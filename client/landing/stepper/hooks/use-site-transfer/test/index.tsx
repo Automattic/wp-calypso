@@ -95,7 +95,7 @@ describe( 'useSiteTransfer', () => {
 			} )
 			.reply( 200, TRANSFER_ACTIVE( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
+			.times( 2 )
 			.reply( 200, TRANSFER_COMPLETED( siteId ) );
 
 		const { result } = render( { siteId } );

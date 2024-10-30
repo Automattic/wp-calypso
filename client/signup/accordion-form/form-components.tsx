@@ -181,22 +181,43 @@ type TextAreaFieldProps = TextInputFieldProps & {
 		| {
 				characterLimit?: never;
 				characterLimitError?: never;
+				shouldEnforceCharacterLimit?: never;
 		  }
 		| {
 				characterLimitError: TranslateResult;
 				characterLimit: number;
+				shouldEnforceCharacterLimit?: boolean;
 		  }
 	);
 
 export function TextAreaField( props: TextAreaFieldProps ) {
-	const { hasFillerContentCheckbox, value, characterLimit, characterLimitError, ...otherProps } =
-		props;
+	const {
+		hasFillerContentCheckbox,
+		value,
+		characterLimit,
+		characterLimitError,
+		shouldEnforceCharacterLimit,
+		onChange: onChangeFromProps,
+		...otherProps
+	} = props;
+
+	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		if ( shouldEnforceCharacterLimit ) {
+			if ( event.target.value.length <= characterLimit ) {
+				return onChangeFromProps?.( event );
+			}
+			return;
+		}
+		return onChangeFromProps?.( event );
+	};
+
 	return (
 		<StyledFormFieldset hasFillerContentCheckbox={ hasFillerContentCheckbox }>
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
 				{ ...otherProps }
+				onChange={ onChange }
 				value={ value }
 				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
@@ -209,9 +230,12 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 					{ value.length }/{ characterLimit }
 				</CharacterCounter>
 			) : null }
-			{ characterLimit && value?.length > characterLimit && (
-				<StyledFormInputValidation isError={ false } isWarning text={ characterLimitError } />
-			) }
+			{ characterLimit &&
+				( shouldEnforceCharacterLimit
+					? value?.length === characterLimit
+					: value?.length > characterLimit ) && (
+					<StyledFormInputValidation isError={ false } isWarning text={ characterLimitError } />
+				) }
 			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
 		</StyledFormFieldset>
 	);

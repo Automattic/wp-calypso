@@ -1,10 +1,11 @@
 import { JetpackLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-// import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/jetpack.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import WooLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woo.svg';
 import WordPressogo from 'calypso/assets/images/a8c-for-agencies/product-logos/wordpress.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { DirectoryApplicationType } from '../../partner-directory/types';
 import type { AgencyTier } from '../types';
 
@@ -16,6 +17,7 @@ function DownloadLink( {
 	currentAgencyTier: AgencyTier;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const productData: Record<
 		string,
@@ -82,7 +84,17 @@ function DownloadLink( {
 	}
 
 	return (
-		<Button href={ data.href }>
+		<Button
+			href={ data.href }
+			onClick={ () => {
+				dispatch(
+					recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_download_click', {
+						product,
+						agency_tier: currentAgencyTier,
+					} )
+				);
+			} }
+		>
 			{ data.icon }
 			{ data.name }
 		</Button>

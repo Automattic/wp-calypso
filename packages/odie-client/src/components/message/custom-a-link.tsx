@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
 
-import './style.scss';
-
 // This component will be extended in the future to support other types of links.
 // For now, it only supports prompt:// links. But in the future might be more protocols like:
 // - navigate:// to navigate within calypso

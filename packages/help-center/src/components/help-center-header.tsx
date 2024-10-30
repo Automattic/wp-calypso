@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { useMemo, useCallback } from '@wordpress/element';
 import {
 	backup,
 	closeSmall,
@@ -11,7 +12,7 @@ import {
 	Icon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
@@ -74,10 +75,17 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 		config.isEnabled( 'help-center-experience' ) && pathname !== '/chat-history';
 	const isHelpCenterHome = key === 'default';
 
-	const headerText =
-		pathname === '/odie' || pathname === '/contact-form'
-			? __( 'Wapuu', __i18n_text_domain__ )
-			: __( 'Help Center', __i18n_text_domain__ );
+	const headerText = useMemo( () => {
+		switch ( pathname ) {
+			case '/odie':
+			case '/contact-form':
+				return __( 'Wapuu', __i18n_text_domain__ );
+			case '/chat-history':
+				return __( 'History', __i18n_text_domain__ );
+			default:
+				return __( 'Help Center', __i18n_text_domain__ );
+		}
+	}, [ __, pathname ] );
 
 	return (
 		<>
@@ -141,6 +149,7 @@ const ContentMinimized = ( {
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
 					<Route path="/odie" element={ __( 'Wapuu', __i18n_text_domain__ ) } />
+					<Route path="/chat-history" element={ __( 'Chat History', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
@@ -160,6 +169,7 @@ const ContentMinimized = ( {
 
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
 	const { __ } = useI18n();
+	const location = useLocation();
 
 	const handleClick = useCallback(
 		( event: React.SyntheticEvent ) => {
@@ -170,8 +180,13 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		[ onMaximize ]
 	);
 
+	const classNames = clsx(
+		'help-center__container-header',
+		location?.pathname?.replace( /^\//, '' )
+	);
+
 	return (
-		<CardHeader className="help-center__container-header">
+		<CardHeader className={ classNames }>
 			<Flex onClick={ handleClick }>
 				{ isMinimized ? (
 					<ContentMinimized handleClick={ handleClick } onMaximize={ onMaximize } />

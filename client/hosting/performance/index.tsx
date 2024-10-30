@@ -4,9 +4,9 @@ import {
 	render as clientRender,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
-import { DOTCOM_SITE_PERFORMANCE } from 'calypso/hosting/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
+import { DOTCOM_SITE_PERFORMANCE } from 'calypso/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/sites/controller';
 import { sitePerformance } from './controller';
 
 export default function () {

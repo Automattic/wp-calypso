@@ -10,8 +10,9 @@ export interface AgencyTierInfo {
 		title: string;
 		description: string;
 		extraDescription?: string;
-		benefits: string[];
+		benefits?: string[];
 		video: string;
 		image: string;
+		cta: string;
 	};
 }

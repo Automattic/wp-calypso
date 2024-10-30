@@ -12,7 +12,6 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	isNewsletterOrLinkInBioFlow,
-	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
 	isFreeFlow,
 } from './utils';
@@ -75,7 +74,8 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
 			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
-				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
+				// We removed the link in bio flow, we need to keep this reference here to avoid side effects.
+				settings.site_intent = isLinkInBioFlow( flowName ) ? 'link-in-bio' : FREE_FLOW;
 				if ( selectedDesign && selectedDesign.is_virtual ) {
 					const { assembleSite } = dispatch( SITE_STORE ) as SiteActions;
 					promises.push(

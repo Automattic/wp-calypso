@@ -137,7 +137,8 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( config.isEnabled( 'a4a-partner-directory' )
+			...( config.isEnabled( 'a4a-partner-directory' ) ||
+			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [
 						{
 							icon: commentAuthorAvatar,

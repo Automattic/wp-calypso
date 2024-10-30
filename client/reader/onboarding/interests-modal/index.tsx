@@ -1,8 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -46,9 +48,20 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		if ( checked ) {
 			dispatch( requestFollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_followed`, {
+				tag,
+				total_followed: followedTags.length + 1,
+			} );
 		} else {
 			dispatch( requestUnfollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
+			recordTracksEvent(
+				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_unfollowed`,
+				{
+					tag,
+					total_followed: followedTags.length - 1,
+				}
+			);
 		}
 	};
 

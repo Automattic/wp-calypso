@@ -86,11 +86,11 @@
 	margin-bottom: 0;
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu {
+.odie-chatbox-message.odie-chatbox-message-bot {
 	background-color: var(--studio-white);
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu p {
+.odie-chatbox-message.odie-chatbox-message-bot p {
 	font-size: 1rem;
 }
 
@@ -484,7 +484,7 @@ $custom-border-corner-size: 16px;
 	.odie-chatbox-message-sources {
 		margin: 12px;
 	}
-
+	
 	&:nth-last-child(2) {
 		.foldable-card {
 			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);

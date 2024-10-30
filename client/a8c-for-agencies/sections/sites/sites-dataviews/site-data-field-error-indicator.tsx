@@ -37,16 +37,22 @@ export default function SiteDataFieldErrorIndicator( { errors }: Props ) {
 					context={ popoverContext.current }
 					isVisible={ isPopoverVisible }
 				>
-					<ul className="sites-dataviews__site-error-popover-list">
-						{ errors.map( ( error, index ) => (
-							<li
-								key={ index }
-								className={ `sites-dataviews__site-error-item is-${ error.severity }` }
-							>
-								{ error.message }
-							</li>
-						) ) }
-					</ul>
+					{ errors.length > 1 ? (
+						<ul className="sites-dataviews__site-error-popover-list">
+							{ errors.map( ( error, index ) => (
+								<li
+									key={ index }
+									className={ `sites-dataviews__site-error-item is-${ error.severity }` }
+								>
+									{ error.message }
+								</li>
+							) ) }
+						</ul>
+					) : (
+						<div className="sites-dataviews__site-error-popover-content">
+							{ errors[ 0 ].message }
+						</div>
+					) }
 				</Popover>
 			) }
 		</div>

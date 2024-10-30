@@ -110,11 +110,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		<div className="core-web-vitals-display__details">
 			<div className="core-web-vitals-display__description">
 				<div className="core-web-vitals-display__description-container">
-					<div
-						css={ {
-							flex: 1,
-						} }
-					>
+					<div className="header">
 						{ ! isMobile && (
 							<span className="core-web-vitals-display__description-subheading">
 								{ displayName }
@@ -124,12 +120,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						{ ! isMobile && (
 							<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
 								{ isPerformanceScoreSelected ? (
-									<div
-										className="metric-tab-bar__tab-metric"
-										css={ {
-											marginTop: '16px',
-										} }
-									>
+									<div className="metric-tab-bar__tab-metric performance-score tab">
 										<CircularPerformanceScore score={ value } size={ 72 } />
 									</div>
 								) : (
@@ -146,13 +137,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						recommendationsQuantity={ numberOfAuditsForMetric }
 					/>
 				</div>
-				<p
-					style={ {
-						marginTop: 0,
-						marginBottom: '24px',
-						maxWidth: '496px',
-					} }
-				>
+				<p>
 					{ metricValuations[ activeTab ].explanation }
 					&nbsp;
 					{ isPerformanceScoreSelected ? (

@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import MarketingTools from 'calypso/sites/marketing/tools';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -14,7 +15,6 @@ import MarketingBusinessTools from './business-tools';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Sharing from './main';
-import MarketingTools from './tools';
 import Traffic from './traffic/';
 
 export const redirectConnections = ( context ) => {

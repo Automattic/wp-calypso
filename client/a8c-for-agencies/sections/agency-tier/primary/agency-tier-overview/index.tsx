@@ -11,8 +11,9 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DownloadBadges from '../../download-badges';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
@@ -22,6 +23,7 @@ import './style.scss';
 
 export default function AgencyTierOverview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const agency = useSelector( getActiveAgency );
 
@@ -77,7 +79,20 @@ export default function AgencyTierOverview() {
 									<div>{ currentAgencyTierInfo.subtitle }</div>
 									{ translate( '{{a}}Learn more{{/a}} ↗', {
 										components: {
-											a: <a target="_blank" href={ learnMoreLink } rel="noopener noreferrer" />,
+											a: (
+												<a
+													target="_blank"
+													href={ learnMoreLink }
+													onClick={ () => {
+														dispatch(
+															recordTracksEvent( 'calypso_a4a_agency_tier_badge_learn_more_click', {
+																agency_tier: currentAgencyTier,
+															} )
+														);
+													} }
+													rel="noopener noreferrer"
+												/>
+											),
 										},
 									} ) }
 								</div>

@@ -1,10 +1,10 @@
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
-import HostingSection, { HostingSectionProps } from '../hosting-section';
+import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 
 import './style.scss';
 
-type Props = Omit< HostingSectionProps, 'children' > & {
+type Props = Omit< PageSectionProps, 'children' > & {
 	items: string[];
 	fiveRows?: boolean;
 	threeRows?: boolean;
@@ -21,7 +21,7 @@ export default function HostingAdditionalFeaturesSection( {
 	threeRows,
 }: Props ) {
 	return (
-		<HostingSection
+		<PageSection
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
@@ -40,6 +40,6 @@ export default function HostingAdditionalFeaturesSection( {
 					</li>
 				) ) }
 			</ul>
-		</HostingSection>
+		</PageSection>
 	);
 }

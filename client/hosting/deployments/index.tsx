@@ -4,9 +4,9 @@ import {
 	render as clientRender,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
-import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/hosting/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/sites/controller';
 import {
 	redirectHomeIfIneligible,
 	deploymentCreation,
