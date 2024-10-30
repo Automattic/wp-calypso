@@ -9,11 +9,8 @@ export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
-export const VIDEOPRESS_FLOW = 'videopress';
-export const VIDEOPRESS_ACCOUNT = 'videopress-account';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
-export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
@@ -202,10 +199,6 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 
 export const isSiteSetupFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_SETUP_FLOW === flowName;
-};
-
-export const isSenseiFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && SENSEI_FLOW === flowName );
 };
 
 export const ecommerceFlowRecurTypes = {

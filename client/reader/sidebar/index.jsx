@@ -47,7 +47,6 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
-import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
@@ -319,7 +318,6 @@ export class ReaderSidebar extends Component {
 			<GlobalSidebar { ...props }>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
-				<ReaderSidebarPromo />
 			</GlobalSidebar>
 		);
 	}
@@ -331,9 +329,6 @@ export class ReaderSidebar extends Component {
 					<ReaderSidebarNudges />
 					{ this.renderSidebarMenu() }
 				</SidebarRegion>
-
-				<ReaderSidebarPromo />
-
 				<SidebarFooter />
 			</Sidebar>
 		);

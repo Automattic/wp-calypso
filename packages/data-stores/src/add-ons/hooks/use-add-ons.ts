@@ -1,9 +1,7 @@
 import {
-	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
-	WPCOM_FEATURES_AI_ASSISTANT,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
@@ -16,12 +14,10 @@ import {
 	ADD_ON_100GB_STORAGE,
 	ADD_ON_50GB_STORAGE,
 	ADD_ON_CUSTOM_DESIGN,
-	ADD_ON_JETPACK_AI_MONTHLY,
 	ADD_ON_UNLIMITED_THEMES,
 	STORAGE_LIMIT,
 } from '../constants';
 import customDesignIcon from '../icons/custom-design';
-import jetpackAIIcon from '../icons/jetpack-ai';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../lib/is-storage-addon-enabled';
@@ -37,7 +33,6 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	/*
 	 * TODO: `useAddOnDisplayCost` be refactored instead to return an index of `{ [ slug ]: "display cost" }`
 	 */
-	const displayCostJetpackAIMonthly = useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY );
 	const displayCostUnlimitedThemes = useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES );
 	const displayCostCustomDesign = useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN );
 	const displayCost1GBSpace50 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 );
@@ -52,19 +47,6 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	return useMemo(
 		() =>
 			[
-				{
-					addOnSlug: ADD_ON_JETPACK_AI_MONTHLY,
-					productSlug: PRODUCT_JETPACK_AI_MONTHLY,
-					featureSlugs: null,
-					icon: jetpackAIIcon,
-					overrides: null,
-					displayCost: displayCostJetpackAIMonthly,
-					featured: true,
-					description: translate(
-						'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
-					),
-					name: undefined,
-				},
 				{
 					addOnSlug: ADD_ON_UNLIMITED_THEMES,
 					productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -127,7 +109,6 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 			displayCost1GBSpace100,
 			displayCost1GBSpace50,
 			displayCostCustomDesign,
-			displayCostJetpackAIMonthly,
 			displayCostUnlimitedThemes,
 			selectedSiteId,
 			translate,
@@ -157,107 +138,90 @@ const useAddOns = ( {
 
 	return useMemo(
 		() =>
-			activeAddOns
-				.filter( ( addOn ) => {
-					/**
-					 * Remove the Jetpack AI add-on if the site already supports the feature.
-					 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`.
-					 * The intention is to have a single source of truth. The add-on can be removed from display
-					 * instead with an appropriate flag, but kept in list of add-ons.
-					 */
-					if (
-						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
-						siteFeatures.data?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
-					) {
-						return false;
-					}
+			activeAddOns.map( ( addOn ) => {
+				const product = productsList.data?.[ addOn.productSlug ];
+				const name = addOn.name ? addOn.name : product?.name || '';
+				const description = addOn.description ?? ( product?.description || '' );
 
-					return true;
-				} )
-				.map( ( addOn ) => {
-					const product = productsList.data?.[ addOn.productSlug ];
-					const name = addOn.name ? addOn.name : product?.name || '';
-					const description = addOn.description ?? ( product?.description || '' );
-
-					/**
-					 * If siteFeatures, sitePurchases, or productsList are still loading, show the add-on as loading.
-					 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
-					 * that to the add-on's meta if need to.
-					 */
-					if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
-						return {
-							...addOn,
-							name,
-							description,
-							isLoading: true,
-						};
-					}
-
-					/**
-					 * If the product is not found in the products list, remove the add-on.
-					 * This should signal a wrong slug or a product that doesn't exist i.e. some sort of Bug.
-					 * (not sure if add-on without a connected product is a valid use case)
-					 */
-					if ( ! product ) {
-						return null;
-					}
-
-					/**
-					 * If it's a storage add-on.
-					 */
-					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-						// if storage add-ons are not enabled in the config or disabled via hook prop, remove them
-						if (
-							( 'boolean' === typeof enableStorageAddOns && ! enableStorageAddOns ) ||
-							( ! isStorageAddonEnabled() && 'boolean' !== typeof enableStorageAddOns )
-						) {
-							return null;
-						}
-
-						/**
-						 * If storage add-on is already purchased.
-						 * TODO: Consider migrating this part to `use-add-on-purchase-status` and attach
-						 * that to the add-on's meta if need to. The intention is to have a single source of truth.
-						 */
-						const isStorageAddOnPurchased = Object.values( spaceUpgradesPurchased ?? [] ).some(
-							( purchase ) => purchase.purchaseRenewalQuantity === addOn.quantity
-						);
-						if ( isStorageAddOnPurchased ) {
-							return {
-								...addOn,
-								name,
-								description,
-								purchased: true,
-							};
-						}
-
-						/**
-						 * If the current storage add-on option is greater than the available upgrade.
-						 * TODO: This is also potentially a candidate for `use-add-on-purchase-status`.
-						 */
-						const currentMaxStorage = mediaStorage.data?.maxStorageBytes
-							? mediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
-							: 0;
-						const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
-						if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
-							return {
-								...addOn,
-								name,
-								description,
-								exceedsSiteStorageLimits: true,
-							};
-						}
-					}
-
-					/**
-					 * Regular product add-ons.
-					 */
+				/**
+				 * If siteFeatures, sitePurchases, or productsList are still loading, show the add-on as loading.
+				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
+				 * that to the add-on's meta if need to.
+				 */
+				if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
 					return {
 						...addOn,
 						name,
 						description,
+						isLoading: true,
 					};
-				} ),
+				}
+
+				/**
+				 * If the product is not found in the products list, remove the add-on.
+				 * This should signal a wrong slug or a product that doesn't exist i.e. some sort of Bug.
+				 * (not sure if add-on without a connected product is a valid use case)
+				 */
+				if ( ! product ) {
+					return null;
+				}
+
+				/**
+				 * If it's a storage add-on.
+				 */
+				if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
+					// if storage add-ons are not enabled in the config or disabled via hook prop, remove them
+					if (
+						( 'boolean' === typeof enableStorageAddOns && ! enableStorageAddOns ) ||
+						( ! isStorageAddonEnabled() && 'boolean' !== typeof enableStorageAddOns )
+					) {
+						return null;
+					}
+
+					/**
+					 * If storage add-on is already purchased.
+					 * TODO: Consider migrating this part to `use-add-on-purchase-status` and attach
+					 * that to the add-on's meta if need to. The intention is to have a single source of truth.
+					 */
+					const isStorageAddOnPurchased = Object.values( spaceUpgradesPurchased ?? [] ).some(
+						( purchase ) => purchase.purchaseRenewalQuantity === addOn.quantity
+					);
+					if ( isStorageAddOnPurchased ) {
+						return {
+							...addOn,
+							name,
+							description,
+							purchased: true,
+						};
+					}
+
+					/**
+					 * If the current storage add-on option is greater than the available upgrade.
+					 * TODO: This is also potentially a candidate for `use-add-on-purchase-status`.
+					 */
+					const currentMaxStorage = mediaStorage.data?.maxStorageBytes
+						? mediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
+						: 0;
+					const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+					if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
+						return {
+							...addOn,
+							name,
+							description,
+							exceedsSiteStorageLimits: true,
+						};
+					}
+				}
+
+				/**
+				 * Regular product add-ons.
+				 */
+				return {
+					...addOn,
+					name,
+					description,
+				};
+			} ),
 		[
 			activeAddOns,
 			enableStorageAddOns,

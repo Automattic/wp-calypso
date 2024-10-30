@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,6 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
@@ -67,6 +69,7 @@ class PurchasesList extends Component {
 
 	render() {
 		const { purchases, sites, translate, subscriptions } = this.props;
+		const commonEventProps = { context: 'me' };
 		let content;
 
 		if ( this.isDataLoading() ) {
@@ -109,18 +112,26 @@ class PurchasesList extends Component {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
-
 					<CompactCard className="purchases-list__no-content">
-						<EmptyContent
-							title={ translate( 'Looking to upgrade?' ) }
-							line={ translate(
-								'Our plans give your site the power to thrive. ' +
-									'Find the plan that works for you.'
-							) }
-							action={ translate( 'Upgrade now' ) }
-							actionURL="/plans"
-							illustration={ noSitesIllustration }
-						/>
+						<>
+							<TrackComponentView
+								eventName="calypso_no_purchases_upgrade_nudge_impression"
+								eventProperties={ commonEventProps }
+							/>
+							<EmptyContent
+								title={ translate( 'Looking to upgrade?' ) }
+								line={ translate(
+									'Our plans give your site the power to thrive. ' +
+										'Find the plan that works for you.'
+								) }
+								action={ translate( 'Upgrade now' ) }
+								actionURL="/plans"
+								illustration={ noSitesIllustration }
+								actionCallback={ () => {
+									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+								} }
+							/>
+						</>
 					</CompactCard>
 				</>
 			);

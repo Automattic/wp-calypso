@@ -73,6 +73,11 @@ export const JetpackSitesDataViews = ( {
 				return;
 			}
 
+			if ( site.is_simple ) {
+				// We don't want to open the site preview pane for simple sites.
+				return;
+			}
+
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
 				selectedItem: site,
@@ -373,7 +378,7 @@ export const JetpackSitesDataViews = ( {
 								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
 									isNotProduction ) && (
 									<>
-										{ ! item.site.error && (
+										{ ! item.site.error && ! item.site.value.is_simple && (
 											<SiteActions
 												isLargeScreen={ isLargeScreen }
 												isDevSite={ isDevSite }
