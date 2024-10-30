@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import SectionNav from 'calypso/components/section-nav';
@@ -24,12 +24,14 @@ export const HelpCenterChatHistory = () => {
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return { isChatLoaded: store.getIsChatLoaded() };
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			unreadCount: store.getUnreadCount(),
+		};
 	}, [] );
-
-	const [ unreadCount, setUnreadCount ] = useState( 0 );
+	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {

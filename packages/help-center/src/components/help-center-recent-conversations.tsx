@@ -1,6 +1,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
@@ -31,15 +31,16 @@ const HelpCenterRecentConversations: React.FC = () => {
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 	const sectionName = GetSectionName( unreadConversationsCount );
+	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
 			const conversations = getConversations() as ZendeskConversation[];
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
-
 			setUnreadConversationsCount( unreadConversations );
 			setUnreadMessagesCount( unreadMessages );
 			setConversations( conversations );
+			setUnreadCount( unreadConversations );
 		}
 	}, [ isChatLoaded, getConversations ] );
 
