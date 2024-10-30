@@ -456,6 +456,15 @@ export class MediaLibraryContent extends Component {
 		}
 
 		if ( this.props.source !== '' ) {
+			// Hide the header until we have the media items set from Google Photos
+			if (
+				'google_photos' === this.props.source &&
+				this.props.photoPickerSession &&
+				! this.props.photoPickerSession?.mediaItemsSet
+			) {
+				return null;
+			}
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
