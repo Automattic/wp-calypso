@@ -2,6 +2,7 @@ import {
 	useTogglePaymentMethod,
 	type PaymentMethod,
 	type ProcessPayment,
+	usePaymentMethodId,
 } from '@automattic/composite-checkout';
 import {
 	PayPalButtons,
@@ -68,7 +69,15 @@ function PayPalSubmitButton( {
 		}
 	}, [ isResolved, togglePaymentMethod ] );
 
-	if ( isPending || ! isResolved ) {
+	// We have to wait for the active payment method to switch because the
+	// contents of the `onClick` function will change when the active state
+	// changes and if we render `PayPalButtons` too soon it will keep the old
+	// version of `onClick` in its closure, which will prevent the payment
+	// processor function from being called.
+	const [ activePaymentMethodId ] = usePaymentMethodId();
+	const isActive = 'paypal-js' === activePaymentMethodId;
+
+	if ( isPending || ! isResolved || ! isActive ) {
 		return <div>Loading</div>;
 	}
 
