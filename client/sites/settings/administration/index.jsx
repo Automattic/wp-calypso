@@ -2,8 +2,8 @@ import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SiteTools from '../site-tools';
-import { SOURCE_SETTINGS_ADMINISTRATION } from '../site-tools/utils';
+import SiteTools from '../../../my-sites/site-settings/site-tools';
+import { SOURCE_SETTINGS_ADMINISTRATION } from '../../../my-sites/site-settings/site-tools/utils';
 
 export default function AdministrationSettings() {
 	const isWpcomStagingSite = useSelector( ( state ) =>

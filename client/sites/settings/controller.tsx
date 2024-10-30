@@ -1,14 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import AdministrationSettings from 'calypso/my-sites/site-settings/administration';
-import AgencySettings from 'calypso/my-sites/site-settings/agency';
-import CachesSettings from 'calypso/my-sites/site-settings/caches';
-import SiteSettings from 'calypso/my-sites/site-settings/site';
-import WebServerSettings from 'calypso/my-sites/site-settings/web-server';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import AdministrationSettings from './administration';
+import AgencySettings from './agency';
+import CachesSettings from './caches';
+import SiteSettings from './site';
+import WebServerSettings from './web-server';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {

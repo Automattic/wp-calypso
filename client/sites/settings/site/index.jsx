@@ -3,9 +3,9 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import SiteSettingPrivacy from '../site-setting-privacy';
-import LaunchSite from '../site-visibility/launch-site';
-import wrapSettingsForm from '../wrap-settings-form';
+import SiteSettingPrivacy from '../../../my-sites/site-settings/site-setting-privacy';
+import LaunchSite from '../../../my-sites/site-settings/site-visibility/launch-site';
+import wrapSettingsForm from '../../../my-sites/site-settings/wrap-settings-form';
 
 const SiteSettings = ( {
 	fields,
