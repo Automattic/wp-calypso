@@ -25,7 +25,7 @@
 
 	&:hover,
 	&:has(:checked) {
-		background: rgba(var(--color-accent-rgb), 8%);
+		background: var(--color-accent-5);
 	}
 
 	&:has(:checked) {
