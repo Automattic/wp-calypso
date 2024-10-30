@@ -480,7 +480,7 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+								hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
 							/>
 						) }
 						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
@@ -497,7 +497,7 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
+								hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
 							/>
 						) }
 					</>
