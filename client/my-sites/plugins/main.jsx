@@ -458,6 +458,7 @@ export default flow(
 			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
 			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses(
+				state,
 				allPlugins,
 				pluginsWithUpdates,
 				inactivePlugins,

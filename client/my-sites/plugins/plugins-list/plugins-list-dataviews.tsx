@@ -4,9 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DataViews } from 'calypso/components/dataviews';
-import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
-import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
 
@@ -27,7 +25,6 @@ export default function PluginsListDataViews( {
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
-	const allStatuses = useSelector( getPluginActionStatuses );
 	const translate = useTranslate();
 
 	const fields = useFields( bulkActionDialog );
@@ -48,16 +45,11 @@ export default function PluginsListDataViews( {
 	const { data, paginationInfo } = useMemo( () => {
 		const result = filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 
-		// Add all statuses to the plugin object so we can display them in the DataViews
-		result.data.forEach( ( plugin ) => {
-			plugin.allStatuses = allStatuses.filter( ( status ) => status.pluginId === plugin.id );
-		} );
-
 		return {
 			data: result.data,
 			paginationInfo: result.paginationInfo,
 		};
-	}, [ currentPlugins, dataViewsState, fields, allStatuses ] );
+	}, [ currentPlugins, dataViewsState, fields ] );
 
 	return (
 		<DataViews

@@ -48,6 +48,12 @@ const state = deepFreeze( {
 						error: createError( 'no_package', 'Download failed.' ),
 					},
 				},
+				'site.three': {
+					'jetpack/jetpack': {
+						status: 'inProgress',
+						action: DEACTIVATE_PLUGIN,
+					},
+				},
 			},
 		},
 	},
@@ -441,47 +447,46 @@ describe( 'Installed plugin selectors', () => {
 		test( 'Should update plugin status property based on its state from another objects.', () => {
 			const allPlugins = [
 				{
+					id: 'jetpack/jetpack',
 					slug: 'jetpack/jetpack',
 				},
 				{
-					slug: 'akismet/akismet',
-				},
-				{
+					id: 'hello-dolly/hello-dolly',
 					slug: 'hello-dolly/hello-dolly',
 				},
 				{
+					id: 'vaultpress/vaultpress',
 					slug: 'vaultpress/vaultpress',
 				},
 			];
 
 			const pluginsWithUpdates = [
 				{
+					id: 'jetpack/jetpack',
 					slug: 'jetpack/jetpack',
-				},
-				{
-					slug: 'akismet/akismet',
 				},
 			];
 
 			const activePlugins = [
 				{
+					id: 'jetpack/jetpack',
 					slug: 'jetpack/jetpack',
 				},
 				{
+					id: 'hello-dolly/hello-dolly',
 					slug: 'hello-dolly/hello-dolly',
 				},
 			];
 
 			const inactivePlugins = [
 				{
-					slug: 'akismet/akismet',
-				},
-				{
+					id: 'vaultpress/vaultpress',
 					slug: 'vaultpress/vaultpress',
 				},
 			];
 
 			const pluginsWithUpdatesAndStatuses = selectors.getPluginsWithUpdateStatuses(
+				state,
 				allPlugins,
 				pluginsWithUpdates,
 				inactivePlugins,
@@ -490,14 +495,41 @@ describe( 'Installed plugin selectors', () => {
 
 			expect( pluginsWithUpdatesAndStatuses ).toEqual(
 				expect.arrayContaining( [
-					{ slug: 'jetpack/jetpack', status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ] },
-					{ slug: 'akismet/akismet', status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.INACTIVE ] },
-					{ slug: 'hello-dolly/hello-dolly', status: [ PLUGINS_STATUS.ACTIVE ] },
-					{ slug: 'vaultpress/vaultpress', status: [ PLUGINS_STATUS.INACTIVE ] },
+					{
+						id: 'jetpack/jetpack',
+						slug: 'jetpack/jetpack',
+						status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
+						allStatuses: [
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.one',
+								status: 'completed',
+							},
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.three',
+								status: 'inProgress',
+							},
+						],
+					},
+					{
+						id: 'hello-dolly/hello-dolly',
+						slug: 'hello-dolly/hello-dolly',
+						status: [ PLUGINS_STATUS.ACTIVE ],
+						allStatuses: [],
+					},
+					{
+						id: 'vaultpress/vaultpress',
+						slug: 'vaultpress/vaultpress',
+						status: [ PLUGINS_STATUS.INACTIVE ],
+						allStatuses: [],
+					},
 				] )
 			);
 
-			expect( pluginsWithUpdatesAndStatuses.length ).toEqual( 4 );
+			expect( pluginsWithUpdatesAndStatuses.length ).toEqual( 3 );
 		} );
 	} );
 } );

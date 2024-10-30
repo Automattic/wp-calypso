@@ -121,9 +121,22 @@ export const getPlugins = createSelector(
 );
 
 export const getPluginsWithUpdateStatuses = createSelector(
-	( plugins, withUpdate, inactive, active ) => {
+	( state, plugins, withUpdate, inactive, active ) => {
 		return plugins.reduce( ( memo, plugin ) => {
 			const status = [];
+			plugin.allStatuses = [];
+
+			Object.entries( state.plugins.installed.status ).map( ( [ siteId, siteStatuses ] ) => {
+				Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+					if ( plugin.id === pluginId ) {
+						plugin.allStatuses.push( {
+							...pluginStatus,
+							siteId,
+							pluginId,
+						} );
+					}
+				} );
+			} );
 
 			if ( find( withUpdate, { slug: plugin.slug } ) ) {
 				status.push( PLUGINS_STATUS.UPDATE );
