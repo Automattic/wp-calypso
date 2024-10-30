@@ -17,10 +17,12 @@ import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { READER_STREAMS_CLEAR } from 'calypso/state/reader/action-types';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+
 import './style.scss';
 
 interface SubscribeModalProps {
@@ -252,17 +254,30 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			.replace( /\/$/, '' ); // Remove trailing slash
 	};
 
+	const handleClose = useCallback( () => {
+		// Clear existing stream data and request fresh content
+		dispatch( {
+			type: READER_STREAMS_CLEAR,
+			payload: { streamKey: 'following' },
+		} );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( requestPage( { streamKey: 'following' } as any ) );
+
+		onClose();
+	}, [ dispatch, onClose ] );
+
 	const handleContinue = useCallback( () => {
+		// Save preference and track event
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-		onClose();
-		window.location.reload();
-	}, [ dispatch, onClose ] );
+
+		handleClose();
+	}, [ dispatch, handleClose ] );
 
 	return (
 		isOpen && (
 			<Modal
-				onRequestClose={ onClose }
+				onRequestClose={ handleClose }
 				isFullScreen
 				className="subscribe-modal"
 				headerActions={ headerActions }

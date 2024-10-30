@@ -9,6 +9,7 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
+	READER_STREAMS_CLEAR,
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
@@ -84,7 +85,6 @@ export const items = ( state = [], action ) => {
 
 			// Filter out duplicate x-posts
 			return combineXPosts( newState );
-
 		case READER_STREAMS_SHOW_UPDATES:
 			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
@@ -99,6 +99,8 @@ export const items = ( state = [], action ) => {
 			updatedState[ indexToRemove ] = updatedState.pop(); // set the dismissed post location to the last item from the recs stream
 			return updatedState;
 		}
+		case READER_STREAMS_CLEAR:
+			return [];
 	}
 	return state;
 };
@@ -170,6 +172,8 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			return { lastUpdated: maxDate, items: newItems };
 		case READER_STREAMS_SHOW_UPDATES:
 			return { ...state, items: [] };
+		case READER_STREAMS_CLEAR:
+			return PENDING_ITEMS_DEFAULT;
 	}
 	return state;
 };
