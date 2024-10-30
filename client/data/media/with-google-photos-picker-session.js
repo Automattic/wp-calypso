@@ -10,7 +10,7 @@ import {
 export const withGooglePhotosPickerSession = createHigherOrderComponent( ( Wrapped ) => {
 	return ( props ) => {
 		const photosPickerApiEnabled = config.isEnabled( 'google-photos-picker' );
-		const photoPickerSession = useSelector( ( state ) => getGooglePhotosPickerSession( state ) );
+		const photosPickerSession = useSelector( ( state ) => getGooglePhotosPickerSession( state ) );
 
 		const { mutate: createPickerSession } = useCreateGooglePhotosPickerSessionMutation();
 		const { mutate: deletePickerSession } = useDeleteGooglePhotosPickerSessionMutation();
@@ -19,9 +19,9 @@ export const withGooglePhotosPickerSession = createHigherOrderComponent( ( Wrapp
 			<Wrapped
 				{ ...props }
 				photosPickerApiEnabled={ photosPickerApiEnabled }
-				photoPickerSession={ photoPickerSession }
-				deletePickerSession={ deletePickerSession }
-				createPhotoPickerSession={ createPickerSession }
+				photosPickerSession={ photosPickerSession }
+				deletePhotosPickerSession={ deletePickerSession }
+				createPhotosPickerSession={ createPickerSession }
 			/>
 		);
 	};

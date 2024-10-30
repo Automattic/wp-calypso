@@ -89,7 +89,7 @@ export class MediaLibraryContent extends Component {
 
 	componentDidMount() {
 		if ( this.props.photosPickerApiEnabled ) {
-			! this.props?.photoPickerSession && this.props?.createPhotoPickerSession();
+			! this.props?.photosPickerSession && this.props?.createPhotosPickerSession();
 		}
 	}
 
@@ -413,7 +413,10 @@ export class MediaLibraryContent extends Component {
 			return this.renderConnectExternalMedia();
 		}
 
-		if ( 'google_photos' === this.props.source && ! this.props.photoPickerSession?.mediaItemsSet ) {
+		if (
+			'google_photos' === this.props.source &&
+			! this.props.photosPickerSession?.mediaItemsSet
+		) {
 			return <GooglePhotosPickerButton />;
 		}
 
@@ -459,8 +462,8 @@ export class MediaLibraryContent extends Component {
 			// Hide the header until we have the media items set from Google Photos
 			if (
 				'google_photos' === this.props.source &&
-				this.props.photoPickerSession &&
-				! this.props.photoPickerSession?.mediaItemsSet
+				this.props.photosPickerSession &&
+				! this.props.photosPickerSession?.mediaItemsSet
 			) {
 				return null;
 			}
@@ -479,6 +482,8 @@ export class MediaLibraryContent extends Component {
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
+					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
+					photosPickerSession={ this.props.photoPickerSession }
 				/>
 			);
 		}
