@@ -1,6 +1,11 @@
+import { SelectDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import type { ReactNode } from 'react';
+import { Children, isValidElement } from 'react';
+import { navigate } from 'calypso/lib/navigate';
+import type { ReactNode, ReactElement } from 'react';
+
 import './style.scss';
 
 export function SidebarItem( { href, children }: { href: string; children: ReactNode } ) {
@@ -21,7 +26,37 @@ export function SidebarItem( { href, children }: { href: string; children: React
 }
 
 export function Sidebar( { children }: { children: ReactNode } ) {
-	return <ul className="panel-sidebar">{ children }</ul>;
+	const isDesktop = useViewportMatch( 'mobile', '>=' );
+	const activeElement = Children.toArray( children ).find(
+		( child ) => isValidElement( child ) && window.location.pathname.startsWith( child.props.href )
+	) as ReactElement;
+
+	if ( isDesktop ) {
+		return (
+			<ul className="panel-sidebar">{ children }</ul>
+		);
+	}
+
+	return (
+		<SelectDropdown
+			className="panel-sidebar panel-sidebar-dropdown"
+			selectedText={ activeElement?.props?.children }
+		>
+			{ Children.toArray( children )
+				.filter( ( child ) => child && isValidElement( child ) )
+				.map( ( child, index ) => {
+					const { href, ...childProps } = ( child as ReactElement ).props;
+					return (
+						<SelectDropdown.Item
+							{ ...childProps }
+							key={ index }
+							selected={ window.location.pathname.startsWith( href ) }
+							onClick={ () => navigate( href ) }
+						/>
+					);
+				} ) }
+		</SelectDropdown>
+	);
 }
 
 export function PanelWithSidebar( { children }: { children: ReactNode } ) {

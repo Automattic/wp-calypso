@@ -1,24 +1,40 @@
 
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "~@automattic/color-studio/dist/color-variables";
 @import "~@automattic/typography/styles/variables";
 
 .panel-with-sidebar {
 	display: flex;
 	gap: 20px;
-	align-items: flex-start;
+	flex-direction: column;
 
 	.navigation-header {
 		margin-bottom: 16px;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: flex-start;
 	}
 }
 
 .panel-sidebar {
 	position: sticky;
-	top: 0;
-	min-width: 160px;
-	margin: 0;
+	top: -24px;
 	flex-shrink: 0;
+	padding: 24px 24px 20px;
+	margin: -24px -24px -19px;
 	list-style: none;
+	background: #fff;
+	z-index: 1;
+
+	@include break-mobile {
+		top: 0;
+		min-width: 160px;
+		padding: 0;
+		margin: 0;
+	}
 }
 
 .panel-sidebar-tab {
@@ -39,5 +55,11 @@
 		background-color: #f0f0f0;
 		font-weight: 600;
 		border-radius: 4px;
+	}
+}
+
+.panel-sidebar-dropdown {
+	.select-dropdown__container {
+		display: block;
 	}
 }
