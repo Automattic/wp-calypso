@@ -218,7 +218,8 @@
 
 // TODO: remove when this is implemented upstream.
 //
-// https://github.com/Automattic/wp-calypso/pull/95561
+// PR: https://github.com/Automattic/wp-calypso/pull/95561
+// Follow-up issue: https://github.com/Automattic/dotcom-forge/issues/9554
 body.is-section-plugins .plugin-management-wrapper {
     --wp-components-color-accent: var(--color-accent);
 }
