@@ -1,43 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Theme rendering should match snapshot 1`] = `
-<div
-  class="card theme-card theme-card--is-actionable is-clickable"
-  data-e2e-theme="twenty-seventeen"
->
+<div>
   <div
-    class="theme-card__content"
+    class="card theme-card theme-card--is-actionable is-clickable"
+    data-e2e-theme="twenty-seventeen"
   >
     <div
-      class="theme-card__image-container"
+      class="theme-card__content"
     >
-      <a
-        aria-label="Twenty Seventeen"
-        class="theme-card__image"
-        href="#"
+      <div
+        class="theme-card__image-container"
       >
-        <img
-          alt=""
-          class="theme__img"
-          src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
-          srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+        <a
+          aria-label="Twenty Seventeen"
+          class="theme-card__image"
+          href="#"
+        >
+          <img
+            alt=""
+            class="theme__img"
+            src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
+            srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+          />
+        </a>
+      </div>
+      <div
+        class="theme-card__info"
+      >
+        <h2
+          class="theme-card__info-title"
+        >
+          <span>
+            Twenty Seventeen
+          </span>
+        </h2>
+        <components--theme-tier-badge
+          islockedstylevariation="false"
+          themeid="twentyseventeen"
         />
-      </a>
-    </div>
-    <div
-      class="theme-card__info"
-    >
-      <h2
-        class="theme-card__info-title"
-      >
-        <span>
-          Twenty Seventeen
-        </span>
-      </h2>
-      <components--theme-tier-badge
-        islockedstylevariation="false"
-        themeid="twentyseventeen"
-      />
+      </div>
     </div>
   </div>
 </div>
