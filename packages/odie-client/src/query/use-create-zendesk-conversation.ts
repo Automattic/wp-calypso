@@ -1,10 +1,18 @@
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
+import { setHelpCenterZendeskConversationStarted } from '../utils';
 
 export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
-	const { setSupportProvider, selectedSiteId, addMessage, setChat, setChatStatus, chat } =
-		useOdieAssistantContext();
+	const {
+		setSupportProvider,
+		selectedSiteId,
+		addMessage,
+		setChat,
+		setChatStatus,
+		setWaitAnswerToFirstMessageFromHumanSupport,
+		chat,
+	} = useOdieAssistantContext();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const chatId = Number( chat.chat_id ) || 0;
@@ -37,6 +45,8 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			Smooch.createConversation( { metadata: { odieChatId: chatId } } ).then( ( conversation ) => {
 				setSupportProvider( 'zendesk' );
 				setChatStatus( 'loaded' );
+				setHelpCenterZendeskConversationStarted();
+				setWaitAnswerToFirstMessageFromHumanSupport( true );
 				setChat( ( prevChat ) => {
 					return {
 						...prevChat,
