@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { withGooglePhotosPickerSession } from 'calypso/data/media/with-google-photos-picker-session';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -21,6 +22,7 @@ import {
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
 import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
+import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
@@ -84,6 +86,12 @@ export class MediaLibraryContent extends Component {
 		onAddMedia: noop,
 		source: '',
 	};
+
+	componentDidMount() {
+		if ( this.props.photosPickerApiEnabled ) {
+			! this.props?.photoPickerSession && this.props?.createPhotoPickerSession();
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
@@ -405,6 +413,10 @@ export class MediaLibraryContent extends Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		if ( 'google_photos' === this.props.source && ! this.props.photoPickerSession?.mediaItemsSet ) {
+			return <GooglePhotosPickerButton />;
+		}
+
 		const listKey = [
 			'list',
 			this.props.site.ID,
@@ -527,5 +539,5 @@ export default withMobileBreakpoint(
 			clearMediaErrors,
 			changeMediaSource,
 		}
-	)( localize( MediaLibraryContent ) )
+	)( withGooglePhotosPickerSession( localize( MediaLibraryContent ) ) )
 );
