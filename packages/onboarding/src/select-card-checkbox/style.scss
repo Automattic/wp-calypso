@@ -1,6 +1,6 @@
 .select-card-checkbox__container {
-	border: 1px solid var(--color-surface-backdrop, #f6f7f7);
-	background: var(--color-surface-backdrop, #f6f7f7);
+	border: 1px solid var(--color-surface-backdrop);
+	background: var(--color-surface-backdrop);
 	border-radius: 4px;
 	padding: 16px;
 	font-size: 0.875rem;
@@ -25,10 +25,10 @@
 
 	&:hover,
 	&:has(:checked) {
-		background: rgba(var(--color-accent-rgb, #3858e9), 8%);
+		background: rgba(var(--color-accent-rgb), 8%);
 	}
 
 	&:has(:checked) {
-		border: 1px solid var(--color-accent, #3858e9);
+		border: 1px solid var(--color-accent);
 	}
 }
