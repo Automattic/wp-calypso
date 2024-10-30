@@ -2,7 +2,7 @@ import { SelectCardCheckbox } from '@automattic/onboarding';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -33,8 +33,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const followedTagsFromState = useSelector( getReaderFollowedTags );
 	const dispatch = useDispatch();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
+	const reduxStore = useStore();
 
 	useEffect( () => {
+		// If there are followed tags in the state and no tags are being processed, update the followed tags state for the UI.
 		if ( followedTagsFromState && processingTags.size === 0 ) {
 			const initialTags = followedTagsFromState.map( ( tag: Tag ) => tag.slug );
 			setFollowedTags( initialTags );
@@ -44,12 +46,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const isContinueDisabled = followedTags.length < 3;
 
 	const handleTopicChange = ( checked: boolean, tag: string ) => {
+		// If the tag is already being processed, do nothing.
 		if ( processingTags.has( tag ) ) {
 			return null;
 		}
 
+		// Mark the tag as being processed.
 		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
+		// Follow or unfollow the tag and update the followed tags state for the UI.
 		if ( checked ) {
 			dispatch( requestFollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
@@ -58,13 +63,36 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
 		}
 
-		setTimeout( () => {
-			setProcessingTags( ( current ) => {
-				const updated = new Set( current );
-				updated.delete( tag );
-				return updated;
-			} );
-		}, 600 );
+		// Set a maximum number of attempts to check if the tag has been processed.
+		let attempts = 0;
+		const MAX_ATTEMPTS = 100; // 100 * 100ms = 10 seconds
+
+		// Poll to check if the tag has been processed (followed or unfollowed).
+		const checkStateInterval = setInterval( () => {
+			attempts++;
+
+			// Get the current followed tags from the state.
+			const currentFollowedTags = getReaderFollowedTags( reduxStore.getState() );
+			if ( ! currentFollowedTags ) {
+				return;
+			}
+			const stateTagSlugs = currentFollowedTags.map( ( t: Tag ) => t.slug );
+
+			// Check if the tag is now being followed or unfollowed.
+			const isStateUpdated = checked
+				? stateTagSlugs.includes( tag )
+				: ! stateTagSlugs.includes( tag );
+
+			// If the state has been updated or we've reached the maximum number of attempts, clear the interval and remove the tag from the processing set.
+			if ( isStateUpdated || attempts >= MAX_ATTEMPTS ) {
+				clearInterval( checkStateInterval );
+				setProcessingTags( ( current ) => {
+					const updated = new Set( current );
+					updated.delete( tag );
+					return updated;
+				} );
+			}
+		}, 100 );
 	};
 
 	const handleContinue = () => {
