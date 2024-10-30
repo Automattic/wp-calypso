@@ -233,6 +233,7 @@ const DotcomPreviewPane = ( {
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
+			enforceTabsView
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
