@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { BackgroundType2 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import { BackgroundType6 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingTestimonialsSection from 'calypso/a8c-for-agencies/sections/marketplace/common/hosting-testimonials-section';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar5 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
@@ -15,7 +15,7 @@ export default function MigrationsTestimonials() {
 		<HostingTestimonialsSection
 			heading={ translate( 'You’re in good company' ) }
 			description={ translate( 'Don’t just take our word for it. Hear from our customers.' ) }
-			background={ BackgroundType2 }
+			background={ BackgroundType6 }
 			items={ [
 				{
 					profile: {

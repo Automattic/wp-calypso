@@ -2,6 +2,7 @@ import Background1Image from './background-1.svg';
 import Background2Image from './background-2.svg';
 import Background3Image from './background-3.svg';
 import Background4Image from './background-4.svg';
+import Background6Image from './background-6.svg';
 
 export type SectionBackground = {
 	image: string;
@@ -28,4 +29,10 @@ export const BackgroundType3: SectionBackground = {
 export const BackgroundType4: SectionBackground = {
 	image: `url(${ Background4Image })`,
 	color: '#F5F2F1',
+};
+
+export const BackgroundType6: SectionBackground = {
+	image: `url(${ Background6Image })`,
+	color: '#EBF4FA',
+	size: 'auto 100%',
 };
