@@ -5,7 +5,7 @@ interface Thumbnails {
 	large: string;
 	medium: string;
 	thumbnail: string;
-	post_thumbnail: string;
+	'post-thumbnail': string;
 }
 
 interface Media {
