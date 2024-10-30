@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { seedManager } from 'calypso/landing/stepper/utils/shuffleArray';
 import { SelectGoals } from '../select-goals';
 
 describe( 'SelectGoals', () => {
@@ -21,7 +22,7 @@ describe( 'SelectGoals', () => {
 		const { rerender } = render( <SelectGoals onChange={ jest.fn() } selectedGoals={ [] } /> );
 		const firstRenderGoals = screen.getAllByTestId( 'goal-title' ).map( ( e ) => e.textContent );
 
-		sessionStorage.clear();
+		seedManager.clearSeed();
 
 		// I'm simulating a page load by rerendering the component with a different key.
 		rerender( <SelectGoals key="second-instance" onChange={ jest.fn() } selectedGoals={ [] } /> );
