@@ -1,5 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useBreakpoint } from '@automattic/viewport-react';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -20,7 +20,7 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 	...otherProps
 } ) => {
 	const translate = useTranslate();
-	const isSmall = useBreakpoint( '<600px' );
+	const isMediumOrBiggerScreen = useViewportMatch( 'small', '>=' );
 
 	return (
 		<StepContainer
@@ -30,7 +30,7 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 			hideBack
 			hideSkip={ false }
 			skipLabelText={ translate( 'Skip' ) }
-			hideNext={ ! isSmall }
+			hideNext={ isMediumOrBiggerScreen }
 			formattedHeader={
 				<FormattedHeader
 					id="goals-header"

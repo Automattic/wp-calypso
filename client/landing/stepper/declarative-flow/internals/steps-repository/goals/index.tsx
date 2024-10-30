@@ -1,6 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -132,7 +132,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
 
-	const isSmall = useBreakpoint( '<600px' );
+	const isMediumOrBiggerScreen = useViewportMatch( 'small', '>=' );
 
 	return (
 		<>
@@ -148,7 +148,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 				stepContent={
 					<>
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
-						{ ! isSmall && (
+						{ isMediumOrBiggerScreen && (
 							<Button className="select-goals__next" variant="primary" onClick={ handleNext }>
 								{ translate( 'Next' ) }
 							</Button>
