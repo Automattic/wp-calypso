@@ -1,24 +1,25 @@
 import { __ } from '@wordpress/i18n';
+import { useSelector } from 'react-redux';
 import NavigationHeader from 'calypso/components/navigation-header';
-import makeSidebar, { PanelWithSidebar } from '../components/panel-sidebar';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { PanelWithSidebar, Sidebar, SidebarItem } from '../components/panel-sidebar';
 import MarketingTools from './tools';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
-const MarketingSidebar = makeSidebar( {
-	items: [
-		{
-			key: 'tools',
-			get label() {
-				return __( 'Marketing Tools' );
-			},
-		},
-	],
-} );
+export function MarketingSidebar() {
+	const slug = useSelector( getSelectedSiteSlug );
+
+	return (
+		<Sidebar>
+			<SidebarItem href={ `/sites/marketing/tools/${ slug }` }>{ __( 'Tools' ) }</SidebarItem>
+		</Sidebar>
+	);
+}
 
 export function marketingTools( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<MarketingSidebar selectedItemKey="tools" />
+			<MarketingSidebar />
 			<div>
 				<NavigationHeader
 					title={ __( 'Marketing Tools' ) }
