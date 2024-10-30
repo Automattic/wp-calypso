@@ -26,7 +26,7 @@ export default function PluginsListDataViews( {
 	bulkActionDialog,
 }: Props ) {
 	const translate = useTranslate();
-
+	const defaultLayouts = { table: {} };
 	const fields = useFields( bulkActionDialog );
 	const actions = useActions( bulkActionDialog );
 
@@ -63,7 +63,7 @@ export default function PluginsListDataViews( {
 			getItemId={ ( item ) => item.id }
 			isLoading={ isLoading }
 			paginationInfo={ paginationInfo }
-			defaultLayouts={ { table: {} } }
+			defaultLayouts={ defaultLayouts }
 		/>
 	);
 }
