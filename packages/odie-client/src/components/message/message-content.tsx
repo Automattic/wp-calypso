@@ -48,10 +48,8 @@ export const MessageContent = forwardRef<
 				isNextMessageFromSameSender &&
 				'next-chat-message-same-sender'
 		);
-
 		return (
 			<>
-				{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 				<div
 					className={ containerClasses }
 					ref={ ref }
@@ -84,6 +82,7 @@ export const MessageContent = forwardRef<
 					</div>
 					<Sources message={ message } />
 				</div>
+				{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 			</>
 		);
 	}
