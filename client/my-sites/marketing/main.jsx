@@ -146,6 +146,8 @@ export const Sharing = ( {
 	}
 
 	const selected = find( filters, { route: pathname } );
+	const isFirstFilterSelected = filters[ 0 ]?.route === pathname;
+
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -177,7 +179,7 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && (
+			{ isFirstFilterSelected && ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					plan={ PLAN_PERSONAL }

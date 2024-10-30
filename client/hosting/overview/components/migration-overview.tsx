@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getMigrationType } from 'calypso/sites-dashboard/utils';
+import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const cards = [
@@ -39,8 +39,15 @@ const cards = [
 	},
 ];
 
-const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
-	const migrationType = getMigrationType( site );
+const getContinueMigrationUrl = (
+	site: SiteDetails,
+	migrationType: string | undefined,
+	migrationStatus: string | undefined
+): string | null => {
+	// We only have link for the pending statuses.
+	if ( 'pending' !== migrationStatus ) {
+		return null;
+	}
 
 	const baseQueryArgs = {
 		siteId: site.ID,
@@ -49,13 +56,11 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 		ref: 'hosting-migration-overview',
 	};
 
-	let continueMigrationUrl;
-
 	if ( ! canInstallPlugins( site ) ) {
 		// For the flows where the checkout is after the choice.
 		switch ( migrationType ) {
 			case 'diy':
-				continueMigrationUrl = addQueryArgs(
+				return addQueryArgs(
 					{
 						...baseQueryArgs,
 						destination: 'upgrade',
@@ -65,7 +70,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 				);
 				break;
 			case 'difm':
-				continueMigrationUrl = addQueryArgs(
+				return addQueryArgs(
 					{
 						...baseQueryArgs,
 						destination: 'upgrade',
@@ -75,46 +80,57 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 				);
 				break;
 			default:
-				continueMigrationUrl = addQueryArgs(
-					baseQueryArgs,
-					'/setup/site-migration/site-migration-how-to-migrate'
-				);
+				return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-how-to-migrate' );
 		}
 	} else {
 		// For the /setup/migration, where the checkout is before the choice.
 		switch ( migrationType ) {
 			case 'diy':
-				continueMigrationUrl = addQueryArgs(
-					baseQueryArgs,
-					'/setup/migration/site-migration-instructions'
-				);
+				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-instructions' );
 				break;
 			case 'difm':
-				continueMigrationUrl = addQueryArgs(
-					baseQueryArgs,
-					'/setup/migration/site-migration-credentials'
-				);
+				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-credentials' );
 				break;
 			default:
-				continueMigrationUrl = addQueryArgs(
-					baseQueryArgs,
-					'/setup/migration/migration-how-to-migrate'
-				);
+				return addQueryArgs( baseQueryArgs, '/setup/migration/migration-how-to-migrate' );
 		}
 	}
+};
+
+const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
+	const migrationType = getMigrationType( site );
+	const migrationStatus = getMigrationStatus( site );
+	const continueMigrationUrl = getContinueMigrationUrl( site, migrationType, migrationStatus );
+	const isPending = 'pending' === migrationStatus;
+
+	const title = isPending
+		? translate( 'Your WordPress site is ready to be migrated' )
+		: translate( 'Your migration is underway' );
+
+	const paragraph = isPending
+		? translate( 'Start your migration today and get ready for unmatched WordPress hosting.' )
+		: translate(
+				'Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
+				{
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						siteName: site.name ?? translate( 'your site' ),
+					},
+				}
+		  );
 
 	return (
 		<div>
 			<HostingHero>
-				<h1>{ translate( 'Your WordPress site is ready to be migrated' ) }</h1>
-				<p>
-					{ translate(
-						'Start your migration today and get ready for unmatched WordPress hosting.'
-					) }
-				</p>
-				<HostingHeroButton href={ continueMigrationUrl }>
-					{ translate( 'Start your migration' ) }
-				</HostingHeroButton>
+				<h1>{ title }</h1>
+				<p>{ paragraph }</p>
+				{ continueMigrationUrl && (
+					<HostingHeroButton href={ continueMigrationUrl }>
+						{ translate( 'Start your migration' ) }
+					</HostingHeroButton>
+				) }
 			</HostingHero>
 			<HostingCardGrid>
 				{ cards.map( ( { title, text } ) => (

@@ -1,9 +1,4 @@
-import {
-	ECOMMERCE_FLOW,
-	FREE_FLOW,
-	NEWSLETTER_FLOW,
-	isLinkInBioFlow,
-} from '@automattic/onboarding';
+import { ECOMMERCE_FLOW, NEWSLETTER_FLOW, isLinkInBioFlow } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -42,16 +37,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					'Unlimited subscribers. Everything you need to grow your audience. And the permanence of WordPress.com.'
 				),
 				buttonText: __( 'Launch my newsletter' ),
-			};
-		}
-
-		if ( flowName === FREE_FLOW ) {
-			return {
-				title: createInterpolateElement(
-					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready?' ),
-					{ br: <br /> }
-				),
-				buttonText: __( 'Get started' ),
 			};
 		}
 

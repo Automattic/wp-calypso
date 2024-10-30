@@ -62,7 +62,8 @@ export type Context = {
 	flags?: {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
-		only_message?: boolean;
+		hide_disclaimer_content?: boolean;
+		show_contact_support_msg?: boolean;
 	};
 };
 
@@ -96,6 +97,7 @@ export type Message = {
 	simulateTyping?: boolean;
 	type: MessageType;
 	directEscalationSupport?: boolean;
+	created_at?: string;
 };
 
 export type Chat = {

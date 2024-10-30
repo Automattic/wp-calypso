@@ -1,9 +1,25 @@
+@mixin wide-screen() {
+	// nav unification (Tools/Hosting -> Marketing)
+	.sharing & {
+		@include breakpoint-deprecated( ">1040px" ) {
+			@content;
+		}
+	}
+
+	// site management panel tab
+	.panel-with-sidebar & {
+		@include breakpoint-deprecated( ">1400px" ) {
+			@content;
+		}
+	}
+}
+
 .tools__header-body {
 	display: flex;
 	flex-direction: column;
 	padding: 32px;
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		max-height: 300px;
 		flex-direction: row;
 		padding: 0;
@@ -15,7 +31,7 @@
 	flex-direction: column;
 	justify-content: center;
 	padding: 0;
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		padding: 40px 40px 40px 0;
 	}
 }
@@ -47,14 +63,14 @@
 }
 
 .tools__header-image-wrapper {
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		display: flex;
 		margin: 0 40px;
 	}
 
 	.tools__header-image {
 		position: relative;
-		@include breakpoint-deprecated( ">1040px" ) {
+		@include wide-screen {
 			max-width: 220px;
 		}
 	}
@@ -85,7 +101,7 @@
 		margin-top: 20px;
 	}
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		width: calc(50% - 1em);
 	}
 }
@@ -110,7 +126,7 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		width: 75%;
 	}
 }
@@ -121,7 +137,7 @@
 	max-height: 75px;
 	width: 16%;
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		display: flex;
 	}
 
@@ -156,7 +172,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include wide-screen {
 		.purchase-detail__button {
 			float: right;
 		}
