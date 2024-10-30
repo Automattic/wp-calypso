@@ -87,6 +87,14 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf,
 } ) );
 
+const chartRangeToQuery = memoizeLast( ( period, chartRange ) => ( {
+	period,
+	start_date: chartRange.chartStart,
+	date: chartRange.chartEnd,
+	summarize: 1,
+	max: 10,
+} ) );
+
 const CHART_VIEWS = {
 	attr: 'views',
 	legendOptions: [ 'visitors' ],
@@ -317,7 +325,9 @@ class StatsSite extends Component {
 			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
 		}
 
-		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+		const query = isNewDateFilteringEnabled
+			? chartRangeToQuery( period, customChartRange )
+			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
 		const traffic = {
