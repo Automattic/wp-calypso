@@ -1,57 +1,48 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { navigate } from 'calypso/lib/navigate';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
-
+import React from 'react';
+import type { ReactNode } from 'react';
 import './style.scss';
 
-interface PanelSidebarItem {
-	key: string;
-	label: string;
-	enabled?: ( state: unknown ) => boolean;
+interface SidebarItemProps {
+	href: string;
+	itemKey: string;
+	selectedItemKey?: string;
+	children: ReactNode;
 }
 
-interface PanelSidebarProps {
-	items: PanelSidebarItem[];
+export function SidebarItem( { href, itemKey, selectedItemKey, children }: SidebarItemProps ) {
+	return (
+		<li>
+			<Button
+				href={ href }
+				className={ clsx( 'panel-sidebar-tab', {
+					'panel-sidebar-tab--active': selectedItemKey === itemKey,
+				} ) }
+			>
+				{ children }
+			</Button>
+		</li>
+	);
+}
+
+interface SidebarProps {
+	children: ReactNode;
 	selectedItemKey: string;
-	context: PageJSContext;
 }
 
-function PanelSidebar( { items, selectedItemKey, context }: PanelSidebarProps ) {
-	const switchItem = ( key: string ) => {
-		navigate( window.location.pathname.replace( /\/[^/]+\/([^/]+)$/, `/${ key }/$1` ) );
-	};
-
+export function Sidebar( { children, selectedItemKey }: SidebarProps ) {
 	return (
 		<div className="panel-sidebar">
-			{ items.map( ( item ) => {
-				if ( item.enabled && ! item.enabled( context.store.getState() ) ) {
-					return null;
-				}
-
-				return (
-					<Button
-						key={ item.key }
-						className={ clsx( 'panel-sidebar-tab', {
-							'panel-sidebar-tab--active': item.key === selectedItemKey,
-						} ) }
-						onClick={ () => switchItem( item.key ) }
-					>
-						{ item.label }
-					</Button>
-				);
-			} ) }
+			<ul>
+				{ React.Children.map( children, ( child ) =>
+					React.cloneElement( child as React.ReactElement, { selectedItemKey } )
+				) }
+			</ul>
 		</div>
 	);
 }
 
-export function PanelWithSidebar( { children }: { children: React.ReactNode } ) {
+export function PanelWithSidebar( { children }: { children: ReactNode } ) {
 	return <div className="panel-with-sidebar">{ children }</div>;
-}
-
-export default function makeSidebar( { items }: { items: PanelSidebarItem[] } ) {
-	const props = { items };
-	return ( { selectedItemKey, context }: { selectedItemKey: string; context: PageJSContext } ) => (
-		<PanelSidebar { ...props } selectedItemKey={ selectedItemKey } context={ context } />
-	);
 }

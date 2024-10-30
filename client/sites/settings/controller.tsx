@@ -1,57 +1,47 @@
 import { __ } from '@wordpress/i18n';
+import { useSelector } from 'react-redux';
 import AdministrationSettings from 'calypso/my-sites/site-settings/administration';
 import AgencySettings from 'calypso/my-sites/site-settings/agency';
 import CachesSettings from 'calypso/my-sites/site-settings/caches';
 import SiteSettings from 'calypso/my-sites/site-settings/site';
 import WebServerSettings from 'calypso/my-sites/site-settings/web-server';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import makeSidebar, { PanelWithSidebar } from '../components/panel-sidebar';
+import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
-const SettingsSidebar = makeSidebar( {
-	items: [
-		{
-			key: 'site',
-			get label() {
-				return __( 'Site' );
-			},
-		},
-		{
-			key: 'administration',
-			get label() {
-				return __( 'Administration' );
-			},
-			enabled: ( state ) => {
-				const siteId = getSelectedSiteId( state );
-				return ! isSiteWpcomStaging( state, siteId );
-			},
-		},
-		{
-			key: 'agency',
-			get label() {
-				return __( 'Agency' );
-			},
-		},
-		{
-			key: 'caches',
-			get label() {
-				return __( 'Caches' );
-			},
-		},
-		{
-			key: 'web-server',
-			get label() {
-				return __( 'Web Server' );
-			},
-		},
-	],
-} );
+export function SettingsSideBar( { selectedItemKey }: { selectedItemKey: string } ) {
+	const slug = useSelector( getSelectedSiteSlug );
+	const isWpcomStaging = useSelectedSiteSelector( isSiteWpcomStaging );
+
+	return (
+		<Sidebar selectedItemKey={ selectedItemKey }>
+			<SidebarItem itemKey="site" href={ `/sites/settings/site/${ slug }` }>
+				{ __( 'Site' ) }
+			</SidebarItem>
+			{ ! isWpcomStaging && (
+				<SidebarItem itemKey="administration" href={ `/sites/settings/administration/${ slug }` }>
+					{ __( 'Administration' ) }
+				</SidebarItem>
+			) }
+			<SidebarItem itemKey="agency" href={ `/sites/settings/agency/${ slug }` }>
+				{ __( 'Agency' ) }
+			</SidebarItem>
+			<SidebarItem itemKey="caches" href={ `/sites/settings/caches/${ slug }` }>
+				{ __( 'Caches' ) }
+			</SidebarItem>
+			<SidebarItem itemKey="web-server" href={ `/sites/settings/web-server/${ slug }` }>
+				{ __( 'Web Server' ) }
+			</SidebarItem>
+		</Sidebar>
+	);
+}
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="site" context={ context } />
+			<SettingsSideBar selectedItemKey="site" />
 			<SiteSettings />
 		</PanelWithSidebar>
 	);
@@ -61,7 +51,7 @@ export function siteSettings( context: PageJSContext, next: () => void ) {
 export function administrationSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="administration" context={ context } />
+			<SettingsSideBar selectedItemKey="administration" />
 			<AdministrationSettings />
 		</PanelWithSidebar>
 	);
@@ -71,7 +61,7 @@ export function administrationSettings( context: PageJSContext, next: () => void
 export function agencySettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="agency" context={ context } />
+			<SettingsSideBar selectedItemKey="agency" />
 			<AgencySettings />
 		</PanelWithSidebar>
 	);
@@ -81,7 +71,7 @@ export function agencySettings( context: PageJSContext, next: () => void ) {
 export function cachesSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="caches" context={ context } />
+			<SettingsSideBar selectedItemKey="caches" />
 			<CachesSettings />
 		</PanelWithSidebar>
 	);
@@ -91,7 +81,7 @@ export function cachesSettings( context: PageJSContext, next: () => void ) {
 export function webServerSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="web-server" context={ context } />
+			<SettingsSideBar selectedItemKey="web-server" />
 			<WebServerSettings />
 		</PanelWithSidebar>
 	);

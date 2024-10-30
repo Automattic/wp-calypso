@@ -13,6 +13,10 @@
 .panel-sidebar {
 	width: 160px;
 	flex-shrink: 0;
+
+	ul {
+		list-style: none;
+	}
 }
 
 .panel-sidebar-tab {
