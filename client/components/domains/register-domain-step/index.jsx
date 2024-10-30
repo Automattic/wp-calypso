@@ -785,6 +785,7 @@ class RegisterDomainStep extends Component {
 						{
 							domainName,
 							blogId: get( this.props, 'selectedSite.ID', null ),
+							vendor: this.props.vendor,
 						},
 						( err, availabilityResult ) => {
 							if ( err ) {
@@ -1003,6 +1004,7 @@ class RegisterDomainStep extends Component {
 					domainName: domain,
 					blogId: get( this.props, 'selectedSite.ID', null ),
 					isCartPreCheck: true,
+					vendor: this.props.vendor,
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
@@ -1060,7 +1062,11 @@ class RegisterDomainStep extends Component {
 
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{
+					domainName: domain,
+					blogId: get( this.props, 'selectedSite.ID', null ),
+					vendor: this.props.vendor,
+				},
 				( error, result ) => {
 					const timeDiff = Date.now() - timestamp;
 					const status = get( result, 'status', error );
