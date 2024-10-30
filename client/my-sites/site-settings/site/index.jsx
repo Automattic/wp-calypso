@@ -1,38 +1,44 @@
-import { connect } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteSettingPrivacy from '../site-setting-privacy';
 import LaunchSite from '../site-visibility/launch-site';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const SiteSettingsGeneral = ( {
+const SiteSettings = ( {
 	fields,
 	handleSubmitForm,
 	updateFields,
 	isRequestingSettings,
 	isSavingSettings,
+} ) => {
+	const isUnlaunchedSite = useSelectedSiteSelector( getIsUnlaunchedSite );
+	const editingToolkitIsActive = useSelectedSiteSelector(
+		getSiteOption,
+		'editing_toolkit_is_active'
+	);
+	const isAtomic = useSelectedSiteSelector( isAtomicSite );
+	const isAtomicAndEditingToolkitDeactivated = isAtomic && editingToolkitIsActive === false;
+	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
 
-	isWpcomStagingSite,
-	isAtomicAndEditingToolkitDeactivated,
-	isUnlaunchedSite,
-} ) => (
-	<div className="site-settings__main general-settings">
-		{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
-			<LaunchSite />
-		) : (
-			<SiteSettingPrivacy
-				fields={ fields }
-				handleSubmitForm={ handleSubmitForm }
-				updateFields={ updateFields }
-				isRequestingSettings={ isRequestingSettings }
-				isSavingSettings={ isSavingSettings }
-			/>
-		) }
-	</div>
-);
+	return (
+		<div className="site-settings">
+			{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
+				<LaunchSite />
+			) : (
+				<SiteSettingPrivacy
+					fields={ fields }
+					handleSubmitForm={ handleSubmitForm }
+					updateFields={ updateFields }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+				/>
+			) }
+		</div>
+	);
+};
 
 const getFormSettings = ( settings ) => {
 	if ( ! settings ) {
@@ -43,13 +49,4 @@ const getFormSettings = ( settings ) => {
 	return { blog_public, wpcom_coming_soon, wpcom_public_coming_soon };
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-		isAtomicAndEditingToolkitDeactivated:
-			isAtomicSite( state, siteId ) &&
-			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
-	};
-} )( wrapSettingsForm( getFormSettings )( SiteSettingsGeneral ) );
+export default wrapSettingsForm( getFormSettings )( SiteSettings );
