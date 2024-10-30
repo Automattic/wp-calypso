@@ -2,18 +2,17 @@ import PropTypes from 'prop-types';
 import Legend from 'calypso/components/chart/legend';
 
 const ChartHeader = ( {
-	title,
+	activeTab,
 	controls,
 	showLegend,
 	activeLegend,
-	activeTab,
 	availableLegend,
 	onLegendClick,
 	charts,
 } ) => {
 	return (
 		<div className="stats-chart-tabs__header">
-			<div className="stats-chart-tabs__header-title">{ title }</div>
+			<div className="stats-chart-tabs__header-title">{ activeTab?.label || 'Views' }</div>
 			{ showLegend && (
 				<Legend
 					activeCharts={ activeLegend }
@@ -29,11 +28,10 @@ const ChartHeader = ( {
 };
 
 ChartHeader.propTypes = {
-	title: PropTypes.node,
+	activeTab: PropTypes.object,
 	controls: PropTypes.node,
 	showLegend: PropTypes.bool,
 	activeLegend: PropTypes.arrayOf( PropTypes.string ),
-	activeTab: PropTypes.object,
 	availableLegend: PropTypes.arrayOf( PropTypes.string ),
 	onLegendClick: PropTypes.func,
 	charts: PropTypes.array,
