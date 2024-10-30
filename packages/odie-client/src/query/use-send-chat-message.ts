@@ -40,6 +40,7 @@ export const useSendChatMessage = () => {
 					if ( elapsedTime ) {
 						trackEvent( 'first_answer_to_human_support', {
 							elapsed_time: elapsedTime,
+							role: message.role,
 						} );
 					}
 					setWaitAnswerToFirstMessageFromHumanSupport( false );
