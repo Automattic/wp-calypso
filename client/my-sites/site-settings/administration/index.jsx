@@ -5,37 +5,17 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SiteSettingPrivacy from '../site-setting-privacy';
 import SiteTools from '../site-tools';
-import { SOURCE_SETTINGS_SITE_TOOLS } from '../site-tools/utils';
-import LaunchSite from '../site-visibility/launch-site';
+import { SOURCE_SETTINGS_ADMINISTRATION } from '../site-tools/utils';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const SiteSettingsGeneral = ( {
-	fields,
-	handleSubmitForm,
-	updateFields,
-	isRequestingSettings,
-	isSavingSettings,
-
-	isWpcomStagingSite,
-	isAtomicAndEditingToolkitDeactivated,
-	isUnlaunchedSite,
-} ) => (
+const SiteSettingsGeneral = ( { isWpcomStagingSite } ) => (
 	<div className="site-settings__main general-settings">
-		{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
-			<LaunchSite />
-		) : (
-			<SiteSettingPrivacy
-				fields={ fields }
-				handleSubmitForm={ handleSubmitForm }
-				updateFields={ updateFields }
-				isRequestingSettings={ isRequestingSettings }
-				isSavingSettings={ isSavingSettings }
-			/>
-		) }
 		{ ! isWpcomStagingSite && (
-			<SiteTools headerTitle={ translate( 'Other tools' ) } source={ SOURCE_SETTINGS_SITE_TOOLS } />
+			<SiteTools
+				headerTitle={ translate( 'Administration' ) }
+				source={ SOURCE_SETTINGS_ADMINISTRATION }
+			/>
 		) }
 	</div>
 );
