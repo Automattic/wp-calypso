@@ -76,6 +76,7 @@ $blueberry-color: #3858e9;
 			flex: 1;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px 8px 8px 0;
+			max-width: 256px;
 		}
 	}
 
@@ -135,6 +136,7 @@ $blueberry-color: #3858e9;
 	width: 80%;
 	margin-right: 16px;
 	padding: 16px;
+	max-width: 256px;
 	p {
 		color: var(--studio-white);
 		padding: 0;
@@ -172,6 +174,7 @@ $blueberry-color: #3858e9;
 	width: 80%;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
+	max-width: 256px;
 	p {
 		color: var(--studio-gray-80);
 		line-height: 20px;
