@@ -32,17 +32,24 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const followedTagsFromState = useSelector( getReaderFollowedTags );
 	const dispatch = useDispatch();
+	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 
 	useEffect( () => {
-		if ( followedTagsFromState ) {
+		if ( followedTagsFromState && processingTags.size === 0 ) {
 			const initialTags = followedTagsFromState.map( ( tag: Tag ) => tag.slug );
 			setFollowedTags( initialTags );
 		}
-	}, [ followedTagsFromState ] );
+	}, [ followedTagsFromState, processingTags ] );
 
 	const isContinueDisabled = followedTags.length < 3;
 
 	const handleTopicChange = ( checked: boolean, tag: string ) => {
+		if ( processingTags.has( tag ) ) {
+			return null;
+		}
+
+		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
+
 		if ( checked ) {
 			dispatch( requestFollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
@@ -50,6 +57,14 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			dispatch( requestUnfollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
 		}
+
+		setTimeout( () => {
+			setProcessingTags( ( current ) => {
+				const updated = new Set( current );
+				updated.delete( tag );
+				return updated;
+			} );
+		}, 600 );
 	};
 
 	const handleContinue = () => {
