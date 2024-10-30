@@ -1,0 +1,26 @@
+.google-photos-picker--container {
+	display: flex;
+	flex-direction: column;
+
+	p {
+		max-width: 500px;
+		text-align: center;
+		margin-bottom: 1rem;
+	}
+
+	.components-button {
+
+		&.is-busy,
+		&.is-busy:hover {
+			pointer-events: none;
+			background-size: 100px 100%;
+			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+		}
+	}
+
+	p,
+	.components-button {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
