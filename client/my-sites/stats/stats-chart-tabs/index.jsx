@@ -95,7 +95,7 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
+		const { isActiveTabLoading, className } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			className,
