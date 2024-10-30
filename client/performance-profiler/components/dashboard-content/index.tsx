@@ -38,6 +38,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
+		crux_score,
 		overall_score,
 		fcp,
 		lcp,
@@ -59,7 +60,7 @@ export const PerformanceProfilerDashboardContent = ( {
 				{ ! overallScoreIsTab && (
 					<div className="top-section">
 						<PerformanceScore
-							value={ overall_score * 100 }
+							value={ crux_score ? crux_score * 100 : overall_score * 100 }
 							recommendationsQuantity={ Object.keys( audits ).length }
 							recommendationsRef={ insightsRef }
 						/>
