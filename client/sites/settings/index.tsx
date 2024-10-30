@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
+import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
@@ -18,7 +18,7 @@ import {
 } from './controller';
 
 export default function () {
-	page( '/sites/settings', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/settings/site', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/settings/site/:site',
 		siteSelection,
@@ -29,6 +29,7 @@ export default function () {
 		clientRender
 	);
 
+	page( '/sites/settings/administration', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/settings/administration/:site',
 		siteSelection,
@@ -39,6 +40,7 @@ export default function () {
 		clientRender
 	);
 
+	page( '/sites/settings/agency', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/settings/agency/:site',
 		siteSelection,
@@ -48,6 +50,8 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/sites/settings/caches', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/settings/caches/:site',
 		siteSelection,
@@ -57,6 +61,8 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/sites/settings/web-server', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/settings/web-server/:site',
 		siteSelection,
