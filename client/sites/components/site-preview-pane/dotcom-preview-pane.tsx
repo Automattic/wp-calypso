@@ -21,8 +21,7 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
-	SITE_MARKETING_TOOLS,
-	SITE_MARKETING_BUSINESS_TOOLS,
+	MARKETING_TOOLS,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
 	SETTINGS_AGENCY,
@@ -115,7 +114,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ SITE_MARKETING_TOOLS, SITE_MARKETING_BUSINESS_TOOLS ],
+				featureIds: [ MARKETING_TOOLS ],
 			},
 			{
 				label: __( 'Settings' ),
