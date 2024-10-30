@@ -21,6 +21,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
 	purchaseType,
@@ -43,6 +44,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
@@ -280,6 +282,11 @@ class CancelPurchase extends Component {
 			);
 		}
 
+		if ( this.props.isHundredYearDomain ) {
+			this.redirect();
+			return null;
+		}
+
 		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
 		const plan = getPlan( purchase?.productSlug );
@@ -408,6 +415,12 @@ export default connect( ( state, props ) => {
 		purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const productsList = getProductsList( state );
+
+	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
+	const selectedDomainName = purchase && getName( purchase );
+	const selectedDomain =
+		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
+
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
@@ -417,5 +430,6 @@ export default connect( ( state, props ) => {
 		productsList,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
+		isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 	};
 } )( localize( withLocalizedMoment( CancelPurchase ) ) );
