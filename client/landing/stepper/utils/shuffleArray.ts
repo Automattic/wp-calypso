@@ -1,32 +1,49 @@
-const SESSION_STORAGE_KEY = 'goals-step-seed';
+class SeedManager {
+	private localSeed: string | null = null;
+	static SESSION_STORAGE_KEY = 'goals-step-seed';
 
-let localSeed: string | null = null;
-
-const getSeed = () => {
-	const existingSeed = sessionStorage.getItem( SESSION_STORAGE_KEY ) ?? localSeed;
-
-	if ( existingSeed ) {
-		return parseInt( existingSeed, 10 );
+	/**
+	 * Clears the cached seed. DO NOT USE - only for testing purposes.
+	 * @internal
+	 */
+	clearSeed() {
+		this.localSeed = null;
+		sessionStorage.removeItem( SeedManager.SESSION_STORAGE_KEY );
 	}
 
-	const seed = Math.floor( Math.random() * 100 );
+	getSeed(): number {
+		const existingSeed =
+			this.localSeed ?? sessionStorage.getItem( SeedManager.SESSION_STORAGE_KEY );
 
-	try {
-		sessionStorage.setItem( SESSION_STORAGE_KEY, seed.toString() );
-	} catch {
-		localSeed = seed.toString();
+		if ( existingSeed ) {
+			return parseInt( existingSeed, 10 );
+		}
+
+		const seed = Math.floor( Math.random() * 100 );
+
+		try {
+			sessionStorage.setItem( SeedManager.SESSION_STORAGE_KEY, seed.toString() );
+		} catch {
+		} finally {
+			this.localSeed = seed.toString();
+		}
+
+		return seed;
 	}
+}
 
-	return seed;
-};
+/**
+ * A singleton instance of the SeedManager. This is only exported for testing purposes.
+ * @internal
+ */
+export const seedManager = new SeedManager();
 
 export const shuffleArray = < T >( array: T[] ): T[] => {
-	let seed = getSeed();
+	let value = seedManager.getSeed();
 
 	const seededRandom = () => {
-		const x = Math.sin( ++seed ) * 10000;
-
-		return x - Math.floor( x );
+		value = ( value * 9301 + 49297 ) % 233280;
+		return value / 233280;
 	};
 
 	return array
