@@ -1,4 +1,3 @@
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -6,8 +5,6 @@ import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteSettingPrivacy from '../site-setting-privacy';
-import SiteTools from '../site-tools';
-import { SOURCE_SETTINGS_SITE_TOOLS } from '../site-tools/utils';
 import LaunchSite from '../site-visibility/launch-site';
 import wrapSettingsForm from '../wrap-settings-form';
 
@@ -33,9 +30,6 @@ const SiteSettingsGeneral = ( {
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
 			/>
-		) }
-		{ ! isWpcomStagingSite && (
-			<SiteTools headerTitle={ translate( 'Other tools' ) } source={ SOURCE_SETTINGS_SITE_TOOLS } />
 		) }
 	</div>
 );
