@@ -114,4 +114,26 @@ describe( 'Theme', () => {
 			expect( container.getElementsByClassName( 'theme__update-alert' ).length ).toBe( 1 );
 		} );
 	} );
+
+	describe( 'In view', () => {
+		it( 'should render a placeholder when the component is not visible', () => {
+			const { container } = render( <Theme { ...props } /> );
+
+			mockAllIsIntersecting( false );
+
+			expect( container.firstChild.firstChild ).toHaveClass( 'is-placeholder' );
+		} );
+
+		it( 'should render the component when it is visible', () => {
+			render( <Theme { ...props } /> );
+
+			mockAllIsIntersecting( false );
+
+			expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+
+			mockAllIsIntersecting( true );
+
+			expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
+		} );
+	} );
 } );
