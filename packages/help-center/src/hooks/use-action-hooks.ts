@@ -1,6 +1,6 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { isThisASupportArticleLink } from './use-content-filter';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
@@ -9,21 +9,19 @@ export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDispatch( 'automattic/help-center' );
 	const queryParams = new URLSearchParams( window.location.search );
+	const helpCenterParam = queryParams.get( 'help-center' ) || '';
 
 	const actionHooks = [
 		/**
-		 * Open to the support doc for the Subscribe block.
+		 * Open to a specific support doc.
 		 */
 		{
 			condition() {
-				return queryParams.get( 'help-center' ) === 'subscribe-block';
+				return isThisASupportArticleLink( helpCenterParam );
 			},
 			action() {
+				setShowSupportDoc( helpCenterParam );
 				setShowHelpCenter( true );
-				setShowSupportDoc(
-					localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/' ),
-					170164 // post id of subscribe block support doc page
-				);
 			},
 		},
 		/**
@@ -31,7 +29,7 @@ export const useActionHooks = () => {
 		 */
 		{
 			condition() {
-				return queryParams.get( 'help-center' ) === 'home';
+				return helpCenterParam === 'home';
 			},
 			action() {
 				setShowHelpCenter( true );
@@ -42,7 +40,7 @@ export const useActionHooks = () => {
 		 */
 		{
 			condition() {
-				return queryParams.get( 'help-center' ) === 'wapuu';
+				return helpCenterParam === 'wapuu';
 			},
 			action() {
 				setNavigateToRoute( '/odie' );

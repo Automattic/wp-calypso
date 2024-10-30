@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from '@wordpress/element';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-const isThisASupportArticleLink = ( href: string ) =>
+export const isThisASupportArticleLink = ( href: string ) =>
 	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
 
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
@@ -20,6 +20,20 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					const href = element.getAttribute( 'href' ) as string;
 
 					if ( ! href.startsWith( '/' ) && ! isThisASupportArticleLink( href ) ) {
+						/**
+						 * Handle links to Calypso.
+						 */
+						if ( href.includes( '://wordpress.com/' ) ) {
+							// Create a Calypso URL that includes the site slug and the query param to open Help Center again
+							const pageUrl = new URL( `${ href }/` );
+							pageUrl.searchParams.set( 'help-center', link );
+
+							element.onclick = ( event: Event ) => {
+								event.preventDefault();
+								window.open( pageUrl.href, '_self' );
+							};
+						}
+
 						return;
 					}
 
