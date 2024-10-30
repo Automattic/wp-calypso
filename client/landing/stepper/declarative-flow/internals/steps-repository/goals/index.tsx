@@ -118,6 +118,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const handleDashboardClick = () => {
 		setIntent( SiteIntent.Build );
+		recordIntentSelectTracksEvent( [], SiteIntent.Build );
 		navigation.submit?.( { skip: true } );
 	};
 
