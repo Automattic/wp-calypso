@@ -1,6 +1,4 @@
 body.is-section-plugins .plugin-management-wrapper {
-    --wp-components-color-accent: var(--color-accent);
-
 	.navigation-header {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
@@ -15,10 +13,6 @@ body.is-section-plugins .plugin-management-wrapper,
             .plugin-icon {
                 max-width: 35px;
                 max-height: 35px;
-            }
-
-            .dataviews-view-table-selection-checkbox{
-                padding-left: 0;
             }
         }
     }

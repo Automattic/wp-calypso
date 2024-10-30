@@ -1,8 +1,9 @@
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';

@@ -179,7 +179,7 @@ export class PluginsList extends Component {
 
 	bulkActionDialog = ( actionName, selectedPlugins ) => {
 		this.setState( {
-			selectedPlugins: selectedPlugins,
+			selectedPlugins,
 		} );
 
 		const { allSites, showPluginActionDialog } = this.props;
