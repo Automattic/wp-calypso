@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-interface SessionData {
+export interface SessionData {
 	id: string;
 	mediaItemsSet: boolean;
 	pickerUri: string;
@@ -22,9 +22,7 @@ export default function useGooglePhotosPickerSessionQuery(
 		queryFn: (): Promise< SessionData > =>
 			wp.req.get( {
 				apiNamespace: 'wpcom/v2',
-				path: `/meta/external-media/session/google_photos_picker/${ encodeURIComponent(
-					sessionId
-				) }`,
+				path: `/meta/external-media/session/google_photos/${ encodeURIComponent( sessionId ) }`,
 			} ),
 		enabled,
 		...options,

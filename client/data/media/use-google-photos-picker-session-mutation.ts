@@ -22,7 +22,7 @@ export function useCreateGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 		mutationFn: () =>
 			wp.req.post( {
 				apiNamespace: 'wpcom/v2',
-				path: '/meta/external-media/session/google_photos_picker',
+				path: '/meta/external-media/session/google_photos',
 			} ),
 		onSuccess: ( data: PickerSession ) => {
 			dispatch( setPhotoPickerSession( data ) );
@@ -37,9 +37,7 @@ export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 			wp.req.post( {
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
-				path: `/meta/external-media/session/google_photos_picker/${ encodeURIComponent(
-					sessionId
-				) }`,
+				path: `/meta/external-media/session/google_photos/${ encodeURIComponent( sessionId ) }`,
 			} ),
 	} );
 }
