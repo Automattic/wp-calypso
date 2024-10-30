@@ -9,6 +9,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import { calculateUnread } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -32,14 +33,11 @@ export const HelpCenterChatHistory = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const convos = getConversations() as ZendeskConversation[];
-			setConversations( convos );
+			const conversations = getConversations() as ZendeskConversation[];
+			setConversations( conversations );
 
-			// Calculate number of chats with unread messages
-			const unreadChats = convos.filter(
-				( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
-			).length;
-			setUnreadCount( unreadChats );
+			const { unreadConversations } = calculateUnread( conversations );
+			setUnreadCount( unreadConversations );
 		}
 	}, [ getConversations, isChatLoaded ] );
 
