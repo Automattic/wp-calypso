@@ -8,9 +8,12 @@ import {
 	PayPalButtonsComponentProps,
 	usePayPalScriptReducer,
 } from '@paypal/react-paypal-js';
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
+
+const debug = debugFactory( 'calypso:paypal-js' );
 
 export function createPayPal(): PaymentMethod {
 	return {
@@ -83,7 +86,9 @@ function PayPalSubmitButton( {
 		resolve: resolvePayPalApprovalPromise,
 		reject: rejectPayPalApprovalPromise,
 	} = deferred< void >();
+
 	const createOrder: PayPalButtonsComponentProps[ 'createOrder' ] = () => {
+		debug( 'creating order' );
 		// Intentionally do not resolve yet. We have to do this so we can
 		// use the composite-checkout transaction system (the `onClick`
 		// handler) to call the transactions endpoint and then eventually
@@ -95,6 +100,7 @@ function PayPalSubmitButton( {
 	};
 
 	const onApprove: PayPalButtonsComponentProps[ 'onApprove' ] = async () => {
+		debug( 'order approved' );
 		// Once the user has confirmed the PayPal transaction in the popup, we
 		// want to tell the composite-checkout payment processor function to
 		// continue so we resolve the other Promise.
@@ -102,11 +108,42 @@ function PayPalSubmitButton( {
 	};
 
 	const onCancel: PayPalButtonsComponentProps[ 'onCancel' ] = async () => {
+		debug( 'order cancelled' );
 		rejectPayPalApprovalPromise(
 			new Error( translate( 'The PayPal transaction was not approved.' ) )
 		);
 	};
 
+	// This payment method button is a little unusual. Normally, a payment
+	// button will trigger the transaction system by calling the `onClick`
+	// function passed to this component. That function (the "payment processor
+	// function" - in this case, `payPalJsProcessor()`) will handle all
+	// communication with the payment partner, eventually telling the
+	// transaction system if the purchase succeeded or failed.
+	//
+	// By using PayPal JS, however, we are using their `PayPalButtons`
+	// component which expects to perform the transaction itself. In order to
+	// still use the transaction system in `@automattic/composite-checkout`, we
+	// utilize a series of Promises to jump back and forth between the button
+	// and the payment processor function.
+	//
+	// First, the button will call `createOrder` to create the PayPal (and the
+	// WPCOM) Order. We use that to call the `onClick` function, which calls
+	// the payment processor function. Since that function is async, we return
+	// a Promise to `PayPalButtons` so it will wait for the Order to be
+	// created. The processor function will call the transactions endpoint to
+	// accomplish this.
+	//
+	// When we have the Order ready, the processor function will call
+	// `resolvePayPalOrderPromise()` to resolve the Promise and return control
+	// to `PayPalButtons`, which should display a dialog for the user to
+	// confirm the payment. Meanwhile, the payment processor function will
+	// pause, awaiting the `payPalApprovalPromise`.
+	//
+	// When the user confirms the payment, `PayPalButtons` should call
+	// `onApprove`. That should call `resolvePayPalApprovalPromise()`,
+	// returning control to the payment processor function, which will tell the
+	// transaction system that the purchase is complete.
 	return (
 		<PayPalButtons
 			disabled={ disabled }
