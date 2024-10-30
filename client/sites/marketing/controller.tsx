@@ -1,7 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import makeSidebar, { PanelWithSidebar } from '../components/panel-sidebar';
-import BusinessTools from './business-tools';
-import MarketingTools from './tools';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const MarketingSidebar = makeSidebar( {
@@ -25,7 +23,7 @@ export function marketingTools( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<MarketingSidebar selectedItemKey="tools" />
-			<MarketingTools />
+			<div>This is Marketing Tools page</div>
 		</PanelWithSidebar>
 	);
 	next();
@@ -35,7 +33,7 @@ export function businessTools( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<MarketingSidebar selectedItemKey="business-tools" />
-			<BusinessTools />
+			<div>This is Business Tools page</div>
 		</PanelWithSidebar>
 	);
 	next();
