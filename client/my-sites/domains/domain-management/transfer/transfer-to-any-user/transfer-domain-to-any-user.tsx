@@ -18,6 +18,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
+import HundredYearDomainNotTransferrableNotice from 'calypso/my-sites/domains/domain-management/components/domain/hundred-year-domain-not-transferrable-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -163,6 +164,10 @@ export default function TransferDomainToAnyUser( {
 		selectedDomain && ( hasTitanMailWithUs( selectedDomain ) || hasGSuiteWithUs( selectedDomain ) );
 
 	const renderForm = () => {
+		if ( selectedDomain?.isHundredYearDomain ) {
+			return <HundredYearDomainNotTransferrableNotice />;
+		}
+
 		if ( ! selectedDomain?.currentUserCanManage ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
