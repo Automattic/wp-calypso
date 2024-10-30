@@ -30,7 +30,7 @@ export const DislikeFeedbackMessage = () => {
 						) }
 					</Markdown>
 				</div>
-				{ shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions }
+				<GetSupport />
 			</>
 		);
 	};
@@ -59,7 +59,7 @@ export const DislikeFeedbackMessage = () => {
 							__i18n_text_domain__
 						) }
 					</Markdown>
-					{ shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions }
+					{ extraContactOptions }
 				</div>
 			</>
 		);
