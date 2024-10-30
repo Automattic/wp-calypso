@@ -5,6 +5,7 @@ interface Thumbnails {
 	large: string;
 	medium: string;
 	thumbnail: string;
+	post_thumbnail: string;
 }
 
 interface Media {
@@ -34,6 +35,10 @@ interface ResponseData {
 	media: Media[];
 	meta?: {
 		next_page: boolean;
+	};
+	account?: {
+		image: string;
+		name: string;
 	};
 }
 
