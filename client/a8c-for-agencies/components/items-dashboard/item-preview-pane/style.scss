@@ -114,7 +114,9 @@
 
 @media (max-width: 480px) {
 	.section-nav {
-		box-shadow: 0 0 0 1px #fff !important;
+		&:not(.enforce-tabs-view) {
+			box-shadow: 0 0 0 1px #fff !important;
+		}
 	}
 
 	.section-nav.is-open {
