@@ -1119,6 +1119,7 @@ __metadata:
     "@wordpress/plugins": "npm:^7.8.0"
     "@wordpress/private-apis": "npm:^1.8.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    "@wordpress/router": "npm:^1.11.0"
     copy-webpack-plugin: "npm:^10.2.4"
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^5.3.3"
@@ -3791,7 +3792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.25.7, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.25.7
   resolution: "@babel/runtime@npm:7.25.7"
   dependencies:
@@ -10623,6 +10624,21 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: c087a1b01504f38ab63853e4bd14eab6b473db8656f6c910081017319e784bdfc54b2bc3a2fc24617116a3bf0ffbe100197198b3a038c8d2ef1fa33c2a81c417
+  languageName: node
+  linkType: hard
+
+"@wordpress/router@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@wordpress/router@npm:1.11.0"
+  dependencies:
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/element": "npm:*"
+    "@wordpress/private-apis": "npm:*"
+    "@wordpress/url": "npm:*"
+    history: "npm:^5.3.0"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 57c022cd37ee5757309eca857c67231c24b5dbad3eec8a078a686370e3d65fbc48aab983adb6cd47a87e65d62fcae7612f959b3d5f43865ba436386dcb82b361
   languageName: node
   linkType: hard
 
