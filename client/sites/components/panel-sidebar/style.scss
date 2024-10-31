@@ -13,7 +13,7 @@
 		margin-bottom: 16px;
 	}
 
-	@include break-mobile {
+	@include break-small {
 		flex-direction: row;
 		align-items: flex-start;
 	}
@@ -29,7 +29,7 @@
 	background: #fff;
 	z-index: 1;
 
-	@include break-mobile {
+	@include break-small {
 		top: 0;
 		min-width: 160px;
 		padding: 0;

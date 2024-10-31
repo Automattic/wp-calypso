@@ -26,15 +26,13 @@ export function SidebarItem( { href, children }: { href: string; children: React
 }
 
 export function Sidebar( { children }: { children: ReactNode } ) {
-	const isDesktop = useViewportMatch( 'mobile', '>=' );
+	const isDesktop = useViewportMatch( 'small', '>=' );
 	const activeElement = Children.toArray( children ).find(
 		( child ) => isValidElement( child ) && window.location.pathname.startsWith( child.props.href )
 	) as ReactElement;
 
 	if ( isDesktop ) {
-		return (
-			<ul className="panel-sidebar">{ children }</ul>
-		);
+		return <ul className="panel-sidebar">{ children }</ul>;
 	}
 
 	return (
