@@ -104,7 +104,7 @@ class StatModuleChartTabs extends Component {
 				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
-
+		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
 				{ showChartHeader && (
