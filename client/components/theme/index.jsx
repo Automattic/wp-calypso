@@ -26,6 +26,7 @@ import ThemeMoreButton from './more-button';
 import './style.scss';
 
 const THEME_CARD_HEIGHT = 420;
+const VIEWPORT_HEIGHT = `${ 3 * THEME_CARD_HEIGHT }px`;
 
 const noop = () => {};
 
@@ -350,7 +351,7 @@ export class Theme extends Component {
 		}
 
 		return (
-			<InView triggerOnce rootMargin={ `${ THEME_CARD_HEIGHT }px` }>
+			<InView triggerOnce rootMargin={ VIEWPORT_HEIGHT }>
 				{ ( { inView, ref } ) => (
 					<div ref={ ref }>
 						{ inView ? (
