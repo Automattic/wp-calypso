@@ -61,7 +61,26 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Selects a Premium theme', async function () {
-			await page.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' ).first().click();
+			const premiumThemeSelector = 'div.theme-card:has(div.theme-tier-badge--premium)';
+			let elementFound = false;
+
+			const locator = page.locator( premiumThemeSelector );
+
+			while ( ! elementFound ) {
+				// Check if the element is visible within the viewport
+				const isVisible = await locator.first().isVisible();
+
+				if ( isVisible ) {
+					elementFound = true;
+				} else {
+					// Scroll down by one viewport height if element is not visible
+					await page.evaluate( () => {
+						window.scrollBy( 0, window.innerHeight );
+					} );
+				}
+			}
+
+			await locator.first().click();
 		} );
 
 		it( 'Navigate to Signup page', async function () {
