@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { chevronRightSmall, Icon } from '@wordpress/icons';
@@ -10,6 +9,7 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';

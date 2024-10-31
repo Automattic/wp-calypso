@@ -10,11 +10,11 @@ import {
 	HostingCardHeading,
 	HostingCardLinkButton,
 } from 'calypso/components/hosting-card';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
 import { filterOutWpcomDomains } from 'calypso/my-sites/domains/domain-management/list/utils';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
