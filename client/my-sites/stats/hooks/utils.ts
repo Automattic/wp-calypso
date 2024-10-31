@@ -48,6 +48,7 @@ export const processQueryParams = ( query: QueryStatsParams ) => {
 
 	return {
 		...query,
+		start_date: query.start_date || '',
 		num,
 		max,
 		date,
