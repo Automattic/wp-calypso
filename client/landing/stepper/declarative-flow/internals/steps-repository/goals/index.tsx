@@ -15,6 +15,10 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
+type KebabToSnakeCase< S extends string > = S extends `${ infer T }${ infer U }`
+	? `${ T extends '-' ? '_' : T }${ KebabToSnakeCase< U > }`
+	: S;
+
 type TracksGoalsSelectEventProperties = {
 	goals: string;
 	combo: string;
@@ -22,7 +26,7 @@ type TracksGoalsSelectEventProperties = {
 	ref?: string;
 	intent: string;
 } & {
-	[ key in Onboard.SiteGoal ]?: number;
+	[ key in Onboard.SiteGoal as KebabToSnakeCase< key > ]?: number;
 };
 
 const SiteGoal = Onboard.SiteGoal;
@@ -70,7 +74,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		};
 
 		goals.forEach( ( goal, i ) => {
-			eventProperties[ goal ] = i + 1;
+			eventProperties[ goal.replaceAll( '-', '_' ) as KebabToSnakeCase< typeof goal > ] = i + 1;
 		} );
 
 		if ( refParameter ) {
