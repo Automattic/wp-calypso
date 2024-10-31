@@ -60,7 +60,6 @@ export default function PluginsListDataViews( {
 			search
 			searchLabel={ translate( 'Search for plugins' ) }
 			actions={ actions }
-			getItemId={ ( item ) => item.id }
 			isLoading={ isLoading }
 			paginationInfo={ paginationInfo }
 			defaultLayouts={ defaultLayouts }
