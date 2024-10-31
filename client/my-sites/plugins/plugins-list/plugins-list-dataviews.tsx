@@ -4,7 +4,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DataViews } from 'calypso/components/dataviews';
+import { useDispatch } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
 
@@ -25,6 +27,7 @@ export default function PluginsListDataViews( {
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const defaultLayouts = { table: {} };
 	const fields = useFields( bulkActionDialog );
@@ -50,6 +53,13 @@ export default function PluginsListDataViews( {
 			paginationInfo: result.paginationInfo,
 		};
 	}, [ currentPlugins, dataViewsState, fields ] );
+
+	useEffect( () => {
+		data.map( ( plugin ) => {
+			console.log( 'calling wporgFetchPluginData for plugin: ' + plugin.slug );
+			dispatch( wporgFetchPluginData( plugin.slug ) );
+		} );
+	}, [ data ] );
 
 	return (
 		<DataViews
