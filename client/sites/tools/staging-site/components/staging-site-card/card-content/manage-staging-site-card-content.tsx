@@ -7,7 +7,8 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import { urlToSlug } from 'calypso/lib/url';
 import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { StagingSite } from '../../../hooks/use-staging-site';
 import { ConfirmationModal } from '../confirmation-modal';
@@ -104,6 +105,7 @@ export const ManageStagingSiteCardContent = ( {
 	{
 		const translate = useTranslate();
 		const productionSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
+		const dispatch = useDispatch();
 
 		const ConfirmationDeleteButton = () => {
 			return (
@@ -130,6 +132,28 @@ export const ManageStagingSiteCardContent = ( {
 				<Button
 					primary
 					onClick={ () => {
+						showSitesPage( `/overview/${ urlToSlug( stagingSite.url ) }` );
+						dispatch( recordTracksEvent( 'calypso_hosting_staging_site_manage' ) );
+						navigate(
+							`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
+								productionSiteUrl as string
+							) }`,
+							false,
+							true
+						);
+					} }
+					disabled={ isButtonDisabled }
+				>
+					<span>{ translate( 'Manage staging site' ) }</span>
+				</Button>
+			);
+		};
+		const ManageStagingSiteButton = () => {
+			return (
+				<Button
+					primary
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_hosting_staging_site_manage' ) );
 						showSitesPage( `/overview/${ urlToSlug( stagingSite.url ) }` );
 					} }
 					disabled={ isButtonDisabled }

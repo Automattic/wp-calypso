@@ -142,7 +142,10 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => showSitesPage( `/overview/${ urlToSlug( productionSite.url ) }` ) }
+						onClick={ () => {
+							dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_to_prod' ) );
+							showSitesPage( `/overview/${ urlToSlug( productionSite.url ) }` );
+						} }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>

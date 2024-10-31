@@ -395,6 +395,7 @@ export const StagingSiteCard = ( {
 
 	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_remove_click' ) );
 		setProgress( 0.1 );
 		deleteStagingSite();
 	}, [ dispatch, siteId, deleteStagingSite ] );

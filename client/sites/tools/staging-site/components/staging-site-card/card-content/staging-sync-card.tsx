@@ -10,6 +10,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -177,6 +178,10 @@ const StagingToProductionSync = ( {
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const trackClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_staging_site_push' ) );
+	};
 	const synchronizationOptions: CheckboxOptionItem[] = useMemo(
 		() => [
 			{
@@ -252,6 +257,7 @@ const StagingToProductionSync = ( {
 					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
 					onConfirm={ onConfirm }
+					onClick={ trackClick }
 					modalTitle={ translate( 'You’re about to update your production site' ) }
 					extraModalContent={
 						<div>
@@ -319,11 +325,17 @@ const ProductionToStagingSync = ( {
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 } ) => {
+	const dispatch = useDispatch();
+	const trackClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_staging_site_pull' ) );
+	};
+
 	return (
 		<ConfirmationModalContainer>
 			<ConfirmationModal
 				disabled={ disabled || isSyncButtonDisabled }
 				onConfirm={ onConfirm }
+				onClick={ trackClick }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
 				modalMessage={ translate(
 					'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
@@ -523,6 +535,7 @@ export const SiteSyncCard = ( {
 	}, [] );
 
 	const onPushInternal = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_staging_site_push_confirm' ) );
 		resetSyncStatus();
 		dispatch( removeNotice( stagingSiteSyncSuccess ) );
 		if ( type === 'production' ) {
@@ -535,6 +548,7 @@ export const SiteSyncCard = ( {
 
 	const syncError = error || checkStatusError;
 	const onPullInternal = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_staging_site_pull_confirm' ) );
 		resetSyncStatus();
 		dispatch( removeNotice( stagingSiteSyncSuccess ) );
 		if ( type === 'production' ) {

@@ -12,6 +12,7 @@ const ActionButtons = styled.div( {
 type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
 	onCancel?: () => void;
+	onClick?: () => void;
 	isBusy?: boolean;
 	isPrimary?: boolean;
 	isScary?: boolean;
@@ -32,6 +33,7 @@ type ConfirmationModalButtonProps = {
 export function ConfirmationModal( {
 	onConfirm,
 	onCancel,
+	onClick,
 	disabled = false,
 	isConfirmationDisabled,
 	isBusy = false,
@@ -49,7 +51,10 @@ export function ConfirmationModal( {
 	cancelLabel,
 }: ConfirmationModalButtonProps ) {
 	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
+	const openModal = () => {
+		onClick?.();
+		setOpen( true );
+	};
 	const closeModal = () => setOpen( false );
 
 	return (

@@ -5,8 +5,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-
 import './site-environment-switcher.scss';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface SiteEnvironmentSwitcherProps {
 	onChange: ( siteId: number ) => void;
@@ -18,6 +19,7 @@ export default function SiteEnvironmentSwitcher( {
 	site,
 }: SiteEnvironmentSwitcherProps ) {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	if (
 		! site.is_wpcom_staging_site &&
@@ -38,11 +40,12 @@ export default function SiteEnvironmentSwitcher( {
 		? site.options?.wpcom_staging_blog_ids?.[ 0 ]
 		: undefined;
 
-	const setEnvironment = ( siteIdToChange: number | undefined ) => {
+	const setEnvironment = ( type: string, siteIdToChange: number | undefined ) => {
 		if ( siteIdToChange === site.ID ) {
 			return;
 		}
 
+		dispatch( recordTracksEvent( 'calypso_sites_environment_switched', { type } ) );
 		onChange( siteIdToChange as number );
 	};
 
@@ -62,12 +65,12 @@ export default function SiteEnvironmentSwitcher( {
 			controls={ [
 				{
 					title: __( 'Production' ),
-					onClick: () => setEnvironment( productionSiteId ),
+					onClick: () => setEnvironment( 'production', productionSiteId ),
 					isActive: ! site.is_wpcom_staging_site,
 				},
 				{
 					title: __( 'Staging' ),
-					onClick: () => setEnvironment( stagingSiteId ),
+					onClick: () => setEnvironment( 'staging', stagingSiteId ),
 					isActive: site.is_wpcom_staging_site,
 				},
 			] }
