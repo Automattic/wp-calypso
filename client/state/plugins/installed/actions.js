@@ -670,3 +670,11 @@ export function fetchAllPlugins() {
 			.catch( receivePluginsDispatchFail );
 	};
 }
+
+export function fetchBatchPlugins( batch ) {
+	return ( dispatch ) => {
+		dispatch( { type: PLUGINS_ALL_REQUEST } );
+
+		return wpcom.req.post( `/me/sites/plugins`, { sites: batch } );
+	};
+}

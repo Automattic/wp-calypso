@@ -470,7 +470,7 @@ export class PluginsMain extends Component {
 		return (
 			<>
 				<DocumentHead title={ pageTitle } />
-				<QueryPlugins siteId={ selectedSite?.ID } />
+				<QueryPlugins siteId={ selectedSite?.ID } inBatches />
 				{ this.props.siteIds && 1 === this.props.siteIds.length ? (
 					<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				) : (
