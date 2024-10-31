@@ -7,9 +7,11 @@ export const ResizableTextarea: React.FC< {
 	className: string;
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	sendMessageHandler: () => Promise< void >;
-} > = ( { className, sendMessageHandler, inputRef } ) => {
-	const onKeyDown = useCallback(
+	keyUpHandler: () => void;
+} > = ( { className, sendMessageHandler, inputRef, keyUpHandler } ) => {
+	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			keyUpHandler();
 			if ( inputRef.current?.value.trim() === '' ) {
 				return;
 			}
@@ -18,7 +20,7 @@ export const ResizableTextarea: React.FC< {
 				await sendMessageHandler();
 			}
 		},
-		[ inputRef, sendMessageHandler ]
+		[ inputRef, keyUpHandler, sendMessageHandler ]
 	);
 
 	useEffect( () => {
@@ -45,7 +47,7 @@ export const ResizableTextarea: React.FC< {
 			ref={ inputRef }
 			rows={ 1 }
 			className={ className }
-			onKeyDown={ onKeyDown }
+			onKeyUp={ onKeyUp }
 			placeholder={ __( 'Type a message…', __i18n_text_domain__ ) }
 			style={ { transition: 'none' } }
 		/>

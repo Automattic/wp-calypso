@@ -14,14 +14,28 @@ import './style.scss';
 
 export const OdieSendMessageButton = ( {
 	containerReference,
+	isMessageSizeValid,
+	onKeyUp,
 }: {
 	containerReference: RefObject< HTMLDivElement >;
+	isMessageSizeValid: boolean;
+	onKeyUp: ( messageSize: boolean ) => void;
 } ) => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
+
+	const isMessageExceedingMaxLength = ( messageLength: number ) => {
+		// api validation
+		return messageLength <= 4096;
+	};
+
+	const onKeyUpHandler = useCallback( () => {
+		const messageLength = inputRef.current?.value.trim().length || 0;
+		onKeyUp( isMessageExceedingMaxLength( messageLength ) );
+	}, [ onKeyUp ] );
 
 	const sendMessageHandler = useCallback( async () => {
 		if ( inputRef.current?.value.trim() === '' || shouldBeDisabled ) {
@@ -48,7 +62,7 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	}, [ sendMessage, trackEvent ] );
+	}, [ sendMessage, shouldBeDisabled, trackEvent ] );
 	const classes = clsx(
 		'odie-send-message-inner-button',
 		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
@@ -68,9 +82,14 @@ export const OdieSendMessageButton = ( {
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
+						keyUpHandler={ onKeyUpHandler }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
-					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
+					<button
+						type="submit"
+						className={ classes }
+						disabled={ shouldBeDisabled || ! isMessageSizeValid }
+					>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />
 						) : (

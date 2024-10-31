@@ -590,3 +590,13 @@ $custom-border-corner-size: 16px;
 .odie-chatbox-thinking-icon {
 	margin-left: 8px;
 }
+
+.odie-chatbox-invalid__message{
+	width: 100%;
+	color: rgb(140, 35, 44);
+	font-size: 0.75rem;
+	display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 66%;
+}

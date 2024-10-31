@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { __ } from '@wordpress/i18n';
+import { useEffect, useRef, useState } from 'react';
 import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
@@ -8,9 +9,15 @@ import useLastMessageVisibility from './useLastMessageVisibility';
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
+	const { chat, trackEvent, currentUser, shouldUseHelpCenterExperience } =
+		useOdieAssistantContext();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
+	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
+
+	const onKeyUp = ( isValidMessageSize: boolean ) => {
+		setIsMessageSizeValid( isValidMessageSize );
+	};
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
@@ -24,7 +31,16 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" ref={ containerRef } id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } ref={ messagesContainerRef } />
 			</div>
-			<OdieSendMessageButton containerReference={ messagesContainerRef } />
+			{ ! isMessageSizeValid && shouldUseHelpCenterExperience && (
+				<div className="odie-chatbox-invalid__message">
+					{ __( 'Message exceeds 4096 characters limit.' ) }
+				</div>
+			) }
+			<OdieSendMessageButton
+				containerReference={ messagesContainerRef }
+				isMessageSizeValid={ isMessageSizeValid }
+				onKeyUp={ onKeyUp }
+			/>
 		</div>
 	);
 };
