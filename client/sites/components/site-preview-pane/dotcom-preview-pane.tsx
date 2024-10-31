@@ -27,6 +27,12 @@ import {
 	SETTINGS_AGENCY,
 	SETTINGS_CACHES,
 	SETTINGS_WEB_SERVER,
+	TOOLS_SFTP_SSH,
+	TOOLS_STAGING_SITE,
+	TOOLS_DEPLOYMENTS,
+	TOOLS_MONITORING,
+	TOOLS_DATABASE,
+	TOOLS_LOGS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -115,6 +121,18 @@ const DotcomPreviewPane = ( {
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ MARKETING_TOOLS ],
+			},
+			{
+				label: __( 'Advanced Tools' ),
+				enabled: isActiveAtomicSite && config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [
+					TOOLS_STAGING_SITE,
+					TOOLS_DEPLOYMENTS,
+					TOOLS_MONITORING,
+					TOOLS_LOGS,
+					TOOLS_SFTP_SSH,
+					TOOLS_DATABASE,
+				],
 			},
 			{
 				label: __( 'Settings' ),

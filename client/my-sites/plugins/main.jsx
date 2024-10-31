@@ -141,7 +141,7 @@ export class PluginsMain extends Component {
 				href: `/plugins/${ selectedSiteSlug || '' }`,
 			},
 			{
-				label: this.props.translate( 'Installed Plugins' ),
+				label: this.props.translate( 'Manage Plugins' ),
 				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
 			},
 		] );
@@ -377,7 +377,7 @@ export class PluginsMain extends Component {
 
 		const installedPluginsList = showInstalledPluginList && (
 			<PluginsList
-				header={ this.props.translate( 'Installed Plugins' ) }
+				header={ this.props.translate( 'Manage Plugins' ) }
 				plugins={ currentPlugins }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 				isLoading={ this.props.requestingPluginsForSites }
@@ -453,7 +453,7 @@ export class PluginsMain extends Component {
 		if ( isJetpackCloud ) {
 			pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 		} else {
-			pageTitle = this.props.translate( 'Installed Plugins', { textOnly: true } );
+			pageTitle = this.props.translate( 'Manage Plugins', { textOnly: true } );
 		}
 
 		const { title, count } = this.getSelectedText();

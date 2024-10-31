@@ -1,50 +1,29 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { navigate } from 'calypso/lib/navigate';
-
+import type { ReactNode } from 'react';
 import './style.scss';
 
-interface PanelSidebarItem {
-	key: string;
-	label: string;
-}
-
-interface PanelSidebarProps {
-	items: PanelSidebarItem[];
-	selectedItemKey: string;
-}
-
-function PanelSidebar( { items, selectedItemKey }: PanelSidebarProps ) {
-	const switchItem = ( key: string ) => {
-		navigate( window.location.pathname.replace( /\/[^/]+\/([^/]+)$/, `/${ key }/$1` ) );
-	};
+export function SidebarItem( { href, children }: { href: string; children: ReactNode } ) {
+	const isActive = window.location.pathname.startsWith( href );
 
 	return (
-		<div className="panel-sidebar">
-			{ items.map( ( item ) => {
-				return (
-					<Button
-						key={ item.key }
-						className={ clsx( 'panel-sidebar-tab', {
-							'panel-sidebar-tab--active': item.key === selectedItemKey,
-						} ) }
-						onClick={ () => switchItem( item.key ) }
-					>
-						{ item.label }
-					</Button>
-				);
-			} ) }
-		</div>
+		<li>
+			<Button
+				href={ href }
+				className={ clsx( 'panel-sidebar-tab', {
+					'panel-sidebar-tab--active': isActive,
+				} ) }
+			>
+				{ children }
+			</Button>
+		</li>
 	);
 }
 
-export function PanelWithSidebar( { children }: { children: React.ReactNode } ) {
+export function Sidebar( { children }: { children: ReactNode } ) {
+	return <ul className="panel-sidebar">{ children }</ul>;
+}
+
+export function PanelWithSidebar( { children }: { children: ReactNode } ) {
 	return <div className="panel-with-sidebar">{ children }</div>;
-}
-
-export default function makeSidebar( { items }: { items: PanelSidebarItem[] } ) {
-	const props = { items };
-	return ( { selectedItemKey }: { selectedItemKey: string } ) => (
-		<PanelSidebar { ...props } selectedItemKey={ selectedItemKey } />
-	);
 }

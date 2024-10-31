@@ -17,7 +17,6 @@ import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -51,6 +50,7 @@ import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';

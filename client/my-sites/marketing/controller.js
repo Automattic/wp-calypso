@@ -11,7 +11,6 @@ import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import MarketingBusinessTools from './business-tools';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Sharing from './main';
@@ -54,7 +53,7 @@ export const redirectMarketingTools = ( context ) => {
 };
 
 export const redirectMarketingBusinessTools = ( context ) => {
-	page.redirect( '/marketing/business-tools/' + context.params.domain );
+	page.redirect( '/marketing/tools/' + context.params.domain );
 };
 
 export const redirectSharingButtons = ( context ) => {
@@ -93,12 +92,6 @@ export const connections = ( context, next ) => {
 
 export const marketingTools = ( context, next ) => {
 	context.contentComponent = createElement( MarketingTools );
-
-	next();
-};
-
-export const marketingBusinessTools = ( context, next ) => {
-	context.contentComponent = createElement( MarketingBusinessTools );
 
 	next();
 };

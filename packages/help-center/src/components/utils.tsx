@@ -82,4 +82,18 @@ export const getFilteredConversations = ( {
 		recentConversations,
 		archivedConversations,
 	};
+export const calculateUnread = ( conversations: ZendeskConversation[] ) => {
+	let unreadConversations = 0;
+	let unreadMessages = 0;
+
+	conversations.forEach( ( conversation ) => {
+		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
+
+		if ( unreadCount > 0 ) {
+			unreadConversations++;
+			unreadMessages += unreadCount;
+		}
+	} );
+
+	return { unreadConversations, unreadMessages };
 };

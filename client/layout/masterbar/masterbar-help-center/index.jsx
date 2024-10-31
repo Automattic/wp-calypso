@@ -5,13 +5,13 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import { helpFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import Item from './item';
+import Item from '../item';
+import HelpCenterIcon from './help-center-icon';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -20,9 +20,10 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 
-	const helpCenterVisible = useDateStoreSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).isHelpCenterShown()
-	);
+	const { helpCenterVisible, unreadCount } = useDateStoreSelect( ( select ) => ( {
+		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+		unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
+	} ) );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
@@ -50,7 +51,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
-				icon={ helpFilled }
+				icon={ <HelpCenterIcon hasUnread={ unreadCount > 0 } /> }
 			/>
 		</>
 	);
