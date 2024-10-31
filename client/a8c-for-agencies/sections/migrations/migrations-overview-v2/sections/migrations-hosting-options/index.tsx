@@ -3,6 +3,7 @@ import { Icon, external } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
+import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
@@ -76,6 +77,12 @@ export default function MigrationsHostingOptions() {
 		setShowWPCOMDevSiteConfigurationsModal( false );
 	}, [ setShowWPCOMDevSiteConfigurationsModal ] );
 
+	const onClickHostingMarketplaceLink = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_migrations_hosting_options_hosting_marketplace_link_click' )
+		);
+	}, [ dispatch ] );
+
 	return (
 		<PageSection
 			heading={ translate( 'Unsure which host suits your needs?' ) }
@@ -125,6 +132,22 @@ export default function MigrationsHostingOptions() {
 						</Button>,
 					] }
 				/>
+			</div>
+
+			<div className="migrations-hosting-options__footnote">
+				{ translate(
+					'Need more details? Compare WordPress.com and Pressable plans on the {{a}}hosting marketplace{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ A4A_MARKETPLACE_HOSTING_LINK }
+									onClick={ onClickHostingMarketplaceLink }
+								/>
+							),
+						},
+					}
+				) }
 			</div>
 
 			{ showWPCOMDevSiteConfigurationsModal && (

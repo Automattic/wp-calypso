@@ -4,6 +4,7 @@
 .migrations-hosting-options__container {
 	display: grid;
 	gap: 32px;
+	margin-block-end: 32px;
 
 	@include break-large {
 		grid-template-columns: repeat( 2, 1fr );
@@ -52,4 +53,16 @@
 
 .migrations-hosting-options-card__footer {
 	margin-block-start: auto;
+}
+
+.migrations-hosting-options__footnote {
+	@include a4a-font-body-lg;
+
+	a,
+	a:hover,
+	a:active,
+	a:visited {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
 }
