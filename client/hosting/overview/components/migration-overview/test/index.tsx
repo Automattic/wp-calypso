@@ -5,7 +5,7 @@ import { canInstallPlugins } from '@automattic/sites';
 import { render, within } from '@testing-library/react';
 import React from 'react';
 import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
-import MigrationOverview from '../migration-overview';
+import MigrationOverview from '../';
 import type { SiteDetails } from '@automattic/data-stores';
 
 jest.mock( '@automattic/sites' );
