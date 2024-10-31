@@ -59,6 +59,7 @@ function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansInd
 							hasRedeemedDomainCredit: plan?.has_redeemed_domain_credit,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
 							pricing: {
+								hasSaleCoupon: plan.has_sale_coupon,
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
 								costOverrides: unpackCostOverrides( plan ),

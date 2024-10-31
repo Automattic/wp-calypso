@@ -232,23 +232,48 @@ const usePricingMetaForGridPlans = ( {
 						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
 							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
 					) {
-						return [
-							planSlug,
-							{
-								originalPrice,
-								discountedPrice: {
-									monthly: null,
-									full: null,
-								},
-								currencyCode: sitePlan?.pricing?.currencyCode,
-								...( sitePlan?.pricing.introOffer && {
-									introOffer: {
-										...sitePlan?.pricing.introOffer,
-										rawPrice: introOfferPrice,
+						// TODO: Reconsider approach with hasSaleCoupon flag
+						return sitePlan?.pricing?.hasSaleCoupon
+							? [
+									planSlug,
+									{
+										originalPrice,
+										discountedPrice: {
+											monthly: getTotalPrice(
+												sitePlan?.pricing.discountedPrice.monthly,
+												storageAddOnPriceMonthly
+											),
+											full: getTotalPrice(
+												sitePlan?.pricing.discountedPrice.full,
+												storageAddOnPriceYearly
+											),
+										},
+										currencyCode: sitePlan?.pricing?.currencyCode,
+										...( sitePlan?.pricing.introOffer && {
+											introOffer: {
+												...sitePlan?.pricing.introOffer,
+												rawPrice: introOfferPrice,
+											},
+										} ),
 									},
-								} ),
-							},
-						];
+							  ]
+							: [
+									planSlug,
+									{
+										originalPrice,
+										discountedPrice: {
+											monthly: null,
+											full: null,
+										},
+										currencyCode: sitePlan?.pricing?.currencyCode,
+										...( sitePlan?.pricing.introOffer && {
+											introOffer: {
+												...sitePlan?.pricing.introOffer,
+												rawPrice: introOfferPrice,
+											},
+										} ),
+									},
+							  ];
 					}
 
 					const discountedPrice = {
