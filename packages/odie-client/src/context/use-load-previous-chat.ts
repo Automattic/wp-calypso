@@ -10,12 +10,14 @@ export const useLoadPreviousChat = ( {
 	setSupportProvider,
 	isChatLoaded,
 	selectedConversationId,
+	isFallback,
 }: {
 	botNameSlug: OdieAllowedBots;
 	odieInitialPromptText?: string;
 	setSupportProvider: ( supportProvider: SupportProvider ) => void;
 	isChatLoaded: boolean;
 	selectedConversationId?: string | null;
+	isFallback?: boolean;
 } ) => {
 	const { chat: existingChat } = useOdieChat( 1, 30 );
 
@@ -25,6 +27,31 @@ export const useLoadPreviousChat = ( {
 	} );
 
 	useEffect( () => {
+		if ( isFallback ) {
+			if ( isChatLoaded ) {
+				getZendeskConversation( {
+					chatId: existingChat?.chat_id,
+					conversationId: selectedConversationId,
+					loadOnlyZendesk: true,
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						setSupportProvider( 'zendesk' );
+						setChat( {
+							chat_id: conversation.metadata[ 'odieChatId' ]
+								? Number( conversation.metadata[ 'odieChatId' ] )
+								: null,
+							...existingChat,
+							conversationId: conversation.id,
+							messages: [ ...( conversation.messages as Message[] ) ],
+						} );
+					}
+					return;
+				} );
+			}
+
+			return;
+		}
+
 		if ( existingChat || selectedConversationId ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
 			const messages = [ initialMessage ];

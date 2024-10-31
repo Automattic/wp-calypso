@@ -20,10 +20,12 @@ export function HelpCenterChat( {
 	isLoadingEnvironment,
 	isUserEligibleForPaidSupport,
 	searchTerm,
+	isFallback,
 }: {
 	isLoadingEnvironment: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	searchTerm: string;
+	isFallback?: boolean;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
@@ -53,6 +55,7 @@ export function HelpCenterChat( {
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
 			}
+			isFallback={ isFallback }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

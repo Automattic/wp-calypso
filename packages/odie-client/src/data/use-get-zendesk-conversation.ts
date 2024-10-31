@@ -17,11 +17,13 @@ const parseResponse = ( conversation: Conversation ) => {
 export const getZendeskConversation = ( {
 	chatId,
 	conversationId,
+	loadOnlyZendesk = false,
 }: {
 	chatId: number | string | null | undefined;
 	conversationId?: string | null | undefined;
+	loadOnlyZendesk?: boolean;
 } ) => {
-	if ( ! chatId ) {
+	if ( ! chatId && ! loadOnlyZendesk ) {
 		return null;
 	}
 

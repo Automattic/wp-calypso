@@ -130,6 +130,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							/>
 						}
 					/>
+					<Route
+						path="/odie-fallback/:id"
+						element={
+							<HelpCenterChat
+								isLoadingEnvironment={ isLoadingEnvironment }
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								searchTerm={ searchTerm }
+								isFallback
+							/>
+						}
+					/>
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
 				</Routes>
 			</Wrapper>

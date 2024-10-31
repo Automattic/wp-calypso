@@ -131,6 +131,7 @@ type OdieAssistantProviderProps = {
 	selectedSiteId?: number | null;
 	selectedConversationId?: string | null;
 	version?: string | null;
+	isFallback?: boolean;
 	children?: ReactNode;
 } & PropsWithChildren;
 // Create a provider component for the context
@@ -144,6 +145,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	selectedSiteId,
 	selectedConversationId,
 	version = null,
+	isFallback = false,
 	currentUser,
 	children,
 } ) => {
@@ -185,6 +187,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setSupportProvider,
 		isChatLoaded,
 		selectedConversationId,
+		isFallback,
 	} );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
@@ -253,10 +256,15 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
+		if ( isFallback && existingChat?.messages?.length > 0 ) {
+			setChat( existingChat );
+			return;
+		}
+
 		if ( existingChat.chat_id ) {
 			setChat( existingChat );
 		}
-	}, [ existingChat, existingChat.chat_id ] );
+	}, [ isFallback, existingChat, existingChat.chat_id ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
