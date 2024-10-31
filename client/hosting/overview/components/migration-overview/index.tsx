@@ -234,7 +234,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 		return <MigrationStartedDIFM site={ site } />;
 	}
 
-	if ( migrationType === 'diy' && ! isPending ) {
+	if ( migrationType === 'diy' ) {
 		return <MigrationStartedDIY site={ site } />;
 	}
 };
