@@ -18,6 +18,7 @@ export const useSendChatMessage = () => {
 		waitAnswerToFirstMessageFromHumanSupport,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		trackEvent,
+		chat,
 	} = useOdieAssistantContext();
 
 	const { mutateAsync: sendOdieMessage } = useSendOdieMessage();
@@ -41,6 +42,7 @@ export const useSendChatMessage = () => {
 						trackEvent( 'first_answer_to_human_support', {
 							elapsed_time: elapsedTime,
 							role: message.role,
+							user_id: chat?.wpcom_user_id,
 						} );
 					}
 					setWaitAnswerToFirstMessageFromHumanSupport( false );
@@ -60,6 +62,7 @@ export const useSendChatMessage = () => {
 			waitAnswerToFirstMessageFromHumanSupport,
 			setWaitAnswerToFirstMessageFromHumanSupport,
 			trackEvent,
+			chat?.wpcom_user_id,
 		]
 	);
 
