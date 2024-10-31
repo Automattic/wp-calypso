@@ -9,6 +9,7 @@ import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import { useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
@@ -26,10 +27,13 @@ interface ActionProps {
 }
 export const Action: FC< ActionProps > = ( { icon, href, text, commandName, onClick } ) => {
 	const isDisabled = ! href && ! onClick;
+	const dispatch = useDispatch();
 	const clickAction = () => {
-		recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
-			command: commandName,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
+				command: commandName,
+			} )
+		);
 
 		onClick?.();
 	};
