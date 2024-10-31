@@ -198,10 +198,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( displayedRecommendations.length > 0 ) {
+		if ( displayedRecommendations.length > 0 && ! selectedSite ) {
 			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ displayedRecommendations ] );
+	}, [ displayedRecommendations, selectedSite ] );
 
 	const handleItemClick = useCallback( ( site: CardData ) => {
 		setSelectedSite( site );
