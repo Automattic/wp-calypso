@@ -1,14 +1,15 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
-import { resolveSelect, useDispatch } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -17,7 +18,12 @@ const LaunchBigSky: Step = function () {
 	const [ isError, setError ] = useState( false );
 	const { siteSlug, siteId, site } = useSiteData();
 	const { isEligible, isLoading } = useIsBigSkyEligible();
-	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
+		useDispatch( SITE_STORE );
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
 
@@ -76,6 +82,7 @@ const LaunchBigSky: Step = function () {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+		setGoalsOnSite( siteSlug, goals );
 		exitFlow( siteId.toString(), siteSlug );
 	};
 
