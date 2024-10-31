@@ -17,10 +17,9 @@ import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { READER_STREAMS_CLEAR } from 'calypso/state/reader/action-types';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { requestPage } from 'calypso/state/reader/streams/actions';
+import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
@@ -255,11 +254,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	};
 
 	const handleClose = useCallback( () => {
-		// Clear existing stream data and request fresh content.
-		dispatch( {
-			type: READER_STREAMS_CLEAR,
-			payload: { streamKey: 'following' },
-		} );
+		dispatch( clearStream( { streamKey: 'following' } ) );
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( requestPage( { streamKey: 'following' } as any ) );
 
