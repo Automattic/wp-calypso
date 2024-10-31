@@ -13,6 +13,7 @@ type Props = {
 	isSaving?: boolean;
 	onSaveSetting: () => void;
 	disabled: boolean;
+	title?: string;
 };
 
 export function A4AFullyManagedSiteSetting( {
@@ -22,6 +23,7 @@ export function A4AFullyManagedSiteSetting( {
 	isSaving,
 	onSaveSetting,
 	disabled,
+	title,
 }: Props ) {
 	const isDevSite = site.is_a4a_dev_site;
 	const isAtomicSite = site.is_wpcom_atomic;
@@ -58,7 +60,7 @@ export function A4AFullyManagedSiteSetting( {
 	return (
 		<div className="site-settings__a4a-fully-managed-container">
 			<SettingsSectionHeader
-				title={ translate( 'Agency settings' ) }
+				title={ title ?? translate( 'Agency settings' ) }
 				id="site-settings__a4a-fully-managed-header"
 				disabled={ disabled }
 				isSaving={ isSaving }
