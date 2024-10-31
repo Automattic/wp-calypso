@@ -95,7 +95,7 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading, className, hideLegend } = this.props;
+		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -107,14 +107,16 @@ class StatModuleChartTabs extends Component {
 
 		return (
 			<div className={ clsx( ...classes ) }>
-				<ChartHeader
-					showLegend={ ! hideLegend }
-					activeLegend={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableLegend={ this.props.availableLegend }
-					onLegendClick={ this.onLegendClick }
-					charts={ this.props.charts }
-				></ChartHeader>
+				{ showChartHeader && (
+					<ChartHeader
+						showLegend={ ! hideLegend }
+						activeLegend={ this.props.activeLegend }
+						activeTab={ this.props.activeTab }
+						availableLegend={ this.props.availableLegend }
+						onLegendClick={ this.onLegendClick }
+						charts={ this.props.charts }
+					></ChartHeader>
+				) }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
