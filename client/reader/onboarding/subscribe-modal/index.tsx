@@ -170,14 +170,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	const headerActions = (
-		<>
-			<Button onClick={ onClose } variant="link">
-				{ __( 'Cancel' ) }
-			</Button>
-		</>
-	);
-
 	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
 	useEffect( () => {
 		if ( combinedRecommendations.length > 0 ) {
@@ -267,6 +259,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 		handleClose();
 	}, [ dispatch, handleClose ] );
+
+	const headerActions = (
+		<>
+			<Button onClick={ handleClose } variant="link">
+				{ __( 'Cancel' ) }
+			</Button>
+		</>
+	);
 
 	return (
 		isOpen && (
