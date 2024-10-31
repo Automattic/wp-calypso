@@ -62,6 +62,7 @@ export class PluginsList extends Component {
 		selectedSiteSlug: PropTypes.string,
 		siteIsAtomic: PropTypes.bool,
 		siteIsJetpack: PropTypes.bool,
+		onSearch: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -358,6 +359,7 @@ export class PluginsList extends Component {
 					currentPlugins={ this.props.plugins }
 					initialSearch={ this.props.searchTerm }
 					isLoading={ this.props.isLoading }
+					onSearch={ this.props.onSearch }
 					bulkActionDialog={ this.bulkActionDialog }
 				/>
 			</div>

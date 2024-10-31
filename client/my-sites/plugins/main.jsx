@@ -311,6 +311,7 @@ export class PluginsMain extends Component {
 				requestPluginsError={ this.props.requestPluginsError }
 				activePlugins={ this.props.activePlugins }
 				inactivePlugins={ this.props.inactivePlugins }
+				onSearch={ this.props.doSearch }
 			/>
 		);
 	}
