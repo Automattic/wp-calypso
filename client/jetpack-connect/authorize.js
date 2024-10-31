@@ -1065,6 +1065,7 @@ export class JetpackAuthorize extends Component {
 									isJetpack: true,
 									redirectTo: window.location.href,
 									from: authQuery.from,
+									pluginName: authQuery.plugin_name,
 								} ) }
 								onClick={ this.handleSignIn }
 							>
