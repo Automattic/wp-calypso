@@ -265,6 +265,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			<Button onClick={ handleClose } variant="link">
 				{ __( 'Cancel' ) }
 			</Button>
+			<Button onClick={ handleContinue } variant="primary">
+				{ __( 'Continue' ) }
+			</Button>
 		</>
 	);
 
@@ -322,12 +325,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								{ __( 'Load more recommendations' ) }
 							</Button>
 						) }
-						<Button
-							className="subscribe-modal__continue-button is-primary"
-							onClick={ handleContinue }
-						>
-							{ __( 'Continue' ) }
-						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">

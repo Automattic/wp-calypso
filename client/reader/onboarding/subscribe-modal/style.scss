@@ -56,12 +56,6 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			max-width: 700px;
 		}
 
-		.subscribe-modal__continue-button {
-			width: 100%;
-			justify-content: center;
-			margin-top: 36px;
-		}
-
 		p {
 			text-wrap: balance;
 		}
@@ -136,5 +130,17 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		height: 100%;
 		overflow-y: auto;
 		padding-top: 40px;
+	}
+
+	.components-modal__header {
+		.components-button {
+			&.is-link {
+				margin-right: auto;
+			}
+
+			&.is-primary {
+				margin-left: 16px;
+			}
+		}
 	}
 }
