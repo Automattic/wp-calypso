@@ -16,6 +16,12 @@ export const generateContactOnClickEvent = (
 	}
 };
 
+export const getLastMessage = ( { conversation }: { conversation: ZendeskConversation } ) => {
+	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
+		? conversation.messages[ conversation.messages.length - 1 ]
+		: null;
+};
+
 export const getFilteredConversations = ( {
 	conversations,
 }: {
@@ -41,6 +47,34 @@ export const getFilteredConversations = ( {
 			} else {
 				recentConversations.push( conversation );
 			}
+		} );
+	}
+
+	if ( recentConversations.length > 0 ) {
+		recentConversations.sort( ( a, b ) => {
+			const aUnreadCount = a?.participants[ 0 ]?.unreadCount ?? 0;
+			const bUnreadCount = b?.participants[ 0 ]?.unreadCount ?? 0;
+			const aLastMessage = getLastMessage( { conversation: a } );
+			const bLastMessage = getLastMessage( { conversation: b } );
+
+			if ( aUnreadCount < bUnreadCount ) {
+				if ( aUnreadCount === 0 || bUnreadCount === 0 ) {
+					return 1;
+				}
+				if ( aLastMessage === null || bLastMessage === null ) {
+					return aLastMessage === null ? 1 : -1;
+				}
+				return aLastMessage < bLastMessage ? 1 : -1;
+			} else if ( aUnreadCount > bUnreadCount ) {
+				if ( aUnreadCount === 0 || bUnreadCount === 0 ) {
+					return -1;
+				}
+				if ( aLastMessage === null || bLastMessage === null ) {
+					return aLastMessage === null ? 1 : -1;
+				}
+				return aLastMessage < bLastMessage ? -1 : 1;
+			}
+			return 0;
 		} );
 	}
 

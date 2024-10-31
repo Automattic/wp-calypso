@@ -9,7 +9,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getFilteredConversations } from './utils';
+import { getFilteredConversations, getLastMessage } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -23,10 +23,7 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
-				const lastMessage =
-					Array.isArray( conversation.messages ) && conversation.messages.length > 0
-						? conversation.messages[ conversation.messages.length - 1 ]
-						: null;
+				const lastMessage = getLastMessage( { conversation } );
 
 				if ( lastMessage ) {
 					return (
