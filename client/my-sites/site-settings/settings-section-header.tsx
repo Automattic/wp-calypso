@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 
 interface SettingsSectionHeaderProps {
-	title: string | ReactNode;
+	title?: string | ReactNode;
 	id?: string;
 	isSaving?: boolean;
 	disabled?: boolean;
@@ -25,7 +25,9 @@ export default function SettingsSectionHeader( {
 	children,
 }: SettingsSectionHeaderProps ) {
 	const translate = useTranslate();
-
+	if ( ! title ) {
+		return null;
+	}
 	return (
 		<SectionHeader label={ title } id={ id }>
 			{ children }

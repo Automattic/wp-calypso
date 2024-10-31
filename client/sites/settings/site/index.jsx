@@ -1,11 +1,13 @@
+import { __ } from '@wordpress/i18n';
+import NavigationHeader from 'calypso/components/navigation-header';
+import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
+import LaunchSite from 'calypso/my-sites/site-settings/site-visibility/launch-site';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import SiteSettingPrivacy from '../../../my-sites/site-settings/site-setting-privacy';
-import LaunchSite from '../../../my-sites/site-settings/site-visibility/launch-site';
-import wrapSettingsForm from '../../../my-sites/site-settings/wrap-settings-form';
 
 const SiteSettings = ( {
 	fields,
@@ -25,6 +27,7 @@ const SiteSettings = ( {
 
 	return (
 		<div className="site-settings">
+			<NavigationHeader title={ __( 'Site' ) } />
 			{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
 				<LaunchSite />
 			) : (
