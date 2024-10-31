@@ -53,7 +53,7 @@ export class ReaderSidebarTags extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
 					onClick={ onClick }
-					customIcon={ <ReaderTagIcon viewBox="2 2 20 20" /> }
+					customIcon={ <ReaderTagIcon viewBox="-3 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>

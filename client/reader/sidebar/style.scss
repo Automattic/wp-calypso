@@ -236,13 +236,6 @@ body.is-section-reader {
 					fill: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-				fill: var(--color-sidebar-menu-hover-background);
-				circle,
-				path {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
-				}
-			}
 			.sidebar__menu-icon.sidebar_svg-notifications {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
@@ -256,13 +249,15 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-conversations,
 			.sidebar__menu-icon.sidebar_svg-list,
 			.sidebar__menu-icon.sidebar_svg-tag,
-			.sidebar__menu-icon.sidebar_svg-discover {
+			.sidebar__menu-icon.sidebar_svg-discover,
+			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-a8c {
+			.sidebar__menu-icon.sidebar_svg-a8c,
+			.sidebar__menu-icon.sidebar_svg-a8c-conversations {
 				fill: var(--color-sidebar-menu-hover-background);
 				g {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
@@ -273,13 +268,6 @@ body.is-section-reader {
 		.sidebar__menu-icon.sidebar_svg-add {
 			g {
 				fill: var(--color-sidebar-gridicon-fill);
-			}
-		}
-		.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-			fill: var(--color-sidebar-background);
-			circle,
-			path {
-				stroke: var(--color-sidebar-gridicon-fill);
 			}
 		}
 		.sidebar__menu-icon.sidebar_svg-notifications {
@@ -295,13 +283,15 @@ body.is-section-reader {
 		.sidebar__menu-icon.sidebar_svg-conversations,
 		.sidebar__menu-icon.sidebar_svg-list,
 		.sidebar__menu-icon.sidebar_svg-tag,
-		.sidebar__menu-icon.sidebar_svg-discover {
+		.sidebar__menu-icon.sidebar_svg-discover,
+		.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
 			fill: var(--color-sidebar-background);
 			path {
 				fill: var(--color-sidebar-gridicon-fill);
 			}
 		}
-		.sidebar__menu-icon.sidebar_svg-a8c {
+		.sidebar__menu-icon.sidebar_svg-a8c,
+		.sidebar__menu-icon.sidebar_svg-a8c-conversations {
 			fill: var(--color-sidebar-background);
 			g {
 				stroke: var(--color-sidebar-gridicon-fill);
@@ -317,10 +307,9 @@ body.is-section-reader {
 					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
+			.sidebar__menu-icon.sidebar_svg-a8c-conversations {
 				fill: var(--color-sidebar-menu-hover-background);
-				circle,
-				path {
+				g {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
@@ -334,7 +323,8 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-following,
 			.sidebar__menu-icon.sidebar_svg-likes,
 			.sidebar__menu-icon.sidebar_svg-conversations,
-			.sidebar__menu-icon.sidebar_svg-discover {
+			.sidebar__menu-icon.sidebar_svg-discover,
+			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
