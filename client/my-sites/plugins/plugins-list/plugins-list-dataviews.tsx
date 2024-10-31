@@ -18,6 +18,8 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
+const defaultLayouts = { table: {} };
+
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,
@@ -26,7 +28,6 @@ export default function PluginsListDataViews( {
 	bulkActionDialog,
 }: Props ) {
 	const translate = useTranslate();
-	const defaultLayouts = { table: {} };
 	const fields = useFields( bulkActionDialog );
 	const actions = useActions( bulkActionDialog );
 
