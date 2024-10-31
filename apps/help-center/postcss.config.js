@@ -13,6 +13,11 @@ module.exports = {
 					return selector === '.card' ? prefixedSelector : selector;
 				}
 
+				// The search component has very generic class that causes many bugs.
+				if ( path.includes( 'count/style.scss' ) ) {
+					return selector === '.count' ? prefixedSelector : selector;
+				}
+
 				return selector;
 			},
 		} ),
