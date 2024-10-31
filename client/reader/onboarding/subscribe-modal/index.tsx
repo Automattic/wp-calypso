@@ -280,7 +280,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__site-list-column">
 						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
-						<p>
+						<p className="subscribe-modal__description">
 							{ __(
 								'Preview sites by clicking below, then subscribe to any site that inspires you.'
 							) }
