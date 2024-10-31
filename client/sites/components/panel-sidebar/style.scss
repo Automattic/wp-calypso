@@ -12,7 +12,8 @@
 }
 
 .panel-sidebar {
-	width: 160px;
+	margin: 0;
+	min-width: 160px;
 	flex-shrink: 0;
 	list-style: none;
 }
