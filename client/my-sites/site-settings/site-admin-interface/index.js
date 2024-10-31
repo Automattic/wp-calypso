@@ -152,6 +152,48 @@ const SiteAdminInterface = ( { siteId, isHosting = false } ) => {
 		);
 	};
 
+	if ( isHosting ) {
+		return (
+			<HostingCard
+				className="admin-interface-style-card"
+				headingId="admin-interface-style"
+				title={ translate( 'Admin interface style' ) }
+			>
+				<HostingCardDescription>
+					{ translate(
+						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}',
+						{
+							components: {
+								supportLink: (
+									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				</HostingCardDescription>
+				<p className="form-setting-explanation">
+					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href={
+										adminInterface === 'wp-admin'
+											? `${ siteAdminUrl }options-general.php`
+											: `/settings/general/${ siteSlug }#admin-interface-style`
+									}
+									onClick={ () =>
+										dispatch( recordTracksEvent( 'calypso_site_settings_admin_interface_style' ) )
+									}
+									rel="noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
+			</HostingCard>
+		);
+	}
+
 	return (
 		<>
 			<SettingsSectionHeader
