@@ -349,9 +349,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 								slug: 'tiktok-for-business',
 								name: __( 'Find new prospects through TikTok' ),
 								icon: 'https://ps.w.org/tiktok-for-business/assets/icon-256x256.jpg?rev=2721531',
-								short_description: __(
-									'Integrate TikTok directly on WordPress to run Lead Generation Ads to capture leads and improve targeting.'
-								),
+								short_description: __( 'Run Lead Generation Ads and improve targeting' ),
 							},
 					  ]
 					: [];
