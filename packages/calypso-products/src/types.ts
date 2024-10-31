@@ -144,6 +144,7 @@ export interface WPComPlan extends Plan {
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getHostingHighlightedFeatures?: () => Feature[];
+	getCancellationFeatures?: () => Feature[];
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &

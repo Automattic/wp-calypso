@@ -3,9 +3,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-$design-button-primary-color: var(--color-primary);
-$design-button-primary-hover-color: var(--color-primary-60);
-
 .theme-upgrade-modal {
 	display: flex;
 	flex-direction: column;
@@ -202,15 +199,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 			&.is-primary {
-				background: $design-button-primary-color;
-				border-color: $design-button-primary-color;
 				width: 100%;
-
-				&:hover,
-				&:focus {
-					background: $design-button-primary-hover-color;
-					border-color: $design-button-primary-hover-color;
-				}
 			}
 		}
 

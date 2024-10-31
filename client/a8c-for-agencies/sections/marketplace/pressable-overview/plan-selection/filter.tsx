@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -15,7 +14,6 @@ import { FilterType } from '../types';
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	plans: APIProductFamilyProduct[];
-	existingPlan?: APIProductFamilyProduct | null;
 	pressablePlan?: PressablePlan | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	isLoading?: boolean;
@@ -25,7 +23,6 @@ export default function PlanSelectionFilter( {
 	selectedPlan,
 	plans,
 	onSelectPlan,
-	existingPlan,
 	pressablePlan,
 	isLoading,
 }: Props ) {
@@ -113,26 +110,6 @@ export default function PlanSelectionFilter( {
 
 	return (
 		<section className={ wrapperClass }>
-			{ !! existingPlan && (
-				<div className="pressable-overview-plan-selection__filter-owned-plan">
-					<div className="badge">
-						<Icon icon={ info } size={ 24 } />
-
-						<span>
-							{ translate( 'You own {{b}}%(planName)s plan{{/b}}', {
-								args: {
-									planName: existingPlan.name,
-								},
-								components: {
-									b: <strong />,
-								},
-								comment: '%(planName)s is the name of the Pressable plan the user owns.',
-							} ) }
-						</span>
-					</div>
-				</div>
-			) }
-
 			<div className="pressable-overview-plan-selection__filter-type">
 				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }

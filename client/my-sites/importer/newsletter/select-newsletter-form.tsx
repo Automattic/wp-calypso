@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
@@ -18,6 +19,7 @@ export default function SelectNewsletterForm( {
 	isLoading,
 	isError,
 }: SelectNewsletterFormProps ) {
+	const { __ } = useI18n();
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
@@ -47,16 +49,18 @@ export default function SelectNewsletterForm( {
 			<FormTextInputWithAction
 				onAction={ handleAction }
 				placeholder="https://example.substack.com"
-				action="Continue"
+				action={ __( 'Continue' ) }
 				isError={ hasError }
 				defaultValue={ value }
 			/>
 			{ hasError && (
-				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
+				<p className="select-newsletter-form__help is-error">
+					{ __( 'Please enter a valid Substack URL.' ) }
+				</p>
 			) }
 			{ ! hasError && (
 				<p className="select-newsletter-form__help">
-					Enter the URL of the Substack newsletter that you wish to import.
+					{ __( 'Enter the URL of the Substack newsletter that you wish to import.' ) }
 				</p>
 			) }
 		</Card>

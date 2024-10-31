@@ -42,6 +42,7 @@ import {
 	buildDIFMWebsiteContentRequestDTO,
 } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { requestProductsList } from 'calypso/state/products-list/actions';
 import {
 	getProductBySlug,
 	getProductsByBillingSlug,
@@ -662,10 +663,28 @@ async function addExternalManagedThemeToCart(
 		} );
 }
 
+export function addWithPluginPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { plugin, billing_period: billingPeriod, siteSlug } = dependencies;
+	const { cartItems, lastKnownFlow } = stepProvidedItems;
+
+	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
+		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const providedDependencies = { cartItems };
+
+		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(
+			( item ) => item
+		);
+
+		processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+			lastKnownFlow,
+		} );
+	} );
+}
+
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
+	const { emailItem, siteSlug } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
@@ -674,15 +693,8 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		return;
 	}
 
-	let pluginItem;
-	if ( plugin ) {
-		pluginItem = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
-	}
-
 	const providedDependencies = { cartItems };
-	const newCartItems = [ ...( cartItems ? cartItems : [] ), emailItem, pluginItem ].filter(
-		( item ) => item
-	);
+	const newCartItems = [ ...( cartItems ? cartItems : [] ), emailItem ].filter( ( item ) => item );
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
 	} );
@@ -927,6 +939,7 @@ export function createAccount(
 		const providedDependencies = {
 			username,
 			marketing_price_group,
+			is_new_account: newAccountCreated,
 			...bearerToken,
 		};
 

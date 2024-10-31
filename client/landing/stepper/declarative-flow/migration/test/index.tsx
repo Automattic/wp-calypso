@@ -25,6 +25,7 @@ describe( `${ flow.name }`, () => {
 		Object.defineProperty( window, 'location', {
 			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
+		jest.clearAllMocks();
 	} );
 
 	afterAll( () => {
@@ -418,6 +419,42 @@ describe( `${ flow.name }`, () => {
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
+
+			it( 'redirects users from SITE_MIGRATION_CREDENTIALS > SITE_MIGRATION_ALREADY_WPCOM when the site is already on WPCOM', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+					dependencies: { action: 'already-wpcom' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ALREADY_WPCOM,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_ALREADY_WPCOM STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_ALREADY_WPCOM to SITE_MIGRATION_SUPPORT_INSTRUCTIONS', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_ALREADY_WPCOM,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { action: 'submit' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', variation: 'goals_shared' },
+				} );
+			} );
 		} );
 
 		describe( 'SITE_MIGRATION_INSTRUCTIONS_STEP', () => {
@@ -473,6 +510,32 @@ describe( `${ flow.name }`, () => {
 						siteSlug: 'example.wordpress.com',
 						from: 'http://oldsite.example.com',
 					},
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to SITE_MIGRATION_ASSISTED_MIGRATION', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerSquarespace?siteSlug=example.wordpress.com&from=&backToFlow=%2Fmigration%2Fsite-migration-credentials&siteId=123&ref=migration'
+				);
+			} );
+
+			it( 'redirects users from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to ASSISTED_MIGRATION when the user skips the import', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+					dependencies: { action: 'skip' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
 		} );
@@ -546,6 +609,17 @@ describe( `${ flow.name }`, () => {
 					siteSlug: 'example.wordpress.com',
 					from: 'http://oldsite.example.com',
 				},
+			} );
+		} );
+		it( 'redirects back user from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to SITE_MIGRATION_CREDENTIALS', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_CREDENTIALS,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );

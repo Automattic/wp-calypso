@@ -62,6 +62,8 @@ export type Context = {
 	flags?: {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
+		hide_disclaimer_content?: boolean;
+		show_contact_support_msg?: boolean;
 	};
 };
 
@@ -71,7 +73,7 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
-export type MessageRole = 'user' | 'bot';
+export type MessageRole = 'user' | 'bot' | 'business';
 
 export type MessageType =
 	| 'message'
@@ -95,10 +97,13 @@ export type Message = {
 	simulateTyping?: boolean;
 	type: MessageType;
 	directEscalationSupport?: boolean;
+	created_at?: string;
 };
 
 export type Chat = {
+	conversationId?: string;
 	chat_id?: number | null;
+	wpcom_user_id?: number | null;
 	messages: Message[];
 };
 
@@ -112,4 +117,53 @@ export type OdieAllowedSectionNames =
 	| 'help-center';
 
 export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as const;
+
 export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
+
+export type SupportProvider = 'zendesk' | 'odie';
+interface ConversationParticipant {
+	id: string;
+	userId: string;
+	unreadCount: number;
+	lastRead: number;
+}
+
+export type ZendeskMessage = {
+	avatarUrl: string;
+	displayName: string;
+	id: string;
+	metadata: Metadata;
+	received: number;
+	role: string;
+	source: {
+		type: 'web' | 'slack';
+		id: string;
+		integrationId: string;
+	};
+	type: ZendeskContentType;
+	text: string;
+};
+
+export type ZendeskContentType =
+	| 'text'
+	| 'carousel'
+	| 'file'
+	| 'form'
+	| 'formResponse'
+	| 'image'
+	| 'list'
+	| 'location'
+	| 'template';
+
+export type ZendeskConversation = {
+	id: string;
+	lastUpdatedAt: number;
+	businessLastRead: number;
+	description: string;
+	displayName: string;
+	iconUrl: string;
+	type: 'sdkGroup' | string;
+	participants: ConversationParticipant[];
+	metadata: Metadata;
+	messages: ZendeskMessage[];
+};

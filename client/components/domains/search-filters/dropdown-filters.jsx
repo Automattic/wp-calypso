@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Count, FormLabel, Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -8,24 +7,19 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
-const HANDLED_FILTER_KEYS = [ 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
+const HANDLED_FILTER_KEYS = [ 'tlds', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
 	static propTypes = {
 		availableTlds: PropTypes.array,
 		filters: PropTypes.shape( {
-			includeDashes: PropTypes.bool,
-			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.array,
 		} ).isRequired,
 		lastFilters: PropTypes.shape( {
-			includeDashes: PropTypes.bool,
-			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.array,
 		} ).isRequired,
@@ -43,7 +37,6 @@ export class DropdownFilters extends Component {
 
 	state = {
 		showPopover: false,
-		showOverallValidationError: false,
 	};
 
 	constructor( props ) {
@@ -67,31 +60,8 @@ export class DropdownFilters extends Component {
 	getFiltercounts() {
 		return (
 			( this.props.lastFilters.tlds?.length || 0 ) +
-			( this.props.lastFilters.includeDashes && 1 ) +
-			( this.props.lastFilters.exactSldMatchesOnly && 1 ) +
-			( this.props.lastFilters.maxCharacters !== '' && 1 )
+			( this.props.lastFilters.exactSldMatchesOnly && 1 )
 		);
-	}
-
-	getMaxCharactersValidationErrors() {
-		const {
-			filters: { maxCharacters },
-			translate,
-		} = this.props;
-		const isValid = /^-?\d*$/.test( maxCharacters );
-		return ! isValid ? [ translate( 'Value must be a whole number' ) ] : null;
-	}
-
-	getOverallValidationErrors() {
-		const isValid = this.getMaxCharactersValidationErrors() === null;
-		const { showOverallValidationError } = this.state;
-		return ! isValid && showOverallValidationError
-			? [ this.props.translate( 'Please correct any errors above' ) ]
-			: null;
-	}
-
-	hasValidationErrors() {
-		return this.getOverallValidationErrors() !== null;
 	}
 
 	updateFilterValues = ( name, value ) => {
@@ -110,21 +80,13 @@ export class DropdownFilters extends Component {
 	};
 
 	handleFiltersReset = () => {
-		this.setState( { showOverallValidationError: false }, () => {
-			this.togglePopover( { discardChanges: false } );
-			this.props.onReset( 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
-		} );
+		this.togglePopover( { discardChanges: false } );
+		this.props.onReset( 'tlds', 'exactSldMatchesOnly' );
 	};
-	handleFiltersSubmit = () => {
-		if ( this.hasValidationErrors() ) {
-			this.setState( { showOverallValidationError: true } );
-			return;
-		}
 
-		this.setState( { showOverallValidationError: false }, () => {
-			this.togglePopover( { discardChanges: false } );
-			this.hasFiltersChanged() && this.props.onSubmit();
-		} );
+	handleFiltersSubmit = () => {
+		this.togglePopover( { discardChanges: false } );
+		this.hasFiltersChanged() && this.props.onSubmit();
 	};
 
 	hasFiltersChanged() {
@@ -183,15 +145,11 @@ export class DropdownFilters extends Component {
 
 	renderPopover() {
 		const {
-			filters: { includeDashes, maxCharacters, exactSldMatchesOnly },
+			filters: { exactSldMatchesOnly },
 			popoverId,
 			translate,
 			showTldFilter,
 		} = this.props;
-
-		const isDashesFilterEnabled = config.isEnabled( 'domains/kracken-ui/dashes-filter' );
-		const isExactMatchFilterEnabled = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
-		const isLengthFilterEnabled = config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 
 		return (
 			<Popover
@@ -206,27 +164,6 @@ export class DropdownFilters extends Component {
 				{ ...( isWithinBreakpoint( '>660px' ) && { relativePosition: { left: -238 } } ) }
 				hideArrow
 			>
-				{ isLengthFilterEnabled && (
-					<ValidationFieldset
-						className="search-filters__text-input-fieldset"
-						errorMessages={ this.getMaxCharactersValidationErrors() }
-					>
-						<FormLabel className="search-filters__label" htmlFor="search-filters-max-characters">
-							{ translate( 'Max Characters' ) }:
-						</FormLabel>
-						<FormTextInput
-							className="search-filters__input"
-							id="search-filters-max-characters"
-							min="1"
-							name="maxCharacters"
-							onChange={ this.handleOnChange }
-							placeholder="14"
-							type="number"
-							value={ maxCharacters }
-						/>
-					</ValidationFieldset>
-				) }
-
 				{ showTldFilter && (
 					<ValidationFieldset className="search-filters__tld-filters">
 						<TokenField
@@ -244,46 +181,25 @@ export class DropdownFilters extends Component {
 				) }
 
 				<FormFieldset className="search-filters__checkboxes-fieldset">
-					{ isExactMatchFilterEnabled && (
-						<FormLabel
-							className="search-filters__label"
-							htmlFor="search-filters-show-exact-matches-only"
-						>
-							<FormInputCheckbox
-								className="search-filters__checkbox"
-								checked={ exactSldMatchesOnly }
-								id="search-filters-show-exact-matches-only"
-								name="exactSldMatchesOnly"
-								onChange={ this.handleOnChange }
-								value="exactSldMatchesOnly"
-							/>
-							<span className="search-filters__checkbox-label">
-								{ translate( 'Show exact matches only' ) }
-							</span>
-						</FormLabel>
-					) }
-
-					{ isDashesFilterEnabled && (
-						<FormLabel className="search-filters__label" htmlFor="search-filters-include-dashes">
-							<FormInputCheckbox
-								className="search-filters__checkbox"
-								checked={ includeDashes }
-								id="search-filters-include-dashes"
-								name="includeDashes"
-								onChange={ this.handleOnChange }
-								value="includeDashes"
-							/>
-							<span className="search-filters__checkbox-label">
-								{ translate( 'Enable dashes' ) }
-							</span>
-						</FormLabel>
-					) }
+					<FormLabel
+						className="search-filters__label"
+						htmlFor="search-filters-show-exact-matches-only"
+					>
+						<FormInputCheckbox
+							className="search-filters__checkbox"
+							checked={ exactSldMatchesOnly }
+							id="search-filters-show-exact-matches-only"
+							name="exactSldMatchesOnly"
+							onChange={ this.handleOnChange }
+							value="exactSldMatchesOnly"
+						/>
+						<span className="search-filters__checkbox-label">
+							{ translate( 'Show exact matches only' ) }
+						</span>
+					</FormLabel>
 				</FormFieldset>
 
-				<ValidationFieldset
-					className="search-filters__buttons-fieldset"
-					errorMessages={ this.getOverallValidationErrors() }
-				>
+				<ValidationFieldset className="search-filters__buttons-fieldset">
 					<div className="search-filters__buttons">
 						<Button onClick={ this.handleFiltersReset }>{ translate( 'Clear' ) }</Button>
 						<Button primary onClick={ this.handleFiltersSubmit }>

@@ -103,7 +103,7 @@
 		quotes: "" "";
 	}
 	a:focus {
-		outline: thin dotted;
+		outline: var(--color-primary-light) solid 2px;
 	}
 	a:hover,
 	a:active {

@@ -8,7 +8,6 @@ import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useExperiment } from 'calypso/lib/explat';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
@@ -20,11 +19,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import {
-	useLaunchpadDecider,
-	getLaunchpadStateBasedOnExperiment,
-	LAUNCHPAD_EXPERIMENT_NAME,
-} from './internals/hooks/use-launchpad-decider';
+import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -167,9 +162,6 @@ const siteSetupFlow: Flow = {
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
-		const [ isLoadingLaunchpadExperiment, launchpadExperimentAssigment ] =
-			useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
-
 		const getLaunchpadScreenValue = (
 			intent: string,
 			shouldSkip: boolean
@@ -178,17 +170,6 @@ const siteSetupFlow: Flow = {
 				return 'off';
 			}
 
-			const launchpadState = getLaunchpadStateBasedOnExperiment(
-				isLoadingLaunchpadExperiment,
-				launchpadExperimentAssigment,
-				shouldSkip
-			);
-
-			if ( launchpadState ) {
-				return launchpadState;
-			}
-
-			// We shouldn't get here, but match the default/existing behaviour
 			if ( shouldSkip ) {
 				return 'skipped';
 			}

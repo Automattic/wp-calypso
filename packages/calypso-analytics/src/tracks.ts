@@ -195,6 +195,12 @@ export function signalUserFromAnotherProduct( userId: string, userIdType: string
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
+	const currentUser = getCurrentUser();
+
+	if ( currentUser?.localeSlug ) {
+		eventProperties[ 'user_lang' ] = currentUser.localeSlug;
+	}
+
 	const trackingPrefs = getTrackingPrefs();
 	if ( ! trackingPrefs?.buckets.analytics ) {
 		debug(

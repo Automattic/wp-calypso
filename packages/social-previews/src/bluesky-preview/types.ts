@@ -7,6 +7,7 @@ export type BlueskyUser = {
 };
 
 export type BlueskyPreviewProps = SocialPreviewBaseProps & {
+	appendUrl?: boolean;
 	user?: BlueskyUser;
 	customText?: string;
 	customImage?: string;

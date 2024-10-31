@@ -23,7 +23,6 @@ const DangerousItemsTitle = styled.p( {
 
 const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 	'.components-base-control__help': {
-		marginLeft: '44px',
 		marginTop: 0,
 	},
 	label: {

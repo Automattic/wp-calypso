@@ -93,16 +93,6 @@
 	white-space: nowrap;
 	width: fit-content;
 
-	&.is-intro-offer {
-		background-color: inherit;
-		color: var(--studio-blue-50);
-		font-weight: 600;
-		letter-spacing: inherit;
-		padding: 0;
-		text-align: left;
-		text-transform: uppercase;
-	}
-
 	&.is-hidden {
 		visibility: hidden;
 	}

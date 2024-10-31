@@ -23,6 +23,9 @@ class ConnectedSubscriptionListItem extends Component {
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
 		railcar: PropTypes.object,
+		disableSuggestedFollows: PropTypes.bool,
+		onItemClick: PropTypes.func,
+		isSelected: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -31,6 +34,8 @@ class ConnectedSubscriptionListItem extends Component {
 		showNotificationSettings: true,
 		showLastUpdatedDate: true,
 		showFollowedOnDate: true,
+		disableSuggestedFollows: false,
+		onItemClick: () => {},
 	};
 
 	componentDidMount() {
@@ -62,6 +67,10 @@ class ConnectedSubscriptionListItem extends Component {
 			isFollowing,
 			followSource,
 			railcar,
+			disableSuggestedFollows,
+			onItemClick,
+			isSelected,
+			onFollowToggle,
 		} = this.props;
 
 		return (
@@ -77,14 +86,29 @@ class ConnectedSubscriptionListItem extends Component {
 				isFollowing={ isFollowing }
 				followSource={ followSource }
 				railcar={ railcar }
+				disableSuggestedFollows={ disableSuggestedFollows }
+				onItemClick={ onItemClick }
+				isSelected={ isSelected }
+				onFollowToggle={ onFollowToggle }
 			/>
 		);
 	}
 }
 
+const normalizeUrl = ( url ) => {
+	if ( ! url ) {
+		return '';
+	}
+	return url.match( /^https?:\/\// ) ? url : `http://${ url }`;
+};
+
 export default compose(
 	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
+		isFollowing: isFollowingSelector( state, {
+			feedId: ownProps.feedId ?? null,
+			blogId: ownProps.siteId ?? null,
+		} ),
+		url: normalizeUrl( ownProps.url ?? '' ),
 	} ) ),
 	connectSite
 )( ConnectedSubscriptionListItem );

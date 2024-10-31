@@ -6,7 +6,6 @@ import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/per
 import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, Navigate, StepperStep } from '../../types';
 
@@ -59,7 +58,6 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 				kebabCase( step.slug )
 			) }
 		>
-			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
 			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
 			{ stepContent }
 			{ stepContent && <StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } /> }

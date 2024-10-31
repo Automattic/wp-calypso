@@ -7,9 +7,11 @@ import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons'
 import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
@@ -56,6 +58,16 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			} );
 		},
 	} );
+
+	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const site = useSite();
+	const siteId = site?.ID;
+
+	useEffect( () => {
+		if ( siteId ) {
+			updateMigrationStatus( siteId, 'migration-started-difm' );
+		}
+	}, [ siteId, updateMigrationStatus ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {

@@ -18,6 +18,7 @@ export type Category = {
 	description?: string;
 	icon?: string;
 	separator?: boolean;
+	showOnlyActive?: boolean;
 };
 
 export type Plugin = {

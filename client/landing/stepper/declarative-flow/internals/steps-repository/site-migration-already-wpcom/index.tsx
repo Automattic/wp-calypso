@@ -24,13 +24,13 @@ const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigatio
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' )!;
 
-	const title = translate( 'Your site is already on {{br /}}WordPress.com', {
+	const title = translate( 'Your site is already on {{break}}WordPress.com{{/break}}', {
 		components: {
-			br: <br />,
+			break: <span style={ { display: 'block' } } />,
 		},
 	} );
-	const subtitle = translate(
-		"Let's figure out your next steps for {{strong}}%(from)s{{/strong}} together.",
+	const subHeaderText = translate(
+		"Let's figure out your next steps for {{strong}}%(from)s{{/strong}} together. Please complete the form below.",
 		{
 			args: {
 				from: extractDomainFromUrl( from ),
@@ -39,12 +39,6 @@ const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigatio
 				strong: <strong />,
 			},
 		}
-	);
-	const subHeaderText = (
-		<>
-			<p>{ subtitle }</p>
-			<p>{ translate( 'Please complete the form below.' ) }</p>
-		</>
 	);
 
 	const onSubmit = () => {

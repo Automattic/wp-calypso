@@ -4,7 +4,10 @@ import { EditorComponent } from './editor-component';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
-	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
+	// This selector was updated to the capitalized label in Gutenberg v19.5.0. Once that is released, we should be able to remove the old selector ("Close block inserter").
+	// See: https://github.com/WordPress/gutenberg/pull/65983
+	closeBlockInserterButton:
+		'button[aria-label="Close Block Inserter"], button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
 	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
 };

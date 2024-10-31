@@ -7,9 +7,6 @@ import useLastMessageVisibility from './useLastMessageVisibility';
 
 import './style.scss';
 
-export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
-export const ODIE_THUMBS_UP_RATING_VALUE = 1;
-
 export const OdieAssistant: React.FC = () => {
 	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -37,3 +34,4 @@ export { useOdieAssistantContext } from './context';
 export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
 export { isOdieAllowedBot } from './utils/is-odie-allowed-bot';
+export type { ZendeskConversation, ZendeskMessage } from './types/index';

@@ -11,18 +11,37 @@ interface GoToImporterParams {
 	platform: ImporterPlatform;
 	siteId: string;
 	siteSlug: string;
+	/**
+	 * @deprecated use backToFlow instead
+	 */
 	backToStep?: StepperStep;
+	backToFlow?: string;
 	migrateEntireSiteStep?: StepperStep;
 	replaceHistory?: boolean;
+	from?: string | null;
+	ref?: string;
 }
 
+/**
+ * @deprecated generate the full flow URL in your flow instead
+ * @see backToFlow property
+ */
 const getFlowPath = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
+
 const goTo = ( path: string, replaceHistory: boolean ) => {
 	if ( replaceHistory ) {
 		return window.location.replace( path );
 	}
 
 	return window.location.assign( path );
+};
+
+const getBackToFlowFromStep = ( backToStep?: StepperStep ) => {
+	if ( backToStep ) {
+		return getFlowPath( backToStep.slug );
+	}
+
+	return undefined;
 };
 
 export const goToImporter = ( {
@@ -32,12 +51,21 @@ export const goToImporter = ( {
 	backToStep,
 	migrateEntireSiteStep,
 	replaceHistory = false,
+	backToFlow,
+	from,
+	ref,
 }: GoToImporterParams ) => {
-	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
+	const backToFlowURL = backToFlow || getBackToFlowFromStep( backToStep );
 	const customizedActionGoToFlow = migrateEntireSiteStep
 		? getFlowPath( migrateEntireSiteStep?.slug )
 		: undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, customizedActionGoToFlow );
+	const path = getFinalImporterUrl(
+		siteSlug,
+		from || '',
+		platform,
+		backToFlowURL,
+		customizedActionGoToFlow
+	);
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );
@@ -47,7 +75,7 @@ export const goToImporter = ( {
 		{
 			siteId,
 			siteSlug,
-			ref: MIGRATION_FLOW,
+			ref: ref,
 			...( platform === 'wordpress' ? { option: 'content' } : {} ),
 		},
 		`/setup/${ SITE_SETUP_FLOW }/${ path }`

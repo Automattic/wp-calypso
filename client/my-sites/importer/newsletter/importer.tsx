@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
@@ -38,10 +39,14 @@ type NewsletterImporterProps = {
 
 function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	if ( urlData?.meta?.title && urlData?.platform === engine ) {
-		return `Import ${ urlData.meta.title }`;
+		return sprintf(
+			// translators: %s is the site name
+			__( 'Import %s' ),
+			urlData.meta.title
+		);
 	}
 
-	return 'Import your newsletter';
+	return __( 'Import your newsletter' );
 }
 
 function updatePathToContent( path: string ) {

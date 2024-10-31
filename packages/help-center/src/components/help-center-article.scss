@@ -111,17 +111,20 @@
 				}
 			}
 
-			p, ol.wp-block-list {
+			p {
 				font-size: $font-body-small;
 				color: var(--color-neutral-80);
 			}
 
-			ul {
+			ul, ol.wp-block-list {
 				font-size: $font-body-small;
 				color: var(--color-neutral-80);
-				list-style-type: circle;
-				list-style-position: inside;
+				list-style-position: outside;
 				margin: 0 0 1.5em 1.5em;
+			}
+
+			ul {
+				list-style-type: circle;
 			}
 
 			span.noticon.noticon-star {

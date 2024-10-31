@@ -5,6 +5,7 @@ import {
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -122,6 +123,27 @@ export default function ThemeTierPartnerBadge() {
 		</>
 	);
 
+	const partnerTooltipContent = (
+		<>
+			<div data-testid="upsell-message">
+				{ translate(
+					'{{a}}Partner themes{{/a}} are developed by third-party creators who have made their themes available to purchase and install directly through your WordPress.com dashboard.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/themes/partner-themes/' ) }
+									target="_blank"
+									rel="noreferrer"
+								></a>
+							),
+						},
+					}
+				) }
+			</div>
+		</>
+	);
+
 	return (
 		<>
 			{ showUpgradeBadge && ( ! isPartnerThemePurchased || ! isThemeAllowed ) && (
@@ -145,7 +167,9 @@ export default function ThemeTierPartnerBadge() {
 				isClickable={ false }
 				labelText={ translate( 'Partner' ) }
 				shouldHideIcon
-				shouldHideTooltip
+				tooltipClassName="theme-tier-badge-tooltip"
+				tooltipContent={ partnerTooltipContent }
+				tooltipPosition="top"
 			/>
 		</>
 	);

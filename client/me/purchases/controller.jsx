@@ -79,8 +79,6 @@ export function cancelPurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
 				<Main wideLayout className="purchases__cancel">
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
@@ -105,8 +103,6 @@ export function confirmCancelDomain( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.confirmCancelDomain }>
 				<Main wideLayout className="purchases__cancel-domain confirm-cancel-domain">
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-
 					<ConfirmCancelDomain
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }

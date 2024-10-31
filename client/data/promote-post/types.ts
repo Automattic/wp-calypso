@@ -105,5 +105,9 @@ export type CampaignQueryResult = {
 	total_pages: number;
 	page: number;
 	has_more_pages: boolean;
+	campaigns_stats: {
+		total_impressions: number;
+		total_clicks: number;
+	};
 	warnings?: PromotePostWarning[];
 };

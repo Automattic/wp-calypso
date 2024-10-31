@@ -7,6 +7,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
@@ -22,6 +23,7 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
+				<PressableUsageLimitNotice />
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>
 					<Actions className="a4a-overview__header-actions">

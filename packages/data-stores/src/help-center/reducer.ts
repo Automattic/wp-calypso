@@ -49,6 +49,14 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
+const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
+			return action.isChatLoaded;
+	}
+	return state;
+};
+
 const subject: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -131,6 +139,7 @@ const reducer = combineReducers( {
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,
 	isMinimized,
+	isChatLoaded,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,

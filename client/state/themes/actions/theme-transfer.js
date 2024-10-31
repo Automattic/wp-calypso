@@ -103,10 +103,14 @@ export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', c
 
 				return dispatch( pollThemeTransferStatus( siteId, transfer_id, 3000, 180000, !! file ) );
 			} )
-			.then( () =>
-				// Get the latest site data after the atomic transfer.
-				dispatch( requestSite( siteId ) )
-			)
+			.then( () => {
+				// Get the latest site data after the atomic transfer. The request
+				// is intentionally delayed because the site endpoint can return
+				// stale data immediately after the transfer.
+				setTimeout( () => {
+					dispatch( requestSite( siteId ) );
+				}, 1000 );
+			} )
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
 			} );

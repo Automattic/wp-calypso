@@ -10,7 +10,7 @@ const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
 	editorYouTubeIframe: 'iframe[title="Embedded content from www.youtube.com"]',
-	publishedYouTubeIframe: `iframe.youtube-player`,
+	publishedYouTubeIframe: '',
 };
 
 /**
@@ -26,10 +26,10 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 */
 	constructor( configurationData: ConfigurationData ) {
 		this.configurationData = configurationData;
+		selectors.publishedYouTubeIframe = `iframe[title="${ this.configurationData.expectedVideoTitle }"]`;
 	}
 
 	blockSidebarName = 'YouTube Embed';
-	blockTestFallBackName = 'YouTube';
 	blockEditorSelector = blockParentSelector;
 
 	/**

@@ -81,6 +81,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_source_slug',
 	'is_difm_lite_in_progress',
 	'site_intent',
+	'site_partner_bundle',
 	'theme_slug',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',

@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -66,14 +67,6 @@ export const addVideoPressSignupClassName = () => {
 	document.body.classList.add( 'is-videopress-signup' );
 };
 
-export const addVideoPressTvSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-tv-signup' );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -110,10 +103,6 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.query.flow === 'videopress-tv' ) {
-			addVideoPressTvSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'videopress' ) ) {
@@ -225,6 +214,27 @@ export default {
 		}
 
 		store.set( 'signup-locale', localeFromParams );
+
+		const isOnboardingFlow = flowName === 'onboarding';
+		if ( isOnboardingFlow ) {
+			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_stepper_flow_2'
+			);
+			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
+				window.location =
+					getStepUrl(
+						flowName,
+						getStepName( context.params ),
+						getStepSectionName( context.params ),
+						localeFromParams ?? localeFromStore,
+						null,
+						'/setup'
+					) +
+					( context.querystring ? '?' + context.querystring : '' ) +
+					( context.hashstring ? '#' + context.hashstring : '' );
+				return;
+			}
+		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
 		// // See: 1113-gh-Automattic/experimentation-platform for details.

@@ -47,7 +47,7 @@ $blueberry-color: #3858e9;
 		justify-content: center;
 		gap: 64px;
 		min-height: 700px;
-		width: 50%;
+		max-width: 560px;
 
 		.main-message {
 			display: flex;
@@ -63,6 +63,8 @@ $blueberry-color: #3858e9;
 				padding: 16px;
 				padding-left: 52px;
 				position: relative;
+				max-width: 528px;
+				box-sizing: border-box;
 
 				.gridicon {
 					position: absolute;
@@ -84,8 +86,11 @@ $blueberry-color: #3858e9;
 
 			.message {
 				font-size: $font-body;
-				font-weight: 500;
 				line-height: $font-title-medium;
+
+				strong {
+					font-weight: 500;
+				}
 			}
 
 			.cta-button {

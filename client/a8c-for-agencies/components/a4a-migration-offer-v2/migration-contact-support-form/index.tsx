@@ -107,7 +107,14 @@ export default function MigrationContactSupportForm( { show, onClose }: Props ) 
 			} )
 		);
 
-		submit( { message, name, email, product, no_of_sites: site } );
+		submit( {
+			message,
+			name,
+			email,
+			product,
+			no_of_sites: site,
+			tags: [ 'a4a_form_dash_migration' ],
+		} );
 	}, [ hasCompletedForm, dispatch, message, submit, name, email, product, site ] );
 
 	useEffect( () => {

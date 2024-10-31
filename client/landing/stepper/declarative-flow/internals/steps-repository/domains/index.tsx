@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	StepContainer,
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
@@ -11,6 +10,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	isSiteAssemblerFlow,
+	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -129,7 +129,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			changeSiteDomainIfNeeded( suggestion?.domain_name );
 		}
 
-		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
+		submit?.( {
+			freeDomain: suggestion?.is_free,
+			domainName: suggestion?.domain_name,
+			productSlug: suggestion?.product_slug,
+		} );
 	};
 
 	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
@@ -175,7 +179,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					),
 					decideLaterComponent
 				);
-			case LINK_IN_BIO_FLOW:
 			case LINK_IN_BIO_TLD_FLOW:
 				return createInterpolateElement(
 					__(
@@ -188,6 +191,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case DOMAIN_UPSELL_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
 			case HUNDRED_YEAR_PLAN_FLOW:
+			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
 				return createInterpolateElement(
@@ -208,7 +212,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
-		if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
 			return __( 'Find the perfect domain' );
 		}
 
@@ -298,7 +302,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		return ! isCopySiteFlow( flow );
 	};
 
-	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
+	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
+		? HundredYearPlanStepWrapper
+		: StepContainer;
 
 	return (
 		<Container
@@ -315,8 +321,16 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"
-					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : undefined }
+					align={
+						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
+							? 'center'
+							: 'left'
+					}
+					subHeaderAlign={
+						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
+							? 'center'
+							: undefined
+					}
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

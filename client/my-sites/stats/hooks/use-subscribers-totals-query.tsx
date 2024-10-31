@@ -10,6 +10,8 @@ const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ):
 		{
 			type: 'all',
 			filter_admin: filterAdmin ? true : false,
+			// Only one-page results adjust visible subscribers with deleted accounts to align with the subscriber list.
+			max: 10,
 		}
 	);
 };

@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,6 +12,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimeHighlightsSection from '../../sections/all-time-highlights-section';
@@ -26,6 +29,19 @@ const StatsInsights = ( props ) => {
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
+	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
+	const reduxDispatch = useDispatch();
+
+	// Dispatch the plan usage data to the Redux store for monthly views check in shouldGateStats.
+	useEffect( () => {
+		if ( ! isPending ) {
+			reduxDispatch( {
+				type: STATS_PLAN_USAGE_RECEIVE,
+				siteId,
+				data: usageInfo,
+			} );
+		}
+	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',

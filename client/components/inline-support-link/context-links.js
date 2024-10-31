@@ -244,11 +244,15 @@ const contextLinks = {
 		post_id: 243475,
 	},
 	privacy: {
-		link: 'https://wordpress.com/support/settings/privacy-settings/',
+		link: 'https://wordpress.com/support/privacy-settings/',
 		post_id: 1507,
 	},
 	'privacy-preview-link': {
 		link: 'https://wordpress.com/support/settings/privacy-settings/#preview-link',
+		post_id: 1507,
+	},
+	'privacy-prevent-third-party-sharing': {
+		link: 'https://wordpress.com/support/privacy-settings/make-your-website-public/#prevent-third-party-sharing',
 		post_id: 1507,
 	},
 	'primary-site-address': {
@@ -299,6 +303,10 @@ const contextLinks = {
 	tags: {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
+	},
+	'tax-exempt-customers': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#other-tax-exempt-customers',
+		post_id: 234670,
 	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',

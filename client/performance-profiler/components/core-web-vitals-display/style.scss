@@ -8,58 +8,12 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-}
 
-.core-web-vitals-display__ranges {
-	display: flex;
-	flex-direction: row;
-	justify-content: start;
-	margin-bottom: 24px;
-	column-gap: 24px;
-
-	.range {
+	&.is-desktop {
 		display: flex;
 		flex-direction: row;
-		column-gap: 6px;
-		font-family: $font-sf-pro-display;
-
-		& > svg {
-			padding-top: 4px;
-		}
-
-		.range-heading {
-			font-size: $font-body-small;
-			font-weight: 500;
-			line-height: 20px;
-		}
-
-		.range-subheading {
-			font-size: $font-body-extra-small;
-			line-height: 20px;
-		}
-	}
-}
-
-.core-web-vitals-display__details {
-	border: 1px solid var(--studio-gray-5);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 0 0 6px 6px;
-	padding: 24px;
-	display: flex;
-	flex-direction: row;
-	column-gap: 48px;
-	min-height: 360px;
-	flex-wrap: wrap;
-	margin-top: -1px;
-
-	& > div {
-		flex-grow: 1;
-		flex-basis: 0;
-		min-width: 300px;
-	}
-
-	& > p {
-		min-height: 80px;
+		width: 100%;
+		gap: 16px;
 	}
 }
 
@@ -79,9 +33,10 @@ $blueberry-color: #3858e9;
 }
 
 .core-web-vitals-display__description p {
-	margin-top: 15px;
+	margin-top: 0;
+	margin-bottom: 24px;
+	max-width: 496px;
 	line-height: 24px;
-	margin-bottom: 32px;
 }
 
 .core-web-vitals-display__description a {
@@ -112,14 +67,6 @@ $blueberry-color: #3858e9;
 	}
 }
 
-//v2
-.core-web-vitals-display-v2 {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-	gap: 16px;
-}
-
 .core-web-vitals-display__metric {
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header;
@@ -145,7 +92,7 @@ $blueberry-color: #3858e9;
 	}
 }
 
-.core-web-vitals-display__details-v2 {
+.core-web-vitals-display__details {
 	border: 1px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
@@ -178,14 +125,17 @@ $blueberry-color: #3858e9;
 	display: flex;
 	gap: 24px;
 
+	.header {
+		flex: 1;
+	}
+
 	@media (max-width: $break-large) {
 		flex-direction: column;
 		gap: 0;
 	}
 }
 
-
-.core-web-vitals-display-v2__ranges {
+.core-web-vitals-display__ranges {
 	display: flex;
 	flex-direction: row;
 	justify-content: start;
@@ -217,5 +167,15 @@ $blueberry-color: #3858e9;
 	@media (max-width: $break-mobile) {
 		flex-direction: column;
 		gap: 8px;
+	}
+}
+
+.metric-tab-bar__tab-metric.performance-score {
+	&.tab {
+		margin-top: 16px;
+	}
+
+	&.accordion {
+		margin-top: 6px;
 	}
 }

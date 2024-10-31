@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { Fragment } from 'react';
 import Markdown from 'react-markdown';
 import {
 	FullPageScreenshot,
@@ -27,8 +28,8 @@ export function InsightTable( {
 			</thead>
 			<tbody>
 				{ items.map( ( item, index ) => (
-					<>
-						<tr key={ `tr-${ index }` }>
+					<Fragment key={ `tr-${ index }` }>
+						<tr>
 							{ headings.map( ( heading ) => (
 								<td key={ `td-${ index }-${ heading.key }` }>
 									<Cell
@@ -46,7 +47,7 @@ export function InsightTable( {
 								key={ `subrows-${ index }` }
 							/>
 						) }
-					</>
+					</Fragment>
 				) ) }
 			</tbody>
 		</table>

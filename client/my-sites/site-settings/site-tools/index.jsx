@@ -178,7 +178,10 @@ export default compose( [
 				sourceSlug: siteSlug,
 			} );
 
-			const showStartSiteTransfer = canCurrentUserStartSiteOwnerTransfer( state, siteId );
+			const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
+
+			const showStartSiteTransfer =
+				! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
 			return {
 				site,

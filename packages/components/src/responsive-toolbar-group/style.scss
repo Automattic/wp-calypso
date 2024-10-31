@@ -34,6 +34,10 @@
 				background: var(--studio-gray-0);
 			}
 		}
+
+		.responsive-toolbar-group__button-item.is-pressed:hover {
+			color: var(--color-text-inverted);
+		}
 	}
 
 	.is-visible {

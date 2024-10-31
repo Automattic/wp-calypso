@@ -27,7 +27,7 @@ const HundredYearPlanFlow: Flow = {
 			[]
 		);
 
-		const isVipFeatureEnabled = config.isEnabled( '100year/vip' );
+		const isVipFeatureEnabled = config.isEnabled( '100-year-plan/vip' );
 		const hasSite = !! currentUser?.site_count;
 
 		const steps = [
@@ -38,11 +38,6 @@ const HundredYearPlanFlow: Flow = {
 							slug: 'diy-or-difm',
 							asyncComponent: () =>
 								import( './internals/steps-repository/hundred-year-plan-diy-or-difm' ),
-						},
-						{
-							slug: 'schedule-appointment',
-							asyncComponent: () =>
-								import( './internals/steps-repository/hundred-year-plan-schedule-appointment' ),
 						},
 						{
 							slug: 'thank-you',
@@ -127,11 +122,9 @@ const HundredYearPlanFlow: Flow = {
 				case 'diy-or-difm':
 					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
 						return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
+					} else if ( providedDependencies?.nextStep === 'thank-you' ) {
+						return navigate( 'thank-you' );
 					}
-					// TODO: add VIP flow
-					return navigate( 'schedule-appointment' );
-				case 'schedule-appointment':
-					return navigate( 'thank-you' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'setup' );

@@ -26,7 +26,8 @@ const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
 		render={ ( { field } ) => {
 			return (
 				<CheckboxControl
-					className="site-migration-already-wpcom__form-checkbox-control"
+					className="already-wpcom__form-checkbox-control"
+					disabled={ field.disabled }
 					onChange={ ( isChecked ) => {
 						if ( isChecked ) {
 							field.onChange( [ ...field.value, value ] );
@@ -58,21 +59,23 @@ const OtherDetails = ( { label, control, error }: OtherDetailsProps ) => {
 			rules={ { required: translate( 'Please, provide more details.' ) } }
 			render={ ( { field } ) => {
 				return (
-					<div className="site-migration-already-wpcom__form-textarea-container">
+					<div className="already-wpcom__form-textarea-container">
 						<FormLabel htmlFor="otherDetails"> { label } </FormLabel>
 						<FormTextArea
 							id="otherDetails"
+							disabled={ field.disabled }
 							value={ field.value }
 							onChange={ field.onChange }
+							onBlur={ field.onBlur }
 							placeholder={ translate(
 								'Share any other details that will help us figure out what we need to do next.'
 							) }
-							className={ clsx( 'site-migration-already-wpcom__form-textarea', {
-								'site-migration-already-wpcom__form-textarea--error': error,
+							className={ clsx( 'already-wpcom__form-textarea', {
+								'already-wpcom__form-textarea--error': error,
 							} ) }
 						/>
 						{ error && error.message && (
-							<p className="site-migration-already-wpcom__form-error">{ error.message }</p>
+							<p className="already-wpcom__form-error">{ error.message }</p>
 						) }
 					</div>
 				);
@@ -90,25 +93,40 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const siteSlug = useSiteSlugParam() ?? '';
 
 	const {
+		mutate: createTicket,
+		isSuccess,
+		error,
+		isPending,
+	} = useMigrationTicketMutation( siteSlug );
+
+	const {
 		control,
 		handleSubmit,
 		watch,
 		setError,
 		formState: { errors },
 	} = useForm< TicketMigrationData >( {
+		disabled: isPending,
 		defaultValues: {
 			intents: [],
 			otherDetails: '',
 		},
 	} );
+	const intents = watch( 'intents' );
+	const isOtherChecked = intents.includes( 'other' );
+	const errorMessage = errors?.root?.message ?? errors?.intents?.message;
 
-	const { mutate: createTicket, isSuccess } = useMigrationTicketMutation( siteSlug );
+	useEffect( () => {
+		if ( error ) {
+			setError( 'root', {
+				type: 'manual',
+				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+		}
+	}, [ error, setError, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			if ( process.env.NODE_ENV !== 'development' ) {
-				alert( 'Success!' );
-			}
 			onComplete();
 		}
 	}, [ isSuccess, onComplete ] );
@@ -119,6 +137,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 				type: 'manual',
 				message: translate( 'Please select an option.' ),
 			} );
+			return;
 		}
 		createTicket( {
 			intents: data.intents,
@@ -126,28 +145,25 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 		} );
 	} );
 
-	const intents = watch( 'intents' );
-	const isOtherChecked = intents.includes( 'other' );
-
 	return (
-		<div className="site-migration-already-wpcom__form-container">
-			<form className="site-migration-already-wpcom__form" onSubmit={ onSubmit }>
-				{ errors.intents && (
+		<div className="already-wpcom__form-container">
+			<form className="already-wpcom__form" onSubmit={ onSubmit }>
+				{ errorMessage && (
 					<Notice
 						showIcon={ false }
 						status="is-warning"
-						text={ translate( 'Please select an option.' ) }
+						text={ errorMessage }
 						showDismiss={ false }
-						className="site-migration-already-wpcom__form-error-notice"
+						className="already-wpcom__form-error-notice"
 					/>
 				) }
 				<div
-					className={ clsx( 'site-migration-already-wpcom__form-content', {
-						'site-migration-already-wpcom__form-content--error': errors.intents,
+					className={ clsx( 'already-wpcom__form-content', {
+						'already-wpcom__form-content--error': errors.intents,
 					} ) }
 				>
-					<div className="site-migration-already-wpcom__form-title-container">
-						<h4 className="site-migration-already-wpcom__form-title">
+					<div className="already-wpcom__form-title-container">
+						<h4 className="already-wpcom__form-title">
 							{ translate( 'What brought you here today?' ) }
 						</h4>
 					</div>
@@ -178,7 +194,9 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						/>
 					) }
 				</div>
-				<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+				<NextButton disabled={ isPending } type="submit">
+					{ translate( 'Continue' ) }
+				</NextButton>
 			</form>
 		</div>
 	);

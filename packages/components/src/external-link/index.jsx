@@ -36,7 +36,15 @@ class ExternalLink extends Component {
 		} );
 
 		const props = {
-			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName', 'iconComponent' ),
+			...omit(
+				this.props,
+				'icon',
+				'iconSize',
+				'showIconFirst',
+				'iconClassName',
+				'iconComponent',
+				'localizeUrl'
+			),
 			className: classes,
 			rel: 'external',
 		};

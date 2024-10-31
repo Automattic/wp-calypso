@@ -211,6 +211,7 @@ export const SiteLogs = ( {
 				requestStatus={ requestStatus }
 			>
 				<ToggleControl
+					__nextHasNoMarginBottom
 					className="site-logs__auto-refresh"
 					label={ __( 'Auto-refresh' ) }
 					checked={ autoRefresh }

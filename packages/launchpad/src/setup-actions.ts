@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -15,6 +16,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'site_monitoring_page',
 	'front_page_updated',
 	'post_sharing_enabled',
+	'mobile_app_installed',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -110,7 +112,6 @@ export const setUpActionsForTasks = ( {
 
 				case 'site_launched':
 				case 'blog_launched':
-				case 'videopress_launched':
 				case 'link_in_bio_launched':
 					action = async () => {
 						await wpcomRequest( {
@@ -119,6 +120,29 @@ export const setUpActionsForTasks = ( {
 							method: 'post',
 						} );
 						onSiteLaunched?.();
+					};
+					useCalypsoPath = false;
+					break;
+
+				case 'review_site':
+					action = () => {
+						// redirects to the site slug home page in a new tab
+						window.open( `https://${ siteSlug }`, '_blank' );
+						updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { [ task.id ]: true },
+						} );
+					};
+					useCalypsoPath = false;
+					break;
+
+				case 'domain_dns_mapped':
+					action = () => {
+						window.open(
+							localizeUrl(
+								`https://wordpress.com/support/domains/connect-existing-domain/#step-2-connect-your-domain`
+							),
+							'_blank'
+						);
 					};
 					useCalypsoPath = false;
 					break;

@@ -16,6 +16,7 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import {
 	getPages,
+	getPostTypeRecords,
 	inIframe,
 	isEditorReady,
 	isEditorReadyWithBlocks,
@@ -25,27 +26,45 @@ import {
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
-let addedListener = false;
+let addedClickListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-	if ( ! addedListener ) {
+	if ( ! addedClickListener ) {
 		document
 			.querySelector( 'body.is-iframed' )
 			?.addEventListener( 'click', triggerOverrideHandler );
-		addedListener = true;
+		addedClickListener = true;
 	}
 }
 
+const enterOverrides = {};
+let addedEnterListener = false;
 function addCommandsInputListener( selector, cb ) {
-	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
-		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
-		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+	enterOverrides[ selector ] = cb;
 
-		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
-			cb( e );
-		}
-	} );
+	if ( ! addedEnterListener ) {
+		document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+			const isInputActive = document.activeElement?.matches(
+				'.commands-command-menu__header input'
+			);
+			const selectedCommand = document.querySelector( '[data-selected=true]' );
+
+			if ( e.key === 'Enter' && isInputActive && !! selectedCommand ) {
+				const matchingSelector = Object.keys( enterOverrides ).find( ( _selector ) => {
+					return selectedCommand.matches( _selector );
+				} );
+
+				if ( matchingSelector ) {
+					const callback = enterOverrides[ matchingSelector ];
+
+					callback?.( e );
+				}
+			}
+		} );
+
+		addedEnterListener = true;
+	}
 }
 
 /**
@@ -1087,6 +1106,34 @@ function handleAddPost( calypsoPort ) {
 	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
+async function handleWpTemplateCommands( calypsoPort ) {
+	const callback = ( e, postType, postId ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'wpAdminRedirect',
+			payload: {
+				destinationUrl: `/wp-admin/site-editor.php?postType=${ postType }&postId=${ encodeURIComponent(
+					postId
+				) }&canvas=edit`,
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	const entityNames = [ 'wp_template', 'wp_template_part' ];
+
+	entityNames.forEach( async ( entityName ) => {
+		const records = await getPostTypeRecords( entityName );
+
+		records.forEach( ( record ) => {
+			const selector = `[data-value$="${ record.id }"]`;
+			addEditorListener( selector, ( e ) => callback( e, entityName, record.id ) );
+			addCommandsInputListener( selector, ( e ) => callback( e, entityName, record.id ) );
+		} );
+	} );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1193,6 +1240,8 @@ function initPort( message ) {
 		handleAddPage( calypsoPort );
 
 		handleAddPost( calypsoPort );
+
+		handleWpTemplateCommands( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

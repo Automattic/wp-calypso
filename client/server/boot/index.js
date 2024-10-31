@@ -26,7 +26,11 @@ export default function setup() {
 	app.use( loggerMiddleware() );
 
 	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
-		app.use( require( 'calypso/server/middleware/profiler' )() );
+		// TODO: Re-enable this middleware once `v8-profiler-next` adds support for Node.js 22
+		// app.use( require( 'calypso/server/middleware/profiler' )() );
+		console.warn(
+			'Server profiling is temporarily disabled until `v8-profiler-next` adds support for Node.js 22.'
+		);
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {

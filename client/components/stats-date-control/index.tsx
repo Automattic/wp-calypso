@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
 import { RefObject } from 'react';
@@ -17,7 +18,7 @@ const COMPONENT_CLASS_NAME = 'stats-date-control';
 type EventNameKey =
 	| 'last_7_days'
 	| 'last_30_days'
-	| 'last_90_days'
+	| 'last_3_months'
 	| 'last_year'
 	| 'custom_date_range'
 	| 'apply_button'
@@ -32,22 +33,22 @@ interface EventNames {
 // Define the tracking event names object. Hardcoding event names ensures consistency, searchability, and prevents errors per Tracks naming conventions.
 const eventNames: EventNames = {
 	jetpack_odyssey: {
-		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_click',
-		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_click',
-		last_90_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_90_days_click',
-		last_year: 'jetpack_odyssey_stats_date_picker_shortcut_last_year_click',
-		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_click',
-		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_click',
-		trigger_button: 'jetpack_odyssey_stats_date_picker_trigger_click',
+		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_clicked',
+		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_clicked',
+		last_3_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_months_clicked',
+		last_year: 'jetpack_odyssey_stats_date_picker_shortcut_last_year_clicked',
+		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_clicked',
+		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_clicked',
+		trigger_button: 'jetpack_odyssey_stats_date_picker_opened',
 	},
 	calypso: {
-		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_click',
-		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_click',
-		last_90_days: 'calypso_stats_date_picker_shortcut_last_90_days_click',
-		last_year: 'calypso_stats_date_picker_shortcut_last_year_click',
-		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_click',
-		apply_button: 'calypso_stats_date_picker_apply_button_click',
-		trigger_button: 'calypso_stats_date_picker_trigger_click',
+		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_clicked',
+		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_clicked',
+		last_3_months: 'calypso_stats_date_picker_shortcut_last_3_months_clicked',
+		last_year: 'calypso_stats_date_picker_shortcut_last_year_clicked',
+		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_clicked',
+		apply_button: 'calypso_stats_date_picker_apply_button_clicked',
+		trigger_button: 'calypso_stats_date_picker_opened',
 	},
 };
 
@@ -64,6 +65,7 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
@@ -166,17 +168,22 @@ const StatsDateControl = ( {
 					buttonRef: RefObject< typeof Button >;
 				} ) => {
 					return (
-						<Button
-							onClick={ () => {
-								const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
-								onTriggerClick();
-							} }
-							ref={ buttonRef }
+						<Tooltip
+							text={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+							placement="bottom-end"
 						>
-							{ getButtonLabel() }
-							<Icon className="gridicon" icon={ calendar } />
-						</Button>
+							<Button
+								onClick={ () => {
+									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+									recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+									onTriggerClick();
+								} }
+								ref={ buttonRef }
+							>
+								{ getButtonLabel() }
+								<Icon className="gridicon" icon={ calendar } />
+							</Button>
+						</Tooltip>
 					);
 				} }
 				rootClass="stats-date-control-picker"

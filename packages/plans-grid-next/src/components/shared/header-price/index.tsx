@@ -50,48 +50,41 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
-		const introOfferPrice =
-			introOffer.intervalUnit === 'year'
-				? parseFloat( ( introOffer.rawPrice / ( introOffer.intervalCount * 12 ) ).toFixed( 2 ) )
-				: introOffer.rawPrice;
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
-					<div className="plans-grid-next-header-price__badge is-intro-offer">
-						{ translate( 'Limited Time Offer' ) }
+					<div className="plans-grid-next-header-price__badge">
+						{ translate( 'Special Offer' ) }
 					</div>
 				) }
-				{ isLargeCurrency ? (
-					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ 0 }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ introOfferPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit={ false }
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							discounted
-						/>
-					</div>
-				) : (
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ introOfferPrice }
+						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
-						isSmallestUnit={ false }
+						isLargeCurrency
+						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
 					/>
-				) }
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={
+							typeof discountedPrice.monthly === 'number'
+								? discountedPrice.monthly
+								: introOffer.rawPrice.monthly
+						}
+						displayPerMonthNotation={ false }
+						isLargeCurrency
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
+					/>
+				</div>
 			</div>
 		);
 	}

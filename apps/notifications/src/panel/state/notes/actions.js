@@ -5,9 +5,10 @@ export const addNotes = ( notes ) => ( {
 	notes,
 } );
 
-export const removeNotes = ( noteIds ) => ( {
+export const removeNotes = ( noteIds, isComment = false ) => ( {
 	type: types.NOTES_REMOVE,
 	noteIds,
+	isComment,
 } );
 
 export const noteAction = ( action ) => ( noteId ) => ( {

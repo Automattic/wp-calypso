@@ -10,15 +10,17 @@
 
 		li {
 			color: var(--studio-gray-60);
+			margin-bottom: 8px;
+			display: flex;
 		}
 
 		svg {
 			position: relative;
-			top: 8px;
 			padding: 5px !important;
-			margin-right: 5px !important;
+			margin-right: 8px !important;
 			background-color: var(--studio-gray-5);
 			border-radius: 100%;
+			min-width: 18px;
 		}
 	}
 
@@ -47,3 +49,40 @@
 		}
 	}
 }
+
+.calendly-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 1rem;
+
+	// match Calendly breakpoints
+	@media (max-width: 682px) {
+		padding: 0;
+	}
+	@media (max-width: 649px) {
+		padding: 4rem 0 0 0;
+	}
+
+	.calendly-popup {
+		height: 100%;
+
+	}
+	.calendly-popup-content {
+		height: 100%;
+	}
+	.calendly-popup-close {
+		position: absolute;
+		top: 1.5rem;
+		right: 2rem;
+		width: 19px;
+		height: 19px;
+		cursor: pointer;
+		background: url(calypso/assets/images/icons/close-icon.svg) no-repeat;
+		background-size: contain;
+	}
+}
+

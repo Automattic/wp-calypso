@@ -546,6 +546,11 @@ $button-padding: 8px 32px;
 			color: var(--jp-black);
 			font-weight: normal;
 		}
+
+		&.connection-notice {
+			margin-bottom: 32px;
+			text-align: center;
+		}
 	}
 
 	.stats-purchase-wizard__slider {

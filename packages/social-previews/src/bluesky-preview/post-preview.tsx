@@ -9,14 +9,14 @@ import type { BlueskyPreviewProps } from './types';
 import './styles.scss';
 
 export const BlueskyPostPreview: React.FC< BlueskyPreviewProps > = ( props ) => {
-	const { user, media } = props;
+	const { user, media, appendUrl } = props;
 
 	return (
 		<div className="bluesky-preview__post">
 			<BlueskyPostSidebar user={ user } />
 			<div>
 				<BlueskyPostHeader user={ user } />
-				<BlueskyPostBody { ...props }>
+				<BlueskyPostBody { ...props } appendUrl={ appendUrl ?? Boolean( media?.length ) }>
 					{ media?.length ? (
 						<div className={ clsx( 'bluesky-preview__media', { 'as-grid': media.length > 1 } ) }>
 							{ media.map( ( mediaItem, index ) => (

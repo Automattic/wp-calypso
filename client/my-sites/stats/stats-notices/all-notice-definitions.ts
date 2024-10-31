@@ -111,6 +111,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isWpcom,
 			isCommercialOwned,
 			isSiteJetpackNotAtomic,
+			isNearLimit,
 		}: StatsNoticeProps ) => {
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showTierUpgradeNoticeOnOdyssey = isOdysseyStats;
@@ -119,7 +120,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			return !! (
 				! isWpcom &&
 				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
-				isCommercialOwned
+				isCommercialOwned &&
+				isNearLimit
 			);
 		},
 		disabled: false,

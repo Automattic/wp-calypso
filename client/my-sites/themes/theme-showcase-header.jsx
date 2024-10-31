@@ -82,25 +82,27 @@ export default function ThemeShowcaseHeader( {
 		<>
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ isLoggedIn ? (
-				<NavigationHeader
-					compactBreadcrumb={ false }
-					navigationItems={ [] }
-					mobileItem={ null }
-					title={ translate( 'Themes' ) }
-					subtitle={ translate(
-						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-							},
-						}
-					) }
-				>
-					{ showInstallThemeButton && <InstallThemeButton /> }
-					{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
-						<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
-					) }
-				</NavigationHeader>
+				<div className="themes__header-navigation-container">
+					<NavigationHeader
+						compactBreadcrumb={ false }
+						navigationItems={ [] }
+						mobileItem={ null }
+						title={ translate( 'Themes' ) }
+						subtitle={ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					>
+						{ showInstallThemeButton && <InstallThemeButton /> }
+						{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
+							<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
+						) }
+					</NavigationHeader>
+				</div>
 			) : (
 				<div className="themes__header-logged-out">
 					<div className="themes__page-heading">

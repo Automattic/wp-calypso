@@ -32,7 +32,7 @@ const useLastMessageVisibility = (
 					if ( debounceTimeoutIdRef.current ) {
 						clearTimeout( debounceTimeoutIdRef.current );
 					}
-					debounceTimeoutIdRef.current = setTimeout( () => {
+					debounceTimeoutIdRef.current = window.setTimeout( () => {
 						setLastMessageInView( entry.isIntersecting && messageCount > 2 );
 					}, 500 );
 				}

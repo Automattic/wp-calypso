@@ -182,6 +182,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	streetNumber?: string;
 	phoneNumber?: string;
 	document?: string;
+	isForBusiness?: boolean;
 	deviceId?: string;
 	successUrl?: string;
 	cancelUrl?: string;
@@ -348,14 +349,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Bancontact'
 	| 'WPCOM_Billing_Stripe_Ideal'
 	| 'WPCOM_Billing_Stripe_P24'
-	| 'WPCOM_Billing_Stripe_Source_Alipay'
-	| 'WPCOM_Billing_Stripe_Source_Bancontact'
-	| 'WPCOM_Billing_Stripe_Source_Eps'
-	| 'WPCOM_Billing_Stripe_Source_Ideal'
-	| 'WPCOM_Billing_Stripe_Source_P24'
-	| 'WPCOM_Billing_Stripe_Source_Sofort'
-	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
-	| 'WPCOM_Billing_Stripe_Source_Wechat'
 	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
@@ -564,6 +557,7 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	is_for_business?: boolean;
 };
 
 export type ContactValidationResponseMessagesExtra = {
@@ -582,6 +576,7 @@ export type ContactValidationResponseMessagesExtra = {
 		trademark_number?: string[];
 		siren_siret?: string[];
 	};
+	is_for_business?: boolean;
 };
 
 /**

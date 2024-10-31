@@ -98,7 +98,7 @@ export const metricValuations = {
 };
 
 // bad values are only needed as a maximum value on the scales
-export const metricsTresholds = {
+export const metricsThresholds = {
 	lcp: {
 		good: 2500,
 		needsImprovement: 4000,
@@ -146,7 +146,7 @@ export const getPerformanceStatus = ( value: number ) => {
 };
 
 export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
-	const { good, needsImprovement } = metricsTresholds[ metric ];
+	const { good, needsImprovement } = metricsThresholds[ metric ];
 
 	if ( metric === 'overall' ) {
 		return getPerformanceStatus( value );

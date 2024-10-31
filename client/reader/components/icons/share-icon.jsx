@@ -2,24 +2,16 @@ export default function ReaderShareIcon( { iconSize } ) {
 	return (
 		<svg
 			key="share"
-			fill="none"
-			className="reader-share"
-			viewBox="0 0 20 20"
+			viewBox="0 0 24 24"
 			width={ iconSize }
 			height={ iconSize }
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<clipPath id="share-icon-a">
-				<path d="m0 0h20v20h-20z" />
-			</clipPath>
-			<g clipPath="url(#share-icon-a)">
-				<path
-					d="m11.8666 6.79996v-3.79996l6.8 6.64993-6.8 6.64997v-3.8s-10.19997-.8844-10.19997 4.5001c0-10.77003 10.19997-10.20004 10.19997-10.20004z"
-					stroke="#646970"
-					strokeLinecap="round"
-					strokeWidth="1.5"
-				/>
-			</g>
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M9.46968 1.53033L6.46967 4.53033L7.53033 5.59099L9.25001 3.87132V15.0607H10.75V3.87132L12.4697 5.59099L13.5303 4.53033L10.5303 1.53033L10 1L9.46968 1.53033ZM5 8.56066H6.5V10.0607H5C4.72386 10.0607 4.5 10.2845 4.5 10.5607V17.5607C4.5 17.8368 4.72386 18.0607 5 18.0607H15C15.2761 18.0607 15.5 17.8368 15.5 17.5607V10.5607C15.5 10.2845 15.2761 10.0607 15 10.0607H13.5V8.56066H15C16.1046 8.56066 17 9.45609 17 10.5607V17.5607C17 18.6652 16.1046 19.5607 15 19.5607H5C3.89543 19.5607 3 18.6652 3 17.5607V10.5607C3 9.45609 3.89543 8.56066 5 8.56066Z"
+			/>
 		</svg>
 	);
 }

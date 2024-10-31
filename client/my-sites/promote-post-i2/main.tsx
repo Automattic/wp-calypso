@@ -38,6 +38,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
+import CampaignsTotalStats from './components/campaigns-total-stats';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
@@ -69,6 +70,10 @@ export type PagedBlazeContentData = {
 	total_items?: number;
 	items?: BlazePagedItem[];
 	warnings?: PromotePostWarning[];
+	campaigns_stats?: {
+		total_impressions: number;
+		total_clicks: number;
+	};
 };
 
 export type PagedBlazeSearchResponse = {
@@ -119,10 +124,11 @@ export default function PromotedPosts( { tab }: Props ) {
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
-	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
-		'campaigns',
-		campaignsData
-	);
+	const {
+		has_more_pages: campaignsHasMorePages,
+		items: pagedCampaigns,
+		campaigns_stats: campaignsStats,
+	} = getPagedBlazeSearchData( 'campaigns', campaignsData );
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
 		'campaigns',
@@ -299,6 +305,11 @@ export default function PromotedPosts( { tab }: Props ) {
 				// TODO: Uncomment when DebtNotifier is implemented
 				/* <DebtNotifier /> */
 			 }
+			<CampaignsTotalStats
+				totalImpressions={ campaignsStats?.total_impressions }
+				totalClicks={ campaignsStats?.total_clicks }
+				outerContainerClass={ ! showBanner ? 'promote-post-i2__divider' : '' }
+			/>
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 

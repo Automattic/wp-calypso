@@ -37,7 +37,8 @@
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
-		"a4a-dev-sites": true
+		"a4a-dev-sites": true,
+		"a8c-for-agencies-agency-tier": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -55,7 +56,8 @@
 		"a8c-for-agencies-partner-directory": true,
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true,
-		"a8c-for-agencies-team": true
+		"a8c-for-agencies-team": true,
+		"a8c-for-agencies-agency-tier": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

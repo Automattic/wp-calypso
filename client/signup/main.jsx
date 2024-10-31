@@ -8,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
+import * as oauthToken from '@automattic/oauth-token';
 import debugModule from 'debug';
 import {
 	clone,
@@ -39,7 +40,6 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
@@ -527,7 +527,7 @@ class Signup extends Component {
 
 		const { isNewishUser, existingSiteCount } = this.props;
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewUser = !! ( dependencies && dependencies.is_new_account );
 		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
@@ -565,6 +565,12 @@ class Signup extends Component {
 		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
 		if ( ! dependencies.toStepper ) {
 			debug( 'Tracking signup completion.', debugProps );
+			const isMapping = domainItem && isDomainMapping( domainItem );
+			const isTransfer = domainItem && isDomainTransfer( domainItem );
+			const signupDomainOriginValue =
+				isTransfer || isMapping
+					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
+					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -582,9 +588,11 @@ class Signup extends Component {
 				intent,
 				startingPoint,
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-				isMapping: domainItem && isDomainMapping( domainItem ),
-				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+				isMapping: isMapping,
+				isTransfer: isTransfer,
+				signupDomainOrigin: signupDomainOriginValue,
+				framework: 'start',
+				isNewishUser,
 			} );
 		}
 	};

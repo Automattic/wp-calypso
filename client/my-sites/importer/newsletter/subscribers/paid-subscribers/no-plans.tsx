@@ -1,6 +1,8 @@
 import { Dialog } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Notice } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState, useEffect } from 'react';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { navigate } from 'calypso/lib/navigate';
@@ -26,6 +28,7 @@ export default function NoPlans( {
 	siteSlug,
 	fromSite,
 }: NoPlansProps ) {
+	const { __ } = useI18n();
 	const currentStep = 'subscribers';
 	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
 	const [ shouldCheckConnection, setShouldCheckConnection ] = useState( false );
@@ -52,8 +55,8 @@ export default function NoPlans( {
 			dispatch(
 				requestDisconnectSiteStripeAccount(
 					selectedSite.ID,
-					'Please wait, disconnecting Stripe\u2026',
-					'Stripe account is disconnected.'
+					__( 'Please wait, disconnecting Stripe…' ),
+					__( 'Stripe account is disconnected.' )
 				)
 			);
 			setTimeout( () => {
@@ -66,17 +69,22 @@ export default function NoPlans( {
 	return (
 		<>
 			<Notice isDismissible={ false } status="warning">
-				We couldn't find any plans in your connected Stripe account.
+				{ __( "We couldn't find any plans in your connected Stripe account." ) }
 			</Notice>
 			<div className="no-plans__info">
 				<p>
-					It looks like the Stripe Account ( { cardData?.account_display } ) does not have any
-					active plans. Are you sure you connected the same Stipe account that you use on Substack?
+					{ sprintf(
+						// translators: %d is the Stripe account name
+						__(
+							'It looks like the Stripe Account (%s) does not have any active plans. Are you sure you connected the same Stripe account that you use on Substack?'
+						),
+						cardData?.account_display
+					) }
 				</p>
 			</div>
 			<ImporterActionButtonContainer>
 				<ImporterActionButton onClick={ disconnectStripe } primary>
-					Try a different Stripe account
+					{ __( 'Try a different Stripe account' ) }
 				</ImporterActionButton>
 
 				<StartImportButton
@@ -84,7 +92,7 @@ export default function NoPlans( {
 					siteId={ selectedSite.ID }
 					primary={ false }
 					step={ currentStep }
-					label="Only Import free subscrivers"
+					label={ __( 'Only import free subscribers' ) }
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
@@ -95,11 +103,11 @@ export default function NoPlans( {
 				isVisible={ showDisconnectStripeDialog }
 				buttons={ [
 					{
-						label: 'Cancel',
+						label: __( 'Cancel' ),
 						action: 'cancel',
 					},
 					{
-						label: 'Disconnect Payments from Stripe',
+						label: __( 'Disconnect Payments from Stripe' ),
 						isPrimary: true,
 						additionalClassNames: 'is-scary',
 						action: 'disconnect',
@@ -107,10 +115,11 @@ export default function NoPlans( {
 				] }
 				onClose={ onCloseDisconnectStripeAccount }
 			>
-				<h1>Disconnect Stripe?</h1>
+				<h1>{ __( 'Disconnect Stripe?' ) }</h1>
 				<p>
-					Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and
-					existing subscriptions will stop working.
+					{ __(
+						'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
+					) }
 				</p>
 			</Dialog>
 		</>

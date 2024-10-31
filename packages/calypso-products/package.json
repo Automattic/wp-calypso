@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-products",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "This module contains information about the various products sold within calypso, such as product slugs, plan intervals, etc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -9,7 +9,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"

@@ -586,10 +586,6 @@ html {
 		color: var(--color-accent-80);
 	}
 
-	.dataviews-filters__view-actions {
-		display: none;
-	}
-
 	.dataviews-view-table tr {
 
 		td,
@@ -641,4 +637,8 @@ html {
 			}
 		}
 	}
+}
+
+.is-opacity-50 {
+	opacity: 0.5;
 }

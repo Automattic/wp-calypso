@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
@@ -175,7 +174,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
-			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: ONBOARDING_FLOW,
@@ -187,7 +185,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
-			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'plans-first',
@@ -509,7 +506,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			enablePresales: false,
-			enableHotjar: true,
 		},
 
 		{
@@ -521,7 +517,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
-			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
