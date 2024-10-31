@@ -53,6 +53,17 @@
 
 .migrations-hosting-options-card__footer {
 	margin-block-start: auto;
+	display: flex;
+
+	> * {
+		flex-grow: 1;
+	}
+
+	@include break-large {
+		> * {
+			flex-grow: 0;
+		}
+	}
 }
 
 .migrations-hosting-options__footnote {
