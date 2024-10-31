@@ -11,7 +11,7 @@ const ChartHeader = ( {
 } ) => {
 	return (
 		<div className="stats-chart-tabs__header">
-			<div className="stats-chart-tabs__header-title">{ activeTab?.label || 'Views' }</div>
+			<div className="stats-chart-tabs__header-title">{ activeTab?.label }</div>
 			{ showLegend && (
 				<Legend
 					activeCharts={ activeLegend }
