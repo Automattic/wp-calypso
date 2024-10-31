@@ -108,8 +108,6 @@ class StatModuleChartTabs extends Component {
 		return (
 			<div className={ clsx( ...classes ) }>
 				<ChartHeader
-					title="Title"
-					controls={ <div className="stats-chart-tabs__header-controls-wrapper"> Controls </div> }
 					showLegend={ ! hideLegend }
 					activeLegend={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }

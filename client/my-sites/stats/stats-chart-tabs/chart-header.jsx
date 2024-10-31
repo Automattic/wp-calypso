@@ -3,7 +3,6 @@ import Legend from 'calypso/components/chart/legend';
 
 const ChartHeader = ( {
 	activeTab,
-	controls,
 	showLegend,
 	activeLegend,
 	availableLegend,
@@ -22,7 +21,6 @@ const ChartHeader = ( {
 					tabs={ charts }
 				/>
 			) }
-			<div className="stats-chart-tabs__header-controls">{ controls }</div>
 		</div>
 	);
 };
