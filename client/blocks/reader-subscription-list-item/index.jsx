@@ -48,6 +48,7 @@ function ReaderSubscriptionListItem( {
 	onItemClick,
 	isSelected,
 	onFollowToggle,
+	replaceStreamClickWithItemClick,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -94,12 +95,22 @@ function ReaderSubscriptionListItem( {
 
 	const streamClicked = ( event, streamLink ) => {
 		recordTitleClick();
-		if ( ! isLoggedIn ) {
+
+		// Prevent default if we need to handle the click differently.
+		if ( ! isLoggedIn || ( replaceStreamClickWithItemClick && onItemClick ) ) {
 			event.preventDefault();
+		}
+
+		if ( ! isLoggedIn ) {
 			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
 				redirectTo: streamLink,
 			} );
+			return;
+		}
+
+		if ( replaceStreamClickWithItemClick && onItemClick ) {
+			onItemClick();
 		}
 	};
 
