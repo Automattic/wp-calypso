@@ -286,6 +286,27 @@ export async function confirmStripePaymentIntent(
 }
 
 /**
+ * Return Object with mandate option values to be included in creating a SetupIntent
+ *
+ * @param {ShoppingCart} ShoppingCart The shopping cart for the SetupIntent
+ * @returns {Object} An object keyed by the fields needed for the mandate options
+ */
+function getMandateOptionsFromShoppingCart(
+	shoppingCart: ShoppingCart
+): Object {
+	return {
+		amount: 10, // Get value from shopping cart
+		amount_type: 'maximum',
+		currency: 'INR', // Get currency from shopping cart
+		interval: 'sporadic',
+		reference: '{{Reference Number}}', // Get Order ID from shopping cart
+		description: 'WordPress.com Billing', // Get service from shopping cart
+		start_date: Date(), // Get the current timestamp
+		supported_types: 'india',
+	};
+}
+
+/**
  * Extract validation errors from a Stripe error
  *
  * Returns null if validation errors cannot be found.
