@@ -33,7 +33,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 		if ( organization.id === AUTOMATTIC_ORG_ID ) {
 			return <ReaderA8cIcon />;
 		}
-		return <ReaderP2Icon />;
+		return <ReaderP2Icon viewBox="2 2 20 20" />;
 	}
 
 	renderAll() {

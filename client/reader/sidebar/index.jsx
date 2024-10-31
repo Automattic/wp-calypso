@@ -185,7 +185,7 @@ export class ReaderSidebar extends Component {
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customIcon={ <ReaderSearchIcon /> }
+					customIcon={ <ReaderSearchIcon viewBox="0 2 20 20" /> }
 					link="/read/search"
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 						'sidebar-streams__search': true,
@@ -209,7 +209,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
 						onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-						customIcon={ <ReaderFollowingIcon /> }
+						customIcon={ <ReaderFollowingIcon viewBox="0 2 20 20" /> }
 						link="/read"
 					/>
 				) }
@@ -220,14 +220,14 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Discover' ) }
 					onNavigate={ this.handleReaderSidebarDiscoverClicked }
-					customIcon={ <ReaderDiscoverIcon /> }
+					customIcon={ <ReaderDiscoverIcon viewBox="0 2 20 20" /> }
 					link="/discover"
 				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }
 					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					customIcon={ <ReaderLikesIcon /> }
+					customIcon={ <ReaderLikesIcon viewBox="1 2 18 18" /> }
 					link="/activities/likes"
 					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 						'sidebar-activity__likes': true,
@@ -240,7 +240,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					customIcon={ <ReaderConversationsIcon /> }
+					customIcon={ <ReaderConversationsIcon iconSize={ 24 } /> }
 					link="/read/conversations"
 				/>
 

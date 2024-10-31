@@ -1,4 +1,4 @@
-/* Overide very specific css on an attribute */
+/* Override very specific css on an attribute */
 .sidebar {
 	.accessible-focus div.global-sidebar & {
 		.sidebar-streams__conversations .sidebar__menu-link,
@@ -243,18 +243,6 @@ body.is-section-reader {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-conversations {
-				fill: var(--color-sidebar-menu-hover-background);
-				g {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
-				}
-				g g {
-					stroke: unset;
-					fill: var(--color-sidebar-gridicon-hover-fill);
-				}
-			}
-			.sidebar__menu-icon.sidebar_svg-following,
-			.sidebar__menu-icon.sidebar_svg-likes,
 			.sidebar__menu-icon.sidebar_svg-notifications {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
@@ -263,16 +251,18 @@ body.is-section-reader {
 			}
 			.sidebar__menu-icon.sidebar_svg-p2,
 			.sidebar__menu-icon.sidebar_svg-search,
+			.sidebar__menu-icon.sidebar_svg-following,
+			.sidebar__menu-icon.sidebar_svg-likes,
+			.sidebar__menu-icon.sidebar_svg-conversations,
+			.sidebar__menu-icon.sidebar_svg-list,
+			.sidebar__menu-icon.sidebar_svg-tag,
 			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-a8c,
-			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
-			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-tag {
+			.sidebar__menu-icon.sidebar_svg-a8c {
 				fill: var(--color-sidebar-menu-hover-background);
 				g {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
@@ -292,18 +282,6 @@ body.is-section-reader {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
 		}
-		.sidebar__menu-icon.sidebar_svg-conversations {
-			fill: var(--color-sidebar-background);
-			g {
-				stroke: var(--color-sidebar-gridicon-fill);
-			}
-			g g {
-				stroke: unset;
-				fill: var(--color-sidebar-gridicon-fill);
-			}
-		}
-		.sidebar__menu-icon.sidebar_svg-following,
-		.sidebar__menu-icon.sidebar_svg-likes,
 		.sidebar__menu-icon.sidebar_svg-notifications {
 			fill: var(--color-sidebar-background);
 			path {
@@ -312,16 +290,18 @@ body.is-section-reader {
 		}
 		.sidebar__menu-icon.sidebar_svg-p2,
 		.sidebar__menu-icon.sidebar_svg-search,
+		.sidebar__menu-icon.sidebar_svg-following,
+		.sidebar__menu-icon.sidebar_svg-likes,
+		.sidebar__menu-icon.sidebar_svg-conversations,
+		.sidebar__menu-icon.sidebar_svg-list,
+		.sidebar__menu-icon.sidebar_svg-tag,
 		.sidebar__menu-icon.sidebar_svg-discover {
 			fill: var(--color-sidebar-background);
 			path {
 				fill: var(--color-sidebar-gridicon-fill);
 			}
 		}
-		.sidebar__menu-icon.sidebar_svg-a8c,
-		.sidebar__menu-icon.sidebar_svg-a8c-conversations,
-		.sidebar__menu-icon.sidebar_svg-list,
-		.sidebar__menu-icon.sidebar_svg-tag {
+		.sidebar__menu-icon.sidebar_svg-a8c {
 			fill: var(--color-sidebar-background);
 			g {
 				stroke: var(--color-sidebar-gridicon-fill);
@@ -344,39 +324,39 @@ body.is-section-reader {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-conversations {
-				fill: var(--color-sidebar-menu-hover-background);
-				g {
-					stroke: var(--color-sidebar-gridicon-selected-fill);
-				}
-				g g {
-					stroke: unset;
-					fill: var(--color-sidebar-gridicon-selected-fill);
-				}
-			}
-			.sidebar__menu-icon.sidebar_svg-following,
-			.sidebar__menu-icon.sidebar_svg-likes,
 			.sidebar__menu-icon.sidebar_svg-notifications {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-p2,
 			.sidebar__menu-icon.sidebar_svg-search,
+			.sidebar__menu-icon.sidebar_svg-following,
+			.sidebar__menu-icon.sidebar_svg-likes,
+			.sidebar__menu-icon.sidebar_svg-conversations,
 			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-a8c,
-			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
-			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-tag {
-				fill: var(--color-sidebar-menu-hover-background);
-				g {
-					stroke: var(--color-sidebar-gridicon-selected-fill);
+		}
+
+		&.is-togglable:not(.is-toggle-open):not(:hover) {
+			.sidebar__heading {
+				.sidebar__menu-icon.sidebar_svg-p2,
+				.sidebar__menu-icon.sidebar_svg-list,
+				.sidebar__menu-icon.sidebar_svg-tag {
+					fill: var(--color-sidebar-menu-hover-background);
+					path {
+						fill: var(--color-sidebar-gridicon-selected-fill);
+					}
+				}
+				.sidebar__menu-icon.sidebar_svg-a8c {
+					fill: var(--color-sidebar-menu-hover-background);
+					g {
+						stroke: var(--color-sidebar-gridicon-selected-fill);
+					}
 				}
 			}
 		}

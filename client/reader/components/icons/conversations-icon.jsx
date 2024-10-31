@@ -1,23 +1,17 @@
-export default function ReaderConversationsIcon() {
+export default function ReaderConversationsIcon( { viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-conversations"
-			fill="none"
-			height="20"
-			viewBox="0 0 20 20"
-			width="20"
+			height="24"
+			viewBox={ viewBox }
+			width="24"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<g stroke="#a2aab2">
-				<path
-					d="m12.2778 14.5556v-.75h-.75-8.00002c-.56801 0-1.02778-.4598-1.02778-1.0278v-8.00002c0-.56801.45977-1.02778 1.02778-1.02778h12.44442c.568 0 1.0278.45977 1.0278 1.02778v7.94842c0 .9051-.4384 1.7561-1.1748 2.2822l-3.5474 2.5341z"
-					strokeWidth="1.5"
-				/>
-				<g fill="#a2aab2" strokeWidth=".75">
-					<path d="m5.875 6.875h7.75v.75h-7.75z" />
-					<path d="m5.875 9.875h3.25v.75h-3.25z" />
-				</g>
-			</g>
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M6.68822 16.625L5.5 17.8145L5.5 5.5L18.5 5.5L18.5 16.625L6.68822 16.625ZM7.31 18.125L19 18.125C19.5523 18.125 20 17.6773 20 17.125L20 5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V19.5247C4 19.8173 4.16123 20.086 4.41935 20.2237C4.72711 20.3878 5.10601 20.3313 5.35252 20.0845L7.31 18.125ZM16 9.99997H8V8.49997H16V9.99997ZM8 14H13V12.5H8V14Z"
+			></path>
 		</svg>
 	);
 }
