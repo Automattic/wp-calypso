@@ -11,7 +11,6 @@ import { isEmpty, isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -24,9 +23,6 @@ import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
 import './style.scss';
-
-const THEME_CARD_HEIGHT = 420;
-const VIEWPORT_HEIGHT = `${ 3 * THEME_CARD_HEIGHT }px`;
 
 const noop = () => {};
 
@@ -351,37 +347,27 @@ export class Theme extends Component {
 		}
 
 		return (
-			<InView triggerOnce rootMargin={ VIEWPORT_HEIGHT }>
-				{ ( { inView, ref } ) => (
-					<div ref={ ref }>
-						{ inView ? (
-							<ThemeCard
-								ref={ this.props.bookmarkRef }
-								name={ name }
-								description={ themeDescription }
-								image={ this.renderScreenshot() }
-								imageClickUrl={ this.props.screenshotClickUrl }
-								imageActionLabel={ this.props.actionLabel }
-								banner={ this.renderUpdateAlert() }
-								badge={ this.renderBadge() }
-								styleVariations={ style_variations }
-								selectedStyleVariation={ selectedStyleVariation }
-								optionsMenu={ this.renderMoreButton() }
-								isActive={ this.props.active }
-								isLoading={ this.props.loading }
-								isSoftLaunched={ this.props.softLaunched }
-								isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
-								onClick={ this.setBookmark }
-								onImageClick={ this.onScreenshotClick }
-								onStyleVariationClick={ this.onStyleVariationClick }
-								onStyleVariationMoreClick={ this.onStyleVariationClick }
-							/>
-						) : (
-							this.renderPlaceholder()
-						) }
-					</div>
-				) }
-			</InView>
+			<ThemeCard
+				ref={ this.props.bookmarkRef }
+				name={ name }
+				description={ themeDescription }
+				image={ this.renderScreenshot() }
+				imageClickUrl={ this.props.screenshotClickUrl }
+				imageActionLabel={ this.props.actionLabel }
+				banner={ this.renderUpdateAlert() }
+				badge={ this.renderBadge() }
+				styleVariations={ style_variations }
+				selectedStyleVariation={ selectedStyleVariation }
+				optionsMenu={ this.renderMoreButton() }
+				isActive={ this.props.active }
+				isLoading={ this.props.loading }
+				isSoftLaunched={ this.props.softLaunched }
+				isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
+				onClick={ this.setBookmark }
+				onImageClick={ this.onScreenshotClick }
+				onStyleVariationClick={ this.onStyleVariationClick }
+				onStyleVariationMoreClick={ this.onStyleVariationClick }
+			/>
 		);
 	}
 }

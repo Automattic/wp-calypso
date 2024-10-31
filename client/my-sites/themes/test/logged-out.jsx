@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
@@ -117,8 +116,6 @@ describe( 'logged-out', () => {
 		);
 		render( <TestComponent store={ store } /> );
 
-		mockAllIsIntersecting( true );
-
 		await waitFor( () => {
 			expect( screen.getByText( 'No themes match your search' ) ).toBeInTheDocument();
 		} );
@@ -136,8 +133,6 @@ describe( 'logged-out', () => {
 			)
 		);
 		render( <TestComponent store={ store } /> );
-
-		mockAllIsIntersecting( true );
 
 		await waitFor( () => {
 			themes.forEach( ( theme ) => {
@@ -158,8 +153,6 @@ describe( 'logged-out', () => {
 			error: 'Error',
 		} );
 		render( <TestComponent store={ store } /> );
-
-		mockAllIsIntersecting( true );
 
 		await waitFor( () => {
 			expect( screen.queryByText( 'No themes match your search' ) ).toBeInTheDocument();
