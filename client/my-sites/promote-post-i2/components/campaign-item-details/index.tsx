@@ -459,14 +459,6 @@ export default function CampaignItemDetails( props: Props ) {
 											{ translate( 'Promote Again' ) }
 										</Button>
 									) }
-									{ canCancelCampaign( status ) && (
-										<Button
-											className="cancel-campaign-button"
-											onClick={ () => setShowDeleteDialog( true ) }
-										>
-											{ cancelCampaignButtonText }
-										</Button>
-									) }
 								</>
 							) : (
 								<FlexibleSkeleton />
@@ -999,32 +991,6 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
-							<div className="campaign-item-details__support-buttons-mobile">
-								{ ! isLoading && status ? (
-									<>
-										{ canPromoteAgainCampaign( status ) && (
-											<Button
-												variant="primary"
-												className="promote-again-button"
-												disabled={ ! isLoadingBillingSummary && paymentBlocked }
-												onClick={ onClickPromote }
-											>
-												{ translate( 'Promote Again' ) }
-											</Button>
-										) }
-										{ canCancelCampaign( status ) && (
-											<Button
-												className="cancel-campaign-button"
-												onClick={ () => setShowDeleteDialog( true ) }
-											>
-												{ cancelCampaignButtonText }
-											</Button>
-										) }
-									</>
-								) : (
-									<FlexibleSkeleton />
-								) }
-							</div>
 							<div className="campaign-item-details__support-articles-wrapper">
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
@@ -1056,6 +1022,18 @@ export default function CampaignItemDetails( props: Props ) {
 								{ translate( 'Get support' ) }
 							</Button>
 
+							{ ! isLoading && status && (
+								<>
+									{ canCancelCampaign( status ) && (
+										<Button
+											className="cancel-campaign-button"
+											onClick={ () => setShowDeleteDialog( true ) }
+										>
+											{ cancelCampaignButtonText }
+										</Button>
+									) }
+								</>
+							) }
 							<div className="campaign-item-details__powered-by mobile">
 								{ isWooStore ? (
 									<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>

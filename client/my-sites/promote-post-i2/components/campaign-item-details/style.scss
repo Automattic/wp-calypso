@@ -89,18 +89,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 			.campaign-item-details__support-buttons-container .campaign-item-details__support-buttons {
 				margin-top: 24px;
-				.contact-support-button {
-					display: none;
-				}
-				.promote-again-button {
-					width: 100%;
-					text-align: center;
-				}
 
-				.cancel-campaign-button,
-				.promote-again-button {
-					display: none;
-				}
 
 			}
 		}
@@ -723,6 +712,28 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
+		.cancel-campaign-button {
+			display: inline-flex;
+			background: var(--color-surface);
+			border: 1.5px solid $studio-gray-10;
+			height: 40px;
+			font-weight: 400;
+			font-size: 0.875rem;
+			justify-content: center;
+			align-items: center;
+			line-height: 14px;
+			color: var(--color-error);
+			margin: 12px 16px 0;
+
+			&:focus {
+				box-shadow: none;
+			}
+			&:visited {
+				color: var(--color-error);
+			}
+		}
+
+
 		.campaign-item-details__support-buttons-icon {
 			display: inline-block;
 			margin-right: 9px;
@@ -848,13 +859,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			margin: 16px 16px 20px 16px;
 			border-radius: 4px;
 
-
-
 			> * {
 				margin-top: 4px;
 				margin-bottom: 4px;
-
-
 			}
 
 			.campaign-item-details__support-link {
@@ -1054,16 +1061,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					align-items: center;
 					line-height: unset;
 					justify-content: center;
-				}
-				.contact-support-button {
-					display: none;
-				}
-				.promote-again-button {
-					width: 100%;
-					text-align: center;
-				}
-				.cancel-campaign-button {
-					display: none;
 				}
 			}
 		}
