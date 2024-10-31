@@ -225,6 +225,7 @@ export async function createStripeSetupIntent(
 ): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
 	let stripeResponse;
+	const mandateOptions = getMandateOptionsFromShoppingCart();
 	try {
 		stripeResponse = await stripe.confirmCardSetup( setupIntentId, {
 			payment_method: {
@@ -234,13 +235,14 @@ export async function createStripeSetupIntent(
 			payment_method_options: {
 				card: {
 					mandate_options: {
-						amount: 10,
-						amount_type: 'maximum',
-						currency: 'INR',
-						interval: 'sporadic',
-						reference: '{{Reference Number}}',
-						start_date: Date( 'now' ),
-						payment_method_options,
+						amount: mandateOptions.amount,
+						amount_type: mandateOptions.amount_type,
+						currency: mandateOptions.currency,
+						interval: mandateOptions.interval,
+						reference: mandateOptions.reference,
+						description: mandateOptions.description,
+						start_date: mandateOptions.start_date,
+						supported_types: mandateOptions.supported_types,
 					},
 				},
 			},
