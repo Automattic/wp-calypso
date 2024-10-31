@@ -64,7 +64,7 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 		>
 			{ pressableOwnership !== 'regular' && (
 				<>
-					<div className="pressable-overview-plan-selection__upgrade-title">
+					<div className="pressable-overview-plan-selection__upgrade-title narrow">
 						{ translate( 'Choose plan to refer' ) }
 					</div>
 					<PlanSelectionFilter
@@ -78,7 +78,6 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 			<PlanSelectionDetails
 				selectedPlan={ selectedPlan }
 				onSelectPlan={ onPlanAddToCart }
-				isLoading={ false }
 				pressableOwnership={ pressableOwnership }
 			/>
 		</div>
