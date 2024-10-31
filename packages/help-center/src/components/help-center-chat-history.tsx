@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import SectionNav from 'calypso/components/section-nav';
@@ -9,6 +9,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import { calculateUnread } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -23,23 +24,22 @@ export const HelpCenterChatHistory = () => {
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return { isChatLoaded: store.getIsChatLoaded() };
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			unreadCount: store.getUnreadCount(),
+		};
 	}, [] );
-
-	const [ unreadCount, setUnreadCount ] = useState( 0 );
+	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const convos = getConversations() as ZendeskConversation[];
-			setConversations( convos );
+			const conversations = getConversations() as ZendeskConversation[];
+			setConversations( conversations );
 
-			// Calculate number of chats with unread messages
-			const unreadChats = convos.filter(
-				( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
-			).length;
-			setUnreadCount( unreadChats );
+			const { unreadConversations } = calculateUnread( conversations );
+			setUnreadCount( unreadConversations );
 		}
 	}, [ getConversations, isChatLoaded ] );
 

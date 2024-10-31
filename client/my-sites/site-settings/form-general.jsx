@@ -35,6 +35,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
+import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -364,7 +365,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate } = this.props;
+		const { fields, isRequestingSettings, translate, timezonesLabels } = this.props;
 		const guessedTimezone = guessTimezone();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
@@ -388,7 +389,7 @@ export class SiteSettingsFormGeneral extends Component {
 							'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
 							{
 								args: {
-									timezoneName: guessedTimezone,
+									timezoneName: timezonesLabels?.[ guessedTimezone ] ?? guessedTimezone,
 								},
 								components: {
 									button: (
@@ -730,6 +731,7 @@ const connectComponent = connect( ( state ) => {
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 		isSimple: isSimpleSite( state, siteId ),
+		timezonesLabels: getTimezonesLabels( state ),
 	};
 } );
 

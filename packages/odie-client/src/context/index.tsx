@@ -5,6 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { broadcastChatClearance, useSetOdieStorage, useOdieBroadcastWithCallbacks } from '../data';
 import { isOdieAllowedBot } from '../utils';
+import { getHelpCenterZendeskConversationStarted } from '../utils/storage-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type {
@@ -51,6 +52,7 @@ type OdieAssistantContextInterface = {
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
 	selectedConversationId?: string | null;
+	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
@@ -63,6 +65,9 @@ type OdieAssistantContextInterface = {
 	chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer';
 	setChatStatus: ( chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' ) => void;
 	version?: string | null;
+	setWaitAnswerToFirstMessageFromHumanSupport: (
+		waitAnswerToFirstMessageFromHumanSupport: boolean
+	) => void;
 };
 
 const defaultContextInterfaceValues = {
@@ -85,6 +90,7 @@ const defaultContextInterfaceValues = {
 	lastMessageRef: null,
 	odieClientId: '',
 	currentUser: { display_name: 'Me' },
+	waitAnswerToFirstMessageFromHumanSupport: false,
 	sendNudge: noop,
 	setChat: noop,
 	setMessageLikedStatus: noop,
@@ -97,6 +103,7 @@ const defaultContextInterfaceValues = {
 	setChatStatus: noop,
 	chatStatus: 'loading' as 'loading' | 'loaded' | 'sending',
 	updateMessage: noop,
+	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 };
 
 // Create a default new context
@@ -147,6 +154,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ waitAnswerToFirstMessageFromHumanSupport, setWaitAnswerToFirstMessageFromHumanSupport ] =
+		useState( getHelpCenterZendeskConversationStarted() !== null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
 
@@ -297,6 +306,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				odieClientId,
 				selectedSiteId,
 				selectedConversationId,
+				waitAnswerToFirstMessageFromHumanSupport,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,
@@ -312,6 +322,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isUserEligibleForPaidSupport,
 				chatStatus,
 				setChatStatus,
+				setWaitAnswerToFirstMessageFromHumanSupport,
 			} }
 		>
 			{ children }

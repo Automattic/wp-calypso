@@ -22,6 +22,7 @@ import {
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
+	MEDIA_PHOTOS_PICKER_SESSION_SET,
 } from 'calypso/state/action-types';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
 import { combineReducers } from 'calypso/state/utils';
@@ -445,12 +446,26 @@ export const fetching = ( state = {}, action ) => {
 	return state;
 };
 
+export const googlePhotosPicker = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_PHOTOS_PICKER_SESSION_SET: {
+			return {
+				...state,
+				session: action.session,
+			};
+		}
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	errors,
 	queries,
 	selectedItems,
 	transientItems,
 	fetching,
+	googlePhotosPicker,
 } );
 
 export default withStorageKey( 'media', combinedReducer );

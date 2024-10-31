@@ -1,47 +1,42 @@
 import { __ } from '@wordpress/i18n';
-import makeSidebar, { PanelWithSidebar } from '../components/panel-sidebar';
+import { useSelector } from 'react-redux';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import AdministrationSettings from './administration';
+import AgencySettings from './agency';
+import CachesSettings from './caches';
+import SiteSettings from './site';
+import WebServerSettings from './web-server';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
-const SettingsSidebar = makeSidebar( {
-	items: [
-		{
-			key: 'site',
-			get label() {
-				return __( 'Site' );
-			},
-		},
-		{
-			key: 'administration',
-			get label() {
-				return __( 'Administration' );
-			},
-		},
-		{
-			key: 'agency',
-			get label() {
-				return __( 'Agency' );
-			},
-		},
-		{
-			key: 'caches',
-			get label() {
-				return __( 'Caches' );
-			},
-		},
-		{
-			key: 'web-server',
-			get label() {
-				return __( 'Web Server' );
-			},
-		},
-	],
-} );
+export function SettingsSidebar() {
+	const slug = useSelector( getSelectedSiteSlug );
+	const isWpcomStaging = useSelectedSiteSelector( isSiteWpcomStaging );
+
+	return (
+		<Sidebar>
+			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'Site' ) }</SidebarItem>
+			{ ! isWpcomStaging && (
+				<SidebarItem href={ `/sites/settings/administration/${ slug }` }>
+					{ __( 'Administration' ) }
+				</SidebarItem>
+			) }
+			<SidebarItem href={ `/sites/settings/agency/${ slug }` }>{ __( 'Agency' ) }</SidebarItem>
+			<SidebarItem href={ `/sites/settings/caches/${ slug }` }>{ __( 'Caches' ) }</SidebarItem>
+			<SidebarItem href={ `/sites/settings/web-server/${ slug }` }>
+				{ __( 'Web Server' ) }
+			</SidebarItem>
+		</Sidebar>
+	);
+}
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="site" />
-			<p>Site settings</p>
+			<SettingsSidebar />
+			<SiteSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -50,8 +45,8 @@ export function siteSettings( context: PageJSContext, next: () => void ) {
 export function administrationSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="administration" />
-			<p>Administration settings</p>
+			<SettingsSidebar />
+			<AdministrationSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -60,8 +55,8 @@ export function administrationSettings( context: PageJSContext, next: () => void
 export function agencySettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="agency" />
-			<p>Agency settings</p>
+			<SettingsSidebar />
+			<AgencySettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -70,8 +65,8 @@ export function agencySettings( context: PageJSContext, next: () => void ) {
 export function cachesSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="caches" />
-			<p>Caches settings</p>
+			<SettingsSidebar />
+			<CachesSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -80,8 +75,8 @@ export function cachesSettings( context: PageJSContext, next: () => void ) {
 export function webServerSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="web-server" />
-			<p>Web server settings</p>
+			<SettingsSidebar />
+			<WebServerSettings />
 		</PanelWithSidebar>
 	);
 	next();

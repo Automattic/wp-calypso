@@ -19,8 +19,9 @@ import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { requestPage } from 'calypso/state/reader/streams/actions';
+import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+
 import './style.scss';
 
 interface SubscribeModalProps {
@@ -169,14 +170,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	const headerActions = (
-		<>
-			<Button onClick={ onClose } variant="link">
-				{ __( 'Cancel' ) }
-			</Button>
-		</>
-	);
-
 	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
 	useEffect( () => {
 		if ( combinedRecommendations.length > 0 ) {
@@ -252,16 +245,33 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			.replace( /\/$/, '' ); // Remove trailing slash
 	};
 
+	const handleClose = useCallback( () => {
+		dispatch( clearStream( { streamKey: 'following' } ) );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( requestPage( { streamKey: 'following' } as any ) );
+
+		onClose();
+	}, [ dispatch, onClose ] );
+
 	const handleContinue = useCallback( () => {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-		onClose();
-	}, [ dispatch, onClose ] );
+
+		handleClose();
+	}, [ dispatch, handleClose ] );
+
+	const headerActions = (
+		<>
+			<Button onClick={ handleClose } variant="link">
+				{ __( 'Cancel' ) }
+			</Button>
+		</>
+	);
 
 	return (
 		isOpen && (
 			<Modal
-				onRequestClose={ onClose }
+				onRequestClose={ handleClose }
 				isFullScreen
 				className="subscribe-modal"
 				headerActions={ headerActions }
@@ -293,6 +303,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										showFollowedOnDate={ false }
 										followSource="reader-onboarding-modal"
 										disableSuggestedFollows
+										replaceStreamClickWithItemClick
 										onItemClick={ () => handleItemClick( site ) }
 										isSelected={ selectedSite?.feed_ID === site.feed_ID }
 										onFollowToggle={ ( following: boolean ) =>

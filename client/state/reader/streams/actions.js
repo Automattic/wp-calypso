@@ -7,6 +7,7 @@ import {
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
+	READER_STREAMS_CLEAR,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
 
@@ -101,4 +102,11 @@ export function fillGap( { streamKey, gap } ) {
 		pageHandle: { before: gap.to.toISOString(), after: gap.from.toISOString() },
 		gap,
 	} );
+}
+
+export function clearStream( { streamKey } ) {
+	return {
+		type: READER_STREAMS_CLEAR,
+		payload: { streamKey },
+	};
 }

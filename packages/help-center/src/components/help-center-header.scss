@@ -17,6 +17,16 @@
 			border-bottom: none;
 		}
 
+		&.has-unread {
+			background: #3858E9;
+			color: var(--studio-white);
+			border-radius: 0;
+
+			button {
+				color: var(--studio-white);
+			}
+		}
+
 		>div {
 			display: flex;
 			align-items: center;
@@ -51,7 +61,7 @@
 			svg:not(.help-center__drag-icon) {
 				cursor: pointer;
 			}
-			
+
 			:focus{
 				outline: none;
 			}
@@ -67,10 +77,10 @@
 				display: inline-block;
 				margin-left: 8px;
 				padding: 2px 8px;
-				background: var(--color-masterbar-unread-dot-background);
-				border-radius: 50%;
+				background: var(--studio-white);
+				border-radius: 45%;
 				font-size: $font-body-extra-small;
-				color: #fff;
+				color: #3858E9;
 			}
 		}
 	}

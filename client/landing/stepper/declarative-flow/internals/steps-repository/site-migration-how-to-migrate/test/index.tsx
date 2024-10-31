@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
@@ -47,6 +47,8 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		mockUpdateMigrationStatus = jest.fn();
 		( useUpdateMigrationStatus as jest.Mock ).mockReturnValue( {
 			updateMigrationStatus: mockUpdateMigrationStatus,
+			updateMigrationStatusAsync: mockUpdateMigrationStatus,
+			updateStatusMutationRest: {},
 		} );
 	} );
 
@@ -56,11 +58,14 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( mockUpdateMigrationStatus ).toHaveBeenCalledWith( siteId, 'migration-pending' );
 	} );
 
-	it( 'should call updateMigrationStatus with correct value for DIFM option', () => {
+	it( 'should call updateMigrationStatus with correct value for DIFM option', async () => {
 		const { getByText } = render( { navigation: { submit: mockSubmit } } );
 
 		const optionButton = getByText( 'Do it for me' );
-		fireEvent.click( optionButton );
+
+		await act( async () => {
+			await fireEvent.click( optionButton );
+		} );
 
 		// Check the last call value
 		const lastCallValue =
@@ -68,11 +73,14 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( lastCallValue ).toBe( 'migration-pending-difm' );
 	} );
 
-	it( 'should call updateMigrationStatus with correct value for DIY option', () => {
+	it( 'should call updateMigrationStatus with correct value for DIY option', async () => {
 		const { getByText } = render( { navigation: { submit: mockSubmit } } );
 
 		const optionButton = getByText( "I'll do it myself" );
-		fireEvent.click( optionButton );
+
+		await act( async () => {
+			await fireEvent.click( optionButton );
+		} );
 
 		// Check the last call value
 		const lastCallValue =
@@ -80,20 +88,26 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( lastCallValue ).toBe( 'migration-pending-diy' );
 	} );
 
-	it( 'should call submit with correct value when DIFM option is clicked', () => {
+	it( 'should call submit with correct value when DIFM option is clicked', async () => {
 		const { getByText } = render( { navigation: { submit: mockSubmit } } );
 
 		const optionButton = getByText( 'Do it for me' );
-		fireEvent.click( optionButton );
+
+		await act( async () => {
+			await fireEvent.click( optionButton );
+		} );
 
 		expect( mockSubmit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'difm' } );
 	} );
 
-	it( 'should call submit with correct value for DIY option', () => {
+	it( 'should call submit with correct value for DIY option', async () => {
 		const { getByText } = render( { navigation: { submit: mockSubmit } } );
 
 		const optionButton = getByText( "I'll do it myself" );
-		fireEvent.click( optionButton );
+
+		await act( async () => {
+			await fireEvent.click( optionButton );
+		} );
 
 		expect( mockSubmit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'myself' } );
 	} );
