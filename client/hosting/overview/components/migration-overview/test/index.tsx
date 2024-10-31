@@ -12,8 +12,8 @@ function textContentMatcher( textMatch: string | RegExp ) {
 			? ( node: Element ) => node.textContent === textMatch
 			: ( node: Element ) => textMatch.test( node.textContent ?? '' );
 
-	return ( _content: string, node: Element ) => {
-		if ( ! hasText( node ) ) {
+	return ( _content: string, node: Element | null ) => {
+		if ( ! node || ! hasText( node ) ) {
 			return false;
 		}
 
