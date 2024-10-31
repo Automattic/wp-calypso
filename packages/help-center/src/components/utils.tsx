@@ -82,6 +82,8 @@ export const getFilteredConversations = ( {
 		recentConversations,
 		archivedConversations,
 	};
+};
+
 export const calculateUnread = ( conversations: ZendeskConversation[] ) => {
 	let unreadConversations = 0;
 	let unreadMessages = 0;
