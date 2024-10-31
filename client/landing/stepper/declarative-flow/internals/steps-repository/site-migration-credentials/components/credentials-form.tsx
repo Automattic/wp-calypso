@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -21,14 +20,13 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
 		useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
 	let errorMessage;
-	if ( isEnglishLocale && errors.root && errors.root.type !== 'manual' && errors.root.message ) {
+	if ( errors.root && errors.root.type !== 'manual' && errors.root.message ) {
 		errorMessage = errors.root.message;
 	} else if ( queryError === 'ticket-creation' ) {
 		errorMessage = translate(
@@ -37,10 +35,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	}
 
 	const getContinueButtonText = () => {
-		if ( isEnglishLocale && isBusy && ! canBypassVerification ) {
+		if ( isBusy && ! canBypassVerification ) {
 			return translate( 'Verifying credentials' );
 		}
-		if ( isEnglishLocale && canBypassVerification ) {
+		if ( canBypassVerification ) {
 			return translate( 'Continue anyways' );
 		}
 
@@ -92,9 +90,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					onClick={ onSkip }
 					type="button"
 				>
-					{ isEnglishLocale
-						? translate( 'I need help, please contact me' )
-						: translate( 'Skip, I need help providing access' ) }
+					{ translate( 'I need help, please contact me' ) }
 				</button>
 			</div>
 		</form>

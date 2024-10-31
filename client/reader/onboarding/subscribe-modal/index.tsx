@@ -1,15 +1,26 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useMemo, useState, ComponentType, useEffect } from 'react';
+import { getLocaleSlug } from 'i18n-calypso';
+import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
+import { trackScrollPage } from 'calypso/reader/controller-helper';
+import {
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding/constants';
+import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
+import { useDispatch } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { curatedBlogs } from '../curated-blogs';
-
 import './style.scss';
 
 interface SubscribeModalProps {
@@ -34,16 +45,32 @@ interface StreamProps {
 	className?: string;
 	followSource?: string;
 	useCompactCards?: boolean;
+	trackScrollPage?: (
+		path: string,
+		title: string,
+		category: string,
+		readerView: string,
+		pageNum: number
+	) => void;
 }
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags ) || [];
-	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	const followedTags = useSelector( getReaderFollowedTags );
+
+	const followedTagSlugs = useMemo( () => {
+		return ( followedTags || [] ).map( ( tag ) => tag.slug );
+	}, [ followedTags ] );
+
+	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	const dispatch = useDispatch();
+	const currentLocale = getLocaleSlug();
+	const SITES_PER_PAGE = 6;
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
-		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
+		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
 		queryFn: () =>
 			wpcom.req.get(
 				{
@@ -52,12 +79,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				},
 				{
 					tags: followedTagSlugs,
-					site_recs_per_card: 6,
+					site_recs_per_card: 18,
 					tag_recs_per_card: 0,
 				}
 			),
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
+		refetchOnMount: 'always',
+		refetchOnWindowFocus: true,
 		select: ( data: { cards: Card[] } ) => {
 			const recommendedBlogsCard = data.cards.find(
 				( card: Card ) => card.type === 'recommended_blogs'
@@ -70,13 +97,22 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				  } ) )
 				: [];
 		},
+		staleTime: Infinity,
+		enabled: followedTagSlugs.length > 0,
 	} );
 
 	const combinedRecommendations = useMemo( () => {
-		// Get list of curated recommendations.
-		const curatedRecommendations = followedTagSlugs
-			.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
-			.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) );
+		if ( isLoading ) {
+			return [];
+		}
+		const isEnglish = currentLocale?.startsWith( 'en' );
+
+		// Get list of curated recommendations only if the language is English.
+		const curatedRecommendations = isEnglish
+			? followedTagSlugs
+					.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
+					.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) )
+			: [];
 
 		// Get list of API recommended blogs.
 		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
@@ -114,9 +150,24 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			return b.weight - a.weight;
 		} );
 
-		// Limit to 6 recommendations
-		return sortedRecommendations.slice( 0, 6 );
-	}, [ followedTagSlugs, apiRecommendedSites ] );
+		// Limit to 18 recommendations.
+		return sortedRecommendations.slice( 0, 18 );
+	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
+
+	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
+
+	const displayedRecommendations = useMemo( () => {
+		// Show all items up to the current page.
+		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE );
+	}, [ combinedRecommendations, currentPage ] );
+
+	const handleLoadMore = useCallback( () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
+			page: currentPage,
+		} );
+		// Only increment the page if we haven't reached the end.
+		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
+	}, [ maxPages, currentPage ] );
 
 	const headerActions = (
 		<>
@@ -126,24 +177,86 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
-	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
+	useEffect( () => {
+		if ( combinedRecommendations.length > 0 ) {
+			dispatch(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
+			);
+		}
+	}, [ combinedRecommendations, dispatch ] );
+
+	// Prefetch all feed streams when the modal is opened.
+	useEffect( () => {
+		if ( isOpen && combinedRecommendations.length > 0 ) {
+			combinedRecommendations.forEach( ( site ) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+			} );
+		}
+	}, [ isOpen, combinedRecommendations, dispatch ] );
+
+	// Reset the page and selected site when the followed tags change.
+	useEffect( () => {
+		setCurrentPage( 0 );
+		setSelectedSite( null );
+	}, [ followedTagSlugs ] );
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
-			setSelectedSite( combinedRecommendations[ 0 ] );
+		if ( displayedRecommendations.length > 0 ) {
+			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ combinedRecommendations, selectedSite ] );
+	}, [ displayedRecommendations ] );
 
-	const handleItemClick = ( site: CardData ) => {
+	const handleItemClick = useCallback( ( site: CardData ) => {
 		setSelectedSite( site );
-	};
+	}, [] );
+
+	const follows = useSelector( getReaderFollows );
+
+	const handleFollowToggle = useCallback(
+		async ( site: CardData, following: boolean ) => {
+			const isFollowingSite = ( site: CardData ) =>
+				follows.some(
+					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
+				);
+
+			// Exit early if the follow state already matches what we want.
+			if ( following === isFollowingSite( site ) ) {
+				return;
+			}
+
+			// Maximum number of retries
+			const MAX_RETRIES = 3;
+
+			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
+				// Update the subscriptions list behind the modal.
+				await dispatch( requestFollows() );
+
+				// Delay the next attempt.
+				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
+
+				if ( following === isFollowingSite( site ) ) {
+					return;
+				}
+			}
+		},
+		[ follows, dispatch ]
+	);
 
 	const formatUrl = ( url: string ): string => {
 		return url
 			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
 			.replace( /\/$/, '' ); // Remove trailing slash
 	};
+
+	const handleContinue = useCallback( () => {
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		onClose();
+	}, [ dispatch, onClose ] );
 
 	return (
 		isOpen && (
@@ -168,7 +281,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 						) }
 						{ ! isLoading && combinedRecommendations.length > 0 && (
 							<div className="subscribe-modal__recommended-sites">
-								{ combinedRecommendations.map( ( site: CardData ) => (
+								{ displayedRecommendations.map( ( site: CardData ) => (
 									<ConnectedReaderSubscriptionListItem
 										key={ site.feed_ID }
 										feedId={ site.feed_ID }
@@ -182,18 +295,32 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										disableSuggestedFollows
 										onItemClick={ () => handleItemClick( site ) }
 										isSelected={ selectedSite?.feed_ID === site.feed_ID }
+										onFollowToggle={ ( following: boolean ) =>
+											handleFollowToggle( site, following )
+										}
 									/>
 								) ) }
 							</div>
 						) }
-						<p>{ __( 'Load more recommendations' ) }</p>
-						<Button className="subscribe-modal__continue-button is-primary" onClick={ onClose }>
+						{ currentPage < maxPages && (
+							<Button
+								className="subscribe-modal__load-more-button"
+								onClick={ handleLoadMore }
+								variant="link"
+							>
+								{ __( 'Load more recommendations' ) }
+							</Button>
+						) }
+						<Button
+							className="subscribe-modal__continue-button is-primary"
+							onClick={ handleContinue }
+						>
 							{ __( 'Continue' ) }
 						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">
-							{ selectedSite ? (
+							{ selectedSite && (
 								<>
 									<div className="subscribe-modal__preview-stream-header">
 										<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
@@ -204,13 +331,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 											className="is-site-stream subscribe-modal__preview-stream"
 											followSource="reader_subscribe_modal"
 											useCompactCards
+											trackScrollPage={ trackScrollPage.bind( null ) }
 										/>
 									</div>
 								</>
-							) : (
-								<div className="subscribe-modal__preview-placeholder-text">
-									{ __( 'Select a blog to preview its posts' ) }
-								</div>
 							) }
 						</div>
 					</div>

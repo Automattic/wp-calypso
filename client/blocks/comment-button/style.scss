@@ -2,6 +2,7 @@
 	align-items: center;
 	box-sizing: border-box;
 	color: var(--color-text-subtle);
+	fill: var(--color-text-subtle);
 	cursor: pointer;
 	display: flex;
 	height: 20px;
@@ -11,6 +12,7 @@
 	&:hover,
 	&:active {
 		color: var(--color-link);
+		fill: var(--color-link);
 	}
 
 	.comment-button__label-status {
@@ -21,11 +23,16 @@
 }
 
 .comment-button__label {
+	font-size: $font-body-small;
 	&:empty {
 		display: none;
+	}
+
+	.comment-button__label-count {
+		font-size: $font-body-small;
 	}
 }
 
 .reader-full-post .reader-post-actions .comment-button .comment-button__label {
-	font-size: rem(14px);
+	font-size: $font-body-small;
 }

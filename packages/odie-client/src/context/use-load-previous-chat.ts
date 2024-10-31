@@ -1,36 +1,58 @@
 import { useEffect, useState } from 'react';
-import { useOdieGetChat } from '../query';
-import { Chat, OdieAllowedBots } from '../types/';
+import { getZendeskConversation } from '../data/use-get-zendesk-conversation';
+import { useOdieChat } from '../query/use-odie-chat';
+import { Chat, OdieAllowedBots, Message, SupportProvider } from '../types/';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 
 export const useLoadPreviousChat = ( {
 	botNameSlug,
-	chatId,
 	odieInitialPromptText,
+	setSupportProvider,
+	isChatLoaded,
+	selectedConversationId,
 }: {
 	botNameSlug: OdieAllowedBots;
-	chatId: number | null | undefined;
 	odieInitialPromptText?: string;
+	setSupportProvider: ( supportProvider: SupportProvider ) => void;
+	isChatLoaded: boolean;
+	selectedConversationId?: string | null;
 } ) => {
-	const { data: existingChat, isLoading: loadingChat } = useOdieGetChat(
-		botNameSlug,
-		chatId,
-		1,
-		30
-	);
+	const { chat: existingChat } = useOdieChat( 1, 30 );
 
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 	} );
 
-	const [ isLoading, setIsLoading ] = useState( true );
-
 	useEffect( () => {
-		setIsLoading( loadingChat );
-		if ( existingChat ) {
+		if ( existingChat || selectedConversationId ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
-			const messages = [ initialMessage, ...existingChat.messages ];
+			const messages = [ initialMessage ];
+
+			if ( existingChat ) {
+				messages.push( ...( existingChat as Chat ).messages );
+			}
+
+			if ( isChatLoaded ) {
+				getZendeskConversation( {
+					chatId: existingChat?.chat_id,
+					conversationId: selectedConversationId,
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						setSupportProvider( 'zendesk' );
+						setChat( {
+							chat_id: conversation.metadata[ 'odieChatId' ]
+								? Number( conversation.metadata[ 'odieChatId' ] )
+								: null,
+							...existingChat,
+							conversationId: conversation.id,
+							messages: [ ...messages, ...( conversation.messages as Message[] ) ],
+						} );
+					}
+					return;
+				} );
+			}
+
 			setChat( { ...existingChat, messages } );
 		} else {
 			setChat( {
@@ -38,7 +60,13 @@ export const useLoadPreviousChat = ( {
 				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 			} );
 		}
-	}, [ botNameSlug, chatId, existingChat, loadingChat, odieInitialPromptText ] );
+	}, [
+		botNameSlug,
+		existingChat?.chat_id,
+		odieInitialPromptText,
+		setSupportProvider,
+		isChatLoaded,
+	] );
 
-	return { chat, isLoading: loadingChat || isLoading };
+	return { chat };
 };

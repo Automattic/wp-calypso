@@ -381,7 +381,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// It should be removed when this property is ready on useQueryThemes
 	useQueryTheme( 'wpcom', selectedDesignThemeId );
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
-	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
+	const screenshot = theme?.screenshots?.[ 0 ] ?? theme?.screenshot;
+	const fullLengthScreenshot = screenshot?.replace( /\?.*/, '' );
 
 	const marketplaceThemeProducts =
 		useSelector( ( state ) =>

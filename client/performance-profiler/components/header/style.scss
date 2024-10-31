@@ -21,12 +21,19 @@
 		color: var(--studio-white);
 		padding: 0;
 
-		&:hover {
-			color: var(--studio-white);
-			text-decoration: none;
-		}
 		&:focus {
 			box-shadow: none;
+		}
+
+		&:hover {
+			text-decoration: none;
+		}
+
+		.badge-container {
+			&:hover {
+				color: var(--studio-gray-5);
+				text-decoration: none;
+			}
 		}
 	}
 
@@ -63,8 +70,11 @@
 			line-height: 20px;
 			text-decoration: underline;
 
-			&:hover {
-				color: var(--studio-gray-5);
+			&.components-button {
+				&:hover {
+					color: var(--studio-gray-5);
+					text-decoration: none;
+				}
 			}
 		}
 	}

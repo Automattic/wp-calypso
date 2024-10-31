@@ -47,6 +47,7 @@ function ReaderSubscriptionListItem( {
 	disableSuggestedFollows,
 	onItemClick,
 	isSelected,
+	onFollowToggle,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -220,7 +221,7 @@ function ReaderSubscriptionListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
-					onFollowToggle={ openSuggestedFollowsModal }
+					onFollowToggle={ disableSuggestedFollows ? onFollowToggle : openSuggestedFollowsModal }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />

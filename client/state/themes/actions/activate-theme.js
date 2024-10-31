@@ -48,7 +48,13 @@ export function activateTheme( themeId, siteId, options = {} ) {
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
-					await dispatch( activateStyleVariation( themeId, siteId, themeOptions.styleVariation ) );
+					await dispatch(
+						activateStyleVariation(
+							themeId,
+							siteId,
+							styleVariationSlug !== 'default' ? themeOptions.styleVariation : {}
+						)
+					);
 				}
 
 				return theme;

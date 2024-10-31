@@ -108,6 +108,18 @@ $brand-text: "SF Pro Text", $sans;
 				position: unset;
 				margin-left: 4px;
 			}
+
+			.sidebar__inline-text,
+			.sidebar__sparkline {
+				display: none;
+			}
+
+			.notice {
+				.notice__content,
+				.notice__action {
+					display: none;
+				}
+			}
 		}
 	}
 

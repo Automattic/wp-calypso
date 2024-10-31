@@ -11,6 +11,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 
@@ -27,7 +28,9 @@ type InsightsSectionProps = {
 const AIBadge = styled.span`
 	padding: 0 8px;
 	margin-left: 8px;
+	margin-top: 2px;
 	width: fit-content;
+	height: fit-content;
 	border-radius: 4px;
 	float: right;
 	font-size: 12px;
@@ -139,6 +142,7 @@ export const InsightsSection = forwardRef(
 							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
 								url: props.url,
 								key,
+								version: profilerVersion(),
 							} )
 						}
 					/>

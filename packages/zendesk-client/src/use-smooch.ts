@@ -95,6 +95,7 @@ export const useSmooch = () => {
 		renderSmooch: Smooch.render,
 		destroy,
 		getConversation,
+		getConversations: Smooch.getConversations,
 		createConversation,
 		addMessengerListener,
 		addUnreadCountListener,

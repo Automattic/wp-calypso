@@ -12,7 +12,6 @@ import { actions as readymadeTemplateActions } from './readymade-templates';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as subscribersActions } from './subscribers';
-import { actions as videoPressActions } from './videopress';
 import type { Task, TaskId, TaskContext, TaskActionTable } from '../types';
 import type { SiteDetails, ChecklistStatuses } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -32,7 +31,6 @@ const DEFINITIONS: TaskActionTable = {
 	...readymadeTemplateActions,
 	...bioActions,
 	...paymentsActions,
-	...videoPressActions,
 };
 
 interface GetEnhancedTasksProps {

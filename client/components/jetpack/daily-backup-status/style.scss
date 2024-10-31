@@ -3,12 +3,16 @@
 	text-align: center;
 	background: #fff;
 	box-shadow: 0 0 0 1px #dcdcde;
+
+	p {
+		font-size: 1rem;
+	}
 }
 
 .daily-backup-status .form-button {
 	float: none;
 	display: block;
-	width: 100%;
+	width: auto;
 	text-align: center;
 	margin-left: 0;
 }

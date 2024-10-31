@@ -70,6 +70,7 @@ class ConnectedSubscriptionListItem extends Component {
 			disableSuggestedFollows,
 			onItemClick,
 			isSelected,
+			onFollowToggle,
 		} = this.props;
 
 		return (
@@ -88,14 +89,26 @@ class ConnectedSubscriptionListItem extends Component {
 				disableSuggestedFollows={ disableSuggestedFollows }
 				onItemClick={ onItemClick }
 				isSelected={ isSelected }
+				onFollowToggle={ onFollowToggle }
 			/>
 		);
 	}
 }
 
+const normalizeUrl = ( url ) => {
+	if ( ! url ) {
+		return '';
+	}
+	return url.match( /^https?:\/\// ) ? url : `http://${ url }`;
+};
+
 export default compose(
 	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
+		isFollowing: isFollowingSelector( state, {
+			feedId: ownProps.feedId ?? null,
+			blogId: ownProps.siteId ?? null,
+		} ),
+		url: normalizeUrl( ownProps.url ?? '' ),
 	} ) ),
 	connectSite
 )( ConnectedSubscriptionListItem );

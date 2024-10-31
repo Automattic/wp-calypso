@@ -57,7 +57,7 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 			dispatch( setActiveAgency( newAgency ) );
 
 			// Enable the Partner Directory section
-			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory_allowed ) {
+			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
 				config.enable( 'a4a-partner-directory' );
 			}
 		}

@@ -40,6 +40,7 @@ type Feature =
 
 type InquiryType =
 	| 'help'
+	| 'user-is-greeting'
 	| 'suggestion'
 	| 'refund'
 	| 'billing'
@@ -53,7 +54,7 @@ export type Context = {
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
-	prompt_tags?: {
+	question_tags?: {
 		feature?: Feature;
 		inquiry_type?: InquiryType;
 		language?: string;
@@ -62,6 +63,8 @@ export type Context = {
 	flags?: {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
+		hide_disclaimer_content?: boolean;
+		show_contact_support_msg?: boolean;
 	};
 };
 
@@ -95,10 +98,13 @@ export type Message = {
 	simulateTyping?: boolean;
 	type: MessageType;
 	directEscalationSupport?: boolean;
+	created_at?: string;
 };
 
 export type Chat = {
+	conversationId?: string;
 	chat_id?: number | null;
+	wpcom_user_id?: number | null;
 	messages: Message[];
 };
 

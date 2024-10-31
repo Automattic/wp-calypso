@@ -15,7 +15,7 @@ export class JetpackHeader extends PureComponent {
 		partnerSlug: PropTypes.string,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
-		isWooCoreProfiler: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
@@ -27,12 +27,12 @@ export class JetpackHeader extends PureComponent {
 			width,
 			isFromAutomatticForAgenciesPlugin,
 			isWooOnboarding,
-			isWooCoreProfiler,
+			isWooPasswordlessJPC,
 			isWooDna,
 			translate,
 		} = this.props;
 
-		if ( isWooCoreProfiler ) {
+		if ( isWooPasswordlessJPC ) {
 			return null;
 		}
 

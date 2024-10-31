@@ -35,17 +35,22 @@ import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import {
 	toggleReaderSidebarLists,
+	toggleReaderSidebarFollowing,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
-import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import {
+	isListsOpen,
+	isFollowingOpen,
+	isTagsOpen,
+} from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
-import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
+import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
@@ -189,15 +194,25 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-						'sidebar-streams__following': true,
-					} ) }
-					label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
-					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					customIcon={ <ReaderFollowingIcon /> }
-					link="/read"
-				/>
+				{ isEnabled( 'reader/recent-feed-overhaul' ) ? (
+					<ReaderSidebarRecent
+						onClick={ this.props.toggleFollowingVisibility }
+						isOpen={ this.props.isFollowingOpen }
+						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+							'sidebar-streams__following': true,
+						} ) }
+					/>
+				) : (
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+							'sidebar-streams__following': true,
+						} ) }
+						label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
+						onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+						customIcon={ <ReaderFollowingIcon /> }
+						link="/read"
+					/>
+				) }
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
@@ -303,7 +318,6 @@ export class ReaderSidebar extends Component {
 			<GlobalSidebar { ...props }>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
-				<ReaderSidebarPromo />
 			</GlobalSidebar>
 		);
 	}
@@ -315,9 +329,6 @@ export class ReaderSidebar extends Component {
 					<ReaderSidebarNudges />
 					{ this.renderSidebarMenu() }
 				</SidebarRegion>
-
-				<ReaderSidebarPromo />
-
 				<SidebarFooter />
 			</Sidebar>
 		);
@@ -346,6 +357,7 @@ export default withCurrentRoute(
 
 			return {
 				isListsOpen: isListsOpen( state ),
+				isFollowingOpen: isFollowingOpen( state ),
 				isTagsOpen: isTagsOpen( state ),
 				subscribedLists: getSubscribedLists( state ),
 				teams: getReaderTeams( state ),
@@ -358,6 +370,7 @@ export default withCurrentRoute(
 			recordTracksEvent,
 			setNextLayoutFocus,
 			toggleListsVisibility: toggleReaderSidebarLists,
+			toggleFollowingVisibility: toggleReaderSidebarFollowing,
 			toggleTagsVisibility: toggleReaderSidebarTags,
 		}
 	)( localize( ReaderSidebar ) )

@@ -1,32 +1,28 @@
 import { Gridicon } from '@automattic/components';
-import { Icon, download as downloadIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import * as React from 'react';
-import ExternalLink from 'calypso/components/external-link';
+import CredentialsPrompt from 'calypso/components/activity-card/toolbar/actions/credentials-prompt';
+import DownloadButton from 'calypso/components/activity-card/toolbar/actions/download-button';
+import RestoreButton from 'calypso/components/activity-card/toolbar/actions/restore-button';
+import ViewFilesButton from 'calypso/components/activity-card/toolbar/actions/view-files-button';
 import Button from 'calypso/components/forms/form-button';
-import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 import PopoverMenu from 'calypso/components/popover-menu';
 import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from 'calypso/lib/jetpack/backup-utils';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
+import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
-import { rewindRequestBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
-import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
-import ViewFilesButton from './buttons/view-files-button';
 
 type SingleSiteOwnProps = {
 	siteId: number;
 	siteSlug: string;
 	rewindId: string;
 	isSuccessfulBackup: boolean;
+	useSplitButton?: boolean;
 };
 
 const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
@@ -34,6 +30,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 	siteSlug,
 	rewindId,
 	isSuccessfulBackup,
+	useSplitButton = false,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -48,33 +45,33 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 		setPopoverVisible( false );
 	};
 
-	const doesRewindNeedCredentials = useSelector( ( state ) =>
+	const needsCredentials = useSelector( ( state ) =>
 		getDoesRewindNeedCredentials( state, siteId )
 	);
 
-	const areCredentialsInvalid = useSelector( ( state ) =>
-		areJetpackCredentialsInvalid( state, siteId, 'main' )
-	);
+	if ( useSplitButton ) {
+		const secondaryActions = [
+			needsCredentials && <CredentialsPrompt key="credentials-prompt" siteSlug={ siteSlug } />,
+			isSuccessfulBackup && (
+				<ViewFilesButton key="view-files-button" siteSlug={ siteSlug } rewindId={ rewindId } />
+			),
+			<DownloadButton
+				key="download-button"
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				rewindId={ rewindId }
+			/>,
+		];
 
-	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
-
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
-
-	const isRestoreDisabled =
-		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
-
-	const onRestoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_actions_restore_click' ) );
-	};
-
-	const onDownloadClick = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_actions_download_click', {
-				rewind_id: rewindId,
-			} )
+		return (
+			<RestoreButton
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				rewindId={ rewindId }
+				secondaryActions={ secondaryActions }
+			/>
 		);
-		dispatch( rewindRequestBackup( siteId, rewindId ) );
-	};
+	}
 
 	return (
 		<>
@@ -94,41 +91,10 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				onClose={ closePopoverMenu }
 				className="toolbar__actions-popover"
 			>
-				<Button
-					href={ ! isRestoreDisabled && backupRestorePath( siteSlug, rewindId ) }
-					className="toolbar__restore-button"
-					disabled={ isRestoreDisabled }
-					onClick={ onRestoreClick }
-				>
-					{ translate( 'Restore to this point' ) }
-				</Button>
-				{ ! isAtomic && ( doesRewindNeedCredentials || areCredentialsInvalid ) && (
-					<div className="toolbar__credentials-warning">
-						<img src={ missingCredentialsIcon } alt="" role="presentation" />
-						<div className="toolbar__credentials-warning-text">
-							{ translate(
-								'{{a}}Enter your server credentials{{/a}} to enable one-click restores from your backups.',
-								{
-									components: {
-										a: <ExternalLink href={ settingsPath( siteSlug ) } />,
-									},
-								}
-							) }
-						</div>
-					</div>
-				) }
+				<RestoreButton siteId={ siteId } siteSlug={ siteSlug } rewindId={ rewindId } />
+				{ needsCredentials && <CredentialsPrompt siteSlug={ siteSlug } /> }
 				{ isSuccessfulBackup && <ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } /> }
-				<Button
-					borderless
-					compact
-					isPrimary={ false }
-					onClick={ onDownloadClick }
-					href={ backupDownloadPath( siteSlug, rewindId ) }
-					className="toolbar__download-button"
-				>
-					<Icon icon={ downloadIcon } className="toolbar__download-button-icon" size={ 18 } />
-					{ translate( 'Download backup' ) }
-				</Button>
+				<DownloadButton siteId={ siteId } siteSlug={ siteSlug } rewindId={ rewindId } />
 			</PopoverMenu>
 		</>
 	);
@@ -179,6 +145,7 @@ type OwnProps = {
 	activity: Activity;
 	availableActions?: Array< string >;
 	onClickClone?: ( period: string ) => void;
+	useSplitButton?: boolean;
 };
 
 const ActionsButton: React.FC< OwnProps > = ( {
@@ -186,6 +153,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 	activity,
 	availableActions,
 	onClickClone,
+	useSplitButton = false,
 } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -220,6 +188,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 			siteSlug={ siteSlug ?? '' }
 			rewindId={ actionableRewindId ?? '' }
 			isSuccessfulBackup={ isSuccessfulBackup }
+			useSplitButton={ useSplitButton }
 		/>
 	);
 };

@@ -5,8 +5,8 @@ import {
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import { DOTCOM_MONITORING } from '../sites/components/site-preview-pane/constants';
-import { siteDashboard } from '../sites/controller';
+import { DOTCOM_MONITORING } from 'calypso/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/sites/controller';
 import { redirectHomeIfIneligible, siteMonitoring } from './controller';
 
 export default function () {

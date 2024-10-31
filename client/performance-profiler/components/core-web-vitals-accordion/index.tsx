@@ -9,7 +9,7 @@ import {
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
-
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import './styles.scss';
 
 type Props = Record< Metrics, number > & {
@@ -37,7 +37,7 @@ const CardHeader = ( props: HeaderProps ) => {
 				<span className="core-web-vitals-accordion__header-text-name">{ displayName }</span>
 
 				{ isPerformanceScoreSelected ? (
-					<div className="metric-tab-bar__tab-metric" style={ { marginTop: '6px' } }>
+					<div className="metric-tab-bar__tab-metric performance-score accordion">
 						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
@@ -61,6 +61,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 		} else {
 			recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
 				tab: key,
+				version: profilerVersion(),
 			} );
 			setActiveTab( key as Metrics );
 		}

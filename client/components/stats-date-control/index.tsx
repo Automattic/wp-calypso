@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
 import { RefObject } from 'react';
@@ -64,6 +65,7 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
@@ -166,17 +168,22 @@ const StatsDateControl = ( {
 					buttonRef: RefObject< typeof Button >;
 				} ) => {
 					return (
-						<Button
-							onClick={ () => {
-								const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
-								onTriggerClick();
-							} }
-							ref={ buttonRef }
+						<Tooltip
+							text={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+							placement="bottom-end"
 						>
-							{ getButtonLabel() }
-							<Icon className="gridicon" icon={ calendar } />
-						</Button>
+							<Button
+								onClick={ () => {
+									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+									recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+									onTriggerClick();
+								} }
+								ref={ buttonRef }
+							>
+								{ getButtonLabel() }
+								<Icon className="gridicon" icon={ calendar } />
+							</Button>
+						</Tooltip>
 					);
 				} }
 				rootClass="stats-date-control-picker"

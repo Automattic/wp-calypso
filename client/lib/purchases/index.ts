@@ -874,7 +874,7 @@ export function isAgencyPartnerType( partnerType: string ) {
 		return false;
 	}
 
-	return [ 'agency', 'agency_beta', 'a4a_agency' ].includes( partnerType );
+	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
 export function purchaseType( purchase: Purchase ) {

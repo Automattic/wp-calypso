@@ -2,71 +2,43 @@
 	align-items: center;
 	display: flex;
 	color: var(--color-text-subtle);
+	fill: var(--color-text-subtle);
+	cursor: pointer;
 	box-sizing: border-box;
 	height: 20px;
 	gap: 4px;
+}
 
-	.gridicons-star {
-		opacity: 0;
-		pointer-events: none;
-		fill: var(--color-link);
-		transform: scale(4) rotate(90deg);
-	}
+.like-button:hover {
+	color: var(--color-link);
+}
 
-	&.is-animated .gridicons-star {
-		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
+.like-button:hover svg {
+	fill: var(--color-link);
+}
 
-	&.is-animated .gridicons-star-outline {
-		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
+.like-button.liked {
+	fill: var(--color-link);
+	color: var(--color-link);
+}
 
-	&:hover {
-		cursor: pointer;
-		color: var(--color-link);
-	}
+.like-button.has-count.has-label .like-button__label-status::before {
+	content: " ";
+}
 
-	&.is-liked {
-		color: var(--color-text-subtle);
-
-
-		.gridicons-star {
-			opacity: 1;
-			fill: var(--color-link);
-			pointer-events: auto;
-			transform: scale(1) rotate(0);
-		}
-
-		.gridicons-star-outline {
-			opacity: 0;
-			pointer-events: none;
-			fill: var(--color-link);
-			transform: translateX(-10px) rotate(1deg) scale(0.3);
-		}
-
-		.like-button__label {
-			color: var(--color-link);
-		}
-	}
-
-	&.has-count {
-		&.has-label {
-			.like-button__label-status::before {
-				content: " ";
-			}
-		}
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		.like-button__label-status {
-			display: none;
-		}
+@include breakpoint-deprecated("<480px") {
+	.like-button__label-status {
+		display: none;
 	}
 }
 
 .like-button__label {
 	&:empty {
 		display: none;
+	}
+
+	.like-button__label-count {
+		font-size: $font-body-small;
 	}
 }
 
@@ -81,5 +53,5 @@
 		.like-button__label {
 			font-size: rem(14px);
 		}
-	} 
+	}
 }

@@ -17,6 +17,7 @@ import {
 	MEDIA_ITEM_EDIT,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
+	MEDIA_PHOTOS_PICKER_SESSION_SET,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/media';
@@ -294,5 +295,16 @@ export function clearSite( siteId ) {
 	return {
 		type: MEDIA_CLEAR_SITE,
 		siteId,
+	};
+}
+
+/**
+ * Set a Google photos picker session.
+ * @param session
+ */
+export function setPhotoPickerSession( session ) {
+	return {
+		type: MEDIA_PHOTOS_PICKER_SESSION_SET,
+		session,
 	};
 }

@@ -8,6 +8,7 @@ import {
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
@@ -23,7 +24,10 @@ const MetricTabBar = ( props: Props ) => {
 
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
-		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', { tab } );
+		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
+			tab,
+			version: profilerVersion(),
+		} );
 	};
 
 	return (
@@ -36,14 +40,7 @@ const MetricTabBar = ( props: Props ) => {
 					onClick={ () => handleTabClick( 'overall' ) }
 				>
 					<div className="metric-tab-bar__tab-text">
-						<div
-							className="metric-tab-bar__tab-header"
-							css={ {
-								marginBottom: '6px',
-							} }
-						>
-							{ translate( 'Performance Score' ) }
-						</div>
+						<div className="metric-tab-bar__tab-header">{ translate( 'Performance Score' ) }</div>
 						<div className="metric-tab-bar__tab-metric">
 							<CircularPerformanceScore score={ props.overall } size={ 48 } />
 						</div>

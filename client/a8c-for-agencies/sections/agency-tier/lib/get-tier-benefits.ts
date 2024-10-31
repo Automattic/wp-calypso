@@ -1,11 +1,12 @@
 import { preventWidows } from 'calypso/lib/formatting';
+import type { AgencyTier } from '../types';
 
 interface Benefit {
 	title: string;
 	description: string;
 	features: string[];
 	isComingSoon: boolean;
-	availableTiers: ( 'emerging-partner' | 'agency-partner' | 'pro-agency-partner' )[];
+	availableTiers: AgencyTier[];
 }
 
 const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
@@ -66,8 +67,8 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 			'Agency dash for streamlined client billing, program and product management, and free agency site on WordPress.com or Pressable*.'
 		),
 		features: [
-			translate( 'Agency partners receive free WordPress.com and Pressable site.' ),
-			translate( 'Pro partners receive free WordPress.com and Pressable site.' ),
+			translate( 'Agency partners receive a free WordPress.com and a Pressable site.' ),
+			translate( 'Pro partners receive a free WordPress.com and a Pressable site.' ),
 		],
 		isComingSoon: true,
 		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],

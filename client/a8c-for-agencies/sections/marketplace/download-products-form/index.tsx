@@ -41,7 +41,8 @@ export default function DownloadProductsForm() {
 		jetpackKeys.map( ( licenseKey: string ) => {
 			const productSlug = getProductSlugFromLicenseKey( licenseKey );
 			const product =
-				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
+				allProducts &&
+				allProducts.find( ( product ) => productSlug && product.slug.startsWith( productSlug ) );
 
 			return (
 				<li key={ licenseKey }>
@@ -73,7 +74,9 @@ export default function DownloadProductsForm() {
 
 		const invalidKeys = licenseKeys.split( ',' ).filter( ( key ) => {
 			const productSlug = getProductSlugFromLicenseKey( key );
-			return ! allProducts.find( ( product ) => product.slug === productSlug );
+			return ! allProducts.find(
+				( product ) => productSlug && product.slug.startsWith( productSlug )
+			);
 		} );
 
 		if ( invalidKeys.length ) {

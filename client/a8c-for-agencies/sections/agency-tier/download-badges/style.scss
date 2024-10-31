@@ -1,0 +1,64 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.agency-tier-download-badge__button {
+	display: flex;
+	gap: 10px;
+}
+
+.agency-tier-download-badges-modal {
+
+	&.a4a-themed-modal .components-modal__content.hide-header {
+		background: var(--color-white);
+		padding: 0;
+	}
+
+	.a4a-themed-modal__sidebar-image-container {
+		min-width: 50%;
+		display: none;
+		justify-content: center;
+		align-items: center;
+
+		@include break-large {
+			display: flex;
+		}
+
+		.a4a-themed-modal__sidebar-image {
+			width: 400px;
+		}
+	}
+
+	.agency-tier-download-badges-modal__content {
+		display: flex;
+		gap: 16px;
+		flex-direction: column;
+
+		.agency-tier-download-badges-modal__title {
+			@include a4a-font-heading-xl;
+		}
+
+		.agency-tier-download-badges-modal__description {
+			@include a4a-font-body-md;
+		}
+
+		.agency-tier-download-badges-modal__list-heading {
+			@include a4a-font-heading-md($font-weight: 700);
+		}
+
+		.agency-tier-download-badges-modal__list {
+			padding-block-start: 8px;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			a.components-button {
+				@include a4a-font-body-lg;
+				display: flex;
+				justify-content: flex-start;
+				gap: 8px;
+				padding: 24px 16px;
+				margin-left: -16px;
+			}
+		}
+	}
+}

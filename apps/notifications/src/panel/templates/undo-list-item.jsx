@@ -107,7 +107,8 @@ export class UndoListItem extends Component {
 			comment.update( data, updateSpamStatus );
 		} );
 
-		this.props.removeNotes( [ this.props.note.id ] );
+		const isComment = true;
+		this.props.removeNotes( [ this.props.note.id ], isComment );
 
 		component.finishExecution();
 	};
@@ -124,7 +125,8 @@ export class UndoListItem extends Component {
 
 		this.instance && this.setState( { isVisible: false } );
 
-		this.props.removeNotes( [ this.props.note.id ] );
+		const isComment = true;
+		this.props.removeNotes( [ this.props.note.id ], isComment );
 
 		this.finishExecution();
 	};

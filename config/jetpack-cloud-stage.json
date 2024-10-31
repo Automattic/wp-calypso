@@ -44,6 +44,7 @@
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-restore-preflight-checks": true,
 		"jetpack/backup-retention-settings": true,
+		"jetpack/backup-schedule-setting": true,
 		"jetpack/card-addition-improvements": true,
 		"jetpack/golden-token": true,
 		"jetpack/plugin-management": true,

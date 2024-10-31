@@ -1,23 +1,14 @@
-/* eslint-disable no-restricted-imports */
-import config from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
-import React, {
-	useCallback,
-	useMemo,
-	useState,
-	KeyboardEvent,
-	FormEvent,
-	useRef,
-	useEffect,
-	RefObject,
-} from 'react';
-import TextareaAutosize from 'calypso/components/textarea-autosize';
+import { useCallback, useRef, RefObject } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
+import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
-import { useOdieSendMessage } from '../../query';
+import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
 import { JumpToRecent } from '../message/jump-to-recent';
+import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
@@ -26,19 +17,19 @@ export const OdieSendMessageButton = ( {
 }: {
 	containerReference: RefObject< HTMLDivElement >;
 } ) => {
-	const { _x } = useI18n();
-	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
-	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
+	const inputRef = useRef< HTMLTextAreaElement >( null );
+	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const sendMessage = useSendChatMessage();
+	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
 
-	useEffect( () => {
-		if ( initialUserMessage && ! chat.chat_id ) {
-			setMessageString( initialUserMessage );
+	const sendMessageHandler = useCallback( async () => {
+		if ( inputRef.current?.value.trim() === '' || shouldBeDisabled ) {
+			return;
 		}
-	}, [ initialUserMessage, chat.chat_id ] );
+		const messageString = inputRef.current?.value;
+		inputRef.current!.value = '';
 
-	const sendMessage = useCallback( async () => {
 		try {
 			trackEvent( 'chat_message_action_send' );
 
@@ -48,7 +39,7 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			await sendOdieMessage( { message } );
+			await sendMessage( message );
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
@@ -57,106 +48,34 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	}, [ messageString, sendOdieMessage, trackEvent ] );
-
-	const sendMessageIfNotEmpty = useCallback( async () => {
-		if ( messageString.trim() === '' ) {
-			return;
-		}
-		setMessageString( '' );
-		await sendMessage();
-	}, [ messageString, sendMessage ] );
-
-	const handleKeyPress = useCallback(
-		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-			if ( isLoading ) {
-				return;
-			}
-			if ( event.key === 'Enter' && ! event.shiftKey ) {
-				event.preventDefault();
-				await sendMessageIfNotEmpty();
-			}
-		},
-		[ isLoading, sendMessageIfNotEmpty ]
+	}, [ sendMessage, trackEvent ] );
+	const classes = clsx(
+		'odie-send-message-inner-button',
+		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
 	);
-
-	const handleSubmit = useCallback(
-		async ( event: FormEvent< HTMLFormElement > ) => {
-			event.preventDefault();
-			await sendMessageIfNotEmpty();
-		},
-		[ sendMessageIfNotEmpty ]
-	);
-
-	const userHasAskedToContactHE = useMemo(
-		() =>
-			chat.messages.some(
-				( message ) => message.context?.flags?.forward_to_human_support === true
-			),
-		[ chat.messages ]
-	);
-
-	const userHasNegativeFeedback = useMemo(
-		() => chat.messages.some( ( message ) => message.liked === false ),
-		[ chat.messages ]
-	);
-
-	const getPlaceholderText = useCallback( () => {
-		const placeholderText = _x(
-			'Please wait…',
-			'Placeholder text for the message input field (chat)',
-			__i18n_text_domain__
-		);
-
-		if ( ! isLoading ) {
-			if ( config.isEnabled( 'help-center-experience' ) ) {
-				return _x(
-					'Type a message…',
-					'Placeholder text for the message input field (chat)',
-					__i18n_text_domain__
-				);
-			}
-
-			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
-				return _x(
-					'Continue chatting with Wapuu',
-					'Placeholder text for the message input field (chat)',
-					__i18n_text_domain__
-				);
-			}
-
-			return _x(
-				'Ask your question',
-				'Placeholder text for the message input field (chat)',
-				__i18n_text_domain__
-			);
-		}
-
-		return placeholderText;
-	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
-
 	return (
 		<>
 			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
-				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
-					<TextareaAutosize
-						placeholder={ getPlaceholderText() }
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						sendMessageHandler();
+					} }
+					className="odie-send-message-input-container"
+				>
+					<ResizableTextarea
+						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
-						rows={ 1 }
-						value={ messageString }
-						onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) =>
-							setMessageString( event.currentTarget.value )
-						}
-						onKeyPress={ handleKeyPress }
+						inputRef={ inputRef }
 					/>
-					{ isLoading && <Spinner className="odie-send-message-input-spinner" /> }
-					<button
-						type="submit"
-						className="odie-send-message-inner-button"
-						disabled={ messageString.trim() === '' || isLoading }
-					>
-						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
+					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
+					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
+						{ shouldUseHelpCenterExperience ? (
+							<SendMessageIcon />
+						) : (
+							<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+						) }
 					</button>
 				</form>
 			</div>

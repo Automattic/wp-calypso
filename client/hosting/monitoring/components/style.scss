@@ -187,11 +187,11 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 .site-monitoring-http-verbs-pie-chart {
 	.pie-chart__chart-section-verb-post,
 	.pie-chart__legend-sample-verb-post {
-		fill: var(--studio-blue-60);
+		fill: var(--studio-wordpress-blue-60);
 	}
 	.pie-chart__chart-section-verb-get,
 	.pie-chart__legend-sample-verb-get {
-		fill: var(--studio-blue-30);
+		fill: var(--studio-wordpress-blue-30);
 	}
 	.pie-chart__chart-section-verb-delete,
 	.pie-chart__legend-sample-verb-delete {
@@ -199,18 +199,18 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	}
 	.pie-chart__chart-section-verb-head,
 	.pie-chart__legend-sample-verb-head {
-		fill: var(--studio-blue-5);
+		fill: var(--studio-wordpress-blue-10);
 	}
 }
 
 .site-monitoring-php-static-pie-chart {
 	.pie-chart__chart-section-dynamic,
 	.pie-chart__legend-sample-dynamic {
-		fill: #09b585;
+		fill: var(--studio-celadon-30);
 	}
 	.pie-chart__chart-section-static,
 	.pie-chart__legend-sample-static {
-		fill: var(--studio-green-5);
+		fill: var(--studio-celadon-5);
 	}
 }
 

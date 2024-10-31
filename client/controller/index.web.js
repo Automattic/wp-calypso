@@ -288,8 +288,10 @@ export function redirectIfJetpackNonAtomic( context, next ) {
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+	const isDisconnectedJetpackAndNotAtomic =
+		! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack;
 
-	if ( isJetpackNonAtomic ) {
+	if ( isJetpackNonAtomic || isDisconnectedJetpackAndNotAtomic ) {
 		return redirectToDashboard( context );
 	}
 
