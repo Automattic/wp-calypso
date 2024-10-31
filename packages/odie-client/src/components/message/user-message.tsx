@@ -13,18 +13,17 @@ import type { Message } from '../../types/';
 export const UserMessage = ( {
 	message,
 	isDisliked = false,
+	isMessageWithoutEscalationOption = false,
 }: {
 	isDisliked?: boolean;
 	message: Message;
+	isMessageWithoutEscalationOption?: boolean;
 } ) => {
 	const { extraContactOptions, isUserEligibleForPaidSupport, shouldUseHelpCenterExperience } =
 		useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
-	const isMessageWithoutEscalationOption =
-		message.context?.flags?.hide_disclaimer_content ||
-		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
@@ -58,10 +57,11 @@ export const UserMessage = ( {
 
 	const renderRedesignedComponent = () => {
 		return (
-			! isMessageWithoutEscalationOption && (
+			! isMessageWithoutEscalationOption &&
+			isBot && (
 				<div className="chat-feedback-wrapper">
 					{ showExtraContactOptions && renderExtraContactOptions() }
-					{ isBot && renderDisclaimers() }
+					{ renderDisclaimers() }
 				</div>
 			)
 		);
@@ -69,7 +69,8 @@ export const UserMessage = ( {
 
 	const renderCurrentDesignComponent = () => {
 		return (
-			! isMessageWithoutEscalationOption && (
+			! isMessageWithoutEscalationOption &&
+			isBot && (
 				<>
 					{ showExtraContactOptions &&
 						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }

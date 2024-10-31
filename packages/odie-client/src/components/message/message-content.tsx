@@ -36,6 +36,10 @@ export const MessageContent = forwardRef<
 	) => {
 		const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
+		const isMessageWithOnlyText =
+			message.context?.flags?.hide_disclaimer_content ||
+			message.context?.question_tags?.inquiry_type === 'user-is-greeting';
+
 		const messageClasses = clsx(
 			'odie-chatbox-message',
 			`odie-chatbox-message-${ message.role }`,
@@ -62,7 +66,11 @@ export const MessageContent = forwardRef<
 						{ messageHeader }
 						{ message.type === 'error' && <ErrorMessage message={ message } /> }
 						{ ( message.type === 'message' || ! message.type ) && (
-							<UserMessage message={ message } isDisliked={ isDisliked } />
+							<UserMessage
+								message={ message }
+								isDisliked={ isDisliked }
+								isMessageWithoutEscalationOption={ isMessageWithOnlyText }
+							/>
 						) }
 						{ message.type === 'introduction' && (
 							<div className="odie-introduction-message-content">
@@ -80,7 +88,7 @@ export const MessageContent = forwardRef<
 						) }
 						{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 					</div>
-					<Sources message={ message } />
+					{ ! isMessageWithOnlyText && <Sources message={ message } /> }
 				</div>
 				{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 			</>
