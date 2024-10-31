@@ -2,6 +2,7 @@ import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-ch
 import debugFactory from 'debug';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
+import { addUrlToPendingPageRedirect } from '../lib/pending-page';
 import {
 	createTransactionEndpointCartFromResponseCart,
 	createTransactionEndpointRequestPayload,
@@ -34,6 +35,7 @@ export async function payPalJsProcessor(
 		throw new Error( 'Missing promise in submitted PayPal data' );
 	}
 	const {
+		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
 		reduxDispatch,
 		includeDomainDetails,
@@ -42,6 +44,7 @@ export async function payPalJsProcessor(
 		siteId,
 		siteSlug,
 		contactDetails,
+		fromSiteSlug,
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-js' } ) );
 
@@ -61,6 +64,14 @@ export async function payPalJsProcessor(
 		currentUrl.searchParams.set( 'cart', 'no-user' );
 	}
 
+	const cancelUrl = currentUrl.toString();
+	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+		fromSiteSlug,
+	} );
+
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		name: '',
 		country: contactDetails?.countryCode?.value ?? '',
@@ -78,6 +89,8 @@ export async function payPalJsProcessor(
 			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_PayPal_PPCP',
+		successUrl,
+		cancelUrl,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	try {
