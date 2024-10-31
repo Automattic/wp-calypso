@@ -7,25 +7,19 @@ export function SidebarItem( { href, children }: { href: string; children: React
 	const isActive = window.location.pathname.startsWith( href );
 
 	return (
-		<li>
-			<Button
-				href={ href }
-				className={ clsx( 'panel-sidebar-tab', {
-					'panel-sidebar-tab--active': isActive,
-				} ) }
-			>
-				{ children }
-			</Button>
-		</li>
+		<Button
+			href={ href }
+			className={ clsx( 'panel-sidebar-tab', {
+				'panel-sidebar-tab--active': isActive,
+			} ) }
+		>
+			{ children }
+		</Button>
 	);
 }
 
 export function Sidebar( { children }: { children: ReactNode } ) {
-	return (
-		<div className="panel-sidebar">
-			<ul>{ children }</ul>
-		</div>
-	);
+	return <div className="panel-sidebar">{ children }</div>;
 }
 
 export function PanelWithSidebar( { children }: { children: ReactNode } ) {

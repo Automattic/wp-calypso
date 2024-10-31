@@ -1,5 +1,6 @@
 
 @import "~@automattic/color-studio/dist/color-variables";
+@import "~@automattic/typography/styles/variables";
 
 .panel-with-sidebar {
 	display: flex;
@@ -13,15 +14,26 @@
 .panel-sidebar {
 	width: 160px;
 	flex-shrink: 0;
-
-	ul {
-		list-style: none;
-	}
 }
 
 .panel-sidebar-tab {
+	border-radius: 4px;
 	width: 100%;
+	margin: 2px 0;
+	padding: 8px;
+	height: 40px;
 	color: var(--studio-gray-100);
+	white-space: nowrap;
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	&:visited, &:focus {
+		color: var(--studio-gray-100);
+	}
+	&:focus:not(:disabled) {
+		box-shadow: none;
+	}
 
 	&--active {
 		background-color: #f0f0f0;
