@@ -2,13 +2,13 @@ import { useMutation, UseMutationOptions, useIsMutating } from '@tanstack/react-
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
-type MutationVariables = string[] | undefined;
+export type MutationVariables = string[] | undefined;
 
-interface PushStagingMutationResponse {
+export interface PushStagingMutationResponse {
 	message: string;
 }
 
-interface PushStagingMutationError {
+export interface PushStagingMutationError {
 	code: string;
 	message: string;
 }

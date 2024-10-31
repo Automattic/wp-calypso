@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
+import { zipObject } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -15,8 +16,12 @@ import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
-import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
-import { CardContentWrapper } from './card-content/card-content-wrapper';
+import {
+	MutationVariables,
+	PushStagingMutationResponse,
+	usePullFromStagingMutation,
+	usePushToStagingMutation,
+} from '../../hooks/use-staging-sync';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { ConfirmationModal } from './confirmation-modal';
 import { LoadingPlaceholder } from './loading-placeholder';
@@ -88,8 +93,18 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSite?.id as number, siteId, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
+		onSuccess: (
+			data: PushStagingMutationResponse,
+			variables: MutationVariables,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			context: unknown
+		) => {
+			dispatch(
+				recordTracksEvent(
+					'calypso_hosting_configuration_staging_site_pull_success',
+					zipObject( variables ?? [], Array( variables?.length ?? 0 ).fill( true ) )
+				)
+			);
 			setSyncError( null );
 		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

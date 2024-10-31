@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
+import { zipObject } from 'lodash';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
@@ -425,8 +426,16 @@ export const StagingSiteCard = ( {
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
+		onSuccess: ( data, variables ) => {
+			dispatch(
+				recordTracksEvent(
+					'calypso_hosting_configuration_staging_site_pull_success',
+					zipObject(
+						variables ? variables : [],
+						Array( variables ? variables.length : 0 ).fill( true )
+					)
+				)
+			);
 			setSyncError( null );
 		},
 		onError: ( error ) => {
