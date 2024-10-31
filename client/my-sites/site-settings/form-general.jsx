@@ -389,7 +389,7 @@ export class SiteSettingsFormGeneral extends Component {
 							'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
 							{
 								args: {
-									timezoneName: timezonesLabels[ guessedTimezone ] ?? guessedTimezone,
+									timezoneName: timezonesLabels?.[ guessedTimezone ] ?? guessedTimezone,
 								},
 								components: {
 									button: (
