@@ -107,7 +107,7 @@ const Header = ( {
 	children?: ReactNode;
 } ) => {
 	return (
-		<HostingHero>
+		<HostingHero className="migration-overview__header">
 			<h1>{ title }</h1>
 			<p>{ subTitle }</p>
 			{ children }

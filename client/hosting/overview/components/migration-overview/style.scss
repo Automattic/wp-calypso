@@ -1,7 +1,9 @@
 .migration-overview__container {
 	& > .migration-overview__content {
-		max-width: 720px;
 		margin: 0 auto;
+	}
+	.migration-overview__header {
+		margin-bottom: 40px;
 	}
 	.migration-started-difm {
 		display: flex;
@@ -9,7 +11,7 @@
 		gap: 1rem;
 		margin: 0 auto;
 		padding-bottom: 2rem;
-
+		max-width: 720px;
 		.migration-started-difm__title {
 			font-size: 1rem;
 			font-weight: 600;
