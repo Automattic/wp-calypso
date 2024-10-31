@@ -10627,7 +10627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/router@npm:^1.11.0":
+"@wordpress/router@npm:^1.11.0, @wordpress/router@npm:^1.8.0, @wordpress/router@npm:^1.8.1":
   version: 1.11.0
   resolution: "@wordpress/router@npm:1.11.0"
   dependencies:
@@ -10639,21 +10639,6 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: 57c022cd37ee5757309eca857c67231c24b5dbad3eec8a078a686370e3d65fbc48aab983adb6cd47a87e65d62fcae7612f959b3d5f43865ba436386dcb82b361
-  languageName: node
-  linkType: hard
-
-"@wordpress/router@npm:^1.8.0, @wordpress/router@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@wordpress/router@npm:1.8.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/element": "npm:^6.8.1"
-    "@wordpress/private-apis": "npm:^1.8.1"
-    "@wordpress/url": "npm:^4.8.1"
-    history: "npm:^5.3.0"
-  peerDependencies:
-    react: ^18.0.0
-  checksum: 5c0f614ab88f13146fffd506fc7471fd9502054e312048dc34662a68f501a779dd2269b105641b4138771231f7f87def155af00edce3118db7ab411c09c804eb
   languageName: node
   linkType: hard
 
