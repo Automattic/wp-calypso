@@ -63,7 +63,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const { setPendingMigration, isLoading: isUpdatingMigrationStatus } = usePendingMigrationStatus( {
+	const { setPendingMigration } = usePendingMigrationStatus( {
 		onSubmit: navigation.submit,
 	} );
 
@@ -84,21 +84,20 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
 
-	const stepContent =
-		isSubmitting || isUpdatingMigrationStatus ? (
-			<LoadingEllipsis className="how-to-migrate__loader" />
-		) : (
-			<div className="how-to-migrate__list">
-				{ options.map( ( option, i ) => (
-					<FlowCard
-						key={ i }
-						title={ option.label }
-						text={ option.description }
-						onClick={ () => handleClick( option.value ) }
-					/>
-				) ) }
-			</div>
-		);
+	const stepContent = isSubmitting ? (
+		<LoadingEllipsis className="how-to-migrate__loader" />
+	) : (
+		<div className="how-to-migrate__list">
+			{ options.map( ( option, i ) => (
+				<FlowCard
+					key={ i }
+					title={ option.label }
+					text={ option.description }
+					onClick={ () => handleClick( option.value ) }
+				/>
+			) ) }
+		</div>
+	);
 
 	const platformText = shouldDisplayHostIdentificationMessage
 		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {

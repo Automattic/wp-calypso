@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -19,7 +18,6 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		: false;
 
 	const {
-		updateMigrationStatus,
 		updateMigrationStatusAsync,
 		updateStatusMutationRest: {
 			isIdle: isMigrationStatusUpdateIdle,
@@ -28,13 +26,6 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 	} = useUpdateMigrationStatus();
 
 	const isLoading = isMigrationStatusUpdateIdle || isMigrationStatusUpdatePending;
-
-	// Register pending migration status when loading the step.
-	useEffect( () => {
-		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-pending' );
-		}
-	}, [ siteId, updateMigrationStatus ] );
 
 	const setPendingMigration = async ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
