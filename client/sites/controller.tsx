@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
@@ -148,5 +149,17 @@ export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: 
 		// so hide the checkout success notice if it's there.
 		context.store.dispatch( removeNotice( 'checkout-thank-you-success' ) );
 	}
+	next();
+}
+
+export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, next: () => void ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+
+	if ( ! isAtomicSite || site.plan?.expired ) {
+		return page.redirect( `/hosting-features/${ site?.slug }` );
+	}
+
 	next();
 }
