@@ -20,6 +20,33 @@
 			display: none;
 		}
 	}
+
+	&.tooltip {
+		position: relative;
+		overflow: visible;
+	}
+
+	&.tooltip::after {
+		height: 20px;
+		line-height: 20px;
+		background: var(--color-sidebar-tooltip-background);
+		border-radius: 4px;
+		color: var(--color-sidebar-tooltip-text);
+		content: attr(data-tooltip);
+		display: none;
+		font-size: $font-body-extra-small;
+		padding: 3px 6px;
+		position: absolute;
+		white-space: nowrap;
+		top: -29px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 8;
+	}
+
+	&.tooltip:hover::after {
+		display: block;
+	}
 }
 
 .comment-button__label {

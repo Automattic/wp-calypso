@@ -98,7 +98,7 @@ class ReaderShare extends Component {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-			tooltip: this.props.isReblogSelection,
+			tooltip: true,
 		} );
 
 		const popoverProps = {
@@ -123,13 +123,17 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
-					data-tooltip={ this.props.isReblogSelection && translate( 'Repost with your thoughts' ) }
-					title={ ! this.props.isReblogSelection && translate( 'Share' ) }
+					data-tooltip={
+						this.props.isReblogSelection
+							? translate( 'Repost with your thoughts' )
+							: translate( 'Share' )
+					}
 				>
 					{ ! this.props.isReblogSelection ? (
 						<>
 							{ ReaderShareIcon( {
 								iconSize: this.props.iconSize,
+								viewBox: '0 -2 24 24',
 							} ) }
 							<span className="reader-share__label">{ translate( 'Share' ) }</span>
 						</>
@@ -137,6 +141,7 @@ class ReaderShare extends Component {
 						<>
 							{ ReaderRepostIcon( {
 								iconSize: this.props.iconSize,
+								viewBox: '0 -1 20 20',
 							} ) }
 							<span className="repost__label">{ translate( 'Repost' ) }</span>
 						</>
