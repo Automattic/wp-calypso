@@ -560,7 +560,7 @@ class StatsSite extends Component {
 								summaryUrl={ this.getStatHref( this.props.period, 'utm', slug ) }
 								summary={ false }
 								className={ clsx(
-									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -571,7 +571,7 @@ class StatsSite extends Component {
 							<StatsModuleUTMOverlay
 								siteId={ siteId }
 								className={ clsx(
-									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -593,15 +593,8 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
 								className={ clsx(
-									{
-										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-										'stats__flexible-grid-item--full--large': supportsUTMStats,
-										'stats__flexible-grid-item--full--medium': supportsUTMStats,
-									},
-									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
-										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -616,15 +609,8 @@ class StatsSite extends Component {
 								statType="statsClicks"
 								showSummaryLink
 								className={ clsx(
-									{
-										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-										'stats__flexible-grid-item--full--large': supportsUTMStats,
-										'stats__flexible-grid-item--full--medium': supportsUTMStats,
-									},
-									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
-										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -638,11 +624,9 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsTopAuthors"
 								className={ clsx(
-									{
-										'stats__author-views': ! supportsUTMStats,
-									},
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
 								) }
 								showSummaryLink
 							/>
@@ -656,11 +640,9 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'authors', slug ) }
 								className={ clsx(
-									{
-										'stats__author-views': ! supportsUTMStats,
-									},
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
 						) }
@@ -673,16 +655,7 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'emails', slug ) }
 								className={ clsx(
-									{
-										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
-										'stats__flexible-grid-item--half':
-											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
-										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
-										'stats__flexible-grid-item--full':
-											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
-									},
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -696,21 +669,8 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
 								className={ clsx(
-									{
-										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-										'stats__flexible-grid-item--one-third--two-spaces':
-											! isJetpack && ! this.isModuleHidden( 'videos' ),
-									},
-									{
-										'stats__flexible-grid-item--full--large':
-											isJetpack && this.isModuleHidden( 'videos' ),
-									},
-									{
-										// 1/2 for all other cases to stack with Devices or empty space
-										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										// Avoid 1/3 on smaller screen if Videos is visible
-										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -724,21 +684,8 @@ class StatsSite extends Component {
 								statType="statsSearchTerms"
 								showSummaryLink
 								className={ clsx(
-									{
-										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-										'stats__flexible-grid-item--one-third--two-spaces':
-											! isJetpack && ! this.isModuleHidden( 'videos' ),
-									},
-									{
-										'stats__flexible-grid-item--full--large':
-											isJetpack && this.isModuleHidden( 'videos' ),
-									},
-									{
-										// 1/2 for all other cases to stack with Devices or empty space
-										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										// Avoid 1/3 on smaller screen if Videos is visible
-										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -751,10 +698,7 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'videoplays', slug ) }
 								className={ clsx(
-									{
-										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
-										'stats__flexible-grid-item--half': isJetpack,
-									},
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -770,10 +714,7 @@ class StatsSite extends Component {
 								statType="statsVideoPlays"
 								showSummaryLink
 								className={ clsx(
-									{
-										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
-										'stats__flexible-grid-item--half': isJetpack,
-									},
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -789,17 +730,8 @@ class StatsSite extends Component {
 									query={ query }
 									summaryUrl={ this.getStatHref( this.props.period, 'filedownloads', slug ) }
 									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										},
-										{
-											'stats__flexible-grid-item--one-third--two-spaces':
-												! this.isModuleHidden( 'videos' ),
-										},
-										{
-											// Avoid 1/3 on smaller screen if Videos is visible
-											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-										},
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large',
 										'stats__flexible-grid-item--full--medium'
 									) }
 								/>
@@ -819,18 +751,9 @@ class StatsSite extends Component {
 									showSummaryLink
 									useShortLabel
 									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										},
-										{
-											'stats__flexible-grid-item--one-third--two-spaces':
-												! this.isModuleHidden( 'videos' ),
-										},
-
-										{
-											// Avoid 1/3 on smaller screen if Videos is visible
-											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-										},
+										'stats__flexible-grid-item--half',
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large',
 										'stats__flexible-grid-item--full--medium'
 									) }
 								/>
