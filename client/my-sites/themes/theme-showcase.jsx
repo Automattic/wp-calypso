@@ -60,6 +60,7 @@ import {
 import PatternAssemblerButton from './pattern-assembler-button';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
+import ThemeShowcaseContext from './theme-showcase-context';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
@@ -83,6 +84,7 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
+		this.themeShowcaseWrapperRef = createRef();
 		this.showcaseRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
@@ -448,28 +450,32 @@ class ThemeShowcase extends Component {
 		const themeCollection = THEME_COLLECTIONS.partner;
 
 		return (
-			<div className="theme-showcase__all-themes">
-				<ThemesSelection
-					{ ...themesSelectionProps }
-					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+			<div className="theme-showcase__all-themes" ref={ this.themeShowcaseWrapperRef }>
+				<ThemeShowcaseContext.Provider
+					value={ { themeShowcaseWrapperRef: this.themeShowcaseWrapperRef } }
 				>
-					{ this.shouldShowCollections() && (
-						<>
-							<ShowcaseThemeCollection
-								{ ...themeCollection }
-								getOptions={ this.getThemeOptions }
-								getScreenshotUrl={ this.getScreenshotUrl }
-								getActionLabel={ this.getActionLabel }
-								onSeeAll={ () =>
-									this.onCollectionSeeAll( {
-										tier: themeCollection.query.tier,
-										filter: themeCollection.query.filter,
-									} )
-								}
-							/>
-						</>
-					) }
-				</ThemesSelection>
+					<ThemesSelection
+						{ ...themesSelectionProps }
+						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+					>
+						{ this.shouldShowCollections() && (
+							<>
+								<ShowcaseThemeCollection
+									{ ...themeCollection }
+									getOptions={ this.getThemeOptions }
+									getScreenshotUrl={ this.getScreenshotUrl }
+									getActionLabel={ this.getActionLabel }
+									onSeeAll={ () =>
+										this.onCollectionSeeAll( {
+											tier: themeCollection.query.tier,
+											filter: themeCollection.query.filter,
+										} )
+									}
+								/>
+							</>
+						) }
+					</ThemesSelection>
+				</ThemeShowcaseContext.Provider>
 			</div>
 		);
 	};

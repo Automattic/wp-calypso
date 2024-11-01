@@ -15,6 +15,7 @@ import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
+import ThemeShowcaseContext from 'calypso/my-sites/themes/theme-showcase-context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -351,37 +352,47 @@ export class Theme extends Component {
 		}
 
 		return (
-			<InView triggerOnce rootMargin={ VIEWPORT_HEIGHT }>
-				{ ( { inView, ref } ) => (
-					<div ref={ ref }>
-						{ inView ? (
-							<ThemeCard
-								ref={ this.props.bookmarkRef }
-								name={ name }
-								description={ themeDescription }
-								image={ this.renderScreenshot() }
-								imageClickUrl={ this.props.screenshotClickUrl }
-								imageActionLabel={ this.props.actionLabel }
-								banner={ this.renderUpdateAlert() }
-								badge={ this.renderBadge() }
-								styleVariations={ style_variations }
-								selectedStyleVariation={ selectedStyleVariation }
-								optionsMenu={ this.renderMoreButton() }
-								isActive={ this.props.active }
-								isLoading={ this.props.loading }
-								isSoftLaunched={ this.props.softLaunched }
-								isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
-								onClick={ this.setBookmark }
-								onImageClick={ this.onScreenshotClick }
-								onStyleVariationClick={ this.onStyleVariationClick }
-								onStyleVariationMoreClick={ this.onStyleVariationClick }
-							/>
-						) : (
-							this.renderPlaceholder()
-						) }
-					</div>
-				) }
-			</InView>
+			<ThemeShowcaseContext.Consumer>
+				{ ( { themeShowcaseWrapperRef } ) => {
+					return (
+						<InView
+							triggerOnce
+							rootMargin={ VIEWPORT_HEIGHT }
+							root={ themeShowcaseWrapperRef?.current || null }
+						>
+							{ ( { inView, ref } ) => (
+								<div ref={ ref }>
+									{ inView ? (
+										<ThemeCard
+											ref={ this.props.bookmarkRef }
+											name={ name }
+											description={ themeDescription }
+											image={ this.renderScreenshot() }
+											imageClickUrl={ this.props.screenshotClickUrl }
+											imageActionLabel={ this.props.actionLabel }
+											banner={ this.renderUpdateAlert() }
+											badge={ this.renderBadge() }
+											styleVariations={ style_variations }
+											selectedStyleVariation={ selectedStyleVariation }
+											optionsMenu={ this.renderMoreButton() }
+											isActive={ this.props.active }
+											isLoading={ this.props.loading }
+											isSoftLaunched={ this.props.softLaunched }
+											isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
+											onClick={ this.setBookmark }
+											onImageClick={ this.onScreenshotClick }
+											onStyleVariationClick={ this.onStyleVariationClick }
+											onStyleVariationMoreClick={ this.onStyleVariationClick }
+										/>
+									) : (
+										this.renderPlaceholder()
+									) }
+								</div>
+							) }
+						</InView>
+					);
+				} }
+			</ThemeShowcaseContext.Consumer>
 		);
 	}
 }
