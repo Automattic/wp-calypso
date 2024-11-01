@@ -592,11 +592,14 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-invalid__message{
-	width: 100%;
 	color: rgb(140, 35, 44);
-	font-size: 0.75rem;
-	display: flex;
-    justify-content: center;
-    position: absolute;
+    font-size: 0.75rem;
     top: 66%;
+    width: 95%;
+    background: #fff;
+    position: fixed;
+    bottom: 73px;
+    height: 30px;
+    text-align: center;
+	padding-top: 6px;
 }

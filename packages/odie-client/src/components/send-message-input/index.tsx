@@ -69,6 +69,11 @@ export const OdieSendMessageButton = ( {
 	);
 	return (
 		<>
+			{ ! isMessageSizeValid && shouldUseHelpCenterExperience && (
+				<div className="odie-chatbox-invalid__message">
+					{ __( 'Message exceeds 4096 characters limit.' ) }
+				</div>
+			) }
 			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form
