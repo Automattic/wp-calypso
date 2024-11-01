@@ -5,7 +5,7 @@ const unlock = getUnlock();
 
 const routerPrivateApis = router?.privateApis;
 
-let useLocation = () => null;
+let useLocation: () => Location | null = () => null;
 
 // The routerPrivateApis may be unavailable.
 if ( unlock && routerPrivateApis && unlock( routerPrivateApis ) ) {

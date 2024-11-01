@@ -1,13 +1,13 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { FC, useEffect } from 'react';
+import { getUnlock } from '../../utils';
 import { NOTICE_ID } from './constants';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { LivePreviewUpgradeButton } from './upgrade-button';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
-import { getUnlock } from './utils';
 
 const unlock = getUnlock();
 
