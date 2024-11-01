@@ -414,6 +414,7 @@ export class MediaLibraryContent extends Component {
 		}
 
 		if (
+			this.props.photosPickerApiEnabled &&
 			'google_photos' === this.props.source &&
 			! this.props.photosPickerSession?.mediaItemsSet
 		) {
