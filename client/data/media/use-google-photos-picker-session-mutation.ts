@@ -31,6 +31,8 @@ export function useCreateGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 }
 
 export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) {
+	const dispatch = useDispatch();
+
 	return useMutation( {
 		...queryOptions,
 		mutationFn: ( sessionId: string ) =>
@@ -39,5 +41,8 @@ export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 				apiNamespace: 'wpcom/v2',
 				path: `/meta/external-media/session/google_photos/${ encodeURIComponent( sessionId ) }`,
 			} ),
+		onSuccess: () => {
+			dispatch( setPhotoPickerSession( null ) );
+		},
 	} );
 }

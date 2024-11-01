@@ -462,7 +462,6 @@ export class MediaLibraryContent extends Component {
 			// Hide the header until we have the media items set from Google Photos
 			if (
 				'google_photos' === this.props.source &&
-				this.props.photosPickerSession &&
 				! this.props.photosPickerSession?.mediaItemsSet
 			) {
 				return null;
@@ -483,8 +482,9 @@ export class MediaLibraryContent extends Component {
 					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
 					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
-					photosPickerSession={ this.props.photoPickerSession }
+					photosPickerSession={ this.props.photosPickerSession }
 					createPhotosPickerSession={ this.props.createPhotosPickerSession }
+					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
 				/>
 			);
 		}
