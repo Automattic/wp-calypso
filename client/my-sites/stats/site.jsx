@@ -293,7 +293,9 @@ class StatsSite extends Component {
 		} else {
 			// if start date is missing let the frequency of data take over to avoid showing one bar
 			// (e.g. months defaulting to 30 days and showing one point)
-			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = moment()
+				.subtract( daysInRange - 1, 'days' )
+				.format( 'YYYY-MM-DD' );
 		}
 
 		customChartRange.daysInRange = daysInRange;
