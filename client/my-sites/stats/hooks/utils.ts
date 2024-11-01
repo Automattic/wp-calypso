@@ -4,7 +4,7 @@ export interface QueryStatsParams {
 	days?: number;
 	max?: number;
 	num?: number;
-	period?: 'day' | 'week' | 'month' | 'year';
+	period?: string;
 	summarize?: number;
 }
 
