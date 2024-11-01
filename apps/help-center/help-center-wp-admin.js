@@ -5,13 +5,9 @@ import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
-import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { createRoot } from 'react-dom/client';
 const queryClient = new QueryClient();
 import './help-center.scss';
-import { unlockRouter } from './utils';
-
-const { RouterProvider } = unlockRouter( routerPrivateApis );
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDataStoreDispatch( 'automattic/help-center' );
@@ -79,19 +75,17 @@ function AdminHelpCenterContent() {
 	button.onclick = handleToggleHelpCenter;
 
 	return (
-		<RouterProvider>
-			<QueryClientProvider client={ queryClient }>
-				<HelpCenter
-					locale={ helpCenterData.locale }
-					sectionName="wp-admin"
-					currentUser={ helpCenterData.currentUser }
-					site={ helpCenterData.site }
-					hasPurchases={ false }
-					onboardingUrl="https://wordpress.com/start"
-					handleClose={ closeCallback }
-				/>
-			</QueryClientProvider>
-		</RouterProvider>
+		<QueryClientProvider client={ queryClient }>
+			<HelpCenter
+				locale={ helpCenterData.locale }
+				sectionName="wp-admin"
+				currentUser={ helpCenterData.currentUser }
+				site={ helpCenterData.site }
+				hasPurchases={ false }
+				onboardingUrl="https://wordpress.com/start"
+				handleClose={ closeCallback }
+			/>
+		</QueryClientProvider>
 	);
 }
 

@@ -8,13 +8,10 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import { privateApis as routerPrivateApis } from '@wordpress/router';
 import ReactDOM from 'react-dom';
-import { useCanvasMode } from './hooks';
+import { useCanvasMode } from './hooks/use-canvas-mode';
 import './help-center.scss';
-import { unlockRouter } from './utils';
 
-const { RouterProvider } = unlockRouter( routerPrivateApis );
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
@@ -94,11 +91,9 @@ function HelpCenterContent() {
 registerPlugin( 'jetpack-help-center', {
 	render: () => {
 		return (
-			<RouterProvider>
-				<QueryClientProvider client={ queryClient }>
-					<HelpCenterContent />
-				</QueryClientProvider>
-			</RouterProvider>
+			<QueryClientProvider client={ queryClient }>
+				<HelpCenterContent />
+			</QueryClientProvider>
 		);
 	},
 } );

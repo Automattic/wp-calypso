@@ -4,13 +4,9 @@ import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useEffect, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import { privateApis as routerPrivateApis } from '@wordpress/router';
 import ReactDOM from 'react-dom';
-import { useCanvasMode } from './hooks';
+import { useCanvasMode } from './hooks/use-canvas-mode';
 import './help-center.scss';
-import { unlockRouter } from './utils';
-
-const { RouterProvider } = unlockRouter( routerPrivateApis );
 
 function HelpCenterContent() {
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
@@ -48,10 +44,6 @@ function HelpCenterContent() {
 
 registerPlugin( 'jetpack-help-center', {
 	render: () => {
-		return (
-			<RouterProvider>
-				<HelpCenterContent />
-			</RouterProvider>
-		);
+		return <HelpCenterContent />;
 	},
 } );
