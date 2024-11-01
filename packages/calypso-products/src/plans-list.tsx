@@ -420,10 +420,6 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PREMIUM_THEMES,
-	PLAN_BLUEHOST_CLOUD,
-	PLAN_BLUEHOST_CLOUD_2Y,
-	PLAN_BLUEHOST_CLOUD_MONTHLY,
-	PLAN_BLUEHOST_CLOUD_3Y,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	FEATURE_REAL_TIME_SECURITY_SCANS,
 	FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
@@ -3068,36 +3064,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
 		getPathSlug: () => 'enterprise',
-	},
-	// Not a real plan. This is used to show the Bluehost cloud offering
-	// in the landing pages for now
-	[ PLAN_BLUEHOST_CLOUD ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0,
-		getStoreSlug: () => PLAN_BLUEHOST_CLOUD,
-	},
-	[ PLAN_BLUEHOST_CLOUD_MONTHLY ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_MONTHLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0,
-		getStoreSlug: () => PLAN_BLUEHOST_CLOUD_MONTHLY,
-	},
-	[ PLAN_BLUEHOST_CLOUD_2Y ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_BIENNIALLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0,
-		getStoreSlug: () => PLAN_BLUEHOST_CLOUD_2Y,
-	},
-	[ PLAN_BLUEHOST_CLOUD_3Y ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_TRIENNIALLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0,
-		getStoreSlug: () => PLAN_BLUEHOST_CLOUD_3Y,
 	},
 	[ PLAN_ECOMMERCE_3_YEARS ]: {
 		...getPlanEcommerceDetails(),

@@ -601,6 +601,10 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 		const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 
+		if ( ! site ) {
+			return null;
+		}
+
 		return (
 			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }

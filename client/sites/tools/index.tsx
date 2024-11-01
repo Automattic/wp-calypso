@@ -9,7 +9,7 @@ import {
 	TOOLS_SFTP_SSH,
 	TOOLS_DATABASE,
 } from 'calypso/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/sites/controller';
+import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import { stagingSite, deployments, monitoring, logs, sftpSsh, database } from './controller';
 
 export default function () {
@@ -17,6 +17,7 @@ export default function () {
 	page(
 		'/sites/tools/staging-site/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		stagingSite,
 		siteDashboard( TOOLS_STAGING_SITE ),
@@ -28,6 +29,7 @@ export default function () {
 	page(
 		'/sites/tools/deployments/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deployments,
 		siteDashboard( TOOLS_DEPLOYMENTS ),
@@ -39,6 +41,7 @@ export default function () {
 	page(
 		'/sites/tools/monitoring/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		monitoring,
 		siteDashboard( TOOLS_MONITORING ),
@@ -50,6 +53,7 @@ export default function () {
 	page(
 		'/sites/tools/logs/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		logs,
 		siteDashboard( TOOLS_LOGS ),
@@ -61,6 +65,7 @@ export default function () {
 	page(
 		'/sites/tools/sftp-ssh/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		sftpSsh,
 		siteDashboard( TOOLS_SFTP_SSH ),
@@ -72,6 +77,7 @@ export default function () {
 	page(
 		'/sites/tools/database/:site',
 		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		database,
 		siteDashboard( TOOLS_DATABASE ),
