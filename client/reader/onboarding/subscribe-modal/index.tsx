@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
@@ -8,12 +9,17 @@ import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/constants';
+import {
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { requestPage } from 'calypso/state/reader/streams/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
@@ -62,6 +68,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
+	const SITES_PER_PAGE = 6;
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -148,28 +155,20 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		return sortedRecommendations.slice( 0, 18 );
 	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
 
+	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
+
 	const displayedRecommendations = useMemo( () => {
-		const startIndex = currentPage * 6;
-		return combinedRecommendations.slice( startIndex, startIndex + 6 );
+		// Show all items up to the current page.
+		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE );
 	}, [ combinedRecommendations, currentPage ] );
 
 	const handleLoadMore = useCallback( () => {
-		const maxPages = Math.ceil( combinedRecommendations.length / 6 ) - 1; // -1 because pages are 0-based.
-		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : 0 ) );
-	}, [ combinedRecommendations.length ] );
-
-	const loadMoreText =
-		currentPage === Math.ceil( combinedRecommendations.length / 6 ) - 1
-			? __( 'Start over' )
-			: __( 'Load more recommendations' );
-
-	const headerActions = (
-		<>
-			<Button onClick={ onClose } variant="link">
-				{ __( 'Cancel' ) }
-			</Button>
-		</>
-	);
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
+			page: currentPage,
+		} );
+		// Only increment the page if we haven't reached the end.
+		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
+	}, [ maxPages, currentPage ] );
 
 	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
 	useEffect( () => {
@@ -199,14 +198,46 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( displayedRecommendations.length > 0 ) {
+		if ( displayedRecommendations.length > 0 && ! selectedSite ) {
 			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ displayedRecommendations ] );
+	}, [ displayedRecommendations, selectedSite ] );
 
 	const handleItemClick = useCallback( ( site: CardData ) => {
 		setSelectedSite( site );
 	}, [] );
+
+	const follows = useSelector( getReaderFollows );
+
+	const handleFollowToggle = useCallback(
+		async ( site: CardData, following: boolean ) => {
+			const isFollowingSite = ( site: CardData ) =>
+				follows.some(
+					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
+				);
+
+			// Exit early if the follow state already matches what we want.
+			if ( following === isFollowingSite( site ) ) {
+				return;
+			}
+
+			// Maximum number of retries
+			const MAX_RETRIES = 3;
+
+			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
+				// Update the subscriptions list behind the modal.
+				await dispatch( requestFollows() );
+
+				// Delay the next attempt.
+				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
+
+				if ( following === isFollowingSite( site ) ) {
+					return;
+				}
+			}
+		},
+		[ follows, dispatch ]
+	);
 
 	const formatUrl = ( url: string ): string => {
 		return url
@@ -214,15 +245,36 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			.replace( /\/$/, '' ); // Remove trailing slash
 	};
 
-	const handleContinue = useCallback( () => {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+	const handleClose = useCallback( () => {
+		dispatch( clearStream( { streamKey: 'following' } ) );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( requestPage( { streamKey: 'following' } as any ) );
+
 		onClose();
 	}, [ dispatch, onClose ] );
+
+	const handleContinue = useCallback( () => {
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+
+		handleClose();
+	}, [ dispatch, handleClose ] );
+
+	const headerActions = (
+		<>
+			<Button onClick={ handleClose } variant="link">
+				{ __( 'Cancel' ) }
+			</Button>
+			<Button onClick={ handleContinue } variant="primary">
+				{ __( 'Continue' ) }
+			</Button>
+		</>
+	);
 
 	return (
 		isOpen && (
 			<Modal
-				onRequestClose={ onClose }
+				onRequestClose={ handleClose }
 				isFullScreen
 				className="subscribe-modal"
 				headerActions={ headerActions }
@@ -231,7 +283,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__site-list-column">
 						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
-						<p>
+						<p className="subscribe-modal__description">
 							{ __(
 								'Preview sites by clicking below, then subscribe to any site that inspires you.'
 							) }
@@ -254,27 +306,25 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										showFollowedOnDate={ false }
 										followSource="reader-onboarding-modal"
 										disableSuggestedFollows
+										replaceStreamClickWithItemClick
 										onItemClick={ () => handleItemClick( site ) }
 										isSelected={ selectedSite?.feed_ID === site.feed_ID }
+										onFollowToggle={ ( following: boolean ) =>
+											handleFollowToggle( site, following )
+										}
 									/>
 								) ) }
 							</div>
 						) }
-						{ combinedRecommendations.length > 6 && (
+						{ currentPage < maxPages && (
 							<Button
 								className="subscribe-modal__load-more-button"
 								onClick={ handleLoadMore }
 								variant="link"
 							>
-								{ loadMoreText }
+								{ __( 'Load more recommendations' ) }
 							</Button>
 						) }
-						<Button
-							className="subscribe-modal__continue-button is-primary"
-							onClick={ handleContinue }
-						>
-							{ __( 'Continue' ) }
-						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">

@@ -70,6 +70,8 @@ class ConnectedSubscriptionListItem extends Component {
 			disableSuggestedFollows,
 			onItemClick,
 			isSelected,
+			onFollowToggle,
+			replaceStreamClickWithItemClick,
 		} = this.props;
 
 		return (
@@ -86,8 +88,10 @@ class ConnectedSubscriptionListItem extends Component {
 				followSource={ followSource }
 				railcar={ railcar }
 				disableSuggestedFollows={ disableSuggestedFollows }
+				replaceStreamClickWithItemClick={ replaceStreamClickWithItemClick }
 				onItemClick={ onItemClick }
 				isSelected={ isSelected }
+				onFollowToggle={ onFollowToggle }
 			/>
 		);
 	}

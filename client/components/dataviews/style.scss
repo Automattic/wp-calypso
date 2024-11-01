@@ -215,3 +215,21 @@
 		padding-left: 48px;
 	}
 }
+
+// TODO: remove when this is implemented upstream.
+//
+// This reverts to core styles that are overriden by wp-calypso (this same file, line 21),
+// which need to be removed in a follow-up.
+// Follow-up issue: https://github.com/Automattic/dotcom-forge/issues/9554
+body.is-section-plugins .plugin-management-wrapper {
+    --wp-components-color-accent: var(--color-accent);
+}
+body.is-section-plugins .plugin-management-wrapper,
+.is-section-jetpack-cloud-plugin-management {
+
+    .dataviews-wrapper .dataviews-view-table .dataviews-view-table__row {
+		.dataviews-view-table-selection-checkbox{
+			padding-left: 0;
+		}
+    }
+}

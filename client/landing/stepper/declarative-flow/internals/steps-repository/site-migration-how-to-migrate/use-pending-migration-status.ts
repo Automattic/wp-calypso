@@ -18,7 +18,16 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		? true
 		: false;
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const {
+		updateMigrationStatus,
+		updateMigrationStatusAsync,
+		updateStatusMutationRest: {
+			isIdle: isMigrationStatusUpdateIdle,
+			isPending: isMigrationStatusUpdatePending,
+		},
+	} = useUpdateMigrationStatus();
+
+	const isLoading = isMigrationStatusUpdateIdle || isMigrationStatusUpdatePending;
 
 	// Register pending migration status when loading the step.
 	useEffect( () => {
@@ -27,11 +36,11 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
-	const setPendingMigration = ( how: string ) => {
+	const setPendingMigration = async ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
 		if ( siteId ) {
 			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			updateMigrationStatus( siteId, `migration-pending-${ parsedHow }` );
+			await updateMigrationStatusAsync( siteId, `migration-pending-${ parsedHow }` );
 		}
 
 		if ( onSubmit ) {
@@ -39,7 +48,7 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		}
 	};
 
-	return { setPendingMigration };
+	return { setPendingMigration, isLoading };
 };
 
 export default usePendingMigrationStatus;

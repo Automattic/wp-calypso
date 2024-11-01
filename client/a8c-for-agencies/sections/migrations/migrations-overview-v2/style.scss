@@ -1,0 +1,16 @@
+.migrations-overview-v2 {
+	.a4a-layout__body {
+		padding: 0;
+
+		& > * {
+			max-width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	.page-section__header-description {
+		@include a4a-font-heading-xl;
+		color: var(--color-neutral-70);
+	}
+}

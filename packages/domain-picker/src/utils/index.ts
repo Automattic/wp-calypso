@@ -1,6 +1,5 @@
 import {
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	ECOMMERCE_FLOW,
 	WOOEXPRESS_FLOW,
@@ -45,7 +44,6 @@ interface DomainSuggestionsVendorOptions {
 	isPremium?: boolean;
 	flowName?:
 		| typeof NEWSLETTER_FLOW
-		| typeof LINK_IN_BIO_FLOW
 		| typeof LINK_IN_BIO_TLD_FLOW
 		| typeof ECOMMERCE_FLOW
 		| typeof WOOEXPRESS_FLOW
@@ -70,9 +68,6 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( isHundredYearDomainFlow( options.flowName ) ) {
 		return '100-year-domains';
-	}
-	if ( options.flowName === LINK_IN_BIO_FLOW ) {
-		return 'link-in-bio';
 	}
 	if ( options.flowName === LINK_IN_BIO_TLD_FLOW ) {
 		return 'link-in-bio-tld';

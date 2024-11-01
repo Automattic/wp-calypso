@@ -1,14 +1,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
-import React, { useState } from 'react';
-import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/constants';
+import React, { useState, useEffect } from 'react';
+import {
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding/constants';
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -23,13 +28,21 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const shouldShowOnboarding =
-		config.isEnabled( 'reader/onboarding' ) &&
 		preferencesLoaded &&
 		! hasCompletedOnboarding &&
 		userRegistrationDate &&
+		isEmailVerified &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	// Track if user viewed Reader Onboarding.
+	useEffect( () => {
+		if ( shouldShowOnboarding ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
+		}
+	}, [ shouldShowOnboarding ] );
 
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
@@ -38,13 +51,35 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		return null;
 	}
 
-	const handleInterestsContinue = () => {
+	// Modal state handlers with tracking.
+	const openInterestsModal = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
+		setIsInterestsModalOpen( true );
+	};
+
+	const closeInterestsModal = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		setIsInterestsModalOpen( false );
+	};
+
+	const openDiscoverModal = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
 		setIsDiscoverModalOpen( true );
 	};
 
+	const closeDiscoverModal = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
+		setIsDiscoverModalOpen( false );
+	};
+
+	const handleInterestsContinue = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
+		closeInterestsModal();
+		openDiscoverModal();
+	};
+
 	const itemClickHandler = ( task: Task ) => {
-		recordTracksEvent( 'calypso_reader_onboarding_task_click', {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
 		} );
 		task?.actionDispatch?.();
@@ -56,14 +91,14 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		{
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
-			actionDispatch: () => setIsInterestsModalOpen( true ),
+			actionDispatch: openInterestsModal,
 			completed: taskOneCompleted,
 			disabled: false,
 		},
 		{
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
-			actionDispatch: () => setIsDiscoverModalOpen( true ),
+			actionDispatch: openDiscoverModal,
 			completed: false,
 			disabled: ! taskOneCompleted,
 		},
@@ -97,13 +132,10 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 
 			<InterestsModal
 				isOpen={ isInterestsModalOpen }
-				onClose={ () => setIsInterestsModalOpen( false ) }
+				onClose={ closeInterestsModal }
 				onContinue={ handleInterestsContinue }
 			/>
-			<SubscribeModal
-				isOpen={ isDiscoverModalOpen }
-				onClose={ () => setIsDiscoverModalOpen( false ) }
-			/>
+			<SubscribeModal isOpen={ isDiscoverModalOpen } onClose={ closeDiscoverModal } />
 		</>
 	);
 };

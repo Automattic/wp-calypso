@@ -47,7 +47,6 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
-import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
@@ -186,7 +185,7 @@ export class ReaderSidebar extends Component {
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customIcon={ <ReaderSearchIcon /> }
+					customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
 					link="/read/search"
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 						'sidebar-streams__search': true,
@@ -210,7 +209,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
 						onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-						customIcon={ <ReaderFollowingIcon /> }
+						customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
 						link="/read"
 					/>
 				) }
@@ -221,14 +220,14 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Discover' ) }
 					onNavigate={ this.handleReaderSidebarDiscoverClicked }
-					customIcon={ <ReaderDiscoverIcon /> }
+					customIcon={ <ReaderDiscoverIcon viewBox="-3 0 24 24" /> }
 					link="/discover"
 				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }
 					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					customIcon={ <ReaderLikesIcon /> }
+					customIcon={ <ReaderLikesIcon viewBox="-3 0 24 24" /> }
 					link="/activities/likes"
 					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 						'sidebar-activity__likes': true,
@@ -241,7 +240,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					customIcon={ <ReaderConversationsIcon /> }
+					customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
 					link="/read/conversations"
 				/>
 
@@ -279,7 +278,7 @@ export class ReaderSidebar extends Component {
 						label="A8C Conversations"
 						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 						link="/read/conversations/a8c"
-						customIcon={ <ReaderA8cConversationsIcon /> }
+						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 0 24 24" /> }
 					/>
 				) }
 
@@ -289,7 +288,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Notifications' ) }
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <ReaderNotificationsIcon /> }
+					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
 					link="/read/notifications"
 				/>
 
@@ -299,7 +298,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Manage subscriptions' ) }
 					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
-					customIcon={ <ReaderManageSubscriptionsIcon /> }
+					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
 					link="/read/subscriptions"
 				/>
 			</SidebarMenu>
@@ -319,7 +318,6 @@ export class ReaderSidebar extends Component {
 			<GlobalSidebar { ...props }>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
-				<ReaderSidebarPromo />
 			</GlobalSidebar>
 		);
 	}
@@ -331,9 +329,6 @@ export class ReaderSidebar extends Component {
 					<ReaderSidebarNudges />
 					{ this.renderSidebarMenu() }
 				</SidebarRegion>
-
-				<ReaderSidebarPromo />
-
 				<SidebarFooter />
 			</Sidebar>
 		);

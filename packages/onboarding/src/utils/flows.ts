@@ -6,17 +6,11 @@ export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
-export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
-export const VIDEOPRESS_FLOW = 'videopress';
-export const VIDEOPRESS_ACCOUNT = 'videopress-account';
-export const VIDEOPRESS_TV_FLOW = 'videopress-tv';
-export const VIDEOPRESS_TV_PURCHASE_FLOW = 'videopress-tv-purchase';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
-export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
@@ -53,8 +47,7 @@ export const EMAIL_SUBSCRIPTION_FLOW = 'email-subscription';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
-		flowName &&
-			[ LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
+		flowName && [ LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
 	);
 };
 
@@ -65,7 +58,7 @@ export const isNewsletterFlow = ( flowName: string | null ) => {
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
+	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
@@ -74,7 +67,6 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 			[
 				NEWSLETTER_FLOW,
 				NEWSLETTER_POST_SETUP_FLOW,
-				LINK_IN_BIO_FLOW,
 				LINK_IN_BIO_TLD_FLOW,
 				LINK_IN_BIO_POST_SETUP_FLOW,
 			].includes( flowName )
@@ -83,13 +75,7 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	return Boolean(
-		flowName &&
-			( isNewsletterOrLinkInBioFlow( flowName ) ||
-				VIDEOPRESS_FLOW === flowName ||
-				VIDEOPRESS_TV_FLOW === flowName ||
-				VIDEOPRESS_TV_PURCHASE_FLOW === flowName ||
-				ECOMMERCE_FLOW === flowName ||
-				FREE_FLOW === flowName )
+		flowName && ( isNewsletterOrLinkInBioFlow( flowName ) || ECOMMERCE_FLOW === flowName )
 	);
 };
 
@@ -212,25 +198,11 @@ export const isSiteSetupFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_SETUP_FLOW === flowName;
 };
 
-export const isSenseiFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && SENSEI_FLOW === flowName );
-};
-
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',
 	'2Y': '2Y',
 	'3Y': '3Y',
-};
-
-export const isVideoPressFlow = ( flowName: string | null ) => {
-	return !! flowName && [ VIDEOPRESS_FLOW, VIDEOPRESS_ACCOUNT ].includes( flowName );
-};
-
-export const isVideoPressTVFlow = ( flowName: string | null | undefined ) => {
-	return Boolean(
-		flowName && [ VIDEOPRESS_TV_FLOW, VIDEOPRESS_TV_PURCHASE_FLOW ].includes( flowName )
-	);
 };
 
 export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {

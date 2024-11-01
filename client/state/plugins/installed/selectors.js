@@ -6,8 +6,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-
 import 'calypso/state/plugins/init';
+import { PLUGINS_STATUS } from './status/constants';
 
 // TODO: Much of the functionality in this file is duplicated with selectors.js
 // which needs to be removed when this file is complete.
@@ -118,6 +118,41 @@ export const getPlugins = createSelector(
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
+);
+
+export const getPluginsWithUpdateStatuses = createSelector(
+	( state, plugins, withUpdate, inactive, active ) => {
+		return plugins.reduce( ( memo, plugin ) => {
+			const status = [];
+			plugin.allStatuses = [];
+
+			Object.entries( state.plugins.installed.status ).map( ( [ siteId, siteStatuses ] ) => {
+				Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+					if ( plugin.id === pluginId ) {
+						plugin.allStatuses.push( {
+							...pluginStatus,
+							siteId,
+							pluginId,
+						} );
+					}
+				} );
+			} );
+
+			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.UPDATE );
+			}
+
+			if ( find( inactive, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.INACTIVE );
+			}
+
+			if ( find( active, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.ACTIVE );
+			}
+			return [ ...memo, { ...plugin, status } ];
+		}, [] );
+	},
+	( plugins, pluginsUpdate ) => [ plugins, pluginsUpdate ]
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {

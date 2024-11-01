@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { isNotAtomicJetpack, isTrialSite } from '../utils';
+import { isDisconnectedJetpackAndNotAtomic, isNotAtomicJetpack, isTrialSite } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -32,6 +32,7 @@ const STAGING_PLAN_LABEL = 'Staging';
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 	const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 	const trialSite = isTrialSite( site );
+	const isSiteDisconnectedJetpackAndNotAtomic = isDisconnectedJetpackAndNotAtomic( site );
 
 	return (
 		<SitePlanContainer>
@@ -56,7 +57,10 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 							/>
 						</PlanRenewNagContainer>
 					) : (
-						site.plan?.product_name_short
+						<>
+							{ ! isSiteDisconnectedJetpackAndNotAtomic && site.plan?.product_name_short }
+							{ isSiteDisconnectedJetpackAndNotAtomic && '-' }
+						</>
 					) }
 				</>
 			) : (

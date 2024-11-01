@@ -156,6 +156,7 @@ import {
 	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+	PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -1104,6 +1105,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommerceWoopaymentsLightboxDescription = translate(
 		'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
 	);
+	const woocommercProductFiltersLightboxDescription = translate(
+		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
@@ -1220,6 +1224,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 			woocommerceAccommodationsBookingsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommercProductFiltersLightboxDescription,
 	};
 };
 

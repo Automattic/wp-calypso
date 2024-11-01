@@ -8,7 +8,9 @@ import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -88,6 +90,8 @@ function useIssueAndAssignLicenses(
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const agency = useSelector( getActiveAgency );
+
 	const products = useProductsQuery();
 
 	const { isReady: isIssueReady, issueLicenses } = useIssueLicenses( {
@@ -127,6 +131,11 @@ function useIssueAndAssignLicenses(
 
 			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
 			options.onSuccess?.();
+
+			// Refresh the list of agencies if we don't have the tier to get the updated tier
+			if ( ! agency?.tier ) {
+				dispatch( fetchAgencies() );
+			}
 
 			const issuedKeys = issuedLicenses
 				.map( ( item ) => item.licenses.map( ( lic ) => lic.license_key ) )
@@ -209,6 +218,7 @@ function useIssueAndAssignLicenses(
 		selectedSite?.domain,
 		products?.data,
 		translate,
+		agency?.tier,
 	] );
 }
 

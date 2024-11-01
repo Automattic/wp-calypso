@@ -304,6 +304,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
 	},
+	'tax-exempt-customers': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#other-tax-exempt-customers',
+		post_id: 234670,
+	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',
 		post_id: 1221,

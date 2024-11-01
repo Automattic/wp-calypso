@@ -8,6 +8,7 @@ import {
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import { getSite } from 'calypso/state/sites/selectors';
 import * as selectors from '../selectors';
+import { PLUGINS_STATUS } from '../status/constants';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const createError = function ( error, message, name = false ) {
@@ -45,6 +46,12 @@ const state = deepFreeze( {
 						status: 'error',
 						action: INSTALL_PLUGIN,
 						error: createError( 'no_package', 'Download failed.' ),
+					},
+				},
+				'site.three': {
+					'jetpack/jetpack': {
+						status: 'inProgress',
+						action: DEACTIVATE_PLUGIN,
 					},
 				},
 			},
@@ -433,6 +440,96 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should return an empty array if there are no matching statuses of that type.', () => {
 			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'getPluginsWithUpdateStatuses', () => {
+		test( 'Should update plugin status property based on its state from another objects.', () => {
+			const allPlugins = [
+				{
+					id: 'jetpack/jetpack',
+					slug: 'jetpack/jetpack',
+				},
+				{
+					id: 'hello-dolly/hello-dolly',
+					slug: 'hello-dolly/hello-dolly',
+				},
+				{
+					id: 'vaultpress/vaultpress',
+					slug: 'vaultpress/vaultpress',
+				},
+			];
+
+			const pluginsWithUpdates = [
+				{
+					id: 'jetpack/jetpack',
+					slug: 'jetpack/jetpack',
+				},
+			];
+
+			const activePlugins = [
+				{
+					id: 'jetpack/jetpack',
+					slug: 'jetpack/jetpack',
+				},
+				{
+					id: 'hello-dolly/hello-dolly',
+					slug: 'hello-dolly/hello-dolly',
+				},
+			];
+
+			const inactivePlugins = [
+				{
+					id: 'vaultpress/vaultpress',
+					slug: 'vaultpress/vaultpress',
+				},
+			];
+
+			const pluginsWithUpdatesAndStatuses = selectors.getPluginsWithUpdateStatuses(
+				state,
+				allPlugins,
+				pluginsWithUpdates,
+				inactivePlugins,
+				activePlugins
+			);
+
+			expect( pluginsWithUpdatesAndStatuses ).toEqual(
+				expect.arrayContaining( [
+					{
+						id: 'jetpack/jetpack',
+						slug: 'jetpack/jetpack',
+						status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
+						allStatuses: [
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.one',
+								status: 'completed',
+							},
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.three',
+								status: 'inProgress',
+							},
+						],
+					},
+					{
+						id: 'hello-dolly/hello-dolly',
+						slug: 'hello-dolly/hello-dolly',
+						status: [ PLUGINS_STATUS.ACTIVE ],
+						allStatuses: [],
+					},
+					{
+						id: 'vaultpress/vaultpress',
+						slug: 'vaultpress/vaultpress',
+						status: [ PLUGINS_STATUS.INACTIVE ],
+						allStatuses: [],
+					},
+				] )
+			);
+
+			expect( pluginsWithUpdatesAndStatuses.length ).toEqual( 3 );
 		} );
 	} );
 } );

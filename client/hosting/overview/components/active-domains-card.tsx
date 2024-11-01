@@ -14,6 +14,7 @@ import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/dom
 import { filterOutWpcomDomains } from 'calypso/my-sites/domains/domain-management/list/utils';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -52,10 +53,18 @@ const ActiveDomainsCard: FC = () => {
 				<HostingCardLinkButton
 					to={ `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }` }
 					hideOnMobile
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_overview_add_domain_button_click' ) )
+					}
 				>
 					{ translate( 'Add new domain' ) }
 				</HostingCardLinkButton>
-				<HostingCardLinkButton to={ `/domains/manage/${ site?.slug }` }>
+				<HostingCardLinkButton
+					to={ `/domains/manage/${ site?.slug }` }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_overview_manage_domains_button_click' ) )
+					}
+				>
 					{ translate( 'Manage domains' ) }
 				</HostingCardLinkButton>
 			</HostingCardHeading>

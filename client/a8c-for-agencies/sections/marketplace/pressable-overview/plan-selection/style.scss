@@ -253,6 +253,10 @@
 		font-weight: bold;
 		text-align: center;
 		margin-block: 56px 32px;
+
+		&.narrow {
+			margin-block: 16px 32px;
+		}
 	}
 
 	.pressable-overview-plan-selection__details-card {

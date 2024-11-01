@@ -147,12 +147,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const getUseYourDomainUrl = () => {
-		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
-		//it always throws window.AppBoot is not a function
-		return '/setup/domains?flow=link-in-bio&section=use-your-domain';
-	};
-
 	const getOtherManagedSubdomains = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
 			return [ 'link' ];
@@ -258,7 +252,6 @@ export function DomainFormControl( {
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
-					mapDomainUrl={ getUseYourDomainUrl() }
 					offerUnavailableOption
 					otherManagedSubdomains={ getOtherManagedSubdomains() }
 					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
@@ -273,7 +266,6 @@ export function DomainFormControl( {
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
 					suggestion={ initialQuery }
-					transferDomainUrl={ getUseYourDomainUrl() }
 					handleClickUseYourDomain={ onUseYourDomainClick }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,

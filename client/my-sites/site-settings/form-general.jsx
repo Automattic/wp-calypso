@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_PERSONAL,
 	PLAN_BUSINESS,
-	WPCOM_FEATURES_NO_ADVERTS,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	getPlan,
@@ -31,14 +29,13 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
-import { useMarketingBanner } from 'calypso/data/marketing-banner/use-marketing-banner';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -368,7 +365,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate } = this.props;
+		const { fields, isRequestingSettings, translate, timezonesLabels } = this.props;
 		const guessedTimezone = guessTimezone();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
@@ -392,7 +389,7 @@ export class SiteSettingsFormGeneral extends Component {
 							'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
 							{
 								args: {
-									timezoneName: guessedTimezone,
+									timezoneName: timezonesLabels?.[ guessedTimezone ] ?? guessedTimezone,
 								},
 								components: {
 									button: (
@@ -598,13 +595,15 @@ export class SiteSettingsFormGeneral extends Component {
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			adminInterfaceIsWPAdmin,
 			hasBlockTheme,
-			isMarketingBannerVisible,
-			personalPlanMonthlyCost,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 		const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
+
+		if ( ! site ) {
+			return null;
+		}
 
 		return (
 			<div className={ clsx( classes ) }>
@@ -659,29 +658,6 @@ export class SiteSettingsFormGeneral extends Component {
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<>
-						{ hasBlockTheme && isMarketingBannerVisible && (
-							<div className="site-settings__marketing-banner-container">
-								<SettingsSectionHeader
-									title={ translate( 'Marketing banner' ) }
-									id="site-settings__marketing-banner-header"
-								/>
-								<UpsellNudge
-									feature={ WPCOM_FEATURES_NO_ADVERTS }
-									plan={ PLAN_PERSONAL }
-									title={ translate(
-										'Remove the banner displayed to your visitors with any paid plan'
-									) }
-									description={ translate(
-										'Upgrade your plan to remove the banner and unlock more features, from %(monthlyCost)s/month',
-										{ args: { monthlyCost: personalPlanMonthlyCost } }
-									) }
-									showIcon
-									event="settings_remove_marketing_banner"
-									tracksImpressionName="calypso_upgrade_nudge_impression"
-									tracksClickName="calypso_upgrade_nudge_cta_click"
-								/>
-							</div>
-						) }
 						{ ! hasBlockTheme && (
 							<div className="site-settings__footer-credit-container">
 								<SettingsSectionHeader
@@ -759,7 +735,7 @@ const connectComponent = connect( ( state ) => {
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 		isSimple: isSimpleSite( state, siteId ),
-		personalPlanMonthlyCost: getProductDisplayCost( state, PLAN_PERSONAL, true ),
+		timezonesLabels: getTimezonesLabels( state ),
 	};
 } );
 
@@ -819,15 +795,11 @@ const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
 	const { data: activeThemeData } = useActiveThemeQuery( props.site?.ID ?? -1, !! props.site );
 	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
-	const { data: marketingBannerData } = useMarketingBanner( props.site?.ID ?? -1, !! props.site );
-	const isMarketingBannerVisible = marketingBannerData?.is_visible ?? false;
-
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
 			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
 			hasBlockTheme={ hasBlockTheme }
-			isMarketingBannerVisible={ isMarketingBannerVisible }
 		/>
 	);
 };

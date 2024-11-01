@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { FieldErrors } from 'react-hook-form';
@@ -19,7 +18,6 @@ export const useFormErrorMapping = (
 	siteInfo?: UrlData | undefined
 ): FieldErrors< CredentialsFormData > | undefined => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const fieldMapping: Record< string, { type: string; message: string } | null > = useMemo(
 		() => ( {
@@ -32,7 +30,7 @@ export const useFormErrorMapping = (
 	);
 
 	const getCredentialsErrorMessage = useCallback(
-		( errorCode: any ) => {
+		( errorCode: number | undefined ) => {
 			switch ( errorCode ) {
 				case 404:
 					return {
@@ -79,7 +77,6 @@ export const useFormErrorMapping = (
 					},
 				};
 			}
-			return undefined;
 		},
 		[ translate ]
 	);
@@ -96,10 +93,7 @@ export const useFormErrorMapping = (
 				};
 			}
 
-			if (
-				isEnglishLocale &&
-				code === 'automated_migration_tools_login_and_get_cookies_test_failed'
-			) {
+			if ( code === 'automated_migration_tools_login_and_get_cookies_test_failed' ) {
 				return {
 					root: {
 						type: 'special',
@@ -128,7 +122,7 @@ export const useFormErrorMapping = (
 				{} as Record< string, { type: string; message: string } >
 			);
 		},
-		[ getTranslatedMessage, translate, getCredentialsErrorMessage, isEnglishLocale ]
+		[ getTranslatedMessage, translate, getCredentialsErrorMessage ]
 	);
 
 	return useMemo( () => {

@@ -3,8 +3,8 @@
 @import "@automattic/typography/styles/variables";
 
 .thank-you {
-	--color-accent: var(--studio-blue-50);
-	--color-accent-60: var(--studio-blue-60);
+	--color-accent: var(--studio-wordpress-blue);
+	--color-accent-60: var(--studio-wordpress-blue-60);
 
 	display: flex;
 	flex-direction: column;

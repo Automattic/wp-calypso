@@ -27,6 +27,7 @@ interface HostingCardLinkButtonProps {
 	to: string;
 	children: string | ReactNode;
 	hideOnMobile?: boolean;
+	onClick?: () => void;
 }
 
 interface HostingCardGridProps {
@@ -67,6 +68,7 @@ export function HostingCardLinkButton( {
 	to,
 	children,
 	hideOnMobile,
+	onClick,
 }: HostingCardLinkButtonProps ) {
 	return (
 		<Button
@@ -75,6 +77,7 @@ export function HostingCardLinkButton( {
 			} ) }
 			plain
 			href={ to }
+			onClick={ onClick }
 		>
 			{ children }
 		</Button>

@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -9,12 +8,10 @@ import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
-import FollowingIntro from './intro';
+
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
-	const [ readerOnboardingIsRendered, setReaderOnboardingIsRendered ] = useState( false );
-
 	return (
 		<>
 			<Stream
@@ -31,8 +28,7 @@ function FollowingStream( { ...props } ) {
 					} ) }
 				/>
 
-				<ReaderOnboarding onRender={ setReaderOnboardingIsRendered } />
-				{ ! readerOnboardingIsRendered && <FollowingIntro /> }
+				<ReaderOnboarding />
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
