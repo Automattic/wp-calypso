@@ -117,7 +117,7 @@ const StatsModuleUTM = ( {
 		if ( ! summary && period && path && siteSlug ) {
 			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
 				'YYYY-MM-DD'
-			) }&summarize=1`;
+			) }`;
 		}
 	};
 

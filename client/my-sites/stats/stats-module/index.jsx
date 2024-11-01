@@ -92,8 +92,7 @@ class StatsModule extends Component {
 				'/' +
 				siteSlug +
 				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' ) +
-				'&summarize=1'
+				period.startOf.format( 'YYYY-MM-DD' )
 			);
 		}
 	}
