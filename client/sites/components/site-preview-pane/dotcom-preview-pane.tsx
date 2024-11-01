@@ -6,6 +6,7 @@ import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
+import { isAtomicFeatureSupported } from 'calypso/sites/utils';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -125,7 +126,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Advanced Tools' ),
-				enabled: isActiveAtomicSite && config.isEnabled( 'untangling/hosting-menu' ),
+				enabled: isAtomicFeatureSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [
 					TOOLS_STAGING_SITE,
 					TOOLS_DEPLOYMENTS,
