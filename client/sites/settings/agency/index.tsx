@@ -6,24 +6,37 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+interface Fields {
+	is_fully_managed_agency_site: boolean;
+}
+
+type AgencySettingsProps = {
+	fields: Fields;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
+	handleToggle: ( field: string ) => () => void;
+	updateFields: ( fields: Fields ) => void;
+	isRequestingSettings: boolean;
+	isSavingSettings: boolean;
+};
+
 const AgencySettings = ( {
 	fields,
 	handleSubmitForm,
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
-} ) => {
+}: AgencySettingsProps ) => {
 	const site = useSelector( getSelectedSite );
-	const isAtomicSite = site.is_wpcom_atomic;
+	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID ?? 0, { enabled: !! site?.ID } );
 
-	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID } );
+	const isAtomicSite = site?.is_wpcom_atomic;
 
 	const shouldShowToggle = agencySite && isAtomicSite;
 
 	return (
 		<div className="agency-settings">
 			<NavigationHeader title={ __( 'Agency' ) } />
-			{ shouldShowToggle && (
+			{ shouldShowToggle && site && (
 				<A4AFullyManagedSiteSetting
 					title={ __( 'Client Access' ) }
 					site={ site }
@@ -43,7 +56,7 @@ const AgencySettings = ( {
 	);
 };
 
-const getFormSettings = ( settings ) => {
+const getFormSettings = ( settings: Fields ) => {
 	if ( ! settings ) {
 		return {
 			is_fully_managed_agency_site: true,
