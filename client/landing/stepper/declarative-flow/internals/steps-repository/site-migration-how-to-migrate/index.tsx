@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo, useState } from 'react';
@@ -14,7 +15,6 @@ import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-prov
 import FlowCard from '../components/flow-card';
 import usePendingMigrationStatus from './use-pending-migration-status';
 import type { StepProps } from '../../types';
-
 import './style.scss';
 
 interface Props extends StepProps {
@@ -29,13 +29,21 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	usePresalesChat( 'wpcom' );
 
+	const hasEnTranslation = useHasEnTranslation();
+
 	const options = useMemo(
 		() => [
 			{
 				label: translate( 'Do it for me' ),
-				description: translate(
+				description: hasEnTranslation(
 					"Share your site with us. We'll review it and handle the migration if possible."
-				),
+				)
+					? translate(
+							"Share your site with us. We'll review it and handle the migration if possible."
+					  )
+					: translate(
+							"Share your site with us, and we'll review it and handle the migration if possible."
+					  ),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
 			},
