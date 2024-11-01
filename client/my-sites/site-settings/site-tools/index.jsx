@@ -1,4 +1,3 @@
-import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -91,7 +90,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader id="site-tools__header" title={ headerTitle } />
+				{ headerTitle && <SettingsSectionHeader id="site-tools__header" title={ headerTitle } /> }
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
@@ -158,50 +157,48 @@ class SiteTools extends Component {
 	}
 }
 
-export default compose( [
-	connect(
-		( state ) => {
-			const siteId = getSelectedSiteId( state );
-			const site = getSite( state, siteId );
-			const siteSlug = getSelectedSiteSlug( state );
-			const isAtomic = isSiteAutomatedTransfer( state, siteId );
-			const isJetpack = isJetpackSite( state, siteId );
-			const isVip = isVipSite( state, siteId );
-			const isP2 = isSiteWPForTeams( state, siteId );
-			const isP2Hub = isSiteP2Hub( state, siteId );
-			const rewindState = getRewindState( state, siteId );
-			const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const site = getSite( state, siteId );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const isP2 = isSiteWPForTeams( state, siteId );
+		const isP2Hub = isSiteP2Hub( state, siteId );
+		const rewindState = getRewindState( state, siteId );
+		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
-			const cloneUrl = `/start/clone-site/${ siteSlug }`;
+		const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
-			const copySiteUrl = addQueryArgs( `/setup/copy-site`, {
-				sourceSlug: siteSlug,
-			} );
+		const copySiteUrl = addQueryArgs( `/setup/copy-site`, {
+			sourceSlug: siteSlug,
+		} );
 
-			const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
+		const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 
-			const showStartSiteTransfer =
-				! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
+		const showStartSiteTransfer =
+			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
-			return {
-				site,
-				isAtomic,
-				copySiteUrl,
-				siteSlug,
-				purchasesError: getPurchasesError( state ),
-				cloneUrl,
-				showChangeAddress: ! isJetpack && ! isVip && ! isP2,
-				showClone: 'active' === rewindState.state && ! isAtomic,
-				showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
-				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
-				showManageConnection: isJetpack && ! isAtomic,
-				showStartSiteTransfer,
-				siteId,
-				hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
-			};
-		},
-		{
-			errorNotice,
-		}
-	),
-] )( localize( withSiteCopy( SiteTools ) ) );
+		return {
+			site,
+			isAtomic,
+			copySiteUrl,
+			siteSlug,
+			purchasesError: getPurchasesError( state ),
+			cloneUrl,
+			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
+			showClone: 'active' === rewindState.state && ! isAtomic,
+			showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
+			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+			showManageConnection: isJetpack && ! isAtomic,
+			showStartSiteTransfer,
+			siteId,
+			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( withSiteCopy( SiteTools ) ) );
