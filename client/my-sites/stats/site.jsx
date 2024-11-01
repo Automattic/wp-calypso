@@ -664,7 +664,7 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
+						{ ! isNewDateFilteringEnabled && supportsEmailStats && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
