@@ -3,10 +3,11 @@ import wp from 'calypso/lib/wp';
 import { PickerSession } from './use-google-photos-picker-session-mutation';
 
 export default function useGooglePhotosPickerSessionQuery(
-	sessionId: string,
-	enabled = true,
+	sessionId: string | undefined,
 	options = {}
 ) {
+	const enabled = !! sessionId;
+
 	return useQuery( {
 		queryKey: [ 'google-photos-picker-session', sessionId ],
 		queryFn: (): Promise< PickerSession > =>

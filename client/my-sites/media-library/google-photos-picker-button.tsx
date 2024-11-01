@@ -13,10 +13,7 @@ const GooglePhotosPickerButton = () => {
 	const translate = useTranslate();
 	const session = useSelector( getGooglePhotosPickerSession );
 	const { mutate: createSession, isPending } = useCreateGooglePhotosPickerSessionMutation();
-	const { data: sessionData, refetch } = useGooglePhotosPickerSessionQuery(
-		session?.id,
-		!! session
-	);
+	const { data: sessionData, refetch } = useGooglePhotosPickerSessionQuery( session?.id );
 
 	const openPickerTab = () => {
 		session?.pickerUri && window.open( session.pickerUri, '_blank' );
