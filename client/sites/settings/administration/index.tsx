@@ -17,7 +17,7 @@ export default function AdministrationSettings() {
 	return (
 		<div className="administration-settings">
 			<NavigationHeader title={ translate( 'Administration' ) } />
-			{ ! isWpcomStagingSite && <SiteTools qsource={ SOURCE_SETTINGS_ADMINISTRATION } /> }
+			{ ! isWpcomStagingSite && <SiteTools source={ SOURCE_SETTINGS_ADMINISTRATION } /> }
 			{ isWpcomStagingSite && (
 				<div>
 					<CompactCard>
