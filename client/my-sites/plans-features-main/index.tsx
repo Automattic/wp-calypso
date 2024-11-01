@@ -15,6 +15,7 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
+	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -75,7 +76,6 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import useSimplifiedFeaturesGridExperiment from './hooks/use-simplified-features-grid-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -329,16 +329,9 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
-	const {
-		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
-		isTargetedView: isTargetedViewForSimplifiedFeaturesGridExperiment,
-		variant: simplifiedFeaturesGridExperimentVariant,
-		setVariantOverride: setSimplifiedFeaturesGridExperimentVariantOverride,
-	} = useSimplifiedFeaturesGridExperiment( {
-		flowName,
-		isInSignup,
-		intent,
-	} );
+	const isTargetedSignupFlow = isInSignup && flowName === 'onboarding';
+	const isTargetedAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
+	const showSimplifiedFeatures = isTargetedSignupFlow || isTargetedAdminIntent;
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -643,8 +636,7 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid ||
-			isLoadingSimplifiedFeaturesGridExperiment
+			! gridPlansForComparisonGrid
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -674,9 +666,14 @@ const PlansFeaturesMain = ( {
 		? getWooExpressFeaturesGroupedForComparisonGrid()
 		: getPlanFeaturesGroupedForComparisonGrid();
 
-	const featureGroupMapForFeaturesGrid = hasWooExpressFeatures
-		? getWooExpressFeaturesGroupedForFeaturesGrid()
-		: getPlanFeaturesGroupedForFeaturesGrid();
+	let featureGroupMapForFeaturesGrid;
+	if ( hasWooExpressFeatures ) {
+		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
+	} else if ( showSimplifiedFeatures ) {
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
+	} else {
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
+	}
 
 	const getComparisonGridToggleLabel = () => {
 		if ( showPlansComparisonGrid ) {
@@ -700,9 +697,7 @@ const PlansFeaturesMain = ( {
 			translate( 'Generative AI' ),
 			translate( 'Integrated content analytics' ),
 			translate( '24/7 support' ),
-			...( simplifiedFeaturesGridExperimentVariant === 'control'
-				? [ translate( 'Professional services' ) ]
-				: [ translate( 'FedRAMP certification' ) ] ),
+			translate( 'FedRAMP certification' ),
 			translate( 'API mesh and node hosting' ),
 			translate( 'Containerized environment' ),
 			translate( 'Global infrastructure' ),
@@ -719,11 +714,8 @@ const PlansFeaturesMain = ( {
 			translate( 'Plugin and theme vulnerability scanning' ),
 			translate( 'Automated plugin upgrade' ),
 			translate( 'Integrated enterprise search' ),
-			...( simplifiedFeaturesGridExperimentVariant === 'control'
-				? [ translate( 'Integrated APM' ) ]
-				: [] ),
 		],
-		[ simplifiedFeaturesGridExperimentVariant, translate ]
+		[ translate ]
 	);
 
 	const viewAllPlansButton = (
@@ -731,10 +723,6 @@ const PlansFeaturesMain = ( {
 			<Button
 				borderless
 				onClick={ () => {
-					if ( ! isTargetedViewForSimplifiedFeaturesGridExperiment ) {
-						setSimplifiedFeaturesGridExperimentVariantOverride( 'control' );
-					}
-
 					setForceDefaultPlans( true );
 				} }
 			>
@@ -848,24 +836,12 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
-										enableShowAllFeaturesButton={
-											simplifiedFeaturesGridExperimentVariant !== 'simplified'
-										}
-										enableCategorisedFeatures={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
-										enableStorageAsBadge={
-											simplifiedFeaturesGridExperimentVariant !== 'simplified'
-										}
-										enableReducedFeatureGroupSpacing={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
-										enableLogosOnlyForEnterprisePlan={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
-										hideFeatureGroupTitles={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
+										enableShowAllFeaturesButton={ ! showSimplifiedFeatures }
+										enableCategorisedFeatures={ showSimplifiedFeatures }
+										enableStorageAsBadge={ ! showSimplifiedFeatures }
+										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
+										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
+										hideFeatureGroupTitles={ showSimplifiedFeatures }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
