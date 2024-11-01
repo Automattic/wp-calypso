@@ -350,11 +350,7 @@ class StatsSite extends Component {
 			'stats__module-list',
 			'stats__module-list--traffic',
 			'stats__module--unified',
-			'stats__flexible-grid-container',
-			{
-				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
-				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
-			}
+			'stats__flexible-grid-container'
 		);
 
 		return (
@@ -752,7 +748,6 @@ class StatsSite extends Component {
 									useShortLabel
 									className={ clsx(
 										'stats__flexible-grid-item--half',
-										// Avoid 1/3 on smaller screen if Videos is visible
 										'stats__flexible-grid-item--full--large',
 										'stats__flexible-grid-item--full--medium'
 									) }
