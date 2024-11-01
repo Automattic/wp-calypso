@@ -24,11 +24,6 @@ export const OdieSendMessageButton = ( {
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 
-	const isMessageExceedingMaxLength = ( messageLength: number ) => {
-		// zendesk api validation
-		return messageLength <= 4096;
-	};
-
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
 		// used to remove validation message.
@@ -38,11 +33,15 @@ export const OdieSendMessageButton = ( {
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
 		const messageLength = message?.length || 0;
-		const isMessageLengthValid = isMessageExceedingMaxLength( messageLength );
+		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
 
 		setIsMessageSizeValid( isMessageLengthValid );
 
-		if ( message === '' || shouldBeDisabled || ! isMessageLengthValid ) {
+		if (
+			message === '' ||
+			shouldBeDisabled ||
+			( shouldUseHelpCenterExperience && ! isMessageLengthValid )
+		) {
 			return;
 		}
 		const messageString = inputRef.current?.value;
