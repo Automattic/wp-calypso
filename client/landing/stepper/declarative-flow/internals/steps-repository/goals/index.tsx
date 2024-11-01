@@ -84,15 +84,9 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
 	};
 
-	const recordIntentSelectTracksEvent = (
-		submittedGoals: Onboard.SiteGoal[],
-		intent: Onboard.SiteIntent
-	) => {
-		const hasImportGoal = submittedGoals.includes( SiteGoal.Import );
-
+	const recordIntentSelectTracksEvent = ( intent: Onboard.SiteIntent ) => {
 		const eventProperties = {
 			intent,
-			import: hasImportGoal,
 		};
 
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
@@ -103,27 +97,27 @@ const GoalsStep: Step = ( { navigation } ) => {
 		setIntent( intent );
 
 		recordGoalsSelectTracksEvent( goals, intent );
-		recordIntentSelectTracksEvent( goals, intent );
+		recordIntentSelectTracksEvent( intent );
 
 		navigation.submit?.( { intent } );
 	};
 
 	const handleImportClick = () => {
 		setIntent( SiteIntent.Import );
-		recordIntentSelectTracksEvent( [], SiteIntent.Import );
+		recordIntentSelectTracksEvent( SiteIntent.Import );
 		navigation.submit?.( { intent: SiteIntent.Import } );
 	};
 
 	const handleDIFMClick = () => {
 		setIntent( SiteIntent.DIFM );
-		recordIntentSelectTracksEvent( [], SiteIntent.DIFM );
+		recordIntentSelectTracksEvent( SiteIntent.DIFM );
 		navigation.submit?.( { intent: SiteIntent.DIFM } );
 	};
 
 	const handleDashboardClick = () => {
 		setIntent( SiteIntent.Build );
-		recordIntentSelectTracksEvent( [], SiteIntent.Build );
-		navigation.submit?.( { skip: true } );
+		recordIntentSelectTracksEvent( SiteIntent.Build );
+		navigation.submit?.( { intent: SiteIntent.Build, skip: true } );
 	};
 
 	useEffect( () => {
