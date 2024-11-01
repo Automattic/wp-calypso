@@ -1,0 +1,118 @@
+import { Button } from '@wordpress/components';
+import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
+import { translate } from 'i18n-calypso';
+import { pickBy } from 'lodash';
+import { useState, useEffect, useCallback } from 'react';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { fetchPost } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { requestPage } from 'calypso/state/reader/streams/actions';
+import { viewStream } from 'calypso/state/reader-ui/actions';
+import type { AppState } from 'calypso/types';
+import './style.scss';
+
+interface ReaderPost {
+	site_name: string;
+	postId: number;
+	feedId: number;
+}
+
+const Recent = () => {
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
+
+	const data = useSelector( ( state: AppState ) => {
+		return state.reader?.streams?.following;
+	}, shallowEqual );
+
+	const [ view, setView ] = useState( {
+		type: 'list',
+		fields: [ 'post' ],
+	} );
+
+	const [ selectedItem, setSelectedItem ] = useState( data?.items?.[ 0 ] || null );
+
+	const post = useSelector( ( state: AppState ) => {
+		if ( ! selectedItem ) {
+			return null;
+		}
+		const postKey = pickBy( {
+			feedId: +selectedItem?.feedId,
+			postId: +selectedItem?.postId,
+		} );
+		return getPostByKey( state, postKey );
+	}, shallowEqual );
+
+	const handleItemClick = useCallback( ( item: ReaderPost ) => {
+		setSelectedItem( item );
+	}, [] );
+
+	const fields = [
+		{
+			id: 'post',
+			label: translate( 'Blog' ),
+			render: ( { item }: { item: ReaderPost } ) => {
+				return <Button onClick={ () => handleItemClick( item ) }>{ item.site_name }</Button>;
+			},
+			enableHiding: false,
+		},
+	];
+
+	const defaultLayouts = [
+		{
+			label: translate( 'List' ),
+			icon: 'list-view',
+		},
+	];
+
+	const fetchData = useCallback( () => {
+		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
+	}, [ dispatch ] );
+
+	useEffect( () => {
+		fetchData();
+	}, [ fetchData ] );
+
+	const fetchFullPost = useCallback(
+		async ( postId: number ) => {
+			await dispatch( fetchPost( postId ) );
+		},
+		[ dispatch ]
+	);
+
+	useEffect( () => {
+		if ( selectedItem ) {
+			fetchFullPost( selectedItem.postId );
+		}
+	}, [ fetchFullPost, selectedItem ] );
+
+	return (
+		<div className="recent">
+			<div className="recent__list-column">
+				<h1>{ translate( 'All Recent' ) }</h1>
+				<DataViews
+					getItemId={ ( item: ReaderPost, index = 0 ) =>
+						item.postId?.toString() ?? `item-${ index }`
+					}
+					view={ view as View }
+					fields={ fields }
+					data={ data?.items ?? [] }
+					onChangeView={ ( newView: View ) =>
+						setView( { type: newView.type, fields: newView.fields ?? [] } )
+					}
+					paginationInfo={ {
+						totalItems: 0,
+						totalPages: 0,
+					} }
+					defaultLayouts={ defaultLayouts as SupportedLayouts }
+				/>
+			</div>
+			<div className="recent__post-column">{ selectedItem && post && post.title }</div>
+		</div>
+	);
+};
+
+export default Recent;

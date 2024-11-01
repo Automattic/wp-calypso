@@ -9,7 +9,7 @@ import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
-import Recent from './recent';
+import Recent from '../recent';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
