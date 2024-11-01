@@ -353,45 +353,43 @@ export class Theme extends Component {
 
 		return (
 			<ThemeShowcaseContext.Consumer>
-				{ ( { themeShowcaseWrapperRef } ) => {
-					return (
-						<InView
-							triggerOnce
-							rootMargin={ VIEWPORT_HEIGHT }
-							root={ themeShowcaseWrapperRef?.current || null }
-						>
-							{ ( { inView, ref } ) => (
-								<div ref={ ref }>
-									{ inView ? (
-										<ThemeCard
-											ref={ this.props.bookmarkRef }
-											name={ name }
-											description={ themeDescription }
-											image={ this.renderScreenshot() }
-											imageClickUrl={ this.props.screenshotClickUrl }
-											imageActionLabel={ this.props.actionLabel }
-											banner={ this.renderUpdateAlert() }
-											badge={ this.renderBadge() }
-											styleVariations={ style_variations }
-											selectedStyleVariation={ selectedStyleVariation }
-											optionsMenu={ this.renderMoreButton() }
-											isActive={ this.props.active }
-											isLoading={ this.props.loading }
-											isSoftLaunched={ this.props.softLaunched }
-											isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
-											onClick={ this.setBookmark }
-											onImageClick={ this.onScreenshotClick }
-											onStyleVariationClick={ this.onStyleVariationClick }
-											onStyleVariationMoreClick={ this.onStyleVariationClick }
-										/>
-									) : (
-										this.renderPlaceholder()
-									) }
-								</div>
-							) }
-						</InView>
-					);
-				} }
+				{ ( { themeShowcaseWrapperRef } ) => (
+					<InView
+						triggerOnce
+						rootMargin={ VIEWPORT_HEIGHT }
+						root={ themeShowcaseWrapperRef?.current || null }
+					>
+						{ ( { inView, ref } ) => (
+							<div ref={ ref }>
+								{ inView ? (
+									<ThemeCard
+										ref={ this.props.bookmarkRef }
+										name={ name }
+										description={ themeDescription }
+										image={ this.renderScreenshot() }
+										imageClickUrl={ this.props.screenshotClickUrl }
+										imageActionLabel={ this.props.actionLabel }
+										banner={ this.renderUpdateAlert() }
+										badge={ this.renderBadge() }
+										styleVariations={ style_variations }
+										selectedStyleVariation={ selectedStyleVariation }
+										optionsMenu={ this.renderMoreButton() }
+										isActive={ this.props.active }
+										isLoading={ this.props.loading }
+										isSoftLaunched={ this.props.softLaunched }
+										isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
+										onClick={ this.setBookmark }
+										onImageClick={ this.onScreenshotClick }
+										onStyleVariationClick={ this.onStyleVariationClick }
+										onStyleVariationMoreClick={ this.onStyleVariationClick }
+									/>
+								) : (
+									this.renderPlaceholder()
+								) }
+							</div>
+						) }
+					</InView>
+				) }
 			</ThemeShowcaseContext.Consumer>
 		);
 	}

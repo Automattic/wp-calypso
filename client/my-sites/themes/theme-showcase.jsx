@@ -439,7 +439,7 @@ class ThemeShowcase extends Component {
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, tier } = this.props;
+		const { filter, isCollectionView, loggedOutComponent, tier } = this.props;
 
 		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
 		const themesSelectionProps = {
@@ -448,12 +448,14 @@ class ThemeShowcase extends Component {
 		};
 
 		const themeCollection = THEME_COLLECTIONS.partner;
+		// If the user is logged in, we need to pass the ref to the theme showcase wrapper to the context
+		// so the document viewport is used to determine the theme lazy loading. When logged out, we don't need
+		// that because the document viewport can be used directly.
+		const themeShowcaseWrapperRef = loggedOutComponent ? undefined : this.themeShowcaseWrapperRef;
 
 		return (
 			<div className="theme-showcase__all-themes" ref={ this.themeShowcaseWrapperRef }>
-				<ThemeShowcaseContext.Provider
-					value={ { themeShowcaseWrapperRef: this.themeShowcaseWrapperRef } }
-				>
+				<ThemeShowcaseContext.Provider value={ { themeShowcaseWrapperRef } }>
 					<ThemesSelection
 						{ ...themesSelectionProps }
 						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
