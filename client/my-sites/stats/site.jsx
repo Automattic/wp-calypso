@@ -473,6 +473,7 @@ class StatsSite extends Component {
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
 								barClick={ this.barClick }
+								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
