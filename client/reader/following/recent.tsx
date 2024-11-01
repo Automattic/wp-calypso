@@ -43,7 +43,9 @@ const Recent = () => {
 
 	return (
 		<DataViews
-			getItemId={ ( item: { post_id?: number | string } ) => item.post_id?.toString() ?? '' }
+			getItemId={ ( item: { postId?: number | string }, index = 0 ) =>
+				item.postId?.toString() ?? `item-${ index }`
+			}
 			view={ view as View }
 			fields={ fields }
 			data={ data?.items ?? [] }
