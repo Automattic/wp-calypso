@@ -229,6 +229,7 @@ ul.module-tabs {
 }
 
 .is-chart-tabs {
+
 	.chart__bars {
 		justify-content: space-between;
 	}
@@ -239,4 +240,23 @@ ul.module-tabs {
 		max-width: 156px;
 	}
 
+	/* styles border around chart for new date filtering design */
+	&.is-date-filtering-enabled {    
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5) !important;
+		border-radius: 4px !important;
+		padding: 24px !important;
+		margin: 32px 0 !important;
+
+			/* styling for chart header */
+			.stats-chart-tabs__header {
+			display: flex;
+			flex-direction: row;
+			gap: 20px; /* adds space between the divs */
+			}
+
+			.chart__legend{
+			margin-left: auto; /* makes all items take equal width */
+			}
+	}
 }
