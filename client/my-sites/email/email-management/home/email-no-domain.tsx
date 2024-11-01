@@ -53,6 +53,8 @@ const EmailNoDomain = ( {
 		);
 	};
 
+	const addDomainUrl = `/domains/add/${ selectedSite.slug }?redirect_to=/mailboxes/${ selectedSite.slug }`;
+
 	if ( isFreePlanProduct ) {
 		return (
 			<EmptyContent
@@ -61,7 +63,7 @@ const EmailNoDomain = ( {
 				actionURL={ `/plans/${ selectedSite.slug }` }
 				secondaryAction={ translate( 'Just search for a domain' ) }
 				secondaryActionCallback={ trackEventForDomain }
-				secondaryActionURL={ `/domains/add/${ selectedSite.slug }` }
+				secondaryActionURL={ addDomainUrl }
 				illustration={ Illustration }
 				line={ translate(
 					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
@@ -78,7 +80,7 @@ const EmailNoDomain = ( {
 			<EmptyContent
 				action={ translate( 'Add a Domain' ) }
 				actionCallback={ trackEventForDomain }
-				actionURL={ `/domains/add/${ selectedSite.slug }` }
+				actionURL={ addDomainUrl }
 				illustration={ Illustration }
 				line={ translate(
 					'Claim your domain, pick from one of our flexible options to connect your domain with email and start getting emails today.'
@@ -93,7 +95,7 @@ const EmailNoDomain = ( {
 	return (
 		<EmptyContent
 			action={ translate( 'Add a Domain' ) }
-			actionURL={ `/domains/add/${ selectedSite.slug }` }
+			actionURL={ addDomainUrl }
 			actionCallback={ trackEventForDomain }
 			illustration={ Illustration }
 			line={ translate(
