@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getGoogleMediaViaProxyRetry } from 'calypso/lib/get-google-media';
 import type { ComponentType, FC, ReactElement, ReactNode } from 'react';
 
@@ -56,10 +56,12 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 		} else {
 			debug( 'requesting image from API', { requestId, imageObjectUrl } );
 			getGoogleMediaViaProxyRetry( fileUrl )
-				.then( ( data: Blob ) => {
-					cacheResponse( requestId, data );
-					setImageObjectUrl( URL.createObjectURL( data ) );
-					debug( 'got image from API', { requestId, imageObjectUrl, data } );
+				.then( ( data: unknown ) => {
+					const blobData = data as Blob;
+
+					cacheResponse( requestId, blobData );
+					setImageObjectUrl( URL.createObjectURL( blobData ) );
+					debug( 'got image from API', { requestId, imageObjectUrl, blobData } );
 				} )
 				.catch( onError );
 		}

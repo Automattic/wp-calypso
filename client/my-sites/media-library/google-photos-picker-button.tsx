@@ -2,10 +2,7 @@ import { Button } from '@wordpress/components';
 import './google-photos-picker-button.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import {
-	useCreateGooglePhotosPickerSessionMutation,
-	PickerSession,
-} from 'calypso/data/media/use-google-photos-picker-session-mutation';
+import { useCreateGooglePhotosPickerSessionMutation } from 'calypso/data/media/use-google-photos-picker-session-mutation';
 import useGooglePhotosPickerSessionQuery from 'calypso/data/media/use-google-photos-picker-session-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setPhotoPickerSession } from 'calypso/state/media/actions';
@@ -14,7 +11,7 @@ import getGooglePhotosPickerSession from 'calypso/state/selectors/get-google-pho
 const GooglePhotosPickerButton = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const session: PickerSession = useSelector( getGooglePhotosPickerSession );
+	const session = useSelector( getGooglePhotosPickerSession );
 	const { mutate: createSession, isPending } = useCreateGooglePhotosPickerSessionMutation();
 	const { data: sessionData, refetch } = useGooglePhotosPickerSessionQuery(
 		session?.id,

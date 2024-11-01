@@ -1,16 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
-
-export interface SessionData {
-	id: string;
-	mediaItemsSet: boolean;
-	pickerUri: string;
-	pollingConfig: {
-		pollInterval: string;
-		timeoutIn: string;
-	};
-	expireTime: string;
-}
+import { PickerSession } from './use-google-photos-picker-session-mutation';
 
 export default function useGooglePhotosPickerSessionQuery(
 	sessionId: string,
@@ -19,10 +9,12 @@ export default function useGooglePhotosPickerSessionQuery(
 ) {
 	return useQuery( {
 		queryKey: [ 'google-photos-picker-session', sessionId ],
-		queryFn: (): Promise< SessionData > =>
+		queryFn: (): Promise< PickerSession > =>
 			wp.req.get( {
 				apiNamespace: 'wpcom/v2',
-				path: `/meta/external-media/session/google_photos/${ encodeURIComponent( sessionId ) }`,
+				path: `/meta/external-media/session/google_photos/${ encodeURIComponent(
+					sessionId as string
+				) }`,
 			} ),
 		enabled,
 		...options,
