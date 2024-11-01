@@ -38,11 +38,11 @@ export const OdieSendMessageButton = ( {
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
 		const messageLength = message?.length || 0;
-		const isMessageValidLength = isMessageExceedingMaxLength( messageLength );
+		const isMessageLengthValid = isMessageExceedingMaxLength( messageLength );
 
-		setIsMessageSizeValid( isMessageValidLength );
+		setIsMessageSizeValid( isMessageLengthValid );
 
-		if ( message === '' || shouldBeDisabled || ! isMessageValidLength ) {
+		if ( message === '' || shouldBeDisabled || ! isMessageLengthValid ) {
 			return;
 		}
 		const messageString = inputRef.current?.value;
