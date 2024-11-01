@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -70,7 +71,8 @@ export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src'
 	const isJetpackNonAtomic =
 		siteId && isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
 	const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
-	const useGoogleProxy = src.includes( 'googleusercontent' );
+	const useGoogleProxy =
+		config.isEnabled( 'google-photos-picker' ) && src.includes( 'googleusercontent' );
 
 	return {
 		siteId,
