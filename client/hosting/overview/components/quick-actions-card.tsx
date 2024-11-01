@@ -20,7 +20,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
 	onClick?: () => void;
-	commandName: string;
+	commandName?: string;
 	icon: ReactNode;
 	href?: string;
 	text: string;
@@ -29,11 +29,13 @@ export const Action: FC< ActionProps > = ( { icon, href, text, commandName, onCl
 	const isDisabled = ! href && ! onClick;
 	const dispatch = useDispatch();
 	const clickAction = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
-				command: commandName,
-			} )
-		);
+		if ( commandName ) {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
+					command: commandName,
+				} )
+			);
+		}
 
 		onClick?.();
 	};
