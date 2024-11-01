@@ -8,6 +8,7 @@ import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
+import LicensingPendingAsyncActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-pending-async-activation';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
@@ -444,6 +445,33 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+export function licensingPendingAsyncActivation( context, next ) {
+	const { product: productSlug } = context.params;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
+
+	if ( ! fromSiteSlug ) {
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingPendingAsyncActivation
+				productSlug={ productSlug }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
+			/>
+		);
+	}
+
+	next();
 }
 
 export function licensingThankYouManualActivationInstructions( context, next ) {
