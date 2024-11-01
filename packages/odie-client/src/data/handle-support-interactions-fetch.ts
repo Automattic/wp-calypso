@@ -3,7 +3,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { SupportInteractionEvent } from '../types/';
 
 export const handleSupportInteractionsFetch = async (
-	method: string,
+	method: 'GET' | 'POST',
 	path?: string,
 	data?: SupportInteractionEvent
 ) => {
