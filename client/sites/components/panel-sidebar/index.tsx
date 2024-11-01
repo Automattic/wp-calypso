@@ -8,8 +8,20 @@ import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
 
-export function SidebarItem( { href, children }: { href: string; children: ReactNode } ) {
+export function SidebarItem( {
+	enabled = true,
+	href,
+	children,
+}: {
+	enabled?: boolean;
+	href: string;
+	children: ReactNode;
+} ) {
 	const isActive = window.location.pathname.startsWith( href );
+
+	if ( ! enabled && ! isActive ) {
+		return null;
+	}
 
 	return (
 		<li>
