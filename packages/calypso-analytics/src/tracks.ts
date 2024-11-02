@@ -215,13 +215,13 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		if (
 			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! /^jetpack(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
+			! /^remotedatablocks(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! /^wpcom_dsp_widget(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! EVENT_NAME_EXCEPTIONS.includes( eventName )
 		) {
 			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match ' +
-					'/^calypso(?:_[a-z0-9]+){2,}$/ nor /^jetpack(?:_[a-z0-9]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match with the naming convention and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
@@ -264,11 +264,12 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	if (
 		! eventName.startsWith( 'calypso_' ) &&
 		! eventName.startsWith( 'jetpack_' ) &&
+		! eventName.startsWith( 'remotedatablocks_' ) &&
 		! eventName.startsWith( 'wpcom_dsp_widget_' ) &&
 		! EVENT_NAME_EXCEPTIONS.includes( eventName )
 	) {
 		debug(
-			'- Event name must be prefixed by "calypso_", "jetpack_", or added to `EVENT_NAME_EXCEPTIONS`'
+			'- Event name must be prefixed by source or added to `EVENT_NAME_EXCEPTIONS`'
 		);
 		return;
 	}
