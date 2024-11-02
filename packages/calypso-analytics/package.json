@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-analytics",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"description": "Automattic Analytics.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
