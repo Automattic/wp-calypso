@@ -268,9 +268,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		! eventName.startsWith( 'wpcom_dsp_widget_' ) &&
 		! EVENT_NAME_EXCEPTIONS.includes( eventName )
 	) {
-		debug(
-			'- Event name must be prefixed by source or added to `EVENT_NAME_EXCEPTIONS`'
-		);
+		debug( '- Event name must be prefixed by source or added to `EVENT_NAME_EXCEPTIONS`' );
 		return;
 	}
 
