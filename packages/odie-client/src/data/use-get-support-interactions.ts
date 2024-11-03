@@ -1,32 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportInteraction, SupportInteractionEvent } from '../types/';
+import type { SupportInteraction } from '../types/';
 
 /**
  * Get the support interaction.
- * If no id is provided, return all support interactions.
- * @param id optional - An ID of an EVENT such as Odie ID or Zendesk ID.
- * @returns The support interaction.
+ * @returns Support interactions.
  */
-export const useGetSupportInteractions = ( id?: number, enabled = true ) => {
+export const useGetSupportInteractions = (
+	per_page = 10,
+	page = 1,
+	status = 'open',
+	provider = null
+) => {
+	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
+
 	return useQuery( {
-		queryKey: [ 'support-interactions', 'get-conversation', id ?? '' ],
-		queryFn: () => handleSupportInteractionsFetch( 'GET' ) as Promise< SupportInteraction[] >,
+		queryKey: [ 'support-interactions', 'get-interactions', path ],
+		queryFn: () => handleSupportInteractionsFetch( 'GET', path ) as Promise< SupportInteraction[] >,
 		select: ( data: SupportInteraction[] ) => {
-			if ( ! id ) {
+			if ( ! provider ) {
 				return data;
 			}
 
-			const supportInteraction = data.find( ( interaction: SupportInteraction ) => {
-				return interaction.events.some(
-					( event: SupportInteractionEvent ) => event.event_external_id === id
-				);
-			} );
-
-			return supportInteraction;
+			return data.filter( ( interaction ) =>
+				interaction.events.some( ( event ) => event.event_source === provider )
+			);
 		},
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
-		enabled,
+		refetchIntervalInBackground: false,
 	} );
 };

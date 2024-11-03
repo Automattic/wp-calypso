@@ -1,47 +1,46 @@
 import { useMutation } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import { useGetSupportInteractions } from './use-get-support-interactions';
-import type { SupportInteractionEvent, SupportInteraction } from '../types/';
+import type { SupportInteractionEvent } from '../types/';
 
 /**
- * Create a new support interaction event.
- * If the event already exists, return the current event.
- * If there is already an interaction, add the event to the interaction.
- * @param eventData - The event data.
- * @param currentEventId optional - The current event ID.
- * @returns The mutation function.
+ * Manage support interaction events.
  */
-export const useCreateSupportInteraction = (
-	eventData: SupportInteractionEvent,
-	currentEventId?: number
-) => {
-	// Get the current interaction if it exists
-	const { data: currentInteraction } = useGetSupportInteractions(
-		currentEventId,
-		!! currentEventId
-	);
+export const useManageSupportInteraction = () => {
+	/**
+	 * Start a new support interaction.
+	 */
+	const startNewInteraction = useMutation( {
+		mutationKey: [ 'support-interaction', 'new-conversation' ],
+		mutationFn: ( eventData: SupportInteractionEvent ) =>
+			handleSupportInteractionsFetch( 'POST', '', eventData ),
+	} ).mutateAsync;
 
-	// Check if the new event already exists
-	const { data: currentEvent } = useGetSupportInteractions( eventData.event_external_id );
+	/**
+	 * Add an event to a support interaction.
+	 */
+	const addEventToInteraction = useMutation( {
+		mutationKey: [ 'support-interaction', 'add-event' ],
+		mutationFn: ( {
+			interactionId,
+			eventData,
+		}: {
+			interactionId: string;
+			eventData: SupportInteractionEvent;
+		} ) => handleSupportInteractionsFetch( 'POST', `/${ interactionId }/events`, eventData ),
+	} ).mutateAsync;
 
-	const supportInteractionUuid = ( currentInteraction as SupportInteraction )?.uuid ?? null;
-	const path = supportInteractionUuid ? `/${ supportInteractionUuid }/events` : '';
+	/**
+	 * Resolve a support interaction.
+	 */
+	const resolveInteraction = useMutation( {
+		mutationKey: [ 'support-interaction', 'resolve' ],
+		mutationFn: ( interactionId: string ) =>
+			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, { status: 'resolved' } ),
+	} ).mutateAsync;
 
-	const createEvent = useMutation( {
-		mutationKey: [
-			'support-interaction',
-			'new-event',
-			eventData.event_external_id,
-			supportInteractionUuid,
-		],
-		mutationFn: () => {
-			return handleSupportInteractionsFetch( 'POST', path, eventData );
-		},
-	} );
-
-	if ( currentEvent ) {
-		return async () => currentEvent;
-	}
-
-	return createEvent.mutateAsync;
+	return {
+		startNewInteraction,
+		addEventToInteraction,
+		resolveInteraction,
+	};
 };
