@@ -34,7 +34,7 @@ export const useManageSupportInteraction = () => {
 	 */
 	const resolveInteraction = useMutation( {
 		mutationKey: [ 'support-interaction', 'resolve' ],
-		mutationFn: ( interactionId: string ) =>
+		mutationFn: ( { interactionId }: { interactionId: string } ) =>
 			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, { status: 'resolved' } ),
 	} ).mutateAsync;
 
