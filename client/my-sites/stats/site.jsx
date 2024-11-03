@@ -67,7 +67,6 @@ import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import DatePicker from './stats-date-picker';
-import StatsModule from './stats-module';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -250,7 +249,6 @@ class StatsSite extends Component {
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
 		} = this.props;
-		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
@@ -352,6 +350,12 @@ class StatsSite extends Component {
 			'stats__module--unified',
 			'stats__flexible-grid-container'
 		);
+
+		const halfWidthModuleClasses = [
+			'stats__flexible-grid-item--half',
+			'stats__flexible-grid-item--full--large',
+			'stats__flexible-grid-item--full--medium',
+		];
 
 		return (
 			<div className="stats">
@@ -482,62 +486,20 @@ class StatsSite extends Component {
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className={ moduleListClasses }>
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="posts"
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopPosts"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ isNewStateEnabled && (
-							<StatsModuleTopPosts
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--40--once-space',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ isNewStateEnabled && (
-							<StatsModuleReferrers
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--40--once-space',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleTopPosts
+							moduleStrings={ moduleStrings.posts }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
+						<StatsModuleReferrers
+							moduleStrings={ moduleStrings.referrers }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
 						<StatsModuleCountries
 							moduleStrings={ moduleStrings.countries }
@@ -555,22 +517,14 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'utm', slug ) }
 								summary={ false }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
 						{ supportsUTMStats && isOldJetpack && (
 							<StatsModuleUTMOverlay
 								siteId={ siteId }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 								overlay={
 									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
@@ -581,65 +535,21 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
-						{ isNewStateEnabled && (
-							<StatsModuleClicks
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleClicks
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && ! isNewStateEnabled && (
-							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-								showSummaryLink
-							/>
-						) }
-
-						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
+						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModuleAuthors
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'authors', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
@@ -650,127 +560,53 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.emails }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'emails', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
-						{ isNewStateEnabled && (
-							<StatsModuleSearch
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleSearch
+							moduleStrings={ moduleStrings.search }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
-						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModuleVideos
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'videoplays', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-
-						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
-							<StatsModule
-								path="videoplays"
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								statType="statsVideoPlays"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
 						{
 							// File downloads are not yet supported in Jetpack environment
-							isNewStateEnabled && ! isJetpack && (
+							! isJetpack && (
 								<StatsModuleDownloads
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }
 									summaryUrl={ this.getStatHref( this.props.period, 'filedownloads', slug ) }
-									className={ clsx(
-										'stats__flexible-grid-item--half',
-										'stats__flexible-grid-item--full--large',
-										'stats__flexible-grid-item--full--medium'
-									) }
+									className={ halfWidthModuleClasses }
 								/>
 							)
 						}
-						{
-							// File downloads are not yet supported in Jetpack environment
-							// TODO: Confirm the above statement.
-							! isNewStateEnabled && ! isJetpack && (
-								<StatsModule
-									path="filedownloads"
-									metricLabel={ translate( 'Downloads' ) }
-									moduleStrings={ moduleStrings.filedownloads }
-									period={ this.props.period }
-									query={ query }
-									statType="statsFileDownloads"
-									showSummaryLink
-									useShortLabel
-									className={ clsx(
-										'stats__flexible-grid-item--half',
-										'stats__flexible-grid-item--full--large',
-										'stats__flexible-grid-item--full--medium'
-									) }
-								/>
-							)
-						}
+
 						{ supportsDevicesStats && ! isOldJetpack && (
 							<StatsModuleDevices
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
+
 						{ ! supportsDevicesStats && isOldJetpack && (
 							<StatsModuleUpgradeDevicesOverlay
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
+								className={ halfWidthModuleClasses }
 								siteId={ siteId }
 								overlay={
 									<StatsCardUpdateJetpackVersion
