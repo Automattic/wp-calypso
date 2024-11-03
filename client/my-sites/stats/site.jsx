@@ -351,11 +351,11 @@ class StatsSite extends Component {
 			'stats__flexible-grid-container'
 		);
 
-		const halfWidthModuleClasses = [
+		const halfWidthModuleClasses = clsx(
 			'stats__flexible-grid-item--half',
 			'stats__flexible-grid-item--full--large',
-			'stats__flexible-grid-item--full--medium',
-		];
+			'stats__flexible-grid-item--full--medium'
+		);
 
 		return (
 			<div className="stats">
