@@ -6,7 +6,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { fetchPost } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -50,20 +49,9 @@ const Recent = () => {
 		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
 	}, [ dispatch ] );
 
-	const fetchFullPost = useCallback(
-		async ( postId: number ) => {
-			await dispatch( fetchPost( postId ) );
-		},
-		[ dispatch ]
-	);
-
-	const handleItemClick = useCallback(
-		( item: ReaderPost ) => {
-			setSelectedItem( item );
-			fetchFullPost( item.postId );
-		},
-		[ fetchFullPost ]
-	);
+	const handleItemClick = ( item: ReaderPost ) => {
+		setSelectedItem( item );
+	};
 
 	const fields = [
 		{
