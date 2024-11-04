@@ -17,6 +17,7 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 	isAkismetProduct,
+	isHundredYearDomain,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
 import {
@@ -754,6 +755,14 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
 	const isDomainTransfer = productSlug === 'domain_transfer';
+
+	if ( isHundredYearDomain( product ) ) {
+		let label = <DefaultLineItemSublabel product={ product } />;
+		if ( isDomainRegistration ) {
+			label = <>{ translate( '100-Year Domain Registration' ) }</>;
+		}
+		return label;
+	}
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
