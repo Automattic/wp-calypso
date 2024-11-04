@@ -31,7 +31,6 @@ class MediaLibraryExternalHeader extends Component {
 		photosPickerApiEnabled: PropTypes.bool,
 		photosPickerSession: PropTypes.object,
 		createPhotosPickerSession: PropTypes.func,
-		deletePhotosPickerSession: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -88,19 +87,10 @@ class MediaLibraryExternalHeader extends Component {
 	}
 
 	onCopy = () => {
-		const {
-			postId,
-			site,
-			selectedItems,
-			source,
-			onSourceChange,
-			photosPickerSession,
-			photosPickerApiEnabled,
-		} = this.props;
+		const { postId, site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
 			this.props.addExternalMedia( selectedItems, site, postId, source );
-			photosPickerApiEnabled && this.props.deletePhotosPickerSession( photosPickerSession?.id );
 		} );
 	};
 
