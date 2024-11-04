@@ -1,6 +1,7 @@
 import {
 	isBiennially,
 	isDIFMProduct,
+	isHundredYearDomain,
 	isMonthlyProduct,
 	isTriennially,
 	isYearly,
@@ -92,6 +93,10 @@ function LineItemIntroOfferCostOverrideDetail( {
 
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
 		return false;
+	}
+
+	if ( isHundredYearDomain( product ) ) {
+		return null;
 	}
 
 	// We only want to display this info for introductory offers which have
