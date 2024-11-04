@@ -1,4 +1,4 @@
-import { isDomainRegistration } from '@automattic/calypso-products';
+import { isDomainRegistration, isHundredYearDomain } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import i18n from 'i18n-calypso';
 import { doesIntroductoryOfferHavePriceIncrease } from './transformations';
@@ -224,6 +224,10 @@ export function getItemIntroductoryOfferDisplay(
 
 	if ( premiumDomainText ) {
 		return { enabled: true, text: premiumDomainText };
+	}
+
+	if ( isHundredYearDomain( product ) ) {
+		return null;
 	}
 
 	const isFreeTrial = product.item_subtotal_integer === 0;
