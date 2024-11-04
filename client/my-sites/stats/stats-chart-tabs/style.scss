@@ -258,6 +258,10 @@ ul.module-tabs {
 			.chart__legend{
 			margin-left: auto; /* makes all items take equal width */
 			}
+
+			.chart__y-axis-marker {
+			border-top-color: #DCDCDE;
+			}
 	}
 
 	/* styling for the chart header component */
