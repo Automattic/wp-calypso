@@ -170,6 +170,7 @@ export type ZendeskConversation = {
 
 export type Metadata = {
 	odieChatId: number;
+	createdAt: string;
 };
 
 export type SupportInteractionUser = {

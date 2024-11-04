@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { ZendeskConversation } from '@automattic/odie-client';
 import type { ContactOption } from '../types';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
