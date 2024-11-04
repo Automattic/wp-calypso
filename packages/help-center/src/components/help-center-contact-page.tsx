@@ -10,10 +10,10 @@ import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-uti
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
-import { comment, Icon } from '@wordpress/icons';
+import { comment, Icon, backup } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactElement, ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -48,10 +48,12 @@ const HelpCenterFooterButton = ( {
 	children,
 	buttonTextEventProp,
 	redirectTo,
+	icon,
 }: {
 	children: ReactNode;
 	buttonTextEventProp: string;
 	redirectTo: string;
+	icon: ReactElement;
 } ) => {
 	const { url, isLoading } = useStillNeedHelpURL();
 	const helpCenterContext = useHelpCenterContext();
@@ -93,7 +95,7 @@ const HelpCenterFooterButton = ( {
 			onClick={ () => handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } ) }
 			className="button help-center-contact-page__button"
 		>
-			<Icon icon={ comment } />
+			<Icon icon={ icon } />
 			{ children }
 		</Link>
 	);
@@ -252,15 +254,27 @@ export const HelpCenterContactButton: FC = () => {
 
 	return conversations.length ? (
 		<>
-			<HelpCenterFooterButton buttonTextEventProp="New conversation" redirectTo="/odie">
+			<HelpCenterFooterButton
+				icon={ comment }
+				buttonTextEventProp="New conversation"
+				redirectTo="/odie"
+			>
 				<span>{ __( 'New conversation', __i18n_text_domain__ ) }</span>
 			</HelpCenterFooterButton>
-			<HelpCenterFooterButton buttonTextEventProp="History" redirectTo="/chat-history">
+			<HelpCenterFooterButton
+				icon={ backup }
+				buttonTextEventProp="History"
+				redirectTo="/chat-history"
+			>
 				<span>{ __( 'History', __i18n_text_domain__ ) }</span>
 			</HelpCenterFooterButton>
 		</>
 	) : (
-		<HelpCenterFooterButton buttonTextEventProp="Still need help?" redirectTo="/odie">
+		<HelpCenterFooterButton
+			icon={ comment }
+			buttonTextEventProp="Still need help?"
+			redirectTo="/odie"
+		>
 			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
 		</HelpCenterFooterButton>
 	);
