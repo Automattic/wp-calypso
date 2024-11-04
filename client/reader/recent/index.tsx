@@ -20,44 +20,32 @@ interface ReaderPost {
 const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
 
-	const data = useSelector( ( state: AppState ) => {
-		return state.reader?.streams?.following;
-	}, shallowEqual );
+	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
 	const [ view, setView ] = useState( {
 		type: 'list',
 		fields: [ 'post' ],
 	} );
 
-	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
-
-	const post = useSelector( ( state: AppState ) => {
-		if ( ! selectedItem ) {
-			return null;
-		}
-		const postKey = {
-			feedId: +selectedItem.feedId,
-			postId: +selectedItem.postId,
-		};
-		return getPostByKey( state, postKey );
-	}, shallowEqual );
-
-	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
-	}, [ dispatch ] );
-
-	const handleItemClick = ( item: ReaderPost ) => {
-		setSelectedItem( item );
-	};
+	const { data, post } = useSelector(
+		( state: AppState ) => ( {
+			data: state.reader?.streams?.following,
+			post: selectedItem
+				? getPostByKey( state, {
+						feedId: +selectedItem.feedId,
+						postId: +selectedItem.postId,
+				  } )
+				: null,
+		} ),
+		shallowEqual
+	);
 
 	const fields = [
 		{
 			id: 'post',
 			label: translate( 'Blog' ),
 			render: ( { item }: { item: ReaderPost } ) => {
-				return <Button onClick={ () => handleItemClick( item ) }>{ item.site_name }</Button>;
+				return <Button onClick={ () => setSelectedItem( item ) }>{ item.site_name }</Button>;
 			},
 			enableHiding: false,
 		},
@@ -70,6 +58,12 @@ const Recent = () => {
 		},
 	];
 
+	const fetchData = useCallback( () => {
+		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
+	}, [ dispatch ] );
+
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
@@ -80,7 +74,7 @@ const Recent = () => {
 		if ( data?.items?.length > 0 && ! selectedItem ) {
 			setSelectedItem( data.items[ 0 ] );
 		}
-	}, [ data, selectedItem ] );
+	}, [ data?.items, selectedItem ] );
 
 	return (
 		<div className="recent">
