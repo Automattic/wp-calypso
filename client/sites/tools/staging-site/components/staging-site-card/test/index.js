@@ -5,14 +5,14 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { useAddStagingSiteMutation } from 'calypso/hosting/staging-site/hooks/use-add-staging-site';
-import { useCheckStagingSiteStatus } from 'calypso/hosting/staging-site/hooks/use-check-staging-site-status';
-import { useGetLockQuery } from 'calypso/hosting/staging-site/hooks/use-get-lock-query';
-import { useHasValidQuotaQuery } from 'calypso/hosting/staging-site/hooks/use-has-valid-quota';
-import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-const middlewares = [ thunk ];
 import { StagingSiteCard } from '..';
+import { useAddStagingSiteMutation } from '../../../hooks/use-add-staging-site';
+import { useCheckStagingSiteStatus } from '../../../hooks/use-check-staging-site-status';
+import { useGetLockQuery } from '../../../hooks/use-get-lock-query';
+import { useHasValidQuotaQuery } from '../../../hooks/use-has-valid-quota';
+import { useStagingSite } from '../../../hooks/use-staging-site';
+const middlewares = [ thunk ];
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
 const INITIAL_STATE = {
@@ -41,7 +41,7 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-add-staging-site', () => ( {
+jest.mock( '../../../hooks/use-add-staging-site', () => ( {
 	__esModule: true,
 	useAddStagingSiteMutation: jest.fn( () => {
 		return {
@@ -51,7 +51,7 @@ jest.mock( 'calypso/hosting/staging-site/hooks/use-add-staging-site', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-has-valid-quota', () => ( {
+jest.mock( '../../../hooks/use-has-valid-quota', () => ( {
 	__esModule: true,
 	useHasValidQuotaQuery: jest.fn( () => {
 		return {
@@ -60,7 +60,7 @@ jest.mock( 'calypso/hosting/staging-site/hooks/use-has-valid-quota', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-delete-staging-site', () => ( {
+jest.mock( '../../../hooks/use-delete-staging-site', () => ( {
 	__esModule: true,
 	useDeleteStagingSite: jest.fn( () => {
 		return {
@@ -70,7 +70,7 @@ jest.mock( 'calypso/hosting/staging-site/hooks/use-delete-staging-site', () => (
 	} ),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-check-staging-site-status', () => ( {
+jest.mock( '../../../hooks/use-check-staging-site-status', () => ( {
 	__esModule: true,
 	useCheckStagingSiteStatus: jest.fn(),
 } ) );
@@ -80,7 +80,7 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-staging-sync', () => ( {
+jest.mock( '../../../hooks/use-staging-sync', () => ( {
 	__esModule: true,
 	usePushToStagingMutation: jest.fn( () => {
 		return {
@@ -94,12 +94,12 @@ jest.mock( 'calypso/hosting/staging-site/hooks/use-staging-sync', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-staging-site', () => ( {
+jest.mock( '../../../hooks/use-staging-site', () => ( {
 	__esModule: true,
 	useStagingSite: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/hosting/staging-site/hooks/use-get-lock-query', () => ( {
+jest.mock( '../../../hooks/use-get-lock-query', () => ( {
 	__esModule: true,
 	useGetLockQuery: jest.fn(),
 } ) );

@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
-import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
+import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
 import { isAtomicFeatureSupported } from 'calypso/sites/utils';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -116,7 +116,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_STAGING_SITE ],
 			},
 			{

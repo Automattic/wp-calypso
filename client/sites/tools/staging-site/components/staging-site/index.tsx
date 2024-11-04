@@ -20,10 +20,10 @@ const StagingSite = () => {
 	}
 
 	if ( isWpcomStagingSite ) {
-		return <StagingSiteProductionCard siteId={ siteId } isBorderless />;
+		return <StagingSiteProductionCard siteId={ siteId } />;
 	}
 
-	return <StagingSiteCard isBorderless />;
+	return <StagingSiteCard />;
 };
 
 export default StagingSite;

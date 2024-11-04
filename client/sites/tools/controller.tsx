@@ -4,6 +4,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import Logs from './logs';
 import Monitoring from './monitoring';
+import StagingSite from './staging-site';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
@@ -29,7 +30,7 @@ export function stagingSite( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<ToolsSidebar />
-			<p>Staging site</p>
+			<StagingSite />
 		</PanelWithSidebar>
 	);
 	next();

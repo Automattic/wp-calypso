@@ -1,7 +1,6 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -17,16 +16,9 @@ import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-sync
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
+import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { LoadingPlaceholder } from './loading-placeholder';
-
-const ProductionCard = styled( Card )( {
-	paddingTop: '0',
-
-	'&.is-borderless': {
-		boxShadow: 'none',
-	},
-} );
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -44,10 +36,9 @@ type CardProps = {
 	disabled?: boolean;
 	siteId: number;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
-	isBorderless?: boolean;
 };
 
-function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless }: CardProps ) {
+function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ syncError, setSyncError ] = useState< string | null >( null );
@@ -118,16 +109,6 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 	const getManageStagingSiteContent = ( productionSite: ProductionSite ) => {
 		return (
 			<>
-				<p>
-					{ translate(
-						'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
 				<ActionButtons>
 					<Button
 						primary
@@ -177,14 +158,18 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 	}
 
 	return (
-		<ProductionCard
-			className={ clsx( 'hosting-card staging-site-card', { 'is-borderless': isBorderless } ) }
+		<CardContentWrapper
+			subtitle={ translate(
+				'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+				{
+					components: {
+						a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+					},
+				}
+			) }
 		>
-			<h3 id="staging-site" className="hosting-card__title">
-				{ __( 'Staging site' ) }
-			</h3>
 			{ cardContent }
-		</ProductionCard>
+		</CardContentWrapper>
 	);
 }
 

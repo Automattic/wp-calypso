@@ -2,7 +2,6 @@ import { PLAN_BUSINESS, getPlan, FEATURE_SITE_STAGING_SITES } from '@automattic/
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { CardContentWrapper } from '../staging-site-card/card-content/card-content-wrapper';
@@ -15,17 +14,7 @@ const StagingSiteUpsellNudge = () => {
 	} );
 
 	return (
-		<CardContentWrapper className="is-borderless">
-			<p>
-				{ translate(
-					'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
-					{
-						components: {
-							a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-						},
-					}
-				) }
-			</p>
+		<CardContentWrapper>
 			<UpsellNudge
 				className="staging-site-upsell-nudge"
 				title={ translate( 'Upgrade to the %(businessPlanName)s plan to add a staging site.', {
