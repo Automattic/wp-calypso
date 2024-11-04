@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { pickBy } from 'lodash';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -36,10 +35,10 @@ const Recent = () => {
 		if ( ! selectedItem ) {
 			return null;
 		}
-		const postKey = pickBy( {
-			feedId: +selectedItem?.feedId,
-			postId: +selectedItem?.postId,
-		} );
+		const postKey = {
+			feedId: +selectedItem.feedId,
+			postId: +selectedItem.postId,
+		};
 		return getPostByKey( state, postKey );
 	}, shallowEqual );
 
