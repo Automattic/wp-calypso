@@ -148,7 +148,12 @@ const GoalsStep: Step = ( { navigation } ) => {
 					<>
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
 						{ isMediumOrBiggerScreen && (
-							<Button className="select-goals__next" variant="primary" onClick={ handleNext }>
+							<Button
+								__next40pxDefaultSize
+								className="select-goals__next"
+								variant="primary"
+								onClick={ handleNext }
+							>
 								{ translate( 'Next' ) }
 							</Button>
 						) }
