@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -11,6 +12,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useChatStatus from '../hooks/use-chat-status';
 import { HELP_CENTER_STORE } from '../stores';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
@@ -49,6 +51,8 @@ const HelpCenterContactSupportOption = ( {
 			?.event_external_id ?? null;
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const navigate = useNavigate();
 
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		sectionName,
