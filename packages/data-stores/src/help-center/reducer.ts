@@ -41,6 +41,13 @@ const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	return state;
 };
 
+const currentSupportInteraction: Reducer< any, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
+		return action.supportInteraction;
+	}
+	return state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
@@ -130,6 +137,7 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 };
 
 const reducer = combineReducers( {
+	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,

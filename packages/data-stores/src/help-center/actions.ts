@@ -36,6 +36,13 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
 
+export function setCurrentSupportInteraction( supportInteraction: any ) {
+	return {
+		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
+		supportInteraction,
+	} as const;
+}
+
 export const setNavigateToRoute = ( route?: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
@@ -163,5 +170,6 @@ export type HelpCenterAction =
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
+			| typeof setCurrentSupportInteraction
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

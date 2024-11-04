@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportInteraction } from '../types/';
+import type { SupportInteraction, SupportProvider } from '../types/';
 
 /**
  * Get the support interaction.
  * @returns Support interactions.
  */
 export const useGetSupportInteractions = (
+	provider: SupportProvider | null = null,
 	per_page = 10,
-	page = 1,
 	status = 'open',
-	provider = null
+	page = 1
 ) => {
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 
@@ -23,7 +23,7 @@ export const useGetSupportInteractions = (
 			}
 
 			return data.filter( ( interaction ) =>
-				interaction.events.some( ( event ) => event.event_source === provider )
+				interaction.events.some( ( event ) => event.source === provider )
 			);
 		},
 		refetchOnWindowFocus: false,
