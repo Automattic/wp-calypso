@@ -1,9 +1,12 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
+import { Card, CardHeader, CardBody } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Link } from 'react-router-dom';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -73,6 +76,27 @@ export const HelpCenterChatHistory = () => {
 		}
 	}, [ getConversations, isChatLoaded ] );
 
+	const EmptyArchivedConversations = () => {
+		return (
+			<Card isBorderless size="small" className="help-center-chat-history__archive-no-results">
+				<CardHeader className="help-center-chat-history__archive-no-results-header">
+					<h4>{ __( 'Your Archive is Empty' ) }</h4>
+				</CardHeader>
+				<CardBody className="help-center-chat-history__archive-no-results-body">
+					{ __( 'Resolved issues and past conversations will be available here' ) }
+					<Link
+						to="/odie/new"
+						onClick={ () => {} }
+						className="help-center-chat-history__archive-no-results-button"
+					>
+						<Icon icon={ comment } />
+						{ __( 'Start conversation' ) }
+					</Link>
+				</CardBody>
+			</Card>
+		);
+	};
+
 	return (
 		<div className="help-center-chat-history">
 			<SectionNav>
@@ -97,9 +121,12 @@ export const HelpCenterChatHistory = () => {
 				<Conversations conversations={ recentConversations } />
 			) }
 
-			{ selectedTab === TAB_STATES.archived && (
-				<Conversations conversations={ archivedConversations } />
-			) }
+			{ selectedTab === TAB_STATES.archived &&
+				( archivedConversations?.length > 0 ? (
+					<Conversations conversations={ archivedConversations } />
+				) : (
+					<EmptyArchivedConversations />
+				) ) }
 		</div>
 	);
 };
