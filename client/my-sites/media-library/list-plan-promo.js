@@ -1,4 +1,10 @@
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	getPlan,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -56,9 +62,9 @@ class MediaLibraryListPlanPromo extends Component {
 			case 'videos':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload video files to your site, upgrade your plan.', {
-								textOnly: true,
-								context: 'Media upgrade promo',
+						? /* translators: %(planName)s is the short-hand version of the Premium plan name */
+						  this.props.translate( 'Upgrade to the %(planName)s plan to enable VideoPress', {
+								args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
 						  } )
 						: this.props.translate( 'Uploading video requires a paid plan.' ) +
 								' ' +
@@ -69,9 +75,9 @@ class MediaLibraryListPlanPromo extends Component {
 			case 'audio':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
-								textOnly: true,
-								context: 'Media upgrade promo',
+						? /* translators: %(planName)s is the short-hand version of the Personal plan name */
+						  this.props.translate( 'Upgrade to the %(planName)s plan to enable audio uploads', {
+								args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 						  } )
 						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
 								' ' +
