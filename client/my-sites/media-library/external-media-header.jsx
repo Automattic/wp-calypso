@@ -95,8 +95,10 @@ class MediaLibraryExternalHeader extends Component {
 	};
 
 	onChangeSelection = () => {
-		const { createPhotosPickerSession } = this.props;
+		const { photosPickerSession, createPhotosPickerSession, deletePhotosPickerSession } =
+			this.props;
 
+		deletePhotosPickerSession && deletePhotosPickerSession( photosPickerSession?.id );
 		createPhotosPickerSession && createPhotosPickerSession();
 	};
 

@@ -485,6 +485,7 @@ export class MediaLibraryContent extends Component {
 					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
 					photosPickerSession={ this.props.photosPickerSession }
 					createPhotosPickerSession={ this.props.createPhotosPickerSession }
+					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
 				/>
 			);
 		}
