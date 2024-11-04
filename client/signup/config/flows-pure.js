@@ -506,7 +506,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			enablePresales: false,
-			enableHotjar: true,
 		},
 
 		{
@@ -518,7 +517,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
-			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',

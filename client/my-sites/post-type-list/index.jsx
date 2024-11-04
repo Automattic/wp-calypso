@@ -1,4 +1,3 @@
-import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -7,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 import ListEnd from 'calypso/components/list-end';
@@ -22,8 +20,6 @@ import {
 	getPostsLastPageForQuery,
 } from 'calypso/state/posts/selectors';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
@@ -52,7 +48,6 @@ class PostTypeList extends Component {
 		totalPostCount: PropTypes.number,
 		totalPageCount: PropTypes.number,
 		lastPageToRequest: PropTypes.number,
-		isVip: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -243,25 +238,15 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate, isVip, isJetpack } = this.props;
+		const { query, siteId, isRequestingPosts } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
-		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = clsx( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
 
 		const isSingleSite = !! siteId;
-
-		const showUpgradeNudge =
-			siteId &&
-			posts.length > 10 &&
-			! isVip &&
-			! isJetpack &&
-			query &&
-			( query.type === 'post' || ! query.type ) &&
-			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
 
 		return (
 			<div className={ classes }>
@@ -275,21 +260,7 @@ class PostTypeList extends Component {
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				<SitePreview />
-				{ posts.slice( 0, 10 ).map( this.renderPost ) }
-				{ showUpgradeNudge && (
-					<UpsellNudge
-						title={ translate( 'No Ads with WordPress.com %(premiumPlanName)s', {
-							args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() },
-						} ) }
-						description={ translate( 'Prevent ads from showing on your site.' ) }
-						feature={ WPCOM_FEATURES_NO_ADVERTS }
-						event="published_posts_no_ads"
-						tracksImpressionName="calypso_upgrade_nudge_impression"
-						tracksClickName="calypso_upgrade_nudge_cta_click"
-						showIcon
-					/>
-				) }
-				{ posts.slice( 10 ).map( this.renderPost ) }
+				{ posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
@@ -311,8 +282,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		isVip: isVipSite( state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,

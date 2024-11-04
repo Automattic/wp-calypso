@@ -5,12 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
 import { buildFilterParam } from '../site-logs';
 import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
-
 import './style.scss';
 
 const SiteLogsToolbarDownloadProgress = ( {
@@ -66,6 +67,7 @@ export const SiteLogsToolbar = ( {
 	children,
 }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
@@ -82,6 +84,14 @@ export const SiteLogsToolbar = ( {
 		}
 		setIsMobileOpen( false );
 		onDateTimeChange( newStart || startDateTime, newEnd || endDateTime );
+	};
+
+	const recordSeverityChange = ( severity: string ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_site_logs_severity_filter', {
+				severity,
+			} )
+		);
 	};
 
 	const severities = [
@@ -170,6 +180,7 @@ export const SiteLogsToolbar = ( {
 								<SelectDropdown.Item
 									key={ option.value }
 									onClick={ () => {
+										recordSeverityChange( option.value );
 										onSeverityChange( option.value );
 										setIsMobileOpen( false );
 									} }

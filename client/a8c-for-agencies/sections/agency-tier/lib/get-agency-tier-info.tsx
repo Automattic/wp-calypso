@@ -131,7 +131,7 @@ const getAgencyTierInfo = (
 						"You've influenced at least $5,000 in Automattic revenue and have unlocked these additional benefits:"
 					),
 					benefits: [
-						translate( 'A dedicated partner manager and enjoy priority support access.' ),
+						translate( 'A dedicated partner manager and priority support access.' ),
 						translate(
 							"Advanced sales training sessions at request to sharpen your team's expertise."
 						),

@@ -21,8 +21,18 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
-	SITE_MARKETING_TOOLS,
-	SITE_MARKETING_BUSINESS_TOOLS,
+	MARKETING_TOOLS,
+	SETTINGS_SITE,
+	SETTINGS_ADMINISTRATION,
+	SETTINGS_AGENCY,
+	SETTINGS_CACHES,
+	SETTINGS_WEB_SERVER,
+	TOOLS_SFTP_SSH,
+	TOOLS_STAGING_SITE,
+	TOOLS_DEPLOYMENTS,
+	TOOLS_MONITORING,
+	TOOLS_DATABASE,
+	TOOLS_LOGS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -110,7 +120,30 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ SITE_MARKETING_TOOLS, SITE_MARKETING_BUSINESS_TOOLS ],
+				featureIds: [ MARKETING_TOOLS ],
+			},
+			{
+				label: __( 'Advanced Tools' ),
+				enabled: isActiveAtomicSite && config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [
+					TOOLS_STAGING_SITE,
+					TOOLS_DEPLOYMENTS,
+					TOOLS_MONITORING,
+					TOOLS_LOGS,
+					TOOLS_SFTP_SSH,
+					TOOLS_DATABASE,
+				],
+			},
+			{
+				label: __( 'Settings' ),
+				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [
+					SETTINGS_SITE,
+					SETTINGS_ADMINISTRATION,
+					SETTINGS_AGENCY,
+					SETTINGS_CACHES,
+					SETTINGS_WEB_SERVER,
+				],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
@@ -200,6 +233,7 @@ const DotcomPreviewPane = ( {
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
+			enforceTabsView
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',

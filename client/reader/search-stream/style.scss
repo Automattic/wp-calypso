@@ -420,10 +420,6 @@
 	.like-button__label-status {
 		@include hide-content-accessibly();
 	}
-
-	.reader-share__button {
-		top: 2px;
-	}
 }
 
 .search-stream__results.is-two-columns .search-stream__site-results {

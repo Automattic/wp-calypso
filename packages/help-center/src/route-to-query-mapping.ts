@@ -8,7 +8,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/discover': __( 'discover blogs' ),
 		'/email/': __( 'manage emails' ),
 		'/hosting-config/': __( 'hosting configuration' ),
-		'/marketing/business-tools/': __( 'business tools' ),
 		'/marketing/sharing-buttons/': __( 'social share' ),
 		'/me/get-apps': __( 'wordpress apps' ),
 		'/me/notifications': __( 'notification settings' ),

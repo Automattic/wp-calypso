@@ -6,8 +6,6 @@ import { useSendOdieFeedback } from '../../query/use-send-odie-feedback';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
 import type { Message } from '../../types/';
 
-import './style.scss';
-
 const WasThisHelpfulButtons = ( {
 	message,
 	isDisliked = false,

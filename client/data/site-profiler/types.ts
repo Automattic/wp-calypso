@@ -151,6 +151,7 @@ export type PerformanceMetricsHistory = {
 
 export type PerformanceReport = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	crux_score: number;
 	performance: number;
 	overall_score: number;
 	fullPageScreenshot: FullPageScreenshot;

@@ -1,7 +1,9 @@
 import { Spinner } from '@wordpress/components';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
+import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
@@ -12,12 +14,29 @@ import './style.scss';
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
-	const { trackEvent, chatStatus } = useOdieAssistantContext();
+	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
+	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
+
+	const onKeyUp = useCallback( () => {
+		// Only triggered when the message is empty
+		// used to remove validation message.
+		setIsMessageSizeValid( true );
+	}, [] );
 
 	const sendMessageHandler = useCallback( async () => {
-		if ( inputRef.current?.value.trim() === '' ) {
+		const message = inputRef.current?.value.trim();
+		const messageLength = message?.length || 0;
+		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
+
+		setIsMessageSizeValid( isMessageLengthValid );
+
+		if (
+			message === '' ||
+			shouldBeDisabled ||
+			( shouldUseHelpCenterExperience && ! isMessageLengthValid )
+		) {
 			return;
 		}
 		const messageString = inputRef.current?.value;
@@ -41,10 +60,18 @@ export const OdieSendMessageButton = () => {
 				error: error?.message,
 			} );
 		}
-	}, [ sendMessage, trackEvent ] );
-
+	}, [ sendMessage, shouldBeDisabled, shouldUseHelpCenterExperience, trackEvent ] );
+	const classes = clsx(
+		'odie-send-message-inner-button',
+		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
+	);
 	return (
 		<>
+			{ ! isMessageSizeValid && shouldUseHelpCenterExperience && (
+				<div className="odie-chatbox-invalid__message">
+					{ __( 'Message exceeds 4096 characters limit.' ) }
+				</div>
+			) }
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form
 					onSubmit={ ( event ) => {
@@ -57,14 +84,15 @@ export const OdieSendMessageButton = () => {
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
+						keyUpHandle={ onKeyUp }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
-					<button
-						type="submit"
-						className="odie-send-message-inner-button"
-						disabled={ shouldBeDisabled }
-					>
-						<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
+						{ shouldUseHelpCenterExperience ? (
+							<SendMessageIcon />
+						) : (
+							<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+						) }
 					</button>
 				</form>
 			</div>

@@ -575,9 +575,21 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'site-tools',
+		paths: [ '/sites/tools' ],
+		module: 'calypso/sites/tools',
+		group: 'sites',
+	},
+	{
 		name: 'site-marketing',
 		paths: [ '/sites/marketing' ],
 		module: 'calypso/sites/marketing',
+		group: 'sites',
+	},
+	{
+		name: 'site-settings',
+		paths: [ '/sites/settings' ],
+		module: 'calypso/sites/settings',
 		group: 'sites',
 	},
 	{

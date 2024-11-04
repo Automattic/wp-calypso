@@ -20,6 +20,8 @@ const SITE_DASHBOARD_ROUTES = {
 
 	// New Information Architecture
 	'site-marketing': '/sites/marketing',
+	'site-tools': '/sites/tools',
+	'site-settings': '/sites/settings',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {

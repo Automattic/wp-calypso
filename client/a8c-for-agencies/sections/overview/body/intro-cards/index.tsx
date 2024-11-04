@@ -1,6 +1,6 @@
 import { Card, DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/simple-list';
+import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

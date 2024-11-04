@@ -304,6 +304,9 @@ const PlanCard = () => {
 										a: isA4A ? (
 											<a
 												href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+												onClick={ () => {
+													recordTracksEvent( 'calypso_overview_agency_managed_site_click' );
+												} }
 											></a>
 										) : (
 											<strong></strong>

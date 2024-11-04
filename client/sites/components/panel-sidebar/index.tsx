@@ -1,50 +1,74 @@
+import { SelectDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
+import { Children, isValidElement } from 'react';
 import { navigate } from 'calypso/lib/navigate';
+import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
 
-interface PanelSidebarItem {
-	key: string;
-	label: string;
-}
+export function SidebarItem( {
+	enabled = true,
+	href,
+	children,
+}: {
+	enabled?: boolean;
+	href: string;
+	children: ReactNode;
+} ) {
+	const isActive = window.location.pathname.startsWith( href );
 
-interface PanelSidebarProps {
-	items: PanelSidebarItem[];
-	selectedItemKey: string;
-}
-
-function PanelSidebar( { items, selectedItemKey }: PanelSidebarProps ) {
-	const switchItem = ( key: string ) => {
-		navigate( window.location.pathname.replace( /\/[^/]+\/([^/]+)$/, `/${ key }/$1` ) );
-	};
+	if ( ! enabled && ! isActive ) {
+		return null;
+	}
 
 	return (
-		<div className="panel-sidebar">
-			{ items.map( ( item ) => {
-				return (
-					<Button
-						key={ item.key }
-						className={ clsx( 'panel-sidebar-tab', {
-							'panel-sidebar-tab--active': item.key === selectedItemKey,
-						} ) }
-						onClick={ () => switchItem( item.key ) }
-					>
-						{ item.label }
-					</Button>
-				);
-			} ) }
-		</div>
+		<li>
+			<Button
+				href={ href }
+				className={ clsx( 'panel-sidebar-tab', {
+					'panel-sidebar-tab--active': isActive,
+				} ) }
+			>
+				{ children }
+			</Button>
+		</li>
 	);
 }
 
-export function PanelWithSidebar( { children }: { children: React.ReactNode } ) {
+export function Sidebar( { children }: { children: ReactNode } ) {
+	const isDesktop = useViewportMatch( 'small', '>=' );
+	const activeElement = Children.toArray( children ).find(
+		( child ) => isValidElement( child ) && window.location.pathname.startsWith( child.props.href )
+	) as ReactElement;
+
+	if ( isDesktop ) {
+		return <ul className="panel-sidebar">{ children }</ul>;
+	}
+
+	return (
+		<SelectDropdown
+			className="panel-sidebar panel-sidebar-dropdown"
+			selectedText={ activeElement?.props?.children }
+		>
+			{ Children.toArray( children )
+				.filter( ( child ) => child && isValidElement( child ) )
+				.map( ( child, index ) => {
+					const { href, ...childProps } = ( child as ReactElement ).props;
+					return (
+						<SelectDropdown.Item
+							{ ...childProps }
+							key={ index }
+							selected={ window.location.pathname.startsWith( href ) }
+							onClick={ () => navigate( href ) }
+						/>
+					);
+				} ) }
+		</SelectDropdown>
+	);
+}
+
+export function PanelWithSidebar( { children }: { children: ReactNode } ) {
 	return <div className="panel-with-sidebar">{ children }</div>;
-}
-
-export default function makeSidebar( { items }: { items: PanelSidebarItem[] } ) {
-	const props = { items };
-	return ( { selectedItemKey }: { selectedItemKey: string } ) => (
-		<PanelSidebar { ...props } selectedItemKey={ selectedItemKey } />
-	);
 }

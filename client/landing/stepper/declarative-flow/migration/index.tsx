@@ -342,7 +342,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
 				if ( props?.action === 'skip' ) {
-					return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
+					return navigateWithQueryParams( SITE_MIGRATION_SUPPORT_INSTRUCTIONS, [], props );
 				}
 
 				return goToImporter( {

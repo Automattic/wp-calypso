@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -15,11 +15,18 @@ import Button from '../button';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types/';
 
-import './style.scss';
-
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
+};
+
+export type MessageIndicators = {
+	isLastUserMessage: boolean;
+	isLastFeedbackMessage: boolean;
+	isLastErrorMessage: boolean;
+	isLastMessage: boolean;
+	isNextMessageFromSameSender: boolean;
+	displayChatWithSupportLabel?: boolean;
 };
 
 const MessageAvatarHeader = ( {
@@ -41,19 +48,21 @@ const MessageAvatarHeader = ( {
 	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>
-				<WapuuAvatar className={ wapuuAvatarClasses } />
+				<WapuuAvatar />
 				<strong className="message-header-name"></strong>
 
-				<div className="message-header-buttons">
-					{ message.content?.length > 600 && ! isMobile && (
-						<Button compact borderless onClick={ handleFullscreenToggle }>
-							<img
-								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-							/>
-						</Button>
-					) }
-				</div>
+				{ ! shouldUseHelpCenterExperience && (
+					<div className="message-header-buttons">
+						{ message.content?.length > 600 && ! isMobile && (
+							<Button compact borderless onClick={ handleFullscreenToggle }>
+								<img
+									src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+									alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+								/>
+							</Button>
+						) }
+					</div>
+				) }
 			</>
 		) : (
 			<>{ message.role === 'business' && <HumanAvatar /> }</>
@@ -77,25 +86,35 @@ const MessageAvatarHeader = ( {
 				className={ wapuuAvatarClasses }
 			/>
 			<strong className="message-header-name">{ botName }</strong>
-			<div className="message-header-buttons">
-				{ message.content?.length > 600 && ! isMobile && (
-					<Button compact borderless onClick={ handleFullscreenToggle }>
-						<img
-							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-							alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-						/>
-					</Button>
-				) }
-			</div>
+			{ ! shouldUseHelpCenterExperience && (
+				<div className="message-header-buttons">
+					{ message.content?.length > 600 && ! isMobile && (
+						<Button compact borderless onClick={ handleFullscreenToggle }>
+							<img
+								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+							/>
+						</Button>
+					) }
+				</div>
+			) }
 		</>
 	);
 };
 
 const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
-	const { botName } = useOdieAssistantContext();
+	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
+
+	useEffect( () => {
+		if ( shouldUseHelpCenterExperience ) {
+			import( './style_redesign.scss' );
+		} else {
+			import( './style.scss' );
+		}
+	}, [ shouldUseHelpCenterExperience ] );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );

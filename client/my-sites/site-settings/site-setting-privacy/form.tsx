@@ -237,7 +237,7 @@ const SiteSettingPrivacyForm = ( {
 									disabled={ isRequestingSettings || discourageSearchChecked }
 									onClick={ () => recordEvent( 'Clicked Partnership Radio Button' ) }
 								/>
-								<span>
+								<span style={ { overflowWrap: 'anywhere' } }>
 									{ translate( 'Prevent third-party sharing for %(siteName)s', {
 										args: {
 											siteName: siteSlug || '',

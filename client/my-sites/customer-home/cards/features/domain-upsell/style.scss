@@ -39,18 +39,21 @@ body .customer-home__layout .domain-upsell__card {
 
 	.domain-upsell-subtitle {
 		margin-bottom: 12px;
+		font-size: $font-body;
+		color: var(--color-text-subtle);
 	}
 
 	.domain-upsell-description {
 		font-size: rem(14px);
 		font-style: italic;
+		color: var(--color-text-subtle);
 	}
 
 	.domain-upsell-actions {
 		display: flex;
 		flex-direction: column;
-		justify-content: right;
-		padding: 28px 0 0;
+		justify-content: left;
+		padding: 24px 0 0;
 		gap: 16px;
 		@media (min-width: ($break-large + 1)) {
 			flex-direction: row-reverse;

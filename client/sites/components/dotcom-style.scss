@@ -102,27 +102,16 @@
 
 	}
 
-	.dataviews-filters__view-actions {
-		border-bottom: 0;
-		align-items: center;
-	}
-
 	.a4a-layout__header {
 		flex-wrap: nowrap;
 	}
 
 	.dataviews-wrapper {
-		thead tr.dataviews-view-table__row {
-			cursor: default;
-		}
-
 		thead tr.dataviews-view-table__row:hover {
 			background: var(--studio-white);
 		}
 
 		tr.dataviews-view-table__row {
-			cursor: pointer;
-
 			&:hover {
 				background-color: #f7faff;
 			}
@@ -144,26 +133,6 @@
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
-
-		&:nth-child(4) {
-			.site-sort {
-				display: inline-block;
-				font-size: $font-body-small;
-				max-width: calc(100% - 14px);
-				overflow-wrap: anywhere;
-				white-space: normal;
-
-				span {
-					display: inline-block;
-					max-width: calc(100% - 14px);
-					vertical-align: middle;
-				}
-			}
-
-			svg.site-sort__icon {
-				display: inline-block;
-			}
-		}
 
 		span,
 		.dataviews-view-table-header-button {
@@ -334,21 +303,6 @@
 			}
 		}
 	}
-	.sites-dashboard.preview-hidden {
-		.dataviews-filters__view-actions {
-			// Sort action icon
-			> .components-button:has(.preview-hidden) {
-				// Since we changed the original height of the search input, we need to adjust the position of this icon.
-				margin-top: 5px;
-			}
-
-			.components-button.is-compact.has-icon:not(.has-text) {
-				@media (max-width: 961px) {
-					margin-inline-end: 8px;
-				}
-			}
-		}
-	}
 
 	.sites-dashboard:not(.preview-hidden) {
 		.a4a-layout__header {
@@ -371,11 +325,6 @@
 
 		.list-tile__leading {
 			margin-right: 12px;
-		}
-
-		.dataviews-filters__view-actions {
-			align-items: center;
-			display: flex;
 		}
 
 		ul.dataviews-view-list {

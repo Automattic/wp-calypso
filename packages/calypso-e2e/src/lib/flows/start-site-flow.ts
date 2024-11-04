@@ -25,7 +25,7 @@ const selectors = {
 	goalButton: ( goal: string ) =>
 		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
 	selectedGoalButton: ( goal: string ) =>
-		`.select-card-checkbox__container.is-checked:has-text("${ goal }")`,
+		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
 
 	// Step containers
 	contentAgnosticContainer: '.step-container',

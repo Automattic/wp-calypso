@@ -1,8 +1,10 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -13,7 +15,6 @@ import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-prov
 import FlowCard from '../components/flow-card';
 import usePendingMigrationStatus from './use-pending-migration-status';
 import type { StepProps } from '../../types';
-
 import './style.scss';
 
 interface Props extends StepProps {
@@ -28,13 +29,21 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	usePresalesChat( 'wpcom' );
 
+	const hasEnTranslation = useHasEnTranslation();
+
 	const options = useMemo(
 		() => [
 			{
 				label: translate( 'Do it for me' ),
-				description: translate(
-					"Share your site with us, and we'll review it and handle the migration if possible."
-				),
+				description: hasEnTranslation(
+					"Share your site with us. We'll review it and handle the migration if possible."
+				)
+					? translate(
+							"Share your site with us. We'll review it and handle the migration if possible."
+					  )
+					: translate(
+							"Share your site with us, and we'll review it and handle the migration if possible."
+					  ),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
 			},
@@ -62,7 +71,20 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const { setPendingMigration } = usePendingMigrationStatus( { onSubmit: navigation.submit } );
+	const { setPendingMigration, isLoading: isUpdatingMigrationStatus } = usePendingMigrationStatus( {
+		onSubmit: navigation.submit,
+	} );
+
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const handleClick = async ( value: string ) => {
+		setIsSubmitting( true );
+
+		try {
+			await setPendingMigration( value );
+		} finally {
+			setIsSubmitting( false );
+		}
+	};
 
 	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
@@ -70,20 +92,21 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
 
-	const stepContent = (
-		<>
+	const stepContent =
+		isSubmitting || isUpdatingMigrationStatus ? (
+			<LoadingEllipsis className="how-to-migrate__loader" />
+		) : (
 			<div className="how-to-migrate__list">
 				{ options.map( ( option, i ) => (
 					<FlowCard
 						key={ i }
 						title={ option.label }
 						text={ option.description }
-						onClick={ () => setPendingMigration( option.value ) }
+						onClick={ () => handleClick( option.value ) }
 					/>
 				) ) }
 			</div>
-		</>
-	);
+		);
 
 	const platformText = shouldDisplayHostIdentificationMessage
 		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {

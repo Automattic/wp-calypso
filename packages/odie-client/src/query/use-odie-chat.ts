@@ -46,6 +46,7 @@ export const useOdieChat = (
 			const chatResponse: Chat = {
 				chat_id: response.chat_id,
 				messages: response.messages || [],
+				wpcom_user_id: response.wpcom_user_id,
 				// Add any other fields that are part of the Chat type
 			};
 

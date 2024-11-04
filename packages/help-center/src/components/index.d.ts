@@ -107,6 +107,30 @@ declare module 'calypso/components/gravatar' {
 	export default Gravatar;
 }
 
+declare module 'calypso/components/section-nav' {
+	const SectionNav: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNav;
+}
+
+declare module 'calypso/components/section-nav/tabs' {
+	const SectionNavTabs: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNavTabs;
+}
+
+declare module 'calypso/components/section-nav/item' {
+	const SectionNavItem: FC< {
+		selected: boolean;
+		onClick: () => void;
+		count?: number;
+		children: React.ReactNode;
+	} >;
+	export default SectionNavItem;
+}
+
 declare module 'calypso/components/textarea-autosize' {
 	const TextareaAutosize: FC< {
 		placeholder: string;

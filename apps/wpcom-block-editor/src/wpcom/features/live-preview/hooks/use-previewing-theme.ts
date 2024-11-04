@@ -6,13 +6,13 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
+import useLocation from '../../../hooks/use-location';
 import {
 	currentlyPreviewingTheme,
 	PERSONAL_THEME,
 	PREMIUM_THEME,
 	WOOCOMMERCE_THEME,
 } from '../utils';
-import useLocation from './use-location';
 import type { Theme } from 'calypso/types';
 
 /**

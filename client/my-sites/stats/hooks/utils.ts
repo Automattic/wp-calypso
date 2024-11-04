@@ -1,9 +1,11 @@
 export interface QueryStatsParams {
 	date?: string;
+	start_date?: string;
 	days?: number;
 	max?: number;
 	num?: number;
 	period?: string;
+	summarize?: number;
 }
 
 const getDaysOfMonthFromDate = ( date: string ): number => {
@@ -44,6 +46,7 @@ export const processQueryParams = ( query: QueryStatsParams ) => {
 
 	return {
 		...query,
+		start_date: query.start_date || '',
 		num,
 		max,
 		date,
