@@ -37,14 +37,9 @@ const Recent = () => {
 						postId: +selectedItem.postId,
 				  } )
 				: null,
-			state,
 		} ),
 		shallowEqual
 	);
-
-	const handleClose = () => {
-		setSelectedItem( null );
-	};
 
 	const fields = [
 		{
@@ -107,7 +102,6 @@ const Recent = () => {
 				{ selectedItem && post && (
 					<FullPostView
 						post={ post }
-						onClose={ handleClose }
 						referralStream={ window.location.pathname }
 						notificationsOpen
 					/>
