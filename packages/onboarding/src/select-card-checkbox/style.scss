@@ -19,16 +19,9 @@
 		align-items: center;
 	}
 
-	&:hover {
-		border-color: transparent;
-	}
-
 	&:hover,
 	&:has(:checked) {
 		background: var(--color-accent-5);
-	}
-
-	&:has(:checked) {
-		border: 1px solid var(--color-accent);
+		border-color: var(--color-accent);
 	}
 }
