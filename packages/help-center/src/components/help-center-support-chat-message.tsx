@@ -45,7 +45,7 @@ export const HelpCenterSupportChatMessage = ( {
 		return (
 			<Gravatar
 				user={ currentUser }
-				size={ 32 }
+				size={ 38 }
 				alt={ __( 'User profile display picture', __i18n_text_domain__ ) }
 			/>
 		);
