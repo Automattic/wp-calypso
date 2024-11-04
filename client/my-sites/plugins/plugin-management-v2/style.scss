@@ -15,33 +15,9 @@
 	fill: var(--studio-gray-40);
 }
 
-.plugin-management-v2__main-content-container {
-	margin-block-start: 0;
-
-	@include break-xlarge() {
-		margin-block-start: 8px;
-	}
-
-	&.is-bulk-management-active {
-		margin-block-start: 0;
-	}
-}
-
-.plugin-management-v2__no-sites {
-	text-align: center;
-	font-size: 1.5rem;
-	margin-top: 16px;
-}
-
 .plugin-management-v2__actions {
 	.gridicon {
 		position: absolute !important;
 		inset-inline-end: 10px;
-	}
-}
-
-.button-group.plugin-management-v2__table-button-group {
-	.button:active {
-		border-width: 1px;
 	}
 }
