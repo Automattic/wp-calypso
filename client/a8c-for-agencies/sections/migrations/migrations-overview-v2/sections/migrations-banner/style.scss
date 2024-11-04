@@ -40,6 +40,10 @@
 	justify-content: space-between;
 	gap: 16px;
 
+	.simple-list {
+		gap: 10px;
+	}
+
 	@include break-large {
 		flex-direction: row;
 		margin-inline-start: 64px;

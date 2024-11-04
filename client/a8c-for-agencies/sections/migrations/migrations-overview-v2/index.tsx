@@ -9,6 +9,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsBanner from './sections/migrations-banner';
@@ -38,6 +39,8 @@ export default function MigrationsOverviewV2() {
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
+						<MobileSidebarNavigation />
+
 						<Button
 							variant="primary"
 							onClick={ onMigrateSitesClick }
