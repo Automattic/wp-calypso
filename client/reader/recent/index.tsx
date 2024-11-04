@@ -31,7 +31,7 @@ const Recent = () => {
 		fields: [ 'post' ],
 	} );
 
-	const [ selectedItem, setSelectedItem ] = useState( data?.items?.[ 0 ] || null );
+	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
 	const post = useSelector( ( state: AppState ) => {
 		if ( ! selectedItem ) {
@@ -44,9 +44,26 @@ const Recent = () => {
 		return getPostByKey( state, postKey );
 	}, shallowEqual );
 
-	const handleItemClick = useCallback( ( item: ReaderPost ) => {
-		setSelectedItem( item );
-	}, [] );
+	const fetchData = useCallback( () => {
+		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
+	}, [ dispatch ] );
+
+	const fetchFullPost = useCallback(
+		async ( postId: number ) => {
+			await dispatch( fetchPost( postId ) );
+		},
+		[ dispatch ]
+	);
+
+	const handleItemClick = useCallback(
+		( item: ReaderPost ) => {
+			setSelectedItem( item );
+			fetchFullPost( item.postId );
+		},
+		[ fetchFullPost ]
+	);
 
 	const fields = [
 		{
@@ -66,28 +83,17 @@ const Recent = () => {
 		},
 	];
 
-	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
-	}, [ dispatch ] );
-
+	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	const fetchFullPost = useCallback(
-		async ( postId: number ) => {
-			await dispatch( fetchPost( postId ) );
-		},
-		[ dispatch ]
-	);
-
+	// Set the first item as selected if no item is selected.
 	useEffect( () => {
-		if ( selectedItem ) {
-			fetchFullPost( selectedItem.postId );
+		if ( data?.items?.length > 0 && ! selectedItem ) {
+			setSelectedItem( data.items[ 0 ] );
 		}
-	}, [ fetchFullPost, selectedItem ] );
+	}, [ data, selectedItem ] );
 
 	return (
 		<div className="recent">
