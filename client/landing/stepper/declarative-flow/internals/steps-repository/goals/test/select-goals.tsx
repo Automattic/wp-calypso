@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { seedManager } from 'calypso/landing/stepper/utils/shuffleArray';
+import { seedManager } from 'calypso/landing/stepper/utils/shuffle-array';
 import { SelectGoals } from '../select-goals';
 
 describe( 'SelectGoals', () => {

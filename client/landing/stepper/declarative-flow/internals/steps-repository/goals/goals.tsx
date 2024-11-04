@@ -2,7 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
-import { shuffleArray } from '../../../../utils/shuffleArray';
+import { shuffleArray } from '../../../../utils/shuffle-array';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
