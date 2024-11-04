@@ -504,6 +504,10 @@ export function StripeSetupIntentIdProvider( {
 	fetchStripeSetupIntentId: GetStripeSetupIntentId;
 	isDisabled?: boolean;
 } > ) {
+	// eslint-disable-next-line no-console
+	console.warn(
+		'StripeSetupIntentIdProvider creates too many setup intents and is deprecated. Please create the setup intent on the fly when submitting the form. See https://github.com/Automattic/wp-calypso/pull/79881'
+	);
 	const setupIntentData = useFetchSetupIntentId( fetchStripeSetupIntentId, { isDisabled } );
 
 	return (
@@ -581,6 +585,10 @@ export function useStripe(): StripeData {
  * intent ID which can be passed to `confirmStripeSetupIntentAndAttachCard`.
  */
 export function useStripeSetupIntentId(): StripeSetupIntentIdData {
+	// eslint-disable-next-line no-console
+	console.warn(
+		'useStripeSetupIntentId creates too many setup intents and is deprecated. Please create the setup intent on the fly when submitting the form. See https://github.com/Automattic/wp-calypso/pull/79881'
+	);
 	const stripeData = useContext( StripeSetupIntentContext );
 	if ( ! stripeData ) {
 		throw new Error(

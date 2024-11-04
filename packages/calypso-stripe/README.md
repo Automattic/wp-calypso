@@ -13,14 +13,6 @@ You'll need to wrap this context provider around any component that wishes to us
 - `locale?: string` An optional locale string used to localize error messages for the Stripe elements fields.
 - `country?: string` An optional country string used to determine which Stripe account to use. If not provided, the country will be detected based on Geo IP.
 
-## StripeSetupIntentIdProvider
-
-You'll need to wrap this context provider around any component that wishes to use `useStripeSetupIntentId`. It accepts the following props:
-
-- `children: React.ReactNode`
-- `fetchStripeSetupIntentId: GetStripeSetupIntentId` A function to fetch the stripe setup intent from the WP.com HTTP API.
-- `isDisabled?: boolean` An option to disable the fetching of the setup intent if it is not needed.
-
 ## useStripe
 
 A React hook that allows access to Stripe.js. This returns an object with the following properties:
@@ -29,14 +21,6 @@ A React hook that allows access to Stripe.js. This returns an object with the fo
 - `stripeConfiguration: null | StripeConfiguration` The object containing the data returned by the wpcom stripe configuration endpoint. May include a payment intent.
 - `isStripeLoading: boolean` A boolean that is true if stripe is currently being loaded.
 - `stripeLoadingError: undefined | null | Error` An optional object that will be set if there is an error loading stripe.
-
-## useStripeSetupIntentId
-
-A React hook that allows access to creating a setup intent ID that can be passed to confirmStripeSetupIntentAndAttachCard. This returns an object with the following properties:
-
-- `setupIntentId: string | undefined`. The setup intent ID.
-- `error: undefined | null | Error`. An error, if one exists.
-- `reload: () => void`. A function that can be used to reload the setupIntentId, which should be done if it is used at all (even if it fails).
 
 ## confirmStripeSetupIntentAndAttachCard
 
