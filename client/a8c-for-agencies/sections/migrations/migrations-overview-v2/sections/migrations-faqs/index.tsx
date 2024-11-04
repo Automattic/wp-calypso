@@ -62,7 +62,7 @@ export default function MigrationsFAQs() {
 						className="migrations-faqs__section"
 					>
 						{ translate(
-							'Sites are migrated by moving a copy onto our servers. During this process, the existing site remains live at your previous host. Once the migration is complete, the domain is pointed to the version of the site on our servers. There can be a minimal interruption while the DNS propagates, but normally your visitors will experience no downtime. For ecommerce sites we coordinate with you on a migration window during which the site can be placed into maintenance mode. This prevents orders from being created across the two sites. This is optional, but recommended, and normally lasts just a couple of hours.'
+							'Sites are migrated by moving a copy onto our servers. During this process, the existing site remains live at your previous host. Once the migration is complete, the domain is pointed to the version of the site on our servers. There can be minimal interruption while the DNS propagates, but normally, your visitors will experience no downtime. For e-commerce sites, we coordinate with you on a migration window during which the site can be placed into maintenance mode. This prevents orders from being created across the two sites. This is optional but recommended and typically lasts just a couple of hours.'
 						) }
 					</FoldableFAQ>
 				</li>
@@ -75,7 +75,7 @@ export default function MigrationsFAQs() {
 						className="migrations-faqs__section"
 					>
 						{ translate(
-							'When you request a migration, our team will coordinate with you the timing. Generally, migrations happen within 1 working week of your request, but at busy times may take a little longer. For ecommerce sites, we coordinate with you to identify low impact times when a site can be placed into maintenance mode during the migration.'
+							'When you request a migration, our team will coordinate with you on the timing. Generally, migrations happen within one working week of your request, but at busy times, they may take a little longer. For e-commerce sites, we coordinate with you to identify low-impact times when a site can be placed into maintenance mode during the migration.'
 						) }
 					</FoldableFAQ>
 				</li>
@@ -110,7 +110,7 @@ export default function MigrationsFAQs() {
 						className="migrations-faqs__section"
 					>
 						{ translate(
-							'If you choose to have our migration team handle the actual migrations, you will need to initially set up a login on each site and share it with them (we provide step by step instructions and a secure method to share). Once the migration is completed, our team review the copy of the site on our servers and will ask you to do the same. You’ll then need to point the domain to our servers by changing the DNS records.'
+							'If you choose to have our migration team handle the actual migrations, you will need to initially set up a login on each site and share it with them (we provide step-by-step instructions and a secure method to share). Once the migration is completed, our team reviews the copy of the site on our servers and will ask you to do the same. You’ll then need to point the domain to our servers by changing the DNS records.'
 						) }
 					</FoldableFAQ>
 				</li>
@@ -136,7 +136,7 @@ export default function MigrationsFAQs() {
 						className="migrations-faqs__section"
 					>
 						{ translate(
-							'No. It doesn’t matter what CMS your site currently uses. If you migrate your site to WordPress.com or Pressable, you will be eligible for our migration offer. However, we won’t be able to provide you with migration assistance in this case.'
+							'No. It doesn’t matter what CMS your site currently uses. You will be eligible for our migration offer if you migrate your site to WordPress.com or Pressable. However, we won’t be able to provide you with migration assistance in this case.'
 						) }
 					</FoldableFAQ>
 				</li>
