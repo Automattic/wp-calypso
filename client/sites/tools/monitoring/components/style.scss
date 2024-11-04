@@ -121,6 +121,10 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+
+	&.tools-monitoring {
+		padding: 0;
+	}
 }
 
 .site-monitoring-time-controls__container {
