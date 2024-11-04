@@ -1,4 +1,4 @@
-import page, { Callback } from '@automattic/calypso-router';
+import page, { Callback, Context as PageJSContext } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
@@ -58,8 +58,8 @@ export default function () {
 		clientRender
 	);
 
-	const redirectLogsToPhp: Callback = ( context ) => {
-		context.page.replace( `/sites/tools/logs/${ context.params.site }/php` );
+	const redirectLogsToPhp: Callback = ( context: PageJSContext ) => {
+		return context.page.redirect( `/sites/tools/logs/${ context.params.site }/php` );
 	};
 	page( '/sites/tools/logs/:site', redirectLogsToPhp );
 	page( '/sites/tools/logs', siteSelection, sites, makeLayout, clientRender );
