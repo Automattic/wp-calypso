@@ -1,4 +1,7 @@
+/* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { EllipsisMenu, useSetOdieStorage } from '@automattic/odie-client';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
@@ -14,6 +17,7 @@ import {
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
@@ -66,15 +70,40 @@ const SupportModeTitle = () => {
 	}
 };
 
+const ChatEllipsisMenu = () => {
+	const { __ } = useI18n();
+	const setChatId = useSetOdieStorage( 'chat_id' );
+
+	const clearChat = () => {
+		setChatId( null );
+	};
+
+	return (
+		<EllipsisMenu
+			popoverClassName="help-center help-center__container-header-menu"
+			position="bottom"
+		>
+			<PopoverMenuItem
+				onClick={ clearChat }
+				className="help-center help-center__container-header-menu-item"
+			>
+				<Gridicon icon="comment" />
+				{ __( 'Clear Conversation' ) }
+			</PopoverMenuItem>
+		</EllipsisMenu>
+	);
+};
+
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
 
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const shouldDisplayClearChatButton =
+		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
 	const shouldDisplayChatHistoryButton =
-		config.isEnabled( 'help-center-experience' ) &&
-		pathname !== '/chat-history' &&
-		pathname !== '/odie';
+		shouldUseHelpCenterExperience && pathname !== '/chat-history' && pathname !== '/odie';
 
 	const isHelpCenterHome = key === 'default';
 
@@ -96,6 +125,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 			<span id="header-text" role="presentation" className="help-center-header__text">
 				{ headerText }
 			</span>
+			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
 			{ shouldDisplayChatHistoryButton && (
 				<Button
 					className="help-center-header__chat-history"
