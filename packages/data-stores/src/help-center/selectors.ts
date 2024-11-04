@@ -14,3 +14,4 @@ export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNew
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
+export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;
