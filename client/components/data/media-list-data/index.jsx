@@ -62,10 +62,10 @@ export class MediaListData extends Component {
 			if ( props.source === 'google_photos' ) {
 				if ( props.googlePhotosPickerSession ) {
 					query.session_id = props.googlePhotosPickerSession.id;
+				} else {
+					// Add any query params specific to Google Photos
+					return utils.getGoogleQuery( query, props );
 				}
-
-				// Add any query params specific to Google Photos
-				return utils.getGoogleQuery( query, props );
 			}
 		}
 
