@@ -146,6 +146,7 @@ class MediaLibraryExternalHeader extends Component {
 
 	renderCard() {
 		const {
+			source,
 			onMediaScaleChange,
 			translate,
 			canCopy,
@@ -166,7 +167,9 @@ class MediaLibraryExternalHeader extends Component {
 					</Button>
 				) }
 
-				{ photosPickerApiEnabled && this.renderChangeSelectionButton() }
+				{ photosPickerApiEnabled &&
+					source === 'google_photos' &&
+					this.renderChangeSelectionButton() }
 				{ canCopy && this.renderCopyButton() }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } mediaScale={ this.props.mediaScale } />
