@@ -6,4 +6,8 @@ ul.migrations-faqs {
 
 .migrations-faqs__section {
 	padding: 0;
+
+	.foldable-faq__question-text {
+		@include a4a-font-heading-lg;
+	}
 }
