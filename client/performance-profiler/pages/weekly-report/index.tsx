@@ -79,7 +79,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 					displayBadge
 					title={ translate( 'You’re all set!' ) }
 					message={ translate(
-						'We‘ll send you a weekly performance report for {{strong}}%s{{/strong}} so you can keep an eye on your site‘s speed. The first email is on it‘s way now.',
+						'We‘ll send you a weekly performance report for {{strong}}%s{{/strong}} so you can keep an eye on your site‘s speed. Your first report will arrive next week.',
 						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
 					) }
 					ctaText={ translate( '← Back to speed test' ) }
