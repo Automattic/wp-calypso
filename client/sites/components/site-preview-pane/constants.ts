@@ -13,7 +13,8 @@ export const MARKETING_TOOLS = 'marketing-tools';
 export const TOOLS_STAGING_SITE = 'tools-staging-site';
 export const TOOLS_DEPLOYMENTS = 'tools-deployments';
 export const TOOLS_MONITORING = 'tools-monitoring';
-export const TOOLS_LOGS = 'tools-logs';
+export const TOOLS_LOGS_PHP = 'tools-logs-php';
+export const TOOLS_LOGS_WEB = 'tools-logs-web';
 export const TOOLS_SFTP_SSH = 'tools-sftp-ssh';
 export const TOOLS_DATABASE = 'tools-database';
 
@@ -39,7 +40,8 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ TOOLS_STAGING_SITE ]: 'sites/tools/staging-site/:site',
 	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
 	[ TOOLS_MONITORING ]: 'sites/tools/monitoring/:site',
-	[ TOOLS_LOGS ]: 'sites/tools/logs/:site',
+	[ TOOLS_LOGS_PHP ]: 'sites/tools/logs/:site/php',
+	[ TOOLS_LOGS_WEB ]: 'sites/tools/logs/:site/web',
 	[ TOOLS_SFTP_SSH ]: 'sites/tools/sftp-ssh/:site',
 	[ TOOLS_DATABASE ]: 'sites/tools/database/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',

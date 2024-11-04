@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import Logs from './logs';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
@@ -53,11 +54,21 @@ export function monitoring( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export function logs( context: PageJSContext, next: () => void ) {
+export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<ToolsSidebar />
-			<p>Logs</p>
+			<Logs logType="php" />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function webServerLogs( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<ToolsSidebar />
+			<Logs logType="web" />
 		</PanelWithSidebar>
 	);
 	next();
