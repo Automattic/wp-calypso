@@ -1,5 +1,5 @@
 import { ProgressBar } from '@wordpress/components';
-import { Icon, people, atSymbol, payment, info, warning } from '@wordpress/icons';
+import { Icon, people, atSymbol, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
@@ -45,59 +45,53 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 	if ( status === 'done' ) {
 		const subscribedCount = parseInt( stepContent.meta?.email_count || '0' );
 		const addedFree = parseInt( stepContent.meta?.subscribed_count || '0' );
-		const existingFree = parseInt( stepContent.meta?.already_subscribed_count || '0' );
-		const failedFree = parseInt( stepContent.meta?.failed_subscribed_count || '0' );
-
 		const addedPaid = parseInt( stepContent.meta?.paid_subscribed_count || '0' );
-		const existingPaid = parseInt( stepContent.meta?.paid_already_subscribed_count || '0' );
-		const failedPaid = parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
+		const existingTotal =
+			parseInt( stepContent.meta?.already_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' );
+		const failedTotal =
+			parseInt( stepContent.meta?.failed_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
-			<>
-				<div className="summary__content">
-					<p>
-						<Icon icon={ atSymbol } /> We imported { subscribedCount } subscribers, where:
-					</p>
-				</div>
-				<div className="summary__content summary__content-indent">
-					{ !! addedFree && (
-						<p>
-							<Icon icon={ people } />
-							<strong>{ addedFree }</strong> free subscribers.
-						</p>
-					) }
-					{ !! addedPaid && (
-						<p>
-							<Icon icon={ payment } />
-							<strong>{ addedPaid }</strong> paid subscribers added.
-						</p>
-					) }
-					{ !! existingFree && (
-						<p>
-							<Icon icon={ info } />
-							<strong>{ existingFree }</strong> existing subscribers.
-						</p>
-					) }
-					{ !! existingPaid && (
-						<p>
-							<Icon icon={ info } />
-							<strong>{ existingPaid }</strong> existing paid subscribers.
-						</p>
-					) }
-					{ !! failedFree && (
-						<p>
-							<Icon icon={ warning } />
-							<strong>{ failedFree }</strong> error in the email format.
-						</p>
-					) }
-					{ !! failedPaid && (
-						<p>
-							<Icon icon={ warning } />
-							<strong>{ failedPaid }</strong> error in the email format.
-						</p>
-					) }
-				</div>
-			</>
+			<div className="summary__content-stats">
+				{ subscribedCount > 0 && (
+					<div className="summary__content-stat-item">
+						<Icon icon={ people } />
+						<span>{ __( 'Total Subscribers' ) }</span>
+						<strong>{ subscribedCount }</strong>
+					</div>
+				) }
+
+				{ addedFree > 0 && (
+					<div className="summary__content-stat-item summary__content-stat-item-indent">
+						<span>{ __( 'Free subscribers' ) }</span>
+						<strong>{ addedFree }</strong>
+					</div>
+				) }
+
+				{ addedPaid > 0 && (
+					<div className="summary__content-stat-item summary__content-stat-item-indent">
+						<span>{ __( 'Paid subscribers' ) }</span>
+						<strong>{ addedPaid }</strong>
+					</div>
+				) }
+
+				{ existingTotal > 0 && (
+					<div className="summary__content-stat-item summary__content-stat-item-indent">
+						<span>{ __( 'Skipped (Duplicate)' ) }</span>
+						<strong>{ existingTotal }</strong>
+					</div>
+				) }
+
+				{ failedTotal > 0 && (
+					<div className="summary__content-stat-item summary__content-stat-item-indent">
+						<span>{ __( 'Not imported' ) }</span>
+						<Icon icon={ info } className="info-icon" />
+						<strong>{ failedTotal }</strong>
+					</div>
+				) }
+			</div>
 		);
 	}
 }

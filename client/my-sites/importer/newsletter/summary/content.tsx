@@ -1,74 +1,36 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, post } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import { Icon, verse, page, file } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
-	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong>, <strong>{ pagesNumber } pages</strong>{ ' ' }
-				and
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && pagesNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ pagesNumber } pages</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber }</strong> pages and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong>.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } pages</strong>.
-			</>
-		);
-	}
-
-	if ( attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } media</strong>.
-			</>
-		);
-	}
+	return (
+		<div className="summary__content-stats">
+			{ postsNumber > 0 && (
+				<div className="summary__content-stat-item">
+					<Icon icon={ verse } /> <span>{ __( 'Posts' ) }</span> <strong>{ postsNumber }</strong>
+				</div>
+			) }
+			{ pagesNumber > 0 && (
+				<div className="summary__content-stat-item">
+					<Icon icon={ page } /> <span>{ __( 'Pages' ) }</span> <strong>{ pagesNumber }</strong>
+				</div>
+			) }
+			{ attachmentsNumber > 0 && (
+				<div className="summary__content-stat-item">
+					<Icon icon={ file } /> <span>{ __( 'Media' ) }</span>{ ' ' }
+					<strong>{ attachmentsNumber }</strong>
+				</div>
+			) }
+		</div>
+	);
 }
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
 	status: string;
+	siteName: string;
 }
 
 export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {
@@ -105,8 +67,8 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 
 		return (
 			<div className="summary__content">
+				<p>{ __( "Here's a summary of the imported data:" ) }</p>
 				<p>
-					<Icon icon={ post } />
 					{ getSummaryCopy(
 						progress.post.completed,
 						progress.page.completed,
