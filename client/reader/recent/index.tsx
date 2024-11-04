@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
-import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -22,7 +22,7 @@ const Recent = () => {
 
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
-	const [ view, setView ] = useState( {
+	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		fields: [ 'post' ],
 	} );
@@ -40,16 +40,19 @@ const Recent = () => {
 		shallowEqual
 	);
 
-	const fields = [
-		{
-			id: 'post',
-			label: translate( 'Blog' ),
-			render: ( { item }: { item: ReaderPost } ) => {
-				return <Button onClick={ () => setSelectedItem( item ) }>{ item.site_name }</Button>;
+	const fields = useMemo(
+		() => [
+			{
+				id: 'post',
+				label: translate( 'Post' ),
+				render: ( { item }: { item: ReaderPost } ) => {
+					return <Button onClick={ () => setSelectedItem( item ) }>{ item.site_name }</Button>;
+				},
+				enableHiding: false,
 			},
-			enableHiding: false,
-		},
-	];
+		],
+		[]
+	);
 
 	const defaultLayouts = [
 		{
@@ -63,6 +66,10 @@ const Recent = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
 	}, [ dispatch ] );
+
+	const { data: shownData, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data?.items ?? [], view, fields );
+	}, [ data, view, fields ] );
 
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
@@ -86,14 +93,11 @@ const Recent = () => {
 					}
 					view={ view as View }
 					fields={ fields }
-					data={ data?.items ?? [] }
+					data={ shownData }
 					onChangeView={ ( newView: View ) =>
 						setView( { type: newView.type, fields: newView.fields ?? [] } )
 					}
-					paginationInfo={ {
-						totalItems: 0,
-						totalPages: 0,
-					} }
+					paginationInfo={ paginationInfo }
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
 			</div>
