@@ -165,6 +165,11 @@ export type ZendeskConversation = {
 	type: 'sdkGroup' | string;
 	participants: ConversationParticipant[];
 	messages: ZendeskMessage[];
+	metadata: Metadata;
+};
+
+export type Metadata = {
+	odieChatId: number;
 };
 
 export type SupportInteractionUser = {
