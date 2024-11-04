@@ -110,7 +110,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'performance-profiler/logged-in' ),
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
 			},
 			{
