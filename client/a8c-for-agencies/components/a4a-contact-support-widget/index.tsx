@@ -12,12 +12,12 @@ export const CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT = '#contact-support-m
 export default function A4AContactSupportWidget() {
 	const translate = useTranslate();
 
-	const hashSupportFormHash =
+	const supportFormHash =
 		window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
 		window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
 		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
 
-	const [ showUserSupportForm, setShowUserSupportForm ] = useState( hashSupportFormHash );
+	const [ showUserSupportForm, setShowUserSupportForm ] = useState( supportFormHash );
 
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
@@ -28,7 +28,7 @@ export default function A4AContactSupportWidget() {
 	}, [] );
 
 	// We need make sure to set this to true when we have the support form hash fragment.
-	if ( hashSupportFormHash && ! showUserSupportForm ) {
+	if ( supportFormHash && ! showUserSupportForm ) {
 		setShowUserSupportForm( true );
 	}
 
