@@ -18,6 +18,8 @@ import type { CurrentUser, Message } from '../../types/';
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
+	displayChatWithSupportLabel?: boolean;
+	isNextMessageFromSameSender: boolean;
 };
 
 export type MessageIndicators = {
@@ -25,8 +27,6 @@ export type MessageIndicators = {
 	isLastFeedbackMessage: boolean;
 	isLastErrorMessage: boolean;
 	isLastMessage: boolean;
-	isNextMessageFromSameSender: boolean;
-	displayChatWithSupportLabel?: boolean;
 };
 
 const MessageAvatarHeader = ( {
