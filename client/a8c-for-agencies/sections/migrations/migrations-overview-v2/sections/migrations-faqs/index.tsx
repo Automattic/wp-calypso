@@ -82,6 +82,19 @@ export default function MigrationsFAQs() {
 
 				<li>
 					<FoldableFAQ
+						id="buyout-credit-calculation"
+						question={ translate( 'How do you calculate my buyout credit?' ) }
+						onToggle={ onFaqToggle }
+						className="migrations-faqs__section"
+					>
+						{ translate(
+							'We will ask you to provide a copy of your current contract or invoice to determine the remaining time on your plan. We will then credit you for the same amount of time left on the plan that you choose in Automattic for Agencies.'
+						) }
+					</FoldableFAQ>
+				</li>
+
+				<li>
+					<FoldableFAQ
 						id="multiple-sites-migration-offers"
 						question={ translate(
 							'Are there any special offers for agencies moving multiple sites?'
