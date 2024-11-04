@@ -77,8 +77,8 @@ const Recent = () => {
 	}, [ data?.items, selectedItem ] );
 
 	return (
-		<div className="recent">
-			<div className="recent__list-column">
+		<div className="recent-feed">
+			<div className="recent-feed__list-column">
 				<h1>{ translate( 'All Recent' ) }</h1>
 				<DataViews
 					getItemId={ ( item: ReaderPost, index = 0 ) =>
@@ -97,7 +97,7 @@ const Recent = () => {
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
 			</div>
-			<div className="recent__post-column">{ selectedItem && post && post.title }</div>
+			<div className="recent-feed__post-column">{ selectedItem && post && post.title }</div>
 		</div>
 	);
 };
