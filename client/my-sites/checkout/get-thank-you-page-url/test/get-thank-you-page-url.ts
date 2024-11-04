@@ -1778,7 +1778,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID' as any,
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
 
 			expect( url ).toBe(
 				addQueryArgs(
@@ -1818,7 +1818,7 @@ describe( 'getThankYouPageUrl', () => {
 				redirectTo: 'https://foo.bar/some-path?with-args=yes',
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
 
 			expect( url ).toBe(
 				addQueryArgs(
