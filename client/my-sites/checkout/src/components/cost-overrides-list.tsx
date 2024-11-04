@@ -295,18 +295,24 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	}
 `;
 
+function getProductAmountDisplay( product: ResponseCartProduct ) {
+	// Always display the price without the introductory offer information
+	// for 100-year domains.
+	let total = product.item_original_subtotal_integer;
+	if ( isHundredYearDomain( product ) ) {
+		total = product.item_subtotal_integer;
+	}
+	return formatCurrency( total, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+}
+
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
-	const actualAmountDisplay = formatCurrency(
-		product.item_original_subtotal_integer,
-		product.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
-		}
-	);
+	const actualAmountDisplay = getProductAmountDisplay( product );
 	return (
 		<SingleProductAndCostOverridesListWrapper>
 			<ProductTitleAreaForCostOverridesList>
