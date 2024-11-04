@@ -21,6 +21,11 @@ $font-body-small: 14px !default;
 		}
 	}
 
+	&:focus {
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 2px var(--color-accent);
+	}
+
 	&.has-underline {
 		text-decoration: underline;
 	}
