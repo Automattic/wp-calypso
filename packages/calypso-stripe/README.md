@@ -32,15 +32,15 @@ A React hook that allows access to Stripe.js. This returns an object with the fo
 
 ## useStripeSetupIntentId
 
-A React hook that allows access to creating a setup intent ID that can be passed to createStripeSetupIntent. This returns an object with the following properties:
+A React hook that allows access to creating a setup intent ID that can be passed to confirmStripeSetupIntentAndAttachCard. This returns an object with the following properties:
 
 - `setupIntentId: string | undefined`. The setup intent ID.
 - `error: undefined | null | Error`. An error, if one exists.
 - `reload: () => void`. A function that can be used to reload the setupIntentId, which should be done if it is used at all (even if it fails).
 
-## createStripeSetupIntent
+## confirmStripeSetupIntentAndAttachCard
 
-A function that can be used to create a Stripe setup intent with a setup intent ID and a Stripe credit card field.
+A function that can be used to confirm a Stripe setup intent with a setup intent ID and a Stripe credit card field. The setup intent itself must have already been created, typically without a payment method attached. This function will create and attach the credit card as a payment method to the setup intent.
 
 ## withStripeProps
 

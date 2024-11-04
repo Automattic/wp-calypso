@@ -223,6 +223,19 @@ export async function createStripeSetupIntent(
 	setupIntentId: StripeSetupIntentId,
 	paymentDetails: PaymentDetails
 ): Promise< StripeSetupIntent > {
+	// eslint-disable-next-line no-console
+	console.warn(
+		'createStripeSetupIntent is poorly named and deprecated. Please switch to confirmStripeSetupIntentAndAttachCard instead.'
+	);
+	return confirmStripeSetupIntentAndAttachCard( stripe, element, setupIntentId, paymentDetails );
+}
+
+export async function confirmStripeSetupIntentAndAttachCard(
+	stripe: Stripe,
+	element: StripeCardNumberElement | StripeCardElement,
+	setupIntentId: StripeSetupIntentId,
+	paymentDetails: PaymentDetails
+): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
 	let stripeResponse;
 	try {
@@ -565,7 +578,7 @@ export function useStripe(): StripeData {
  *
  * First you must wrap a parent component in `StripeSetupIntentIdProvider`.
  * Then you can call this hook in any sub-component to get access to the setup
- * intent ID which can be passed to `createStripeSetupIntent`.
+ * intent ID which can be passed to `confirmStripeSetupIntentAndAttachCard`.
  */
 export function useStripeSetupIntentId(): StripeSetupIntentIdData {
 	const stripeData = useContext( StripeSetupIntentContext );
