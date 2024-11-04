@@ -12,7 +12,7 @@ export const useManageSupportInteraction = () => {
 	const startNewInteraction = useMutation( {
 		mutationKey: [ 'support-interaction', 'new-conversation' ],
 		mutationFn: ( eventData: SupportInteractionEvent ) =>
-			handleSupportInteractionsFetch( 'POST', '', eventData ),
+			handleSupportInteractionsFetch( 'POST', null, eventData ),
 	} ).mutateAsync;
 
 	/**

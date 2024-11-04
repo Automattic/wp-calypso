@@ -4,7 +4,7 @@ import type { SupportInteractionEvent } from '../types/';
 
 export const handleSupportInteractionsFetch = async (
 	method: 'GET' | 'POST' | 'PUT',
-	path?: string,
+	path: string | null,
 	data?: SupportInteractionEvent | { status: string }
 ) => {
 	return canAccessWpcomApis()

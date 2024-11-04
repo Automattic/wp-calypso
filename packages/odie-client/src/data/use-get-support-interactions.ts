@@ -3,7 +3,7 @@ import { handleSupportInteractionsFetch } from './handle-support-interactions-fe
 import type { SupportInteraction, SupportProvider } from '../types/';
 
 /**
- * Get the support interaction.
+ * Get the support interactions.
  * @returns Support interactions.
  */
 export const useGetSupportInteractions = (
