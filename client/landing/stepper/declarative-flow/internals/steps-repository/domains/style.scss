@@ -599,6 +599,15 @@
 			}
 		}
 
+		.domain-search-results__domain-available-notice {
+			background: transparent;
+
+			/* hide transfer link */
+			a {
+				display: none;
+			}
+		}
+
 		// Hide the domain explanation image
 		.register-domain-step__domain-side-content-container-domain-explanation-image,
 		.domains__domain-side-content-container {
