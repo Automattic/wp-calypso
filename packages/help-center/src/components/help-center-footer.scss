@@ -17,6 +17,7 @@
 		justify-content: center;
 		margin-bottom: 0;
 		line-height: 2.15;
+		gap: 10px;
 
 		&:hover {
 			border-color: var(--color-neutral-20);
@@ -31,12 +32,16 @@
 		}
 
 		svg {
-			margin-right: 10px;
+			// margin-right: 10px;
 			vertical-align: middle;
+			fill: #8C8F94;
 		}
 
 		span {
 			color: var(--studio-gray-100);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 }
