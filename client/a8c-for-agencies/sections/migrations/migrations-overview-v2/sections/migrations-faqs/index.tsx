@@ -111,7 +111,7 @@ export default function MigrationsFAQs() {
 			id: 'migration-payment-process',
 			question: translate( 'How do I get paid?' ),
 			answer: translate(
-				'Once your sites have been active on WordPress.com or Pressable hosting for over 6 months, we will pay you the site migration commission during the payout windows listed {{PayoutKBLink}}here{{/PayoutKBLink}}. You will also need to add your payment details to our payment partner, Tipalti, which you can do {{paymentSettingLink}}here{{/paymentSettingLink}}.',
+				'Once your sites have been active on WordPress.com or Pressable hosting for over 6 months, we will pay you the site migration commission during the payout windows listed {{PayoutKBLink}}here{{/PayoutKBLink}}. You will also need to add your payment details to our payment partner, Tipalti, which you can do {{PaymentSettingLink}}here{{/PaymentSettingLink}}.',
 				{
 					components: {
 						PayoutKBLink: (
@@ -124,7 +124,7 @@ export default function MigrationsFAQs() {
 								}
 							/>
 						),
-						paymentSettingLink: (
+						PaymentSettingLink: (
 							<a
 								href={ A4A_REFERRALS_PAYMENT_SETTINGS }
 								onClick={ () =>
