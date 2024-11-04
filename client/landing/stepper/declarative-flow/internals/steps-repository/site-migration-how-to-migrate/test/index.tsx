@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
@@ -40,75 +40,73 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 };
 
 describe( 'SiteMigrationHowToMigrate', () => {
-	const mockSubmit = jest.fn();
 	let mockUpdateMigrationStatus;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		mockUpdateMigrationStatus = jest.fn();
 		( useUpdateMigrationStatus as jest.Mock ).mockReturnValue( {
-			updateMigrationStatus: mockUpdateMigrationStatus,
-			updateMigrationStatusAsync: mockUpdateMigrationStatus,
-			updateStatusMutationRest: {},
+			mutate: mockUpdateMigrationStatus,
+			isPending: false,
+			isSuccess: false,
 		} );
-	} );
-
-	it( 'should register pending migration status when the component is loaded', () => {
-		render( { navigation: { submit: mockSubmit } } );
-
-		expect( mockUpdateMigrationStatus ).toHaveBeenCalledWith( siteId, 'migration-pending' );
 	} );
 
 	it( 'should call updateMigrationStatus with correct value for DIFM option', async () => {
-		const { getByText } = render( { navigation: { submit: mockSubmit } } );
-
+		const submit = jest.fn();
+		const { getByText } = render( { navigation: { submit } } );
 		const optionButton = getByText( 'Do it for me' );
 
-		await act( async () => {
-			await fireEvent.click( optionButton );
-		} );
+		await userEvent.click( optionButton );
 
-		// Check the last call value
-		const lastCallValue =
-			mockUpdateMigrationStatus.mock.calls[ mockUpdateMigrationStatus.mock.calls.length - 1 ][ 1 ];
-		expect( lastCallValue ).toBe( 'migration-pending-difm' );
+		expect( mockUpdateMigrationStatus ).toHaveBeenCalledWith( {
+			siteId,
+			statusSticker: 'migration-pending-difm',
+		} );
 	} );
 
 	it( 'should call updateMigrationStatus with correct value for DIY option', async () => {
-		const { getByText } = render( { navigation: { submit: mockSubmit } } );
+		const submit = jest.fn();
+		const { getByText } = render( { navigation: { submit } } );
 
 		const optionButton = getByText( "I'll do it myself" );
 
-		await act( async () => {
-			await fireEvent.click( optionButton );
-		} );
+		await userEvent.click( optionButton );
 
-		// Check the last call value
-		const lastCallValue =
-			mockUpdateMigrationStatus.mock.calls[ mockUpdateMigrationStatus.mock.calls.length - 1 ][ 1 ];
-		expect( lastCallValue ).toBe( 'migration-pending-diy' );
+		expect( mockUpdateMigrationStatus ).toHaveBeenCalledWith( {
+			siteId,
+			statusSticker: 'migration-pending-diy',
+		} );
 	} );
 
-	it( 'should call submit with correct value when DIFM option is clicked', async () => {
-		const { getByText } = render( { navigation: { submit: mockSubmit } } );
+	it( 'should call submit when the user select DIFM and the status is updated', async () => {
+		const submit = jest.fn();
 
-		const optionButton = getByText( 'Do it for me' );
-
-		await act( async () => {
-			await fireEvent.click( optionButton );
+		( useUpdateMigrationStatus as jest.Mock ).mockReturnValue( {
+			isSuccess: true,
+			mutate: jest.fn(),
 		} );
 
-		expect( mockSubmit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'difm' } );
+		const { getByText } = render( { navigation: { submit } } );
+
+		const optionButton = getByText( 'Do it for me' );
+		await userEvent.click( optionButton );
+
+		expect( submit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'difm' } );
 	} );
 
 	it( 'should call submit with correct value for DIY option', async () => {
-		const { getByText } = render( { navigation: { submit: mockSubmit } } );
+		const submit = jest.fn();
 
-		const optionButton = getByText( "I'll do it myself" );
-
-		await act( async () => {
-			await fireEvent.click( optionButton );
+		( useUpdateMigrationStatus as jest.Mock ).mockReturnValue( {
+			isSuccess: true,
+			mutate: jest.fn(),
 		} );
 
-		expect( mockSubmit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'myself' } );
+		const { getByText } = render( { navigation: { submit } } );
+		const optionButton = getByText( "I'll do it myself" );
+		await userEvent.click( optionButton );
+
+		expect( submit ).toHaveBeenCalledWith( { destination: 'upgrade', how: 'myself' } );
 	} );
 } );

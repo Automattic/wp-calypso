@@ -1,7 +1,8 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { canInstallPlugins } from '@automattic/sites';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -9,6 +10,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
@@ -25,8 +27,12 @@ interface Props extends StepProps {
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const { navigation, headerText } = props;
 
+	const [ how, setHow ] = useState< string | null >( null );
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const site = useSite();
+	const upgradeIsRequired = useMemo( () => ! canInstallPlugins( site ), [ site ] );
+
 	usePresalesChat( 'wpcom' );
 
 	const hasEnTranslation = useHasEnTranslation();
@@ -55,7 +61,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF,
 			},
 		],
-		[ translate ]
+		[ hasEnTranslation, translate ]
 	);
 
 	let importSiteHostName = '';
@@ -71,20 +77,25 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const { setPendingMigration, isLoading: isUpdatingMigrationStatus } = usePendingMigrationStatus( {
-		onSubmit: navigation.submit,
-	} );
+	const {
+		mutate: setPendingMigration,
+		isPending: isUpdatingMigrationStatus,
+		isSuccess,
+	} = usePendingMigrationStatus();
 
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const shouldShowLoader = isUpdatingMigrationStatus || ! site?.ID;
+
 	const handleClick = async ( value: string ) => {
-		setIsSubmitting( true );
-
-		try {
-			await setPendingMigration( value );
-		} finally {
-			setIsSubmitting( false );
-		}
+		setHow( value );
+		setPendingMigration( value );
 	};
+
+	useEffect( () => {
+		if ( how && isSuccess ) {
+			const destination = upgradeIsRequired ? 'upgrade' : 'migrate';
+			navigation?.submit?.( { how, destination } );
+		}
+	}, [ isSuccess, how, navigation, upgradeIsRequired ] );
 
 	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
@@ -92,21 +103,20 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
 
-	const stepContent =
-		isSubmitting || isUpdatingMigrationStatus ? (
-			<LoadingEllipsis className="how-to-migrate__loader" />
-		) : (
-			<div className="how-to-migrate__list">
-				{ options.map( ( option, i ) => (
-					<FlowCard
-						key={ i }
-						title={ option.label }
-						text={ option.description }
-						onClick={ () => handleClick( option.value ) }
-					/>
-				) ) }
-			</div>
-		);
+	const stepContent = shouldShowLoader ? (
+		<LoadingEllipsis className="how-to-migrate__loader" />
+	) : (
+		<div className="how-to-migrate__list">
+			{ options.map( ( option, i ) => (
+				<FlowCard
+					key={ i }
+					title={ option.label }
+					text={ option.description }
+					onClick={ () => handleClick( option.value ) }
+				/>
+			) ) }
+		</div>
+	);
 
 	const platformText = shouldDisplayHostIdentificationMessage
 		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {

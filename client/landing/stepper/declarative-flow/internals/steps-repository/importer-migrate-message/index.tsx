@@ -52,13 +52,13 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		},
 	} );
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus();
 	const site = useSite();
 	const siteId = site?.ID;
 
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-started-difm' );
+			updateMigrationStatus( { siteId, statusSticker: 'migration-started-difm' } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 

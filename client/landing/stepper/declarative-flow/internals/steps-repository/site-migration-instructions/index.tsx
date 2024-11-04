@@ -82,10 +82,10 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus();
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-started-diy' );
+			updateMigrationStatus( { siteId, statusSticker: 'migration-started-diy' } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 

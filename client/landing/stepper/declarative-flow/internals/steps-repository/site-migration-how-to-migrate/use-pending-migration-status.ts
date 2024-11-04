@@ -2,53 +2,35 @@ import { useEffect } from 'react';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import type { NavigationControls } from '../../types';
+import { type SiteId } from 'calypso/types';
 
-interface PendingMigrationStatusProps {
-	onSubmit?: Pick< NavigationControls, 'submit' >[ 'submit' ];
-}
+const useMarkPendingMigration = ( siteId?: SiteId ) => {
+	const { mutate: updateMigrationStatus, isSuccess } = useUpdateMigrationStatus();
 
-const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) => {
+	useEffect( () => {
+		if ( siteId ) {
+			updateMigrationStatus( { siteId, statusSticker: 'migration-pending' } );
+		}
+	}, [ siteId, updateMigrationStatus ] );
+	return { isSuccess };
+};
+
+const useSetPendingMigration = () => {
 	const site = useSite();
 	const siteId = site?.ID;
 
-	const canInstallPlugins = site?.plan?.features?.active.find(
-		( feature ) => feature === 'install-plugins'
-	)
-		? true
-		: false;
+	useMarkPendingMigration( siteId );
 
-	const {
-		updateMigrationStatus,
-		updateMigrationStatusAsync,
-		updateStatusMutationRest: {
-			isIdle: isMigrationStatusUpdateIdle,
-			isPending: isMigrationStatusUpdatePending,
-		},
-	} = useUpdateMigrationStatus();
+	const { mutate: updateMigrationStatus, isPending, isSuccess } = useUpdateMigrationStatus();
 
-	const isLoading = isMigrationStatusUpdateIdle || isMigrationStatusUpdatePending;
-
-	// Register pending migration status when loading the step.
-	useEffect( () => {
-		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-pending' );
-		}
-	}, [ siteId, updateMigrationStatus ] );
-
-	const setPendingMigration = async ( how: string ) => {
-		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
+	const setPendingMigration = ( how: string ) => {
 		if ( siteId ) {
 			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			await updateMigrationStatusAsync( siteId, `migration-pending-${ parsedHow }` );
-		}
-
-		if ( onSubmit ) {
-			return onSubmit( { how, destination } );
+			updateMigrationStatus( { siteId, statusSticker: `migration-pending-${ parsedHow }` } );
 		}
 	};
 
-	return { setPendingMigration, isLoading };
+	return { mutate: setPendingMigration, isPending, isSuccess };
 };
 
-export default usePendingMigrationStatus;
+export default useSetPendingMigration;
