@@ -78,7 +78,6 @@ const HelpCenterRecentConversations: React.FC = () => {
 				<HelpCenterSupportChatMessage
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
-					avatarSize={ 38 }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
 					navigateTo="/chat-history"

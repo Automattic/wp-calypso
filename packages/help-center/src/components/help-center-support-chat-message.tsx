@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
+import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -20,7 +21,6 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	badgeCount = 0,
-	avatarSize = 32,
 	isUnread = false,
 	navigateTo = '',
 }: {
@@ -33,7 +33,7 @@ export const HelpCenterSupportChatMessage = ( {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
-	const { displayName, received, text, avatarUrl } = message;
+	const { displayName, received, text } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 
@@ -50,12 +50,7 @@ export const HelpCenterSupportChatMessage = ( {
 					'has-badge': badgeCount > 0,
 				} ) }
 			>
-				<img
-					src={ avatarUrl }
-					alt={ __( 'User Avatar' ) }
-					height={ avatarSize }
-					width={ avatarSize }
-				/>
+				<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
 
 				{ badgeCount > 0 && (
 					<div className="help-center-support-chat__conversation-badge">+{ badgeCount }</div>

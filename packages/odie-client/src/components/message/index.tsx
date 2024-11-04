@@ -65,7 +65,11 @@ const MessageAvatarHeader = ( {
 				) }
 			</>
 		) : (
-			<>{ message.role === 'business' && <HumanAvatar /> }</>
+			<>
+				{ message.role === 'business' && (
+					<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
+				) }
+			</>
 		);
 	}
 
