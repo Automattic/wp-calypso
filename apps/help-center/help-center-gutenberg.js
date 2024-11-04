@@ -9,7 +9,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
-import { useCanvasMode } from './hooks/use-canvas-mode';
+import { useCanvasMode } from './hooks';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
