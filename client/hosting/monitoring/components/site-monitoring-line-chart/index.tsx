@@ -104,6 +104,7 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 			{
 				scale: serie.scale,
 				side: 1,
+				size: 70,
 				grid: {
 					show: false,
 				},
