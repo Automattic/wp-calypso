@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { SectionBackground } from './backgrounds';
@@ -6,6 +7,7 @@ import { SectionBackground } from './backgrounds';
 import './style.scss';
 
 export type PageSectionProps = {
+	className?: string;
 	children: ReactNode;
 	heading: TranslateResult;
 	subheading?: TranslateResult;
@@ -15,6 +17,7 @@ export type PageSectionProps = {
 };
 
 export default function PageSection( {
+	className,
 	icon,
 	heading,
 	subheading,
@@ -26,7 +29,7 @@ export default function PageSection( {
 
 	return (
 		<section
-			className="page-section-wrapper"
+			className={ clsx( 'page-section-wrapper', className ) }
 			style={ {
 				backgroundColor: background?.color,
 				backgroundImage: isNarrowView ? undefined : background?.image,

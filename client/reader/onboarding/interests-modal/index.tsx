@@ -85,10 +85,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			attempts++;
 
 			// Get the current followed tags from the state.
-			const currentFollowedTags = getReaderFollowedTags( reduxStore.getState() );
-			if ( ! currentFollowedTags ) {
-				return;
-			}
+			const currentFollowedTags = getReaderFollowedTags( reduxStore.getState() ) || [];
 			const stateTagSlugs = currentFollowedTags.map( ( t: Tag ) => t.slug );
 
 			// Check if the tag is now being followed or unfollowed.

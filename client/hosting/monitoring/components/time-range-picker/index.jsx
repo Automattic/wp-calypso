@@ -2,8 +2,9 @@ import { SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
-
 import './style.scss';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const TIME_RANGE_OPTIONS = {
 	'6-hours': '6-hours',
@@ -32,10 +33,16 @@ export function calculateTimeRange( selectedOption ) {
 
 export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ selectedOption, setSelectedOption ] = useState( '24-hours' ); // Default selected option is '1' (24 hours)
 
 	// Event handler to handle changes in the SegmentedControl selection
 	const handleOptionClick = ( newSelectedOption ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_site_monitoring_time_range_change', {
+				time_range: newSelectedOption,
+			} )
+		);
 		setSelectedOption( newSelectedOption );
 
 		// Calculate the time range and pass it back to the parent component

@@ -75,8 +75,16 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		display: none;
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 
@@ -108,7 +116,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		display: flex;
 		align-items: center;
 
@@ -116,6 +124,14 @@
 			width: 0;
 			flex: 1 0 auto;
 		}
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 
@@ -138,7 +154,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		margin-top: 0;
 		padding-top: 0;
 		border-top: none;
@@ -148,13 +164,28 @@
 			width: 0;
 			flex: 1 0 auto;
 		}
+	}
 
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 
-@include breakpoint-deprecated( ">480px" ) {
-	.section-nav-group.has-horizontal-scroll {
+.section-nav-group.has-horizontal-scroll {
+	@mixin tabs-view-styles {
 		overflow-x: auto;
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 

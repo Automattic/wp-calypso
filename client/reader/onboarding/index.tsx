@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
@@ -32,7 +31,6 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const shouldShowOnboarding =
-		config.isEnabled( 'reader/onboarding' ) &&
 		preferencesLoaded &&
 		! hasCompletedOnboarding &&
 		userRegistrationDate &&

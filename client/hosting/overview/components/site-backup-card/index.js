@@ -120,6 +120,9 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 								? `https://cloud.jetpack.com/backup/${ siteSlug }`
 								: `/backup/${ siteSlug }`
 						}
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_overview_backups_see_all_click' ) )
+						}
 					>
 						{ translate( 'See all backups' ) }
 					</HostingCardLinkButton>

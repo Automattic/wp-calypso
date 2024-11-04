@@ -198,10 +198,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( displayedRecommendations.length > 0 ) {
+		if ( displayedRecommendations.length > 0 && ! selectedSite ) {
 			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ displayedRecommendations ] );
+	}, [ displayedRecommendations, selectedSite ] );
 
 	const handleItemClick = useCallback( ( site: CardData ) => {
 		setSelectedSite( site );
@@ -265,6 +265,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			<Button onClick={ handleClose } variant="link">
 				{ __( 'Cancel' ) }
 			</Button>
+			<Button onClick={ handleContinue } variant="primary">
+				{ __( 'Continue' ) }
+			</Button>
 		</>
 	);
 
@@ -280,7 +283,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__site-list-column">
 						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
-						<p>
+						<p className="subscribe-modal__description">
 							{ __(
 								'Preview sites by clicking below, then subscribe to any site that inspires you.'
 							) }
@@ -322,12 +325,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								{ __( 'Load more recommendations' ) }
 							</Button>
 						) }
-						<Button
-							className="subscribe-modal__continue-button is-primary"
-							onClick={ handleContinue }
-						>
-							{ __( 'Continue' ) }
-						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">

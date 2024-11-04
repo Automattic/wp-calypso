@@ -11,7 +11,7 @@ export const ThinkingPlaceholder = () => {
 		<div className="message-header bot">
 			{ shouldUseHelpCenterExperience ? (
 				<>
-					<WapuuAvatar className="odie-chatbox-message-avatar" />
+					<WapuuAvatar />
 					<img
 						src={ WapuuThinkingNew }
 						alt={ __( 'Loading state, awaiting response from AI', __i18n_text_domain__ ) }

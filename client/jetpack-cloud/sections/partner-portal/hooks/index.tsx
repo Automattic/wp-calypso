@@ -413,6 +413,11 @@ export function useProductDescription( productSlug: string ): {
 					'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
 				);
 				break;
+			case 'woocommerce-product-filters':
+				description = translate(
+					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
+				);
+				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
 				break;

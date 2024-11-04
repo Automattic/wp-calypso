@@ -7,7 +7,8 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getDateRangeQueryParam,
@@ -59,6 +60,7 @@ export const SiteLogs = ( {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
+	const dispatch = useDispatch();
 
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 
@@ -128,6 +130,7 @@ export const SiteLogs = ( {
 			updateDateRangeQueryParam( dateRange );
 		}
 
+		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
 

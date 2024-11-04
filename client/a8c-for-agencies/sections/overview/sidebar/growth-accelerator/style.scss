@@ -23,16 +23,20 @@
 .overview__growth-accelerator-footer {
 	display: flex;
 	gap: 16px;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 .components-button.is-primary.overview__growth-accelerator-footer-schedule-call {
 	display: flex;
 	flex-direction: row;
 	gap: 8px;
+	flex: 1 1 auto;
 }
 
 .components-button.is-link.overview__growth-accelerator-footer-not-interested {
 	color: var(--color-text);
+	flex: 1 1 auto;
 
 	&:visited,
 	&:focus,

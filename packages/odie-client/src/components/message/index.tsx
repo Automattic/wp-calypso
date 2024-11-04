@@ -48,7 +48,7 @@ const MessageAvatarHeader = ( {
 	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>
-				<WapuuAvatar className={ wapuuAvatarClasses } />
+				<WapuuAvatar />
 				<strong className="message-header-name"></strong>
 
 				{ ! shouldUseHelpCenterExperience && (

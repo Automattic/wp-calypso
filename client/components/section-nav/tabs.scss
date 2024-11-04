@@ -1,7 +1,15 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
+.section-nav-group {
+	&.enforce-tabs-view {
+		display: block;
+		border-top: none;
+		margin-block-start: 0;
+	}
+}
+
 .section-nav-tabs {
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		width: 0;
 		flex: 1 0 auto;
 
@@ -12,13 +20,21 @@
 			margin: 8px;
 		}
 	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
+	}
 }
 
 .section-nav-tabs__list {
 	margin: 0;
 	list-style: none;
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		display: flex;
 		width: 100%;
 		overflow: hidden;
@@ -27,16 +43,52 @@
 			display: none;
 		}
 	}
-}
 
-.enforce-tabs-view {
-	&.section-nav-group {
-		display: block;
-		border-top: none;
-		margin-block-start: 0;
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
 	}
 
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
+	}
+}
+
+/**
+ * Overflow styles
+ */
+.section-nav-tabs:not(.is-dropdown) {
 	.section-nav-tabs__list {
-		display: flex;
+		--direction-start: left;
+		--direction-end: right;
+		&:dir( rtl ) {
+			--direction-start: right;
+			--direction-end: left;
+		}
+
+		--fade-width: 4rem;
+		--fade-gradient-base: transparent 0%, #000 var( --fade-width );
+		--fade-gradient-composed: var( --fade-gradient-base ), #000 60%, transparent 50%;
+
+		&.is-overflowing-first {
+			mask-image: linear-gradient(
+				to var( --direction-end ),
+				var( --fade-gradient-base )
+			);
+		}
+
+		&.is-overflowing-last {
+			mask-image: linear-gradient(
+				to var( --direction-start ),
+				var( --fade-gradient-base )
+			);
+		}
+
+		&.is-overflowing-first.is-overflowing-last {
+			mask-image: linear-gradient(
+					to right,
+					var( --fade-gradient-composed )
+				),
+				linear-gradient( to left, var( --fade-gradient-composed ) );
+		}
 	}
 }

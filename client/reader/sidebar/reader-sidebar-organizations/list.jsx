@@ -31,9 +31,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 	renderIcon() {
 		const { organization } = this.props;
 		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return <ReaderA8cIcon />;
+			return <ReaderA8cIcon size={ 24 } viewBox="-5 0 24 24" />;
 		}
-		return <ReaderP2Icon />;
+		return <ReaderP2Icon viewBox="-3 0 24 24" />;
 	}
 
 	renderAll() {

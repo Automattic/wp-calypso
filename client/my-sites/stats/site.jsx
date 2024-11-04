@@ -87,6 +87,14 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf,
 } ) );
 
+const chartRangeToQuery = memoizeLast( ( period, chartRange ) => ( {
+	period,
+	start_date: chartRange.chartStart,
+	date: chartRange.chartEnd,
+	summarize: 1,
+	max: 10,
+} ) );
+
 const CHART_VIEWS = {
 	attr: 'views',
 	legendOptions: [ 'visitors' ],
@@ -285,7 +293,9 @@ class StatsSite extends Component {
 		} else {
 			// if start date is missing let the frequency of data take over to avoid showing one bar
 			// (e.g. months defaulting to 30 days and showing one point)
-			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = moment()
+				.subtract( daysInRange - 1, 'days' )
+				.format( 'YYYY-MM-DD' );
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -317,7 +327,9 @@ class StatsSite extends Component {
 			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
 		}
 
-		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+		const query = isNewDateFilteringEnabled
+			? chartRangeToQuery( period, customChartRange )
+			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
 		const traffic = {
@@ -454,21 +466,40 @@ class StatsSite extends Component {
 							</StatsPeriodHeader>
 						) }
 
-						<ChartTabs
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							availableLegend={ this.getAvailableLegend() }
-							onChangeLegend={ this.onChangeLegend }
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ CHARTS }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.props.chartTab }
-							customQuantity={ customChartQuantity }
-							customRange={ customChartRange }
-							hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
-						/>
+						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+							/>
+						) }
+						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
+							/>
+						) }
 					</>
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
@@ -654,7 +685,7 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
+						{ ! isNewDateFilteringEnabled && supportsEmailStats && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }

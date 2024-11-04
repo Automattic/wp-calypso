@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .migrations-overview-v2 {
 	.a4a-layout__body {
 		padding: 0;
@@ -10,7 +13,11 @@
 	}
 
 	.page-section__header-description {
-		@include a4a-font-heading-xl;
+		@include a4a-font-heading-md;
 		color: var(--color-neutral-70);
+
+		@include break-medium {
+			@include a4a-font-heading-xl;
+		}
 	}
 }

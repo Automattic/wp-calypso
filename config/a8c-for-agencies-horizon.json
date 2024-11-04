@@ -36,7 +36,8 @@
 		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": true,
 		"a4a-migrations-page-v2": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a4a-pressable-referrals": true
 	},
 	"enable_all_sections": false,
 	"sections": {

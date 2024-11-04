@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import {
 	BackgroundType1,
 	BackgroundType2,
@@ -14,7 +16,9 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import { MarketplaceTypeContext } from '../../../context';
 import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
+import ReferralPressableOverviewPlanSelection from '../../../pressable-overview/plan-selection/referral-mode';
 import CommonHostingBenefits from '../common-hosting-benefits';
 
 import './style.scss';
@@ -25,6 +29,12 @@ type Props = {
 
 export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const isReferMode = marketplaceType === 'referral';
+	const isPressableReferralsEnabled = isEnabled( 'a4a-pressable-referrals' );
+	const showReferralMode = isPressableReferralsEnabled && isReferMode;
 
 	const { pressablePlans } = useProductAndPlans( {
 		selectedSite: null,
@@ -37,7 +47,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	return (
 		<div className="premier-agency-hosting">
-			{ isExistingPlanFetched && existingPlan && (
+			{ isExistingPlanFetched && existingPlan && ! showReferralMode && (
 				<section className="pressable-overview-plan-existing">
 					<div className="pressable-overview-plan-existing__details-card">
 						<div className="pressable-overview-plan-existing__header">
@@ -57,7 +67,11 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					</div>
 				</section>
 			) }
-			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
+			{ showReferralMode ? (
+				<ReferralPressableOverviewPlanSelection onAddToCart={ onAddToCart } />
+			) : (
+				<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
+			) }
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( 'Jetpack Complete included' ) }

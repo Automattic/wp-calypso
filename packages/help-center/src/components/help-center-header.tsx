@@ -72,7 +72,10 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { pathname, key } = useLocation();
 
 	const shouldDisplayChatHistoryButton =
-		config.isEnabled( 'help-center-experience' ) && pathname !== '/chat-history';
+		config.isEnabled( 'help-center-experience' ) &&
+		pathname !== '/chat-history' &&
+		pathname !== '/odie';
+
 	const isHelpCenterHome = key === 'default';
 
 	const headerText = useMemo( () => {

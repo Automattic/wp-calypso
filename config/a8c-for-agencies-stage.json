@@ -38,7 +38,8 @@
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a4a-pressable-referrals": false
 	},
 	"enable_all_sections": false,
 	"sections": {

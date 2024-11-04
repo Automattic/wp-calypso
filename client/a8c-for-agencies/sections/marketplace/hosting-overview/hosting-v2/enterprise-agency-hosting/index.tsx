@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType4 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.png';
 import CapeGeminiLogo from 'calypso/assets/images/logos/capgemini.svg';
@@ -14,7 +15,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
-import SimpleList from '../../../common/simple-list';
 
 import './style.scss';
 

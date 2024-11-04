@@ -6,11 +6,14 @@ import React, { KeyboardEvent } from 'react';
 export const ResizableTextarea: React.FC< {
 	className: string;
 	inputRef: React.RefObject< HTMLTextAreaElement >;
+	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
-} > = ( { className, sendMessageHandler, inputRef } ) => {
-	const onKeyDown = useCallback(
+} > = ( { className, sendMessageHandler, inputRef, keyUpHandle } ) => {
+	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
+				// call the handler to remove the validation message if visible.
+				keyUpHandle();
 				return;
 			}
 			if ( event.key === 'Enter' && ! event.shiftKey ) {
@@ -18,7 +21,7 @@ export const ResizableTextarea: React.FC< {
 				await sendMessageHandler();
 			}
 		},
-		[ inputRef, sendMessageHandler ]
+		[ inputRef, sendMessageHandler, keyUpHandle ]
 	);
 
 	useEffect( () => {
@@ -45,7 +48,7 @@ export const ResizableTextarea: React.FC< {
 			ref={ inputRef }
 			rows={ 1 }
 			className={ className }
-			onKeyDown={ onKeyDown }
+			onKeyUp={ onKeyUp }
 			placeholder={ __( 'Type a message…', __i18n_text_domain__ ) }
 			style={ { transition: 'none' } }
 		/>

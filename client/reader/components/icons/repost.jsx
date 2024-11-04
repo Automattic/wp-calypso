@@ -1,10 +1,10 @@
-export default function ReaderRepostIcon( { iconSize } ) {
+export default function ReaderRepostIcon( { iconSize, viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
 			key="repost"
 			width={ iconSize }
 			height={ iconSize }
-			viewBox="0 0 20 20"
+			viewBox={ viewBox }
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path

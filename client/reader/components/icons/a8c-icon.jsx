@@ -1,10 +1,10 @@
-export default function ReaderA8cIcon( { size = 20 } ) {
+export default function ReaderA8cIcon( { size = 20, viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-a8c"
 			fill="none"
 			height={ size }
-			viewBox="0 0 20 20"
+			viewBox={ viewBox }
 			width={ size }
 			xmlns="http://www.w3.org/2000/svg"
 		>

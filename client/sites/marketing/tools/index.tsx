@@ -1,16 +1,13 @@
 import config from '@automattic/calypso-config';
-import { PLAN_BUSINESS, getPlan, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { Fragment, FunctionComponent } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
-import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,10 +28,6 @@ export const MarketingTools: FunctionComponent = () => {
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
-	const currentDate = new Date();
-	const shouldShowFacebook =
-		( currentDate.getFullYear() === 2024 && currentDate.getMonth() === 9 ) ||
-		config.isEnabled( 'marketing-force-facebook-display' ); // October 2024 only OR if the feature flag is enabled ( dev, calypso, stage ).
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -47,22 +40,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 		page( `/earn/${ selectedSiteSlug }` );
 	};
-
-	const handleFacebookClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
-
-		page( `/plugins/official-facebook-pixel/${ selectedSiteSlug }` );
-	};
-
-	const facebookDescription = translate(
-		'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. <em>Available on %(businessPlanName)s and %(commercePlanName)s plans</em>.',
-		{
-			args: {
-				businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-				commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-			},
-		}
-	) as string;
 
 	const handleBuiltByWpClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_built_by_wp_button_click' );
@@ -124,21 +101,6 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
-
-				{ shouldShowFacebook && (
-					<MarketingToolsFeature
-						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
-						description={ createInterpolateElement( facebookDescription, {
-							em: <em />,
-						} ) }
-						imagePath={ facebookLogo }
-						imageAlt={ translate( 'Facebook Logo' ) }
-					>
-						<Button onClick={ handleFacebookClick }>
-							{ translate( 'Add Facebook for WordPress.com' ) }
-						</Button>
-					</MarketingToolsFeature>
-				) }
 
 				<MarketingToolsFeature
 					title={ translate( 'Fiverr logo maker' ) }

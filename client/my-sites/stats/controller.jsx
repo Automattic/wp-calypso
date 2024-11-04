@@ -185,6 +185,7 @@ export function site( context, next ) {
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
+	// startDate is the date the user clicked on the chart, which is basically the start of the period, i.e. Monday of weeks, 1st of months, or the selected date.
 	const date = isValidStartDate
 		? moment( queryOptions.startDate ).locale( 'en' )
 		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;

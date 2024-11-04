@@ -862,6 +862,16 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// If it's a 100-year domain, don't show the cancel button
+		if ( isDomainRegistration( purchase ) ) {
+			const domain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+				( domain ) => domain.domain === purchase.meta
+			);
+			if ( domain?.isHundredYearDomain ) {
+				return null;
+			}
+		}
+
 		const onClick = ( event: { preventDefault: () => void } ) => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
