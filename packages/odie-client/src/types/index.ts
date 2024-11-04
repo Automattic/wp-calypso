@@ -133,7 +133,6 @@ export type ZendeskMessage = {
 	avatarUrl: string;
 	displayName: string;
 	id: string;
-	metadata: Metadata;
 	received: number;
 	role: string;
 	source: {
@@ -165,7 +164,6 @@ export type ZendeskConversation = {
 	iconUrl: string;
 	type: 'sdkGroup' | string;
 	participants: ConversationParticipant[];
-	metadata: Metadata;
 	messages: ZendeskMessage[];
 };
 
@@ -177,7 +175,7 @@ export type SupportInteractionUser = {
 
 export type SupportInteractionEvent = {
 	event_external_id: number;
-	event_source: SupportProvider;
+	source: SupportProvider;
 	metadata?: object;
 	event_order?: number;
 };
