@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { HelpCenterSite } from '@automattic/data-stores';
+import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -13,7 +13,7 @@ import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { FC } from 'react';
+import { FC, ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -22,6 +22,7 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
+import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
@@ -41,6 +42,61 @@ type HelpCenterContactPageProps = {
 	onClick?: () => void;
 	trackEventName?: string;
 	isUserEligible?: boolean;
+};
+
+const HelpCenterFooterButton = ( {
+	children,
+	buttonTextEventProp,
+	redirectTo,
+}: {
+	children: ReactNode;
+	buttonTextEventProp: string;
+	redirectTo: string;
+} ) => {
+	const { url, isLoading } = useStillNeedHelpURL();
+	const helpCenterContext = useHelpCenterContext();
+	const sectionName = helpCenterContext.sectionName;
+	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
+	const setChatId = useSetOdieStorage( 'chat_id' );
+
+	const handleContactButtonClicked = ( {
+		buttonTextEventProp,
+	}: {
+		buttonTextEventProp: string;
+	} ) => {
+		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+			button_type: buttonTextEventProp,
+		} );
+
+		if ( buttonTextEventProp === 'New conversation' ) {
+			setChatId( null );
+		}
+	};
+
+	const redirectionURL = () => {
+		if ( buttonTextEventProp === 'Still need help?' ) {
+			if ( isLoading ) {
+				return '';
+			}
+			return redirectToWpcom ? { pathname: url } : url;
+		}
+		return redirectTo;
+	};
+
+	return (
+		<Link
+			to={ redirectionURL() }
+			target={ redirectToWpcom ? '_blank' : '_self' }
+			onClick={ () => handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } ) }
+			className="button help-center-contact-page__button"
+		>
+			<Icon icon={ comment } />
+			{ children }
+		</Link>
+	);
 };
 
 export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
@@ -180,34 +236,32 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
-	const { url, isLoading } = useStillNeedHelpURL();
-	const helpCenterContext = useHelpCenterContext();
-	const sectionName = helpCenterContext.sectionName;
-	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
+	const { getConversations } = useSmooch();
+	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
+	const { isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return { isChatLoaded: store.getIsChatLoaded() };
+	}, [] );
 
-	const trackContactButtonClicked = () => {
-		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
-	};
+	useEffect( () => {
+		if ( isChatLoaded && getConversations ) {
+			const conversations = getConversations() as ZendeskConversation[];
+			setConversations( conversations );
+		}
+	}, [ isChatLoaded, getConversations ] );
 
-	let to = redirectToWpcom ? { pathname: url } : url;
-
-	if ( isLoading ) {
-		to = '';
-	}
-
-	return (
-		<Link
-			to={ to }
-			target={ redirectToWpcom ? '_blank' : '_self' }
-			onClick={ trackContactButtonClicked }
-			className="button help-center-contact-page__button"
-		>
-			<Icon icon={ comment } />
+	return conversations.length ? (
+		<>
+			<HelpCenterFooterButton buttonTextEventProp="New conversation" redirectTo="/odie">
+				<span>{ __( 'New conversation', __i18n_text_domain__ ) }</span>
+			</HelpCenterFooterButton>
+			<HelpCenterFooterButton buttonTextEventProp="History" redirectTo="/chat-history">
+				<span>{ __( 'History', __i18n_text_domain__ ) }</span>
+			</HelpCenterFooterButton>
+		</>
+	) : (
+		<HelpCenterFooterButton buttonTextEventProp="Still need help?" redirectTo="/odie">
 			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
-		</Link>
+		</HelpCenterFooterButton>
 	);
 };
