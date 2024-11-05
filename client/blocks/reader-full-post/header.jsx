@@ -60,16 +60,21 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 			) : null }
 			{ isDefaultLayout && <div className="reader-full-post__author-block">{ authorProfile }</div> }
 			<div className="reader-full-post__header-meta">
-				{ followCount ? (
-					<div className="author-compact-profile__follow-count">
-						{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
-							count: followCount,
-							args: {
-								followCount: formatNumber( followCount, getLocaleSlug() ),
-							},
-						} ) }
-					</div>
-				) : null }
+				{ layout === 'recent' && (
+					<>
+						{ siteName && <span className="reader-full-post__header-site-name">{ siteName }</span> }
+						{ followCount && (
+							<span className="reader-full-post__header-follow-count">
+								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
+									count: followCount,
+									args: {
+										followCount: formatNumber( followCount, getLocaleSlug() ),
+									},
+								} ) }
+							</span>
+						) }
+					</>
+				) }
 				{ post.date ? (
 					<span className="reader-full-post__header-date">
 						<a
