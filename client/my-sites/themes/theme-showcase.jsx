@@ -4,7 +4,7 @@ import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
-import { isMobile } from '@automattic/viewport';
+import { isMobileWidthOrHeight } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -453,7 +453,7 @@ class ThemeShowcase extends Component {
 		// so the document viewport is used to determine the theme lazy loading. When logged out, we don't need
 		// that because the document viewport can be used directly.
 		const themeShowcaseWrapperRef =
-			loggedOutComponent || isMobile() ? undefined : this.themeShowcaseWrapperRef;
+			loggedOutComponent || isMobileWidthOrHeight() ? undefined : this.themeShowcaseWrapperRef;
 
 		return (
 			<div className="theme-showcase__all-themes" ref={ this.themeShowcaseWrapperRef }>
