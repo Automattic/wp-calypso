@@ -1,6 +1,7 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
+import { useReducedMotion } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -57,7 +58,7 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const { resetPaidNewsletter } = useResetMutation();
-	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const prefersReducedMotion = useReducedMotion();
 
 	const onButtonClick = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 	const paidSubscribersCount = parseInt(
