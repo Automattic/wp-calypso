@@ -1,4 +1,6 @@
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
+import { getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -28,6 +30,16 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 		return <ReaderFullPostHeaderPlaceholder />;
 	}
 
+	// Extract the props we need from authorProfile
+	const { props: { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount } = {} } =
+		authorProfile || {};
+
+	console.log( 'layout', layout );
+	console.log( 'post', post );
+	console.log( 'authorProfile', authorProfile );
+
+	const isDefaultLayout = layout !== 'recent';
+
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<div className={ clsx( classes ) }>
@@ -46,8 +58,18 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 					</h1>
 				</AutoDirection>
 			) : null }
-			<div className="reader-full-post__author-block">{ authorProfile }</div>
+			{ isDefaultLayout && <div className="reader-full-post__author-block">{ authorProfile }</div> }
 			<div className="reader-full-post__header-meta">
+				{ followCount ? (
+					<div className="author-compact-profile__follow-count">
+						{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
+							count: followCount,
+							args: {
+								followCount: formatNumber( followCount, getLocaleSlug() ),
+							},
+						} ) }
+					</div>
+				) : null }
 				{ post.date ? (
 					<span className="reader-full-post__header-date">
 						<a

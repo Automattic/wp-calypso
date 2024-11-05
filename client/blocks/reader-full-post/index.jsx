@@ -490,8 +490,8 @@ export class FullPostView extends Component {
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
-
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		const isDefaultLayout = this.props.layout !== 'recent';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -511,7 +511,7 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-					<BackButton onClick={ this.handleBack } />
+					{ isDefaultLayout && <BackButton onClick={ this.handleBack } /> }
 					<div className="reader-full-post__visit-site-container">
 						<ExternalLink
 							icon
@@ -525,58 +525,60 @@ export class FullPostView extends Component {
 						</ExternalLink>
 					</div>
 					<div className="reader-full-post__content">
-						<div className="reader-full-post__sidebar">
-							{ isLoading && <AuthorCompactProfile author={ null } /> }
-							{ ! isLoading && post.author && (
-								<AuthorCompactProfile
-									author={ post.author }
-									siteIcon={ get( site, 'icon.img' ) }
-									feedIcon={ feedIcon }
-									siteName={ siteName }
-									siteUrl={ post.site_URL }
-									feedUrl={ get( post, 'feed_URL' ) }
-									followCount={ site && site.subscribers_count }
-									onFollowToggle={ this.openSuggestedFollowsModal }
-									feedId={ +post.feed_ID }
-									siteId={ +post.site_ID }
-									post={ post }
-								/>
-							) }
-							<div className="reader-full-post__sidebar-comment-like">
-								{ userCan( 'edit_post', post ) && (
-									<PostEditButton
-										post={ post }
-										site={ site }
-										iconSize={ 20 }
-										onClick={ this.onEditClick }
-									/>
-								) }
-
-								{ shouldShowComments( post ) && (
-									<CommentButton
-										key="comment-button"
-										commentCount={ commentCount }
-										onClick={ this.handleCommentClick }
-										tagName="div"
-										icon={ ReaderCommentIcon( { iconSize: 20 } ) }
-									/>
-								) }
-
-								{ shouldShowLikes( post ) && (
-									<LikeButton
+						{ isDefaultLayout && (
+							<div className="reader-full-post__sidebar">
+								{ isLoading && <AuthorCompactProfile author={ null } /> }
+								{ ! isLoading && post.author && (
+									<AuthorCompactProfile
+										author={ post.author }
+										siteIcon={ get( site, 'icon.img' ) }
+										feedIcon={ feedIcon }
+										siteName={ siteName }
+										siteUrl={ post.site_URL }
+										feedUrl={ get( post, 'feed_URL' ) }
+										followCount={ site && site.subscribers_count }
+										onFollowToggle={ this.openSuggestedFollowsModal }
+										feedId={ +post.feed_ID }
 										siteId={ +post.site_ID }
-										postId={ +post.ID }
-										fullPost
-										tagName="div"
-										likeSource="reader"
+										post={ post }
 									/>
 								) }
+								<div className="reader-full-post__sidebar-comment-like">
+									{ userCan( 'edit_post', post ) && (
+										<PostEditButton
+											post={ post }
+											site={ site }
+											iconSize={ 20 }
+											onClick={ this.onEditClick }
+										/>
+									) }
 
-								{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-									canBeMarkedAsSeen( { post } ) &&
-									this.renderMarkAsSenButton() }
+									{ shouldShowComments( post ) && (
+										<CommentButton
+											key="comment-button"
+											commentCount={ commentCount }
+											onClick={ this.handleCommentClick }
+											tagName="div"
+											icon={ ReaderCommentIcon( { iconSize: 20 } ) }
+										/>
+									) }
+
+									{ shouldShowLikes( post ) && (
+										<LikeButton
+											siteId={ +post.site_ID }
+											postId={ +post.ID }
+											fullPost
+											tagName="div"
+											likeSource="reader"
+										/>
+									) }
+
+									{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
+										canBeMarkedAsSeen( { post } ) &&
+										this.renderMarkAsSenButton() }
+								</div>
 							</div>
-						</div>
+						) }
 						<article className="reader-full-post__story">
 							<ReaderFullPostHeader
 								post={ post }
