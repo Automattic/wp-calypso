@@ -68,24 +68,38 @@ function addListenerFunctions(
 	};
 }
 
-function createMediaQueryList( args?: QueryOption ): QueryItem {
+function createMediaQueryList( args?: QueryOption, widthOrHeight?: boolean ): QueryItem {
 	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
 			? addListenerFunctions( { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max } )
-			: window.matchMedia( `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)` );
+			: window.matchMedia(
+					widthOrHeight
+						? `(min-width: ${ min + 1 }px) and (max-width: ${ max }px),(min-height: ${
+								min + 1
+						  }px) and (max-height: ${ max }px)`
+						: `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)`
+			  );
 	}
 
 	if ( min !== undefined ) {
 		return isServer
 			? addListenerFunctions( { matches: SERVER_WIDTH > min } )
-			: window.matchMedia( `(min-width: ${ min + 1 }px)` );
+			: window.matchMedia(
+					widthOrHeight
+						? `(min-width: ${ min + 1 }px),(min-height: ${ min + 1 }px)`
+						: `(min-width: ${ min + 1 }px)`
+			  );
 	}
 
 	if ( max !== undefined ) {
 		return isServer
 			? addListenerFunctions( { matches: SERVER_WIDTH <= max } )
-			: window.matchMedia( `(max-width: ${ max }px)` );
+			: window.matchMedia(
+					widthOrHeight
+						? `(max-width: ${ max }px),(max-height: ${ max }px)`
+						: `(max-width: ${ max }px)`
+			  );
 	}
 
 	return false;
@@ -118,7 +132,10 @@ const mediaQueryOptions: Record< string, QueryOption > = {
 	'480px-960px': { min: 480, max: 960 },
 };
 
-export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
+export function getMediaQueryList(
+	breakpoint: string,
+	widthOrHeight: boolean = false
+): undefined | QueryItem {
 	if ( ! mediaQueryOptions.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console
@@ -127,16 +144,20 @@ export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
 		return undefined;
 	}
 
-	return createMediaQueryList( mediaQueryOptions[ breakpoint ] );
+	return createMediaQueryList( mediaQueryOptions[ breakpoint ], widthOrHeight );
 }
 
 /**
- * Returns whether the current window width matches a breakpoint.
+ * Returns whether the current window width (or height, if the second param is true) matches a breakpoint.
  * @param {string} breakpoint The breakpoint to consider.
+ * @param {boolean} [widthOrHeight] The breakpoint to consider.
  * @returns {boolean|undefined} Whether the provided breakpoint is matched.
  */
-export function isWithinBreakpoint( breakpoint: string ): boolean | undefined {
-	const mediaQueryList = getMediaQueryList( breakpoint );
+export function isWithinBreakpoint(
+	breakpoint: string,
+	widthOrHeight: boolean = false
+): boolean | undefined {
+	const mediaQueryList = getMediaQueryList( breakpoint, widthOrHeight );
 	return mediaQueryList ? mediaQueryList.matches : undefined;
 }
 
@@ -154,7 +175,7 @@ export function subscribeIsWithinBreakpoint(
 		return noop;
 	}
 
-	const mediaQueryList = getMediaQueryList( breakpoint );
+	const mediaQueryList = getMediaQueryList( breakpoint, false );
 
 	if ( mediaQueryList && ! isServer ) {
 		const wrappedListener = ( evt: { matches: boolean } ) => listener( evt.matches );
@@ -172,6 +193,14 @@ export function subscribeIsWithinBreakpoint(
  */
 export function isMobile(): boolean | undefined {
 	return isWithinBreakpoint( MOBILE_BREAKPOINT );
+}
+
+/**
+ * Returns whether the current window width or height matches the mobile breakpoint.
+ * @returns {boolean|undefined} Whether the mobile breakpoint is matched.
+ */
+export function isMobileWidthOrHeight(): boolean | undefined {
+	return isWithinBreakpoint( MOBILE_BREAKPOINT, true );
 }
 
 /**

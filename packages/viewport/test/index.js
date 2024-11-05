@@ -38,6 +38,12 @@ describe( 'viewport', () => {
 		jest.restoreAllMocks();
 	} );
 
+	describe( 'getMediaQueryList', () => {
+		it( 'should return undefined when the breakpoint is unknown', () => {
+			expect( viewport.getMediaQueryList( 'unknown' ) ).toBeUndefined();
+		} );
+	} );
+
 	describe( 'isWithinBreakpoint', () => {
 		test( 'should return undefined when called with no breakpoint', () => {
 			expect( viewport.isWithinBreakpoint() ).toBe( undefined );
@@ -52,6 +58,12 @@ describe( 'viewport', () => {
 			expect( matchesMock ).toHaveBeenCalledTimes( 1 );
 			expect( matchesMock ).toHaveBeenCalledWith( '(max-width: 960px)' );
 		} );
+
+		test( 'should retrieve the current status for a known width or height breakpoint when the second param is true', () => {
+			expect( viewport.isWithinBreakpoint( '<960px', true ) ).toBe( 'foo' );
+			expect( matchesMock ).toHaveBeenCalledTimes( 1 );
+			expect( matchesMock ).toHaveBeenCalledWith( '(max-width: 960px),(max-height: 960px)' );
+		} );
 	} );
 
 	describe( 'isMobile', () => {
@@ -59,6 +71,14 @@ describe( 'viewport', () => {
 			expect( viewport.isMobile() ).toBe( 'foo' );
 			expect( matchesMock ).toHaveBeenCalledTimes( 1 );
 			expect( matchesMock ).toHaveBeenCalledWith( '(max-width: 480px)' );
+		} );
+	} );
+
+	describe( 'isMobileWidthOrHeight', () => {
+		test( 'should retrieve the current status for the mobile width or height breakpoint', () => {
+			expect( viewport.isMobileWidthOrHeight() ).toBe( 'foo' );
+			expect( matchesMock ).toHaveBeenCalledTimes( 1 );
+			expect( matchesMock ).toHaveBeenCalledWith( '(max-width: 480px),(max-height: 480px)' );
 		} );
 	} );
 
