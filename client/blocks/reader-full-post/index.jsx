@@ -93,6 +93,7 @@ export class FullPostView extends Component {
 		referralStream: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
+		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -580,6 +581,7 @@ export class FullPostView extends Component {
 							<ReaderFullPostHeader
 								post={ post }
 								referralPost={ referralPost }
+								layout={ this.props.layout }
 								authorProfile={
 									<AuthorCompactProfile
 										author={ post.author }

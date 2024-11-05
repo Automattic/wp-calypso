@@ -104,6 +104,7 @@ const Recent = () => {
 						post={ post }
 						referralStream={ window.location.pathname }
 						notificationsOpen
+						layout="recent"
 					/>
 				) }
 			</div>

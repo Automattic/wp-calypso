@@ -7,7 +7,7 @@ import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, authorProfile } ) => {
+const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -16,7 +16,10 @@ const ReaderFullPostHeader = ( { post, authorProfile } ) => {
 		recordPermalinkClick( 'timestamp_full_post', post );
 	};
 
-	const classes = { 'reader-full-post__header': true };
+	const classes = {
+		'reader-full-post__header': true,
+		'reader-full-post__header--recent': layout === 'recent',
+	};
 	if ( ! post.title || post.title.trim().length < 1 ) {
 		classes[ 'is-missing-title' ] = true;
 	}
@@ -68,6 +71,11 @@ const ReaderFullPostHeader = ( { post, authorProfile } ) => {
 ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
+	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+};
+
+ReaderFullPostHeader.defaultProps = {
+	layout: 'default',
 };
 
 export default ReaderFullPostHeader;
