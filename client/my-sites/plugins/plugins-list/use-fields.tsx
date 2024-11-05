@@ -90,7 +90,7 @@ export function useFields(
 				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
-					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {
+					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) && item?.update?.new_version ) {
 						return (
 							<Button
 								variant="secondary"
@@ -98,7 +98,9 @@ export function useFields(
 							>
 								{ translate( 'Update to version %(version)s', {
 									args: {
-										version: item?.update?.new_version.split( '-' ).slice( 0, 2 ).join( '-' ) || '',
+										version: item?.update?.new_version
+											? item.update.new_version.split( '-' ).slice( 0, 2 ).join( '-' )
+											: '',
 									},
 								} ) }
 							</Button>
