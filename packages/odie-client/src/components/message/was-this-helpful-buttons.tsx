@@ -80,7 +80,9 @@ const WasThisHelpfulButtons = ( {
 				<span className={ questionClasses }>
 					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
 				</span>
-				<span className={ thanksClasses }>{ __( 'Thanks!', __i18n_text_domain__ ) }</span>
+				<span className={ thanksClasses }>
+					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
+				</span>
 			</div>
 			<span className="odie-feedback-component-button-container">
 				<button

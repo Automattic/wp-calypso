@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 export const ODIE_ERROR_MESSAGE = __(
-	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+	"Sorry, I'm offline right now. Leave our Support team a note and they'll get back to you as soon as possible.",
 	__i18n_text_domain__
 );
 
@@ -11,7 +11,7 @@ export const ODIE_RATE_LIMIT_MESSAGE = __(
 );
 
 export const ODIE_INITIAL_MESSAGE = __(
-	'Hi there 👋 I’m Wapuu, WordPress.com’s AI assistant! Having an issue with your site or account? Tell me all about it and I’ll be happy to help.',
+	'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
 	__i18n_text_domain__
 );
 

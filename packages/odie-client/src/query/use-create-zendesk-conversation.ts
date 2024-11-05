@@ -23,7 +23,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		}
 
 		addMessage( {
-			content: "We're connecting you to our support team.",
+			content: "Help's on the way!",
 			role: 'bot',
 			type: 'message',
 			context: {
