@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { Message, MessageRole, MessageType, ZendeskMessage } from '../types/';
 
 function prepareMarkdownImage( imgUrl: string ): string {
@@ -14,10 +15,15 @@ function convertUrlsToMarkdown( text: string ): string {
 }
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
-	const messageContent =
-		message.type === 'image' && message.mediaUrl
-			? prepareMarkdownImage( message.mediaUrl )
-			: convertUrlsToMarkdown( message.text );
+	let messageContent = '';
+	if ( message.type === 'image' && message.mediaUrl ) {
+		messageContent = prepareMarkdownImage( message.mediaUrl );
+	} else if ( message.type === 'text' ) {
+		messageContent = convertUrlsToMarkdown( message.text );
+	} else if ( message.type === 'file' && message.mediaUrl ) {
+		// We don't support it yet return generic message.
+		messageContent = __( 'Message content not supported' );
+	}
 
 	return {
 		content: messageContent,
