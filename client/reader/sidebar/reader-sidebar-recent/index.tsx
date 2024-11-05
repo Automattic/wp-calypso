@@ -1,3 +1,4 @@
+import { Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -50,7 +51,10 @@ export class ReaderSidebarRecent extends Component< {
 					materialIconStyle={ null }
 				>
 					{ sites.map( ( site ) => (
-						<li key={ site.ID }>{ site.name }</li>
+						<li key={ site.ID }>
+							{ site.name }{ ' ' }
+							{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+						</li>
 					) ) }
 				</ExpandableSidebarMenu>
 			</li>
