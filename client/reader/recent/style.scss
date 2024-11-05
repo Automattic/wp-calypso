@@ -1,0 +1,11 @@
+.is-section-reader .recent-feed {
+    display: flex;
+
+	&__list-column {
+		flex: 1;
+	}
+
+	&__post-column {
+		flex: 3;
+	}
+}

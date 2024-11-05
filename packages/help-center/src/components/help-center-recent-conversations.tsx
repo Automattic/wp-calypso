@@ -53,6 +53,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 	);
 	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
+	const navigateTo =
+		unreadConversationsCount === 1 ? `/odie/${ lastConversation.id }` : '/chat-history';
 
 	const chatMessage = {
 		...lastMessage,
@@ -78,10 +80,9 @@ const HelpCenterRecentConversations: React.FC = () => {
 				<HelpCenterSupportChatMessage
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
-					avatarSize={ 38 }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
-					navigateTo="/chat-history"
+					navigateTo={ navigateTo }
 				/>
 			) : null }
 		</div>

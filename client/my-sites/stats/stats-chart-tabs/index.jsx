@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -18,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
+import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -35,6 +35,7 @@ class StatModuleChartTabs extends Component {
 		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
 		charts: PropTypes.arrayOf( ChartTabShape ),
+		className: PropTypes.string,
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				comments: PropTypes.number,
@@ -49,6 +50,7 @@ class StatModuleChartTabs extends Component {
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
 		hideLegend: PropTypes.bool,
+		showChartHeader: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -93,28 +95,29 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading } = this.props;
+		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
 		const classes = [
 			'is-chart-tabs',
+			className,
 			{
 				'is-loading': isActiveTabLoading,
 				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
-
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
-				{ ! this.props.hideLegend && (
-					<Legend
-						activeCharts={ this.props.activeLegend }
+				{ showChartHeader && (
+					<ChartHeader
+						showLegend={ ! hideLegend }
+						activeLegend={ this.props.activeLegend }
 						activeTab={ this.props.activeTab }
-						availableCharts={ this.props.availableLegend }
-						clickHandler={ this.onLegendClick }
-						tabs={ this.props.charts }
-					/>
+						availableLegend={ this.props.availableLegend }
+						onLegendClick={ this.onLegendClick }
+						charts={ this.props.charts }
+					></ChartHeader>
 				) }
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />

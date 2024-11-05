@@ -100,7 +100,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_MONITORING ],
 			},
 			{

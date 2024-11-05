@@ -1,0 +1,44 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-process__cards {
+	display: grid;
+	gap: 16px;
+
+	@include break-medium {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	@include break-xlarge {
+		grid-template-columns: repeat( 4, 1fr );
+	gap: 24px;
+	}
+}
+
+.migrations-process__card {
+	padding: 24px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		justify-content: space-between;
+	}
+
+	a,
+	a:hover,
+	a:active,
+	a:focus,
+	a:visited {
+		color: var( --text-color );
+		text-decoration: underline
+	}
+}
+
+.migrations-process__card-number {
+	@include a4a-font-heading-xxl;
+}
+
+.migrations-process__card-text {
+	@include a4a-font-heading-xl;
+}

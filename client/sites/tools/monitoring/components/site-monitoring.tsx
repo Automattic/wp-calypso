@@ -1,5 +1,6 @@
 import colorStudio from '@automattic/color-studio';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -494,7 +495,7 @@ const useErrorHttpCodeSeries = () => {
 		{
 			...seriesDefaultProps,
 			statusCode: 508,
-			label: __( '508: Loop Detected ' ),
+			label: __( '508: Loop Detected' ),
 		},
 		{
 			...seriesDefaultProps,
@@ -504,14 +505,14 @@ const useErrorHttpCodeSeries = () => {
 		{
 			...seriesDefaultProps,
 			statusCode: 511,
-			label: __( '511: Network Authentication Required ' ),
+			label: __( '511: Network Authentication Required' ),
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
 	return { series, statusCodes };
 };
 
-export const SiteMonitoring = () => {
+export const SiteMonitoring = ( { className }: { className?: string } ) => {
 	const { __, _x } = useI18n();
 	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
@@ -558,7 +559,7 @@ export const SiteMonitoring = () => {
 	}
 
 	return (
-		<div className="site-monitoring-metrics-tab">
+		<div className={ clsx( 'site-monitoring-metrics-tab', className ) }>
 			<div className="site-monitoring-time-controls__container">
 				<NavigationHeader
 					className="site-monitoring__navigation-header"

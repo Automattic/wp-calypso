@@ -1,8 +1,8 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSiteMetricsQuery } from 'calypso/hosting/monitoring/hooks/use-metrics-query';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
+import { useSiteMetricsQuery } from 'calypso/sites/tools/monitoring/hooks/use-metrics-query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

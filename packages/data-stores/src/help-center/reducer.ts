@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
+import type { SupportInteraction } from '@automattic/odie-client/src/types/';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -37,6 +38,16 @@ const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SEEN_WHATS_NEW_MODAL':
 			return action.value;
+	}
+	return state;
+};
+
+const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
+		return action.supportInteraction;
 	}
 	return state;
 };
@@ -130,6 +141,7 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 };
 
 const reducer = combineReducers( {
+	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
