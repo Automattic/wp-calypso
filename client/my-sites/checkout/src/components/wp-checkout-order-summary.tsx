@@ -330,6 +330,13 @@ export function CheckoutSummaryRefundWindows( {
 	const refundPolicies = getRefundPolicies( cart );
 	const refundWindows = getRefundWindows( refundPolicies );
 
+	// Filter out carts with only a Domain Transfer, as the refund period doesn't start until the transfer completes
+	if ( refundPolicies.includes( RefundPolicy.DomainNameTransfer ) ) {
+		if ( refundWindows.length === 1 ) {
+			return null;
+		}
+	}
+
 	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
 		return null;
 	}
@@ -405,7 +412,8 @@ export function CheckoutSummaryRefundWindows( {
 			}
 		);
 	} else {
-		const shortestRefundWindow = Math.min( ...refundWindows );
+		// Return the shortest refund window but skip any refund windows which are equal to 0
+		const shortestRefundWindow = Math.min( ...refundWindows.filter( ( value ) => value > 0 ) );
 
 		text = translate(
 			'%(days)d-day full money back guarantee',
