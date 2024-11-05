@@ -84,6 +84,8 @@ export type MessageType =
 	| 'placeholder'
 	| 'dislike-feedback'
 	| 'help-link'
+	| 'file'
+	| 'image'
 	| 'introduction';
 
 export type Message = {
@@ -143,6 +145,7 @@ export type ZendeskMessage = {
 	};
 	type: ZendeskContentType;
 	text: string;
+	mediaUrl?: string;
 };
 
 export type ZendeskContentType =

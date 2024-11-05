@@ -40,7 +40,7 @@ export const MessageContent = ( {
 				<div className={ messageClasses }>
 					{ messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( message.type === 'message' || ! message.type ) && (
+					{ ( [ 'message', 'image', 'file' ].includes( message.type ) || ! message.type ) && (
 						<UserMessage message={ message } isDisliked={ isDisliked } />
 					) }
 					{ message.type === 'introduction' && (
