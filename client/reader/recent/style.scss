@@ -3,6 +3,7 @@
 
 	&__list-column {
 		flex: 1;
+		max-width: 320px;
 
 		&-header {
 			padding: 16px 12px 0;
@@ -42,9 +43,19 @@
 
 		.recent-post-field {
 			display: flex;
+			justify-content: space-between;
 			align-items: center;
 			text-align: left;
 			padding: 0;
+			width: 100%;
+
+			&__title-text,
+			&__site-name {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				max-width: 200px;
+			}
 
 			&__title-text {
 				font-weight: 700;
@@ -53,6 +64,11 @@
 			&__site-name {
 				font-weight: 400;
 				font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
+			}
+
+			&__featured-image {
+				max-width: 38px;
+				align-self: flex-end;
 			}
 		}
 	}
