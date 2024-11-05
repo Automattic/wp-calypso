@@ -75,12 +75,12 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const targetRow = await this.page.locator( selectors.domainSuggestionRow ).filter( {
+		const targetRow = this.page.locator( selectors.domainSuggestionRow ).filter( {
 			hasText: keyword,
 		} );
 		await targetRow.waitFor();
 
-		const target = await targetRow.getByRole( 'button' );
+		const target = targetRow.getByRole( 'button' );
 		await target.waitFor();
 
 		// The `heading` element represents the entire domain (including the tld).
