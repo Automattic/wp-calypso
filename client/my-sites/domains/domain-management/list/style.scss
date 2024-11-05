@@ -170,6 +170,49 @@
 	}
 	.domains-table-filter {
 		align-items: flex-start;
+
+		.domains-table-search {
+			.components-input-control__container {
+				background-color: var(--wp-components-color-background, #fff);
+				border-radius: 2px;
+
+				.components-input-control__suffix {
+					> div {
+						padding-right: 4px;
+					}
+
+					svg {
+						fill: var( --studio-gray-80 );
+					}
+				}
+			}
+
+			.components-input-base {
+				height: 32px;
+				max-width: 186px;
+			}
+
+			.components-input-control__input {
+				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				height: 32px;
+				padding-left: 8px;
+				padding-right: 8px;
+			}
+
+			.components-input-control__backdrop {
+				box-shadow: none;
+			}
+
+			@media only screen and ( max-width: 600px ) {
+				.components-input-base {
+					max-width: 217px;
+				}
+
+				.components-input-control__input {
+					font-size: 1rem;
+				}
+			}
+		}
 	}
 	.domains-table {
 		max-width: 1400px;
