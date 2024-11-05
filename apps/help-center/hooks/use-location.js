@@ -3,7 +3,7 @@ import { getUnlock } from '../utils';
 
 const unlock = getUnlock();
 
-let useLocation;
+let useLocation = () => null;
 
 // The routerPrivateApis may be unavailable.
 if ( unlock && routerPrivateApis && unlock( routerPrivateApis ) ) {
