@@ -1,7 +1,7 @@
 import { Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -32,70 +32,54 @@ type Props = {
 	onClick: () => void;
 	className: string;
 	translate: ( key: string ) => string;
-	sites: Site[];
 };
 
-type State = {
-	showAllSites: boolean;
-};
+const SITE_DISPLAY_CUTOFF = 8;
 
-const SITE_DISPLAY_LIMIT = 8;
+const ReaderSidebarRecent: React.FC< Props > = ( { translate, isOpen, onClick, className } ) => {
+	const [ showAllSites, setShowAllSites ] = useState( false );
+	const sites = useSelector< Site, Site[] >( getReaderFollowedSites );
 
-export class ReaderSidebarRecent extends Component< Props, State > {
-	state: State = {
-		showAllSites: false,
+	const toggleShowAllSites = () => {
+		setShowAllSites( ! showAllSites );
 	};
 
-	toggleShowAllSites = () => {
-		this.setState( ( prevState ) => ( { showAllSites: ! prevState.showAllSites } ) );
-	};
+	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
+	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
-	render() {
-		const { translate, isOpen, onClick, className, sites } = this.props;
-		const { showAllSites } = this.state;
-
-		const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_LIMIT );
-		const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
-
-		return (
-			<li>
-				<ExpandableSidebarMenu
-					expanded={ isOpen }
-					title={ translate( 'Recent' ) }
-					onClick={ onClick }
-					customIcon={ <ReaderFollowingIcon /> }
-					disableFlyout
-					className={ className }
-					count={ undefined }
-					icon={ null }
-					materialIcon={ null }
-					materialIconStyle={ null }
-				>
-					<li>
-						{ translate( 'All' ) }{ ' ' }
-						{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+	return (
+		<li>
+			<ExpandableSidebarMenu
+				expanded={ isOpen }
+				title={ translate( 'Recent' ) }
+				onClick={ onClick }
+				customIcon={ <ReaderFollowingIcon /> }
+				disableFlyout
+				className={ className }
+				count={ undefined }
+				icon={ null }
+				materialIcon={ null }
+				materialIconStyle={ null }
+			>
+				<li>
+					{ translate( 'All' ) }{ ' ' }
+					{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+				</li>
+				{ sitesToShow.map( ( site ) => (
+					<li key={ site.ID }>
+						{ site.name } { site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 					</li>
-					{ sitesToShow.map( ( site ) => (
-						<li key={ site.ID }>
-							{ site.name }{ ' ' }
-							{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
-						</li>
-					) ) }
-					{ sites.length > SITE_DISPLAY_LIMIT && (
-						<li>
-							<button onClick={ this.toggleShowAllSites }>
-								{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
-							</button>
-						</li>
-					) }
-				</ExpandableSidebarMenu>
-			</li>
-		);
-	}
-}
+				) ) }
+				{ sites.length > SITE_DISPLAY_CUTOFF && (
+					<li>
+						<button onClick={ toggleShowAllSites }>
+							{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
+						</button>
+					</li>
+				) }
+			</ExpandableSidebarMenu>
+		</li>
+	);
+};
 
-export default connect( ( state ) => {
-	return {
-		sites: getReaderFollowedSites( state ),
-	};
-} )( localize( ReaderSidebarRecent ) );
+export default localize( ReaderSidebarRecent );
