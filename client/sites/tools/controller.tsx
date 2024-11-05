@@ -2,6 +2,13 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import {
+	DeploymentCreation,
+	DeploymentManagement,
+	DeploymentRunLogs,
+	Deployments,
+} from './deployments';
+import { indexPage } from './deployments/routes';
 import Logs from './logs';
 import Monitoring from './monitoring';
 import StagingSite from './staging-site';
@@ -40,7 +47,53 @@ export function deployments( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<ToolsSidebar />
-			<p>Deployments</p>
+			<Deployments />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function deploymentCreation( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<ToolsSidebar />
+			<DeploymentCreation />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function deploymentManagement( context: PageJSContext, next: () => void ) {
+	const codeDeploymentId = parseInt( context.params.deploymentId, 10 ) || null;
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	if ( ! codeDeploymentId ) {
+		return context.page.replace( indexPage( siteSlug! ) );
+	}
+
+	context.primary = (
+		<PanelWithSidebar>
+			<ToolsSidebar />
+			<DeploymentManagement codeDeploymentId={ codeDeploymentId } />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function deploymentRunLogs( context: PageJSContext, next: () => void ) {
+	const codeDeploymentId = parseInt( context.params.deploymentId, 10 ) || null;
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	if ( ! codeDeploymentId ) {
+		return context.page.replace( indexPage( siteSlug! ) );
+	}
+
+	context.primary = (
+		<PanelWithSidebar>
+			<ToolsSidebar />
+			<DeploymentRunLogs codeDeploymentId={ codeDeploymentId } />
 		</PanelWithSidebar>
 	);
 	next();

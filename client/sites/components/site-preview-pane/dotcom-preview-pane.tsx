@@ -96,7 +96,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
 			},
 			{

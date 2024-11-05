@@ -62,7 +62,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 	return (
-		<Main className="github-deployments" fullWidthLayout>
+		<Main className="github-deployments tools-deployments" fullWidthLayout>
 			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				compactBreadcrumb
