@@ -14,7 +14,7 @@ import './style.scss';
 interface ReaderPost {
 	site_name: string;
 	postId: number;
-	feedId: number;
+	blogId: number;
 }
 
 const Recent = () => {
@@ -32,8 +32,8 @@ const Recent = () => {
 			data: state.reader?.streams?.recent,
 			post: selectedItem
 				? getPostByKey( state, {
-						feedId: +selectedItem.feedId,
 						postId: +selectedItem.postId,
+						blogId: +selectedItem.blogId,
 				  } )
 				: null,
 		} ),
@@ -74,7 +74,7 @@ const Recent = () => {
 		if ( data?.items?.length > 0 && ! selectedItem ) {
 			setSelectedItem( data.items[ 0 ] );
 		}
-	}, [ data?.items, selectedItem ] );
+	}, [ data?.items?.length, selectedItem ] );
 
 	return (
 		<div className="recent-feed">
@@ -91,8 +91,8 @@ const Recent = () => {
 						setView( { type: newView.type, fields: newView.fields ?? [] } )
 					}
 					paginationInfo={ {
-						totalItems: 0,
-						totalPages: 0,
+						totalItems: 100,
+						totalPages: 10,
 					} }
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
