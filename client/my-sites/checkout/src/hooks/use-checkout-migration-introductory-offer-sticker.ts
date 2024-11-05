@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useMigrationStickerMutation } from './use-migration-sticker';
+import { useMigrationIntroductoryOfferMutation } from 'calypso/data/site-migration/landing/use-introductory-offer-mutation';
 
 const REF_PATHS_WITH_INTRODUCTORY_OFFER = [ 'move-lp', 'logged-out-homepage-lp' ];
 
@@ -19,7 +19,7 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 			isPending: isMigrationStickerSettingPending,
 			isSuccess: isMigrationStickerSettingSuccess,
 		},
-	} = useMigrationStickerMutation();
+	} = useMigrationIntroductoryOfferMutation();
 
 	const shouldSetMigrationSticker = useMemo( () => {
 		if ( ! siteId ) {
