@@ -51,12 +51,6 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 						<dd>{ addedFree }</dd>
 					</>
 				) }
-				{ addedFree > 0 && (
-					<>
-						<dt className="summary__content-indent">{ __( 'Free subscribers' ) }</dt>
-						<dd>{ addedFree }</dd>
-					</>
-				) }
 				{ addedPaid > 0 && (
 					<>
 						<dt className="summary__content-indent">{ __( 'Paid subscribers' ) }</dt>
