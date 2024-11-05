@@ -40,6 +40,7 @@
 		box-shadow: none;
 	}
 
+	/*
 	.summary__content {
 		clear: both;
 		margin-bottom: 12px;
@@ -57,22 +58,26 @@
 			fill: var(--studio-gray-50);
 		}
 	}
+	*/
 
-	.summary__content-stats {
+	dl.summary__content-stats {
+		max-width: 200px;
 		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-	
-	.summary__content-stat-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
+		flex-wrap: wrap;
 
-	.summary__content-indent {
-		margin-top: -20;
-		margin-left: 20px;
+		dt {
+			font-weight: 400;
+			margin: 0;
+		}
+
+		dd {
+			font-weight: 600;
+			margin: 0 0 0 auto;
+		}
+
+		.summary__content-indent {
+			margin-left: 30px;
+		}
 	}
 
 	.stripe-logo {

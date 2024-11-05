@@ -1,4 +1,5 @@
-import { ProgressBar } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, people, atSymbol, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
@@ -14,31 +15,12 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> You <strong>skipped</strong> subscriber importing.
+					<Icon icon={ atSymbol } />
+					{ createInterpolateElement( __( 'You <strong>skipped</strong> subscriber importing.' ), {
+						strong: <strong />,
+					} ) }
 				</p>
 			</div>
-		);
-	}
-
-	if ( status === 'importing' ) {
-		return (
-			<>
-				<div className="summary__content">
-					<p>
-						<Icon icon={ atSymbol } />{ ' ' }
-						<strong>{ __( "We're importing your subscribers." ) }</strong>
-						<br />
-					</p>
-				</div>
-				<p>
-					{ __(
-						"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
-					) }
-				</p>
-				<p>
-					<ProgressBar className="is-larger-progress-bar" />
-				</p>
-			</>
 		);
 	}
 
@@ -54,44 +36,53 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
-			<div className="summary__content-stats">
+			<dl className="summary__content-stats">
 				{ subscribedCount > 0 && (
-					<div className="summary__content-stat-item">
-						<Icon icon={ people } />
-						<span>{ __( 'Total Subscribers' ) }</span>
-						<strong>{ subscribedCount }</strong>
-					</div>
+					<>
+						<dt>
+							<Icon icon={ people } /> { __( 'Total Subscribers' ) }
+						</dt>
+						<dd>{ subscribedCount }</dd>
+					</>
 				) }
-
 				{ addedFree > 0 && (
-					<div className="summary__content-stat-item summary__content-stat-item-indent">
-						<span>{ __( 'Free subscribers' ) }</span>
-						<strong>{ addedFree }</strong>
-					</div>
+					<>
+						<dt className="summary__content-indent">{ __( 'Free subscribers' ) }</dt>
+						<dd>{ addedFree }</dd>
+					</>
 				) }
-
+				{ addedFree > 0 && (
+					<>
+						<dt className="summary__content-indent">{ __( 'Free subscribers' ) }</dt>
+						<dd>{ addedFree }</dd>
+					</>
+				) }
 				{ addedPaid > 0 && (
-					<div className="summary__content-stat-item summary__content-stat-item-indent">
-						<span>{ __( 'Paid subscribers' ) }</span>
-						<strong>{ addedPaid }</strong>
-					</div>
+					<>
+						<dt className="summary__content-indent">{ __( 'Paid subscribers' ) }</dt>
+						<dd>{ addedPaid }</dd>
+					</>
 				) }
-
 				{ existingTotal > 0 && (
-					<div className="summary__content-stat-item summary__content-stat-item-indent">
-						<span>{ __( 'Skipped (Duplicate)' ) }</span>
-						<strong>{ existingTotal }</strong>
-					</div>
+					<>
+						<dt className="summary__content-indent">{ __( 'Skipped (duplicate)' ) }</dt>
+						<dd>{ existingTotal }</dd>
+					</>
 				) }
-
 				{ failedTotal > 0 && (
-					<div className="summary__content-stat-item summary__content-stat-item-indent">
-						<span>{ __( 'Not imported' ) }</span>
-						<Icon icon={ info } className="info-icon" />
-						<strong>{ failedTotal }</strong>
-					</div>
+					<>
+						<dt className="summary__content-indent">
+							{ __( 'Not imported' ) }
+							<Tooltip>
+								<Icon icon={ info } size={ 16 } />
+							</Tooltip>
+						</dt>
+						<dd>{ failedTotal }</dd>
+					</>
 				) }
-			</div>
+			</dl>
 		);
 	}
+
+	return null;
 }

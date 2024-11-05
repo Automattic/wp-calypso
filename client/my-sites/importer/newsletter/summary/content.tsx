@@ -1,31 +1,7 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Icon, verse, page, file } from '@wordpress/icons';
+import { Icon, verse, page, post, file } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
-
-function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
-	return (
-		<div className="summary__content-stats">
-			{ postsNumber > 0 && (
-				<div className="summary__content-stat-item">
-					<Icon icon={ verse } /> <span>{ __( 'Posts' ) }</span> <strong>{ postsNumber }</strong>
-				</div>
-			) }
-			{ pagesNumber > 0 && (
-				<div className="summary__content-stat-item">
-					<Icon icon={ page } /> <span>{ __( 'Pages' ) }</span> <strong>{ pagesNumber }</strong>
-				</div>
-			) }
-			{ attachmentsNumber > 0 && (
-				<div className="summary__content-stat-item">
-					<Icon icon={ file } /> <span>{ __( 'Media' ) }</span>{ ' ' }
-					<strong>{ attachmentsNumber }</strong>
-				</div>
-			) }
-		</div>
-	);
-}
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
@@ -48,36 +24,41 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 		);
 	}
 
-	if ( status === 'importing' || status === 'processing' ) {
-		return (
-			<div className="summary__content">
-				<p>
-					<Icon icon={ post } /> <strong>{ __( "We're importing your content." ) }</strong>
-					<br />
-					{ __(
-						"This may take a few minutes. Feel free to leave this window — we'll let you know when it's done."
-					) }
-				</p>
-			</div>
-		);
-	}
-
 	if ( status === 'done' ) {
 		const progress = stepContent.progress;
+		const posts = progress.post.completed;
+		const pages = progress.page.completed;
+		const attachments = progress.attachment.completed;
 
 		return (
-			<div className="summary__content">
-				<p>{ __( "Here's a summary of the imported data:" ) }</p>
-				<p>
-					{ getSummaryCopy(
-						progress.post.completed,
-						progress.page.completed,
-						progress.attachment.completed
-					) }
-				</p>
-			</div>
+			<dl className="summary__content-stats">
+				{ posts > 0 && (
+					<>
+						<dt>
+							<Icon icon={ verse } /> { __( 'Posts' ) }
+						</dt>
+						<dd>{ posts }</dd>
+					</>
+				) }
+				{ pages > 0 && (
+					<>
+						<dt>
+							<Icon icon={ page } /> { __( 'Pages' ) }
+						</dt>
+						<dd>{ pages }</dd>
+					</>
+				) }
+				{ attachments > 0 && (
+					<>
+						<dt>
+							<Icon icon={ file } /> { __( 'Media items' ) }
+						</dt>
+						<dd>{ attachments }</dd>
+					</>
+				) }
+			</dl>
 		);
 	}
 
-	return;
+	return null;
 }
