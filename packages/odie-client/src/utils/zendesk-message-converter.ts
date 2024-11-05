@@ -5,11 +5,14 @@ function prepareMarkdownImage( imgUrl: string ): string {
 }
 
 function convertUrlsToMarkdown( text: string ): string {
-	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+\b)/g;
+	const urlRegex =
+		/\b(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s<>[\](){}'"]*)?/gi;
 
 	return text.replace( urlRegex, ( url ) => {
-		const fullUrl = url.startsWith( 'http' ) ? url : `https://${ url }`;
-		return `[${ url }](${ fullUrl })`;
+		// Clean up any trailing punctuation
+		const cleanUrl = url.replace( /[.,!?]+$/, '' );
+		const fullUrl = cleanUrl.startsWith( 'http' ) ? cleanUrl : `https://${ cleanUrl }`;
+		return `[${ cleanUrl }](${ fullUrl })`;
 	} );
 }
 
