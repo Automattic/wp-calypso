@@ -11,11 +11,16 @@ import {
 import { indexPage } from './deployments/routes';
 import Logs from './logs';
 import Monitoring from './monitoring';
+import useIsSftpSshSettingSupported from './sftp-ssh/hooks/use-is-sftp-ssh-setting-supported';
+import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
+import SftpSsh from './sftp-ssh/page';
 import StagingSite from './staging-site';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
+	const shouldShowSftpSsh = useIsSftpSshSettingSupported();
+	const sftpSshTitle = useSftpSshSettingTitle();
 
 	return (
 		<Sidebar>
@@ -27,7 +32,9 @@ export function ToolsSidebar() {
 			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
 			<SidebarItem href={ `/sites/tools/logs/${ slug }` }>{ __( 'Logs' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/tools/sftp-ssh/${ slug }` }>{ __( 'SFTP/SSH' ) }</SidebarItem>
+			<SidebarItem enabled={ !! shouldShowSftpSsh } href={ `/sites/tools/sftp-ssh/${ slug }` }>
+				{ sftpSshTitle }
+			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/database/${ slug }` }>{ __( 'Database' ) }</SidebarItem>
 		</Sidebar>
 	);
@@ -133,7 +140,7 @@ export function sftpSsh( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<ToolsSidebar />
-			<p>SFTP/SSH</p>
+			<SftpSsh />
 		</PanelWithSidebar>
 	);
 	next();

@@ -17,6 +17,10 @@
 		width: 100%;
 	}
 
+	.form-text-input, .form-select {
+		font-size: 0.875rem !important;
+	}
+
 	@include break-small {
 		flex-direction: row;
 		align-items: flex-start;
