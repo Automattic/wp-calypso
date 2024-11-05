@@ -84,9 +84,6 @@ Object.assign( AssetsWriter.prototype, {
 				Object.assign( {}, chunk, {
 					chunks: stats.namedChunkGroups[ chunk.id ]?.chunks,
 					files: chunk.files.map( fixupPath ),
-					siblings: _.reject( chunk.siblings, ( sibling ) =>
-						String( sibling ).startsWith( this.options.runtimeChunk )
-					),
 				} )
 			);
 
