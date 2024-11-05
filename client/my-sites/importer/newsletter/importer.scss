@@ -58,8 +58,6 @@
 			fill: var(--studio-gray-50);
 		}
 	}
-	*/
-
 	dl.summary__content-stats {
 		max-width: 200px;
 		display: flex;
@@ -68,16 +66,30 @@
 		dt {
 			font-weight: 400;
 			margin: 0;
+			width: 80%;
+
+			&.summary__content-indent {
+				font-weight: 400;
+				padding-left: 24px;
+			}
 		}
 
 		dd {
 			font-weight: 600;
 			margin: 0 0 0 auto;
+			width: 20%;
+			text-align: right;
 		}
+	}
+	*/
 
-		.summary__content-indent {
-			margin-left: 30px;
-		}
+	table.summary__content-stats {
+		max-width: 200px;
+	}
+
+	.summary__content-stats-label {
+		min-width: 180px;
+		padding-right: 10px;
 	}
 
 	.stripe-logo {

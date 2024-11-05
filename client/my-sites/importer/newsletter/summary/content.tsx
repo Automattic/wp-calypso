@@ -31,32 +31,35 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 		const attachments = progress.attachment.completed;
 
 		return (
-			<dl className="summary__content-stats">
+			<table className="summary__content-stats">
 				{ posts > 0 && (
-					<>
-						<dt>
-							<Icon icon={ verse } /> { __( 'Posts' ) }
-						</dt>
-						<dd>{ posts }</dd>
-					</>
+					<tr>
+						<td>
+							<Icon icon={ verse } />
+						</td>
+						<td className="summary__content-stats-label">{ __( 'Posts' ) }</td>
+						<td>{ posts }</td>
+					</tr>
 				) }
 				{ pages > 0 && (
-					<>
-						<dt>
-							<Icon icon={ page } /> { __( 'Pages' ) }
-						</dt>
-						<dd>{ pages }</dd>
-					</>
+					<tr>
+						<td>
+							<Icon icon={ page } />
+						</td>
+						<td className="summary__content-stats-label">{ __( 'Pages' ) }</td>
+						<td>{ pages }</td>
+					</tr>
 				) }
 				{ attachments > 0 && (
-					<>
-						<dt>
-							<Icon icon={ file } /> { __( 'Media items' ) }
-						</dt>
-						<dd>{ attachments }</dd>
-					</>
+					<tr>
+						<td>
+							<Icon icon={ file } />
+						</td>
+						<td className="summary__content-stats-label">{ __( 'Media items' ) }</td>
+						<td>{ attachments }</td>
+					</tr>
 				) }
-			</dl>
+			</table>
 		);
 	}
 

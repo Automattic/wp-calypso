@@ -36,45 +36,50 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
-			<dl className="summary__content-stats">
+			<table className="summary__content-stats">
 				{ subscribedCount > 0 && (
-					<>
-						<dt>
-							<Icon icon={ people } /> { __( 'Total Subscribers' ) }
-						</dt>
-						<dd>{ subscribedCount }</dd>
-					</>
+					<tr>
+						<td>
+							<Icon icon={ people } />
+						</td>
+						<td className="summary__content-stats-label">{ __( 'Total Subscribers' ) }</td>
+						<td>{ subscribedCount }</td>
+					</tr>
 				) }
 				{ addedFree > 0 && (
-					<>
-						<dt className="summary__content-indent">{ __( 'Free subscribers' ) }</dt>
-						<dd>{ addedFree }</dd>
-					</>
+					<tr>
+						<td></td>
+						<td className="summary__content-stats-label">{ __( 'Free subscribers' ) }</td>
+						<td>{ addedFree }</td>
+					</tr>
 				) }
 				{ addedPaid > 0 && (
-					<>
-						<dt className="summary__content-indent">{ __( 'Paid subscribers' ) }</dt>
-						<dd>{ addedPaid }</dd>
-					</>
+					<tr>
+						<td></td>
+						<td className="summary__content-stats-label">{ __( 'Paid subscribers' ) }</td>
+						<td>{ addedPaid }</td>
+					</tr>
 				) }
 				{ existingTotal > 0 && (
-					<>
-						<dt className="summary__content-indent">{ __( 'Skipped (duplicate)' ) }</dt>
-						<dd>{ existingTotal }</dd>
-					</>
+					<tr>
+						<td></td>
+						<td className="summary__content-stats-label">{ __( 'Skipped (duplicate)' ) }</td>
+						<td>{ existingTotal }</td>
+					</tr>
 				) }
 				{ failedTotal > 0 && (
-					<>
-						<dt className="summary__content-indent">
+					<tr>
+						<td></td>
+						<td className="summary__content-stats-label">
 							{ __( 'Not imported' ) }
 							<Tooltip>
 								<Icon icon={ info } size={ 16 } />
 							</Tooltip>
-						</dt>
-						<dd>{ failedTotal }</dd>
-					</>
+						</td>
+						<td>{ failedTotal }</td>
+					</tr>
 				) }
-			</dl>
+			</table>
 		);
 	}
 
