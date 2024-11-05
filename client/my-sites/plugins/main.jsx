@@ -37,6 +37,7 @@ import {
 	requestPluginsError,
 	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
@@ -77,6 +78,7 @@ export class PluginsMain extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const {
+			currentPlugins,
 			hasJetpackSites: hasJpSites,
 			selectedSiteIsJetpack,
 			selectedSiteSlug,
@@ -84,6 +86,13 @@ export class PluginsMain extends Component {
 			hasManagePlugins,
 			search,
 		} = this.props;
+
+		currentPlugins.map( ( plugin ) => {
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
+			if ( ! pluginData && ! config.isEnabled( 'bulk-plugin-management' ) ) {
+				this.props.wporgFetchPluginData( plugin.slug );
+			}
+		} );
 
 		if (
 			( prevProps.isRequestingSites && ! this.props.isRequestingSites ) ||
@@ -675,6 +684,7 @@ export default flow(
 			};
 		},
 		{
+			wporgFetchPluginData,
 			recordTracksEvent,
 			recordGoogleEvent,
 			appendBreadcrumb,

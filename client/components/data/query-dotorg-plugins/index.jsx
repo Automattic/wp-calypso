@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,7 +26,7 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 		if ( pluginSlugList.length ) {
 			const pluginSlug = queueRef.current.shift();
 
-			if ( pluginSlug ) {
+			if ( pluginSlug && config.isEnabled( 'bulk-plugin-management' ) ) {
 				dispatch( wporgFetchPluginData( pluginSlug ) );
 			}
 		}
