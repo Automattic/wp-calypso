@@ -133,7 +133,7 @@ interface ConversationParticipant {
 }
 
 export type ZendeskMessage = {
-	avatarUrl: string;
+	avatarUrl?: string;
 	displayName: string;
 	id: string;
 	received: number;
