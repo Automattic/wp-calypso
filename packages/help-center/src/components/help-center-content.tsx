@@ -3,6 +3,8 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data/use-manage-support-interaction';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -50,11 +52,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName } = useHelpCenterContext();
+	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
 	const { isLoading: isLoadingChatStatus } = useChatStatus();
 
 	const { data, isLoading: isLoadingEligibility } = useSupportStatus();
+	const { startNewInteraction } = useManageSupportInteraction();
+	const {
+		data: supportInteractions,
+		isLoading: isLoadingSupportInteraction,
+		refetch,
+	} = useGetSupportInteractions( 'help-center' );
 
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
 	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus || isLoadingEligibility;
@@ -70,13 +79,36 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} );
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
-	const { navigateToRoute, isMinimized } = useSelect( ( select ) => {
+	const { currentSupportInteraction, navigateToRoute, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
 			navigateToRoute: store.getNavigateToRoute(),
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+
+	useEffect( () => {
+		if ( ! isLoadingSupportInteraction ) {
+			if (
+				supportInteractions &&
+				supportInteractions.length === 0 &&
+				! currentSupportInteraction
+			) {
+				const helpCenterInteractionId = Number( `${ currentUser?.ID ?? site?.ID }${ Date.now() }` );
+
+				startNewInteraction( {
+					event_source: 'help-center',
+					event_external_id: helpCenterInteractionId,
+				} ).then( ( interaction ) => {
+					setCurrentSupportInteraction( interaction );
+					refetch();
+				} );
+			} else if ( supportInteractions && supportInteractions.length > 0 ) {
+				setCurrentSupportInteraction( supportInteractions[ 0 ] );
+			}
+		}
+	}, [ supportInteractions, isLoadingSupportInteraction ] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {

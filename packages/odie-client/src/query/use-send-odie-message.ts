@@ -1,9 +1,13 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, useGetOdieStorage, useSetOdieStorage } from '../data';
+import { broadcastOdieMessage } from '../data';
+import { useManageSupportInteraction } from '../data/use-manage-support-interaction';
 import { generateUUID } from '../utils';
 import { useOdieChat } from './use-odie-chat';
 import type { Message, Chat } from '../types/';
@@ -14,9 +18,15 @@ import type { Message, Chat } from '../types/';
  * @returns useMutation return object.
  */
 export const useSendOdieMessage = () => {
-	const chatId = useGetOdieStorage( 'chat_id' );
-	const storeChatId = useSetOdieStorage( 'chat_id' );
-	const { updateCache } = useOdieChat();
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
+	const { chat, updateCache } = useOdieChat();
+	const chatId = chat?.chat_id;
+	const { addEventToInteraction } = useManageSupportInteraction();
 	const internal_message_id = generateUUID();
 
 	const {
@@ -65,7 +75,15 @@ export const useSendOdieMessage = () => {
 				return;
 			}
 
-			storeChatId( chat.chat_id?.toString() || '' );
+			if ( ! chatId ) {
+				addEventToInteraction( {
+					interactionId: currentSupportInteraction.uuid,
+					eventData: {
+						event_external_id: chat.chat_id,
+						event_source: 'odie',
+					},
+				} );
+			}
 
 			const botMessage: Message = {
 				message_id: chat.messages[ 0 ].message_id,

@@ -1,8 +1,10 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import { useGetOdieStorage } from '../data';
 import { Message, Chat } from '../types/';
 
 /**
@@ -13,10 +15,18 @@ export const useOdieChat = (
 	perPage = 30,
 	includeFeedback = true
 ): {
-	chat: Chat | undefined;
+	chat: Chat;
 	updateCache: ( messages: Message[] ) => void;
 } => {
-	const chatId = useGetOdieStorage( 'chat_id' ) || 0;
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
+	const chatId = currentSupportInteraction?.events.find( ( event ) => event.source === 'odie' )
+		?.event_external_id;
+
 	const queryClient = useQueryClient();
 	const { botNameSlug } = useOdieAssistantContext();
 
@@ -74,5 +84,5 @@ export const useOdieChat = (
 		} );
 	};
 
-	return { chat, updateCache };
+	return { chat: chat || { chat_id: null, messages: [] }, updateCache };
 };

@@ -2,6 +2,8 @@ import { getShortDateString } from '@automattic/i18n-utils';
 import { useRef } from 'react';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
+import { getOdieInitialMessage } from '../../context/get-odie-initial-message';
+import { useOdieChat } from '../../query/use-odie-chat';
 import useAutoScroll from '../../useAutoScroll';
 import { useZendeskMessageListener } from '../../utils';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -30,7 +32,9 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { chat } = useOdieChat( 1, 30 );
+
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
@@ -44,6 +48,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
+				<ChatMessage
+					message={ getOdieInitialMessage() }
+					key={ 0 }
+					currentUser={ currentUser }
+					isNextMessageFromSameSender={ false }
+					displayChatWithSupportLabel={ false }
+				/>
 				{ chat.messages.map( ( message, index ) => (
 					<ChatMessage
 						message={ message }
