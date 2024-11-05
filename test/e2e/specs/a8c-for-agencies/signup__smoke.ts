@@ -49,7 +49,7 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		// Select the user type to site owner
 		await page
 			.getByRole( 'combobox', { name: 'How would you describe yourself?' } )
-			.selectOption( { value: 'site_owner' } );
+			.selectOption( { label: "I do not work at an agency. I'm a site owner." } );
 
 		// Verify the message is displayed
 		const message = await page.$(
@@ -60,7 +60,7 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		// Select the user type to agency owner
 		await page
 			.getByRole( 'combobox', { name: 'How would you describe yourself?' } )
-			.selectOption( { value: 'agency_owner' } );
+			.selectOption( { label: "I'm an agency owner" } );
 
 		// Select the number of managed sites
 		await page
