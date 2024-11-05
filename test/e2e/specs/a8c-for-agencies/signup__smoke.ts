@@ -65,7 +65,7 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		// Select the number of managed sites
 		await page
 			.getByRole( 'combobox', { name: 'How many sites do you manage?' } )
-			.selectOption( { value: '6-20' } );
+			.selectOption( { label: '6-20' } );
 
 		// Select the services offered
 		await page.getByRole( 'checkbox', { name: 'Strategy Consulting' } ).check();
@@ -96,5 +96,13 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		expect( await page.getByRole( 'checkbox', { name: 'WordPress.com' } ).isChecked() ).toBe(
 			true
 		);
+		expect( await page.getByPlaceholder( 'Street name and house number' ).inputValue() ).toBe(
+			'123 Main St'
+		);
+		expect(
+			await page.getByPlaceholder( 'Apartment, floor, suite or unit number' ).inputValue()
+		).toBe( 'Suite 101' );
+		expect( await page.getByLabel( 'City' ).inputValue() ).toBe( 'San Francisco' );
+		expect( await page.getByLabel( 'Postal code' ).inputValue() ).toBe( '94105' );
 	} );
 } );
