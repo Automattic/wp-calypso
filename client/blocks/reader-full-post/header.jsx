@@ -43,6 +43,29 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<div className={ clsx( classes ) }>
+			{ layout === 'recent' && (
+				<div className="reader-full-post__header-site-icon">
+					{ ( () => {
+						if ( author?.avatar_URL ) {
+							return (
+								<img
+									src={ author.avatar_URL }
+									alt={ siteName }
+									className="reader-full-post__site-icon"
+								/>
+							);
+						}
+						if ( siteIcon ) {
+							return (
+								<img src={ siteIcon } alt={ siteName } className="reader-full-post__site-icon" />
+							);
+						}
+						return (
+							<img src={ feedIcon } alt={ siteName } className="reader-full-post__site-icon" />
+						);
+					} )() }
+				</div>
+			) }
 			{ post.title ? (
 				<AutoDirection>
 					<h1 className="reader-full-post__header-title">

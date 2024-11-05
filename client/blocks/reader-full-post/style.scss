@@ -663,6 +663,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post {
+	.reader-full-post__header-site-icon {
+		float: left;
+		margin-right: 20px;
+	}
+	.reader-full-post__site-icon {
+		border-radius: 50%;
+		height: 80px;
+	}
 	.reader-full-post__header--recent {
 		.reader-full-post__header-meta {
 			span {
