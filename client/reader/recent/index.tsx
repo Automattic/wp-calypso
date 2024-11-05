@@ -74,7 +74,7 @@ const Recent = () => {
 		if ( data?.items?.length > 0 && ! selectedItem ) {
 			setSelectedItem( data.items[ 0 ] );
 		}
-	}, [ data?.items?.length, selectedItem ] );
+	}, [ data?.items, selectedItem ] );
 
 	return (
 		<div className="recent-feed">
@@ -91,8 +91,8 @@ const Recent = () => {
 						setView( { type: newView.type, fields: newView.fields ?? [] } )
 					}
 					paginationInfo={ {
-						totalItems: 100,
-						totalPages: 10,
+						totalItems: 0,
+						totalPages: 0,
 					} }
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
