@@ -372,8 +372,10 @@ export function CheckoutSummaryRefundWindows( {
 		const refundWindow = refundWindows[ 0 ];
 		const planBundleRefundPolicy = refundPolicies.find(
 			( refundPolicy ) =>
+				refundPolicy === RefundPolicy.PlanTriennialBundle ||
 				refundPolicy === RefundPolicy.PlanBiennialBundle ||
-				refundPolicy === RefundPolicy.PlanYearlyBundle
+				refundPolicy === RefundPolicy.PlanYearlyBundle ||
+				refundPolicy === RefundPolicy.PlanMonthlyBundle
 		);
 		const planProduct = cart.products.find( isPlan );
 
