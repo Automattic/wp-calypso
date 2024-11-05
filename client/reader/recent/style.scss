@@ -3,6 +3,16 @@
 
 	&__list-column {
 		flex: 1;
+
+		.recent-post-field {
+			display: flex;
+			align-items: center;
+			text-align: left;
+
+			&__title-text {
+				font-weight: 700;
+			}
+		}
 	}
 
 	&__post-column {
