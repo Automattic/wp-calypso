@@ -13,14 +13,12 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 	const { __ } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
-			<div className="summary__content">
-				<p>
-					<Icon icon={ post } />
-					{ createInterpolateElement( __( 'You <strong>skipped</strong> content importing.' ), {
-						strong: <strong />,
-					} ) }
-				</p>
-			</div>
+			<p>
+				<Icon icon={ post } />
+				{ createInterpolateElement( __( 'You <strong>skipped</strong> content importing.' ), {
+					strong: <strong />,
+				} ) }
+			</p>
 		);
 	}
 
@@ -38,7 +36,9 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 							<Icon icon={ verse } />
 						</td>
 						<td className="summary__content-stats-label">{ __( 'Posts' ) }</td>
-						<td>{ posts }</td>
+						<td>
+							<strong>{ posts }</strong>
+						</td>
 					</tr>
 				) }
 				{ pages > 0 && (
@@ -47,7 +47,9 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 							<Icon icon={ page } />
 						</td>
 						<td className="summary__content-stats-label">{ __( 'Pages' ) }</td>
-						<td>{ pages }</td>
+						<td>
+							<strong>{ pages }</strong>
+						</td>
 					</tr>
 				) }
 				{ attachments > 0 && (
@@ -56,7 +58,9 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 							<Icon icon={ file } />
 						</td>
 						<td className="summary__content-stats-label">{ __( 'Media items' ) }</td>
-						<td>{ attachments }</td>
+						<td>
+							<strong>{ attachments }</strong>
+						</td>
 					</tr>
 				) }
 			</table>

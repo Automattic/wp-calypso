@@ -1,6 +1,6 @@
 import { Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, people, atSymbol, info } from '@wordpress/icons';
+import { Icon, people, help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
@@ -13,14 +13,12 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 	const { __ } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
-			<div className="summary__content">
-				<p>
-					<Icon icon={ atSymbol } />
-					{ createInterpolateElement( __( 'You <strong>skipped</strong> subscriber importing.' ), {
-						strong: <strong />,
-					} ) }
-				</p>
-			</div>
+			<p>
+				<Icon icon={ people } />
+				{ createInterpolateElement( __( 'You <strong>skipped</strong> subscriber importing.' ), {
+					strong: <strong />,
+				} ) }
+			</p>
 		);
 	}
 
@@ -43,37 +41,39 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 							<Icon icon={ people } />
 						</td>
 						<td className="summary__content-stats-label">{ __( 'Total Subscribers' ) }</td>
-						<td>{ subscribedCount }</td>
+						<td>
+							<strong>{ subscribedCount }</strong>
+						</td>
 					</tr>
 				) }
 				{ addedFree > 0 && (
-					<tr>
+					<tr className="summary__content-indent">
 						<td></td>
 						<td className="summary__content-stats-label">{ __( 'Free subscribers' ) }</td>
 						<td>{ addedFree }</td>
 					</tr>
 				) }
 				{ addedPaid > 0 && (
-					<tr>
+					<tr className="summary__content-indent">
 						<td></td>
 						<td className="summary__content-stats-label">{ __( 'Paid subscribers' ) }</td>
 						<td>{ addedPaid }</td>
 					</tr>
 				) }
 				{ existingTotal > 0 && (
-					<tr>
+					<tr className="summary__content-indent">
 						<td></td>
 						<td className="summary__content-stats-label">{ __( 'Skipped (duplicate)' ) }</td>
 						<td>{ existingTotal }</td>
 					</tr>
 				) }
 				{ failedTotal > 0 && (
-					<tr>
+					<tr className="summary__content-indent">
 						<td></td>
 						<td className="summary__content-stats-label">
 							{ __( 'Not imported' ) }
 							<Tooltip>
-								<Icon icon={ info } size={ 16 } />
+								<Icon icon={ help } size={ 16 } />
 							</Tooltip>
 						</td>
 						<td>{ failedTotal }</td>

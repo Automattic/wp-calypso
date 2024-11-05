@@ -85,21 +85,24 @@ export default function Summary( {
 					<p>
 						{ sprintf(
 							// translators: %s the site name
-							__( 'Here’s a summary of the imported data to %s' ),
+							__( 'Here’s a summary of the imported data to %s:' ),
 							selectedSite.name
 						) }
 					</p>
-
-					{ steps.content.content && (
-						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
-					) }
-
-					{ steps.subscribers.content && (
-						<SubscribersSummary
-							stepContent={ steps.subscribers.content }
-							status={ steps.subscribers.status }
-						/>
-					) }
+					<div className="summary__content">
+						{ steps.content.content && (
+							<ContentSummary
+								stepContent={ steps.content.content }
+								status={ steps.content.status }
+							/>
+						) }
+						{ steps.subscribers.content && (
+							<SubscribersSummary
+								stepContent={ steps.subscribers.content }
+								status={ steps.subscribers.status }
+							/>
+						) }
+					</div>
 					{ showPauseSubstackBillingWarning && (
 						<Notice status="warning" className="importer__notice" isDismissible={ false }>
 							<h2>{ __( 'Action required' ) }</h2>
@@ -126,6 +129,8 @@ export default function Summary( {
 							/>
 						</Notice>
 					) }
+					<hr />
+					<p>{ __( 'What would you like to do next?' ) }</p>
 					<ImporterActionButtonContainer noSpacing>
 						<ImporterActionButton
 							href={ '/settings/newsletter/' + selectedSite.slug }

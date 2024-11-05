@@ -40,10 +40,11 @@
 		box-shadow: none;
 	}
 
-	/*
 	.summary__content {
 		clear: both;
 		margin-bottom: 12px;
+	}
+	/*
 
 		p {
 			position: relative;
@@ -58,33 +59,26 @@
 			fill: var(--studio-gray-50);
 		}
 	}
-	dl.summary__content-stats {
-		max-width: 200px;
-		display: flex;
-		flex-wrap: wrap;
-
-		dt {
-			font-weight: 400;
-			margin: 0;
-			width: 80%;
-
-			&.summary__content-indent {
-				font-weight: 400;
-				padding-left: 24px;
-			}
-		}
-
-		dd {
-			font-weight: 600;
-			margin: 0 0 0 auto;
-			width: 20%;
-			text-align: right;
-		}
-	}
 	*/
 
 	table.summary__content-stats {
 		max-width: 200px;
+		margin-bottom: 0;
+		td {
+			vertical-align: middle;
+			font-size: $font-body;
+		}
+		svg {
+			margin-top: 3px;
+			margin-right: 5px;
+		}
+	}
+
+	.summary__content-indent {
+		color: var( --studio-gray-50 );
+		svg {
+			fill: var( --studio-gray-50 );
+		}
 	}
 
 	.summary__content-stats-label {
