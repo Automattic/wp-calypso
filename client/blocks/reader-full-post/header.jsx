@@ -1,6 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
-import { getLocaleSlug } from 'i18n-calypso';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -62,7 +62,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 			<div className="reader-full-post__header-meta">
 				{ followCount ? (
 					<div className="author-compact-profile__follow-count">
-						{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
+						{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 							count: followCount,
 							args: {
 								followCount: formatNumber( followCount, getLocaleSlug() ),
