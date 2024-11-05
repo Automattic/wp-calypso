@@ -61,7 +61,7 @@ $blueberry-color: #3858e9;
 
 
 	&[disabled] {
-		background-color: var(--color-neutral-20);
+		background-color: var(--color-neutral-20) !important;
 		border-color: var(--color-neutral-5);
 		cursor: default;
 

@@ -44,8 +44,8 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 
 	// Track the redirect event
 	recordTracksEvent( 'calypso_tailored_flows_redirect', {
-		redirectFromUrl: location.pathname + location.search,
-		redirectToUrl: finalUrl,
+		redirect_from_url: location.pathname + location.search,
+		redirect_to_url: finalUrl,
 		referrer: document.referrer,
 	} );
 
