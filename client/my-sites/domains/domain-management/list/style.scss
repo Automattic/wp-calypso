@@ -170,14 +170,17 @@
 		align-items: flex-start;
 	}
 	.domains-table {
+		max-width: 1400px;
+		margin-left: auto;
+		margin-right: auto;
+
 		@include break-xhuge {
-			max-width: 1400px;
 			margin-left: auto;
 			margin-right: auto;
 		}
 		.domains-table-toolbar {
 			@include break-huge {
-				margin-inline: 64px;
+				margin-inline: 48px;
 			}
 		}
 
