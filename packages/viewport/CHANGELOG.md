@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Added the ability to match breakpoints by screen width or height (#95984)
+
 ## 1.1.0
 
 - Update dependency typescript to ^4.5.5 (#60420)
