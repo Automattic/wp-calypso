@@ -59,7 +59,7 @@ export default () => {
 			}
 
 			if ( ! chunk.chunks ) {
-				console.warn( 'cannot find the chunks of the chunk ' + chunkName );
+				console.warn( 'cannot find the chunks of the chunk group ' + chunkName );
 				return EMPTY_ASSETS;
 			}
 
