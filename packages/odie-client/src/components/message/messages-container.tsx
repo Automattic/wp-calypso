@@ -39,6 +39,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 		return currentMessage === nextMessage;
 	};
+
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
@@ -57,10 +58,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				) ) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 				{ chatStatus === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
-				<div className="odie-chatbox__action-message">
-					{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
-					{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
-				</div>
+				{ [ 'sending', 'dislike' ].includes( chatStatus ) && (
+					<div className="odie-chatbox__action-message">
+						{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
+						{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
+					</div>
+				) }
 			</div>
 		</>
 	);
