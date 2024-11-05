@@ -13,8 +13,13 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
+import {
+	getSelectedDomain,
+	canCurrentUserAddEmail,
+	getCurrentUserCannotAddEmailReason,
+} from 'calypso/lib/domains';
 import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
@@ -92,7 +97,9 @@ const EmailProvidersStackedComparison = ( {
 	);
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
-	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
+	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart && false;
+	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
+	const isGravatarDomain = cannotAddEmailWarningReason?.code === 'domain-gravatar-domain';
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -292,12 +299,19 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ showNonOwnerMessage && (
+				{ showNonOwnerMessage && ! isGravatarDomain && (
 					<EmailNonDomainOwnerMessage
 						domain={ domain }
 						selectedSite={ selectedSite }
 						source="email-comparison"
 					/>
+				) }
+				{ isGravatarDomain && (
+					<Notice showDismiss={ false } className="email-providers-stacked-comparison__notice">
+						{ translate(
+							'This is a Gravatar domain and cannot have email services purchased for it.'
+						) }
+					</Notice>
 				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
