@@ -5,6 +5,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { FullPostView } from 'calypso/blocks/reader-full-post';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -20,16 +21,7 @@ const Recent = () => {
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
-		fields: [ 'recent_post', 'seen', 'post' ],
-		layout: {
-			combinedFields: [
-				{
-					id: 'recent_post',
-					children: [ 'seen', 'post' ],
-					direction: 'horizontal',
-				},
-			],
-		},
+		fields: [ 'seen', 'post' ],
 	} );
 
 	const { data, posts } = useSelector( ( state: AppState ) => {
@@ -67,7 +59,13 @@ const Recent = () => {
 				id: 'seen',
 				label: translate( 'Seen' ),
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentSeenField post={ getPostFromItem( item ) } />;
+					return (
+						<RecentSeenField
+							item={ item }
+							post={ getPostFromItem( item ) }
+							setSelectedItem={ setSelectedItem }
+						/>
+					);
 				},
 				enableHiding: false,
 			},
@@ -121,20 +119,24 @@ const Recent = () => {
 	return (
 		<div className="recent-feed">
 			<div className="recent-feed__list-column">
-				<h1>{ translate( 'All Recent' ) }</h1>
-				<DataViews
-					getItemId={ ( item: ReaderPost, index = 0 ) =>
-						item.postId?.toString() ?? `item-${ index }`
-					}
-					view={ view as View }
-					fields={ fields }
-					data={ shownData }
-					onChangeView={ ( newView: View ) =>
-						setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
-					}
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ defaultLayouts as SupportedLayouts }
-				/>
+				<div className="recent-feed__list-column-header">
+					<FormattedHeader align="left" headerText={ translate( 'All Recent' ) } />
+				</div>
+				<div className="recent-feed__list-column-content">
+					<DataViews
+						getItemId={ ( item: ReaderPost, index = 0 ) =>
+							item.postId?.toString() ?? `item-${ index }`
+						}
+						view={ view as View }
+						fields={ fields }
+						data={ shownData }
+						onChangeView={ ( newView: View ) =>
+							setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
+						}
+						paginationInfo={ paginationInfo }
+						defaultLayouts={ defaultLayouts as SupportedLayouts }
+					/>
+				</div>
 			</div>
 			<div className="recent-feed__post-column">
 				{ selectedItem && getPostFromItem( selectedItem ) && (
