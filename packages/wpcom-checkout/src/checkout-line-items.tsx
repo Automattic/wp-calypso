@@ -785,6 +785,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per month', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -794,6 +795,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per year', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -803,6 +805,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per two years', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -812,11 +815,51 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per three years', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
 
 	return <DefaultLineItemSublabel product={ product } />;
+}
+
+function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const expiryDate = product.subscription_expiry_date
+		? formatDate( product.subscription_expiry_date )
+		: undefined;
+	const postRenewExpiry = product.subscription_post_purchase_expiry_date
+		? formatDate( product.subscription_post_purchase_expiry_date )
+		: undefined;
+	return (
+		<>
+			{ expiryDate && (
+				<>
+					<br />
+					{ translate( 'Currently expires on %(expiryDate)s', { args: { expiryDate } } ) }{ ' ' }
+				</>
+			) }
+			{ postRenewExpiry && (
+				<>
+					<br />
+					{ translate( 'After purchase, will expire on %(postRenewExpiry)s', {
+						args: { postRenewExpiry },
+					} ) }
+				</>
+			) }
+		</>
+	);
+}
+
+function formatDate( isoDate: string ): string {
+	// This somewhat mimics `moment.format('ll')` (used here formerly) without
+	// needing the deprecated `moment` package.
+	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
+		weekday: undefined,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	} );
 }
 
 function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {
