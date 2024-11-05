@@ -1,5 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { Gridicon, WordPressLogo, FoldableCard } from '@automattic/components';
+import { Gridicon, WordPressWordmark, FoldableCard } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import {
@@ -161,6 +161,11 @@ const StyledFoldableCard = styled( FoldableCard )`
 		.foldable-card__header {
 			.foldable-card__main {
 				justify-content: flex-end;
+				margin-right: 0;
+				max-width: calc( 100% - 20px );
+			}
+			.foldable-card__action {
+				width: 32px;
 			}
 			.gridicons-chevron-down {
 				fill: var( --studio-gray-0 );
@@ -178,12 +183,17 @@ const StyledFoldableCard = styled( FoldableCard )`
 
 const WordPressLogoWrapper = styled.div`
 	position: absolute;
-	top: 24px;
-	left: 24px;
+	top: 20px;
+	left: 0;
 `;
 
-function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobile: boolean } > ) {
-	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+function InfoColumnWrapper( {
+	isMobile,
+	flowName,
+	children,
+}: PropsWithChildren< { isMobile: boolean; flowName: string } > ) {
+	const planTitle =
+		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
 
 	return isMobile ? (
 		<StyledFoldableCard smooth hideSummary header={ planTitle }>
@@ -237,7 +247,7 @@ function InfoColumn( {
 				isMobile={ isMobile }
 			>
 				<WordPressLogoWrapper>
-					<WordPressLogo size={ 24 } />
+					<WordPressWordmark size={ { width: 200, height: 25 } } />
 				</WordPressLogoWrapper>
 
 				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
@@ -295,7 +305,7 @@ function HundredYearPlanStepWrapper( props: Props ) {
 					>
 						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
-							<InfoColumnWrapper isMobile={ isMobile }>
+							<InfoColumnWrapper isMobile={ isMobile } flowName={ flowName }>
 								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
 							</InfoColumnWrapper>
 						) }

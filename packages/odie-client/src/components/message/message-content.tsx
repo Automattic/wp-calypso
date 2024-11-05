@@ -34,14 +34,23 @@ export const MessageContent = ( {
 		shouldUseHelpCenterExperience && isNextMessageFromSameSender && 'next-chat-message-same-sender'
 	);
 
+	const isMessageWithOnlyText =
+		message.context?.flags?.hide_disclaimer_content ||
+		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
+
 	return (
 		<>
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
 					{ messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( message.type === 'message' || ! message.type ) && (
-						<UserMessage message={ message } isDisliked={ isDisliked } />
+					{ ( [ 'message', 'image', 'file', 'text' ].includes( message.type ) ||
+						! message.type ) && (
+						<UserMessage
+							message={ message }
+							isDisliked={ isDisliked }
+							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
+						/>
 					) }
 					{ message.type === 'introduction' && (
 						<div className="odie-introduction-message-content">
@@ -59,7 +68,7 @@ export const MessageContent = ( {
 					) }
 					{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
-				<Sources message={ message } />
+				{ ! isMessageWithOnlyText && <Sources message={ message } /> }
 			</div>
 			{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 		</>

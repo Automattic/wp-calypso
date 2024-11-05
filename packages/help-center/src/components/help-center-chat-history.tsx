@@ -97,7 +97,7 @@ export const HelpCenterChatHistory = () => {
 						className="help-center-chat-history__archive-no-results-button"
 					>
 						<Icon icon={ comment } />
-						{ __( 'Start conversation', __i18n_text_domain__ ) }
+						{ __( 'Get support', __i18n_text_domain__ ) }
 					</Link>
 				</CardBody>
 			</Card>

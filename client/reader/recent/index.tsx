@@ -15,7 +15,7 @@ import './style.scss';
 interface ReaderPost {
 	site_name: string;
 	postId: number;
-	feedId: number;
+	blogId: number;
 }
 
 const Recent = () => {
@@ -30,11 +30,11 @@ const Recent = () => {
 
 	const { data, post } = useSelector(
 		( state: AppState ) => ( {
-			data: state.reader?.streams?.following,
+			data: state.reader?.streams?.recent,
 			post: selectedItem
 				? getPostByKey( state, {
-						feedId: +selectedItem.feedId,
 						postId: +selectedItem.postId,
+						blogId: +selectedItem.blogId,
 				  } )
 				: null,
 		} ),
@@ -60,9 +60,9 @@ const Recent = () => {
 	];
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'following', window.location.pathname ) as AnyAction );
+		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( ( requestPage as any )( { streamKey: 'following' } ) );
+		dispatch( ( requestPage as any )( { streamKey: 'recent' } ) );
 	}, [ dispatch ] );
 
 	// Fetch the data when the component is mounted.

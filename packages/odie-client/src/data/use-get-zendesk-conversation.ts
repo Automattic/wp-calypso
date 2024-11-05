@@ -1,12 +1,10 @@
 import Smooch from 'smooch';
+import { zendeskMessageConverter } from '../utils';
+import type { ZendeskMessage } from '../types/';
 
 const parseResponse = ( conversation: Conversation ) => {
-	const messages = conversation?.messages.map( ( message ) => {
-		return {
-			content: message.text,
-			role: message.role,
-			type: message.type === 'text' ? 'message' : message.type,
-		};
+	const messages = conversation?.messages.map( ( message: ZendeskMessage ) => {
+		return zendeskMessageConverter( message );
 	} );
 
 	return { ...conversation, messages };
