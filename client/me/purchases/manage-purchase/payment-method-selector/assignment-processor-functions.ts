@@ -21,10 +21,9 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
-async function fetchStripeSetupIntentId( source: string ): Promise< StripeSetupIntentId > {
-	const configuration = await wp.req.get( '/me/stripe-configuration', {
-		needs_intent: true,
-		source,
+async function createStripeSetupIntent( countryCode: string ): Promise< StripeSetupIntentId > {
+	const configuration = await wp.req.post( '/me/stripe-setup-intent', {
+		country: countryCode,
 	} );
 	const intentId: string | undefined =
 		configuration?.setup_intent_id && typeof configuration.setup_intent_id === 'string'
@@ -84,7 +83,6 @@ export async function assignNewCardProcessor(
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
-		isCheckout,
 	}: {
 		purchase: Purchase | undefined;
 		translate: LocalizeProps[ 'translate' ];
@@ -93,7 +91,6 @@ export async function assignNewCardProcessor(
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
-		isCheckout?: boolean;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -170,9 +167,7 @@ export async function assignNewCardProcessor(
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
-		const stripeSetupIntentId = await fetchStripeSetupIntentId(
-			isCheckout ? 'checkout' : 'not-checkout'
-		);
+		const stripeSetupIntentId = await createStripeSetupIntent( countryCode );
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',
