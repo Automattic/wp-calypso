@@ -463,6 +463,7 @@ export class MediaLibraryContent extends Component {
 			// Hide the header until we have the media items set from Google Photos
 			if (
 				'google_photos' === this.props.source &&
+				this.props.photosPickerApiEnabled &&
 				! this.props.photosPickerSession?.mediaItemsSet
 			) {
 				return null;
