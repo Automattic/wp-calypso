@@ -53,7 +53,9 @@ export class ReaderSidebarRecent extends Component< Props, State > {
 	render() {
 		const { translate, isOpen, onClick, className, sites } = this.props;
 		const { showAllSites } = this.state;
+
 		const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_LIMIT );
+		const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 		return (
 			<li>
@@ -69,6 +71,10 @@ export class ReaderSidebarRecent extends Component< Props, State > {
 					materialIcon={ null }
 					materialIconStyle={ null }
 				>
+					<li>
+						{ translate( 'All' ) }{ ' ' }
+						{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+					</li>
 					{ sitesToShow.map( ( site ) => (
 						<li key={ site.ID }>
 							{ site.name }{ ' ' }
