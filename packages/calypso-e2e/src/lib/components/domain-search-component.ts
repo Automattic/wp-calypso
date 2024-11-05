@@ -5,6 +5,7 @@ import { plansPageUrl } from '../pages';
 const selectors = {
 	searchInput: `.search-component__input`,
 	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
+	domainSuggestionRow: '.domain-suggestion',
 };
 
 /**
@@ -74,11 +75,14 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const target = this.page.getByRole( 'button' ).filter( { hasText: keyword } );
-		await target.waitFor();
+		const targetRow = await this.page.locator( selectors.domainSuggestionRow ).filter( {
+			hasText: keyword,
+		} );
+
+		const target = await targetRow.getByRole( 'button' );
 
 		// The `heading` element represents the entire domain (including the tld).
-		const selectedDomain = await target.getByRole( 'heading' ).innerText();
+		const selectedDomain = await targetRow.getByRole( 'heading' ).innerText();
 
 		await target.click();
 
