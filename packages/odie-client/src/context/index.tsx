@@ -2,12 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { broadcastChatClearance, useSetOdieStorage, useOdieBroadcastWithCallbacks } from '../data';
+import { useChat } from '../query/use-chat';
 import { isOdieAllowedBot } from '../utils';
 import { getHelpCenterZendeskConversationStarted } from '../utils/storage-utils';
-import { getOdieInitialMessage } from './get-odie-initial-message';
-import { useLoadPreviousChat } from './use-load-previous-chat';
 import type {
 	Chat,
 	CurrentUser,
@@ -59,7 +58,6 @@ type OdieAssistantContextInterface = {
 	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
 	scrollToLastMessage: ScrollToLastMessageType | null;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
-	updateMessage: ( message: Message ) => void;
 	chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer';
 	setChatStatus: ( chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' ) => void;
 	version?: string | null;
@@ -100,7 +98,6 @@ const defaultContextInterfaceValues = {
 	trackEvent: noop,
 	setChatStatus: noop,
 	chatStatus: 'loading' as 'loading' | 'loaded' | 'sending',
-	updateMessage: noop,
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 };
 
@@ -158,130 +155,64 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		useState< ScrollToLastMessageType | null >( null );
 	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
-	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? store.getOdieBotNameSlug()
-				: 'wpcom-support-chat';
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? store.getOdieBotNameSlug()
+			: 'wpcom-support-chat';
 
-			return {
-				odieInitialPromptText: store.getOdieInitialPromptText(),
-				botNameSlug: odieBotNameSlug as OdieAllowedBots,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[]
-	);
+		return {
+			botNameSlug: odieBotNameSlug as OdieAllowedBots,
+			isMinimized: store.getIsMinimized(),
+			isChatLoaded: store.getIsChatLoaded(),
+		};
+	}, [] );
 
-	const { chat: existingChat } = useLoadPreviousChat( {
-		botNameSlug,
-		odieInitialPromptText,
-		setSupportProvider,
-		isChatLoaded,
-		selectedConversationId,
-		setChatStatus,
-	} );
+	const { currentChat, addMessageToChatArray: addMessage, updateMessageInChatArray } = useChat();
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
-
-	const [ chat, setChat ] = useState< Chat >( existingChat );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( `calypso_odie_${ eventName }`, {
 				...properties,
-				chat_id: chat?.chat_id,
+				chat_id: currentChat?.chat_id,
 				bot_name_slug: botNameSlug,
 			} );
 		},
-		[ botNameSlug, chat?.chat_id ]
+		[ botNameSlug, currentChat.chat_id ]
 	);
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
+	// TODO: replace this with the new clearChat function
 	const clearChat = useCallback( () => {
-		setSupportProvider( 'odie' );
-		setOdieStorage( null );
-		setChat( {
-			chat_id: null,
-			messages: [
-				getOdieInitialMessage( botNameSlug, odieInitialPromptText, shouldUseHelpCenterExperience ),
-			],
-		} );
 		trackEvent( 'chat_cleared', {} );
-		broadcastChatClearance( odieClientId );
-	}, [
-		botNameSlug,
-		odieInitialPromptText,
-		trackEvent,
-		setOdieStorage,
-		shouldUseHelpCenterExperience,
-	] );
+		setMainChatState( emptyChat );
+		resetSupportInteraction();
+	}, [ trackEvent, resetSupportInteraction ] );
 
-	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
-		setChat( ( prevChat ) => {
-			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
-			const updatedMessage = { ...message, liked };
-			return {
-				...prevChat,
-				messages: [
-					...prevChat.messages.slice( 0, messageIndex ),
-					updatedMessage,
-					...prevChat.messages.slice( messageIndex + 1 ),
-				],
-			};
-		} );
-	}, [] );
-
-	const addMessage = useCallback(
-		( message: Message | Message[] ) => {
-			setChat( ( prevChat ) => {
-				// Normalize message to always be an array
-				const newMessages = Array.isArray( message ) ? message : [ message ];
-
-				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
-				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
-					? prevChat.messages
-					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
-
-				// Append new messages at the end
+	const setMessageLikedStatus = useCallback(
+		( message: Message, liked: boolean ) => {
+			updateMessageInChatArray( ( prevChat ) => {
+				const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
+				const updatedMessage = { ...message, liked };
 				return {
 					...prevChat,
-					messages: [ ...filteredMessages, ...newMessages ],
+					messages: [
+						...prevChat.messages.slice( 0, messageIndex ),
+						updatedMessage,
+						...prevChat.messages.slice( messageIndex + 1 ),
+					],
 				};
 			} );
 		},
-		[ setChat ]
+		[ updateMessageInChatArray ]
 	);
-
-	useEffect( () => {
-		if ( existingChat.chat_id ) {
-			setChat( existingChat );
-		}
-	}, [ existingChat, existingChat.chat_id ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
-
-	const updateMessage = useCallback(
-		( message: Partial< Message > ) => {
-			setChat( ( prevChat ) => {
-				const updatedMessages = prevChat.messages.map( ( prevMessage ) =>
-					( message.internal_message_id &&
-						prevMessage.internal_message_id === message.internal_message_id ) ||
-					( message.message_id && prevMessage.message_id === message.message_id )
-						? { ...prevMessage, ...message }
-						: prevMessage
-				);
-
-				return { ...prevChat, messages: updatedMessages };
-			} );
-		},
-		[ setChat ]
-	);
 
 	const overriddenVersion = versionParams || version;
 
@@ -320,7 +251,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				setScrollToLastMessage: setScrollToLastMessage ?? noop,
 				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
-				updateMessage,
 				version: overriddenVersion,
 				isLoadingEnvironment,
 				isUserEligibleForPaidSupport,

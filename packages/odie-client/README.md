@@ -92,7 +92,6 @@ const defaultContextInterfaceValues = {
 	setIsVisible: noop, // Function to set the visibility of the chat.
 	setIsLoading: noop, // Function to set the general loading state.
 	trackEvent: noop, // Function to track events.
-	updateMessage: noop, // Function to update a message in the chat.
 };
 ```
 

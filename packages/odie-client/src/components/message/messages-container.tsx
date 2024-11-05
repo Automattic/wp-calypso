@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import { getOdieInitialMessage } from '../../context/get-odie-initial-message';
-import { useOdieChat } from '../../query/use-odie-chat';
+import { useChat } from '../../query/use-chat';
 import useAutoScroll from '../../useAutoScroll';
 import { useZendeskMessageListener } from '../../utils';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -33,7 +33,7 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
-	const { chat } = useOdieChat( 1, 30 );
+	const chat = useChat();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
