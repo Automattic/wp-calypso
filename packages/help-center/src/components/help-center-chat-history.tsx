@@ -9,10 +9,36 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { calculateUnread } from './utils';
+import { getFilteredConversations, getLastMessage, calculateUnread } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
+
+const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
+	const { __ } = useI18n();
+	if ( ! conversations || ! conversations.length ) {
+		return <div className="help-center-chat-history__no-results">{ __( 'Nothing found…' ) }</div>;
+	}
+
+	return (
+		<>
+			{ conversations.map( ( conversation ) => {
+				const lastMessage = getLastMessage( { conversation } );
+
+				if ( lastMessage ) {
+					return (
+						<HelpCenterSupportChatMessage
+							navigateTo={ `/odie/${ conversation.id }` }
+							key={ conversation.id }
+							message={ lastMessage }
+							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
+						/>
+					);
+				}
+			} ) }
+		</>
+	);
+};
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
@@ -31,6 +57,10 @@ export const HelpCenterChatHistory = () => {
 			unreadCount: store.getUnreadCount(),
 		};
 	}, [] );
+
+	const { recentConversations, archivedConversations } = getFilteredConversations( {
+		conversations,
+	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
@@ -42,34 +72,6 @@ export const HelpCenterChatHistory = () => {
 			setUnreadCount( unreadConversations );
 		}
 	}, [ getConversations, isChatLoaded ] );
-
-	const RecentConversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
-		if ( ! conversations ) {
-			return [];
-		}
-
-		return (
-			<>
-				{ conversations.map( ( conversation ) => {
-					const lastMessage =
-						Array.isArray( conversation.messages ) && conversation.messages.length > 0
-							? conversation.messages[ conversation.messages.length - 1 ]
-							: null;
-
-					if ( lastMessage ) {
-						return (
-							<HelpCenterSupportChatMessage
-								navigateTo={ `/odie/${ conversation.id }` }
-								key={ conversation.id }
-								message={ lastMessage }
-								isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
-							/>
-						);
-					}
-				} ) }
-			</>
-		);
-	};
 
 	return (
 		<div className="help-center-chat-history">
@@ -92,11 +94,11 @@ export const HelpCenterChatHistory = () => {
 			</SectionNav>
 
 			{ selectedTab === TAB_STATES.recent && (
-				<RecentConversations conversations={ conversations } />
+				<Conversations conversations={ recentConversations } />
 			) }
 
 			{ selectedTab === TAB_STATES.archived && (
-				<div className="help-center-chat-history__no-results">{ __( 'Nothing found…' ) }</div>
+				<Conversations conversations={ archivedConversations } />
 			) }
 		</div>
 	);

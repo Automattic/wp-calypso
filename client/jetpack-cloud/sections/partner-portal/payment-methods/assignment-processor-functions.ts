@@ -1,4 +1,4 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
@@ -48,7 +48,7 @@ export async function assignNewCardProcessor(
 		const formFieldValues = {
 			name,
 		};
-		const tokenResponse = await createStripeSetupIntentAsync(
+		const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 			formFieldValues,
 			stripe,
 			cardElement,
@@ -72,7 +72,7 @@ export async function assignNewCardProcessor(
 	}
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 	}: {
@@ -85,7 +85,7 @@ async function createStripeSetupIntentAsync(
 	const paymentDetailsForStripe = {
 		name,
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardElement,
 		stripeSetupIntentId,

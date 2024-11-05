@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons';
@@ -17,15 +18,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import FlowCard from '../components/flow-card';
-import { redirect } from '../import/util';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
-
-interface ActionsProps {
-	title: string;
-	text: string;
-	onClick: () => void;
-}
 
 interface WhatToExpectProps {
 	icon: JSX.Element;
@@ -85,7 +78,6 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldPreventTicketCreation, config, fromUrl, siteSlug ] );
 	let whatToExpect: WhatToExpectProps[] = [];
-	let actions: ActionsProps[] = [];
 
 	if (
 		shouldPreventTicketCreation &&
@@ -101,20 +93,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: scheduled,
 				text: __(
-					`You'll get an update on the progress of your migration within 2–3 business days.`
+					`We'll send you an update within 2–3 business days. You can also check the progress of your migration from your Sites dashboard.`
 				),
-			},
-		];
-		actions = [
-			{
-				title: __( 'Explore features' ),
-				text: __( 'Discover the features available on WordPress.com' ),
-				onClick: () => redirect( `/home/${ siteSlug }` ),
-			},
-			{
-				title: __( 'Learn about WordPress.com' ),
-				text: __( 'Access guides and tutorials to better understand how to use WordPress.com.' ),
-				onClick: () => redirect( '/support' ),
 			},
 		];
 	} else {
@@ -134,18 +114,6 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 				text: __( `We'll create a copy of your live site, allowing you to compare the two.` ),
 			},
 		];
-		actions = [
-			{
-				title: __( 'Let me explore' ),
-				text: __( 'Discover more features and options available on WordPress.com on your own.' ),
-				onClick: () => redirect( `/home/${ siteSlug }` ),
-			},
-			{
-				title: __( 'Help me learn' ),
-				text: __( 'Access guides and tutorials to better understand how to use WordPress.com.' ),
-				onClick: () => redirect( '/support' ),
-			},
-		];
 	}
 
 	whatToExpect.push( {
@@ -156,6 +124,21 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	const title = hasEnTranslation( "We'll take it from here!" )
 		? __( "We'll take it from here!" )
 		: __( 'Let us take it from here!' );
+
+	const sitesDashboardButton = (
+		<div className="migration-message__cta-wrapper">
+			<Button
+				className="migration-message__cta"
+				href="/sites"
+				variant="primary"
+				onClick={ () =>
+					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
+				}
+			>
+				{ __( 'View Sites dashboard' ) }
+			</Button>
+		</div>
+	);
 
 	return (
 		<StepContainer
@@ -194,11 +177,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 							{ text }
 						</div>
 					) ) }
-					<div className="migration-message__actions">
-						{ actions.map( ( { title, text, onClick }, index ) => (
-							<FlowCard key={ index } title={ title } text={ text } onClick={ onClick } />
-						) ) }
-					</div>
+					{ sitesDashboardButton }
 				</>
 			}
 			recordTracksEvent={ recordTracksEvent }

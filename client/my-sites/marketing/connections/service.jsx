@@ -44,8 +44,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AccountDialog from './account-dialog';
 import Connection from './connection';
+import GooglePhotosMigration from './google-photos-migration';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
-import PicasaMigration from './picasa-migration';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -495,7 +495,7 @@ export class SharingService extends Component {
 			return true;
 		}
 
-		if ( this.isPicasaMigration( status ) ) {
+		if ( this.isGooglePhotosMigration( status ) ) {
 			return true;
 		}
 
@@ -513,7 +513,8 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
-	isPicasaMigration( status ) {
+	// Is the service a Google Photos that requires migration to Google Photos Picker API
+	isGooglePhotosMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
 		}
@@ -664,7 +665,7 @@ export class SharingService extends Component {
 							connections={ connections }
 						/>
 
-						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
+						{ this.isGooglePhotosMigration( connectionStatus ) && <GooglePhotosMigration /> }
 
 						{ ! this.isMailchimpService( connectionStatus ) && (
 							<ServiceConnectedAccounts

@@ -6,7 +6,7 @@
 	max-width: 650px;
 	margin: 0 auto;
 	border-radius: 4px;
-	border: 1px solid var(--gray-gray-5, #dcdcde);
+	border: 1px solid var(--studio-gray-5, #dcdcde);
 	overflow: hidden;
 }
 
@@ -53,7 +53,12 @@
 body a.migration-started-card__cta {
 	padding: 0.625rem 1.5rem;
 	border-radius: 4px;
-	background-color: var(--black-white-black, #000);
+	border: 1px solid var(--studio-gray-10, #c3c4c7);
 	font-size: 0.875rem;
-	color: var(--black-white-white, #fff);
+	color: var(--studio-gray-100, #101517);
+}
+
+.migration-started__cta {
+	margin-top: 20px;
+	padding: 0.625rem 1.5rem;
 }

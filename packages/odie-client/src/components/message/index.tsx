@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -18,6 +18,8 @@ import type { CurrentUser, Message } from '../../types/';
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
+	displayChatWithSupportLabel?: boolean;
+	isNextMessageFromSameSender: boolean;
 };
 
 export type MessageIndicators = {
@@ -25,8 +27,6 @@ export type MessageIndicators = {
 	isLastFeedbackMessage: boolean;
 	isLastErrorMessage: boolean;
 	isLastMessage: boolean;
-	isNextMessageFromSameSender: boolean;
-	displayChatWithSupportLabel?: boolean;
 };
 
 const MessageAvatarHeader = ( {
@@ -65,7 +65,11 @@ const MessageAvatarHeader = ( {
 				) }
 			</>
 		) : (
-			<>{ message.role === 'business' && <HumanAvatar /> }</>
+			<>
+				{ message.role === 'business' && (
+					<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
+				) }
+			</>
 		);
 	}
 
@@ -102,11 +106,7 @@ const MessageAvatarHeader = ( {
 	);
 };
 
-const ChatMessage = ( {
-	message,
-	currentUser,
-	...messageIndicators
-}: ChatMessageProps & MessageIndicators ) => {
+const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
 	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
@@ -119,8 +119,6 @@ const ChatMessage = ( {
 			import( './style.scss' );
 		}
 	}, [ shouldUseHelpCenterExperience ] );
-
-	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -160,9 +158,7 @@ const ChatMessage = ( {
 				<MessageContent
 					message={ message }
 					messageHeader={ messageHeader }
-					ref={ fullscreenRef }
 					isDisliked={ isDisliked }
-					{ ...messageIndicators }
 				/>
 			</div>
 		</div>
@@ -173,9 +169,7 @@ const ChatMessage = ( {
 			<MessageContent
 				message={ message }
 				messageHeader={ messageHeader }
-				ref={ fullscreenRef }
 				isDisliked={ isDisliked }
-				{ ...messageIndicators }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>

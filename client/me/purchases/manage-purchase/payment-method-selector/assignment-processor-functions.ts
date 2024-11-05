@@ -1,4 +1,4 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import {
 	makeRedirectResponse,
 	makeSuccessResponse,
@@ -178,7 +178,7 @@ export async function assignNewCardProcessor(
 			postal_code: postalCode ?? '',
 			name: name ?? '',
 		};
-		const tokenResponse = await createStripeSetupIntentAsync(
+		const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 			formFieldValues,
 			stripe,
 			cardNumberElement,
@@ -226,7 +226,7 @@ export async function assignNewCardProcessor(
 	}
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 		country,
@@ -247,7 +247,7 @@ async function createStripeSetupIntentAsync(
 			postal_code,
 		},
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardNumberElement,
 		setupIntentId,

@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-overview-v2 .hosting-testimonials {
+	display: grid;
+	gap: 16px;
+
+	@include break-wide {
+		gap: 24px;
+		grid-template-columns: repeat(6, 1fr);
+
+
+		.hosting-testimonials__item {
+			grid-column: span 2;
+		}
+
+		// First two items span 50% each to create 2 columns in first row
+		.hosting-testimonials__item:nth-child(1),
+		.hosting-testimonials__item:nth-child(2) {
+			grid-column: span 3;
+		}
+	}
+
+	.hosting-testimonials__item-profile-avatar {
+		border-radius: 50%;
+	}
+}
