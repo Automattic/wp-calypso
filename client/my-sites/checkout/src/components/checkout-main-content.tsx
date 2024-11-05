@@ -24,7 +24,12 @@ import {
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, getContactDetailsType } from '@automattic/wpcom-checkout';
+import {
+	styled,
+	joinClasses,
+	getContactDetailsType,
+	ContactDetailsType,
+} from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -143,6 +148,27 @@ const SideBarLoadingCopy = styled.p`
 	padding: 0;
 	animation: ${ pulse } 2s ease-in-out infinite;
 `;
+
+const ContactDetailsFormDescription = styled.p`
+	font-size: 14px;
+	color: ${ ( props ) => props.theme.colors.textColor };
+	margin: 0 0 16px;
+`;
+
+function ConditionalContactDetailsMessage( {
+	contactDetailsType,
+}: {
+	contactDetailsType: ContactDetailsType;
+} ) {
+	const translate = useTranslate();
+	return contactDetailsType === 'domain' ? (
+		<ContactDetailsFormDescription>
+			{ translate(
+				'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+			) }
+		</ContactDetailsFormDescription>
+	) : null;
+}
 
 function LoadingSidebarContent() {
 	return (
@@ -678,24 +704,30 @@ export default function CheckoutMainContent( {
 								return validationResponse;
 							} }
 							activeStepContent={
-								<WPContactForm
-									countriesList={ countriesList }
-									shouldShowContactDetailsValidationErrors={
-										shouldShowContactDetailsValidationErrors
-									}
-									contactDetailsType={ contactDetailsType }
-									isLoggedOutCart={ isLoggedOutCart }
-									setShouldShowContactDetailsValidationErrors={
-										setShouldShowContactDetailsValidationErrors
-									}
-								/>
+								<>
+									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+									<WPContactForm
+										countriesList={ countriesList }
+										shouldShowContactDetailsValidationErrors={
+											shouldShowContactDetailsValidationErrors
+										}
+										contactDetailsType={ contactDetailsType }
+										isLoggedOutCart={ isLoggedOutCart }
+										setShouldShowContactDetailsValidationErrors={
+											setShouldShowContactDetailsValidationErrors
+										}
+									/>
+								</>
 							}
 							completeStepContent={
-								<WPContactFormSummary
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-									isGSuiteInCart={ isGSuiteInCart }
-									isLoggedOutCart={ isLoggedOutCart }
-								/>
+								<>
+									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+									<WPContactFormSummary
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+										isGSuiteInCart={ isGSuiteInCart }
+										isLoggedOutCart={ isLoggedOutCart }
+									/>
+								</>
 							}
 							titleContent={ <ContactFormTitle /> }
 							editButtonText={ String( translate( 'Edit' ) ) }

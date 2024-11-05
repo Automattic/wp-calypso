@@ -18,7 +18,7 @@ export const useOdieChat = (
 } => {
 	const chatId = useGetOdieStorage( 'chat_id' ) || 0;
 	const queryClient = useQueryClient();
-	const { botNameSlug, setChatStatus } = useOdieAssistantContext();
+	const { botNameSlug } = useOdieAssistantContext();
 
 	const urlQueryParams = new URLSearchParams( {
 		page_number: page.toString(),
@@ -31,7 +31,6 @@ export const useOdieChat = (
 	const { data: chat } = useQuery< Chat, Error >( {
 		queryKey: queryKey,
 		queryFn: async (): Promise< Chat > => {
-			setChatStatus( 'loading' );
 			const response: Chat = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
@@ -42,7 +41,6 @@ export const useOdieChat = (
 						path: `/help-center/odie/chat/${ botNameSlug }/${ chatId }?${ urlQueryParams.toString() }`,
 						method: 'GET',
 				  } );
-			setChatStatus( 'loaded' );
 
 			// Ensure the response matches the Chat type
 			const chatResponse: Chat = {

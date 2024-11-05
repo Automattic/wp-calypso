@@ -32,7 +32,8 @@ import {
 	TOOLS_DEPLOYMENTS,
 	TOOLS_MONITORING,
 	TOOLS_DATABASE,
-	TOOLS_LOGS,
+	TOOLS_LOGS_PHP,
+	TOOLS_LOGS_WEB,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -99,7 +100,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_MONITORING ],
 			},
 			{
@@ -109,7 +110,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
 			},
 			{
@@ -129,7 +130,8 @@ const DotcomPreviewPane = ( {
 					TOOLS_STAGING_SITE,
 					TOOLS_DEPLOYMENTS,
 					TOOLS_MONITORING,
-					TOOLS_LOGS,
+					TOOLS_LOGS_PHP,
+					TOOLS_LOGS_WEB,
 					TOOLS_SFTP_SSH,
 					TOOLS_DATABASE,
 				],

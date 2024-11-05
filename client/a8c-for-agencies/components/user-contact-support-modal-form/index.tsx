@@ -21,6 +21,7 @@ type Props = {
 	show: boolean;
 	onClose?: () => void;
 	defaultMessage?: string;
+	defaultProduct?: string;
 };
 
 const DEFAULT_MESSAGE_VALUE = '';
@@ -30,6 +31,7 @@ export default function UserContactSupportModalForm( {
 	show,
 	onClose,
 	defaultMessage = DEFAULT_MESSAGE_VALUE,
+	defaultProduct = DEFAULT_PRODUCT_VALUE,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -39,7 +41,7 @@ export default function UserContactSupportModalForm( {
 
 	const [ name, setName ] = useState( user?.display_name );
 	const [ email, setEmail ] = useState( user?.email );
-	const [ product, setProduct ] = useState( DEFAULT_PRODUCT_VALUE );
+	const [ product, setProduct ] = useState( defaultProduct );
 	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
 	const [ site, setSite ] = useState( '' );
 	const [ message, setMessage ] = useState( defaultMessage );
@@ -53,8 +55,8 @@ export default function UserContactSupportModalForm( {
 
 	const resetForm = useCallback( () => {
 		setMessage( defaultMessage );
-		setProduct( DEFAULT_PRODUCT_VALUE );
-	}, [ defaultMessage ] );
+		setProduct( defaultProduct );
+	}, [ defaultMessage, defaultProduct ] );
 
 	const onModalClose = useCallback( () => {
 		onClose?.();

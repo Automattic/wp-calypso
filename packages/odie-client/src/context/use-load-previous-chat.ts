@@ -10,12 +10,14 @@ export const useLoadPreviousChat = ( {
 	setSupportProvider,
 	isChatLoaded,
 	selectedConversationId,
+	setChatStatus,
 }: {
 	botNameSlug: OdieAllowedBots;
 	odieInitialPromptText?: string;
 	setSupportProvider: ( supportProvider: SupportProvider ) => void;
 	isChatLoaded: boolean;
 	selectedConversationId?: string | null;
+	setChatStatus: ( chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' ) => void;
 } ) => {
 	const { chat: existingChat } = useOdieChat( 1, 30 );
 
@@ -33,7 +35,7 @@ export const useLoadPreviousChat = ( {
 				messages.push( ...( existingChat as Chat ).messages );
 			}
 
-			if ( isChatLoaded ) {
+			if ( selectedConversationId && isChatLoaded ) {
 				getZendeskConversation( {
 					chatId: existingChat?.chat_id,
 					conversationId: selectedConversationId,
@@ -49,16 +51,19 @@ export const useLoadPreviousChat = ( {
 							messages: [ ...messages, ...( conversation.messages as Message[] ) ],
 						} );
 					}
+					setChatStatus( 'loaded' );
 					return;
 				} );
+			} else {
+				setChat( { ...existingChat, messages } );
+				setChatStatus( 'loaded' );
 			}
-
-			setChat( { ...existingChat, messages } );
 		} else {
 			setChat( {
 				chat_id: null,
 				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 			} );
+			setChatStatus( 'loaded' );
 		}
 	}, [
 		botNameSlug,
@@ -66,6 +71,7 @@ export const useLoadPreviousChat = ( {
 		odieInitialPromptText,
 		setSupportProvider,
 		isChatLoaded,
+		setChatStatus,
 	] );
 
 	return { chat };

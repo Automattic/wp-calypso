@@ -1,0 +1,11 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-cta__button {
+	display: block;
+	width: 100%;
+
+	@include break-large {
+		width: auto;
+	}
+}
