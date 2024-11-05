@@ -1,6 +1,6 @@
-import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -18,7 +18,7 @@ const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
-	const [ view, setView ] = useState( {
+	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'recent_post', 'seen', 'post' ],
 		layout: {
@@ -53,35 +53,41 @@ const Recent = () => {
 		};
 	}, shallowEqual );
 
-	const getPostFromItem = ( item: ReaderPost ) => {
-		const postKey = `${ item.blogId }-${ item.postId }`;
-		return posts[ postKey ];
-	};
+	const getPostFromItem = useCallback(
+		( item: ReaderPost ) => {
+			const postKey = `${ item.blogId }-${ item.postId }`;
+			return posts[ postKey ];
+		},
+		[ posts ]
+	);
 
-	const fields = [
-		{
-			id: 'seen',
-			label: translate( 'Seen' ),
-			render: ( { item }: { item: ReaderPost } ) => {
-				return <RecentSeenField post={ getPostFromItem( item ) } />;
+	const fields = useMemo(
+		() => [
+			{
+				id: 'seen',
+				label: translate( 'Seen' ),
+				render: ( { item }: { item: ReaderPost } ) => {
+					return <RecentSeenField post={ getPostFromItem( item ) } />;
+				},
+				enableHiding: false,
 			},
-			enableHiding: false,
-		},
-		{
-			id: 'post',
-			label: translate( 'Post' ),
-			render: ( { item }: { item: ReaderPost } ) => {
-				return (
-					<RecentPostField
-						item={ item }
-						post={ getPostFromItem( item ) }
-						setSelectedItem={ setSelectedItem }
-					/>
-				);
+			{
+				id: 'post',
+				label: translate( 'Post' ),
+				render: ( { item }: { item: ReaderPost } ) => {
+					return (
+						<RecentPostField
+							item={ item }
+							post={ getPostFromItem( item ) }
+							setSelectedItem={ setSelectedItem }
+						/>
+					);
+				},
+				enableHiding: false,
 			},
-			enableHiding: false,
-		},
-	];
+		],
+		[ getPostFromItem ]
+	);
 
 	const defaultLayouts = [
 		{
@@ -95,6 +101,10 @@ const Recent = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( ( requestPage as any )( { streamKey: 'recent' } ) );
 	}, [ dispatch ] );
+
+	const { data: shownData, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data?.items ?? [], view, fields );
+	}, [ data, view, fields ] );
 
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
@@ -118,14 +128,11 @@ const Recent = () => {
 					}
 					view={ view as View }
 					fields={ fields }
-					data={ data?.items ?? [] }
+					data={ shownData }
 					onChangeView={ ( newView: View ) =>
 						setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
 					}
-					paginationInfo={ {
-						totalItems: 0,
-						totalPages: 0,
-					} }
+					paginationInfo={ paginationInfo }
 					defaultLayouts={ defaultLayouts as SupportedLayouts }
 				/>
 			</div>
