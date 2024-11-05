@@ -3,7 +3,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useCallback, useEffect } from 'react';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/landing/use-introductory-offer-mutation';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';

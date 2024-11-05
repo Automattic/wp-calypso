@@ -25,3 +25,11 @@ interface LogToLogstashParams {
 export async function logToLogstash( params: LogToLogstashParams ): Promise< void > {
 	await wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
 }
+
+export function safeLogToLogstash( params: LogToLogstashParams ): void {
+	try {
+		logToLogstash( params );
+	} catch ( error ) {
+		// Fail silently
+	}
+}
