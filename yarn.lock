@@ -1119,6 +1119,7 @@ __metadata:
     "@wordpress/plugins": "npm:^7.8.0"
     "@wordpress/private-apis": "npm:^1.8.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    "@wordpress/router": "npm:^1.8.0"
     copy-webpack-plugin: "npm:^10.2.4"
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^5.3.3"

@@ -41,6 +41,7 @@
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/plugins": "^7.8.0",
 		"@wordpress/private-apis": "^1.8.0",
+		"@wordpress/router": "^1.8.0",
 		"postcss-prefix-selector": "^1.16.1"
 	},
 	"devDependencies": {
