@@ -224,13 +224,14 @@ const buildApp = ( environment ) => {
 				},
 				chunks: [
 					...sections.map( ( section ) => ( {
+						id: section.name,
 						names: [ section.name ],
+						chunks: [ section.name ],
 						files: [
 							`/calypso/evergreen/${ section.name }.js`,
 							`/calypso/evergreen/${ section.name }.css`,
 							`/calypso/evergreen/${ section.name }.rtl.css`,
 						],
-						siblings: [],
 					} ) ),
 				],
 			};
