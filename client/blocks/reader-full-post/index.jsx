@@ -76,7 +76,6 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { requestSite } from 'calypso/state/sites/actions';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
@@ -465,9 +464,10 @@ export class FullPostView extends Component {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
+		const isDefaultLayout = this.props.layout !== 'recent';
 		const siteName = getSiteName( { site, post } );
 		const classes = { 'reader-full-post': true };
-		const showRelatedPosts = post && ! post.is_external && post.site_ID;
+		const showRelatedPosts = post && ! post.is_external && post.site_ID && isDefaultLayout;
 		const relatedPostsFromOtherSitesTitle = translate(
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
 			{
@@ -492,7 +492,6 @@ export class FullPostView extends Component {
 		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-		const isDefaultLayout = this.props.layout !== 'recent';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
