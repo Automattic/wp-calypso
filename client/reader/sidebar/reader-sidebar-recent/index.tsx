@@ -27,15 +27,34 @@ type Site = {
 	is_following: boolean;
 };
 
-export class ReaderSidebarRecent extends Component< {
+type Props = {
 	isOpen: boolean;
 	onClick: () => void;
 	className: string;
 	translate: ( key: string ) => string;
 	sites: Site[];
-} > {
+};
+
+type State = {
+	showAllSites: boolean;
+};
+
+const SITE_DISPLAY_LIMIT = 8;
+
+export class ReaderSidebarRecent extends Component< Props, State > {
+	state: State = {
+		showAllSites: false,
+	};
+
+	toggleShowAllSites = () => {
+		this.setState( ( prevState ) => ( { showAllSites: ! prevState.showAllSites } ) );
+	};
+
 	render() {
 		const { translate, isOpen, onClick, className, sites } = this.props;
+		const { showAllSites } = this.state;
+		const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_LIMIT );
+
 		return (
 			<li>
 				<ExpandableSidebarMenu
@@ -50,12 +69,19 @@ export class ReaderSidebarRecent extends Component< {
 					materialIcon={ null }
 					materialIconStyle={ null }
 				>
-					{ sites.map( ( site ) => (
+					{ sitesToShow.map( ( site ) => (
 						<li key={ site.ID }>
 							{ site.name }{ ' ' }
 							{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 						</li>
 					) ) }
+					{ sites.length > SITE_DISPLAY_LIMIT && (
+						<li>
+							<button onClick={ this.toggleShowAllSites }>
+								{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
+							</button>
+						</li>
+					) }
 				</ExpandableSidebarMenu>
 			</li>
 		);
