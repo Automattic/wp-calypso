@@ -8,7 +8,7 @@ interface MigrationStickerMutationOptions {
 	targetBlogId: SiteId;
 }
 
-export const useMigrationStickerMutation = () => {
+export const useMigrationIntroductoryOfferMutation = () => {
 	const addMutation = useMutation( {
 		mutationFn: ( { targetBlogId }: MigrationStickerMutationOptions ) =>
 			wp.req.post( {
