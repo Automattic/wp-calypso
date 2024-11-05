@@ -70,6 +70,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 	return (
 		<div className="domains-table-filter">
 			<SearchControl
+				className="domains-table-search"
 				onChange={ onSearch }
 				value={ filter.query }
 				placeholder={ __( 'Search by domain…' ) }
