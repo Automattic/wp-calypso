@@ -3,6 +3,7 @@ import {
 	themesIllustrationImage,
 	assemblerIllustrationV2Image,
 } from '@automattic/design-picker';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -106,6 +107,24 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
+									footer={ translate(
+										'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
+														target="_blank"
+														rel="noreferrer noopener"
+														onClick={ ( event ) => {
+															recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
+															event.stopPropagation();
+														} }
+													/>
+												),
+											},
+										}
+									) }
 									onSelect={ () => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,

@@ -5,6 +5,10 @@
 	}
 }
 
+.design-choice__image-container {
+	flex-direction: column;
+}
+
 .design-choices__body {
 	display: flex;
 	flex-direction: row;
