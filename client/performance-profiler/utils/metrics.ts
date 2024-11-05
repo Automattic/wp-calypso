@@ -188,3 +188,13 @@ export const filterRecommendations = (
 		selectedFilter === 'all' || audit?.metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
 	);
 };
+
+export const highImpactAudits = [
+	'render-blocking-resources',
+	'uses-responsive-images',
+	'uses-optimized-images',
+	'offscreen-images',
+	'server-response-time',
+	'mainthread-work-breakdown',
+	'largest-contentful-paint-element',
+];
