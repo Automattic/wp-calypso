@@ -9,39 +9,75 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import RecentPostField from './recent-post-field';
-import type { ReaderPost } from './types';
+import RecentSeenField from './recent-seen-field';
+import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 import './style.scss';
 
 const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
-
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
 	const [ view, setView ] = useState( {
-		type: 'list',
-		fields: [ 'post' ],
+		type: 'table',
+		fields: [ 'recent_post', 'seen', 'post' ],
+		layout: {
+			combinedFields: [
+				{
+					id: 'recent_post',
+					children: [ 'seen', 'post' ],
+					direction: 'horizontal',
+				},
+			],
+		},
 	} );
 
-	const { data, post } = useSelector(
-		( state: AppState ) => ( {
-			data: state.reader?.streams?.recent,
-			post: selectedItem
-				? getPostByKey( state, {
-						postId: +selectedItem.postId,
-						blogId: +selectedItem.blogId,
-				  } )
-				: null,
-		} ),
-		shallowEqual
-	);
+	const { data, posts } = useSelector( ( state: AppState ) => {
+		const streamData = state.reader?.streams?.following;
+		const postsMap: Record< string, PostItem > = {};
+
+		// Create a map of posts for all items
+		streamData?.items?.forEach( ( item: ReaderPost ) => {
+			const post = getPostByKey( state, {
+				feedId: +item.feedId,
+				postId: +item.postId,
+			} );
+			if ( post ) {
+				postsMap[ `${ item.feedId }-${ item.postId }` ] = post;
+			}
+		} );
+
+		return {
+			data: streamData,
+			posts: postsMap,
+		};
+	}, shallowEqual );
+
+	const getPostFromItem = ( item: ReaderPost ) => {
+		const postKey = `${ item.feedId }-${ item.postId }`;
+		return posts[ postKey ];
+	};
 
 	const fields = [
 		{
-			id: 'post',
-			label: translate( 'Blog' ),
+			id: 'seen',
+			label: translate( 'Seen' ),
 			render: ( { item }: { item: ReaderPost } ) => {
-				return <RecentPostField item={ item } setSelectedItem={ setSelectedItem } />;
+				return <RecentSeenField post={ getPostFromItem( item ) } />;
+			},
+			enableHiding: false,
+		},
+		{
+			id: 'post',
+			label: translate( 'Post' ),
+			render: ( { item }: { item: ReaderPost } ) => {
+				return (
+					<RecentPostField
+						item={ item }
+						post={ getPostFromItem( item ) }
+						setSelectedItem={ setSelectedItem }
+					/>
+				);
 			},
 			enableHiding: false,
 		},
@@ -49,8 +85,8 @@ const Recent = () => {
 
 	const defaultLayouts = [
 		{
-			label: translate( 'List' ),
-			icon: 'list-view',
+			label: translate( 'Table' ),
+			icon: 'table-view',
 		},
 	];
 
@@ -84,7 +120,7 @@ const Recent = () => {
 					fields={ fields }
 					data={ data?.items ?? [] }
 					onChangeView={ ( newView: View ) =>
-						setView( { type: newView.type, fields: newView.fields ?? [] } )
+						setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
 					}
 					paginationInfo={ {
 						totalItems: 0,
@@ -94,9 +130,9 @@ const Recent = () => {
 				/>
 			</div>
 			<div className="recent-feed__post-column">
-				{ selectedItem && post && (
+				{ selectedItem && getPostFromItem( selectedItem ) && (
 					<FullPostView
-						post={ post }
+						post={ getPostFromItem( selectedItem ) }
 						referralStream={ window.location.pathname }
 						notificationsOpen
 					/>
