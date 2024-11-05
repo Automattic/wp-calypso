@@ -40,9 +40,8 @@ export const MessageContent = ( {
 				<div className={ messageClasses }>
 					{ messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( [ 'message', 'image', 'file' ].includes( message.type ) || ! message.type ) && (
-						<UserMessage message={ message } isDisliked={ isDisliked } />
-					) }
+					{ ( [ 'message', 'image', 'file', 'text' ].includes( message.type ) ||
+						! message.type ) && <UserMessage message={ message } isDisliked={ isDisliked } /> }
 					{ message.type === 'introduction' && (
 						<div className="odie-introduction-message-content">
 							<div className="odie-chatbox-introduction-message">
