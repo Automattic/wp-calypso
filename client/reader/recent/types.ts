@@ -3,7 +3,7 @@ import { Author } from 'calypso/state/comments/actions';
 export interface ReaderPost {
 	site_name: string;
 	postId: number;
-	feedId: number;
+	blogId: number;
 }
 
 export interface PostItem {

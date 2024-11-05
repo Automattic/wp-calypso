@@ -33,17 +33,17 @@ const Recent = () => {
 	} );
 
 	const { data, posts } = useSelector( ( state: AppState ) => {
-		const streamData = state.reader?.streams?.following;
+		const streamData = state.reader?.streams?.recent;
 		const postsMap: Record< string, PostItem > = {};
 
 		// Create a map of posts for all items
 		streamData?.items?.forEach( ( item: ReaderPost ) => {
 			const post = getPostByKey( state, {
-				feedId: +item.feedId,
+				feedId: +item.blogId,
 				postId: +item.postId,
 			} );
 			if ( post ) {
-				postsMap[ `${ item.feedId }-${ item.postId }` ] = post;
+				postsMap[ `${ item.blogId }-${ item.postId }` ] = post;
 			}
 		} );
 
@@ -54,7 +54,7 @@ const Recent = () => {
 	}, shallowEqual );
 
 	const getPostFromItem = ( item: ReaderPost ) => {
-		const postKey = `${ item.feedId }-${ item.postId }`;
+		const postKey = `${ item.blogId }-${ item.postId }`;
 		return posts[ postKey ];
 	};
 
