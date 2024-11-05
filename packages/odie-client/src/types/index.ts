@@ -124,7 +124,7 @@ export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as
 
 export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
 
-export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging';
+export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 
 interface ConversationParticipant {
 	id: string;

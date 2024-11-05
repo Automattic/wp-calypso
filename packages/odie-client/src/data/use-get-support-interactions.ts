@@ -27,7 +27,6 @@ export const useGetSupportInteractions = (
 			);
 		},
 		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
-		refetchIntervalInBackground: false,
+		staleTime: 3600, // 1 hour
 	} );
 };
