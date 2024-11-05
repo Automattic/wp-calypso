@@ -626,7 +626,6 @@ export default flow(
 			const activePlugins = getPlugins( state, siteIds, 'active' );
 			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
-			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses(
 				state,
 				allPlugins,
@@ -664,7 +663,7 @@ export default flow(
 					: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: config.isEnabled( 'bulk-plugin-management' )
 					? []
-					: getPlugins( state, visibleSiteIds, filter ),
+					: getPlugins( state, siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [], filter ),
 				pluginsWithUpdates,
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				activePlugins,
