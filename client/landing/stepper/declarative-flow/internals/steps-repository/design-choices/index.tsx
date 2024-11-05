@@ -12,10 +12,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
-import BigSkyDisclaimerModal from '../../components/big-sky-disclaimer-modal';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -98,16 +98,23 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								/>
 							) }
 							{ ! isLoading && isEligible && (
-								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
-									<DesignChoice
-										className="design-choices__try-big-sky"
-										title={ translate( 'Try Big Sky' ) }
-										description={ translate( 'The AI website builder for WordPress.' ) }
-										imageSrc={ hiBigSky }
-										destination="launch-big-sky"
-										onSelect={ handleSubmit }
-									/>
-								</BigSkyDisclaimerModal>
+								<DesignChoice
+									className="design-choices__try-big-sky"
+									title={ translate( 'Try Big Sky' ) }
+									description={ translate( 'The AI website builder for WordPress.' ) }
+									imageSrc={ hiBigSky }
+									destination="launch-big-sky"
+									onSelect={ () => {
+										recordTracksEvent( 'calypso_big_sky_choose', {
+											flow,
+											step: stepName,
+										} );
+										const queryParams = new URLSearchParams( location.search ).toString();
+										navigate(
+											`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
+										);
+									} }
+								/>
 							) }
 						</div>
 					</>
