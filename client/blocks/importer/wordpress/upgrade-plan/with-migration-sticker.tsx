@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useMigrationIntroductoryOfferMutation } from 'calypso/data/site-migration/landing/use-introductory-offer-mutation';
 import { Skeleton } from './skeleton';
 import type { UpgradePlanProps } from './types';
 import type { FC } from 'react';
@@ -16,7 +16,7 @@ const withMigrationSticker =
 			addMigrationSticker,
 			addMutationRest: { isIdle, isPending },
 			deleteMigrationSticker,
-		} = useMigrationStickerMutation();
+		} = useMigrationIntroductoryOfferMutation();
 
 		useEffect( () => {
 			if ( ! isIntroductoryOfferEnabled ) {
