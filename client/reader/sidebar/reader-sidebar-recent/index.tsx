@@ -1,10 +1,11 @@
 import { Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 
 // TODO: Find the right home for this, or the existing definition
 type Site = {
@@ -36,16 +37,26 @@ type Props = {
 
 const SITE_DISPLAY_CUTOFF = 8;
 
-const ReaderSidebarRecent: React.FC< Props > = ( { translate, isOpen, onClick, className } ) => {
+const ReaderSidebarRecent = ( {
+	translate,
+	isOpen,
+	onClick,
+	className,
+}: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSelector< Site, Site[] >( getReaderFollowedSites );
+
+	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
+	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 	const toggleShowAllSites = () => {
 		setShowAllSites( ! showAllSites );
 	};
 
-	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
-	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
+	const dispatch = useDispatch();
+	const selectSite = ( feedId: number | null ) => {
+		dispatch( selectSidebarRecentSite( { feedId } ) );
+	};
 
 	return (
 		<li>
@@ -62,12 +73,17 @@ const ReaderSidebarRecent: React.FC< Props > = ( { translate, isOpen, onClick, c
 				materialIconStyle={ null }
 			>
 				<li>
-					{ translate( 'All' ) }{ ' ' }
-					{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+					<button onClick={ () => selectSite( null ) }>
+						{ translate( 'All' ) }{ ' ' }
+						{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+					</button>
 				</li>
 				{ sitesToShow.map( ( site ) => (
 					<li key={ site.ID }>
-						{ site.name } { site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+						<button onClick={ () => selectSite( site.feed_ID ) }>
+							{ site.name }{ ' ' }
+							{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+						</button>
 					</li>
 				) ) }
 				{ sites.length > SITE_DISPLAY_CUTOFF && (
