@@ -1,4 +1,3 @@
-import { Button } from '@wordpress/components';
 import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
@@ -9,14 +8,10 @@ import { FullPostView } from 'calypso/blocks/reader-full-post';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import RecentPostField from './recent-post-field';
+import type { ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 import './style.scss';
-
-interface ReaderPost {
-	site_name: string;
-	postId: number;
-	blogId: number;
-}
 
 const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
@@ -46,7 +41,7 @@ const Recent = () => {
 			id: 'post',
 			label: translate( 'Blog' ),
 			render: ( { item }: { item: ReaderPost } ) => {
-				return <Button onClick={ () => setSelectedItem( item ) }>{ item.site_name }</Button>;
+				return <RecentPostField item={ item } setSelectedItem={ setSelectedItem } />;
 			},
 			enableHiding: false,
 		},
