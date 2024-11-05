@@ -97,7 +97,7 @@ const EmailProvidersStackedComparison = ( {
 	);
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
-	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart && false;
+	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const isGravatarDomain = cannotAddEmailWarningReason?.code === 'domain-gravatar-domain';
 
