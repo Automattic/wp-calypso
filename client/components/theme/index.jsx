@@ -15,7 +15,7 @@ import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
-import ThemeShowcaseContext from 'calypso/my-sites/themes/theme-showcase-context';
+import { ThemeShowcaseContext } from 'calypso/my-sites/themes/theme-showcase-context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
