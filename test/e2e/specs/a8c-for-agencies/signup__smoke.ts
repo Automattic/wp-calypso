@@ -32,70 +32,69 @@ describe( 'A4A > Signup: Smoke Test', function () {
 
 		// Enter first name
 		const firstName = 'John';
-		await page.fill( 'input[name="firstName"]', firstName );
+		await page.getByLabel( 'First name' ).fill( firstName );
 
 		// Enter last name
 		const lastName = 'Doe';
-		await page.fill( 'input[name="lastName"]', lastName );
+		await page.getByLabel( 'Last name' ).fill( lastName );
 
 		// Enter the agency name
 		const agencyName = 'Agency Name';
-		await page.fill( 'input[name="agencyName"]', agencyName );
+		await page.getByLabel( 'Agency name' ).fill( agencyName );
 
 		// Enter the business URL
 		const businessURL = 'https://example.com';
-		await page.fill( 'input[name="agencyUrl"]', businessURL );
+		await page.getByLabel( 'Business URL' ).fill( businessURL );
+
+		// Select the user type to site owner
+		await page
+			.getByRole( 'combobox', { name: 'How would you describe yourself?' } )
+			.selectOption( { value: 'site_owner' } );
+
+		// Verify the message is displayed
+		const message = await page.$(
+			'text=It seems like we might not be the perfect match right now.'
+		);
+		expect( message ).not.toBeNull();
+
+		// Select the user type to agency owner
+		await page
+			.getByRole( 'combobox', { name: 'How would you describe yourself?' } )
+			.selectOption( { value: 'agency_owner' } );
 
 		// Select the number of managed sites
-		await page.selectOption( 'select[name="managed_sites"]', { value: '6-20' } );
+		await page
+			.getByRole( 'combobox', { name: 'How many sites do you manage?' } )
+			.selectOption( { value: '6-20' } );
 
 		// Select the services offered
-		await page.click( 'input[name="services_offered[]"][value="strategy_consulting"]' );
+		await page.getByRole( 'checkbox', { name: 'Strategy Consulting' } ).check();
 
 		// Select the products offered
-		await page.click( 'input[name="products_offered[]"][value="WordPress.com"]' );
+		await page.getByRole( 'checkbox', { name: 'WordPress.com' } ).check();
 
 		// Enter the address
-		await page.fill( 'input[name="line1"]', '123 Main St' );
-		await page.fill( 'input[name="line2"]', 'Suite 101' );
-		await page.fill( 'input[name="city"]', 'San Francisco' );
-		await page.fill( 'input[name="postalCode"]', '94105' );
-
-		// Select the country
-		await page.fill(
-			'input[id="components-form-token-input-combobox-control-0"]',
-			'United States'
-		);
+		await page.getByPlaceholder( 'Street name and house number' ).fill( '123 Main St' );
+		await page.getByPlaceholder( 'Apartment, floor, suite or unit number' ).fill( 'Suite 101' );
+		await page.getByLabel( 'City' ).fill( 'San Francisco' );
+		await page.getByLabel( 'Postal code' ).fill( '94105' );
 
 		// Verify the form values
-		const firstNameValue = await page.inputValue( 'input[name="firstName"]' );
-		expect( firstNameValue ).toBe( firstName );
-
-		const lastNameValue = await page.inputValue( 'input[name="lastName"]' );
-		expect( lastNameValue ).toBe( lastName );
-
-		const agencyNameValue = await page.inputValue( 'input[name="agencyName"]' );
-		expect( agencyNameValue ).toBe( agencyName );
-
-		const businessURLValue = await page.inputValue( 'input[name="agencyUrl"]' );
-		expect( businessURLValue ).toBe( businessURL );
-
-		const managedSitesValue = await page.inputValue( 'select[name="managed_sites"]' );
-		expect( managedSitesValue ).toBe( '6-20' );
-
-		const servicesOfferedValue = await page.inputValue(
-			'input[name="services_offered[]"][value="strategy_consulting"]'
+		expect( await page.getByLabel( 'First name' ).inputValue() ).toBe( firstName );
+		expect( await page.getByLabel( 'Last name' ).inputValue() ).toBe( lastName );
+		expect( await page.getByLabel( 'Agency name' ).inputValue() ).toBe( agencyName );
+		expect( await page.getByLabel( 'Business URL' ).inputValue() ).toBe( businessURL );
+		expect(
+			await page.getByRole( 'combobox', { name: 'How would you describe yourself?' } ).inputValue()
+		).toBe( 'agency_owner' );
+		expect(
+			await page.getByRole( 'combobox', { name: 'How many sites do you manage?' } ).inputValue()
+		).toBe( '6-20' );
+		expect( await page.getByRole( 'checkbox', { name: 'Strategy Consulting' } ).isChecked() ).toBe(
+			true
 		);
-		expect( servicesOfferedValue ).toBe( 'strategy_consulting' );
-
-		const productsOfferedValue = await page.inputValue(
-			'input[name="products_offered[]"][value="WordPress.com"]'
+		expect( await page.getByRole( 'checkbox', { name: 'WordPress.com' } ).isChecked() ).toBe(
+			true
 		);
-		expect( productsOfferedValue ).toBe( 'WordPress.com' );
-
-		const countryValue = await page.inputValue(
-			'input[id="components-form-token-input-combobox-control-0"]'
-		);
-		expect( countryValue ).toBe( 'United States' );
 	} );
 } );
