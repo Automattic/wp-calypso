@@ -348,7 +348,7 @@ describe( 'I18N: Editor', function () {
 						.locator(
 							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
 						)
-						.click();
+						.click( { position: { x: 0, y: 0 } } );
 
 					// If on block insertion, one of the sub-blocks are selected, click on
 					// the first button in the floating toolbar which selects the overall
