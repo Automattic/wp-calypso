@@ -1,35 +1,56 @@
 import { __ } from '@wordpress/i18n';
 import { Message, MessageRole, MessageType, ZendeskMessage } from '../types/';
 
+// Format markdown to support images attachments
 function prepareMarkdownImage( imgUrl: string ): string {
 	return `![Image](${ imgUrl })`;
 }
 
+// Format markdown to support links inside text
 function convertUrlsToMarkdown( text: string ): string {
-	const urlRegex =
-		/\b(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s<>[\](){}'"]*)?/gi;
+	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+\b)/g;
 
 	return text.replace( urlRegex, ( url ) => {
-		// Clean up any trailing punctuation
-		const cleanUrl = url.replace( /[.,!?]+$/, '' );
-		const fullUrl = cleanUrl.startsWith( 'http' ) ? cleanUrl : `https://${ cleanUrl }`;
-		return `[${ cleanUrl }](${ fullUrl })`;
+		const fullUrl = url.startsWith( 'http' ) ? url : `https://${ url }`;
+		return `[${ url }](${ fullUrl })`;
 	} );
 }
 
-export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
-	let messageContent = '';
-	if ( message.type === 'image' && message.mediaUrl ) {
-		messageContent = prepareMarkdownImage( message.mediaUrl );
-	} else if ( message.type === 'text' ) {
-		messageContent = convertUrlsToMarkdown( message.text );
-	} else if ( message.type === 'file' && message.mediaUrl ) {
-		// We don't support it yet return generic message.
-		messageContent = __( 'Message content not supported' );
-	}
+// Format markdown to support file attachments, returns a link to download the file.
+function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ): string {
+	const fileName = url.split( '/' ).pop()?.split( '?' )[ 0 ];
+	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
+}
 
+function getContentMessage( message: ZendeskMessage ): string {
+	let messageContent = '';
+	switch ( message.type ) {
+		case 'image':
+			if ( message.mediaUrl ) {
+				messageContent = prepareMarkdownImage( message.mediaUrl );
+			}
+			break;
+		case 'text':
+			messageContent = convertUrlsToMarkdown( message.text );
+			break;
+		case 'file':
+			if ( message.mediaUrl ) {
+				messageContent = createDownloadableMarkdownLink(
+					message.mediaUrl,
+					message.altText || __( 'Attachment' )
+				);
+			}
+			break;
+		default:
+			// We don't support it yet return generic message.
+			messageContent = __( 'Message content not supported' );
+	}
+	return messageContent;
+}
+
+export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
 	return {
-		content: messageContent,
+		content: getContentMessage( message ),
 		role: ( [ 'user', 'business' ].includes( message.role )
 			? message.role
 			: 'user' ) as MessageRole,

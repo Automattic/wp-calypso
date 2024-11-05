@@ -146,6 +146,7 @@ export type ZendeskMessage = {
 	type: ZendeskContentType;
 	text: string;
 	mediaUrl?: string;
+	altText?: string;
 };
 
 export type ZendeskContentType =
