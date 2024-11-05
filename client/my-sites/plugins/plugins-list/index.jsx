@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { isEqual, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -34,7 +34,6 @@ import PluginManagementV2 from '../plugin-management-v2';
 import { handleUpdatePlugins } from '../utils';
 import PluginsListDataViews from './plugins-list-dataviews';
 
-import './style.scss';
 function checkPropsChange( nextProps, propArr ) {
 	let i;
 	let prop;
@@ -71,6 +70,14 @@ export class PluginsList extends Component {
 	static defaultProps = {
 		recordGoogleEvent: () => {},
 	};
+
+	componentWillMount() {
+		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+			import( './style.scss' );
+		} else {
+			import( './style-compatibilty.scss' );
+		}
+	}
 
 	togglePlugin = ( plugin ) => {
 		const { slug } = plugin;
@@ -248,11 +255,12 @@ export class PluginsList extends Component {
 		}
 
 		const { plugins, allSites, showPluginActionDialog } = this.props;
-		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		if ( ! config.isEnabled( 'bulk-plugin-management' ) ) {
 			selectedPlugins = selectedPlugins ? [ selectedPlugins ] : plugins.filter( this.isSelected );
 		}
+
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		const ALL_ACTION_CALLBACKS = {
 			[ PluginActions.ACTIVATE ]: this.activateSelected,
@@ -395,7 +403,6 @@ export class PluginsList extends Component {
 			disconnectJetpackNotice: false,
 		} );
 
-		const { translate } = this.props;
 		this.props.warningNotice(
 			translate(
 				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
@@ -421,7 +428,6 @@ export class PluginsList extends Component {
 			removeJetpackNotice: false,
 		} );
 
-		const { translate } = this.props;
 		this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
 	}
 
@@ -442,46 +448,48 @@ export class PluginsList extends Component {
 
 		const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
 
-		<div className="plugins-list">
-			<QueryProductsList />
-			<PluginsListHeader
-				label={ this.props.header }
-				isBulkManagementActive={ this.state.bulkManagementActive }
-				selectedSiteSlug={ selectedSiteSlug }
-				plugins={ this.props.plugins }
-				selected={ this.getSelected() }
-				toggleBulkManagement={ this.toggleBulkManagement }
-				updateSelected={ this.updateSelected }
-				deactiveAndDisconnectSelected={ this.deactivateAndDisconnectSelected }
-				setAutoupdateSelected={ this.setAutoupdateSelected }
-				unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-				removePluginNotice={ () => this.removePluginDialog() }
-				setSelectionState={ this.setBulkSelectionState }
-				activatePluginNotice={ () => this.bulkActionDialog( PluginActions.ACTIVATE ) }
-				deactivatePluginNotice={ () => this.bulkActionDialog( PluginActions.DEACTIVATE ) }
-				autoupdateEnablePluginNotice={ () =>
-					this.bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES )
-				}
-				autoupdateDisablePluginNotice={ () =>
-					this.bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES )
-				}
-				updatePluginNotice={ () => this.bulkActionDialog( PluginActions.UPDATE ) }
-				isJetpackCloud={ this.props.isJetpackCloud }
-			/>
-			<PluginManagementV2
-				plugins={ this.getPlugins() }
-				isLoading={ this.props.isLoading }
-				selectedSite={ this.props.selectedSite }
-				searchTerm={ this.props.searchTerm }
-				filter={ this.props.filter }
-				isBulkManagementActive={ this.state.bulkManagementActive }
-				toggleBulkManagement={ this.toggleBulkManagement }
-				removePluginNotice={ this.removePluginDialog }
-				updatePlugin={ this.updatePlugin }
-				isJetpackCloud={ this.props.isJetpackCloud }
-				requestError={ this.props.requestPluginsError }
-			/>
-		</div>;
+		return (
+			<div className="plugins-list">
+				<QueryProductsList />
+				<PluginsListHeader
+					label={ this.props.header }
+					isBulkManagementActive={ this.state.bulkManagementActive }
+					selectedSiteSlug={ selectedSiteSlug }
+					plugins={ this.props.plugins }
+					selected={ this.getSelected() }
+					toggleBulkManagement={ this.toggleBulkManagement }
+					updateSelected={ this.updateSelected }
+					deactiveAndDisconnectSelected={ this.deactivateAndDisconnectSelected }
+					setAutoupdateSelected={ this.setAutoupdateSelected }
+					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
+					removePluginNotice={ () => this.removePluginDialog() }
+					setSelectionState={ this.setBulkSelectionState }
+					activatePluginNotice={ () => this.bulkActionDialog( PluginActions.ACTIVATE ) }
+					deactivatePluginNotice={ () => this.bulkActionDialog( PluginActions.DEACTIVATE ) }
+					autoupdateEnablePluginNotice={ () =>
+						this.bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES )
+					}
+					autoupdateDisablePluginNotice={ () =>
+						this.bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES )
+					}
+					updatePluginNotice={ () => this.bulkActionDialog( PluginActions.UPDATE ) }
+					isJetpackCloud={ this.props.isJetpackCloud }
+				/>
+				<PluginManagementV2
+					plugins={ this.getPlugins() }
+					isLoading={ this.props.isLoading }
+					selectedSite={ this.props.selectedSite }
+					searchTerm={ this.props.searchTerm }
+					filter={ this.props.filter }
+					isBulkManagementActive={ this.state.bulkManagementActive }
+					toggleBulkManagement={ this.toggleBulkManagement }
+					removePluginNotice={ this.removePluginDialog }
+					updatePlugin={ this.updatePlugin }
+					isJetpackCloud={ this.props.isJetpackCloud }
+					requestError={ this.props.requestPluginsError }
+				/>
+			</div>
+		);
 	}
 
 	getPlugins() {

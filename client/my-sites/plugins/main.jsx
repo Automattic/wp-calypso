@@ -70,6 +70,12 @@ export class PluginsMain extends Component {
 		};
 	}
 
+	componentWillMount() {
+		if ( ! config.isEnabled( 'bulk-plugin-management' ) ) {
+			import( './style-compatibilty.scss' );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		const {
 			currentPlugins,
@@ -657,8 +663,8 @@ export default flow(
 					? pluginsWithUpdatesAndStatuses
 					: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: config.isEnabled( 'bulk-plugin-management' )
-					? getPlugins( state, visibleSiteIds, filter )
-					: [],
+					? []
+					: getPlugins( state, visibleSiteIds, filter ),
 				pluginsWithUpdates,
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				activePlugins,
