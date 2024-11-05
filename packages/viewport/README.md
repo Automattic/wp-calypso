@@ -55,8 +55,9 @@ Note: the above usage is more easily accomplished using the hooks and higher-ord
 
 ## Supported methods
 
-- `isWithinBreakpoint( breakpoint )`: Whether the current screen size matches the breakpoint.
+- `isWithinBreakpoint( breakpoint, widthOrHeight = false )`: Whether the current screen size matches the breakpoint. If the second argument is true, it checks if the screen height or width matches the breakpoint.
 - `isMobile()`: Whether the current screen size matches a mobile breakpoint (equivalent to "<480px"). See note at end of document.
+- `isMobileWidthOrHeight()`: Whether the current screen width or height matches a mobile breakpoint (equivalent to "<480px"). See note at end of document.
 - `isDesktop()`: Whether the current screen size matches a desktop breakpoint (equivalent to ">960px"). See note at end of document.
 - `subscribeIsWithinBreakpoint( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint. Returns the unsubscribe function.
 - `subscribeIsMobile( listener )`: Register a listener for size changes that affect the mobile breakpoint (equivalent to "<480px"). Returns the unsubscribe function. See note at end of document.
