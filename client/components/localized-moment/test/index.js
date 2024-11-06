@@ -5,7 +5,7 @@
 import { render, act, waitFor } from '@testing-library/react';
 import globalMoment from 'moment';
 import { PureComponent } from 'react';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
 import MomentProvider from '../provider';
 

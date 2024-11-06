@@ -28,7 +28,7 @@ import {
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { GoogleAnalyticsForm } from '../analytics/form-google-analytics';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import {
 	logmeinUrl,
 	attachLogmein,

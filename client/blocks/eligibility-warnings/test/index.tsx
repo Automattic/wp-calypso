@@ -7,7 +7,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import EligibilityWarnings from '..';
 
 jest.mock( '@automattic/calypso-router', () => ( {

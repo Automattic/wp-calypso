@@ -5,7 +5,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';
 import * as actions from 'calypso/state/jetpack/credentials/actions';
 

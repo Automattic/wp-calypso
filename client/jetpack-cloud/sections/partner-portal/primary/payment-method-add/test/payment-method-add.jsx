@@ -5,7 +5,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import PaymentMethodAdd from '../index';
 
 describe( '<PaymentMethodAdd>', () => {

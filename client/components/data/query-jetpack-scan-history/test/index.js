@@ -4,7 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import { JETPACK_SCAN_HISTORY_REQUEST } from 'calypso/state/action-types';
 import * as jetpackScanActions from 'calypso/state/jetpack-scan/history/actions';

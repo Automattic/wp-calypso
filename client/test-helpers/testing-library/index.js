@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render as rtlRender, renderHook as rtlRenderHook } from '@testing-library/react';
 import { Fragment } from 'react';
 import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, legacy_createStore as createStore } from 'redux';
 import { thunk } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
 

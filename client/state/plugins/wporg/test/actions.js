@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { legacy_createStore as createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import * as wporg from 'calypso/lib/wporg';
 import { combineReducers } from 'calypso/state/utils';

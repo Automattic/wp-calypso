@@ -7,7 +7,7 @@ import {
 } from '@automattic/shopping-cart';
 import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
-import { createStore, applyMiddleware } from 'redux';
+import { legacy_createStore as createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';

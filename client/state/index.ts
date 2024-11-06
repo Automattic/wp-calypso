@@ -4,7 +4,14 @@ import {
 	useDispatch as reduxUseDispatch,
 	useStore as reduxUseStore,
 } from 'react-redux';
-import { UnknownAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
+import {
+	UnknownAction,
+	legacy_createStore as createStore,
+	applyMiddleware,
+	compose,
+	Store,
+	StoreEnhancer,
+} from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import { thunk } from 'redux-thunk';
 import { WithAddReducer } from 'calypso/state/add-reducer';

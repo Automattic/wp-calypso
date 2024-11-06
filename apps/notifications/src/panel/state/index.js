@@ -1,4 +1,9 @@
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; // eslint-disable-line no-restricted-imports
+import {
+	applyMiddleware,
+	combineReducers,
+	compose,
+	legacy_createStore as createStore,
+} from 'redux';
 import { thunk } from 'redux-thunk';
 import actionMiddleware from './action-middleware';
 import { createListenerMiddleware } from './create-listener-middleware';

@@ -20,5 +20,5 @@ import { combineReducers } from 'calypso/state/utils';
 ```
 
 ```js
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 ```

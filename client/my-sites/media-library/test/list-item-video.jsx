@@ -4,7 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { legacy_createStore as createStore } from 'redux';
 import resize from 'calypso/lib/resize-image-url';
 import ListItemVideo from 'calypso/my-sites/media-library/list-item-video';
 import fixtures from './fixtures';
