@@ -7,7 +7,6 @@ import SummaryStat from './SummaryStat';
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
 	status: string;
-	siteName: string;
 }
 
 export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {

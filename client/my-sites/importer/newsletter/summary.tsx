@@ -30,8 +30,8 @@ interface SummaryProps {
 }
 
 function getSummaryDescription(
-	contentStepContent: ContentStepContent,
-	subscribersStepContent: SubscribersStepContent
+	contentStepContent: ContentStepContent | undefined,
+	subscribersStepContent: SubscribersStepContent | undefined
 ) {
 	if ( contentStepContent && subscribersStepContent ) {
 		return __( 'We’re importing your content and subscribers' );
