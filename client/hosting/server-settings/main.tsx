@@ -22,7 +22,7 @@ import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mo
 import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
 import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
-import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
 import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/card';
 import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';

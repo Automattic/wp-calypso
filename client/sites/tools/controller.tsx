@@ -2,6 +2,8 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import { useAreAdvancedHostingFeaturesSupported } from '../features';
+import Database from './database/page';
 import {
 	DeploymentCreation,
 	DeploymentManagement,
@@ -11,7 +13,6 @@ import {
 import { indexPage } from './deployments/routes';
 import Logs from './logs';
 import Monitoring from './monitoring';
-import useIsSftpSshSettingSupported from './sftp-ssh/hooks/use-is-sftp-ssh-setting-supported';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SftpSsh from './sftp-ssh/page';
 import StagingSite from './staging-site';
@@ -19,7 +20,8 @@ import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
-	const shouldShowSftpSsh = useIsSftpSshSettingSupported();
+	const shouldShowAdvancedHostingFeatures = useAreAdvancedHostingFeaturesSupported();
+
 	const sftpSshTitle = useSftpSshSettingTitle();
 
 	return (
@@ -32,10 +34,18 @@ export function ToolsSidebar() {
 			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
 			<SidebarItem href={ `/sites/tools/logs/${ slug }` }>{ __( 'Logs' ) }</SidebarItem>
-			<SidebarItem enabled={ !! shouldShowSftpSsh } href={ `/sites/tools/sftp-ssh/${ slug }` }>
+			<SidebarItem
+				enabled={ !! shouldShowAdvancedHostingFeatures }
+				href={ `/sites/tools/sftp-ssh/${ slug }` }
+			>
 				{ sftpSshTitle }
 			</SidebarItem>
-			<SidebarItem href={ `/sites/tools/database/${ slug }` }>{ __( 'Database' ) }</SidebarItem>
+			<SidebarItem
+				enabled={ !! shouldShowAdvancedHostingFeatures }
+				href={ `/sites/tools/database/${ slug }` }
+			>
+				{ __( 'Database' ) }
+			</SidebarItem>
 		</Sidebar>
 	);
 }
@@ -150,7 +160,7 @@ export function database( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<ToolsSidebar />
-			<p>Database</p>
+			<Database />
 		</PanelWithSidebar>
 	);
 	next();

@@ -8,7 +8,7 @@ import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
-import { isAtomicFeatureSupported } from './utils';
+import { areHostingFeaturesSupported } from './features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -157,7 +157,7 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if ( ! isAtomicFeatureSupported( site ) ) {
+	if ( ! areHostingFeaturesSupported( site ) ) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
