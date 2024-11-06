@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
@@ -90,8 +91,8 @@ const ReaderSidebarRecent = ( {
 					} ) }
 					onClick={ () => selectSite( null ) }
 				>
-					{ translate( 'All' ) }{ ' ' }
-					{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+					<span className="sidebar__menu-item-sitename">{ translate( 'All' ) }</span>{ ' ' }
+					<Count count={ totalUnseenCount } compact />
 				</button>
 			</li>
 			{ sitesToShow.map( ( site ) => (
@@ -102,7 +103,9 @@ const ReaderSidebarRecent = ( {
 						} ) }
 						onClick={ () => selectSite( site.feed_ID ) }
 					>
-						{ site.name } { site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+						<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
+						<span className="sidebar__menu-item-sitename">{ site.name }</span>{ ' ' }
+						<Count count={ site.unseen_count } compact />
 					</button>
 				</li>
 			) ) }
