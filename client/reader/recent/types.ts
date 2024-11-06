@@ -4,8 +4,6 @@ export interface ReaderPost {
 	site_name: string;
 	postId: number;
 	blogId: number;
-	feedId?: number;
-	feed_ID?: number;
 }
 
 export interface PostItem {
