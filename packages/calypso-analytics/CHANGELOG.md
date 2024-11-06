@@ -1,6 +1,6 @@
 ## 1.1.3
 
-- Add "Remote Data Blocks" in the list of allowed sources..
+- Add "Remote Data Blocks" in the list of allowed sources.
 
 ## 1.1.2
 
