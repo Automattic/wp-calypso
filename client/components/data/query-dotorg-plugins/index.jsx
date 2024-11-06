@@ -7,6 +7,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { getAllPlugins } from 'calypso/state/plugins/wporg/selectors';
 
 const PLUGIN_RETRIEVE_INTERVAL = 200;
+const BATCH_PLUGIN_RETRIEVE_COUNT = 5;
 
 function QueryDotorgPlugins( { pluginSlugList } ) {
 	const dispatch = useDispatch();
@@ -22,13 +23,13 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 		} );
 	}, [ pluginSlugList, dotorgPlugins ] );
 
-	useInterval( () => {
-		if ( pluginSlugList.length ) {
-			const pluginSlug = queueRef.current.shift();
+	useInterval( async () => {
+		if ( pluginSlugList.length && config.isEnabled( 'bulk-plugin-management' ) ) {
+			const batch = queueRef.current.splice( 0, BATCH_PLUGIN_RETRIEVE_COUNT );
 
-			if ( pluginSlug && config.isEnabled( 'bulk-plugin-management' ) ) {
-				dispatch( wporgFetchPluginData( pluginSlug ) );
-			}
+			await Promise.all(
+				batch.map( ( pluginSlug ) => dispatch( wporgFetchPluginData( pluginSlug ) ) )
+			);
 		}
 	}, PLUGIN_RETRIEVE_INTERVAL );
 
