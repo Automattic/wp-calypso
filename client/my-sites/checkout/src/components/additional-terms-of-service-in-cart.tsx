@@ -104,12 +104,15 @@ function MessageForTermsOfServiceRecordUnknown( {
 		);
 
 		const termLengthText = translate(
-			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
+			'The promotional period for your {{b}}%(productName)s{{/b}} subscription lasts from %(startDate)s to %(endDate)s.',
 			{
 				args: {
 					productName,
 					startDate,
 					endDate: promotionEndDate,
+				},
+				components: {
+					b: <strong />,
 				},
 			}
 		);
@@ -119,11 +122,14 @@ function MessageForTermsOfServiceRecordUnknown( {
 				'After you renew today, your %(productName)s subscription will last until %(endDate)s.'
 			);
 		const renewalTermLengthText = translate(
-			'After you renew today, your %(productName)s subscription will last until %(endDate)s.',
+			'After you renew today, your {{b}}%(productName)s{{/b}} subscription will last until %(endDate)s.',
 			{
 				args: {
 					productName,
 					endDate: subscriptionEndDate,
+				},
+				components: {
+					b: <strong />,
 				},
 			}
 		);
@@ -224,7 +230,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 	}
 
 	return translate(
-		'At the end of the promotional period your %(productName)s subscription will renew for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
+		'At the end of the promotional period your {{b}}%(productName)s{{/b}} subscription will renew for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 		{
 			args: {
 				productName,
@@ -232,6 +238,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 				regularPrice,
 			},
 			components: {
+				b: <strong />,
 				link: <a href={ manageSubscriptionLink } target="_blank" rel="noopener noreferrer" />,
 			},
 		}
