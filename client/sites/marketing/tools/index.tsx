@@ -8,7 +8,6 @@ import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
-import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -51,10 +50,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const handleHireAnSEOExpertClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_hire_an_seo_expert_button_click' );
-	};
-
-	const handleSimpleTextingClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_simpletexting_button_click' );
 	};
 
 	const handleStartSharingClick = () => {
@@ -145,23 +140,6 @@ export const MarketingTools: FunctionComponent = () => {
 					imageAlt={ translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ) }
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'SimpleTexting' ) }
-					description={ translate(
-						'SimpleTexting makes it easy, fast and affordable to send SMS marketing campaigns or engage in 1-on-1 conversations with your customers.'
-					) }
-					imagePath={ simpletextLogo }
-					imageAlt={ translate( 'SimpleTexting logo' ) }
-				>
-					<Button
-						onClick={ handleSimpleTextingClick }
-						href="https://simpletexting.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Start texting' ) }
-					</Button>
 				</MarketingToolsFeature>
 
 				{ isEnglish && (
