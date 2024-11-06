@@ -1,4 +1,5 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps, useState } from 'react';
 import { GitHubInstallationsDropdown } from '../installations-dropdown';
@@ -71,7 +72,7 @@ export const GitHubBrowseRepositories = ( {
 							'To access your repositories, install the WordPress.com app on your GitHub account and grant it the necessary permissions.'
 						) }
 					</span>
-					<Button primary onClick={ onNewInstallationRequest }>
+					<Button variant="primary" onClick={ onNewInstallationRequest }>
 						{ __( 'Install the WordPress.com app' ) }
 						<Gridicon css={ { marginLeft: '4px' } } icon="external" size={ 18 } />
 					</Button>

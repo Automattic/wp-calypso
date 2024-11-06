@@ -1,5 +1,5 @@
-import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
+import { FormInputValidation, FormLabel, Spinner } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
@@ -169,7 +169,7 @@ export const GitHubConnectionForm = ( {
 								</FormSettingExplanation>
 							) }
 							{ changeRepository && (
-								<Button compact onClick={ changeRepository }>
+								<Button variant="secondary" size="compact" onClick={ changeRepository }>
 									{ __( 'Select repository' ) }
 								</Button>
 							) }
@@ -218,7 +218,12 @@ export const GitHubConnectionForm = ( {
 				/>
 			</div>
 			<div className="github-deployments-connect-repository__submit">
-				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
+				<Button
+					type="submit"
+					variant="primary"
+					isBusy={ isPending }
+					disabled={ isPending || submitDisabled }
+				>
 					{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
 				</Button>
 

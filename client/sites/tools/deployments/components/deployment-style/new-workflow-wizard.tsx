@@ -1,4 +1,5 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -72,9 +73,9 @@ export const NewWorkflowWizard = ( {
 			<div css={ { marginTop: '16px' } }>
 				<Button
 					type="button"
-					className="button form-button"
+					variant="secondary"
 					disabled={ isPending }
-					busy={ isPending }
+					isBusy={ isPending }
 					onClick={ () =>
 						createWorkflow( {
 							repositoryId: repository.id,
