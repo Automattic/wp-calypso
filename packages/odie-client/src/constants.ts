@@ -18,18 +18,23 @@ export const ODIE_RATE_LIMIT_MESSAGE = __(
 	__i18n_text_domain__
 );
 
-export const ODIE_INITIAL_MESSAGE = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
-	if ( shouldUseHelpCenterExperience ) {
-		return __(
-			'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
-			__i18n_text_domain__
-		);
-	}
+export const ODIE_INITIAL_MESSAGE_NEW = __(
+	'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
+	__i18n_text_domain__
+);
 
-	return __(
-		'Hi there 👋 I’m Wapuu, WordPress.com’s AI assistant! Having an issue with your site or account? Tell me all about it and I’ll be happy to help.',
-		__i18n_text_domain__
-	);
+export const ODIE_INITIAL_MESSAGE = __(
+	'Hi there 👋 I’m Wapuu, WordPress.com’s AI assistant! Having an issue with your site or account? Tell me all about it and I’ll be happy to help.',
+	__i18n_text_domain__
+);
+
+export const getOdieInitialMessageConstant = (
+	shouldUseHelpCenterExperience: boolean | undefined
+) => {
+	if ( shouldUseHelpCenterExperience ) {
+		return ODIE_INITIAL_MESSAGE_NEW;
+	}
+	return ODIE_INITIAL_MESSAGE;
 };
 
 export const ODIE_FORWARD_TO_FORUMS_MESSAGE = __(
