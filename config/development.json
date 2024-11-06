@@ -35,6 +35,7 @@
 		"a4a-dev-sites": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
+		"automated-migration/pending-status": true,
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-assembler": true,
