@@ -25,7 +25,6 @@ type ReaderAvatarProps = {
 	preferBlavatar?: boolean;
 	showPlaceholder?: boolean;
 	isCompact?: boolean;
-	isRecentFeed?: boolean;
 	onClick?: () => void;
 	iconSize?: number | null;
 };
@@ -36,7 +35,6 @@ const ReaderAvatar = ( {
 	feedIcon,
 	siteUrl,
 	isCompact = false,
-	isRecentFeed = false,
 	preferGravatar = false,
 	preferBlavatar = false,
 	showPlaceholder = false,
@@ -91,9 +89,6 @@ const ReaderAvatar = ( {
 	if ( isCompact ) {
 		siteIconSize = 40;
 		gravatarSize = hasBothIcons ? 32 : 40;
-	} else if ( isRecentFeed ) {
-		siteIconSize = 24;
-		gravatarSize = 24;
 	} else {
 		siteIconSize = 96;
 		gravatarSize = hasBothIcons ? 32 : 96;

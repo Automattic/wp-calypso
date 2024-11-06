@@ -15,7 +15,7 @@ const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, setSel
 				siteIcon={ post.site_icon }
 				feedIcon={ post.feed_icon }
 				author={ post.author }
-				isRecentFeed
+				iconSize={ 24 }
 			/>
 		</Button>
 	);
