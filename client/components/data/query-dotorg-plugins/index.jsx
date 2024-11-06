@@ -14,6 +14,7 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 	const queueRef = useRef( [] );
 
 	const dotorgPlugins = useSelector( ( state ) => getAllPlugins( state ) );
+	const isBulkManagementEnabled = config.isEnabled( 'bulk-plugin-management' );
 
 	useEffect( () => {
 		pluginSlugList.forEach( ( pluginSlug ) => {
@@ -24,7 +25,7 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 	}, [ pluginSlugList, dotorgPlugins ] );
 
 	useInterval( async () => {
-		if ( pluginSlugList.length && config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( isBulkManagementEnabled && pluginSlugList.length ) {
 			const batch = queueRef.current.splice( 0, BATCH_PLUGIN_RETRIEVE_COUNT );
 
 			await Promise.all(
