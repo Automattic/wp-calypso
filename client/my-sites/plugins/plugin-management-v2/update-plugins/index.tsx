@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import ButtonGroup from 'calypso/components/button-group';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -40,10 +39,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 		)
 	);
 
-	// We don't want null or undefined "sites"
-	const allSites = useSelector( ( state ) =>
-		getSites( state ).filter( ( s ): s is SiteDetails => Boolean( s ) )
-	);
+	const allSites = useSelector( getSites );
 
 	const pluginsOnSites = useSelector( ( state ) => getPluginsOnSites( state, plugins ) );
 	const selectedSite = useSelector( getSelectedSite );

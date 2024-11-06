@@ -163,13 +163,13 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
+} );
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
 	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
