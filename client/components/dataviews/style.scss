@@ -153,6 +153,11 @@
 			}
 		}
 	}
+
+	// Color overrides for focus states of Action button
+	.components-button:focus:not(:disabled) {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
 }
 
 // TODO: remove when updating to dataviews@4.3.0.

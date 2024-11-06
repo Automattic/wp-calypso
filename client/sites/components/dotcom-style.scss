@@ -327,15 +327,8 @@
 			margin-right: 12px;
 		}
 
+		// DataView overrides: Selected and hover states on the site list.
 		ul.dataviews-view-list {
-			.components-h-stack {
-				gap: 0;
-			}
-
-			li {
-				cursor: pointer;
-			}
-
 			li.is-selected,
 			li.is-selected:hover {
 				background-color: #ebf2fc;
@@ -560,14 +553,10 @@
 		}
 
 		.dataviews-wrapper {
-			width: 100%;
-
 			.dataviews-view-list {
-				flex: 1;
-				max-height: none;
-
-				// Ideally instead of reusing the site name full field
+				// DataView overrides: Ideally instead of reusing the site name full field
 				// We should be setting a media field and a primary field.
+				// Or update Core to hide them when not specified.
 				.dataviews-view-list__media-wrapper {
 					display: none;
 				}
@@ -614,6 +603,54 @@
 	.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
 		.item-preview__header {
 			padding: 0;
+		}
+	}
+}
+
+// DataView overrides:
+// Using the List view for the fly-out panel requires hiding certain elements 
+// to properly fit the site list when the panel is open.
+.main.a4a-layout.sites-dashboard {
+	@media (min-width: $break-large) {
+		ul.dataviews-view-list {
+			// This override could potentially be removed if we’re able to pass the Actions column via data.actions
+			.components-h-stack,
+			.dataviews-view-list__item {
+				width: 100%;
+			}
+		
+			/* This styling is a bit of a hack: To make the site name clickable area larger, will need
+			 * to hide the other fields when in preview mode.
+			 */
+			.dataviews-view-list__field {
+				// Hide the field except first (Site name) and last (actions menu)
+				&:not(:first-child):not(:last-child) {
+					display: none;
+				}
+		
+				// Force the site name to take up the full width
+				&:first-child {
+					flex-grow: 1;
+		
+					.sites-dataviews__site {
+						width: 100%;
+						justify-content: flex-start;
+					}
+				}
+			}
+		
+			.sites-overview__stats-trend,
+			.sites-overview__column-action-button,
+			.sites-overview__row-status,
+			.toggle-activate-monitoring__toggle-button,
+			.sites-dataviews__favorite-btn-wrapper,
+			.sites-overview__boost-score {
+				display: none;
+			}
+		
+			.site-actions__actions-large-screen {
+				display: block;
+			}
 		}
 	}
 }
