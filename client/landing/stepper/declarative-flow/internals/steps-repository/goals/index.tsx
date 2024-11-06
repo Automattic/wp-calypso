@@ -92,32 +92,35 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
 	};
 
-	const handleNext = () => {
+	const getStepSubmissionHandler = ( eventProps: Record< string, unknown > ) => () => {
 		const intent = goalsToIntent( goals );
 		setIntent( intent );
 
 		recordGoalsSelectTracksEvent( goals, intent );
 		recordIntentSelectTracksEvent( intent );
 
-		navigation.submit?.( { intent } );
+		navigation.submit?.( { intent, ...eventProps } );
 	};
+
+	const handleSkip = getStepSubmissionHandler( { action: 'skip' } );
+	const handleNext = getStepSubmissionHandler( { action: 'next' } );
 
 	const handleImportClick = () => {
 		setIntent( SiteIntent.Import );
 		recordIntentSelectTracksEvent( SiteIntent.Import );
-		navigation.submit?.( { intent: SiteIntent.Import } );
+		navigation.submit?.( { intent: SiteIntent.Import, action: 'import' } );
 	};
 
 	const handleDIFMClick = () => {
 		setIntent( SiteIntent.DIFM );
 		recordIntentSelectTracksEvent( SiteIntent.DIFM );
-		navigation.submit?.( { intent: SiteIntent.DIFM } );
+		navigation.submit?.( { intent: SiteIntent.DIFM, action: 'difm' } );
 	};
 
 	const handleDashboardClick = () => {
 		setIntent( SiteIntent.Build );
 		recordIntentSelectTracksEvent( SiteIntent.Build );
-		navigation.submit?.( { intent: SiteIntent.Build, skip: true } );
+		navigation.submit?.( { intent: SiteIntent.Build, skip: true, action: 'dashboard' } );
 	};
 
 	useEffect( () => {
@@ -141,6 +144,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
+				onSkip={ handleSkip }
 				goNext={ handleNext }
 				nextLabelText={ translate( 'Next' ) }
 				recordTracksEvent={ recordTracksEvent }
