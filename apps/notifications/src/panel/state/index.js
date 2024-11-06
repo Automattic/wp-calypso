@@ -1,5 +1,5 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; // eslint-disable-line no-restricted-imports
-import thunkMiddleware from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import actionMiddleware from './action-middleware';
 import { createListenerMiddleware } from './create-listener-middleware';
 import notes from './notes/reducer';
@@ -17,7 +17,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const listenerMiddleware = createListenerMiddleware();
 const withMiddleware = () =>
-	composeEnhancers( applyMiddleware( thunkMiddleware, listenerMiddleware, actionMiddleware() ) )(
+	composeEnhancers( applyMiddleware( thunk, listenerMiddleware, actionMiddleware() ) )(
 		createStore
 	);
 
