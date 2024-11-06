@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useMigrationCanceller } from 'calypso/data/site-migration/landing/use-migration-canceller';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -110,6 +111,13 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		  } )
 		: '';
 
+	const { mutate: cancelMigration } = useMigrationCanceller( site?.ID );
+
+	const goBack = () => {
+		cancelMigration();
+		navigation.goBack?.();
+	};
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
@@ -128,7 +136,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
-				goBack={ navigation.goBack }
+				goBack={ goBack }
 			/>
 		</>
 	);
