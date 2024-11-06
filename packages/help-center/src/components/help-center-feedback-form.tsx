@@ -2,13 +2,19 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
+import CustomALink from '@automattic/odie-client/src/components/message/custom-a-link';
+import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
+import { uriTransformer } from '@automattic/odie-client/src/components/message/uri-transformer';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import Markdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import './help-center-feedback-form.scss';
+import { generateContactOnClickEvent } from './utils';
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: number | null;
@@ -27,6 +33,7 @@ const HelpCenterFeedbackForm = ( {
 
 	const { sectionName, site } = useHelpCenterContext();
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const navigate = useNavigate();
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
 	const productId = plan?.getProductId();
@@ -94,20 +101,45 @@ const HelpCenterFeedbackForm = ( {
 		);
 	};
 
+	const handleContactSupportClick = () => {
+		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
+		navigate( '/odie' );
+	};
+
 	return (
 		<div className="help-center-feedback__form">
 			{ startedFeedback === null && <FeedbackButtons /> }
 			{ startedFeedback !== null && answerValue === 1 && <FeedbackTextArea /> }
-			{ startedFeedback !== null && answerValue === 2 && site && (
-				<HelpCenterContactSupportOption
-					sectionName={ sectionName }
-					productId={ productId }
-					site={ site }
-					triggerSource="article-feedback-form"
-					articleUrl={ articleUrl }
-					trackEventName="calypso_helpcenter_feedback_contact_support"
-				/>
-			) }
+			{ startedFeedback !== null &&
+				answerValue === 2 &&
+				site &&
+				( shouldUseHelpCenterExperience ? (
+					<>
+						<div className="odie-chatbox-dislike-feedback-message">
+							<Markdown
+								urlTransform={ uriTransformer }
+								components={ {
+									a: CustomALink,
+								} }
+							>
+								{ __(
+									'Would you like to contact our support team? Select an option below:',
+									__i18n_text_domain__
+								) }
+							</Markdown>
+						</div>
+						<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+					</>
+				) : (
+					<HelpCenterContactSupportOption
+						sectionName={ sectionName }
+						productId={ productId }
+						site={ site }
+						triggerSource="article-feedback-form"
+						articleUrl={ articleUrl }
+						trackEventName="calypso_helpcenter_feedback_contact_support"
+					/>
+				) ) }
 		</div>
 	);
 };

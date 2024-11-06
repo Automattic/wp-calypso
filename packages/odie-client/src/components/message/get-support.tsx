@@ -4,12 +4,18 @@ import { useCreateZendeskConversation } from '../../hooks';
 
 import './get-support.scss';
 
-export const GetSupport = () => {
+export const GetSupport = ( {
+	onClickAdditionalEvent,
+}: {
+	onClickAdditionalEvent?: () => void;
+} ) => {
 	const newConversation = useCreateZendeskConversation();
 	const { shouldUseHelpCenterExperience, chat } = useOdieAssistantContext();
 
 	const handleOnClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
+
+		onClickAdditionalEvent?.();
 
 		await newConversation();
 	};

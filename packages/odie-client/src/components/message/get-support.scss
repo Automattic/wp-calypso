@@ -1,7 +1,9 @@
-.help-center__container-chat .chatbox-messages .odie__transfer-to-human {
+
+
+.help-center__container-chat .chatbox-messages .odie__transfer-to-human,
+.help-center-article-content .help-center-feedback__form .odie__transfer-to-human {
 	display: flex;
 	width: 100%;
-	margin-left: 11%;
 	padding-bottom: 16px;
 
 	button {
@@ -26,4 +28,8 @@
 			outline: none;
 		}
 	}
+}
+
+.help-center__container-chat .chatbox-messages .odie__transfer-to-human {
+	margin-left: 11%;
 }
