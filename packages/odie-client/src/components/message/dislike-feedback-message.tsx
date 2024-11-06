@@ -37,6 +37,16 @@ export const DislikeFeedbackMessage = () => {
 
 	// This can be removed after removing the feature flag
 	const renderCurrentComponentDesign = () => {
+		const dislikeFeedbackMessage = shouldUseHelpCenterExperience
+			? __(
+					'Let’s get the information you need. Would you like to contact our support team?',
+					__i18n_text_domain__
+			  )
+			: __(
+					'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+					__i18n_text_domain__
+			  );
+
 		return (
 			<>
 				<div className="message-header bot">
@@ -54,10 +64,7 @@ export const DislikeFeedbackMessage = () => {
 							a: CustomALink,
 						} }
 					>
-						{ __(
-							'Let’s get the information you need. Would you like to contact our support team?',
-							__i18n_text_domain__
-						) }
+						{ dislikeFeedbackMessage }
 					</Markdown>
 					{ extraContactOptions }
 				</div>

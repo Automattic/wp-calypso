@@ -156,6 +156,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		useState( getHelpCenterZendeskConversationStarted() !== null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
+	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
 	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
 		( select ) => {
@@ -207,11 +208,19 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
-			messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+			messages: [
+				getOdieInitialMessage( botNameSlug, odieInitialPromptText, shouldUseHelpCenterExperience ),
+			],
 		} );
 		trackEvent( 'chat_cleared', {} );
 		broadcastChatClearance( odieClientId );
-	}, [ botNameSlug, odieInitialPromptText, trackEvent, setOdieStorage ] );
+	}, [
+		botNameSlug,
+		odieInitialPromptText,
+		trackEvent,
+		setOdieStorage,
+		shouldUseHelpCenterExperience,
+	] );
 
 	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {

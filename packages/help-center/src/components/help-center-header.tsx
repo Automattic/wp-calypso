@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useSetOdieStorage } from '@automattic/odie-client';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
@@ -78,6 +79,8 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 
 	const isHelpCenterHome = key === 'default';
 
+	const setChatId = useSetOdieStorage( 'chat_id' );
+
 	const headerText = useMemo( () => {
 		switch ( pathname ) {
 			case '/odie':
@@ -102,7 +105,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 					label={ __( 'Chat history', __i18n_text_domain__ ) }
 					icon={ backup }
 					tooltipPosition="top left"
-					onClick={ () => navigate( '/chat-history' ) }
+					onClick={ () => setChatId( null ) }
 					onTouchStart={ () => navigate( '/chat-history' ) }
 				/>
 			) }

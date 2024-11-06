@@ -27,7 +27,12 @@ const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }
 						/>
-						<HelpCenterFeedbackForm postId={ post.ID } articleUrl={ post.URL } />
+						<HelpCenterFeedbackForm
+							postId={ post.ID }
+							blogId={ post.site_ID }
+							slug={ post.slug }
+							articleUrl={ post.URL }
+						/>
 					</EmbedContainer>
 				</>
 			) }

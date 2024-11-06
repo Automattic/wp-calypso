@@ -3,6 +3,7 @@ import { getZendeskConversation } from '../data/use-get-zendesk-conversation';
 import { useOdieChat } from '../query/use-odie-chat';
 import { Chat, OdieAllowedBots, Message, SupportProvider } from '../types/';
 import { getOdieInitialMessage } from './get-odie-initial-message';
+import { useOdieAssistantContext } from '.';
 
 export const useLoadPreviousChat = ( {
 	botNameSlug,
@@ -20,15 +21,22 @@ export const useLoadPreviousChat = ( {
 	setChatStatus: ( chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' ) => void;
 } ) => {
 	const { chat: existingChat } = useOdieChat( 1, 30 );
+	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
-		messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+		messages: [
+			getOdieInitialMessage( botNameSlug, odieInitialPromptText, shouldUseHelpCenterExperience ),
+		],
 	} );
 
 	useEffect( () => {
 		if ( existingChat || selectedConversationId ) {
-			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
+			const initialMessage = getOdieInitialMessage(
+				botNameSlug,
+				odieInitialPromptText,
+				shouldUseHelpCenterExperience
+			);
 			const messages = [ initialMessage ];
 
 			if ( existingChat ) {
@@ -61,7 +69,13 @@ export const useLoadPreviousChat = ( {
 		} else {
 			setChat( {
 				chat_id: null,
-				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+				messages: [
+					getOdieInitialMessage(
+						botNameSlug,
+						odieInitialPromptText,
+						shouldUseHelpCenterExperience
+					),
+				],
 			} );
 			setChatStatus( 'loaded' );
 		}
@@ -72,6 +86,9 @@ export const useLoadPreviousChat = ( {
 		setSupportProvider,
 		isChatLoaded,
 		setChatStatus,
+		existingChat,
+		selectedConversationId,
+		shouldUseHelpCenterExperience,
 	] );
 
 	return { chat };
