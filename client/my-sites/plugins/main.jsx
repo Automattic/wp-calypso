@@ -67,12 +67,11 @@ export class PluginsMain extends Component {
 		super( props );
 		this.state = {
 			isMobile: isWithinBreakpoint( '<960px' ),
-			limitPluginsToDisplayGlobalUpdate: 100,
 		};
 	}
 
 	componentWillMount() {
-		if ( ! config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( ! this.props.newBulkPluginManagement ) {
 			import( './style-compatibilty.scss' );
 		}
 	}
@@ -90,7 +89,7 @@ export class PluginsMain extends Component {
 
 		currentPlugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData && ! config.isEnabled( 'bulk-plugin-management' ) ) {
+			if ( ! pluginData && ! this.props.newBulkPluginManagement ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
 		} );
@@ -165,7 +164,7 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
-		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( this.props.newBulkPluginManagement ) {
 			return this.addWporgDataToPlugins( this.props.currentPlugins );
 		}
 
@@ -368,7 +367,7 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( this.props.newBulkPluginManagement ) {
 			return (
 				<PluginsList
 					header={ this.props.translate( 'Manage Plugins' ) }
@@ -487,7 +486,7 @@ export class PluginsMain extends Component {
 		let selectedTextContent = null;
 		const { title, count } = this.getSelectedText();
 
-		if ( ! config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( ! this.props.newBulkPluginManagement ) {
 			navItems = this.getFilters().map( ( filterItem ) => {
 				if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 					return null;
@@ -551,10 +550,9 @@ export class PluginsMain extends Component {
 								<>
 									{ this.renderAddPluginButton() }
 									{ this.renderUploadPluginButton() }
-									{ currentPlugins &&
-										currentPlugins.length < this.state.limitPluginsToDisplayGlobalUpdate && (
-											<UpdatePlugins isWpCom plugins={ currentPlugins } />
-										) }
+									{ ! this.props.newBulkPluginManagement && (
+										<UpdatePlugins isWpCom plugins={ currentPlugins } />
+									) }
 								</>
 							) }
 						</NavigationHeader>
@@ -649,6 +647,7 @@ export default flow(
 				jetpackNonAtomic;
 
 			const breadcrumbs = getBreadcrumbs( state );
+			const newBulkPluginManagement = config.isEnabled( 'bulk-plugin-management' );
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -662,10 +661,10 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
-				currentPlugins: config.isEnabled( 'bulk-plugin-management' )
+				currentPlugins: newBulkPluginManagement
 					? pluginsWithUpdatesAndStatuses
 					: getPlugins( state, siteIds, filter ),
-				currentPluginsOnVisibleSites: config.isEnabled( 'bulk-plugin-management' )
+				currentPluginsOnVisibleSites: newBulkPluginManagement
 					? []
 					: getPlugins( state, siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [], filter ),
 				pluginsWithUpdates,
@@ -685,6 +684,7 @@ export default flow(
 				isJetpackCloud,
 				breadcrumbs,
 				requestPluginsError: requestPluginsError( state ),
+				newBulkPluginManagement,
 			};
 		},
 		{
