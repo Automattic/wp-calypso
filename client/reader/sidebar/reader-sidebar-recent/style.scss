@@ -2,6 +2,11 @@
 	&__item {
 		width: 100%;
 		cursor: pointer;
+
+		&--selected {
+			color: var( --color-sidebar-menu-selected-text ) !important;
+			background-color: var( --color-sidebar-menu-selected-background ) !important;
+		}
 	}
 
 	&__view-more {
