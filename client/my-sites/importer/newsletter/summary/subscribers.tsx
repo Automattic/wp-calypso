@@ -1,8 +1,8 @@
-import { Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, people, help } from '@wordpress/icons';
+import { people } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import SummaryStat from './SummaryStat';
 
 interface SubscriberSummaryProps {
 	stepContent: SubscribersStepContent;
@@ -14,10 +14,15 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 	if ( status === 'skipped' ) {
 		return (
 			<p>
-				<Icon icon={ people } />
-				{ createInterpolateElement( __( 'You <strong>skipped</strong> subscriber importing.' ), {
-					strong: <strong />,
-				} ) }
+				<SummaryStat
+					icon={ people }
+					label={ createInterpolateElement(
+						__( 'You <strong>skipped</strong> subscriber importing.' ),
+						{
+							strong: <strong />,
+						}
+					) }
+				/>
 			</p>
 		);
 	}
@@ -34,52 +39,21 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
-			<table className="summary__content-stats">
+			<div className="summary__content-stats">
 				{ subscribedCount > 0 && (
-					<tr>
-						<td>
-							<Icon icon={ people } />
-						</td>
-						<td className="summary__content-stats-label">{ __( 'Total Subscribers' ) }</td>
-						<td>
-							<strong>{ subscribedCount }</strong>
-						</td>
-					</tr>
+					<SummaryStat
+						count={ subscribedCount }
+						icon={ people }
+						label={ __( 'Total Subscribers' ) }
+					/>
 				) }
-				{ addedFree > 0 && (
-					<tr className="summary__content-indent">
-						<td></td>
-						<td className="summary__content-stats-label">{ __( 'Free subscribers' ) }</td>
-						<td>{ addedFree }</td>
-					</tr>
-				) }
-				{ addedPaid > 0 && (
-					<tr className="summary__content-indent">
-						<td></td>
-						<td className="summary__content-stats-label">{ __( 'Paid subscribers' ) }</td>
-						<td>{ addedPaid }</td>
-					</tr>
-				) }
+				{ addedFree > 0 && <SummaryStat count={ addedFree } label={ __( 'Free Subscribers' ) } /> }
+				{ addedPaid > 0 && <SummaryStat count={ addedPaid } label={ __( 'Paid Subscribers' ) } /> }
 				{ existingTotal > 0 && (
-					<tr className="summary__content-indent">
-						<td></td>
-						<td className="summary__content-stats-label">{ __( 'Skipped (duplicate)' ) }</td>
-						<td>{ existingTotal }</td>
-					</tr>
+					<SummaryStat count={ existingTotal } label={ __( 'Skipped (duplicate)' ) } />
 				) }
-				{ failedTotal > 0 && (
-					<tr className="summary__content-indent">
-						<td></td>
-						<td className="summary__content-stats-label">
-							{ __( 'Not imported' ) }
-							<Tooltip>
-								<Icon icon={ help } size={ 16 } />
-							</Tooltip>
-						</td>
-						<td>{ failedTotal }</td>
-					</tr>
-				) }
-			</table>
+				{ failedTotal > 0 && <SummaryStat count={ failedTotal } label={ __( 'Not imported' ) } /> }
+			</div>
 		);
 	}
 

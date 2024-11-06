@@ -1,7 +1,8 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, verse, page, post, file } from '@wordpress/icons';
+import { verse, page, post, file } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import SummaryStat from './SummaryStat';
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
@@ -14,10 +15,15 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 	if ( status === 'skipped' ) {
 		return (
 			<p>
-				<Icon icon={ post } />
-				{ createInterpolateElement( __( 'You <strong>skipped</strong> content importing.' ), {
-					strong: <strong />,
-				} ) }
+				<SummaryStat
+					icon={ post }
+					label={ createInterpolateElement(
+						__( 'You <strong>skipped</strong> content importing.' ),
+						{
+							strong: <strong />,
+						}
+					) }
+				/>
 			</p>
 		);
 	}
@@ -29,41 +35,13 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 		const attachments = progress.attachment.completed;
 
 		return (
-			<table className="summary__content-stats">
-				{ posts > 0 && (
-					<tr>
-						<td>
-							<Icon icon={ verse } />
-						</td>
-						<td className="summary__content-stats-label">{ __( 'Posts' ) }</td>
-						<td>
-							<strong>{ posts }</strong>
-						</td>
-					</tr>
-				) }
-				{ pages > 0 && (
-					<tr>
-						<td>
-							<Icon icon={ page } />
-						</td>
-						<td className="summary__content-stats-label">{ __( 'Pages' ) }</td>
-						<td>
-							<strong>{ pages }</strong>
-						</td>
-					</tr>
-				) }
+			<div className="summary__content-stats">
+				{ posts > 0 && <SummaryStat count={ posts } icon={ verse } label={ __( 'Posts' ) } /> }
+				{ pages > 0 && <SummaryStat count={ pages } icon={ page } label={ __( 'Pages' ) } /> }
 				{ attachments > 0 && (
-					<tr>
-						<td>
-							<Icon icon={ file } />
-						</td>
-						<td className="summary__content-stats-label">{ __( 'Media items' ) }</td>
-						<td>
-							<strong>{ attachments }</strong>
-						</td>
-					</tr>
+					<SummaryStat count={ attachments } icon={ file } label={ __( 'Media items' ) } />
 				) }
-			</table>
+			</div>
 		);
 	}
 
