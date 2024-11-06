@@ -2,7 +2,7 @@ import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { FormFileUpload } from '@wordpress/components';
+import { FormFileUpload, Spinner } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import React from 'react';
@@ -31,8 +31,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 };
 
 export const AttachmentButton: React.FC = () => {
-	const { chat, setChatStatus, shouldUseHelpCenterExperience, addMessage } =
-		useOdieAssistantContext();
+	const { chat, shouldUseHelpCenterExperience, addMessage } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
@@ -41,19 +40,14 @@ export const AttachmentButton: React.FC = () => {
 		async ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			if ( authData && chat.conversationId && chat.clientId && event.currentTarget.files?.length ) {
 				const file = event.currentTarget.files[ 0 ];
-				setChatStatus( 'loading' );
 				attachFileToConversation( {
 					authData,
 					file,
 					conversationId: chat.conversationId,
 					clientId: chat.clientId,
-				} )
-					.then( () => {
-						addMessage( getPlaceholderAttachmentMessage( file ) );
-					} )
-					.finally( () => {
-						setChatStatus( 'loaded' );
-					} );
+				} ).then( () => {
+					addMessage( getPlaceholderAttachmentMessage( file ) );
+				} );
 			}
 		},
 		[ chat.conversationId, authData ]
@@ -65,7 +59,8 @@ export const AttachmentButton: React.FC = () => {
 
 	return (
 		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
-			<Icon icon={ image } />
+			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
+			{ ! isAttachingFile && <Icon icon={ image } /> }
 		</FormFileUpload>
 	);
 };
