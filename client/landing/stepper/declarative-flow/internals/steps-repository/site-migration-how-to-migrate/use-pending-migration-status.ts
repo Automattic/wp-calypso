@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import type { NavigationControls } from '../../types';
@@ -19,28 +20,29 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		: false;
 
 	const {
-		updateMigrationStatus,
-		updateMigrationStatusAsync,
-		updateStatusMutationRest: {
-			isIdle: isMigrationStatusUpdateIdle,
-			isPending: isMigrationStatusUpdatePending,
-		},
-	} = useUpdateMigrationStatus();
+		mutate: updateMigrationStatus,
+		mutateAsync: updateMigrationStatusAsync,
+		isIdle: isMigrationStatusUpdateIdle,
+		isPending: isMigrationStatusUpdatePending,
+	} = useUpdateMigrationStatus( siteId );
 
 	const isLoading = isMigrationStatusUpdateIdle || isMigrationStatusUpdatePending;
 
 	// Register pending migration status when loading the step.
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-pending' );
+			updateMigrationStatus( { status: MigrationStatus.PENDING } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
 	const setPendingMigration = async ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
 		if ( siteId ) {
-			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			await updateMigrationStatusAsync( siteId, `migration-pending-${ parsedHow }` );
+			const status =
+				how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF
+					? MigrationStatus.PENDING_DYFM
+					: MigrationStatus.PENDING_DIFM;
+			await updateMigrationStatusAsync( { status } );
 		}
 
 		if ( onSubmit ) {

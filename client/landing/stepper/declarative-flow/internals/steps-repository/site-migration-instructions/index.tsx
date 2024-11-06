@@ -3,8 +3,8 @@ import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useCallback, useEffect } from 'react';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
-import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -19,6 +19,7 @@ import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
 import type { Status } from './provisioning';
 import type { Step } from '../../types';
+import type { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import './style.scss';
 
 interface PreparationEventsHookOptions {
@@ -82,10 +83,10 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-started-diy' );
+			updateMigrationStatus( { status: MigrationStatus.STARTED_DIY } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
