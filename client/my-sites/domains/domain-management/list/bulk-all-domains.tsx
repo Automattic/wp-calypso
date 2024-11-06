@@ -294,7 +294,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					}
 				}
 				.domains-table-toolbar {
-					margin-inline: 32px !important;
+					margin-inline: 32px;
 				}
 			}
 

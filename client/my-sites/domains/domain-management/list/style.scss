@@ -149,7 +149,11 @@
 			padding-inline: 0;
 
 			.navigation-header__main {
-				padding-inline: 48px;
+				padding-inline: 16px;
+
+				@include break-mobile {
+					padding-inline: 48px;
+				}
 			}
 
 			@include break-huge {
@@ -158,6 +162,7 @@
 				.navigation-header__main {
 					max-width: 1400px;
 					margin: 0 auto;
+					padding-inline: 48px;
 				}
 			}
 		}
@@ -223,8 +228,12 @@
 			margin-left: auto;
 			margin-right: auto;
 		}
+
+
 		.domains-table-toolbar {
-			@include break-huge {
+			margin-inline: 0;
+
+			@include break-mobile {
 				margin-inline: 48px;
 			}
 		}
