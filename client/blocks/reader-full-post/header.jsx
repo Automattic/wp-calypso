@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
@@ -31,12 +32,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 	}
 
 	// Extract the props we need from authorProfile
-	const { props: { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount } = {} } =
-		authorProfile || {};
-
-	console.log( 'layout', layout );
-	console.log( 'post', post );
-	console.log( 'authorProfile', authorProfile );
+	const { props: { author, siteIcon, feedIcon, siteName, followCount } = {} } = authorProfile || {};
 
 	const isDefaultLayout = layout !== 'recent';
 
@@ -45,25 +41,18 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 		<div className={ clsx( classes ) }>
 			{ layout === 'recent' && (
 				<div className="reader-full-post__header-site-icon">
-					{ ( () => {
-						if ( author?.avatar_URL ) {
-							return (
-								<img
-									src={ author.avatar_URL }
-									alt={ siteName }
-									className="reader-full-post__site-icon"
-								/>
-							);
-						}
-						if ( siteIcon ) {
-							return (
-								<img src={ siteIcon } alt={ siteName } className="reader-full-post__site-icon" />
-							);
-						}
-						return (
-							<img src={ feedIcon } alt={ siteName } className="reader-full-post__site-icon" />
-						);
-					} )() }
+					<ReaderSiteStreamLink
+						className="reader-full-post__header-site-icon-link"
+						feedId={ post.feed_ID }
+						siteId={ post.blog_ID }
+						post={ post }
+					>
+						<img
+							src={ author?.avatar_URL || siteIcon || feedIcon }
+							alt={ siteName }
+							className="reader-full-post__site-icon"
+						/>
+					</ReaderSiteStreamLink>
 				</div>
 			) }
 			{ post.title ? (
@@ -85,7 +74,18 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 			<div className="reader-full-post__header-meta">
 				{ layout === 'recent' && (
 					<>
-						{ siteName && <span className="reader-full-post__header-site-name">{ siteName }</span> }
+						{ siteName && (
+							<span className="reader-full-post__header-site-name">
+								<ReaderSiteStreamLink
+									className="reader-full-post__header-site-name-link"
+									feedId={ post.feed_ID }
+									siteId={ post.blog_ID }
+									post={ post }
+								>
+									{ siteName }
+								</ReaderSiteStreamLink>
+							</span>
+						) }
 						{ followCount && (
 							<span className="reader-full-post__header-follow-count">
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
@@ -112,7 +112,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 					</span>
 				) : null }
 			</div>
-			<TagsList post={ post } tagsToShow={ 5 } />
+			{ isDefaultLayout && <TagsList post={ post } tagsToShow={ 5 } /> }
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
