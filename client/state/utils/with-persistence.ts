@@ -1,5 +1,5 @@
 import type { SerializableReducer } from './serialize';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 export interface SerializeOptions< TState > {
 	serialize?: ( state: TState ) => any;
@@ -13,7 +13,7 @@ export interface SerializeOptions< TState > {
  * @param options.serialize Custom serialization method
  * @param options.deserialize Custom deserialization method
  */
-export function withPersistence< TState, TAction extends AnyAction >(
+export function withPersistence< TState, TAction extends UnknownAction >(
 	reducer: SerializableReducer< TState, TAction >,
 	{ serialize, deserialize }: SerializeOptions< TState > = {}
 ): SerializableReducer< TState, TAction > {

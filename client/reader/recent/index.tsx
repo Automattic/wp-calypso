@@ -3,7 +3,7 @@ import { DataViews, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { FullPostView } from 'calypso/blocks/reader-full-post';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -19,7 +19,7 @@ interface ReaderPost {
 }
 
 const Recent = () => {
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 
@@ -60,7 +60,7 @@ const Recent = () => {
 	];
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
+		dispatch( viewStream( 'recent', window.location.pathname ) as UnknownAction );
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( ( requestPage as any )( { streamKey: 'recent' } ) );
 	}, [ dispatch ] );

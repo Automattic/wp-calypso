@@ -9,11 +9,11 @@ import {
 	URL_ANALYZER_URL_DATA_UPDATE,
 } from '../../action-types';
 import type { UrlData } from 'calypso/blocks/import/types';
-import type { AnyAction, Dispatch } from 'redux';
+import type { UnknownAction, Dispatch } from 'redux';
 
 export const analyzeUrl =
 	( url: string ) =>
-	( dispatch: Dispatch< AnyAction > ): Promise< UrlData > => {
+	( dispatch: Dispatch< UnknownAction > ): Promise< UrlData > => {
 		dispatch( {
 			type: URL_ANALYZER_ANALYZE,
 		} );
@@ -46,7 +46,7 @@ export const analyzeUrl =
 
 export const resetError =
 	() =>
-	( dispatch: Dispatch< AnyAction > ): void => {
+	( dispatch: Dispatch< UnknownAction > ): void => {
 		dispatch( {
 			type: URL_ANALYZER_RESET_ERROR,
 		} );
@@ -54,7 +54,7 @@ export const resetError =
 
 export const urlDataUpdate =
 	( urlData: UrlData ) =>
-	( dispatch: Dispatch< AnyAction > ): void => {
+	( dispatch: Dispatch< UnknownAction > ): void => {
 		dispatch( {
 			type: URL_ANALYZER_URL_DATA_UPDATE,
 			payload: urlData,

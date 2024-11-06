@@ -10,7 +10,7 @@ import type {
 } from './types';
 import type { SelectFromMap } from '@automattic/data-stores';
 import type { StoreStateValue } from '@automattic/wpcom-checkout';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -181,7 +181,7 @@ export function createCreditCardPaymentMethodStore( {
 					brand: brandReducer(),
 					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 				},
-				action: AnyAction
+				action: UnknownAction
 			) {
 				return {
 					fields: fieldReducer( state.fields, action ),

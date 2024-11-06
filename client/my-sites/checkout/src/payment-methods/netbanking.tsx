@@ -24,7 +24,7 @@ import type {
 	StoreStateValue,
 } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
@@ -81,7 +81,7 @@ export function createNetBankingPaymentMethodStore(): NetBankingStore {
 				customerName: { value: '', isTouched: false },
 				fields: {},
 			},
-			action: AnyAction
+			action: UnknownAction
 		) {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':

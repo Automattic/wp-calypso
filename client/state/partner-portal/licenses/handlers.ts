@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { formatLicenseMeta } from 'calypso/a8c-for-agencies/data/purchases/lib/format-licenses';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
@@ -59,7 +59,7 @@ interface APIItemFormatter< FormattedType, APIType > {
 	( items: APIType[] ): FormattedType[];
 }
 
-function http( options: any, action: HttpAction ): AnyAction {
+function http( options: any, action: HttpAction ): UnknownAction {
 	return coreHttp(
 		{
 			...options,
@@ -69,10 +69,10 @@ function http( options: any, action: HttpAction ): AnyAction {
 			},
 		},
 		action
-	) as AnyAction;
+	) as UnknownAction;
 }
 
-export function fetchLicensesHandler( action: HttpAction ): AnyAction {
+export function fetchLicensesHandler( action: HttpAction ): UnknownAction {
 	return http(
 		{
 			method: 'GET',
@@ -89,11 +89,11 @@ export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 			},
 		},
 		action
-	) as AnyAction;
+	) as UnknownAction;
 }
 
 export function receiveLicensesHandler(
-	action: AnyAction,
+	action: UnknownAction,
 	paginatedLicenses: PaginatedItems< License >
 ) {
 	return receiveLicenses( paginatedLicenses );
@@ -139,7 +139,7 @@ function formatPaginatedItems< FormattedType, APIType >(
 	};
 }
 
-export function fetchLicenseCountsHandler( action: HttpAction ): AnyAction {
+export function fetchLicenseCountsHandler( action: HttpAction ): UnknownAction {
 	return http(
 		{
 			method: 'GET',
@@ -147,10 +147,10 @@ export function fetchLicenseCountsHandler( action: HttpAction ): AnyAction {
 			path: '/jetpack-licensing/licenses/counts',
 		},
 		action
-	) as AnyAction;
+	) as UnknownAction;
 }
 
-export function receiveLicenseCountsHandler( action: AnyAction, counts: LicenseCounts ) {
+export function receiveLicenseCountsHandler( action: UnknownAction, counts: LicenseCounts ) {
 	return receiveLicenseCounts( counts );
 }
 

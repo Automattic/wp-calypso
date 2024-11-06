@@ -3,7 +3,7 @@ import { MARKETPLACE_BILLING_INTERVAL_SELECT } from 'calypso/state/action-types'
 import { withSchemaValidation } from 'calypso/state/utils';
 import { IBillingIntervalState } from '../types';
 import { billingIntervalSchema } from './schema';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 export const defaultState: IBillingIntervalState = {
 	interval: IntervalLength.MONTHLY,
@@ -11,7 +11,7 @@ export const defaultState: IBillingIntervalState = {
 
 const billingInterval = withSchemaValidation(
 	billingIntervalSchema,
-	( state = defaultState, action: AnyAction ): IBillingIntervalState => {
+	( state = defaultState, action: UnknownAction ): IBillingIntervalState => {
 		switch ( action.type ) {
 			case MARKETPLACE_BILLING_INTERVAL_SELECT:
 				return {

@@ -1,11 +1,11 @@
 import { COMMAND_PALETTE_CLOSE, COMMAND_PALETTE_OPEN } from 'calypso/state/action-types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 const initialState = {
 	isCommandPaletteOpen: false,
 };
 
-const commandPaletteReducer = ( state = initialState, action: AnyAction ) => {
+const commandPaletteReducer = ( state = initialState, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case COMMAND_PALETTE_OPEN:
 			return { ...state, isCommandPaletteOpen: true };

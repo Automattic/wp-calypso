@@ -9,9 +9,9 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import fromApi from './from-api';
 import type { RewindSizeInfo } from 'calypso/state/rewind/size/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
-type RequestActionType = AnyAction & {
+type RequestActionType = UnknownAction & {
 	siteId: number;
 };
 

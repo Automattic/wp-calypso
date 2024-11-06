@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import {
 	JETPACK_BACKUP_BROWSER_ADD_CHILDREN,
 	JETPACK_BACKUP_BROWSER_SET_CHECK_STATE,
@@ -153,7 +153,7 @@ const updateParent = ( state: AppState, node: BackupBrowserItem ): AppState => {
 	return updateParent( state, newNode );
 };
 
-export default ( state = initialState, { type, payload }: AnyAction ) => {
+export default ( state = initialState, { type, payload }: UnknownAction ) => {
 	switch ( type ) {
 		case JETPACK_BACKUP_BROWSER_SET_CHECK_STATE: {
 			const newState = { ...state };

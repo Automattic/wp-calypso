@@ -1,4 +1,4 @@
-import { Action, AnyAction } from 'redux';
+import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 export interface LicenseCounts {
@@ -44,7 +44,7 @@ export interface UserLicensingStore {
 	userLicensing: LicensesStore;
 }
 
-export type UserLicensingThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
+export type UserLicensingThunkAction< A extends Action = UnknownAction, R = unknown > = ThunkAction<
 	void,
 	UserLicensingStore,
 	R,

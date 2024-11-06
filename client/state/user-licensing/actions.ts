@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -29,37 +29,39 @@ import 'calypso/state/user-licensing/init';
 /**
  * Licenses Counts actions
  */
-export const licensesCountsReceiveAction = ( counts: LicenseCounts ): AnyAction => {
+export const licensesCountsReceiveAction = ( counts: LicenseCounts ): UnknownAction => {
 	return {
 		type: USER_LICENSES_COUNTS_RECEIVE,
 		counts,
 	};
 };
 
-export const licensesCountsRequestSuccessAction = (): AnyAction => {
+export const licensesCountsRequestSuccessAction = (): UnknownAction => {
 	return { type: USER_LICENSES_COUNTS_REQUEST_SUCCESS };
 };
 
-export const licensesCountsRequestFailureAction = ( error: string | undefined ): AnyAction => {
+export const licensesCountsRequestFailureAction = ( error: string | undefined ): UnknownAction => {
 	return {
 		type: USER_LICENSES_COUNTS_REQUEST_FAILURE,
 		error: error,
 	};
 };
 
-export const requestLicensesCounts = (): AnyAction => ( { type: USER_LICENSES_COUNTS_REQUEST } );
+export const requestLicensesCounts = (): UnknownAction => ( {
+	type: USER_LICENSES_COUNTS_REQUEST,
+} );
 
 /**
  * Licenses actions
  */
-export const licensesReceiveAction = ( licenses: PaginatedItems< License > ): AnyAction => {
+export const licensesReceiveAction = ( licenses: PaginatedItems< License > ): UnknownAction => {
 	return {
 		type: USER_LICENSES_RECEIVE,
 		licenses,
 	};
 };
 
-export const licensesRequestSuccessAction = (): AnyAction => {
+export const licensesRequestSuccessAction = (): UnknownAction => {
 	return { type: USER_LICENSES_REQUEST_SUCCESS };
 };
 

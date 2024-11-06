@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import { JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -12,7 +12,7 @@ import {
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
 
-export function fetchPartnerHandler( action: AnyAction ): AnyAction {
+export function fetchPartnerHandler( action: UnknownAction ): UnknownAction {
 	return http(
 		{
 			method: 'GET',
@@ -24,18 +24,18 @@ export function fetchPartnerHandler( action: AnyAction ): AnyAction {
 			retryPolicy: noRetry(),
 		},
 		action
-	) as AnyAction;
+	) as UnknownAction;
 }
 
 export function receivePartnerHandler(
-	action: AnyAction,
+	action: UnknownAction,
 	partner: Partner
 ): PartnerPortalThunkAction {
 	return receivePartner( partner );
 }
 
 export function receivePartnerErrorHandler(
-	action: AnyAction,
+	action: UnknownAction,
 	error: APIError
 ): PartnerPortalThunkAction {
 	return receivePartnerError( error );

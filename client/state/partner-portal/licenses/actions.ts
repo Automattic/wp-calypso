@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -22,7 +22,7 @@ import {
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
-function createHttpAction( action: AnyAction ): HttpAction {
+function createHttpAction( action: UnknownAction ): HttpAction {
 	return {
 		...action,
 		fetcher: 'wpcomJetpackLicensing',
@@ -53,7 +53,7 @@ export function fetchLicenses(
 	};
 }
 
-export function receiveLicenses( paginatedLicenses: PaginatedItems< License > ): AnyAction {
+export function receiveLicenses( paginatedLicenses: PaginatedItems< License > ): UnknownAction {
 	return { type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE, paginatedLicenses };
 }
 
@@ -63,6 +63,6 @@ export function fetchLicenseCounts(): HttpAction {
 	} );
 }
 
-export function receiveLicenseCounts( counts: LicenseCounts ): AnyAction {
+export function receiveLicenseCounts( counts: LicenseCounts ): UnknownAction {
 	return { type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE, counts };
 }

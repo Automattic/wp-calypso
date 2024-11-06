@@ -23,7 +23,7 @@ import type {
 	StoreState,
 	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
 
@@ -90,7 +90,7 @@ export function createPayPalStore(): PayPalStore {
 				city: { value: '', isTouched: false },
 				state: { value: '', isTouched: false },
 			},
-			action: AnyAction
+			action: UnknownAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'POSTAL_CODE_SET':

@@ -1,4 +1,4 @@
-import { AnyAction, Reducer } from 'redux';
+import { UnknownAction, Reducer } from 'redux';
 import { maskField } from 'calypso/lib/checkout';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -63,7 +63,7 @@ export function fields(
 	}
 }
 
-export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > = (
+export const cardDataComplete: Reducer< Record< string, boolean >, UnknownAction > = (
 	state = initialState.cardDataComplete,
 	action
 ) => {
@@ -75,7 +75,7 @@ export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > =
 	}
 };
 
-export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
+export const cardDataErrors: Reducer< Record< string, unknown >, UnknownAction > = (
 	state = initialState.cardDataErrors,
 	action
 ) => {
@@ -87,7 +87,7 @@ export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
 	}
 };
 
-export const useAsPrimaryPaymentMethod: Reducer< boolean, AnyAction > = (
+export const useAsPrimaryPaymentMethod: Reducer< boolean, UnknownAction > = (
 	state = initialState.useAsPrimaryPaymentMethod,
 	action
 ) => {

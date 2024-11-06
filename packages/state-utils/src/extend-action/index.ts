@@ -1,8 +1,8 @@
 import { merge } from 'lodash';
-import type { Action, AnyAction } from 'redux';
+import type { Action, UnknownAction } from 'redux';
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-type AnyThunkAction = ThunkAction< any, any, any, AnyAction >;
+type AnyThunkAction = ThunkAction< any, any, any, UnknownAction >;
 
 function isThunk( action: Action | AnyThunkAction ): action is AnyThunkAction {
 	return 'function' === typeof action;
@@ -25,9 +25,10 @@ function extendAction< TAction extends Action | AnyThunkAction >(
 	}
 
 	return ( ( dispatch, getState, ...extraArgs ) => {
-		const newDispatch = ( a: AnyAction ) => dispatch( extendAction( a, data ) as AnyAction );
+		const newDispatch = ( a: UnknownAction ) =>
+			dispatch( extendAction( a, data ) as UnknownAction );
 		return action(
-			newDispatch as ThunkDispatch< unknown, unknown, AnyAction >,
+			newDispatch as ThunkDispatch< unknown, unknown, UnknownAction >,
 			getState,
 			...extraArgs
 		);

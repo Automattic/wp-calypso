@@ -4,7 +4,7 @@ import {
 	useDispatch as reduxUseDispatch,
 	useStore as reduxUseStore,
 } from 'react-redux';
-import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
+import { UnknownAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import { thunk } from 'redux-thunk';
 import { WithAddReducer } from 'calypso/state/add-reducer';
@@ -64,6 +64,6 @@ export function useSelector< State = IAppState, Selected = unknown >(
 	return reduxUseSelector( selector, equalityFn );
 }
 
-export function useStore(): Store< IAppState, AnyAction > {
+export function useStore(): Store< IAppState, UnknownAction > {
 	return reduxUseStore();
 }

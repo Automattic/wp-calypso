@@ -33,7 +33,7 @@ export function requestPostLikes( siteId, postId ) {
  * retrieve post likes for a post.
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @returns {import('redux').AnyAction}        Action
+ * @returns {import('redux').UnknownAction}        Action
  */
 export function requestPostLikers( siteId, postId ) {
 	return {

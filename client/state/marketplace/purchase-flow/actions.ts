@@ -4,17 +4,17 @@ import {
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 import 'calypso/state/marketplace/init';
 
-export function setPrimaryDomainCandidate( domainName: string | undefined ): AnyAction {
+export function setPrimaryDomainCandidate( domainName: string | undefined ): UnknownAction {
 	return {
 		type: MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 		domainName,
 	};
 }
 
-export function productToBeInstalled( productSlug: string, primaryDomain: string ): AnyAction {
+export function productToBeInstalled( productSlug: string, primaryDomain: string ): UnknownAction {
 	return {
 		type: MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 		productSlug,
@@ -25,7 +25,7 @@ export function productToBeInstalled( productSlug: string, primaryDomain: string
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
 	reason = 'Not provided.'
-): AnyAction {
+): UnknownAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,

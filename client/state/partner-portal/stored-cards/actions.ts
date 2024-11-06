@@ -4,11 +4,11 @@ import 'calypso/state/partner-portal/stored-cards/init';
 import { STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { AnyAction, Dispatch } from 'redux';
+import type { UnknownAction, Dispatch } from 'redux';
 
 export const fetchStoredCards =
 	( paging: { startingAfter: string; endingBefore: string } ) =>
-	( dispatch: Dispatch< AnyAction > ) => {
+	( dispatch: Dispatch< UnknownAction > ) => {
 		dispatch( {
 			type: 'STORED_CARDS_FETCH',
 		} );
@@ -61,7 +61,7 @@ export const fetchStoredCards =
 
 export const deleteStoredCard =
 	( card: PaymentMethod, primaryPaymentMethodId?: string ) =>
-	( dispatch: Dispatch< AnyAction > ) => {
+	( dispatch: Dispatch< UnknownAction > ) => {
 		dispatch( {
 			type: 'STORED_CARDS_DELETE',
 			card,

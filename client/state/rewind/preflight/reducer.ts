@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { JETPACK_BACKUP_PREFLIGHT_TESTS_SET } from 'calypso/state/action-types';
 import { PreflightState, PreflightTestStatus } from './types';
 import { calculateOverallStatus } from './utils';
@@ -8,7 +8,7 @@ const initialState: PreflightState = {
 	tests: [],
 };
 
-const preflightReducer = ( state = initialState, action: AnyAction ): PreflightState => {
+const preflightReducer = ( state = initialState, action: UnknownAction ): PreflightState => {
 	switch ( action.type ) {
 		case JETPACK_BACKUP_PREFLIGHT_TESTS_SET:
 			if ( action.tests && Array.isArray( action.tests ) ) {

@@ -15,7 +15,7 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 
@@ -44,7 +44,7 @@ export function createIdealPaymentMethodStore(): IdealStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action: AnyAction
+			action: UnknownAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -213,7 +213,7 @@ const MailboxLoaderError = ( {
 };
 
 const MailboxSelectionList = ( { domains }: { domains: ResponseDomain[] } ) => {
-	const dispatch = useDispatch() as ThunkDispatch< any, any, AnyAction >;
+	const dispatch = useDispatch() as ThunkDispatch< any, any, UnknownAction >;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 

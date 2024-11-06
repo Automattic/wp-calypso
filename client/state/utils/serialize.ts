@@ -1,7 +1,7 @@
 import { getInitialState } from '@automattic/state-utils';
-import type { Reducer, AnyAction, Action } from 'redux';
+import type { Reducer, UnknownAction, Action } from 'redux';
 
-export interface SerializableReducer< TState = any, TAction extends AnyAction = Action >
+export interface SerializableReducer< TState = any, TAction extends UnknownAction = Action >
 	extends Reducer< TState, TAction > {
 	serialize?: ( state: TState ) => any;
 	deserialize?: ( persisted: any ) => TState;

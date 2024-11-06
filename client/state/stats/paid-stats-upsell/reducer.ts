@@ -6,7 +6,7 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import { schema } from './schema';
-import type { Reducer, AnyAction } from 'redux';
+import type { Reducer, UnknownAction } from 'redux';
 
 /**
  * Returns the updated value for the paid stats upsell modal.
@@ -14,7 +14,7 @@ import type { Reducer, AnyAction } from 'redux';
  * @param {Object} action - Action object.
  * @returns {Object} Updated state.
  */
-const modalReducer = ( state = { view: false, statType: null }, action: AnyAction ) => {
+const modalReducer = ( state = { view: false, statType: null }, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case STATS_PAID_STATS_UPSELL_MODAL_TOGGLE: {
 			return { view: ! state.view, statType: action.payload.statType };

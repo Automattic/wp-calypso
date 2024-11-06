@@ -2,7 +2,7 @@ import { set } from 'lodash';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { AppState } from 'calypso/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with
@@ -10,10 +10,10 @@ import type { AnyAction } from 'redux';
  * the `is_dev_account` setting ("I am a developer") enabled.
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {import('redux').AnyAction} the new Redux action
+ * @returns {import('redux').UnknownAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export function enhanceWithUserIsDevAccount( action: AnyAction, getState: () => AppState ) {
+export function enhanceWithUserIsDevAccount( action: UnknownAction, getState: () => AppState ) {
 	const isDevAccount = getUserSetting( getState(), 'is_dev_account' );
 
 	if ( isDevAccount === null ) {

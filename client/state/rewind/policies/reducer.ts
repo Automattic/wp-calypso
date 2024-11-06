@@ -6,15 +6,15 @@ import {
 } from 'calypso/state/action-types';
 import type { RewindPolicies } from './types';
 import type { AppState } from 'calypso/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
-type RewindPoliciesActionType = AnyAction & {
+type RewindPoliciesActionType = UnknownAction & {
 	policies: RewindPolicies;
 };
 
 const policies = (
 	state: AppState = {},
-	{ type, policies }: AnyAction | RewindPoliciesActionType
+	{ type, policies }: UnknownAction | RewindPoliciesActionType
 ): AppState | number | undefined => {
 	switch ( type ) {
 		case REWIND_POLICIES_REQUEST:

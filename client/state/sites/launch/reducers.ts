@@ -1,5 +1,5 @@
 import { combineReducers } from '@wordpress/data';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { SITE_LAUNCH, SITE_LAUNCH_SUCCESS, SITE_LAUNCH_FAILURE } from 'calypso/state/action-types';
 
 const addInProgressSiteLaunch = ( state: number[], siteId: number ) => {
@@ -13,7 +13,7 @@ const removeInProgressSiteLaunch = ( state: number[], siteId: number ) => {
 	return state.filter( ( id ) => id !== siteId );
 };
 
-export const siteLaunchesInProgress = ( state: number[] = [], action: AnyAction ) => {
+export const siteLaunchesInProgress = ( state: number[] = [], action: UnknownAction ) => {
 	switch ( action.type ) {
 		case SITE_LAUNCH:
 			return addInProgressSiteLaunch( state, action.siteId );

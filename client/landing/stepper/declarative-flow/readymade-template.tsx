@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import deepmerge from 'deepmerge';
 import { useSelector } from 'react-redux';
+import { UnknownAction } from 'redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
@@ -28,7 +29,6 @@ import {
 	StepperStep,
 } from './internals/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
-import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -260,7 +260,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 						PromiseLike< string >,
 						any,
 						any,
-						AnyAction
+						UnknownAction
 					>
 				)
 			)

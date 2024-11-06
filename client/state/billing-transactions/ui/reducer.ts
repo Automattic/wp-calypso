@@ -6,12 +6,12 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import type { BillingTransactionUiState } from '../types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 /**
  * Returns the updated app filter state after an action has been dispatched
  */
-export const app = ( state: BillingTransactionUiState[ 'app' ] = null, action: AnyAction ) => {
+export const app = ( state: BillingTransactionUiState[ 'app' ] = null, action: UnknownAction ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
 		return action.app;
 	}
@@ -23,7 +23,7 @@ export const app = ( state: BillingTransactionUiState[ 'app' ] = null, action: A
  */
 export const date = (
 	state: BillingTransactionUiState[ 'date' ] = { month: null, operator: null },
-	{ type, month, operator }: AnyAction
+	{ type, month, operator }: UnknownAction
 ) => {
 	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
 		return {
@@ -37,7 +37,7 @@ export const date = (
 /**
  * Returns the updated page state after an action has been dispatched
  */
-export const page = ( state: BillingTransactionUiState[ 'page' ] = 1, action: AnyAction ) => {
+export const page = ( state: BillingTransactionUiState[ 'page' ] = 1, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTIONS_FILTER_SET_PAGE:
 			return action.page;
@@ -53,7 +53,10 @@ export const page = ( state: BillingTransactionUiState[ 'page' ] = 1, action: An
 /**
  * Returns the updated string search filter state after an action has been dispatched
  */
-export const query = ( state: BillingTransactionUiState[ 'query' ] = '', action: AnyAction ) => {
+export const query = (
+	state: BillingTransactionUiState[ 'query' ] = '',
+	action: UnknownAction
+) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {
 		return action.query;
 	}

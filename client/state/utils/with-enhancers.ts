@@ -1,9 +1,9 @@
-import type { Action, AnyAction } from 'redux';
+import type { Action, UnknownAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
-type AnyThunkAction = ThunkAction< any, any, any, AnyAction >;
+type AnyThunkAction = ThunkAction< any, any, any, UnknownAction >;
 
-type Enhancer = ( action: AnyAction, getState: () => any ) => AnyAction;
+type Enhancer = ( action: UnknownAction, getState: () => any ) => UnknownAction;
 
 /**
  * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. Enhancers
@@ -28,14 +28,14 @@ export const withEnhancers =
 		}
 
 		return ( dispatch, getState, extraArguments ) => {
-			const enhanceAction = ( actionValue: AnyAction ) =>
+			const enhanceAction = ( actionValue: UnknownAction ) =>
 				( enhancers as Enhancer[] ).reduce(
-					( result: AnyAction, enhancer ) => enhancer( result, getState ),
+					( result: UnknownAction, enhancer ) => enhancer( result, getState ),
 					actionValue
 				);
-			const enhancedDispatch = ( actionValue: AnyAction ) =>
+			const enhancedDispatch = ( actionValue: UnknownAction ) =>
 				dispatch( enhanceAction( actionValue ) );
-			const thunkDispatch = ( actionValue: AnyAction | AnyThunkAction ) => {
+			const thunkDispatch = ( actionValue: UnknownAction | AnyThunkAction ) => {
 				if ( typeof actionValue === 'function' ) {
 					return actionValue( thunkDispatch, getState, extraArguments );
 				}

@@ -17,6 +17,7 @@ import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, matchPath } from 'react-router-dom';
+import { UnknownAction } from 'redux';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
@@ -46,7 +47,6 @@ import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
-import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
 
@@ -151,7 +151,7 @@ window.AppBoot = async () => {
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	// Reset the selected site ID when the stepper is loaded.
-	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
+	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as UnknownAction );
 
 	await geolocateCurrencySymbol();
 

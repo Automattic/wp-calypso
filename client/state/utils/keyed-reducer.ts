@@ -3,7 +3,7 @@ import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize, SerializableReducer } from './serialize';
 import { withPersistence } from './with-persistence';
 import type { PropertyPath } from 'lodash';
-import type { Action, AnyAction } from 'redux';
+import type { Action, UnknownAction } from 'redux';
 
 type CalypsoInitAction = Action< '@@calypso/INIT' >;
 export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInitAction;
@@ -58,7 +58,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = < TState, TAction extends AnyAction = Action >(
+export const keyedReducer = < TState, TAction extends UnknownAction = Action >(
 	keyPath: PropertyPath,
 	reducer: SerializableReducer< TState, KeyedReducerAction< TAction > >
 ): SerializableReducer< Record< string | number, TState >, TAction > => {

@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import {
 	JETPACK_BACKUP_STAGING_GET_REQUEST,
 	JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS,
@@ -20,7 +20,7 @@ export const initialState = {
 	sites: [],
 };
 
-export const stagingSitesList = ( state = initialState, action: AnyAction ) => {
+export const stagingSitesList = ( state = initialState, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_BACKUP_STAGING_LIST_REQUEST:
 			return {
@@ -50,7 +50,7 @@ export const stagingSitesList = ( state = initialState, action: AnyAction ) => {
 
 export const updateStagingFlagRequestStatus = (
 	state = BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED,
-	action: AnyAction
+	action: UnknownAction
 ) => {
 	switch ( action.type ) {
 		case JETPACK_BACKUP_STAGING_UPDATE_REQUEST:
@@ -70,7 +70,7 @@ export const getSiteInitialState = {
 	info: {},
 };
 
-export const site = ( state = getSiteInitialState, action: AnyAction ) => {
+export const site = ( state = getSiteInitialState, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_BACKUP_STAGING_GET_REQUEST:
 			return {

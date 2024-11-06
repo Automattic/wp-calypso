@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import {
 	JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET,
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
@@ -18,7 +18,7 @@ export const initialState = {
 	error: null,
 };
 
-export const hasFetched = ( state = initialState.isFetching, action: AnyAction ) => {
+export const hasFetched = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
 		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR:
@@ -28,7 +28,7 @@ export const hasFetched = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
-export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
+export const isFetching = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST:
 			return true;
@@ -41,7 +41,7 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
-export const isPartnerOAuthTokenLoaded = ( state = false, action: AnyAction ) => {
+export const isPartnerOAuthTokenLoaded = ( state = false, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET:
 			return true;
@@ -50,7 +50,10 @@ export const isPartnerOAuthTokenLoaded = ( state = false, action: AnyAction ) =>
 	}
 };
 
-const activePartnerKeyReducer = ( state = initialState.activePartnerKey, action: AnyAction ) => {
+const activePartnerKeyReducer = (
+	state = initialState.activePartnerKey,
+	action: UnknownAction
+) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE:
 			return action.partnerKeyId;
@@ -64,7 +67,7 @@ export const activePartnerKey = withSchemaValidation(
 	withPersistence( activePartnerKeyReducer )
 );
 
-const current = ( state = initialState.current, action: AnyAction ) => {
+const current = ( state = initialState.current, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
 			if ( action.partner.keys.length === 0 ) {
@@ -87,7 +90,7 @@ const current = ( state = initialState.current, action: AnyAction ) => {
 	return state;
 };
 
-export const error = ( state = initialState.error, action: AnyAction ) => {
+export const error = ( state = initialState.error, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR:
 			return action.error;

@@ -6,9 +6,9 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import { schema } from './schema';
-import type { Reducer, AnyAction } from 'redux';
+import type { Reducer, UnknownAction } from 'redux';
 
-const dataReducer = ( state = {}, action: AnyAction ) => {
+const dataReducer = ( state = {}, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case STATS_PLAN_USAGE_RECEIVE: {
 			return action.data;

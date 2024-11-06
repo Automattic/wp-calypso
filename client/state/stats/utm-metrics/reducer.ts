@@ -18,7 +18,7 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import { schema } from './schema';
-import type { Reducer, AnyAction } from 'redux';
+import type { Reducer, UnknownAction } from 'redux';
 
 const isValidJSONArray = ( string: string ) => {
 	try {
@@ -109,7 +109,7 @@ const metricsParser = (
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
-const dataReducer = ( state = {}, action: AnyAction ) => {
+const dataReducer = ( state = {}, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_RECEIVE: {
 			const values = action.data.top_utm_values || {};
@@ -170,7 +170,7 @@ export const data = withSchemaValidation(
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
-const isLoadingReducer = ( state = {}, action: AnyAction ) => {
+const isLoadingReducer = ( state = {}, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_REQUEST: {
 			return true;

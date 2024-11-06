@@ -1,4 +1,4 @@
-import { Action, AnyAction } from 'redux';
+import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import {
 	LicenseFilter,
@@ -14,14 +14,14 @@ export interface DispatchRequest {
 	( options: unknown ): unknown;
 }
 
-export type PartnerPortalThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
+export type PartnerPortalThunkAction< A extends Action = UnknownAction, R = unknown > = ThunkAction<
 	void,
 	PartnerPortalStore,
 	R,
 	A
 >;
 
-export interface HttpAction extends AnyAction {
+export interface HttpAction extends UnknownAction {
 	fetcher: string;
 }
 

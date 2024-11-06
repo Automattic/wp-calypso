@@ -17,7 +17,7 @@ import {
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TimestampMS } from 'calypso/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
 const debug = debugFactory( 'calypso:guided-tours' );
@@ -65,7 +65,7 @@ interface AcceptedProps {
 	shouldScrollTo?: boolean;
 	style?: CSSProperties;
 	target?: string;
-	wait?: () => ThunkAction< Promise< void >, unknown, void, AnyAction >;
+	wait?: () => ThunkAction< Promise< void >, unknown, void, UnknownAction >;
 	waitForTarget?: boolean;
 	when?: ContextWhen;
 }

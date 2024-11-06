@@ -6,7 +6,7 @@ import {
 	MARKETPLACE_PRODUCTS_REINSTALL_NOT_STARTED,
 } from 'calypso/state/action-types';
 import { activateTheme } from 'calypso/state/themes/actions';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 import 'calypso/state/marketplace/init';
 
 /**
@@ -32,14 +32,14 @@ export function productsReinstall( siteId: number, themeId: string ) {
 	};
 }
 
-export function productsReinstallStarted( siteId: number ): AnyAction {
+export function productsReinstallStarted( siteId: number ): UnknownAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_STARTED,
 		siteId,
 	};
 }
 
-export function productsReinstallFailed( siteId: number, error: string ): AnyAction {
+export function productsReinstallFailed( siteId: number, error: string ): UnknownAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_FAILED,
 		siteId,
@@ -47,14 +47,14 @@ export function productsReinstallFailed( siteId: number, error: string ): AnyAct
 	};
 }
 
-export function productsReinstallCompleted( siteId: number ): AnyAction {
+export function productsReinstallCompleted( siteId: number ): UnknownAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_COMPLETED,
 		siteId,
 	};
 }
 
-export function productsReinstallNotStarted( siteId: number ): AnyAction {
+export function productsReinstallNotStarted( siteId: number ): UnknownAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_NOT_STARTED,
 		siteId,

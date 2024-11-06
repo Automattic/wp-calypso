@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { combineReducers } from 'calypso/state/utils';
 import {
 	JETPACK_GET_AGENCIES_REQUEST,
@@ -16,7 +16,7 @@ export const initialState = {
 	error: null,
 };
 
-export const hasFetched = ( state = initialState.isFetching, action: AnyAction ) => {
+export const hasFetched = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_SUCCESS:
 		case JETPACK_SET_AGENCY_CLIENT_USER:
@@ -26,7 +26,7 @@ export const hasFetched = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
-export const agencies = ( state = initialState.isFetching, action: AnyAction ) => {
+export const agencies = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_SUCCESS:
 			return action.agencies;
@@ -35,7 +35,7 @@ export const agencies = ( state = initialState.isFetching, action: AnyAction ) =
 	return state;
 };
 
-export const isAgencyClientUser = ( state = initialState.isFetching, action: AnyAction ) => {
+export const isAgencyClientUser = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_SET_AGENCY_CLIENT_USER: {
 			return action.isClientUser;
@@ -45,7 +45,7 @@ export const isAgencyClientUser = ( state = initialState.isFetching, action: Any
 	return state;
 };
 
-export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
+export const isFetching = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_REQUEST:
 			return true;
@@ -59,7 +59,7 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
-const activeAgency = ( state = initialState.activeAgency, action: AnyAction ) => {
+const activeAgency = ( state = initialState.activeAgency, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_CURRENT_AGENCY_UPDATE:
 			return action.activeAgency;
@@ -68,7 +68,7 @@ const activeAgency = ( state = initialState.activeAgency, action: AnyAction ) =>
 	return state;
 };
 
-export const error = ( state = initialState.error, action: AnyAction ) => {
+export const error = ( state = initialState.error, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_ERROR:
 			return action.error;

@@ -18,9 +18,9 @@ import {
 import { getSingleMediaPlaceholder, MediaUploadedData } from './actions';
 import { initialState, SITE_INFORMATION_SECTION_ID, MEDIA_UPLOAD_STATES } from './constants';
 import { WebsiteContentCollectionState } from './types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
-export default ( state = initialState, action: AnyAction ): WebsiteContentCollectionState => {
+export default ( state = initialState, action: UnknownAction ): WebsiteContentCollectionState => {
 	switch ( action.type ) {
 		case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
 			const { pages, siteInformationSection, feedbackSection } = action.payload;

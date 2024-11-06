@@ -3,7 +3,7 @@ import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
-import type { AnyAction } from 'redux';
+import type { UnknownAction } from 'redux';
 
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with
@@ -11,10 +11,13 @@ import type { AnyAction } from 'redux';
  * the nav redesign global site view enabled.
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {import('redux').AnyAction} the new Redux action
+ * @returns {import('redux').UnknownAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export function enhanceWithGlobalSiteViewEnabled( action: AnyAction, getState: () => AppState ) {
+export function enhanceWithGlobalSiteViewEnabled(
+	action: UnknownAction,
+	getState: () => AppState
+) {
 	const siteId = getSelectedSiteId( getState() );
 
 	const isNewNavEnabled = isAdminInterfaceWPAdmin( getState(), siteId );

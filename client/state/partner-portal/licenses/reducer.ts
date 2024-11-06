@@ -1,4 +1,4 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
@@ -20,7 +20,7 @@ export const initialState = {
 	},
 };
 
-export const hasFetched = ( state = initialState.hasFetched, action: AnyAction ) => {
+export const hasFetched = ( state = initialState.hasFetched, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE:
 			return true;
@@ -29,7 +29,7 @@ export const hasFetched = ( state = initialState.hasFetched, action: AnyAction )
 	return state;
 };
 
-export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
+export const isFetching = ( state = initialState.isFetching, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_LICENSES_REQUEST:
 			return true;
@@ -41,7 +41,7 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
-export const paginated = ( state = initialState.paginated, action: AnyAction ) => {
+export const paginated = ( state = initialState.paginated, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE:
 			return action.paginatedLicenses;
@@ -50,7 +50,7 @@ export const paginated = ( state = initialState.paginated, action: AnyAction ) =
 	return state;
 };
 
-export const counts = ( state = initialState.counts, action: AnyAction ) => {
+export const counts = ( state = initialState.counts, action: UnknownAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE:
 			return action.counts;
@@ -61,7 +61,7 @@ export const counts = ( state = initialState.counts, action: AnyAction ) => {
 
 export const hasFetchedLicenseCounts = (
 	state = initialState.hasFetchedLicenseCounts,
-	action: AnyAction
+	action: UnknownAction
 ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE:
