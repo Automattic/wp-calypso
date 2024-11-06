@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
-import { useGetOdieStorage, useOdieAssistantContext } from '@automattic/odie-client';
+import { useGetOdieStorage } from '@automattic/odie-client';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
@@ -26,7 +27,7 @@ const HelpCenterFeedbackForm = ( {
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
 	const { sectionName, site } = useHelpCenterContext();
-	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
