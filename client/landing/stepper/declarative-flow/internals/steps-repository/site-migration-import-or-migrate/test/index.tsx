@@ -4,7 +4,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useMigrationIntroductoryOfferMutation } from 'calypso/data/site-migration/landing/use-introductory-offer-mutation';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationImportOrMigrate from '..';
@@ -18,9 +18,9 @@ const render = ( props?: Partial< StepProps > ) => {
 
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
-jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
+jest.mock( 'calypso/data/site-migration/landing-page-migration-sticker' );
 
-( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+( useMigrationIntroductoryOfferMutation as jest.Mock ).mockReturnValue( {
 	addMigrationSticker: jest.fn(),
 	deleteMigrationSticker: jest.fn(),
 } );
@@ -122,7 +122,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 
 	it( 'calls the deleteMigrationSticker function to delete migration sticker when import button is clicked', async () => {
 		const deleteMigrationSticker = jest.fn();
-		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+		( useMigrationIntroductoryOfferMutation as jest.Mock ).mockReturnValue( {
 			deleteMigrationSticker,
 		} );
 

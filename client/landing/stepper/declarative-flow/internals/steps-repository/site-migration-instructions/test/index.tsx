@@ -3,7 +3,7 @@
  */
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useMigrationIntroductoryOfferMutation } from 'calypso/data/site-migration/landing/use-introductory-offer-mutation';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -17,7 +17,7 @@ import { SitePreview } from '../site-preview';
 jest.mock( 'calypso/landing/stepper/hooks/use-prepare-site-for-migration' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/landing/stepper/hooks/use-query' );
-jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
+jest.mock( 'calypso/data/site-migration/landing/use-introductory-offer-mutation' );
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 jest.mock( '../site-preview' );
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -45,7 +45,7 @@ describe( 'SiteMigrationInstructions', () => {
 			},
 		} );
 
-		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+		( useMigrationIntroductoryOfferMutation as jest.Mock ).mockReturnValue( {
 			deleteMigrationSticker: jest.fn(),
 		} );
 
@@ -108,7 +108,7 @@ describe( 'SiteMigrationInstructions', () => {
 	);
 
 	it( 'calls deleteMigrationSticker on mount', () => {
-		const { deleteMigrationSticker } = useMigrationStickerMutation();
+		const { deleteMigrationSticker } = useMigrationIntroductoryOfferMutation();
 
 		render();
 
