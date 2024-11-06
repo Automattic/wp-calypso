@@ -23,25 +23,10 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			return;
 		}
 
-		const newConversationMessage = {
-			content: "We're connecting you to our support team.",
-			role: 'bot',
-			type: 'message',
-			context: {
-				flags: {
-					hide_disclaimer_content: true,
-					show_contact_support_msg: true,
-				},
-				site_id: null,
-			},
-		};
-
-		if ( shouldUseHelpCenterExperience ) {
-			newConversationMessage.content = "Help's on the way!";
-		}
-
 		addMessage( {
-			content: "Help's on the way!",
+			content: shouldUseHelpCenterExperience
+				? "Help's on the way!"
+				: "We're connecting you to our support team.",
 			role: 'bot',
 			type: 'message',
 			context: {
