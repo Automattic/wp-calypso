@@ -2,16 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
-import { log } from './logger';
-
-const shouldSkip = () => {
-	const isPendingStatusEnabled = isEnabled( 'automated-migration/pending-status' );
-
-	return isPendingStatusEnabled;
-};
+import { log } from '../logger';
 
 const request = async ( { siteId }: { siteId: SiteId } ): Promise< Response > => {
-	if ( shouldSkip() ) {
+	if ( ! isEnabled( 'automated-migration/pending-status' ) ) {
 		return { status: 'skipped' };
 	}
 
@@ -19,6 +13,9 @@ const request = async ( { siteId }: { siteId: SiteId } ): Promise< Response > =>
 		path: `/sites/${ siteId }/site-migration-status-sticker`,
 		apiNamespace: 'wpcom/v2',
 		method: 'DELETE',
+		body: {
+			type: 'pending',
+		},
 	} );
 
 	return { status: 'success' };
