@@ -5,7 +5,6 @@ import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -17,13 +16,19 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import './style.scss';
+import './defensive-mode-form.scss';
 
-type DefensiveModeCardProps = {
+type DefensiveModeFormProps = {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	disabled?: boolean;
 };
 
-export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
+export default function DefensiveModeForm( {
+	ContainerComponent,
+	DescriptionComponent,
+	disabled,
+}: DefensiveModeFormProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
@@ -61,14 +66,14 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
-		<HostingCard
+		<ContainerComponent
 			className="defensive-mode-card"
 			title={ translate( 'Defensive mode', {
 				comment: 'Defensive mode is a feature to protect against DDoS attacks.',
 				textOnly: true,
 			} ) }
 		>
-			<HostingCardDescription>
+			<DescriptionComponent>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
 					{
@@ -79,7 +84,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						},
 					}
 				) }
-			</HostingCardDescription>
+			</DescriptionComponent>
 
 			{ isLoadingDefensiveMode && <EdgeCacheLoadingPlaceholder /> }
 
@@ -88,7 +93,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 					<div className="defensive-mode-card__enabled-description">
 						<div className="defensive-mode-card__enabled-indicator" />
 
-						<HostingCardDescription>
+						<DescriptionComponent>
 							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(date)s.', {
 								args: {
 									date: enabledUntil.format( 'LLL' ),
@@ -98,7 +103,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 									b: <strong />,
 								},
 							} ) }
-						</HostingCardDescription>
+						</DescriptionComponent>
 					</div>
 
 					{ ! defensiveModeData.enabled_by_a11n && (
@@ -191,6 +196,6 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 					</Button>
 				</>
 			) }
-		</HostingCard>
+		</ContainerComponent>
 	);
 }
