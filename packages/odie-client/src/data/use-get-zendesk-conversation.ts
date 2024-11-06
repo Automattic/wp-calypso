@@ -14,6 +14,7 @@ const parseResponse = ( conversation: Conversation ) => {
 
 	return { ...conversation, clientId, messages };
 };
+
 /**
  * Get the conversation for the Zendesk conversation.
  */

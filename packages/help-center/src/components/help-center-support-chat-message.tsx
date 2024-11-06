@@ -55,7 +55,9 @@ export const HelpCenterSupportChatMessage = ( {
 	return (
 		<Link
 			to={ navigateTo }
-			onClick={ () => trackContactButtonClicked( sectionName ) }
+			onClick={ () => {
+				trackContactButtonClicked( sectionName );
+			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
 			} ) }

@@ -1,23 +1,23 @@
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
+import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
 
 export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 	const {
-		setSupportProvider,
 		selectedSiteId,
 		addMessage,
-		setChat,
 		setChatStatus,
 		setWaitAnswerToFirstMessageFromHumanSupport,
+		setChatProvider,
 		chat,
 		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
-	const chatId = Number( chat.chat_id ) || 0;
-
+	const { addEventToInteraction } = useManageSupportInteraction();
+	const chatId = chat.odieId;
 	const createConversation = async () => {
 		if ( ! chatId || isSubmittingZendeskUserFields ) {
 			return;
@@ -47,15 +47,15 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		} ).then( () => {
 			Smooch.createConversation( { metadata: { odieChatId: chatId, createdAt: Date.now() } } ).then(
 				( conversation ) => {
-					setSupportProvider( 'zendesk' );
+					setChatProvider( 'zendesk' );
 					setChatStatus( 'loaded' );
 					setHelpCenterZendeskConversationStarted();
 					setWaitAnswerToFirstMessageFromHumanSupport( true );
-					setChat( ( prevChat ) => {
-						return {
-							...prevChat,
-							conversationId: conversation.id,
-						};
+					addEventToInteraction( {
+						interactionId: chat.supportInteractionId as string,
+						// TODO: We need to update the type of event_external_id in the shcema to accept string.
+						// @ts-expect-error - there is a mismatch between the types
+						eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 					} );
 				}
 			);

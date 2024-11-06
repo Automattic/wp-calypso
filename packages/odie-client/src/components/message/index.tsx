@@ -13,7 +13,7 @@ import WapuuAvatarSquared from '../../assets/wapuu-squared-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
 import { MessageContent } from './message-content';
-import type { CurrentUser, Message } from '../../types/';
+import type { CurrentUser, Message } from '../../types';
 
 export type ChatMessageProps = {
 	message: Message;

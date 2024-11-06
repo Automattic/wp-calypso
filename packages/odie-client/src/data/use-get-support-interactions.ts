@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportInteraction, SupportProvider } from '../types/';
+import type { SupportInteraction, SupportProvider } from '../types';
 
 /**
  * Get the support interactions.

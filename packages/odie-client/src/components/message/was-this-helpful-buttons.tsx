@@ -2,9 +2,9 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { useSendOdieFeedback } from '../../query/use-send-odie-feedback';
+import { useSendOdieFeedback } from '../../data';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-import type { Message } from '../../types/';
+import type { Message } from '../../types';
 
 const WasThisHelpfulButtons = ( {
 	message,

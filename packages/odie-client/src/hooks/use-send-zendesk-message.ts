@@ -2,14 +2,14 @@ import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
-import type { Message } from '../types/';
+import type { Message } from '../types';
 
 /**
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = () => {
-	const { setChatStatus, selectedConversationId, chat } = useOdieAssistantContext();
-	const conversationId = chat.conversationId || selectedConversationId;
+	const { setChatStatus, chat } = useOdieAssistantContext();
+	const conversationId = chat.conversationId;
 	const newConversation = useCreateZendeskConversation();
 
 	return useCallback(

@@ -2,15 +2,13 @@ import { getShortDateString } from '@automattic/i18n-utils';
 import { useRef } from 'react';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
-import { getOdieInitialMessage } from '../../context/get-odie-initial-message';
-import { useChat } from '../../query/use-chat';
-import useAutoScroll from '../../useAutoScroll';
-import { useZendeskMessageListener } from '../../utils';
+import { useAutoScroll, useZendeskMessageListener } from '../../hooks';
+import { getOdieInitialMessage } from '../../utils';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
-import type { Chat, CurrentUser } from '../../types/';
+import type { Chat, CurrentUser } from '../../types';
 
 const DislikeThumb = () => {
 	return (
@@ -32,8 +30,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
-	const chat = useChat();
+	const { chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
@@ -68,11 +65,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					/>
 				) ) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
-				{ chatStatus === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
-				{ [ 'sending', 'dislike' ].includes( chatStatus ) && (
+				{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
+				{ [ 'sending', 'dislike' ].includes( chat.status ) && (
 					<div className="odie-chatbox__action-message">
-						{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
-						{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
+						{ chat.status === 'sending' && <ThinkingPlaceholder /> }
+						{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
 					</div>
 				) }
 			</div>

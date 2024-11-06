@@ -5,8 +5,8 @@ import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
-import { useSendChatMessage } from '../../query/use-send-chat-message';
-import { Message } from '../../types/';
+import { useSendChatMessage } from '../../hooks';
+import { Message } from '../../types';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
@@ -15,9 +15,9 @@ import './style.scss';
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
-	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { trackEvent, chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
-	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
+	const shouldBeDisabled = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 
 	const onKeyUp = useCallback( () => {

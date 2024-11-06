@@ -1,16 +1,11 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage } from '../data';
-import { useManageSupportInteraction } from '../data/use-manage-support-interaction';
 import { generateUUID } from '../utils';
-import { useOdieChat } from './use-odie-chat';
-import type { Message, Chat } from '../types/';
+import { useManageSupportInteraction, broadcastOdieMessage } from '.';
+import type { Message, ReturnedChat } from '../types';
 
 /**
  * Sends a new message to ODIE.
@@ -18,14 +13,6 @@ import type { Message, Chat } from '../types/';
  * @returns useMutation return object.
  */
 export const useSendOdieMessage = () => {
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
-	const { chat, updateCache } = useOdieChat();
-	const chatId = chat?.chat_id;
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const internal_message_id = generateUUID();
 
@@ -33,16 +20,17 @@ export const useSendOdieMessage = () => {
 		botNameSlug,
 		selectedSiteId,
 		version,
-		setChatStatus,
 		addMessage,
-		odieClientId,
+		odieBroadcastClientId,
+		chat,
+		setChatStatus,
 		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 
-	return useMutation< Chat, Error, Message >( {
-		mutationFn: async ( message: Message ): Promise< Chat > => {
-			const chatIdSegment = chatId ? `/${ chatId }` : '';
-			const response = canAccessWpcomApis()
+	return useMutation< ReturnedChat, Error, Message >( {
+		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
+			const chatIdSegment = chat.odieId ? `/${ chat.odieId }` : '';
+			return canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'POST',
 						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
@@ -54,15 +42,16 @@ export const useSendOdieMessage = () => {
 						method: 'POST',
 						data: { message: message.content, version, context: { selectedSiteId } },
 				  } );
-
-			// Assuming the response structure matches the Chat type
-			return response as Chat;
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
-		onSuccess: ( chat, userMessage ) => {
-			if ( ! chat.messages || chat.messages.length === 0 || ! chat.messages[ 0 ].content ) {
+		onSuccess: ( returnedChat ) => {
+			if (
+				! returnedChat.messages ||
+				returnedChat.messages.length === 0 ||
+				! returnedChat.messages[ 0 ].content
+			) {
 				const errorMessage: Message = {
 					content: ODIE_ERROR_MESSAGE( shouldUseHelpCenterExperience ),
 					internal_message_id,
@@ -71,33 +60,33 @@ export const useSendOdieMessage = () => {
 				};
 
 				addMessage( errorMessage );
-				broadcastOdieMessage( errorMessage, odieClientId );
+				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
 				return;
 			}
 
-			if ( ! chatId ) {
+			if ( ! chat.odieId ) {
 				addEventToInteraction( {
-					interactionId: currentSupportInteraction.uuid,
+					interactionId: chat.supportInteractionId as string,
 					eventData: {
-						event_external_id: chat.chat_id,
+						event_external_id: returnedChat.chat_id,
+						// @ts-expect-error - sending and receiving events are not exactly the same.
 						event_source: 'odie',
 					},
 				} );
 			}
 
 			const botMessage: Message = {
-				message_id: chat.messages[ 0 ].message_id,
+				message_id: returnedChat.messages[ 0 ].message_id,
 				internal_message_id,
-				content: chat.messages[ 0 ].content,
+				content: returnedChat.messages[ 0 ].content,
 				role: 'bot',
-				simulateTyping: chat.messages[ 0 ].simulateTyping,
+				simulateTyping: returnedChat.messages[ 0 ].simulateTyping,
 				type: 'message',
-				context: chat.messages[ 0 ].context,
+				context: returnedChat.messages[ 0 ].context,
 			};
 
 			addMessage( botMessage );
-			broadcastOdieMessage( botMessage, odieClientId );
-			updateCache( [ userMessage, botMessage ] );
+			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},
 		onSettled: () => {
 			setChatStatus( 'loaded' );
@@ -113,7 +102,7 @@ export const useSendOdieMessage = () => {
 				type: 'error',
 			};
 			addMessage( errorMessage );
-			broadcastOdieMessage( errorMessage, odieClientId );
+			broadcastOdieMessage( errorMessage, odieBroadcastClientId );
 		},
 	} );
 };
