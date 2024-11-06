@@ -84,14 +84,16 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
+
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( { status: MigrationStatus.STARTED_DIY } );
+			updateMigrationStatus( { status: MigrationStatus.PENDING_DIY } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
 	// Delete migration sticker.
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
+
 	useEffect( () => {
 		if ( siteId ) {
 			deleteMigrationSticker( siteId );
