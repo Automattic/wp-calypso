@@ -9,7 +9,7 @@ import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions
 
 import './style.scss';
 
-// TODO: Find the right home for this, or the existing definition
+// holdercp TODO: Find the right home for this, or the existing definition
 type Site = {
 	ID: number;
 	URL: string;
