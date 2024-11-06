@@ -69,7 +69,6 @@ export const useSendOdieMessage = () => {
 					interactionId: chat.supportInteractionId as string,
 					eventData: {
 						event_external_id: returnedChat.chat_id,
-						// @ts-expect-error - sending and receiving events are not exactly the same.
 						event_source: 'odie',
 					},
 				} );

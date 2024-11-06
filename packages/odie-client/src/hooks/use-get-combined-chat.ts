@@ -17,12 +17,12 @@ export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteracti
 
 	// Get the current odie chat
 	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.source === 'odie' )
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
 			?.event_external_id ?? null;
 
 	// Get the current Zendesk conversation ID
 	const conversationId = currentSupportInteraction?.events.find(
-		( event ) => event.source === 'zendesk'
+		( event ) => event.event_source === 'zendesk'
 	)?.event_external_id;
 
 	const {

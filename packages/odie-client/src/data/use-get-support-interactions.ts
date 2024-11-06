@@ -23,7 +23,7 @@ export const useGetSupportInteractions = (
 			}
 
 			return data.filter( ( interaction ) =>
-				interaction.events.some( ( event ) => event.source === provider )
+				interaction.events.some( ( event ) => event.event_source === provider )
 			);
 		},
 		refetchOnWindowFocus: false,
