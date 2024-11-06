@@ -67,6 +67,7 @@ export class PluginsMain extends Component {
 		super( props );
 		this.state = {
 			isMobile: isWithinBreakpoint( '<960px' ),
+			limitPluginsToDisplayGlobalUpdate: 100,
 		};
 	}
 
@@ -550,7 +551,10 @@ export class PluginsMain extends Component {
 								<>
 									{ this.renderAddPluginButton() }
 									{ this.renderUploadPluginButton() }
-									<UpdatePlugins isWpCom plugins={ currentPlugins } />
+									{ currentPlugins &&
+										currentPlugins.length < this.state.limitPluginsToDisplayGlobalUpdate && (
+											<UpdatePlugins isWpCom plugins={ currentPlugins } />
+										) }
 								</>
 							) }
 						</NavigationHeader>

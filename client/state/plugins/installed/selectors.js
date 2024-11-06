@@ -163,6 +163,10 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
 export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
@@ -170,10 +174,6 @@ export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 		return acc;
 	}, {} );
 } );
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
