@@ -234,6 +234,10 @@
 			margin-inline: 0;
 
 			@include break-mobile {
+				margin-inline: 32px;
+			}
+
+			@include break-small {
 				margin-inline: 48px;
 			}
 		}
