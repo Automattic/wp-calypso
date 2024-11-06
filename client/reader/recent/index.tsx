@@ -5,7 +5,6 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import AsyncLoad from 'calypso/components/async-load';
-import { FullPostView } from 'calypso/blocks/reader-full-post';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
@@ -15,13 +14,6 @@ import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 import './style.scss';
-
-interface ReaderPost {
-	site_name: string;
-	postId: number;
-	feedId: number;
-	blogId?: number;
-}
 
 const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
@@ -150,7 +142,7 @@ const Recent = () => {
 				{ selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
 						require="calypso/blocks/reader-full-post"
-						feedId={ selectedItem.feedId }
+						blogId={ selectedItem.blogId }
 						postId={ selectedItem.postId }
 						onClose={ () => setSelectedItem( null ) }
 						layout="recent"
