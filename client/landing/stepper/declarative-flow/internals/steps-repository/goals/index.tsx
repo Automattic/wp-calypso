@@ -66,22 +66,30 @@ const GoalsStep: Step = ( { navigation } ) => {
 		goals: Onboard.SiteGoal[],
 		intent: Onboard.SiteIntent
 	) => {
-		const eventProperties: TracksGoalsSelectEventProperties = {
+		const commonEventProps: Pick< TracksGoalsSelectEventProperties, 'intent' | 'ref' > = {
+			intent,
+			ref: refParameter ?? null,
+		};
+
+		const goalsSelectProperties: TracksGoalsSelectEventProperties = {
+			...commonEventProps,
 			goals: serializeGoals( goals ),
 			combo: goals.sort().join( ',' ),
 			total: goals.length,
-			intent,
 		};
 
 		goals.forEach( ( goal, i ) => {
-			eventProperties[ goal.replaceAll( '-', '_' ) as KebabToSnakeCase< typeof goal > ] = i + 1;
+			// This is done to conform to Tracks event property naming conventions.
+			const snakeCaseGoal = goal.replaceAll( '-', '_' ) as KebabToSnakeCase< typeof goal >;
+			goalsSelectProperties[ snakeCaseGoal ] = i + 1;
+
+			recordTracksEvent( 'calypso_signup_goals_single_select', {
+				goal,
+				ref: commonEventProps.ref,
+			} );
 		} );
 
-		if ( refParameter ) {
-			eventProperties.ref = refParameter as string;
-		}
-
-		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
+		recordTracksEvent( 'calypso_signup_goals_select', goalsSelectProperties );
 	};
 
 	const recordIntentSelectTracksEvent = ( intent: Onboard.SiteIntent ) => {
