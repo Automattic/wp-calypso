@@ -4,7 +4,7 @@ import {
 } from '@automattic/zendesk-client';
 import { FormFileUpload } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
-import { Icon, upload } from '@wordpress/icons';
+import { Icon, image } from '@wordpress/icons';
 import React from 'react';
 import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
@@ -65,7 +65,7 @@ export const AttachmentButton: React.FC = () => {
 
 	return (
 		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
-			<Icon icon={ upload } />
+			<Icon icon={ image } />
 		</FormFileUpload>
 	);
 };
