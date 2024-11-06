@@ -68,6 +68,14 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	return state;
 };
 
+const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
+			return action.zendeskClientId;
+	}
+	return state;
+};
+
 const subject: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -152,6 +160,7 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
+	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,

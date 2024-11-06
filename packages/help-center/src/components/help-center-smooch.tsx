@@ -10,7 +10,7 @@ import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data'
 import { useEffect, useRef } from '@wordpress/element';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { calculateUnread } from './utils';
+import { calculateUnread, getClientId } from './utils';
 
 const HelpCenterSmooch: React.FC = () => {
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
@@ -29,7 +29,8 @@ const HelpCenterSmooch: React.FC = () => {
 		isHelpCenterShown && isEligibleForChat,
 		isEligibleForChat
 	);
-	const { setIsChatLoaded, setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { initSmooch, destroy, getConversations, renderSmooch } = useSmooch();
 
 	// Initialize Smooch which communicates with Zendesk
@@ -64,10 +65,10 @@ const HelpCenterSmooch: React.FC = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const { unreadConversations } = calculateUnread(
-				getConversations() as ZendeskConversation[]
-			);
+			const conversations = getConversations() as ZendeskConversation[];
+			const { unreadConversations } = calculateUnread( conversations );
 			setUnreadCount( unreadConversations );
+			setZendeskClientId( getClientId( conversations ) );
 		}
 	}, [ isChatLoaded, getConversations, setUnreadCount ] );
 

@@ -80,6 +80,12 @@ export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 		isChatLoaded,
 	} ) as const;
 
+export const setZendeskClientId = ( zendeskClientId: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_ZENDESK_CLIENT_ID',
+		zendeskClientId,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -168,6 +174,7 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setIsChatLoaded
+			| typeof setZendeskClientId
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
