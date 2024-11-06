@@ -8,6 +8,7 @@ import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons'
 import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -18,7 +19,6 @@ import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
-import type { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import './style.scss';
 
 interface WhatToExpectProps {
