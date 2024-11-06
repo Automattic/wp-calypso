@@ -7,6 +7,7 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
+import { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -47,7 +48,10 @@ const ReaderSidebarRecent = ( {
 	className,
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
-	const sites = useSelector< Site, Site[] >( getReaderFollowedSites );
+	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
+	const selectedSiteId = useSelector< AppState, number >(
+		( state ) => state.readerUi.sidebar.selectedRecentSite
+	);
 
 	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
@@ -76,7 +80,9 @@ const ReaderSidebarRecent = ( {
 		>
 			<li>
 				<button
-					className="reader-sidebar-recent__item sidebar__menu-link"
+					className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link', {
+						'reader-sidebar-recent__item--selected': selectedSiteId === null,
+					} ) }
 					onClick={ () => selectSite( null ) }
 				>
 					{ translate( 'All' ) }{ ' ' }
@@ -86,7 +92,9 @@ const ReaderSidebarRecent = ( {
 			{ sitesToShow.map( ( site ) => (
 				<li key={ site.ID }>
 					<button
-						className="reader-sidebar-recent__item sidebar__menu-link"
+						className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link', {
+							'reader-sidebar-recent__item--selected': site.feed_ID === selectedSiteId,
+						} ) }
 						onClick={ () => selectSite( site.feed_ID ) }
 					>
 						{ site.name } { site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
