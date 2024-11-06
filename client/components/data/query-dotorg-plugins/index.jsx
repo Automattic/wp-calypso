@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +13,6 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 	const queueRef = useRef( [] );
 
 	const dotorgPlugins = useSelector( ( state ) => getAllPlugins( state ) );
-	const isBulkManagementEnabled = config.isEnabled( 'bulk-plugin-management' );
 
 	useEffect( () => {
 		pluginSlugList.forEach( ( pluginSlug ) => {
@@ -25,7 +23,7 @@ function QueryDotorgPlugins( { pluginSlugList } ) {
 	}, [ pluginSlugList, dotorgPlugins ] );
 
 	useInterval( async () => {
-		if ( isBulkManagementEnabled && pluginSlugList.length ) {
+		if ( pluginSlugList.length ) {
 			const batch = queueRef.current.splice( 0, BATCH_PLUGIN_RETRIEVE_COUNT );
 
 			await Promise.all(
