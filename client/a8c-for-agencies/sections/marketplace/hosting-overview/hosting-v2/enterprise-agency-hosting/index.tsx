@@ -18,13 +18,19 @@ import HostingTestimonialsSection from '../../../common/hosting-testimonials-sec
 
 import './style.scss';
 
-export default function EnterpriseAgencyHosting() {
+export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode: boolean } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const onRequestDemoClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_request_demo_click' )
+		);
+	};
+
+	const onReferClientClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_refer_client_click' )
 		);
 	};
 
@@ -35,6 +41,24 @@ export default function EnterpriseAgencyHosting() {
 					<div className="enterprise-agency-hosting__details-heading">
 						{ translate( 'Enterprise CMS' ) }
 					</div>
+					{ isReferMode && (
+						<div className="enterprise-agency-hosting__details-subheading">
+							{ translate(
+								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms ↗{{/a}}',
+								{
+									components: {
+										a: (
+											<a
+												href="https://automattic.com/for-agencies/program-incentives"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</div>
+					) }
 					<SimpleList
 						items={ [
 							translate( 'Unmatched flexibility to build a customized web experience' ),
@@ -46,11 +70,12 @@ export default function EnterpriseAgencyHosting() {
 					/>
 					<Button
 						href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
-						onClick={ onRequestDemoClick }
+						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
 						target="_blank"
 						variant="primary"
 					>
-						{ translate( 'Request a Demo' ) } <Icon icon={ external } size={ 16 } />
+						{ isReferMode ? translate( 'Refer client' ) : translate( 'Request a Demo' ) }
+						<Icon icon={ external } size={ 16 } />
 					</Button>
 				</div>
 				<div className="enterprise-agency-hosting__details">

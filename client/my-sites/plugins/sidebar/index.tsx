@@ -24,7 +24,9 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	const [ previousPath, setPreviousPath ] = useState( path );
 	const isManagedPluginSelected =
 		managePluginsPattern.test( path ) ||
-		( path.startsWith( '/plugins/' ) && managePluginsPattern.test( previousPath ) );
+		( path.startsWith( '/plugins/' ) &&
+			managePluginsPattern.test( previousPath ) &&
+			! path.startsWith( '/plugins/scheduled-updates' ) );
 
 	return (
 		<GlobalSidebar

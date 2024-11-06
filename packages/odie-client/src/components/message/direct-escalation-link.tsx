@@ -3,8 +3,10 @@ import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../query/use-create-zendesk-conversation';
+import { getHelpCenterZendeskConversationStarted } from '../../utils/storage-utils';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
+	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
 	const newConversation = useCreateZendeskConversation();
 	const { shouldUseHelpCenterExperience, trackEvent, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
@@ -17,6 +19,9 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 
 		if ( isUserEligibleForPaidSupport ) {
 			if ( shouldUseHelpCenterExperience ) {
+				if ( conversationStarted ) {
+					return;
+				}
 				newConversation();
 			} else {
 				navigate( '/contact-options' );
@@ -24,12 +29,20 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}
-	}, [ navigate, isUserEligibleForPaidSupport, trackEvent, messageId ] );
+	}, [
+		trackEvent,
+		messageId,
+		isUserEligibleForPaidSupport,
+		shouldUseHelpCenterExperience,
+		conversationStarted,
+		newConversation,
+		navigate,
+	] );
 
 	return (
 		<div className="disclaimer">
 			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
-			<button onClick={ handleClick } className="odie-button-link">
+			<button onClick={ handleClick } className="odie-button-link" disabled={ conversationStarted }>
 				{ isUserEligibleForPaidSupport
 					? __( 'Contact our support team.', __i18n_text_domain__ )
 					: __( 'Ask in our forums.', __i18n_text_domain__ ) }

@@ -1,4 +1,5 @@
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -32,19 +33,23 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	numOfSelectedGlobalStyles = 1,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
-	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
+	// @TODO Cleanup once the test phase is over.
+	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+		? PLAN_PERSONAL
+		: PLAN_PREMIUM;
+	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, upgradeToPlan ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
-		planSlugs: [ PLAN_PREMIUM ],
+		planSlugs: [ upgradeToPlan ],
 		siteId: selectedSiteId,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
-	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
+	const pricing = pricingMeta?.[ upgradeToPlan ];
 	const isPricingLoaded =
 		pricing?.currencyCode && pricing?.originalPrice.monthly && pricing?.originalPrice.full;
 

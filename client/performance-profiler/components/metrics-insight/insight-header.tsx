@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { highImpactAudits } from 'calypso/performance-profiler/utils/metrics';
 
 interface InsightHeaderProps {
 	data: PerformanceMetricsItemQueryResponse;
@@ -14,13 +15,10 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const { data, index } = props;
 	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
-	const { type, metricSavings } = data;
+	const { id, type } = data;
 
 	const renderBadge = () => {
-		if (
-			! metricSavings ||
-			! ( metricSavings?.FCP || metricSavings?.LCP || metricSavings?.CLS || metricSavings?.INP )
-		) {
+		if ( ! highImpactAudits.includes( id ) ) {
 			return null;
 		}
 

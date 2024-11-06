@@ -19,6 +19,9 @@ import {
 	sftpSsh,
 	database,
 	webServerLogs,
+	deploymentCreation,
+	deploymentManagement,
+	deploymentRunLogs,
 } from './controller';
 
 export default function () {
@@ -41,6 +44,36 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deployments,
+		siteDashboard( TOOLS_DEPLOYMENTS ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/tools/deployments/:site/create',
+		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
+		navigation,
+		deploymentCreation,
+		siteDashboard( TOOLS_DEPLOYMENTS ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/tools/deployments/:site/manage/:deploymentId',
+		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
+		navigation,
+		deploymentManagement,
+		siteDashboard( TOOLS_DEPLOYMENTS ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/tools/deployments/:site/logs/:deploymentId',
+		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
+		navigation,
+		deploymentRunLogs,
 		siteDashboard( TOOLS_DEPLOYMENTS ),
 		makeLayout,
 		clientRender

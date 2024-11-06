@@ -3,7 +3,6 @@ import { Fragment, ReactNode, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FeatureExample from 'calypso/components/feature-example';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -62,7 +61,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 	return (
-		<Main className="github-deployments" fullWidthLayout>
+		<div className="github-deployments tools-deployments">
 			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				compactBreadcrumb
@@ -89,6 +88,6 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 				/>
 			) }
 			<WrapperComponent>{ children }</WrapperComponent>
-		</Main>
+		</div>
 	);
 }

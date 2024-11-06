@@ -113,9 +113,13 @@ $blueberry-color: #3858e9;
 	font-size: inherit;
 }
 
-.odie-button-link:hover {
+.odie-button-link:hover, .odie-button-link:disabled {
 	text-decoration: none;
 	color: var(--color-link-dark);
+}
+
+.odie-button-link:disabled {
+	cursor: not-allowed;
 }
 
 .odie-sources-foldable-card {

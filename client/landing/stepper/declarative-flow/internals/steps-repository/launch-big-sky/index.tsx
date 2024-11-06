@@ -27,6 +27,22 @@ const LaunchBigSky: Step = function () {
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
 
+	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
+		try {
+			await wpcomRequest( {
+				path: '/sites/' + siteId + '/pages/' + pageId,
+				method: 'DELETE',
+				apiNamespace: 'wp/v2',
+			} );
+			return true;
+		} catch ( error ) {
+			// fail silently here, just log an error and return false, Big Sky will still launch
+			// eslint-disable-next-line no-console
+			console.error( `Failed to delete page ${ pageId } for site ${ siteId }:`, error );
+			return false;
+		}
+	};
+
 	useEffect( () => {
 		if ( ! isLoading && ! isEligible ) {
 			window.location.assign( '/start' );
@@ -61,6 +77,9 @@ const LaunchBigSky: Step = function () {
 				} )
 			);
 		}
+
+		// Delete the existing boilerplate about page, always has a page ID of 1
+		pendingActions.push( deletePage( selectedSiteId, 1 ) );
 
 		try {
 			const results = await Promise.all( pendingActions );

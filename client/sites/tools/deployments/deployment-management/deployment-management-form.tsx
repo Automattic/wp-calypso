@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useDispatch, useSelector } from '../../../state';
+import { useDispatch, useSelector } from '../../../../state';
 import { GitHubConnectionForm } from '../components/github-connection-form';
 import { getDeploymentTypeFromPath } from '../deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';

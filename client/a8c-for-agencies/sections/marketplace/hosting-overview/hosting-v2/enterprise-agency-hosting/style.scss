@@ -29,11 +29,16 @@
 
 		&:nth-child(2) {
 			background-color: #f5f2f1;
+			justify-content: start;
 		}
 	}
 
 	.enterprise-agency-hosting__details-heading {
 		@include a4a-font-heading-xl;
+	}
+
+	.enterprise-agency-hosting__details-subheading {
+		padding-block-end: 24px;
 	}
 
 	.enterprise-agency-hosting__logos {

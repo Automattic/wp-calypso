@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 
 interface CreateDeploymentRouteParams {
@@ -5,9 +6,12 @@ interface CreateDeploymentRouteParams {
 	repositoryId?: number;
 }
 
-export const indexPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }`;
+export const indexPage = ( siteSlug: string ) =>
+	isEnabled( 'untangling/hosting-menu' )
+		? `/sites/tools/deployments/${ siteSlug }`
+		: `/github-deployments/${ siteSlug }`;
 
-export const createPage = ( siteSlug: string ) => `/github-deployments/${ siteSlug }/create`;
+export const createPage = ( siteSlug: string ) => `${ indexPage( siteSlug ) }/create`;
 
 export const createDeploymentPage = (
 	siteSlug: string,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useInterval } from '../../../lib/interval';
+import { useInterval } from '../../../../lib/interval';
 import {
 	DeploymentRun,
 	DeploymentRunStatus,

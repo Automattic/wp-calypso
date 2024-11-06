@@ -10,7 +10,11 @@ import {
 } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import {
+	filterRecommendations,
+	metricsNames,
+	highImpactAudits,
+} from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
@@ -59,15 +63,11 @@ export const InsightsSection = forwardRef(
 			props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
-		const sumMetricSavings = ( key: string ) =>
-			Object.values( audits[ key ].metricSavings ?? {} ).reduce( ( acc, val ) => acc + val, 0 );
-
-		const sortInsightKeys = ( a: string, b: string ) =>
-			sumMetricSavings( b ) - sumMetricSavings( a );
-
+		const sortHighImpactAudits = ( a: string, b: string ) =>
+			highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
 		const filteredAudits = Object.keys( audits )
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
-			.sort( sortInsightKeys );
+			.sort( sortHighImpactAudits );
 		const onFilter = useCallback(
 			( option: { label: string; value: string } ) => {
 				recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {

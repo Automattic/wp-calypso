@@ -3,6 +3,75 @@
 
 	&__list-column {
 		flex: 1;
+		max-width: 320px;
+
+		&-header {
+			padding: 16px 12px 0;
+			border-bottom: 1px solid var( --studio-gray-0 );
+			margin-bottom: 16px;
+		}
+
+		.dataviews__view-actions {
+			padding: 0 12px;
+			max-width: 300px;
+		}
+
+		table {
+			border-collapse: collapse;
+			margin-top: 16px;
+		}
+
+		thead {
+			display: none;
+		}
+
+		tr {
+			border-top: 1px solid var( --studio-gray-0 );
+		}
+
+		td {
+			vertical-align: middle;
+			padding: 12px;
+
+			&:first-child {
+				padding-right: 0;
+			}
+		}
+
+		.recent-seen-field {
+			padding: 0;
+		}
+
+		.recent-post-field {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			text-align: left;
+			padding: 0;
+			width: 100%;
+
+			&__title-text,
+			&__site-name {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				max-width: 200px;
+			}
+
+			&__title-text {
+				font-weight: 700;
+			}
+
+			&__site-name {
+				font-weight: 400;
+				font-size: rem( 11px );
+			}
+
+			&__featured-image {
+				max-width: 38px;
+				align-self: flex-end;
+			}
+		}
 	}
 
 	&__post-column {

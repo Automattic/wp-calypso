@@ -118,9 +118,31 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			.domains-table {
-				margin-top: 35px;
+				margin-top: 40px;
 				.domains-table-toolbar {
-					margin-inline: 16px;
+					margin-inline: 48px;
+
+					.domains-table-bulk-actions-toolbar {
+						align-items: flex-start;
+
+						.button {
+							padding: 4px 12px 4px 8px;
+
+							&:disabled img {
+								opacity: 0.5;
+							}
+						}
+
+						.select-dropdown {
+							border-radius: 2px;
+
+							.select-dropdown__header {
+								border-radius: 2px;
+								height: 32px;
+								padding: 0 8px;
+							}
+						}
+					}
 				}
 				table {
 					overflow-y: auto;
@@ -128,23 +150,37 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					margin-bottom: 0;
 					padding-inline: 0;
 					margin-inline-start: 0;
+					margin-top: 0;
 
-					grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+					grid-template-columns: 75px 1fr minmax( auto, 1fr ) auto auto auto auto;
 
 					th:last-child,
 					td:last-child {
-						padding: 0 16px 0 0;
+						padding-right: 16px;
 					}
 
 					th:first-child,
 					td:first-child {
-						padding: 0 0 0 24px;
+						padding-left: 56px;
 					}
 
 					thead.domains-table-header {
 						position: sticky;
 						top: 0;
 						z-index: 2;
+					}
+
+					th {
+						padding-top: 22px;
+						padding-bottom: 14px;
+
+						.list__header-column {
+							color: #1e1e1e;
+
+							&:hover {
+								color: var( --color-accent );
+							}
+						}
 					}
 				}
 			}
@@ -213,19 +249,19 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			@media only screen and ( min-width: 960px ) {
 				.domains-table {
 					.domains-table-toolbar {
-						margin-inline: 26px;
+						margin-inline: 48px;
 					}
 					table {
 						grid-template-columns: 75px 2fr 1fr 1fr 1fr auto auto auto auto;
 
 						th:last-child,
 						td:last-child {
-							padding: 0 26px 0 0;
+							padding-right: 56px;
 						}
 
 						th:first-child,
 						td:first-child {
-							padding: 0 0 0 34px;
+							padding-left: 56px;
 						}
 					}
 				}
@@ -243,21 +279,22 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 				.domains-table {
 					table {
-						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+						grid-template-columns: 75px 1fr minmax( auto, 1fr ) auto auto auto auto;
 
 						th:last-child,
 						td:last-child {
-							padding: 0 16px 0 0;
+							padding-right: 16px;
 						}
 
 						th:first-child,
 						td:first-child {
-							padding: 0 0 0 24px;
+							padding: 0 0 0 40px;
+							padding-left: 40px;
 						}
 					}
 				}
 				.domains-table-toolbar {
-					margin-inline: 0 !important;
+					margin-inline: 32px;
 				}
 			}
 
@@ -280,19 +317,19 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
 				.domains-table {
 					.domains-table-toolbar {
-						margin-inline: 16px;
+						margin-inline: 48px;
 					}
 					table {
-						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+						grid-template-columns: 75px 1fr minmax( auto, 1fr ) auto auto auto auto;
 
 						th:last-child,
 						td:last-child {
-							padding: 0 16px 0 0;
+							padding-right: 16px;
 						}
 
 						th:first-child,
 						td:first-child {
-							padding: 0 0 0 24px;
+							padding-left: 56px;
 						}
 					}
 				}

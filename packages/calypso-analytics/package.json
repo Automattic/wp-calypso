@@ -31,7 +31,7 @@
 	},
 	"dependencies": {
 		"@automattic/load-script": "workspace:^",
-		"cookie": "^0.4.1",
+		"cookie": "^0.7.0",
 		"debug": "^4.3.3",
 		"hash.js": "^1.1.7",
 		"tslib": "^2.3.0",

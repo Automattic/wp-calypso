@@ -84,6 +84,8 @@ export type MessageType =
 	| 'placeholder'
 	| 'dislike-feedback'
 	| 'help-link'
+	| 'file'
+	| 'image'
 	| 'introduction';
 
 export type Message = {
@@ -131,7 +133,7 @@ interface ConversationParticipant {
 }
 
 export type ZendeskMessage = {
-	avatarUrl: string;
+	avatarUrl?: string;
 	displayName: string;
 	id: string;
 	received: number;
@@ -143,6 +145,8 @@ export type ZendeskMessage = {
 	};
 	type: ZendeskContentType;
 	text: string;
+	mediaUrl?: string;
+	altText?: string;
 };
 
 export type ZendeskContentType =

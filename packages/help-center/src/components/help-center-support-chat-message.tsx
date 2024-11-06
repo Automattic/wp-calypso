@@ -30,11 +30,12 @@ export const HelpCenterSupportChatMessage = ( {
 	avatarSize?: number;
 	isUnread: boolean;
 	navigateTo: string;
+	altText?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, text } = message;
+	const { displayName, received, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 
@@ -71,7 +72,9 @@ export const HelpCenterSupportChatMessage = ( {
 				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
-				<div className="help-center-support-chat__conversation-information-message">{ text }</div>
+				<div className="help-center-support-chat__conversation-information-message">
+					{ text || altText }
+				</div>
 				<div className="help-center-support-chat__conversation-sub-information">
 					<span className="help-center-support-chat__conversation-information-name">
 						{ displayName }

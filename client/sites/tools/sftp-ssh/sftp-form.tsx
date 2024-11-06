@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -39,7 +38,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
 
-import './style.scss';
+import './sftp-form.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
@@ -86,11 +85,17 @@ const disableSshAccess = ( siteId: number | null ) =>
 		disableAtomicSshAccess( siteId )
 	);
 
-type SftpCardProps = {
+type SftpFormProps = {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	disabled?: boolean;
 };
 
-export const SftpCard = ( { disabled }: SftpCardProps ) => {
+export const SftpForm = ( {
+	ContainerComponent,
+	DescriptionComponent,
+	disabled,
+}: SftpFormProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -275,15 +280,16 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 		  );
 
 	return (
-		<HostingCard
+		<ContainerComponent
 			className="sftp-card"
 			headingId="sftp-credentials"
 			title={
 				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
 			}
+			isLoading={ hasSftpFeatureAndIsLoading }
 		>
 			{ ! hasSftpFeatureAndIsLoading && (
-				<HostingCardDescription>
+				<DescriptionComponent>
 					{ username
 						? translate(
 								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
@@ -294,7 +300,7 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 								}
 						  )
 						: featureExplanation }
-				</HostingCardDescription>
+				</DescriptionComponent>
 			) }
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions-container">
@@ -391,6 +397,6 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 			) }
 			{ isLoading && <Spinner /> }
 			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
-		</HostingCard>
+		</ContainerComponent>
 	);
 };
