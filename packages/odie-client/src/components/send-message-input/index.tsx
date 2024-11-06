@@ -1,6 +1,11 @@
-import { Spinner } from '@wordpress/components';
+import {
+	useAuthenticateZendeskMessaging,
+	useAttachFileToConversation,
+} from '@automattic/zendesk-client';
+import { Spinner, FormFileUpload } from '@wordpress/components';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { SendMessageIcon } from '../../assets/send-message-icon';
@@ -14,10 +19,13 @@ import './style.scss';
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
-	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { trackEvent, chat, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
+	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
+		useAttachFileToConversation();
 
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
@@ -61,6 +69,22 @@ export const OdieSendMessageButton = () => {
 			} );
 		}
 	}, [ sendMessage, shouldBeDisabled, shouldUseHelpCenterExperience, trackEvent ] );
+
+	const onFileUpload = useCallback(
+		async ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			if ( authData && chat.conversationId && chat.clientId && event.currentTarget.files?.length ) {
+				const response = await attachFileToConversation( {
+					authData,
+					file: event.currentTarget.files[ 0 ],
+					conversationId: chat.conversationId,
+					clientId: chat.clientId,
+				} );
+				console.log( 'response', response );
+			}
+		},
+		[ chat.conversationId, authData ]
+	);
+
 	const classes = clsx(
 		'odie-send-message-inner-button',
 		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
@@ -80,6 +104,11 @@ export const OdieSendMessageButton = () => {
 					} }
 					className="odie-send-message-input-container"
 				>
+					{ chat.conversationId && shouldUseHelpCenterExperience && (
+						<FormFileUpload accept="image/*" onChange={ onFileUpload }>
+							<Icon icon={ upload } />
+						</FormFileUpload>
+					) }
 					<ResizableTextarea
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
