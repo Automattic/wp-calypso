@@ -12,4 +12,8 @@
 	&__view-more {
 		color: var( --color-link ) !important;
 	}
+
+	&.sidebar__menu--selected:not( :hover ) path {
+		fill: var( --color-sidebar-gridicon-selected-fill ) !important;
+	}
 }

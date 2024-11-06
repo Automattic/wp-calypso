@@ -35,16 +35,19 @@ type Site = {
 type Props = {
 	isOpen: boolean;
 	onClick: () => void;
+	path: string;
 	className: string;
 	translate: ( key: string ) => string;
 };
 
 const SITE_DISPLAY_CUTOFF = 8;
+const RECENT_PATH_REGEX = /^\/read\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
 	translate,
 	isOpen,
 	onClick,
+	path,
 	className,
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
@@ -70,9 +73,11 @@ const ReaderSidebarRecent = ( {
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
 			onClick={ onClick }
-			customIcon={ <ReaderFollowingIcon /> }
+			customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
 			disableFlyout
-			className={ clsx( 'reader-sidebar-recent', className ) }
+			className={ clsx( 'reader-sidebar-recent', className, {
+				'sidebar__menu--selected': ! isOpen && RECENT_PATH_REGEX.test( path ),
+			} ) }
 			count={ undefined }
 			icon={ null }
 			materialIcon={ null }

@@ -199,6 +199,7 @@ export class ReaderSidebar extends Component {
 						<ReaderSidebarRecent
 							onClick={ this.props.toggleFollowingVisibility }
 							isOpen={ this.props.isFollowingOpen }
+							path={ path }
 						/>
 					</li>
 				) : (
