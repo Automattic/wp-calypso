@@ -83,6 +83,12 @@ export default function MigrationsHostingOptions() {
 		);
 	}, [ dispatch ] );
 
+	const onClickPressableDemoLink = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_migrations_hosting_options_pressable_demo_link_click' )
+		);
+	}, [ dispatch ] );
+
 	return (
 		<PageSection
 			heading={ translate( 'Unsure which host suits your needs?' ) }
@@ -115,9 +121,21 @@ export default function MigrationsHostingOptions() {
 
 				<HostingOptionCard
 					banner={ PressableBanner }
-					title={ translate( 'Schedule a demo' ) }
+					title={ translate( 'Managing over 50 sites? Schedule a demo' ) }
 					description={ translate(
-						'Our friendly experts are happy to give you a personalized one-on-one tour of our platform to discuss your needs and everything Pressable has to offer.'
+						'Schedule a personalized demo to explore Pressable’s advanced features for high-performing agencies! If you’re managing fewer sites, we invite you to watch our {{a}}pre-recorded demo{{/a}} and contact our Automattic for Agencies support with any additional questions.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://href.li/?https://www.youtube.com/watch?v=GMNQYrp7tkQ"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ onClickPressableDemoLink }
+									/>
+								),
+							},
+						}
 					) }
 					buttons={ [
 						<Button
