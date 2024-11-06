@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
-import { Message } from '../../types/';
+import { Message } from '../../types';
 import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';

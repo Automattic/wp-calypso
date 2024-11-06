@@ -49,3 +49,4 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
+export const ODIE_ALLOWED_BOTS = [ 'wpcom-support-chat', 'wpcom-plan-support' ];

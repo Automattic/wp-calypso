@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportInteractionEvent } from '../types/';
+import type { SupportInteractionEvent } from '../types';
 
 /**
  * Manage support interaction events.

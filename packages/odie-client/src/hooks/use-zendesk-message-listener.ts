@@ -4,14 +4,14 @@ import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { zendeskMessageConverter } from './zendesk-message-converter';
-import type { ZendeskMessage } from '../types/';
+import { zendeskMessageConverter } from '../utils';
+import type { ZendeskMessage } from '../types';
 
 /**
  * Listens for messages from Zendesk and converts them to Odie messages.
  */
 export const useZendeskMessageListener = () => {
-	const { setChat, chat } = useOdieAssistantContext();
+	const { addMessage, chat } = useOdieAssistantContext();
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -32,12 +32,7 @@ export const useZendeskMessageListener = () => {
 
 			if ( data.conversation.id === chat?.conversationId ) {
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
-				setChat( ( prevChat ) => {
-					return {
-						...prevChat,
-						messages: [ ...prevChat.messages, convertedMessage ],
-					};
-				} );
+				addMessage( convertedMessage );
 				Smooch.markAllAsRead( data.conversation.id );
 			}
 		} );
@@ -46,5 +41,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off( 'message:received' );
 		};
-	}, [ isChatLoaded, chat?.conversationId ] );
+	}, [ isChatLoaded, chat?.conversationId, addMessage ] );
 };

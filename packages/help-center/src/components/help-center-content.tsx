@@ -4,7 +4,6 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data/use-manage-support-interaction';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -16,6 +15,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldRenderEmailOption } from '../hooks';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
@@ -53,14 +53,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, currentUser, site } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
 	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
 	const { isLoading: isLoadingChatStatus } = useChatStatus();
 
 	const { data, isLoading: isLoadingEligibility } = useSupportStatus();
-	const { startNewInteraction } = useManageSupportInteraction();
+	const resetSupportInteraction = useResetSupportInteraction();
 	const {
-		data: supportInteractions,
+		data: fetchedSupportInteractions,
 		isLoading: isLoadingSupportInteraction,
 		refetch,
 	} = useGetSupportInteractions( 'help-center' );
@@ -89,26 +89,23 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [] );
 
 	useEffect( () => {
-		if ( ! isLoadingSupportInteraction ) {
-			if (
-				supportInteractions &&
-				supportInteractions.length === 0 &&
-				! currentSupportInteraction
-			) {
-				const helpCenterInteractionId = Number( `${ currentUser?.ID ?? site?.ID }${ Date.now() }` );
-
-				startNewInteraction( {
-					event_source: 'help-center',
-					event_external_id: helpCenterInteractionId,
-				} ).then( ( interaction ) => {
-					setCurrentSupportInteraction( interaction );
+		if ( ! currentSupportInteraction ) {
+			if ( fetchedSupportInteractions && fetchedSupportInteractions.length > 0 ) {
+				setCurrentSupportInteraction( fetchedSupportInteractions[ 0 ] );
+			} else if ( fetchedSupportInteractions && fetchedSupportInteractions.length === 0 ) {
+				resetSupportInteraction().then( () => {
 					refetch();
 				} );
-			} else if ( supportInteractions && supportInteractions.length > 0 ) {
-				setCurrentSupportInteraction( supportInteractions[ 0 ] );
 			}
 		}
-	}, [ supportInteractions, isLoadingSupportInteraction ] );
+	}, [
+		fetchedSupportInteractions,
+		isLoadingSupportInteraction,
+		resetSupportInteraction,
+		refetch,
+		currentSupportInteraction,
+		setCurrentSupportInteraction,
+	] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {

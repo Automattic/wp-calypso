@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Message, MessageRole, MessageType, ZendeskMessage } from '../types/';
+import { Message, MessageRole, MessageType, ZendeskMessage } from '../types';
 
 // Format markdown to support images attachments
 function prepareMarkdownImage( imgUrl: string ): string {

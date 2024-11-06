@@ -4,7 +4,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
 import type { APIFetchOptions } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types/';
+import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {

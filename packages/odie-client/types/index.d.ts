@@ -50,3 +50,5 @@ declare module 'calypso/components/async-load' {
 
 	export default AsyncLoad;
 }
+
+declare const __i18n_text_domain__: string;
