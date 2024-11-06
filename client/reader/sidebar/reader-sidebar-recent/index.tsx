@@ -1,4 +1,5 @@
 import { Count } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -67,7 +68,7 @@ const ReaderSidebarRecent = ( {
 			onClick={ onClick }
 			customIcon={ <ReaderFollowingIcon /> }
 			disableFlyout
-			className={ `reader-sidebar-recent ${ className }` }
+			className={ clsx( 'reader-sidebar-recent', className ) }
 			count={ undefined }
 			icon={ null }
 			materialIcon={ null }
