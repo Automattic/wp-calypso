@@ -645,7 +645,8 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
+		const authorsData = get( data, dataPath, [] );
 
 		return authorsData.map( ( item ) => {
 			const record = {
