@@ -89,7 +89,7 @@ export class PluginsMain extends Component {
 
 		currentPlugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData ) {
+			if ( ! pluginData && ! config.isEnabled( 'bulk-plugin-management' ) ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
 		} );

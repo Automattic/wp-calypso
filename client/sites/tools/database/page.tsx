@@ -2,22 +2,20 @@ import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { useAreAdvancedHostingFeaturesSupported } from 'calypso/sites/features';
-import { SftpForm } from 'calypso/sites/tools/sftp-ssh/sftp-form';
-import useSftpSshSettingTitle from './hooks/use-sftp-ssh-setting-title';
-import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
+import PhpMyAdminForm from './form';
 
 import './style.scss';
 
-function Container( { isLoading, children }: { isLoading: boolean; children: React.ReactNode } ) {
-	return isLoading ? <SftpCardLoadingPlaceholder /> : children;
+function Container( { children }: { children: React.ReactNode } ) {
+	return children;
 }
 
 function Description( { children }: { children?: React.ReactNode } ) {
-	const title = useSftpSshSettingTitle();
-	return <NavigationHeader title={ title } subtitle={ children } />;
+	const translate = useTranslate();
+	return <NavigationHeader title={ translate( 'Database' ) } subtitle={ children } />;
 }
 
-export default function SftpSsh() {
+export default function Database() {
 	const translate = useTranslate();
 
 	const isSupported = useAreAdvancedHostingFeaturesSupported();
@@ -37,11 +35,17 @@ export default function SftpSsh() {
 	};
 
 	const renderSetting = () => {
-		return <SftpForm ContainerComponent={ Container } DescriptionComponent={ Description } />;
+		return (
+			<PhpMyAdminForm
+				disabled={ false }
+				ContainerComponent={ Container }
+				DescriptionComponent={ Description }
+			/>
+		);
 	};
 
 	return (
-		<div className="tools-sftp-ssh">
+		<div className="tools-database phpmyadmin-card">
 			{ isSupported ? renderSetting() : renderNotSupportedNotice() }
 		</div>
 	);

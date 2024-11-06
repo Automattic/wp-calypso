@@ -3,7 +3,6 @@ import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -16,7 +15,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RestorePasswordDialog from './restore-db-password';
 
-import './style.scss';
+import './form.scss';
 
 const trackOpenPhpmyadmin = () =>
 	composeAnalytics(
@@ -59,22 +58,22 @@ export function useOpenPhpMyAdmin() {
 	};
 }
 
-export default function PhpMyAdminCard( { disabled } ) {
+export default function PhpMyAdminForm( { disabled, ContainerComponent, DescriptionComponent } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
 	return (
-		<HostingCard
+		<ContainerComponent
 			className="phpmyadmin-card"
 			headingId="database-access"
 			title={ translate( 'Database access' ) }
 		>
-			<HostingCardDescription>
+			<DescriptionComponent>
 				{ translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
-			</HostingCardDescription>
+			</DescriptionComponent>
 			<div className="phpmyadmin-card__questions">
 				<PanelBody title={ translate( 'What is phpMyAdmin?' ) } initialOpen={ false }>
 					{ translate(
@@ -122,6 +121,6 @@ export default function PhpMyAdminCard( { disabled } ) {
 				onCancel={ () => setIsRestorePasswordDialogVisible( false ) }
 				onRestore={ () => setIsRestorePasswordDialogVisible( false ) }
 			/>
-		</HostingCard>
+		</ContainerComponent>
 	);
 }
