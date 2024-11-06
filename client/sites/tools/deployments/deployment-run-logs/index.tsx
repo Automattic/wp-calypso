@@ -35,17 +35,19 @@ export function DeploymentRunsLogs( { codeDeploymentId }: DeploymentRunsDialogPr
 	return (
 		<PageShell pageTitle={ __( 'GitHub Deployments' ) }>
 			<HeaderCakeBack icon="chevron-left" onClick={ goToDeployments } />
-			<HeaderCake isCompact>
-				<h1>{ __( 'Deployment runs' ) }</h1>
-			</HeaderCake>
-			<ActionPanel>
-				<DeploymentsRunsTable
-					deploymentsRuns={ deployments }
-					sortKey={ key }
-					sortDirection={ direction }
-					onSortChange={ handleSortChange }
-				/>
-			</ActionPanel>
+			<div>
+				<HeaderCake isCompact>
+					<h1>{ __( 'Deployment runs' ) }</h1>
+				</HeaderCake>
+				<ActionPanel>
+					<DeploymentsRunsTable
+						deploymentsRuns={ deployments }
+						sortKey={ key }
+						sortDirection={ direction }
+						onSortChange={ handleSortChange }
+					/>
+				</ActionPanel>
+			</div>
 		</PageShell>
 	);
 }

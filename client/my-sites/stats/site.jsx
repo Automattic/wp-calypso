@@ -86,8 +86,8 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf,
 } ) );
 
-const chartRangeToQuery = memoizeLast( ( period, chartRange ) => ( {
-	period,
+const chartRangeToQuery = memoizeLast( ( chartRange ) => ( {
+	period: 'day',
 	start_date: chartRange.chartStart,
 	date: chartRange.chartEnd,
 	summarize: 1,
@@ -326,7 +326,7 @@ class StatsSite extends Component {
 		}
 
 		const query = isNewDateFilteringEnabled
-			? chartRangeToQuery( period, customChartRange )
+			? chartRangeToQuery( customChartRange )
 			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links

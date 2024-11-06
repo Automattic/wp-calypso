@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	PLAN_PERSONAL,
@@ -99,10 +100,15 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				options?.styleVariationSlug &&
 				! isDefaultGlobalStylesVariationSlug( options.styleVariationSlug );
 
-			const minimumPlan =
-				tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation
-					? PLAN_PREMIUM
-					: tierMinimumUpsellPlan;
+			// @TODO Cleanup once the test phase is over.
+			let minimumPlan;
+			if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
+				minimumPlan = tierMinimumUpsellPlan;
+			} else if ( tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation ) {
+				minimumPlan = PLAN_PREMIUM;
+			} else {
+				minimumPlan = tierMinimumUpsellPlan;
+			}
 
 			const planPathSlug = getPlanPathSlugForThemes( state, siteId, minimumPlan );
 
