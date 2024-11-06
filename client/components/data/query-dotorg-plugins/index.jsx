@@ -6,7 +6,7 @@ import { useInterval } from 'calypso/lib/interval';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins } from 'calypso/state/plugins/wporg/selectors';
 
-const PLUGIN_RETRIEVE_INTERVAL = 200;
+const PLUGIN_RETRIEVE_INTERVAL = 500;
 const BATCH_PLUGIN_RETRIEVE_COUNT = 5;
 
 function QueryDotorgPlugins( { pluginSlugList } ) {
