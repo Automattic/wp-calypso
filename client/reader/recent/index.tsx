@@ -1,3 +1,5 @@
+import { WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -18,31 +20,31 @@ import './style.scss';
 const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'seen', 'post' ],
 	} );
 
-	const { data, posts } = useSelector( ( state: AppState ) => {
-		const streamData = state.reader?.streams?.recent;
-		const postsMap: Record< string, PostItem > = {};
+	const data = useSelector( ( state: AppState ) => state.reader?.streams?.recent );
 
-		// Create a map of posts for all items
-		streamData?.items?.forEach( ( item: ReaderPost ) => {
+	const posts = useSelector( ( state: AppState ) => {
+		const items = data?.items;
+		if ( ! items ) {
+			return {};
+		}
+
+		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
 			const post = getPostByKey( state, {
-				feedId: +item.blogId,
-				postId: +item.postId,
+				feedId: item.blogId,
+				postId: item.postId,
 			} );
 			if ( post ) {
-				postsMap[ `${ item.blogId }-${ item.postId }` ] = post;
+				acc[ `${ item.blogId }-${ item.postId }` ] = post;
 			}
-		} );
-
-		return {
-			data: streamData,
-			posts: postsMap,
-		};
+			return acc;
+		}, {} );
 	}, shallowEqual );
 
 	const getPostFromItem = useCallback(
@@ -51,6 +53,17 @@ const Recent = () => {
 			return posts[ postKey ];
 		},
 		[ posts ]
+	);
+
+	const handleItemClick = useCallback(
+		( item: ReaderPost ) => {
+			if ( isWide ) {
+				setSelectedItem( item );
+			} else {
+				// TODO: Fetch the post and navigate to it.
+			}
+		},
+		[ isWide ]
 	);
 
 	const fields = useMemo(
@@ -63,7 +76,7 @@ const Recent = () => {
 						<RecentSeenField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							setSelectedItem={ setSelectedItem }
+							handleItemClick={ handleItemClick }
 						/>
 					);
 				},
@@ -77,14 +90,14 @@ const Recent = () => {
 						<RecentPostField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							setSelectedItem={ setSelectedItem }
+							handleItemClick={ handleItemClick }
 						/>
 					);
 				},
 				enableHiding: false,
 			},
 		],
-		[ getPostFromItem ]
+		[ getPostFromItem, handleItemClick ]
 	);
 
 	const defaultLayouts = [

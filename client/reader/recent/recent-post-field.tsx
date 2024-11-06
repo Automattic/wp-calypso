@@ -4,16 +4,16 @@ import type { ReaderPost, PostItem } from './types';
 interface RecentPostFieldProps {
 	item: ReaderPost;
 	post: PostItem;
-	setSelectedItem: ( post: ReaderPost | null ) => void;
+	handleItemClick: ( item: ReaderPost ) => void;
 }
 
-const RecentPostField: React.FC< RecentPostFieldProps > = ( { item, post, setSelectedItem } ) => {
+const RecentPostField: React.FC< RecentPostFieldProps > = ( { item, post, handleItemClick } ) => {
 	if ( ! post ) {
 		return null;
 	}
 
 	return (
-		<Button className="recent-post-field" onClick={ () => setSelectedItem( item ) }>
+		<Button className="recent-post-field" onClick={ () => handleItemClick( item ) }>
 			<div className="recent-post-field__title">
 				<div className="recent-post-field__title-text">{ post?.title }</div>
 				<div className="recent-post-field__site-name">{ item.site_name }</div>
