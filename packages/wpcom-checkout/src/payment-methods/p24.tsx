@@ -15,7 +15,7 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -52,7 +52,7 @@ export function createP24PaymentMethodStore(): P24Store {
 				customerName: { value: '', isTouched: false },
 				customerEmail: { value: '', isTouched: false },
 			},
-			action: UnknownAction
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':

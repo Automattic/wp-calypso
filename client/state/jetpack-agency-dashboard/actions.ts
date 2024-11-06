@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import {
 	AgencyDashboardFilterOption,
 	PurchasedProductsInfo,
@@ -73,11 +73,11 @@ export const updateSort = ( sort?: DashboardSortInterface ) => () => {
 	updateDashboardURLQueryArgs( { sort } );
 };
 
-export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): UnknownAction {
+export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: productsInfo };
 }
 
-export function selectLicense( siteId: number, license: string ): UnknownAction {
+export function selectLicense( siteId: number, license: string ): AnyAction {
 	return {
 		type: isStreamlinedPurchasesEnabled
 			? JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE
@@ -87,7 +87,7 @@ export function selectLicense( siteId: number, license: string ): UnknownAction 
 	};
 }
 
-export function unselectLicense( siteId: number, license: string ): UnknownAction {
+export function unselectLicense( siteId: number, license: string ): AnyAction {
 	return {
 		type: isStreamlinedPurchasesEnabled
 			? JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE
@@ -97,7 +97,7 @@ export function unselectLicense( siteId: number, license: string ): UnknownActio
 	};
 }
 
-export function resetSite(): UnknownAction {
+export function resetSite(): AnyAction {
 	return {
 		type: isStreamlinedPurchasesEnabled
 			? JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES
@@ -105,10 +105,7 @@ export function resetSite(): UnknownAction {
 	};
 }
 
-export function setSiteMonitorStatus(
-	siteId: number,
-	status: 'loading' | 'completed'
-): UnknownAction {
+export function setSiteMonitorStatus( siteId: number, status: 'loading' | 'completed' ): AnyAction {
 	return {
 		type: JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
 		siteId,

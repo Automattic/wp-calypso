@@ -6,9 +6,9 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { receiveModuleToggles } from 'calypso/state/stats/module-toggles/actions';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
-export const doUpdateModuleToggles = ( action: UnknownAction ) => {
+export const doUpdateModuleToggles = ( action: AnyAction ) => {
 	const { siteId } = action;
 
 	return [
@@ -24,7 +24,7 @@ export const doUpdateModuleToggles = ( action: UnknownAction ) => {
 	];
 };
 
-export const fetch = ( action: UnknownAction ) => {
+export const fetch = ( action: AnyAction ) => {
 	const { siteId } = action;
 
 	return [
@@ -42,7 +42,7 @@ export const fetch = ( action: UnknownAction ) => {
 	];
 };
 
-export const onSuccess = ( { siteId }: UnknownAction, data: object ) =>
+export const onSuccess = ( { siteId }: AnyAction, data: object ) =>
 	receiveModuleToggles( siteId, data );
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/module-toggles/index.js', {

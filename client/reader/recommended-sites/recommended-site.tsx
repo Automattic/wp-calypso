@@ -18,7 +18,7 @@ import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import { useSubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import {
@@ -200,7 +200,7 @@ const RecommendedSite = ( {
 				siteId,
 				seed: recommendedSitesSeed,
 				siteTitle,
-			} ) as UnknownAction
+			} ) as AnyAction
 		);
 	};
 

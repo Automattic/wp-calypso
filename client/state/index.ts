@@ -5,7 +5,7 @@ import {
 	useStore as reduxUseStore,
 } from 'react-redux';
 import {
-	UnknownAction,
+	AnyAction,
 	legacy_createStore as createStore,
 	applyMiddleware,
 	compose,
@@ -71,6 +71,6 @@ export function useSelector< State = IAppState, Selected = unknown >(
 	return reduxUseSelector( selector, equalityFn );
 }
 
-export function useStore(): Store< IAppState, UnknownAction > {
+export function useStore(): Store< IAppState, AnyAction > {
 	return reduxUseStore();
 }

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent, enhanceWithSiteType } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
 import type { StatsPageViewTrackerProps } from './index';
-import type { UnknownAction, Store } from 'redux';
+import type { AnyAction, Store } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
 const debug = debugFactory( 'calypso:my-sites:stats:StatsPageViewTracker:useTracks' );
@@ -28,7 +28,7 @@ export default function useTracks( {
 	selectedSiteId,
 	...restProps
 }: useTracksProps ) {
-	const dispatch = useDispatch() as ThunkDispatch< Store, void, UnknownAction >;
+	const dispatch = useDispatch() as ThunkDispatch< Store, void, AnyAction >;
 
 	const recordPageView = useCallback( () => {
 		const recordEvent = withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] );

@@ -4,7 +4,7 @@ import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize } from './serialize';
 import type { SerializableReducer } from './serialize';
-import type { Reducer, UnknownAction, Action } from 'redux';
+import type { Reducer, AnyAction, Action } from 'redux';
 
 export interface CombinedReducer extends SerializableReducer {
 	storageKey?: string;
@@ -160,7 +160,7 @@ export function combineReducers( reducers: Record< string, Reducer > ): Combined
 	return combinedReducer;
 }
 
-function applyStoredState< TState, TAction extends UnknownAction = Action >(
+function applyStoredState< TState, TAction extends AnyAction = Action >(
 	reducers: Record< string, CombinedReducer >,
 	state: TState,
 	action: TAction

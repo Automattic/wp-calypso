@@ -1,6 +1,6 @@
 import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StoreDescriptor } from '@wordpress/data';
-import type { UnknownAction as Action } from 'redux';
+import type { AnyAction as Action } from 'redux';
 
 export type CardSubscriber = (
 	callback: () => void,

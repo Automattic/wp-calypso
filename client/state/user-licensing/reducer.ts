@@ -1,5 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import {
 	USER_LICENSES_RECEIVE,
 	USER_LICENSES_REQUEST,
@@ -25,7 +25,7 @@ export const initialState = {
 
 export const countsFetching = (
 	state: AppState = false,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | boolean => {
 	switch ( action.type ) {
 		case USER_LICENSES_COUNTS_REQUEST:
@@ -41,7 +41,7 @@ export const countsFetching = (
 
 export const counts = (
 	state: AppState = initialState.counts,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | LicenseCounts => {
 	switch ( action.type ) {
 		case USER_LICENSES_COUNTS_RECEIVE:
@@ -53,7 +53,7 @@ export const counts = (
 
 export const hasFetchedLicenseCounts = (
 	state = initialState.hasFetchedLicenseCounts,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | boolean => {
 	switch ( action.type ) {
 		case USER_LICENSES_COUNTS_RECEIVE:
@@ -65,7 +65,7 @@ export const hasFetchedLicenseCounts = (
 
 export const licensesFetching = (
 	state: AppState = initialState.licensesFetching,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | boolean => {
 	switch ( action.type ) {
 		case USER_LICENSES_REQUEST:
@@ -81,7 +81,7 @@ export const licensesFetching = (
 
 export const licenses = (
 	state: AppState = initialState.licenses,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | PaginatedItems< License > => {
 	switch ( action.type ) {
 		case USER_LICENSES_RECEIVE:
@@ -93,7 +93,7 @@ export const licenses = (
 
 export const hasFetchedLicenses = (
 	state = initialState.hasFetchedLicenses,
-	action: UnknownAction
+	action: AnyAction
 ): AppState | boolean => {
 	switch ( action.type ) {
 		case USER_LICENSES_RECEIVE:

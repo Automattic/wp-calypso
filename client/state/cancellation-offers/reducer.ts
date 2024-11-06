@@ -12,7 +12,7 @@ import {
 	CancellationOfferAPIResponse,
 } from 'calypso/state/cancellation-offers/types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 // Map the response to a typed object.
 const mapResponseObject = ( {
@@ -35,7 +35,7 @@ const createCancellationOfferMap = ( payload: CancellationOfferAPIResponse[] ) =
 	return payload.map( mapResponseObject );
 };
 
-const isFetching = ( state = null, action: UnknownAction ) => {
+const isFetching = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST:
 			return true;
@@ -47,7 +47,7 @@ const isFetching = ( state = null, action: UnknownAction ) => {
 	return state;
 };
 
-const error = ( state = {}, action: UnknownAction ) => {
+const error = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST_FAILURE:
 			return action.error;
@@ -56,7 +56,7 @@ const error = ( state = {}, action: UnknownAction ) => {
 	return state;
 };
 
-export const offers = ( state = [], action: UnknownAction ) => {
+export const offers = ( state = [], action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_RECEIVE:
 			return createCancellationOfferMap( action.offers );
@@ -65,7 +65,7 @@ export const offers = ( state = [], action: UnknownAction ) => {
 	return state;
 };
 
-export const isApplying = ( state = false, action: UnknownAction ) => {
+export const isApplying = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_APPLY:
 			return true;
@@ -77,7 +77,7 @@ export const isApplying = ( state = false, action: UnknownAction ) => {
 	return state;
 };
 
-export const applyError = ( state = null, action: UnknownAction ) => {
+export const applyError = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE:
 			return action.error;
@@ -86,7 +86,7 @@ export const applyError = ( state = null, action: UnknownAction ) => {
 	return state;
 };
 
-export const applySuccess = ( state = false, action: UnknownAction ) => {
+export const applySuccess = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
 			return action.success;

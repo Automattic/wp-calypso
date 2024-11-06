@@ -7,7 +7,7 @@ import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-typ
 import { withSchemaValidation } from 'calypso/state/utils';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS, IPurchaseFlowState } from '../types';
 import { purchaseFlowSchema } from './schema';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
@@ -17,7 +17,7 @@ export const defaultState: IPurchaseFlowState = {
 
 const purchaseFlow = withSchemaValidation(
 	purchaseFlowSchema,
-	( state: IPurchaseFlowState = defaultState, action: UnknownAction ): IPurchaseFlowState => {
+	( state: IPurchaseFlowState = defaultState, action: AnyAction ): IPurchaseFlowState => {
 		switch ( action.type ) {
 			case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
 				return {

@@ -1,4 +1,4 @@
-import { Action, UnknownAction } from 'redux';
+import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { DirectoryApplicationType } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
@@ -108,7 +108,7 @@ export interface AgencyStore {
 	isAgencyClientUser: boolean;
 }
 
-export type AgencyThunkAction< A extends Action = UnknownAction, R = unknown > = ThunkAction<
+export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
 	void,
 	A4AStore,
 	R,

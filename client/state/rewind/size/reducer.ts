@@ -1,4 +1,4 @@
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import {
 	JETPACK_BACKUP_RETENTION_SET,
 	REWIND_SIZE_REQUEST,
@@ -9,7 +9,7 @@ import {
 import { combineReducers } from 'calypso/state/utils';
 import { AppState } from 'calypso/types';
 
-const requestStatus = ( state: AppState = null, { type }: UnknownAction ): AppState | string => {
+const requestStatus = ( state: AppState = null, { type }: AnyAction ): AppState | string => {
 	switch ( type ) {
 		case REWIND_SIZE_REQUEST:
 			return 'pending';
@@ -24,7 +24,7 @@ const requestStatus = ( state: AppState = null, { type }: UnknownAction ): AppSt
 
 const bytesUsed = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | number | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -35,7 +35,7 @@ const bytesUsed = (
 
 const minDaysOfBackupsAllowed = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | number | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -46,7 +46,7 @@ const minDaysOfBackupsAllowed = (
 
 const daysOfBackupsAllowed = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | number | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -57,7 +57,7 @@ const daysOfBackupsAllowed = (
 
 const daysOfBackupsSaved = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | number | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -66,10 +66,7 @@ const daysOfBackupsSaved = (
 	return size.daysOfBackupsSaved ?? null;
 };
 
-const retentionDays = (
-	state: AppState = null,
-	action: UnknownAction
-): AppState | number | null => {
+const retentionDays = ( state: AppState = null, action: AnyAction ): AppState | number | null => {
 	switch ( action.type ) {
 		case REWIND_SIZE_SET:
 			return action.size.retentionDays ?? null;
@@ -82,7 +79,7 @@ const retentionDays = (
 
 const lastBackupSize = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | number | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -93,7 +90,7 @@ const lastBackupSize = (
 
 const backupsStopped = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | boolean | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;
@@ -104,7 +101,7 @@ const backupsStopped = (
 
 const lastBackupFailed = (
 	state: AppState = null,
-	{ type, size }: UnknownAction
+	{ type, size }: AnyAction
 ): AppState | boolean | null => {
 	if ( type !== REWIND_SIZE_SET ) {
 		return state;

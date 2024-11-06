@@ -6,7 +6,7 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import { schema } from './schema';
-import type { Reducer, UnknownAction } from 'redux';
+import type { Reducer, AnyAction } from 'redux';
 
 /**
  * Returns the updated count records state after an action has been dispatched.
@@ -14,7 +14,7 @@ import type { Reducer, UnknownAction } from 'redux';
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
-const dataReducer = ( state = {}, action: UnknownAction ) => {
+const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_HIGHLIGHTS_RECEIVE: {
 			return action.data;
@@ -34,7 +34,7 @@ export const data = withSchemaValidation(
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
-const isLoadingReducer = ( state = {}, action: UnknownAction ) => {
+const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_HIGHLIGHTS_REQUEST: {
 			return true;

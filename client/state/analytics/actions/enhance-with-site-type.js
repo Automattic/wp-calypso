@@ -7,7 +7,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * specifies the type of the current selected site.
  * @param {Object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {import('redux').UnknownAction} the new Redux action
+ * @returns {import('redux').AnyAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
 export function enhanceWithSiteType( action, getState ) {

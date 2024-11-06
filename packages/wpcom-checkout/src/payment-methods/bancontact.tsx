@@ -15,7 +15,7 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:bancontact-payment-method' );
 
@@ -44,7 +44,7 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action: UnknownAction
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':

@@ -22,7 +22,7 @@ import type {
 	StoreActions,
 	StoreState,
 } from '@automattic/wpcom-checkout';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
@@ -48,7 +48,7 @@ export function createWeChatPaymentMethodStore(): WeChatStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action: UnknownAction
+			action: AnyAction
 		) {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':

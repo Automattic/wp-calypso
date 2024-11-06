@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -43,10 +43,10 @@ const UserStepComponent: Step = function UserStep( {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
 			requestAllBlogsAccess();
-			dispatch( fetchCurrentUser() as unknown as UnknownAction );
+			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
 		if ( ! isLoggedIn ) {
-			dispatch( fetchCurrentUser() as unknown as UnknownAction );
+			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else {
 			navigation.submit?.();
 		}

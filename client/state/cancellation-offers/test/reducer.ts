@@ -1,6 +1,6 @@
 import { PURCHASE_CANCELLATION_OFFER_RECEIVE } from 'calypso/state/action-types';
 import { offers } from '../reducer';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 describe( 'reducer', () => {
 	describe( '#cancellationOffers()', () => {
@@ -16,7 +16,7 @@ describe( 'reducer', () => {
 							formatted_price: '$99.95',
 						},
 					],
-				} as UnknownAction );
+				} as AnyAction );
 
 				expect( state ).toEqual( [
 					{

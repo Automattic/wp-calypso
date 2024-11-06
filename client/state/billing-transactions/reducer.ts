@@ -13,7 +13,7 @@ import individualTransactions from './individual-transactions/reducer';
 import { billingTransactionsSchema } from './schema';
 import ui from './ui/reducer';
 import type { BillingTransactionsState, BillingTransactionsStateItems } from './types';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -21,7 +21,7 @@ import type { UnknownAction } from 'redux';
  */
 export const items = withSchemaValidation(
 	billingTransactionsSchema,
-	( state: BillingTransactionsState[ 'items' ] = {}, action: UnknownAction ) => {
+	( state: BillingTransactionsState[ 'items' ] = {}, action: AnyAction ) => {
 		switch ( action.type ) {
 			case BILLING_TRANSACTIONS_RECEIVE: {
 				const { past, upcoming } = action;
@@ -46,7 +46,7 @@ export const items = withSchemaValidation(
  */
 export const requesting = (
 	state: BillingTransactionsState[ 'requesting' ] = false,
-	action: UnknownAction
+	action: AnyAction
 ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTIONS_REQUEST:
@@ -66,7 +66,7 @@ export const requesting = (
  */
 export const sendingReceiptEmail = (
 	state: BillingTransactionsState[ 'sendingReceiptEmail' ] = {},
-	action: UnknownAction
+	action: AnyAction
 ) => {
 	switch ( action.type ) {
 		case BILLING_RECEIPT_EMAIL_SEND: {

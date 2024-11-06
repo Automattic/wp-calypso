@@ -7,13 +7,13 @@ import {
 import { withSchemaValidation } from 'calypso/state/utils';
 import { IReinstallProductsState, IReinstallProductsStatus } from '../types';
 import { productsReinstallSchema } from './schema';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 export const defaultState: IReinstallProductsState = {};
 
 const productsReinstall = withSchemaValidation(
 	productsReinstallSchema,
-	( state = defaultState, action: UnknownAction ): IReinstallProductsState => {
+	( state = defaultState, action: AnyAction ): IReinstallProductsState => {
 		const { type, siteId, error } = action;
 		switch ( type ) {
 			case MARKETPLACE_PRODUCTS_REINSTALL_STARTED:

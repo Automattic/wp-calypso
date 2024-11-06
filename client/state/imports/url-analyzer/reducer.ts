@@ -7,9 +7,9 @@ import {
 	URL_ANALYZER_RESET_ERROR,
 	URL_ANALYZER_URL_DATA_UPDATE,
 } from '../../action-types';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
-const isAnalyzing = ( state = false, action: UnknownAction ) => {
+const isAnalyzing = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case URL_ANALYZER_ANALYZE:
 			return true;
@@ -20,7 +20,7 @@ const isAnalyzing = ( state = false, action: UnknownAction ) => {
 	return state;
 };
 
-const analyzerError = ( state = null, action: UnknownAction ) => {
+const analyzerError = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case URL_ANALYZER_ANALYZE_ERROR: {
 			const { payload } = action;
@@ -33,7 +33,7 @@ const analyzerError = ( state = null, action: UnknownAction ) => {
 	}
 };
 
-const urlData = ( state = null, action: UnknownAction ) => {
+const urlData = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case URL_ANALYZER_ANALYZE_SUCCESS: {
 			const { payload } = action;

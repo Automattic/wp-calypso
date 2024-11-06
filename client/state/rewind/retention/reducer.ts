@@ -6,16 +6,13 @@ import {
 } from 'calypso/state/action-types';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from './constants';
 import type { AppState } from 'calypso/types';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 const initialState: AppState = {
 	requestStatus: BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED,
 };
 
-export const updateBackupRetentionRequestStatus = (
-	state = initialState,
-	{ type }: UnknownAction
-) => {
+export const updateBackupRetentionRequestStatus = ( state = initialState, { type }: AnyAction ) => {
 	switch ( type ) {
 		case JETPACK_BACKUP_RETENTION_UPDATE:
 			return {

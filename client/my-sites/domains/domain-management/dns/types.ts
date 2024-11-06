@@ -1,7 +1,7 @@
 import { applyDnsTemplate, updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { UnknownAction, Dispatch } from 'redux';
+import type { AnyAction, Dispatch } from 'redux';
 
 export type DnsRecord = {
 	id: string;
@@ -27,7 +27,7 @@ type Dns = {
 };
 
 type UnpackPromisedValue< T > = T extends ( ...args: unknown[] ) => infer R
-	? R extends ( dispatch: Dispatch< UnknownAction > ) => infer ActionType
+	? R extends ( dispatch: Dispatch< AnyAction > ) => infer ActionType
 		? ( ...args: Parameters< T > ) => Promise< ActionType >
 		: ( ...args: Parameters< T > ) => Promise< R >
 	: T;

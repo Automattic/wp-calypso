@@ -3,9 +3,9 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { receiveHighlights } from 'calypso/state/stats/highlights/actions';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
-export const fetch = ( action: UnknownAction ) => {
+export const fetch = ( action: AnyAction ) => {
 	const { siteId } = action;
 
 	return [
@@ -20,7 +20,7 @@ export const fetch = ( action: UnknownAction ) => {
 	];
 };
 
-export const onSuccess = ( { siteId }: UnknownAction, data: object ) =>
+export const onSuccess = ( { siteId }: AnyAction, data: object ) =>
 	receiveHighlights( siteId, data );
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/highlights/index.js', {

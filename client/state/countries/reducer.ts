@@ -7,12 +7,12 @@ import {
 import { combineReducers } from 'calypso/state/utils';
 import type { CountriesState } from './types';
 import type { Reducer } from 'react';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 function createListReducer< TType extends Exclude< keyof CountriesState, 'woocommerce' > >(
 	updatedActionType: string
-): Reducer< CountriesState[ TType ] | undefined, UnknownAction > {
-	return ( state: undefined | CountriesState[ TType ] = [], action: UnknownAction ) => {
+): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
+	return ( state: undefined | CountriesState[ TType ] = [], action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;
@@ -24,8 +24,8 @@ function createListReducer< TType extends Exclude< keyof CountriesState, 'woocom
 
 function createObjectReducer< TType extends Extract< keyof CountriesState, 'woocommerce' > >(
 	updatedActionType: string
-): Reducer< CountriesState[ TType ] | undefined, UnknownAction > {
-	return ( state: undefined | CountriesState[ TType ] = {}, action: UnknownAction ) => {
+): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
+	return ( state: undefined | CountriesState[ TType ] = {}, action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;

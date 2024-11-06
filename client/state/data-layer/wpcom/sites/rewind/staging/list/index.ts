@@ -7,9 +7,9 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import type { APIRewindStagingSiteList } from 'calypso/state/rewind/staging/types';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 
-type RequestActionType = UnknownAction & {
+type RequestActionType = AnyAction & {
 	siteId: number;
 };
 

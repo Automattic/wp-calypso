@@ -8,7 +8,7 @@ import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -38,7 +38,7 @@ const setupReduxStore = ( user: CurrentUser ) => {
 
 	const userStoreKey = User.register();
 	if ( user?.ID ) {
-		reduxStore.dispatch( setCurrentUser( user ) as UnknownAction );
+		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
 		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUser( user );
 	} else {
 		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUserFailed();

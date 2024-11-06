@@ -68,7 +68,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { FC } from 'react';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
@@ -400,7 +400,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					reduxDispatch(
 						activateOrInstallThenActivate( themeId, site?.ID, {
 							source: 'assembler',
-						} ) as ThunkAction< PromiseLike< string >, any, any, UnknownAction >
+						} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 					)
 				)
 				.then( ( activeThemeStylesheet: string ) =>

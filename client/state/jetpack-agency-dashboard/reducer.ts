@@ -1,5 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { Reducer, UnknownAction } from 'redux';
+import { Reducer, AnyAction } from 'redux';
 import { combineReducers } from 'calypso/state/utils';
 import { AppState } from 'calypso/types';
 import {
@@ -19,8 +19,8 @@ import type {
 
 const purchasedLicense: Reducer<
 	{ purchasedLicenseInfo: PurchasedProductsInfo | null },
-	UnknownAction
-> = ( state = { purchasedLicenseInfo: null }, action: UnknownAction ): AppState => {
+	AnyAction
+> = ( state = { purchasedLicenseInfo: null }, action: AnyAction ): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE:
 			return { ...state, purchasedLicenseInfo: action.payload };
@@ -28,9 +28,9 @@ const purchasedLicense: Reducer<
 	return state;
 };
 
-const siteMonitorStatus: Reducer< { statuses: SiteMonitorStatus }, UnknownAction > = (
+const siteMonitorStatus: Reducer< { statuses: SiteMonitorStatus }, AnyAction > = (
 	state = { statuses: {} },
-	action: UnknownAction
+	action: AnyAction
 ): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE:
@@ -41,8 +41,8 @@ const siteMonitorStatus: Reducer< { statuses: SiteMonitorStatus }, UnknownAction
 
 const selectedLicenses: Reducer<
 	{ siteId: null | number; licenses: Array< string > },
-	UnknownAction
-> = ( state = { siteId: null, licenses: [] }, action: UnknownAction ): AppState => {
+	AnyAction
+> = ( state = { siteId: null, licenses: [] }, action: AnyAction ): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE:
 			return {
@@ -104,8 +104,8 @@ const removeLicense = ( state: AppState, siteId: number, license: string ) => {
 
 const selectedSiteLicenses: Reducer<
 	{ licenses: Array< { siteId: number; products: Array< string > } > },
-	UnknownAction
-> = ( state = { licenses: [] }, action: UnknownAction ): AppState => {
+	AnyAction
+> = ( state = { licenses: [] }, action: AnyAction ): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE:
 			return { ...state, licenses: addLicense( state, action.siteId, action.license ) };

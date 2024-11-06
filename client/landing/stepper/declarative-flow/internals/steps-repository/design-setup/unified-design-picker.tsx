@@ -97,7 +97,7 @@ import type {
 } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
-import type { UnknownAction } from 'redux';
+import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 const SiteIntent = Onboard.SiteIntent;
 
@@ -635,7 +635,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 							reduxDispatch(
 								activateOrInstallThenActivate( themeId ?? '', site?.ID ?? 0, {
 									source: 'assembler',
-								} ) as ThunkAction< PromiseLike< string >, any, any, UnknownAction >
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)
 						)
 						.then( ( activeThemeStylesheet: string ) =>

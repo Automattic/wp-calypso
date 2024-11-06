@@ -1,4 +1,4 @@
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -10,7 +10,7 @@ const formatApiAgencies = ( agencies: Agency[] ) => {
 	return agencies;
 };
 
-function fetchAgenciesHandler( action: UnknownAction ): UnknownAction {
+function fetchAgenciesHandler( action: AnyAction ): AnyAction {
 	return http(
 		{
 			method: 'GET',
@@ -22,11 +22,11 @@ function fetchAgenciesHandler( action: UnknownAction ): UnknownAction {
 			retryPolicy: noRetry(),
 		},
 		action
-	) as UnknownAction;
+	) as AnyAction;
 }
 
 function receiveAgenciesHandler(
-	_action: UnknownAction,
+	_action: AnyAction,
 	data: Agency[] | { is_client_user: boolean }
 ) {
 	if ( 'is_client_user' in data ) {
@@ -35,7 +35,7 @@ function receiveAgenciesHandler(
 	return receiveAgencies( data );
 }
 
-function receiveAgenciesErrorHandler( _action: UnknownAction, error: APIError ) {
+function receiveAgenciesErrorHandler( _action: AnyAction, error: APIError ) {
 	return receiveAgenciesError( error );
 }
 
