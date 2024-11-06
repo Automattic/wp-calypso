@@ -7,6 +7,8 @@ import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon'
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 
+import './style.scss';
+
 // TODO: Find the right home for this, or the existing definition
 type Site = {
 	ID: number;
@@ -59,42 +61,48 @@ const ReaderSidebarRecent = ( {
 	};
 
 	return (
-		<li>
-			<ExpandableSidebarMenu
-				expanded={ isOpen }
-				title={ translate( 'Recent' ) }
-				onClick={ onClick }
-				customIcon={ <ReaderFollowingIcon /> }
-				disableFlyout
-				className={ className }
-				count={ undefined }
-				icon={ null }
-				materialIcon={ null }
-				materialIconStyle={ null }
-			>
-				<li>
-					<button onClick={ () => selectSite( null ) }>
-						{ translate( 'All' ) }{ ' ' }
-						{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+		<ExpandableSidebarMenu
+			expanded={ isOpen }
+			title={ translate( 'Recent' ) }
+			onClick={ onClick }
+			customIcon={ <ReaderFollowingIcon /> }
+			disableFlyout
+			className={ `reader-sidebar-recent ${ className }` }
+			count={ undefined }
+			icon={ null }
+			materialIcon={ null }
+			materialIconStyle={ null }
+		>
+			<li>
+				<button
+					className="reader-sidebar-recent__item sidebar__menu-link"
+					onClick={ () => selectSite( null ) }
+				>
+					{ translate( 'All' ) }{ ' ' }
+					{ totalUnseenCount > 0 && <Count count={ totalUnseenCount } compact /> }
+				</button>
+			</li>
+			{ sitesToShow.map( ( site ) => (
+				<li key={ site.ID }>
+					<button
+						className="reader-sidebar-recent__item sidebar__menu-link"
+						onClick={ () => selectSite( site.feed_ID ) }
+					>
+						{ site.name } { site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 					</button>
 				</li>
-				{ sitesToShow.map( ( site ) => (
-					<li key={ site.ID }>
-						<button onClick={ () => selectSite( site.feed_ID ) }>
-							{ site.name }{ ' ' }
-							{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
-						</button>
-					</li>
-				) ) }
-				{ sites.length > SITE_DISPLAY_CUTOFF && (
-					<li>
-						<button onClick={ toggleShowAllSites }>
-							{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
-						</button>
-					</li>
-				) }
-			</ExpandableSidebarMenu>
-		</li>
+			) ) }
+			{ sites.length > SITE_DISPLAY_CUTOFF && (
+				<li>
+					<button
+						className="reader-sidebar-recent__item reader-sidebar-recent__view-more sidebar__menu-link "
+						onClick={ toggleShowAllSites }
+					>
+						{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
+					</button>
+				</li>
+			) }
+		</ExpandableSidebarMenu>
 	);
 };
 
