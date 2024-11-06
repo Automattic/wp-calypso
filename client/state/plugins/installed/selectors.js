@@ -163,17 +163,17 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
