@@ -164,6 +164,8 @@ export function getPluginsWithUpdates( state, siteIds ) {
 }
 
 export function getPluginsOnSites( state, plugins ) {
+	console.log( 'will getPluginsOnSites' );
+	return [];
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
@@ -200,10 +202,11 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId ).toLowerCase() );
 }
 
-export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
+export const getSiteObjectsWithPlugin = createSelector( ( state, siteIds, pluginSlug ) => {
+	return [];
 	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
 	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
-}
+} );
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];

@@ -379,12 +379,12 @@ export function navigationIfLoggedIn( context, next ) {
 }
 
 export function maybeRedirectLoggedOut( context, next ) {
-	const siteFragment =
-		context.params.site || context.params.site_id || getSiteFragment( context.path );
+	// const siteFragment =
+	// 	context.params.site || context.params.site_id || getSiteFragment( context.path );
 
-	if ( siteFragment ) {
-		return redirectLoggedOut( context, next );
-	}
+	// if ( siteFragment ) {
+	// 	return redirectLoggedOut( context, next );
+	// }
 	next();
 }
 

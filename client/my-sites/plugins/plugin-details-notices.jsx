@@ -23,7 +23,8 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 	const isBundledPlugin = isEcommercePlan
 		? ECOMMERCE_BUNDLED_PLUGINS.includes( plugin.software_slug )
 		: false;
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	// const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const purchases = [];
 	const marketplacePluginHasSubscription = !! (
 		plugin.isMarketplaceProduct && getPluginPurchased( plugin, purchases )?.active
 	);

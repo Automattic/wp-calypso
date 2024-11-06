@@ -51,17 +51,18 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		return isPluginActive( state, selectedSiteId, pluginSlug );
 	} );
 
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-	const hasPurchasedFree = sitePurchases.some( isJetpackSearchFree );
+	// const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const sitePurchases = [];
+	// const hasPurchasedFree = sitePurchases.some( isJetpackSearchFree );
 	const hasPurchasedPaid = sitePurchases.some( isJetpackSearch );
 
 	// Does the preinstalled premium plugin have a free tier?
-	const hasPreinstalledPremiumPluginFreeTier = !! preinstalledPremiumPlugin?.products?.free;
+	// const hasPreinstalledPremiumPluginFreeTier = !! preinstalledPremiumPlugin?.products?.free;
 
 	// Is the site using the free tier of a preinstalled premium plugin?
-	const isPreinstalledPremiumPluginFreeInstalled =
-		hasPreinstalledPremiumPluginFreeTier && isPreinstalledPremiumPluginUpgraded && hasPurchasedFree;
-
+	// const isPreinstalledPremiumPluginFreeInstalled =
+	// 	hasPreinstalledPremiumPluginFreeTier && isPreinstalledPremiumPluginUpgraded && hasPurchasedFree;
+	const isPreinstalledPremiumPluginFreeInstalled = false;
 	const isPreinstalledPremiumPluginPaidInstalled =
 		isPreinstalledPremiumPluginUpgraded && hasPurchasedPaid;
 
@@ -77,6 +78,8 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		if ( selectedSiteId ) {
 			return Number( isPreinstalledPremiumPluginUpgraded );
 		}
+
+		return 0;
 
 		const allSites = getSelectedOrAllSitesJetpackCanManage( state );
 		const sitesWithPlugin = getSitesWithPlugin(

@@ -57,11 +57,12 @@ const PluginsBrowserListElement = ( props ) => {
 		isMarketplaceProductSelector( state, plugin.slug || '' )
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
-	const sitesWithPlugin = useSelector( ( state ) =>
-		currentSites
-			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
-			: []
-	);
+	const sitesWithPlugin = [];
+	// const sitesWithPlugin = useSelector( ( state ) =>
+	// 	currentSites
+	// 		? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
+	// 		: []
+	// );
 
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
 
@@ -112,9 +113,10 @@ const PluginsBrowserListElement = ( props ) => {
 	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const onClickItem = useCallback( () => {
-		dispatch( setLastVisitedPlugin( plugin.slug, props.listName ) );
+		console.log( 'clicked!' );
+		// dispatch( setLastVisitedPlugin( plugin.slug, props.listName ) );
 
-		trackPluginLinkClick();
+		// trackPluginLinkClick();
 	}, [ trackPluginLinkClick, dispatch, plugin.slug, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {

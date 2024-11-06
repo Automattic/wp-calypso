@@ -25,6 +25,7 @@ interface Props {
 }
 
 export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactElement | null {
+	return <div>update plugins CTA</div>;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

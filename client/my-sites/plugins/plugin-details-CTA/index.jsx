@@ -69,7 +69,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	// const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const purchases = [];
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
@@ -110,9 +111,12 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	// Eligibilities for Simple Sites.
 	// eslint-disable-next-line prefer-const
-	let { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
-		getEligibility( state, selectedSite?.ID )
-	);
+	// let { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+	// 	getEligibility( state, selectedSite?.ID )
+	// );
+
+	let eligibilityHolds = [];
+	const eligibilityWarnings = [];
 
 	const upgradeToBusinessHref = useMemo( () => {
 		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );

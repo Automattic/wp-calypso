@@ -1,13 +1,14 @@
+import { createSelector } from '@wordpress/data';
 import 'calypso/state/plugins/init';
 
 export function getAllPlugins( state ) {
 	return state?.plugins.wporg.items;
 }
 
-export function getPlugin( state, pluginSlug ) {
+export const getPlugin = createSelector( ( state, pluginSlug ) => {
 	const plugin = state?.plugins.wporg.items[ pluginSlug ] ?? null;
 	return plugin ? { ...plugin } : plugin;
-}
+} );
 
 export function getPlugins( state, pluginSlugs ) {
 	return pluginSlugs.map( ( pluginSlug ) => getPlugin( state, pluginSlug ) );

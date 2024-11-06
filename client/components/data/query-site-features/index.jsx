@@ -20,7 +20,7 @@ export function useQuerySiteFeatures( siteIds ) {
 	const hashedSiteIds = siteIdsHash( siteIds );
 
 	useEffect( () => {
-		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
+		// siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
 	}, [ dispatch, hashedSiteIds ] );
 }
 
