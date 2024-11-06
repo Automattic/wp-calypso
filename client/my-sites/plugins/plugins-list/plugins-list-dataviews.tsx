@@ -40,8 +40,10 @@ export default function PluginsListDataViews( {
 
 	// When search changes, notify the parent component
 	useEffect( () => {
-		onSearch && onSearch( dataViewsState.search || '' );
-	}, [ dataViewsState.search, onSearch ] );
+		if ( dataViewsState.search !== initialSearch ) {
+			onSearch && onSearch( dataViewsState.search || '' );
+		}
+	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {
 		const result = filterSortAndPaginate( currentPlugins, dataViewsState, fields );
