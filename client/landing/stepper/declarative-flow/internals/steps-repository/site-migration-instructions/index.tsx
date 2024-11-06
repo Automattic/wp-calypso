@@ -3,6 +3,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useCallback, useEffect } from 'react';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
@@ -19,7 +20,6 @@ import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
 import type { Status } from './provisioning';
 import type { Step } from '../../types';
-import type { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import './style.scss';
 
 interface PreparationEventsHookOptions {
@@ -105,6 +105,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		error: preparationError,
 		migrationKey,
 	} = usePrepareSiteForMigration( siteId );
+
 	const migrationKeyStatus = detailedStatus.migrationKey;
 
 	// Register events and logs.
@@ -133,6 +134,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 			window.removeEventListener( 'beforeunload', preventUnload );
 		};
 	}, [ preparationCompleted, preventUnload ] );
+
 	// Hosting details.
 	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;

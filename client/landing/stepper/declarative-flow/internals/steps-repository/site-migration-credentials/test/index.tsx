@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
@@ -15,6 +16,7 @@ import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
 		get: jest.fn(),
+		post: jest.fn(),
 	},
 } ) );
 
@@ -215,6 +217,19 @@ describe( 'SiteMigrationCredentials', () => {
 			expect( submit ).toHaveBeenCalledWith( {
 				action: 'submit',
 			} );
+		} );
+	} );
+
+	it( 'sets a migration as pending automatically', async () => {
+		render();
+
+		await waitFor( () => {
+			expect( wp.req.post ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					path: '/sites/123/site-migration-status-sticker',
+					body: { status_sticker: MigrationStatus.PENDING_DIFM },
+				} )
+			);
 		} );
 	} );
 
