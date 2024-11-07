@@ -1,11 +1,14 @@
-import { useMutation } from '@tanstack/react-query';
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { generateUUID } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
-import type { Message, ReturnedChat } from '../types';
+import type { Chat, Message, ReturnedChat } from '../types';
 
 /**
  * Sends a new message to ODIE.
@@ -13,23 +16,46 @@ import type { Message, ReturnedChat } from '../types';
  * @returns useMutation return object.
  */
 export const useSendOdieMessage = () => {
+	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		const currentSupportInteraction = store.getCurrentSupportInteraction();
+		// Get the current odie chat
+		const odieId =
+			currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+				?.event_external_id ?? null;
+
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+			odieId,
+		};
+	}, [] );
+
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const internal_message_id = generateUUID();
+	const queryClient = useQueryClient();
 
 	const {
 		botNameSlug,
 		selectedSiteId,
 		version,
-		addMessage,
+		setChat,
 		odieBroadcastClientId,
-		chat,
 		setChatStatus,
 		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 
+	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			...props,
+			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
+			status: 'loaded',
+		} ) );
+	};
+
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const chatIdSegment = chat.odieId ? `/${ chat.odieId }` : '';
+			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			return canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'POST',
@@ -60,13 +86,14 @@ export const useSendOdieMessage = () => {
 				};
 
 				addMessage( errorMessage );
+
 				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
 				return;
 			}
 
-			if ( ! chat.odieId ) {
+			if ( ! odieId ) {
 				addEventToInteraction( {
-					interactionId: chat.supportInteractionId as string,
+					interactionId: currentSupportInteraction!.uuid,
 					eventData: {
 						event_external_id: returnedChat.chat_id.toString(),
 						event_source: 'odie',
@@ -84,11 +111,11 @@ export const useSendOdieMessage = () => {
 				context: returnedChat.messages[ 0 ].context,
 			};
 
-			addMessage( botMessage );
+			addMessage( botMessage, { odieId: returnedChat.chat_id } );
 			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},
 		onSettled: () => {
-			setChatStatus( 'loaded' );
+			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
 		},
 		onError: ( error ) => {
 			const isRateLimitError = error.message.includes( '429' );

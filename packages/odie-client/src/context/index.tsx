@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getHelpCenterZendeskConversationStarted } from '../utils';
@@ -42,6 +42,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
 	odieBroadcastClientId: '',
+	setChat: noop,
 	setChatProvider: noop,
 	setChatStatus: noop,
 	setMessageLikedStatus: noop,
@@ -69,36 +70,25 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
-	const { botNameSlug, isMinimized, isChatLoaded, currentSupportInteraction } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? store.getOdieBotNameSlug()
-				: 'wpcom-support-chat';
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? store.getOdieBotNameSlug()
+			: 'wpcom-support-chat';
 
-			return {
-				currentSupportInteraction: store.getCurrentSupportInteraction(),
-				botNameSlug: odieBotNameSlug as OdieAllowedBots,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[]
-	);
+		return {
+			botNameSlug: odieBotNameSlug as OdieAllowedBots,
+			isMinimized: store.getIsMinimized(),
+			isChatLoaded: store.getIsChatLoaded(),
+		};
+	}, [] );
 
 	/**
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const initialCombinedChats = useGetCombinedChat( currentSupportInteraction );
-	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
-
-	useEffect( () => {
-		if ( initialCombinedChats ) {
-			setMainChatState( { ...initialCombinedChats, status: 'loaded' } );
-		}
-	}, [ initialCombinedChats ] );
+	const { mainChatState, setMainChatState } = useGetCombinedChat();
 
 	/**
 	 * Tracking event.
@@ -188,6 +178,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				botName,
 				botNameSlug,
 				chat: mainChatState,
+				setChat: setMainChatState,
 				clearChat,
 				currentUser,
 				extraContactOptions,

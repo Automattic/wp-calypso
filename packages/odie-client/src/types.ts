@@ -1,5 +1,5 @@
 import { ODIE_ALLOWED_BOTS } from './constants';
-import type { ReactNode, PropsWithChildren } from 'react';
+import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	setChatProvider: ( provider: SupportProvider ) => void;
@@ -19,6 +19,7 @@ export type OdieAssistantContextInterface = {
 	selectedConversationId?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
+	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
@@ -149,13 +150,16 @@ export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfe
 
 export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
 
-export type Chat = {
-	supportInteractionId: string | null;
-	conversationId: string | null;
+export type OdieChat = {
+	messages: Message[];
 	odieId: number | null;
 	wpcomUserId: number | null;
+};
+
+export type Chat = OdieChat & {
+	supportInteractionId: string | null;
+	conversationId: string | null;
 	clientId?: string;
-	messages: Message[];
 	provider: SupportProvider;
 	status: ChatStatus;
 };
@@ -224,7 +228,7 @@ export type SupportInteractionUser = {
 };
 
 export type SupportInteractionEvent = {
-	event_external_id: string | number;
+	event_external_id: string;
 	event_source: SupportProvider;
 	metadata?: object;
 	event_order?: number;

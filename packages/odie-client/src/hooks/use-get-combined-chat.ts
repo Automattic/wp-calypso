@@ -1,19 +1,24 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { emptyChat } from '../context';
 import { getZendeskConversation, useOdieChat } from '../data';
-import type { Chat, Message, SupportInteraction } from '../types';
+import type { Chat, Message } from '../types';
 
 /**
  * This combines the ODIE chat with the ZENDESK conversation.
- * @param currentSupportInteraction - The current support interaction.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteraction ) => {
-	const [ chat, setChat ] = useState< Chat >( {
-		...emptyChat,
-		status: 'loading',
-		supportInteractionId: currentSupportInteraction?.uuid ?? null,
-	} );
+export const useGetCombinedChat = () => {
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
+
+	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 
 	// Get the current odie chat
 	const odieId =
@@ -21,50 +26,49 @@ export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteracti
 			?.event_external_id ?? null;
 
 	// Get the current Zendesk conversation ID
-	const conversationId = currentSupportInteraction?.events.find(
-		( event ) => event.event_source === 'zendesk'
-	)?.event_external_id;
+	const conversationId =
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
+			?.event_external_id ?? null;
 
-	const {
-		data: odieChat,
-		isLoading: isOdieChatLoading,
-		refetch: refetchOdieChat,
-	} = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		// TODO: I am not sure how to approach this...
-		if ( ! isOdieChatLoading && odieId && ! chat.odieId ) {
-			refetchOdieChat().then( () => {
-				if ( odieChat ) {
-					setChat( odieChat );
-				}
-			} );
+		if ( odieId && ! conversationId ) {
+			if ( odieChat ) {
+				setMainChatState( ( prevChat ) => ( {
+					...prevChat,
+					...odieChat,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loaded',
+				} ) );
+			}
+		} else if ( odieId && conversationId ) {
+			if ( odieChat ) {
+				getZendeskConversation( {
+					chatId: odieChat.odieId,
+					conversationId: conversationId.toString(),
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						setMainChatState( ( prevChat ) => ( {
+							...prevChat,
+							...odieChat,
+							supportInteractionId: currentSupportInteraction!.uuid,
+							conversationId: conversation.id,
+							messages: [ ...odieChat.messages, ...( conversation.messages as Message[] ) ],
+							provider: 'zendesk',
+							status: 'loaded',
+						} ) );
+					}
+				} );
+			}
+		} else {
+			setMainChatState( ( prevChat ) => ( {
+				...prevChat,
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: 'loaded',
+			} ) );
 		}
+	}, [ isOdieChatLoading, odieChat, conversationId, odieId, currentSupportInteraction ] );
 
-		if ( ! isOdieChatLoading && conversationId ) {
-			getZendeskConversation( {
-				chatId: chat.odieId,
-				conversationId: conversationId.toString(),
-			} )?.then( ( conversation ) => {
-				if ( conversation ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						conversationId: conversation.id,
-						messages: [ ...prevChat.messages, ...( conversation.messages as Message[] ) ],
-						provider: 'zendesk',
-					} ) );
-				}
-			} );
-		}
-	}, [
-		chat.odieId,
-		isOdieChatLoading,
-		odieChat,
-		conversationId,
-		refetchOdieChat,
-		odieId,
-		currentSupportInteraction,
-	] );
-
-	return chat;
+	return { mainChatState, setMainChatState };
 };
