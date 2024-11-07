@@ -34,7 +34,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 };
 
 export const AttachmentButton: React.FC = () => {
-	const { chat, shouldUseHelpCenterExperience, addMessage } = useOdieAssistantContext();
+	const { chat, addMessage } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
@@ -68,7 +68,7 @@ export const AttachmentButton: React.FC = () => {
 		[ chat.conversationId, authData ]
 	);
 
-	if ( ! chat.conversationId || ! inferredClientId || ! shouldUseHelpCenterExperience ) {
+	if ( ! chat.conversationId || ! inferredClientId ) {
 		return null;
 	}
 

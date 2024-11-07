@@ -89,7 +89,7 @@ export const OdieSendMessageButton = () => {
 						keyUpHandle={ onKeyUp }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
-					<AttachmentButton />
+					{ shouldUseHelpCenterExperience && <AttachmentButton /> }
 					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />
