@@ -49,7 +49,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 				metadata: {
 					odieChatId: chatId,
 					createdAt: Date.now(),
-					supportInteractionId: chat.supportInteractionId,
+					supportInteractionId: chat.supportInteractionId as string,
 				},
 			} ).then( ( conversation ) => {
 				setChatProvider( 'zendesk' );

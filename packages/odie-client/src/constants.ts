@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+declare const __i18n_text_domain__: string;
 
 export const ODIE_ERROR_MESSAGE = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
 	if ( shouldUseHelpCenterExperience ) {
