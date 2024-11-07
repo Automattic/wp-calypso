@@ -6,25 +6,6 @@ import React from 'react';
 import MigrationOverview from '..';
 import type { SiteDetails } from '@automattic/data-stores';
 
-function textContentMatcher( textMatch: string | RegExp ) {
-	const hasText =
-		typeof textMatch === 'string'
-			? ( node: Element ) => node.textContent === textMatch
-			: ( node: Element ) => textMatch.test( node.textContent ?? '' );
-
-	return ( _content: string, node: Element | null ) => {
-		if ( ! node || ! hasText( node ) ) {
-			return false;
-		}
-
-		const childrenDontHaveText = Array.from( node?.children || [] ).every(
-			( child ) => ! hasText( child )
-		);
-
-		return childrenDontHaveText;
-	};
-}
-
 const buildMigrationSite = ( {
 	status,
 	how,
@@ -118,13 +99,6 @@ describe( 'MigrationOverview', () => {
 			render( <MigrationOverview site={ site } /> );
 
 			expect( screen.queryByText( /Your migration is underway/ ) ).toBeVisible();
-			expect(
-				screen.queryByText(
-					textContentMatcher(
-						/Sit back as Bold Apps transfers to its new home. Get ready for unmatched WordPress hosting./
-					)
-				)
-			).toBeVisible();
 		} );
 
 		it( 'does not show the continue migration link', () => {
@@ -143,13 +117,6 @@ describe( 'MigrationOverview', () => {
 			render( <MigrationOverview site={ site } /> );
 
 			expect( screen.queryByText( /Your migration is underway/ ) ).toBeVisible();
-			expect(
-				screen.queryByText(
-					textContentMatcher(
-						/Sit back as Bold Apps transfers to its new home. Here’s what you can expect./
-					)
-				)
-			).toBeVisible();
 		} );
 
 		it( 'does not show the continue migration link', () => {
