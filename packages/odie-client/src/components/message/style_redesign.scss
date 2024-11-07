@@ -124,6 +124,10 @@ $blueberry-color: #3858e9;
 	overflow-x: hidden !important;
 }
 
+.odie-chatbox-message p:first-of-type {
+	padding-top: 0;
+}
+
 .odie-chatbox-message p:last-of-type {
 	margin-bottom: 0;
 }
@@ -152,7 +156,7 @@ $blueberry-color: #3858e9;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px 8px 8px 0 !important;
 		background-color:#F7F8FE !important;
-		
+		padding: 16px;
 	}
 }
 
@@ -179,6 +183,7 @@ $blueberry-color: #3858e9;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	max-width: 256px;
+	padding: 16px;
 	p {
 		color: var(--studio-gray-80);
 		line-height: 20px;
