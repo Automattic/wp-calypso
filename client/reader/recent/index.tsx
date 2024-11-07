@@ -37,11 +37,11 @@ const Recent = () => {
 
 		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
 			const post = getPostByKey( state, {
-				feedId: item.blogId,
+				feedId: item.feedId,
 				postId: item.postId,
 			} );
 			if ( post ) {
-				acc[ `${ item.blogId }-${ item.postId }` ] = post;
+				acc[ `${ item.feedId }-${ item.postId }` ] = post;
 			}
 			return acc;
 		}, {} );
@@ -49,7 +49,7 @@ const Recent = () => {
 
 	const getPostFromItem = useCallback(
 		( item: ReaderPost ) => {
-			const postKey = `${ item.blogId }-${ item.postId }`;
+			const postKey = `${ item.postId }-${ item.feedId }`;
 			return posts[ postKey ];
 		},
 		[ posts ]
