@@ -10,12 +10,10 @@ import { setHelpCenterZendeskConversationStarted } from '../utils';
 export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 	const {
 		selectedSiteId,
-		addMessage,
 		setChatStatus,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		setChatProvider,
 		chat,
-		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -32,22 +30,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			return;
 		}
 
-		addMessage( {
-			content: shouldUseHelpCenterExperience
-				? "Help's on the way!"
-				: "We're connecting you to our support team.",
-			role: 'bot',
-			type: 'message',
-			context: {
-				flags: {
-					hide_disclaimer_content: true,
-					show_contact_support_msg: true,
-				},
-				site_id: null,
-			},
-		} );
-
-		setChatStatus( 'sending' );
+		setChatStatus( 'transfer' );
 
 		submitUserFields( {
 			messaging_initial_message: '',
@@ -58,7 +41,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 				metadata: {
 					odieChatId: chatId,
 					createdAt: Date.now(),
-					supportInteractionId: currentSupportInteraction.uuid,
+					supportInteractionId: currentSupportInteraction!.uuid,
 				},
 			} ).then( ( conversation ) => {
 				setChatProvider( 'zendesk' );
@@ -66,7 +49,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 				setHelpCenterZendeskConversationStarted();
 				setWaitAnswerToFirstMessageFromHumanSupport( true );
 				addEventToInteraction( {
-					interactionId: currentSupportInteraction.uuid,
+					interactionId: currentSupportInteraction!.uuid,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );
 			} );

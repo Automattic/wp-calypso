@@ -1,3 +1,6 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
@@ -8,8 +11,15 @@ import type { Message } from '../types';
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = () => {
-	const { setChatStatus, chat } = useOdieAssistantContext();
-	const conversationId = chat.conversationId;
+	const conversationId = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		const currentSupportInteraction = store.getCurrentSupportInteraction();
+
+		return currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
+			?.event_external_id;
+	}, [] );
+
+	const { setChatStatus } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();
 
 	return useCallback(
@@ -23,7 +33,7 @@ export const useSendZendeskMessage = () => {
 				return;
 			}
 
-			await Smooch.sendMessage( { type: 'text', text: message.content }, conversationId! );
+			await Smooch.sendMessage( { type: 'text', text: message.content }, conversationId );
 			setChatStatus( 'loaded' );
 		},
 		[ newConversation, setChatStatus, conversationId ]

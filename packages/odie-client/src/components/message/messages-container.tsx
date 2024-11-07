@@ -8,7 +8,7 @@ import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
-import type { Chat, CurrentUser } from '../../types';
+import type { Chat, CurrentUser, Message } from '../../types';
 
 const DislikeThumb = () => {
 	return (
@@ -40,6 +40,20 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 		return currentMessage === nextMessage;
 	};
+	const transferingMessage = {
+		content: shouldUseHelpCenterExperience
+			? "Help's on the way!"
+			: "We're connecting you to our support team.",
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: true,
+			},
+			site_id: null,
+		},
+	} as Message;
 
 	return (
 		<>
@@ -66,10 +80,19 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				) ) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 				{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
-				{ [ 'sending', 'dislike' ].includes( chat.status ) && (
+				{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
 					<div className="odie-chatbox__action-message">
 						{ chat.status === 'sending' && <ThinkingPlaceholder /> }
 						{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+						{ chat.status === 'transfer' && (
+							<ChatMessage
+								message={ transferingMessage }
+								key={ 0 }
+								currentUser={ currentUser }
+								isNextMessageFromSameSender={ false }
+								displayChatWithSupportLabel={ false }
+							/>
+						) }
 					</div>
 				) }
 			</div>
