@@ -248,20 +248,20 @@ ul.module-tabs {
 		padding: 24px;
 		margin: 32px 0;
 
-			/* styling for chart header */
-			.stats-chart-tabs__header {
+		/* styling for chart header with new date filtering design */
+		.stats-chart-tabs__header {
 			display: flex;
 			flex-direction: row;
 			gap: 20px; /* adds space between the divs */
-			}
+		}
 
-			.chart__legend{
+		.chart__legend{
 			margin-left: auto; /* makes all items take equal width */
-			}
+		}
 
-			.chart__y-axis-marker {
+		.chart__y-axis-marker {
 			border-top-color: #DCDCDE;
-			}
+		}
 	}
 
 	/* styling for the chart header component */
