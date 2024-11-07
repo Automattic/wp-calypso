@@ -1,4 +1,3 @@
-import { Count } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -86,33 +85,38 @@ const ReaderSidebarRecent = ( {
 		>
 			<li>
 				<button
-					className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link', {
-						'reader-sidebar-recent__item--selected': selectedSiteId === null,
-					} ) }
+					className={ clsx(
+						'reader-sidebar-recent__item reader-sidebar-recent__item--without-icon',
+						{
+							'reader-sidebar-recent__item--selected': selectedSiteId === null,
+						}
+					) }
 					onClick={ () => selectSite( null ) }
 				>
-					<span className="sidebar__menu-item-sitename">{ translate( 'All' ) }</span>{ ' ' }
-					<Count count={ totalUnseenCount } compact />
+					<span className="reader-sidebar-recent__site-name">{ translate( 'All' ) }</span>{ ' ' }
+					<span className="reader-sidebar-recent__site-count">{ totalUnseenCount }</span>
 				</button>
 			</li>
 			{ sitesToShow.map( ( site ) => (
 				<li key={ site.ID }>
 					<button
-						className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link', {
+						className={ clsx( 'reader-sidebar-recent__item', {
 							'reader-sidebar-recent__item--selected': site.feed_ID === selectedSiteId,
 						} ) }
 						onClick={ () => selectSite( site.feed_ID ) }
 					>
-						<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
-						<span className="sidebar__menu-item-sitename">{ site.name }</span>{ ' ' }
-						<Count count={ site.unseen_count } compact />
+						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 16 } />
+						<span title={ site.name } className="reader-sidebar-recent__site-name">
+							{ site.name }
+						</span>
+						<span className="reader-sidebar-recent__site-count">{ site.unseen_count }</span>
 					</button>
 				</li>
 			) ) }
 			{ sites.length > SITE_DISPLAY_CUTOFF && (
 				<li>
 					<button
-						className="reader-sidebar-recent__item reader-sidebar-recent__view-more sidebar__menu-link "
+						className="reader-sidebar-recent__item reader-sidebar-recent__item--without-icon reader-sidebar-recent__view-more"
 						onClick={ toggleShowAllSites }
 					>
 						{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
