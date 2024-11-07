@@ -51,6 +51,7 @@ export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteracti
 						...prevChat,
 						conversationId: conversation.id,
 						messages: [ ...prevChat.messages, ...( conversation.messages as Message[] ) ],
+						provider: 'zendesk',
 					} ) );
 				}
 			} );

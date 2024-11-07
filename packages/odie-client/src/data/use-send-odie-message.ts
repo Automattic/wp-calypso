@@ -68,7 +68,7 @@ export const useSendOdieMessage = () => {
 				addEventToInteraction( {
 					interactionId: chat.supportInteractionId as string,
 					eventData: {
-						event_external_id: returnedChat.chat_id,
+						event_external_id: returnedChat.chat_id.toString(),
 						event_source: 'odie',
 					},
 				} );
