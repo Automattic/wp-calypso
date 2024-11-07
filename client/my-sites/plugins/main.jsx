@@ -10,7 +10,7 @@ import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/vie
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { filter as lodashFilter, capitalize, flow, isEmpty } from 'lodash';
+import { filter as capitalize, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -424,7 +424,7 @@ export class PluginsMain extends Component {
 				header={ this.props.translate( 'Manage Plugins' ) }
 				plugins={ currentPlugins }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
-				isLoading={ this.props.requestingPluginsForSites || this.props.isLoadingSites }
+				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
 				searchTerm={ search }
 				filter={ this.props.filter }
@@ -624,7 +624,6 @@ export default flow(
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const isLoadingSites = isRequestingSites( state );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
-			const pluginsWithUpdates = lodashFilter( allPlugins, 'updates' );
 			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses( state, allPlugins );
 
 			const jetpackNonAtomic =
@@ -659,8 +658,6 @@ export default flow(
 				currentPluginsOnVisibleSites: newBulkPluginManagement
 					? []
 					: getPlugins( state, siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [], filter ),
-				pluginsWithUpdates,
-				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
@@ -675,6 +672,9 @@ export default flow(
 				breadcrumbs,
 				requestPluginsError: requestPluginsError( state ),
 				newBulkPluginManagement,
+				pluginUpdateCount: newBulkPluginManagement
+					? 0
+					: getPlugins( state, siteIds, 'updates' )?.length,
 			};
 		},
 		{
