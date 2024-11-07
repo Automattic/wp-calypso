@@ -11,7 +11,7 @@ import type { ZendeskMessage } from '../types';
  * Listens for messages from Zendesk and converts them to Odie messages.
  */
 export const useZendeskMessageListener = () => {
-	const { addMessage } = useOdieAssistantContext();
+	const { setChat, chat } = useOdieAssistantContext();
 
 	const { isChatLoaded, currentSupportInteraction } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -26,16 +26,20 @@ export const useZendeskMessageListener = () => {
 	)?.event_external_id;
 
 	useEffect( () => {
-		if ( ! isChatLoaded || ! currentZendeskConversationId ) {
+		if ( ! isChatLoaded ) {
 			return;
 		}
 
 		Smooch.on( 'message:received', ( message, data ) => {
 			const zendeskMessage = message as ZendeskMessage;
 
-			if ( data.conversation.id === currentZendeskConversationId ) {
+			if ( data.conversation.id === chat.conversationId ) {
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
-				addMessage( convertedMessage );
+				setChat( ( prevChat ) => ( {
+					...prevChat,
+					messages: [ ...prevChat.messages, convertedMessage ],
+					status: 'loaded',
+				} ) );
 				Smooch.markAllAsRead( data.conversation.id );
 			}
 		} );
@@ -44,5 +48,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off( 'message:received' );
 		};
-	}, [ isChatLoaded, currentZendeskConversationId, addMessage ] );
+	}, [ isChatLoaded, currentZendeskConversationId, chat, setChat, currentSupportInteraction ] );
 };
