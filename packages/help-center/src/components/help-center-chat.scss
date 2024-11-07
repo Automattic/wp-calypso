@@ -28,6 +28,7 @@
 			button {
 				padding: 7px;
 				&:focus {
+					outline: 2px solid #3858e9;
 					outline-offset: 1px;
 				}
 			}
