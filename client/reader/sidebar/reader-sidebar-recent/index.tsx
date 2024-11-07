@@ -11,19 +11,13 @@ import { AppState } from 'calypso/types';
 
 import './style.scss';
 
-// holdercp TODO: Find the right home for this, or the existing definition
+// Not complete, just useful fields for now
 type Site = {
 	ID: number;
 	URL: string;
 	feed_URL: string;
 	feed_ID: number;
-	date_subscribed: number;
 	last_updated: number;
-	delivery_methods: {
-		notification: {
-			send_posts: boolean;
-		};
-	};
 	is_owner: boolean;
 	organization_id: number;
 	name: string;
