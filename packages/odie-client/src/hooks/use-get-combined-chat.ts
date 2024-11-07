@@ -29,7 +29,7 @@ export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteracti
 		data: odieChat,
 		isLoading: isOdieChatLoading,
 		refetch: refetchOdieChat,
-	} = useOdieChat( odieId );
+	} = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
 		// TODO: I am not sure how to approach this...

@@ -1,23 +1,29 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
-import { useDispatch } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { HELP_CENTER_STORE } from '../stores';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 export const useResetSupportInteraction = () => {
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
-	const { startNewInteraction } = useManageSupportInteraction();
-	const { currentUser, site } = useHelpCenterContext();
+	const { resolveInteraction } = useManageSupportInteraction();
+	const queryClient = useQueryClient();
 
-	const reset = useCallback( async () => {
-		startNewInteraction( {
-			// @ts-expect-error - there is a mismatch between the types
-			event_source: 'help-center',
-			event_external_id: Number( `${ currentUser?.ID ?? site?.ID }${ Date.now() }` ), // Random ID to avoid conflicts
-		} ).then( ( interaction ) => {
-			setCurrentSupportInteraction( interaction );
-		} );
-	}, [ startNewInteraction, setCurrentSupportInteraction, currentUser, site ] );
+	const reset = async () => {
+		if ( currentSupportInteraction ) {
+			resolveInteraction( { interactionId: currentSupportInteraction.uuid } );
+			await queryClient.invalidateQueries( {
+				queryKey: [ 'support-interactions', 'get-interactions', 'help-center' ],
+			} );
+			setCurrentSupportInteraction( null );
+		}
+	};
 
 	return reset;
 };
