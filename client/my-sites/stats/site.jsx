@@ -66,6 +66,7 @@ import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
+import ChartHeader from './stats-chart-tabs/chart-header';
 import DatePicker from './stats-date-picker';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
