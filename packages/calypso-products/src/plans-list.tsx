@@ -817,17 +817,24 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_FREE_THEMES,
+			isEnabled( 'global-styles/on-personal-plan' ) ? FEATURE_STYLE_CUSTOMIZATION : null,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		] ),
-	getSignupFeatures: () => [
-		FEATURE_FREE_DOMAIN,
-		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		FEATURE_FREE_THEMES,
-	],
+	getSignupFeatures: () => {
+		const baseFeatures = [
+			FEATURE_FREE_DOMAIN,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_FREE_THEMES,
+		];
+
+		return isEnabled( 'global-styles/on-personal-plan' )
+			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
+			: baseFeatures;
+	},
 	getBlogSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -844,6 +851,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_NO_ADS,
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		isEnabled( 'global-styles/on-personal-plan' ) ? FEATURE_STYLE_CUSTOMIZATION : null,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
@@ -855,13 +863,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
-			return [
+			const baseFeatures = [
 				FEATURE_UNLIMITED_ENTITIES,
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_AD_FREE_EXPERIENCE,
 				WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
+
+			return isEnabled( 'global-styles/on-personal-plan' )
+				? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
+				: baseFeatures;
 		}
 
 		return [
