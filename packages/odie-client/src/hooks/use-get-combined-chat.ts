@@ -34,7 +34,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		if ( odieId && ! conversationId ) {
+		if ( odieId && ( ! conversationId || ! shouldUseHelpCenterExperience ) ) {
 			if ( odieChat ) {
 				setMainChatState( {
 					...odieChat,
@@ -44,7 +44,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 					status: 'loaded',
 				} );
 			}
-		} else if ( odieId && conversationId ) {
+		} else if ( odieId && conversationId && shouldUseHelpCenterExperience ) {
 			if ( odieChat ) {
 				getZendeskConversation( {
 					chatId: odieChat.odieId,
@@ -57,7 +57,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 							conversationId: conversation.id,
 							messages: [
 								...odieChat.messages,
-								ODIE_TRANSFER_MESSAGE( shouldUseHelpCenterExperience ),
+								ODIE_TRANSFER_MESSAGE( true ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
