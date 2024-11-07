@@ -223,6 +223,10 @@
 // Follow-up issue: https://github.com/Automattic/dotcom-forge/issues/9554
 body.is-section-plugins .plugin-management-wrapper {
     --wp-components-color-accent: var(--color-accent);
+
+	.dataviews-loading {
+		padding: 15px 0 0 0;
+	}
 }
 body.is-section-plugins .plugin-management-wrapper,
 .is-section-jetpack-cloud-plugin-management {
