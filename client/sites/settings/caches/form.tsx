@@ -4,7 +4,6 @@ import { Button, JetpackLogo } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
@@ -21,13 +20,21 @@ import { shouldRateLimitEdgeCacheClear } from 'calypso/state/selectors/should-ra
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 
-import './style.scss';
+import './form.scss';
 
-type CacheCardProps = {
+type CacheFormProps = {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	SubdescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	disabled?: boolean;
 };
 
-export default function CacheCard( { disabled }: CacheCardProps ) {
+export default function CacheForm( {
+	ContainerComponent,
+	DescriptionComponent,
+	SubdescriptionComponent,
+	disabled,
+}: CacheFormProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -114,13 +121,17 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
 				{
 					components: {
-						a: <a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />,
+						a: config.isEnabled( 'untangling/hosting-menu' ) ? (
+							<a href={ '/sites/settings/site/' + siteSlug } />
+						) : (
+							<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />
+						),
 					},
 				}
 		  );
 
 	return (
-		<HostingCard
+		<ContainerComponent
 			className="cache-card"
 			headingId="cache"
 			title={ translate( 'Performance optimization', {
@@ -129,13 +140,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			} ) }
 		>
 			<div className="cache-card__all-cache-block">
-				<HostingCardDescription>
+				<DescriptionComponent>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
 					} ) }
-				</HostingCardDescription>
+				</DescriptionComponent>
 
 				<Tooltip
 					placement="top"
@@ -245,7 +256,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							comment: 'Object cache stores database lookups and some network requests',
 						} ) }
 					</div>
-					<HostingCardDescription>
+					<SubdescriptionComponent>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
 							{
@@ -255,7 +266,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 								},
 							}
 						) }
-					</HostingCardDescription>
+					</SubdescriptionComponent>
 
 					<Tooltip
 						placement="top"
@@ -290,7 +301,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						<div className="cache-card__subtitle">{ translate( 'Elasticsearch' ) }</div>
 						<div className="cache-card__jetpack-description">
 							<JetpackLogo size={ 16 } />
-							<HostingCardDescription>
+							<SubdescriptionComponent>
 								{ translate(
 									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
 									{
@@ -306,11 +317,11 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 										},
 									}
 								) }
-							</HostingCardDescription>
+							</SubdescriptionComponent>
 						</div>
 					</div>
 				</>
 			) }
-		</HostingCard>
+		</ContainerComponent>
 	);
 }

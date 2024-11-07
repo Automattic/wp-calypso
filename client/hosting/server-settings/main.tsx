@@ -19,7 +19,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
+import CacheCard from 'calypso/hosting/server-settings/components/cache-card/card';
 import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card/card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
 import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';

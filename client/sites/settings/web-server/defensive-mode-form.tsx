@@ -11,7 +11,7 @@ import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
 } from 'calypso/data/hosting/use-cache';
-import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
+import { EdgeCacheLoadingPlaceholder } from 'calypso/sites/settings/caches/edge-cache-loading-placeholder';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

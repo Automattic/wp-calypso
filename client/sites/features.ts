@@ -13,6 +13,11 @@ export function areHostingFeaturesSupported( site?: SiteExcerptData | null ) {
 	return isAtomicSite && ! isPlanExpired;
 }
 
+export function useAreHostingFeaturesSupported() {
+	const site = useSelector( getSelectedSite );
+	return areHostingFeaturesSupported( site );
+}
+
 export function useAreAdvancedHostingFeaturesSupported() {
 	const site = useSelector( getSelectedSite );
 	const features = useSelectedSiteSelector( getSiteFeatures );
