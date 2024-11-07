@@ -1,5 +1,3 @@
-import { Author } from 'calypso/state/comments/actions';
-
 export interface ReaderPost {
 	site_name: string;
 	postId: number;
@@ -12,5 +10,7 @@ export interface PostItem {
 	site_icon: {
 		img: string;
 	};
-	author: Author;
+	author: {
+		avatar_URL: string;
+	};
 }
