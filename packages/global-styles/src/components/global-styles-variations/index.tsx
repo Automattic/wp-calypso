@@ -1,4 +1,5 @@
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
@@ -105,9 +106,12 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
+	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+		? PLAN_PERSONAL
+		: PLAN_PREMIUM;
 	const premiumStylesDescription = translate(
 		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+		{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
 	);
 
 	const baseGlobalStyles = useMemo(

@@ -98,7 +98,9 @@ export const UserMessage = ( {
 				<Markdown
 					urlTransform={ uriTransformer }
 					components={ {
-						a: CustomALink,
+						a: ( props: React.ComponentProps< 'a' > ) => (
+							<CustomALink { ...props } target="_blank" />
+						),
 					} }
 				>
 					{ isRequestingHumanSupport ? displayMessage : message.content }

@@ -52,6 +52,7 @@ $blueberry-color: #3858e9;
 	width: 100%;
 	box-sizing: border-box;
 	text-wrap: pretty;
+	word-break: break-word;
 
 	ol,
 	ul {
@@ -112,9 +113,13 @@ $blueberry-color: #3858e9;
 	font-size: inherit;
 }
 
-.odie-button-link:hover {
+.odie-button-link:hover, .odie-button-link:disabled {
 	text-decoration: none;
 	color: var(--color-link-dark);
+}
+
+.odie-button-link:disabled {
+	cursor: not-allowed;
 }
 
 .odie-sources-foldable-card {
@@ -164,6 +169,7 @@ $blueberry-color: #3858e9;
 .odie-chatbox-message p {
 	font-size: 0.875rem;
 	padding: 16px;
+	margin-bottom: 0;
 }
 
 .odie-introduction-message-content {
@@ -255,7 +261,7 @@ $blueberry-color: #3858e9;
 }
 
 .chatbox-messages:last-child {
-	margin-bottom: 64px;
+	margin-bottom: 72px;
 }
 
 .odie-sources {

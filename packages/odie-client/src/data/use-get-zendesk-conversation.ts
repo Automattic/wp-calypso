@@ -1,15 +1,18 @@
 import Smooch from 'smooch';
+import { zendeskMessageConverter } from '../utils';
+import type { ZendeskMessage } from '../types/';
 
 const parseResponse = ( conversation: Conversation ) => {
-	const messages = conversation?.messages.map( ( message ) => {
-		return {
-			content: message.text,
-			role: message.role,
-			type: message.type === 'text' ? 'message' : message.type,
-		};
+	let clientId;
+
+	const messages = conversation?.messages.map( ( message: ZendeskMessage ) => {
+		if ( message.source?.id ) {
+			clientId = message.source?.id;
+		}
+		return zendeskMessageConverter( message );
 	} );
 
-	return { ...conversation, messages };
+	return { ...conversation, clientId, messages };
 };
 /**
  * Get the conversation for the Zendesk conversation.

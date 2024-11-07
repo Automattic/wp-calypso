@@ -47,7 +47,6 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
-	lastMessageInView?: boolean;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
@@ -55,7 +54,6 @@ type OdieAssistantContextInterface = {
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
-	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
@@ -150,7 +148,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ chatStatus, setChatStatus ] = useState<
 		'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer'
-	>( 'loaded' );
+	>( 'loading' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
@@ -158,8 +156,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		useState( getHelpCenterZendeskConversationStarted() !== null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
-
-	const [ lastMessageInView, setLastMessageInView ] = useState( true );
+	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
 	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
 		( select ) => {
@@ -185,6 +182,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setSupportProvider,
 		isChatLoaded,
 		selectedConversationId,
+		setChatStatus,
 	} );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
@@ -210,11 +208,19 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
-			messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+			messages: [
+				getOdieInitialMessage( botNameSlug, odieInitialPromptText, shouldUseHelpCenterExperience ),
+			],
 		} );
 		trackEvent( 'chat_cleared', {} );
 		broadcastChatClearance( odieClientId );
-	}, [ botNameSlug, odieInitialPromptText, trackEvent, setOdieStorage ] );
+	}, [
+		botNameSlug,
+		odieInitialPromptText,
+		trackEvent,
+		setOdieStorage,
+		shouldUseHelpCenterExperience,
+	] );
 
 	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
@@ -302,7 +308,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
-				lastMessageInView,
 				odieClientId,
 				selectedSiteId,
 				selectedConversationId,
@@ -310,7 +315,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,
-				setLastMessageInView,
 				setIsNudging,
 				setIsVisible,
 				setScrollToLastMessage: setScrollToLastMessage ?? noop,

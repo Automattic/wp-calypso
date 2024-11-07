@@ -19,8 +19,15 @@ export const useSendOdieMessage = () => {
 	const { updateCache } = useOdieChat();
 	const internal_message_id = generateUUID();
 
-	const { botNameSlug, selectedSiteId, version, setChatStatus, addMessage, odieClientId } =
-		useOdieAssistantContext();
+	const {
+		botNameSlug,
+		selectedSiteId,
+		version,
+		setChatStatus,
+		addMessage,
+		odieClientId,
+		shouldUseHelpCenterExperience,
+	} = useOdieAssistantContext();
 
 	return useMutation< Chat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< Chat > => {
@@ -47,7 +54,7 @@ export const useSendOdieMessage = () => {
 		onSuccess: ( chat, userMessage ) => {
 			if ( ! chat.messages || chat.messages.length === 0 || ! chat.messages[ 0 ].content ) {
 				const errorMessage: Message = {
-					content: ODIE_ERROR_MESSAGE,
+					content: ODIE_ERROR_MESSAGE( shouldUseHelpCenterExperience ),
 					internal_message_id,
 					role: 'bot',
 					type: 'error',
@@ -80,7 +87,9 @@ export const useSendOdieMessage = () => {
 		onError: ( error ) => {
 			const isRateLimitError = error.message.includes( '429' );
 			const errorMessage: Message = {
-				content: isRateLimitError ? ODIE_RATE_LIMIT_MESSAGE : ODIE_ERROR_MESSAGE,
+				content: isRateLimitError
+					? ODIE_RATE_LIMIT_MESSAGE
+					: ODIE_ERROR_MESSAGE( shouldUseHelpCenterExperience ),
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

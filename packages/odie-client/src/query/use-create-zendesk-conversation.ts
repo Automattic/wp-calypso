@@ -12,6 +12,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		setChatStatus,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
+		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
@@ -23,7 +24,9 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		}
 
 		addMessage( {
-			content: "We're connecting you to our support team.",
+			content: shouldUseHelpCenterExperience
+				? "Help's on the way!"
+				: "We're connecting you to our support team.",
 			role: 'bot',
 			type: 'message',
 			context: {
@@ -42,18 +45,20 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId,
 		} ).then( () => {
-			Smooch.createConversation( { metadata: { odieChatId: chatId } } ).then( ( conversation ) => {
-				setSupportProvider( 'zendesk' );
-				setChatStatus( 'loaded' );
-				setHelpCenterZendeskConversationStarted();
-				setWaitAnswerToFirstMessageFromHumanSupport( true );
-				setChat( ( prevChat ) => {
-					return {
-						...prevChat,
-						conversationId: conversation.id,
-					};
-				} );
-			} );
+			Smooch.createConversation( { metadata: { odieChatId: chatId, createdAt: Date.now() } } ).then(
+				( conversation ) => {
+					setSupportProvider( 'zendesk' );
+					setChatStatus( 'loaded' );
+					setHelpCenterZendeskConversationStarted();
+					setWaitAnswerToFirstMessageFromHumanSupport( true );
+					setChat( ( prevChat ) => {
+						return {
+							...prevChat,
+							conversationId: conversation.id,
+						};
+					} );
+				}
+			);
 		} );
 	};
 

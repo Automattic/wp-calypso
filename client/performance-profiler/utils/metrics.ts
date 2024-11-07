@@ -169,12 +169,8 @@ export const displayValue = ( metric: Metrics, value: number ): string => {
 		return '';
 	}
 
-	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
+	if ( [ 'lcp', 'fcp', 'ttfb', 'inp', 'fid', 'tbt' ].includes( metric ) ) {
 		return `${ max2Decimals( value / 1000 ) }s`;
-	}
-
-	if ( [ 'inp', 'fid', 'tbt' ].includes( metric ) ) {
-		return `${ max2Decimals( value ) }ms`;
 	}
 
 	return `${ max2Decimals( value ) }`;
@@ -188,3 +184,13 @@ export const filterRecommendations = (
 		selectedFilter === 'all' || audit?.metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
 	);
 };
+
+export const highImpactAudits = [
+	'render-blocking-resources',
+	'uses-responsive-images',
+	'uses-optimized-images',
+	'offscreen-images',
+	'server-response-time',
+	'mainthread-work-breakdown',
+	'largest-contentful-paint-element',
+];

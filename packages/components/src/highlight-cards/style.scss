@@ -235,6 +235,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		z-index: z-index("root", ".tooltip.popover.page-modules-settings-popover");
 		.popover__inner {
 			padding: 14px 16px;
+			width: 244px;
 		}
 	}
 

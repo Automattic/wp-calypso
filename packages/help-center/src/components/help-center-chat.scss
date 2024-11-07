@@ -17,5 +17,11 @@
 		@media screen and (max-width: 660px) {
 			max-width: 100%;
 		}
+
+		.odie-send-message-input-spinner {
+			top: 28px;
+			/* stylelint-disable-next-line length-zero-no-unit */
+			margin: 0px 11px 0px 0px;
+		}
 	}
 }

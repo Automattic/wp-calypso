@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
@@ -40,8 +41,10 @@ export default function PluginsListDataViews( {
 
 	// When search changes, notify the parent component
 	useEffect( () => {
-		onSearch && onSearch( dataViewsState.search || '' );
-	}, [ dataViewsState.search, onSearch ] );
+		if ( dataViewsState.search !== initialSearch ) {
+			onSearch && onSearch( dataViewsState.search || '' );
+		}
+	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {
 		const result = filterSortAndPaginate( currentPlugins, dataViewsState, fields );
@@ -53,17 +56,20 @@ export default function PluginsListDataViews( {
 	}, [ currentPlugins, dataViewsState, fields ] );
 
 	return (
-		<DataViews
-			data={ data }
-			view={ dataViewsState }
-			onChangeView={ setDataViewsState }
-			fields={ fields }
-			search
-			searchLabel={ translate( 'Search for plugins' ) }
-			actions={ actions }
-			isLoading={ isLoading }
-			paginationInfo={ paginationInfo }
-			defaultLayouts={ defaultLayouts }
-		/>
+		<>
+			<QueryDotorgPlugins pluginSlugList={ data.map( ( plugin ) => plugin.slug ) } />
+			<DataViews
+				data={ data }
+				view={ dataViewsState }
+				onChangeView={ setDataViewsState }
+				fields={ fields }
+				search
+				searchLabel={ translate( 'Search for plugins' ) }
+				actions={ actions }
+				isLoading={ isLoading }
+				paginationInfo={ paginationInfo }
+				defaultLayouts={ defaultLayouts }
+			/>
+		</>
 	);
 }

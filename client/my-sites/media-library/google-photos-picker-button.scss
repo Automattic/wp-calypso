@@ -1,0 +1,10 @@
+.google-photos-picker--container {
+	.components-button {
+		&.is-busy,
+		&.is-busy:hover {
+			pointer-events: none;
+			background-size: 100px 100%;
+			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+		}
+	}
+}

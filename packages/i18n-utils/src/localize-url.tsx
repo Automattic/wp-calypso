@@ -13,6 +13,7 @@ import {
 	magnificentNonEnLocales,
 	localesForPricePlans,
 	jetpackComLocales,
+	wpLoginLocales,
 	Locale,
 } from './locales';
 
@@ -128,7 +129,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'cloud.jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),

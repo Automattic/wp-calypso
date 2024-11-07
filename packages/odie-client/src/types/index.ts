@@ -84,6 +84,8 @@ export type MessageType =
 	| 'placeholder'
 	| 'dislike-feedback'
 	| 'help-link'
+	| 'file'
+	| 'image'
 	| 'introduction';
 
 export type Message = {
@@ -103,6 +105,7 @@ export type Message = {
 
 export type Chat = {
 	conversationId?: string;
+	clientId?: string;
 	chat_id?: number | null;
 	wpcom_user_id?: number | null;
 	messages: Message[];
@@ -121,7 +124,8 @@ export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as
 
 export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
 
-export type SupportProvider = 'zendesk' | 'odie';
+export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging';
+
 interface ConversationParticipant {
 	id: string;
 	userId: string;
@@ -130,10 +134,9 @@ interface ConversationParticipant {
 }
 
 export type ZendeskMessage = {
-	avatarUrl: string;
+	avatarUrl?: string;
 	displayName: string;
 	id: string;
-	metadata: Metadata;
 	received: number;
 	role: string;
 	source: {
@@ -143,6 +146,8 @@ export type ZendeskMessage = {
 	};
 	type: ZendeskContentType;
 	text: string;
+	mediaUrl?: string;
+	altText?: string;
 };
 
 export type ZendeskContentType =
@@ -165,6 +170,33 @@ export type ZendeskConversation = {
 	iconUrl: string;
 	type: 'sdkGroup' | string;
 	participants: ConversationParticipant[];
-	metadata: Metadata;
 	messages: ZendeskMessage[];
+	metadata: Metadata;
+};
+
+export type Metadata = {
+	odieChatId: number;
+	createdAt: string;
+};
+
+export type SupportInteractionUser = {
+	user_id: string;
+	provider: 'wpcom';
+	is_owner: boolean;
+};
+
+export type SupportInteractionEvent = {
+	event_external_id: number;
+	source: SupportProvider;
+	metadata?: object;
+	event_order?: number;
+};
+
+export type SupportInteraction = {
+	uuid: string;
+	status: 'open' | 'closed';
+	start_date: string;
+	last_updated: string;
+	users: SupportInteractionUser[];
+	events: SupportInteractionEvent[];
 };

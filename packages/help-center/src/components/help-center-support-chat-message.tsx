@@ -1,11 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gravatar } from '@automattic/components';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
+import { type ZendeskMessage } from '@automattic/odie-client';
+import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import type { ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -20,7 +22,6 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	badgeCount = 0,
-	avatarSize = 32,
 	isUnread = false,
 	navigateTo = '',
 }: {
@@ -29,13 +30,27 @@ export const HelpCenterSupportChatMessage = ( {
 	avatarSize?: number;
 	isUnread: boolean;
 	navigateTo: string;
+	altText?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-
-	const { displayName, received, text, avatarUrl } = message;
+	const { currentUser } = useHelpCenterContext();
+	const { displayName, received, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
+
+	const renderAvatar = () => {
+		if ( message.role === 'business' ) {
+			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
+		}
+		return (
+			<Gravatar
+				user={ currentUser }
+				size={ 38 }
+				alt={ __( 'User profile display picture', __i18n_text_domain__ ) }
+			/>
+		);
+	};
 
 	return (
 		<Link
@@ -50,19 +65,16 @@ export const HelpCenterSupportChatMessage = ( {
 					'has-badge': badgeCount > 0,
 				} ) }
 			>
-				<img
-					src={ avatarUrl }
-					alt={ __( 'User Avatar' ) }
-					height={ avatarSize }
-					width={ avatarSize }
-				/>
+				{ renderAvatar() }
 
 				{ badgeCount > 0 && (
 					<div className="help-center-support-chat__conversation-badge">+{ badgeCount }</div>
 				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
-				<div className="help-center-support-chat__conversation-information-message">{ text }</div>
+				<div className="help-center-support-chat__conversation-information-message">
+					{ text || altText }
+				</div>
 				<div className="help-center-support-chat__conversation-sub-information">
 					<span className="help-center-support-chat__conversation-information-name">
 						{ displayName }

@@ -82,7 +82,9 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 		switch ( pathname ) {
 			case '/odie':
 			case '/contact-form':
-				return __( 'Wapuu', __i18n_text_domain__ );
+				return config.isEnabled( 'help-center-experience' )
+					? __( 'Support Assistant', __i18n_text_domain__ )
+					: __( 'Wapuu', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
@@ -149,8 +151,15 @@ const ContentMinimized = ( {
 					<Route path="/contact-form" element={ <SupportModeTitle /> } />
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route path="/odie" element={ __( 'Wapuu', __i18n_text_domain__ ) } />
-					<Route path="/chat-history" element={ __( 'Chat History', __i18n_text_domain__ ) } />
+					<Route
+						path="/odie"
+						element={
+							config.isEnabled( 'help-center-experience' )
+								? __( 'Support Assistant', __i18n_text_domain__ )
+								: __( 'Wapuu', __i18n_text_domain__ )
+						}
+					/>
+					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>

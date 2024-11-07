@@ -13,10 +13,12 @@ const CustomALink = ( {
 	href,
 	children,
 	inline = true,
+	target = '_self',
 }: {
 	href?: string;
 	children?: React.ReactNode;
 	inline?: boolean;
+	target?: string;
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
 	const [ transformedHref, setTransformedHref ] = useState( '' );
@@ -41,7 +43,7 @@ const CustomALink = ( {
 			<a
 				className="odie-sources-link"
 				href={ transformedHref }
-				target="_self"
+				target={ target }
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {

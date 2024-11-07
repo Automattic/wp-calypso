@@ -60,6 +60,11 @@
 			color: var(--color-link-dark, --studio-blue-70);
 			border-color: inherit;
 		}
+		// Remove the default focus outline on the Recent Conversations nav tabs
+		&.section-nav-tab__link:focus {
+			box-shadow: none;
+			outline: none;
+		}
 	}
 
 	.help-center__section-title {

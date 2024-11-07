@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import { useCallback, useRef, RefObject, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
@@ -7,16 +7,12 @@ import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
-import { JumpToRecent } from '../message/jump-to-recent';
+import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( {
-	containerReference,
-}: {
-	containerReference: RefObject< HTMLDivElement >;
-} ) => {
+export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
@@ -65,7 +61,8 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	}, [ sendMessage, shouldBeDisabled, trackEvent ] );
+	}, [ sendMessage, shouldBeDisabled, shouldUseHelpCenterExperience, trackEvent ] );
+
 	const classes = clsx(
 		'odie-send-message-inner-button',
 		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
@@ -77,7 +74,6 @@ export const OdieSendMessageButton = ( {
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
 			) }
-			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form
 					onSubmit={ ( event ) => {
@@ -93,6 +89,7 @@ export const OdieSendMessageButton = ( {
 						keyUpHandle={ onKeyUp }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
+					{ shouldUseHelpCenterExperience && <AttachmentButton /> }
 					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />

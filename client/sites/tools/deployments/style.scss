@@ -1,0 +1,11 @@
+.tools-deployments {
+	display: flex;
+    flex-direction: column;
+    gap: 16px;
+	margin: 0;
+
+	> .header-cake__back {
+		align-self: flex-start;
+		margin: 0;
+	}
+}
