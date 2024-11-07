@@ -118,6 +118,37 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
+	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
+
+	useEffect( () => {
+		const observer = new IntersectionObserver(
+			( entries ) => {
+				entries.forEach( ( entry ) => {
+					setIsActionsVisible( entry.isIntersecting );
+				} );
+			},
+			{
+				threshold: 0.1,
+				rootMargin: '0px',
+			}
+		);
+
+		setTimeout( () => {
+			const actionsElement = document.querySelector( '.reader-post-actions' );
+
+			if ( actionsElement ) {
+				observer.observe( actionsElement );
+			}
+		}, 100 );
+
+		return () => {
+			const actionsElement = document.querySelector( '.reader-post-actions' );
+			if ( actionsElement ) {
+				observer.unobserve( actionsElement );
+			}
+		};
+	}, [ selectedItem ] );
+
 	return (
 		<div className="recent-feed">
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
@@ -142,13 +173,22 @@ const Recent = () => {
 			</div>
 			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 				{ selectedItem && getPostFromItem( selectedItem ) && (
-					<AsyncLoad
-						require="calypso/blocks/reader-full-post"
-						blogId={ selectedItem.blogId }
-						postId={ selectedItem.postId }
-						onClose={ () => setSelectedItem( null ) }
-						layout="recent"
-					/>
+					<>
+						<AsyncLoad
+							require="calypso/blocks/reader-full-post"
+							blogId={ selectedItem.blogId }
+							postId={ selectedItem.postId }
+							onClose={ () => setSelectedItem( null ) }
+							layout="recent"
+						/>
+						<div
+							className={ `recent-feed__post-column-bottom-bar ${
+								isActionsVisible ? 'is-actions-visible' : ''
+							}` }
+						>
+							<p>Hello world</p>
+						</div>
+					</>
 				) }
 			</div>
 		</div>
