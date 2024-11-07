@@ -290,7 +290,8 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
 	const shouldShowUpgradeBanner =
-		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+		! isLoadingSftpData &&
+		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
