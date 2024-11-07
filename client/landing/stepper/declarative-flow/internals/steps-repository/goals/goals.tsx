@@ -1,18 +1,27 @@
 import { Onboard } from '@automattic/data-stores';
+import { useLocale, isLocaleRtl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { shuffleArray } from '../../../../utils/shuffle-array';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const useGoals = (): Goal[] => {
+/**
+ * @returns The first element is a loading flag, the second element is the list of goals.
+ */
+export const useGoals = (): [ boolean, Goal[] ] => {
 	loadExperimentAssignment( 'calypso_design_picker_image_optimization_202406' ); // Temporary for A/B test.
 
-	const translate = useTranslate();
+	const [ addedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
+		'calypso_onboarding_goals_step_added_goals'
+	);
 
-	return useMemo( () => {
+	const translate = useTranslate();
+	const locale = useLocale();
+
+	const addedGoalsExpResult = useMemo( () => {
 		const goals = [
 			{
 				key: SiteGoal.Write,
@@ -74,4 +83,52 @@ export const useGoals = (): Goal[] => {
 
 		return shuffleArray( goals );
 	}, [ translate ] );
+
+	const goals = [
+		{
+			key: SiteGoal.Write,
+			title: translate( 'Write & Publish' ),
+		},
+		{
+			key: SiteGoal.Sell,
+			title: translate( 'Sell online' ),
+		},
+		{
+			key: SiteGoal.Promote,
+			title: translate( 'Promote myself or business' ),
+		},
+		{
+			key: SiteGoal.DIFM,
+			title: translate( 'Let us build your site in 4 days' ),
+			isPremium: true,
+		},
+		{
+			key: SiteGoal.Import,
+			title: translate( 'Import existing content or website' ),
+		},
+		{
+			key: SiteGoal.Other,
+			title: translate( 'Other' ),
+		},
+	];
+
+	/**
+	 * Hides the DIFM goal for RTL locales.
+	 */
+	const hideDIFMGoalForUnsupportedLocales = ( { key }: Goal ) => {
+		if ( key === SiteGoal.DIFM && isLocaleRtl( locale ) ) {
+			return false;
+		}
+		return true;
+	};
+
+	if ( addedGoalsExpLoading ) {
+		return [ true, [] ];
+	}
+
+	if ( addedGoalsExpAssignment?.variationName === 'treatment' ) {
+		return [ false, addedGoalsExpResult ];
+	}
+
+	return [ false, goals.filter( hideDIFMGoalForUnsupportedLocales ) ];
 };

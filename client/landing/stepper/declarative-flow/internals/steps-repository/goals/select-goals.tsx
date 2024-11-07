@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
+import { Spinner } from '@wordpress/components';
 import { useGoals } from './goals';
 
 type SelectGoalsProps = {
@@ -31,7 +32,11 @@ const Placeholder = styled.div`
 const SiteGoal = Onboard.SiteGoal;
 
 export const SelectGoals = ( { onChange, selectedGoals }: SelectGoalsProps ) => {
-	const goalOptions = useGoals();
+	const [ areGoalsLoading, goalOptions ] = useGoals();
+
+	if ( areGoalsLoading ) {
+		return <Spinner />;
+	}
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
