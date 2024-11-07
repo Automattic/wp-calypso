@@ -95,7 +95,7 @@ export type OdieUserTracking = {
 	elements_clicked: string[];
 };
 
-type Context = {
+export type Context = {
 	nudge_id?: string | undefined;
 	section_name?: string;
 	session_id?: string;
