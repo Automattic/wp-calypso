@@ -79,8 +79,12 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const isHelpCenterHome = key === 'default';
 
 	const headerText = useMemo( () => {
+		if ( pathname.startsWith( '/odie' ) ) {
+			return config.isEnabled( 'help-center-experience' )
+				? __( 'Support Assistant', __i18n_text_domain__ )
+				: __( 'Wapuu', __i18n_text_domain__ );
+		}
 		switch ( pathname ) {
-			case '/odie':
 			case '/contact-form':
 				return config.isEnabled( 'help-center-experience' )
 					? __( 'Support Assistant', __i18n_text_domain__ )
