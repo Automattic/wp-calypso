@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -49,6 +50,7 @@ const ReaderSidebarRecent = ( {
 	const selectedSiteId = useSelector< AppState, number >(
 		( state ) => state.readerUi.sidebar.selectedRecentSite
 	);
+	const dispatch = useDispatch();
 
 	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
@@ -57,9 +59,11 @@ const ReaderSidebarRecent = ( {
 		setShowAllSites( ! showAllSites );
 	};
 
-	const dispatch = useDispatch();
 	const selectSite = ( feedId: number | null ) => {
 		dispatch( selectSidebarRecentSite( { feedId } ) );
+		if ( ! RECENT_PATH_REGEX.test( path ) ) {
+			page( '/read' );
+		}
 	};
 
 	return (
