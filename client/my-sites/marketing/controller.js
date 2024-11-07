@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import MarketingTools from 'calypso/sites/marketing/tools';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -12,7 +13,6 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SharingButtons from './buttons/buttons';
-import SharingConnections from './connections/connections';
 import Sharing from './main';
 import Traffic from './traffic/';
 

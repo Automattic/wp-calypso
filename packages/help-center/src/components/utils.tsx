@@ -99,3 +99,8 @@ export const calculateUnread = ( conversations: ZendeskConversation[] ) => {
 
 	return { unreadConversations, unreadMessages };
 };
+
+export const getClientId = ( conversations: ZendeskConversation[] ): string =>
+	conversations
+		.flatMap( ( conversation ) => conversation.messages )
+		.find( ( message ) => message.source.type === 'web' && message.source.id )?.source.id || '';

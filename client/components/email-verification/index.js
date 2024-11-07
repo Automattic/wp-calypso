@@ -12,6 +12,7 @@ export default function emailVerification( context, next ) {
 	const showNewEmailNotice = '1' === context.query.new_email_result;
 
 	if ( showVerifiedNotice ) {
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'verified' ) );
 		sendVerificationSignal();
 		setTimeout( () => {
 			const message = i18n.translate( 'Email confirmed!' );

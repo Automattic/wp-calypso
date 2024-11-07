@@ -7,6 +7,7 @@ import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
+import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
@@ -61,6 +62,7 @@ export const OdieSendMessageButton = () => {
 			} );
 		}
 	}, [ sendMessage, shouldBeDisabled, shouldUseHelpCenterExperience, trackEvent ] );
+
 	const classes = clsx(
 		'odie-send-message-inner-button',
 		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
@@ -87,6 +89,7 @@ export const OdieSendMessageButton = () => {
 						keyUpHandle={ onKeyUp }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
+					{ shouldUseHelpCenterExperience && <AttachmentButton /> }
 					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />

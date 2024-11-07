@@ -4,6 +4,7 @@ import {
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
+	READER_SIDEBAR_SELECT_RECENT_SITE,
 } from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/reader-ui/init';
@@ -42,5 +43,20 @@ export function toggleReaderSidebarFollowing() {
 	recordTrack( 'calypso_reader_sidebar_following_toggle' );
 	return {
 		type: READER_SIDEBAR_FOLLOWING_TOGGLE,
+	};
+}
+
+/**
+ * Creates a dispatchable action that reflects the site selected in the Recent sidebar section.
+ * @param {Object} params - The parameters for selecting a recent site.
+ * @param {number|null} params.feedId - The ID of the feed to select.
+ * @returns The action object to dispatch.
+ */
+
+export function selectSidebarRecentSite( { feedId } ) {
+	// TODO: Determine if tracking is needed here
+	return {
+		type: READER_SIDEBAR_SELECT_RECENT_SITE,
+		feedId,
 	};
 }

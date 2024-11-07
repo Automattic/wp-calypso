@@ -23,7 +23,7 @@ import {
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './style.scss';
+import 'calypso/sites/marketing/style.scss';
 
 export const Sharing = ( {
 	contentComponent,

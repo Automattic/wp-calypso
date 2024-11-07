@@ -1,10 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { useGetOdieStorage } from '@automattic/odie-client';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
@@ -26,6 +27,7 @@ const HelpCenterFeedbackForm = ( {
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
 	const { sectionName, site } = useHelpCenterContext();
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
@@ -41,25 +43,30 @@ const HelpCenterFeedbackForm = ( {
 		} );
 	};
 
-	const FeedbackButtons = () => (
-		<>
-			<p>{ __( 'Did you find the answer to your question?' ) }</p>
-			<div className="help-center-feedback-form__buttons">
-				<button
-					// 1 is used as `yes` in crowdsignal as well, do not change
-					onClick={ () => handleFeedbackClick( 1 ) }
-				>
-					{ __( 'Yes' ) } <ThumbsUpIcon />
-				</button>
-				<button
-					// 2 is used as `no` in crowdsignal as well, do not change
-					onClick={ () => handleFeedbackClick( 2 ) }
-				>
-					{ __( 'No' ) } <ThumbsDownIcon />
-				</button>
-			</div>
-		</>
-	);
+	const FeedbackButtons = () => {
+		const feedbackButtonsText = shouldUseHelpCenterExperience
+			? __( 'Was this helpful?' )
+			: __( 'Did you find the answer to your question?' );
+		return (
+			<>
+				<p>{ feedbackButtonsText }</p>
+				<div className="help-center-feedback-form__buttons">
+					<button
+						// 1 is used as `yes` in crowdsignal as well, do not change
+						onClick={ () => handleFeedbackClick( 1 ) }
+					>
+						{ __( 'Yes' ) } <ThumbsUpIcon />
+					</button>
+					<button
+						// 2 is used as `no` in crowdsignal as well, do not change
+						onClick={ () => handleFeedbackClick( 2 ) }
+					>
+						{ __( 'No' ) } <ThumbsDownIcon />
+					</button>
+				</div>
+			</>
+		);
+	};
 
 	const feedbackFormUrl = addQueryArgs(
 		'https://wordpressdotcom.survey.fm/helpcenter-articles-feedback',
@@ -71,18 +78,23 @@ const HelpCenterFeedbackForm = ( {
 		}
 	);
 
-	const FeedbackTextArea = () => (
-		<>
-			<p>{ __( 'How we can improve?' ) }</p>
-			<iframe
-				title={ __( 'Feedback Form' ) }
-				// This is the URL of the feedback form,
-				// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
-				// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
-				src={ feedbackFormUrl }
-			></iframe>
-		</>
-	);
+	const FeedbackTextArea = () => {
+		if ( shouldUseHelpCenterExperience ) {
+			return <p>{ __( 'Great! Thanks.' ) }</p>;
+		}
+		return (
+			<>
+				<p>{ __( 'How we can improve?' ) }</p>
+				<iframe
+					title={ __( 'Feedback Form' ) }
+					// This is the URL of the feedback form,
+					// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
+					// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
+					src={ feedbackFormUrl }
+				></iframe>
+			</>
+		);
+	};
 
 	return (
 		<div className="help-center-feedback__form">

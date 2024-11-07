@@ -155,50 +155,53 @@ export default function SitesDashboard() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState ] );
 
+	const setUpdatedUrl = useCallback(
+		( selectedSite?: Site ) => {
+			const updatedUrl = updateSitesDashboardUrl( {
+				category,
+				setCategory,
+				showOnlyFavorites,
+				showOnlyDevelopmentSites,
+				filters: dataViewsState.filters ?? [],
+				selectedSite,
+				selectedSiteFeature: selectedSiteFeature,
+				search: dataViewsState.search ?? '',
+				currentPage: dataViewsState.page ?? 1,
+				sort: dataViewsState.sort,
+			} );
+			if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+				page.show( updatedUrl );
+			}
+		},
+		[
+			category,
+			dataViewsState.filters,
+			dataViewsState.page,
+			dataViewsState.search,
+			dataViewsState.sort,
+			selectedSiteFeature,
+			setCategory,
+			showOnlyDevelopmentSites,
+			showOnlyFavorites,
+		]
+	);
+
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
 		if ( ! dataViewsState.selectedItem ) {
 			return;
 		}
-
-		if ( dataViewsState.selectedItem ) {
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
-		}
-
-		const updatedUrl = updateSitesDashboardUrl( {
-			category: category,
-			setCategory: setCategory,
-			filters: dataViewsState.filters ?? [],
-			selectedSite: dataViewsState.selectedItem,
-			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search ?? '',
-			currentPage: dataViewsState.page ?? 1,
-			sort: dataViewsState.sort,
-			showOnlyFavorites,
-			showOnlyDevelopmentSites,
-		} );
-		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
-			page.show( updatedUrl );
-		}
-	}, [
-		dataViewsState.selectedItem,
-		selectedSiteFeature,
-		category,
-		setCategory,
-		dispatch,
-		dataViewsState.filters,
-		dataViewsState.search,
-		dataViewsState.page,
-		showOnlyFavorites,
-		showOnlyDevelopmentSites,
-		dataViewsState.sort,
-	] );
+		dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
+		setUpdatedUrl( dataViewsState.selectedItem );
+	}, [ dataViewsState.selectedItem, dispatch, setUpdatedUrl ] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
-			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+			const selectedItem = undefined;
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem } );
+			setUpdatedUrl( selectedItem );
 		}
-	}, [ dataViewsState, setDataViewsState ] );
+	}, [ dataViewsState, setDataViewsState, setUpdatedUrl ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

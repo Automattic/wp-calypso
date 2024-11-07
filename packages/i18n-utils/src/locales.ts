@@ -135,3 +135,5 @@ export const jetpackComLocales: Locale[] = [
 	'zh-cn',
 	'zh-tw',
 ];
+
+export const wpLoginLocales: Locale[] = [ ...magnificentNonEnLocales, 'ro', 'vi' ];

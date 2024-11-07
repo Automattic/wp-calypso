@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { SharingService, connectFor } from '../service';
 
 export class Facebook extends SharingService {
 	static propTypes = {

@@ -12,6 +12,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		setChatStatus,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
+		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
@@ -23,7 +24,9 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		}
 
 		addMessage( {
-			content: "We're connecting you to our support team.",
+			content: shouldUseHelpCenterExperience
+				? "Help's on the way!"
+				: "We're connecting you to our support team.",
 			role: 'bot',
 			type: 'message',
 			context: {

@@ -11,7 +11,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
 import { useSelector } from 'calypso/state';
@@ -30,7 +29,7 @@ import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fet
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-import './style.scss';
+import './web-server-form.scss';
 
 const ParagraphPlaceholder = styled( LoadingPlaceholder )( {
 	height: 24,
@@ -50,11 +49,17 @@ const InputPlaceholder = styled( LoadingPlaceholder )( {
 	marginBottom: '1em',
 } );
 
-type WebServerSettingsCardProps = {
+type WebServerSettingsFormProps = {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	disabled?: boolean;
 };
 
-export default function WebServerSettingsCard( { disabled }: WebServerSettingsCardProps ) {
+export default function WebServerSettingsForm( {
+	ContainerComponent,
+	DescriptionComponent,
+	disabled,
+}: WebServerSettingsFormProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -411,7 +416,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 	};
 
 	return (
-		<HostingCard
+		<ContainerComponent
 			className="web-server-settings-card"
 			headingId="web-server-settings"
 			title={ translate( 'Web server settings' ) }
@@ -420,16 +425,16 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
-			<HostingCardDescription>
+			<DescriptionComponent>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
-			</HostingCardDescription>
+			</DescriptionComponent>
 			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getPhpVersionContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
-		</HostingCard>
+		</ContainerComponent>
 	);
 }
