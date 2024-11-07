@@ -55,7 +55,15 @@ export const useGetCombinedChat = ( currentSupportInteraction?: SupportInteracti
 				}
 			} );
 		}
-	}, [ chat.odieId, isOdieChatLoading, odieChat, conversationId, refetchOdieChat, odieId ] );
+	}, [
+		chat.odieId,
+		isOdieChatLoading,
+		odieChat,
+		conversationId,
+		refetchOdieChat,
+		odieId,
+		currentSupportInteraction,
+	] );
 
 	return chat;
 };
