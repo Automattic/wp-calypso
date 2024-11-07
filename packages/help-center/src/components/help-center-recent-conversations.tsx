@@ -53,8 +53,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 	);
 	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
-	const navigateTo =
-		unreadConversationsCount === 1 ? `/odie/${ lastConversation.id }` : '/chat-history';
+	const navigateTo = unreadConversationsCount === 1 ? '/odie' : '/chat-history';
 
 	const chatMessage = {
 		...lastMessage,
@@ -83,6 +82,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
 					navigateTo={ navigateTo }
+					supportInteractionId={ lastConversation.metadata?.supportInteractionId }
 				/>
 			) : null }
 		</div>
