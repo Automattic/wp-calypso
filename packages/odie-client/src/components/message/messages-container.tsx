@@ -30,7 +30,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { chat, shouldUseHelpCenterExperience, botNameSlug } = useOdieAssistantContext();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
@@ -46,7 +46,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
 				<ChatMessage
-					message={ getOdieInitialMessage() }
+					message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
 					key={ 0 }
 					currentUser={ currentUser }
 					isNextMessageFromSameSender={ false }
