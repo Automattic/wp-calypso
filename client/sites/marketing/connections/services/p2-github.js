@@ -1,10 +1,10 @@
-import { last, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SharingService, connectFor } from '../service';
 
-export class P2Slack extends SharingService {
+export class P2Github extends SharingService {
 	static propTypes = {
 		// This foreign propTypes access should be safe because we expect all of them to be removed
 		// eslint-disable-next-line react/forbid-foreign-prop-types
@@ -22,15 +22,13 @@ export class P2Slack extends SharingService {
 	/**
 	 * Deletes the passed connections.
 	 */
-	removeConnection = () => {
+	removeConnection = ( connections = this.props.removableConnections ) => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection(
-			last( this.props.keyringConnections ),
-			this.props.siteId
-		);
+		connections.map( ( connectionId ) => {
+			this.props.deleteStoredKeyringConnection( connectionId, this.props.siteId );
+		} );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
@@ -47,6 +45,15 @@ export class P2Slack extends SharingService {
 			isAwaitingConnections: false,
 			isRefreshing: false,
 		} );
+
+		// Do not show a message if the connect window is closed.
+		if ( this.props.availableExternalAccounts.length === availableExternalAccounts.length ) {
+			this.setState( {
+				isConnecting: false,
+				isDisconnecting: false,
+			} );
+			return;
+		}
 
 		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
 			this.setState( { isConnecting: false } );
@@ -69,7 +76,7 @@ export class P2Slack extends SharingService {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<img
 				className="sharing-service__logo"
-				src="/calypso/images/sharing/p2-slack-logo.svg"
+				src="/calypso/images/sharing/p2-github-logo.svg"
 				width="48"
 				height="48"
 				alt=""
@@ -79,7 +86,7 @@ export class P2Slack extends SharingService {
 }
 
 export default connectFor(
-	P2Slack,
+	P2Github,
 	( state, props ) => {
 		return {
 			...props,

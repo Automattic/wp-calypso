@@ -17,6 +17,10 @@ import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
+// temporarily we want to show a simplified version of the chat history
+// this bool controls it.
+const simplifiedHistoryChat = true;
+
 const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 	const { __ } = useI18n();
 	if ( ! conversations || ! conversations.length ) {
@@ -78,7 +82,7 @@ export const HelpCenterChatHistory = () => {
 			const { unreadConversations } = calculateUnread( conversations );
 			setUnreadCount( unreadConversations );
 		}
-	}, [ getConversations, isChatLoaded ] );
+	}, [ getConversations, isChatLoaded, setUnreadCount ] );
 
 	const EmptyArchivedConversations = () => {
 		return (
@@ -103,6 +107,11 @@ export const HelpCenterChatHistory = () => {
 			</Card>
 		);
 	};
+
+	// Temporarily simplified version
+	if ( simplifiedHistoryChat ) {
+		return <Conversations conversations={ recentConversations } />;
+	}
 
 	return (
 		<div className="help-center-chat-history">

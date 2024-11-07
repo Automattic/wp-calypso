@@ -23,6 +23,7 @@ import {
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 	MARKETING_TOOLS,
+	MARKETING_CONNECTIONS,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
 	SETTINGS_AGENCY,
@@ -122,7 +123,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ MARKETING_TOOLS ],
+				featureIds: [ MARKETING_TOOLS, MARKETING_CONNECTIONS ],
 			},
 			{
 				label: __( 'Advanced Tools' ),

@@ -21,8 +21,8 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
 import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
+import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';

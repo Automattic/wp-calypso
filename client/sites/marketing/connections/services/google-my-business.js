@@ -1,7 +1,6 @@
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import GoogleMyBusinessLogo from 'calypso/my-sites/google-my-business/logo';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import {
 	connectGoogleMyBusinessAccount,
 	connectGoogleMyBusinessLocation,
@@ -12,6 +11,7 @@ import getSiteUserConnectionsForGoogleMyBusiness from 'calypso/state/selectors/g
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
 import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
+import { SharingService, connectFor } from '../service';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {

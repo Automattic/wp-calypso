@@ -9,6 +9,7 @@ export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
 export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
 
 export const MARKETING_TOOLS = 'marketing-tools';
+export const MARKETING_CONNECTIONS = 'marketing-connections';
 
 export const TOOLS_STAGING_SITE = 'tools-staging-site';
 export const TOOLS_DEPLOYMENTS = 'tools-deployments';
@@ -37,6 +38,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 
 	// New Information Architecture
 	[ MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
+	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
 	[ TOOLS_STAGING_SITE ]: 'sites/tools/staging-site/:site',
 	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
 	[ TOOLS_MONITORING ]: 'sites/tools/monitoring/:site',
