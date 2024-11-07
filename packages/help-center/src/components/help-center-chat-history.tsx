@@ -13,7 +13,11 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getFilteredConversations, getLastMessage } from './utils';
+import {
+	getConversationsFromSupportInteractions,
+	getSortedRecentAndArchivedConversations,
+	getLastMessage,
+} from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -74,18 +78,23 @@ export const HelpCenterChatHistory = () => {
 		};
 	}, [] );
 
-	const { recentConversations, archivedConversations } = getFilteredConversations( {
+	const { recentConversations, archivedConversations } = getSortedRecentAndArchivedConversations( {
 		conversations,
 	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if ( isChatLoaded && supportInteractions && supportInteractions?.length > 0 ) {
+		if (
+			isChatLoaded &&
+			getConversations &&
+			supportInteractions &&
+			supportInteractions?.length > 0
+		) {
 			const conversations = getConversations();
-			const filteredConversations = conversations.filter( ( conversation ) =>
-				supportInteractions.some(
-					( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
-				)
+
+			const filteredConversations = getConversationsFromSupportInteractions(
+				conversations,
+				supportInteractions
 			);
 			setConversations( filteredConversations );
 		}
