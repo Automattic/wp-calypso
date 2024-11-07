@@ -9,7 +9,8 @@ export interface ReaderPost {
 export interface PostItem {
 	title: string;
 	featured_image: string;
-	site_icon: string;
-	feed_icon: string;
+	site_icon: {
+		img: string;
+	};
 	author: Author;
 }
