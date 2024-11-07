@@ -54,7 +54,9 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
 
-						const target = node?.querySelector( hash );
+						// Decode the hash to ensure we have a valid CSS selector
+						const decodedHash = decodeURIComponent( hash );
+						const target = node?.querySelector( decodedHash );
 						if ( target ) {
 							target.scrollIntoView();
 						}
