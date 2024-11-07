@@ -496,7 +496,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, receiptId, selectedFeature } = this.props;
+		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
@@ -552,7 +552,6 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<DomainOnlyThankYou
 						purchases={ purchases }
-						receiptId={ receiptId }
 						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
 					/>
 				);
