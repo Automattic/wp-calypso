@@ -481,7 +481,7 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+								headerSlot={ this.renderNewDateFilteringChartHeader() }
 							/>
 						) }
 						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
@@ -498,7 +498,7 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
+								headerSlot={ this.renderDefaultChartHeader() }
 							/>
 						) }
 					</>
@@ -740,6 +740,33 @@ class StatsSite extends Component {
 					{ ( isInternal ) => this.renderBody( isInternal ) }
 				</StatsGlobalValuesContext.Consumer>
 			</Main>
+		);
+	}
+
+	renderDefaultChartHeader() {
+		return (
+			<ChartHeader
+				showLegend
+				activeLegend={ this.state.activeLegend }
+				activeTab={ getActiveTab( this.props.chartTab ) }
+				availableLegend={ this.getAvailableLegend() }
+				onLegendClick={ this.onLegendClick }
+				charts={ CHARTS }
+			/>
+		);
+	}
+
+	renderNewDateFilteringChartHeader() {
+		// Example of a different header implementation
+		return (
+			<ChartHeader
+				showLegend
+				activeLegend={ this.state.activeLegend }
+				activeTab={ getActiveTab( this.props.chartTab ) }
+				availableLegend={ this.getAvailableLegend() }
+				onLegendClick={ this.onLegendClick }
+				charts={ CHARTS }
+			/>
 		);
 	}
 }
