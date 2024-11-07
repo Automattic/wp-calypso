@@ -5,7 +5,7 @@ import type { PostItem, ReaderPost } from './types';
 interface RecentSeenFieldProps {
 	item: ReaderPost;
 	post: PostItem;
-	setSelectedItem: ( item: ReaderPost ) => void;
+	setSelectedItem: ( post: ReaderPost | null ) => void;
 }
 
 const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, setSelectedItem } ) => {
