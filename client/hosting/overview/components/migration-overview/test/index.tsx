@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MigrationOverview from '..';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -28,6 +29,12 @@ const buildMigrationSite = ( {
 			},
 		},
 	} ) as SiteDetails;
+
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: jest.fn(),
+} ) );
+
+const render = ( ui: React.ReactElement ) => renderWithProvider( ui );
 
 describe( 'MigrationOverview', () => {
 	const getStartMigrationLink = () => {
