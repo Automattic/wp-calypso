@@ -1,5 +1,5 @@
 import SocialLogo from 'calypso/components/social-logo';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { SharingService, connectFor } from '../service';
 
 export class InstagramBusiness extends SharingService {
 	static propTypes = {

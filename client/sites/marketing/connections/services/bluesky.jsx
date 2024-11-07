@@ -1,4 +1,4 @@
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { SharingService, connectFor } from '../service';
 
 export class Bluesky extends SharingService {
 	static propTypes = {

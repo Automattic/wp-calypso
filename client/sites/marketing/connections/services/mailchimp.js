@@ -1,9 +1,9 @@
 import { last, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { SharingService, connectFor } from '../service';
 
-export class GooglePhotos extends SharingService {
+export class Mailchimp extends SharingService {
 	static propTypes = {
 		// This foreign propTypes access should be safe because we expect all of them to be removed
 		// eslint-disable-next-line react/forbid-foreign-prop-types
@@ -55,35 +55,18 @@ export class GooglePhotos extends SharingService {
 			);
 		}
 	}
-
-	/*
-	 * We render a custom logo here instead of using SocialLogos as we need a full colour logo and SocialLogos currently strips all colour
-	 * When SocialLogos supports colour logos then we can remove this and use the default renderLogo() in SharingService
-	 */
-	renderLogo() {
-		return (
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<img
-				className="sharing-service__logo"
-				src="/calypso/images/sharing/google-photos-logo.svg?v=20210921"
-				width="48"
-				height="48"
-				alt=""
-			/>
-		);
-	}
 }
 
 export default connectFor(
-	GooglePhotos,
+	Mailchimp,
 	( state, props ) => {
 		return {
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( ( connection ) => ( {
-				...connection,
-				keyring_connection_ID: connection.ID,
+			siteUserConnections: props.keyringConnections.map( ( conn ) => ( {
+				...conn,
+				keyring_connection_ID: conn.ID,
 			} ) ),
 		};
 	},

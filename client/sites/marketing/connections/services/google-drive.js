@@ -1,7 +1,7 @@
 import { last } from 'lodash';
 import googleDriveLogo from 'calypso/assets/images/connections/google-drive-logo.svg';
-import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { SharingService, connectFor } from '../service';
 
 export class GoogleDrive extends SharingService {
 	static propTypes = {
