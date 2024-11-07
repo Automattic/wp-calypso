@@ -2,6 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
@@ -10,7 +11,7 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = () => {
+export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -35,12 +36,13 @@ export const useGetCombinedChat = () => {
 	useEffect( () => {
 		if ( odieId && ! conversationId ) {
 			if ( odieChat ) {
-				setMainChatState( ( prevChat ) => ( {
-					...prevChat,
+				setMainChatState( {
 					...odieChat,
+					provider: 'odie',
+					conversationId: null,
 					supportInteractionId: currentSupportInteraction!.uuid,
 					status: 'loaded',
-				} ) );
+				} );
 			}
 		} else if ( odieId && conversationId ) {
 			if ( odieChat ) {
@@ -49,15 +51,18 @@ export const useGetCombinedChat = () => {
 					conversationId: conversationId.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
-						setMainChatState( ( prevChat ) => ( {
-							...prevChat,
+						setMainChatState( {
 							...odieChat,
 							supportInteractionId: currentSupportInteraction!.uuid,
 							conversationId: conversation.id,
-							messages: [ ...odieChat.messages, ...( conversation.messages as Message[] ) ],
+							messages: [
+								...odieChat.messages,
+								ODIE_TRANSFER_MESSAGE( shouldUseHelpCenterExperience ),
+								...( conversation.messages as Message[] ),
+							],
 							provider: 'zendesk',
 							status: 'loaded',
-						} ) );
+						} );
 					}
 				} );
 			}

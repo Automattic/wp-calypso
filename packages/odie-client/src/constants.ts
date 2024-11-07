@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import type { Message } from './types';
 declare const __i18n_text_domain__: string;
 
 export const ODIE_ERROR_MESSAGE = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
@@ -47,6 +48,23 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 	'It sounds like you want to talk to a human. We’re here to help! Use the option below to message our Happiness Engineers.',
 	__i18n_text_domain__
 );
+
+export const ODIE_TRANSFER_MESSAGE = (
+	shouldUseHelpCenterExperience: boolean | undefined
+): Message => ( {
+	content: shouldUseHelpCenterExperience
+		? "Help's on the way!"
+		: "We're connecting you to our support team.",
+	role: 'bot',
+	type: 'message',
+	context: {
+		flags: {
+			hide_disclaimer_content: true,
+			show_contact_support_msg: true,
+		},
+		site_id: null,
+	},
+} );
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;

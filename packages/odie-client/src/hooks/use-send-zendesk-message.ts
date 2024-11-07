@@ -19,14 +19,14 @@ export const useSendZendeskMessage = () => {
 			?.event_external_id;
 	}, [] );
 
-	const { setChatStatus } = useOdieAssistantContext();
+	const { setChatStatus, chat } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();
 
 	return useCallback(
 		async ( message: Message ) => {
 			setChatStatus( 'loading' );
 
-			if ( ! conversationId ) {
+			if ( ! conversationId || ! chat.conversationId ) {
 				// Start a new conversation if it doesn't exist
 				await newConversation();
 				setChatStatus( 'loaded' );
