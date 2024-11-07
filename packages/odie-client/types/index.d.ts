@@ -1,5 +1,3 @@
-declare const __i18n_text_domain__: string;
-
 declare module '*.svg' {
 	const content: string;
 	export default content;
