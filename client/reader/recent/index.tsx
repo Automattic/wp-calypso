@@ -49,7 +49,7 @@ const Recent = () => {
 
 	const getPostFromItem = useCallback(
 		( item: ReaderPost ) => {
-			const postKey = `${ item.postId }-${ item.feedId }`;
+			const postKey = `${ item.feedId }-${ item.postId }`;
 			return posts[ postKey ];
 		},
 		[ posts ]
@@ -144,7 +144,7 @@ const Recent = () => {
 				{ selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
 						require="calypso/blocks/reader-full-post"
-						blogId={ selectedItem.blogId }
+						blogId={ selectedItem.feedId }
 						postId={ selectedItem.postId }
 						onClose={ () => setSelectedItem( null ) }
 						layout="recent"
