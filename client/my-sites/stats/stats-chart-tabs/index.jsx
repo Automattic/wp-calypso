@@ -18,7 +18,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
-import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -52,8 +51,7 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		hideLegend: PropTypes.bool,
-		showChartHeader: PropTypes.bool,
+		headerSlot: PropTypes.node,
 	};
 
 	intervalId = null;
@@ -98,7 +96,7 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
+		const { isActiveTabLoading, className, headerSlot } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -110,16 +108,7 @@ class StatModuleChartTabs extends Component {
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
-				{ showChartHeader && (
-					<ChartHeader
-						showLegend={ ! hideLegend }
-						activeLegend={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						availableLegend={ this.props.availableLegend }
-						onLegendClick={ this.onLegendClick }
-						charts={ this.props.charts }
-					></ChartHeader>
-				) }
+				{ headerSlot }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
