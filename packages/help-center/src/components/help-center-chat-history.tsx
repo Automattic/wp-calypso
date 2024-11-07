@@ -13,8 +13,8 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getFilteredConversations, getLastMessage, calculateUnread } from './utils';
-import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
+import { getFilteredConversations, getLastMessage } from './utils';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -22,13 +22,8 @@ import './help-center-chat-history.scss';
 // this bool controls it.
 const simplifiedHistoryChat = true;
 
-const Conversations = ( {
-	conversations,
-}: {
-	conversations: [ SupportInteraction, ZendeskConversation ][];
-} ) => {
+const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 	const { __ } = useI18n();
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	if ( ! conversations || ! conversations.length ) {
 		return (
@@ -38,23 +33,17 @@ const Conversations = ( {
 		);
 	}
 
-	const handleClick = ( supportInteraction: SupportInteraction ) => {
-		if ( supportInteraction ) {
-			setCurrentSupportInteraction( supportInteraction );
-		}
-	};
-
 	return (
 		<>
-			{ conversations.map( ( [ interaction, conversation ] ) => {
+			{ conversations.map( ( conversation ) => {
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( lastMessage ) {
 					return (
 						<HelpCenterSupportChatMessage
 							navigateTo="/odie"
-							onClick={ () => handleClick( interaction ) }
-							key={ interaction.uuid }
+							supportInteractionId={ conversation.metadata?.supportInteractionId }
+							key={ conversation.id }
 							message={ lastMessage }
 							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
 						/>
@@ -72,9 +61,7 @@ export const HelpCenterChatHistory = () => {
 		archived: 'archived',
 	};
 
-	const [ interactionConversationPairs, setInteractionConversationPairs ] = useState<
-		[ SupportInteraction, ZendeskConversation ][]
-	>( [] );
+	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
 	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
@@ -88,27 +75,19 @@ export const HelpCenterChatHistory = () => {
 	}, [] );
 
 	const { recentConversations, archivedConversations } = getFilteredConversations( {
-		interactionConversationPairs,
+		conversations,
 	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if ( isChatLoaded && supportInteractions && supportInteractions?.length > 0 ) {
 			const conversations = getConversations();
-
-			const interactionConversationPairs = supportInteractions.reduce<
-				[ SupportInteraction, ZendeskConversation ][]
-			>( ( pairs, interaction ) => {
-				const matchingConversation = conversations.find(
-					( conversation ) => conversation.metadata?.supportInteractionId === interaction.uuid
-				);
-				if ( matchingConversation ) {
-					pairs.push( [ interaction, matchingConversation ] );
-				}
-				return pairs;
-			}, [] );
-
-			setInteractionConversationPairs( interactionConversationPairs );
+			const filteredConversations = conversations.filter( ( conversation ) =>
+				supportInteractions.some(
+					( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+				)
+			);
+			setConversations( filteredConversations );
 		}
 	}, [ supportInteractions, isChatLoaded, getConversations, setUnreadCount ] );
 
@@ -138,7 +117,7 @@ export const HelpCenterChatHistory = () => {
 
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
-		return <Conversations conversations={ interactionConversationPairs } />;
+		return <Conversations conversations={ recentConversations } />;
 	}
 
 	return (
