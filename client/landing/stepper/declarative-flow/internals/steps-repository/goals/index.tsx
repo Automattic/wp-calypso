@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
@@ -41,6 +42,11 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  * The goals capture step
  */
 const GoalsStep: Step = ( { navigation } ) => {
+	const [ isAddedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
+		'calypso_onboarding_goals_step_added_goals'
+	);
+	const isAddedGoalsExp = addedGoalsExpAssignment?.variationName === 'treatment';
+
 	const translate = useTranslate();
 	const whatAreYourGoalsText = translate( 'What would you like to do?' );
 	const subHeaderText = translate(
@@ -144,6 +150,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const isMediumOrBiggerScreen = useViewportMatch( 'small', '>=' );
 
+	if ( isAddedGoalsExpLoading ) {
+		return null;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ whatAreYourGoalsText } />
@@ -158,7 +168,11 @@ const GoalsStep: Step = ( { navigation } ) => {
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
-						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
+						<SelectGoals
+							selectedGoals={ goals }
+							onChange={ setGoals }
+							isAddedGoalsExp={ isAddedGoalsExp }
+						/>
 						{ isMediumOrBiggerScreen && (
 							<Button
 								__next40pxDefaultSize

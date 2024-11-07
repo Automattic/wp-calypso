@@ -7,6 +7,7 @@ import { useGoals } from './goals';
 type SelectGoalsProps = {
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
+	isAddedGoalsExp: boolean;
 };
 
 const Placeholder = styled.div`
@@ -31,8 +32,8 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( { onChange, selectedGoals }: SelectGoalsProps ) => {
-	const goalOptions = useGoals();
+export const SelectGoals = ( { onChange, selectedGoals, isAddedGoalsExp }: SelectGoalsProps ) => {
+	const goalOptions = useGoals( isAddedGoalsExp );
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
