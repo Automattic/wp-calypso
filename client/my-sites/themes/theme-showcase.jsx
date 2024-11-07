@@ -152,32 +152,26 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
-	translatedStaticFilters() {
+	getStaticFilters() {
 		const { translate } = this.props;
 		return {
 			MYTHEMES: {
 				key: STATIC_FILTERS.MYTHEMES,
-				get text() {
-					return translate( 'My Themes' );
-				},
+				text: translate( 'My Themes' ),
 			},
 			RECOMMENDED: {
 				key: STATIC_FILTERS.RECOMMENDED,
-				get text() {
-					return translate( 'Recommended' );
-				},
+				text: translate( 'Recommended' ),
 			},
 			ALL: {
 				key: STATIC_FILTERS.ALL,
-				get text() {
-					return translate( 'All' );
-				},
+				text: translate( 'All' ),
 			},
 		};
 	}
 
 	getDefaultStaticFilter = () =>
-		Object.values( this.translatedStaticFilters() ).find(
+		Object.values( this.getStaticFilters() ).find(
 			( staticFilter ) => staticFilter.key === DEFAULT_STATIC_FILTER
 		);
 
@@ -192,7 +186,7 @@ class ThemeShowcase extends Component {
 
 	getTabFilters = () => {
 		const { translate } = this.props;
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 		if ( this.props.siteId && ! this.props.areSiteFeaturesLoaded ) {
 			return null;
 		}
@@ -243,7 +237,7 @@ class ThemeShowcase extends Component {
 	getSelectedTabFilter = () => {
 		const filter = this.props.filter ?? '';
 		const filterArray = filter.split( '+' );
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
@@ -291,7 +285,7 @@ class ThemeShowcase extends Component {
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 
 		const filters =
 			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
@@ -345,7 +339,7 @@ class ThemeShowcase extends Component {
 		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
 		const showCollection =
 			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 
 		const url = this.constructUrl( {
 			tier,
@@ -366,7 +360,7 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 		const { filter = '', filterToTermTable } = this.props;
 		const subjectFilters = Object.values( this.subjectTermTable );
 		const filterWithoutSubjects = filter
@@ -569,7 +563,7 @@ class ThemeShowcase extends Component {
 
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
@@ -644,7 +638,7 @@ class ThemeShowcase extends Component {
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-		const staticFilters = this.translatedStaticFilters();
+		const staticFilters = this.getStaticFilters();
 
 		const themeProps = {
 			forceWpOrgSearch: true,
