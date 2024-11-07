@@ -1,4 +1,7 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
+import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
@@ -14,6 +17,12 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		chat,
 		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
@@ -49,7 +58,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 				metadata: {
 					odieChatId: chatId,
 					createdAt: Date.now(),
-					supportInteractionId: chat.supportInteractionId as string,
+					supportInteractionId: currentSupportInteraction.uuid,
 				},
 			} ).then( ( conversation ) => {
 				setChatProvider( 'zendesk' );
@@ -57,7 +66,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 				setHelpCenterZendeskConversationStarted();
 				setWaitAnswerToFirstMessageFromHumanSupport( true );
 				addEventToInteraction( {
-					interactionId: chat.supportInteractionId as string,
+					interactionId: currentSupportInteraction.uuid,
 					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 				} );
 			} );

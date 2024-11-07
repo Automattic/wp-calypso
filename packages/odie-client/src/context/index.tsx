@@ -131,24 +131,24 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	/**
 	 * Add a new message to the chat.
 	 */
-	const addMessage = useCallback( ( message: Message | Message[] ) => {
+	const addMessage = ( message: Message | Message[] ) => {
 		setMainChatState( ( prevChat ) => ( {
 			...prevChat,
 			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
 		} ) );
-	}, [] );
+	};
 
 	/**
 	 * Set the status of the chat.
 	 */
-	const setChatStatus = useCallback( ( status: ChatStatus ) => {
+	const setChatStatus = ( status: ChatStatus ) => {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
-	}, [] );
+	};
 
 	/**
 	 * Set the liked status of a message.
 	 */
-	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
+	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
 		setMainChatState( ( prevChat ) => {
 			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
 			const updatedMessage = { ...message, liked };
@@ -161,15 +161,15 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				],
 			};
 		} );
-	}, [] );
+	};
 
 	/**
 	 * Set the provider of the chat.
 	 * This is used to switch between Odie and Zendesk.
 	 */
-	const setChatProvider = useCallback( ( provider: SupportProvider ) => {
+	const setChatProvider = ( provider: SupportProvider ) => {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, provider } ) );
-	}, [] );
+	};
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
 
