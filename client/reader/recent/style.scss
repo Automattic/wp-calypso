@@ -92,11 +92,11 @@
 				overflow: hidden;
 				max-width: 200px;
 
-				@media ( min-width: $break-large ) {
-					max-width: 100%;
+				@media ( min-width: $break-wide ) {
+					max-width: 125px;
 				}
 
-				@media ( min-width: $break-wide ) {
+				@media ( min-width: 1540px ) {
 					max-width: 200px;
 				}
 			}
