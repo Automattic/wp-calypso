@@ -21,7 +21,7 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
-const EVENT_SOURCES = [ 'calypso', 'jetpack', 'remotedatablocks', 'wpcom_dsp_widget' ];
+const ALLOWED_EVENT_SOURCES = [ 'calypso', 'jetpack', 'remotedatablocks', 'wpcom_dsp_widget' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
 	'a8c_cookie_banner_view',
@@ -282,7 +282,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
  * Checks if the event name follows the Tracks naming convention.
  */
 function isValidEventName( eventName: string ): boolean {
-	return EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
 		new RegExp( `^${ eventSource }(?:_[a-z0-9]+){2,}$` ).test( eventName )
 	);
 }
@@ -291,7 +291,7 @@ function isValidEventName( eventName: string ): boolean {
  * Checks if the event name has a valid source prefix.
  */
 function isValidEventSource( eventName: string ): boolean {
-	return EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
 		eventName.startsWith( `${ eventSource }_` )
 	);
 }
