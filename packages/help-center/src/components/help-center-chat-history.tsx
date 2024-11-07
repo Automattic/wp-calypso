@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSmooch } from '@automattic/zendesk-client';
 import { Card, CardHeader, CardBody } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -13,7 +14,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getFilteredConversations, getLastMessage, calculateUnread } from './utils';
-import type { ZendeskConversation } from '@automattic/odie-client';
+import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -21,8 +22,14 @@ import './help-center-chat-history.scss';
 // this bool controls it.
 const simplifiedHistoryChat = true;
 
-const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
+const Conversations = ( {
+	conversations,
+}: {
+	conversations: [ SupportInteraction, ZendeskConversation ][];
+} ) => {
 	const { __ } = useI18n();
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
+
 	if ( ! conversations || ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
@@ -31,16 +38,23 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 		);
 	}
 
+	const handleClick = ( supportInteraction: SupportInteraction ) => {
+		if ( supportInteraction ) {
+			setCurrentSupportInteraction( supportInteraction );
+		}
+	};
+
 	return (
 		<>
-			{ conversations.map( ( conversation ) => {
+			{ conversations.map( ( [ interaction, conversation ] ) => {
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( lastMessage ) {
 					return (
 						<HelpCenterSupportChatMessage
-							navigateTo={ `/odie/${ conversation.id }` }
-							key={ conversation.id }
+							navigateTo="/odie"
+							onClick={ () => handleClick( interaction ) }
+							key={ interaction.uuid }
 							message={ lastMessage }
 							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
 						/>
@@ -58,9 +72,13 @@ export const HelpCenterChatHistory = () => {
 		archived: 'archived',
 	};
 
-	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
+	const [ interactionConversationPairs, setInteractionConversationPairs ] = useState<
+		[ SupportInteraction, ZendeskConversation ][]
+	>( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
+	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+
 	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -70,19 +88,29 @@ export const HelpCenterChatHistory = () => {
 	}, [] );
 
 	const { recentConversations, archivedConversations } = getFilteredConversations( {
-		conversations,
+		interactionConversationPairs,
 	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if ( isChatLoaded && getConversations ) {
+		if ( isChatLoaded && supportInteractions && supportInteractions?.length > 0 ) {
 			const conversations = getConversations();
-			setConversations( conversations );
 
-			const { unreadConversations } = calculateUnread( conversations );
-			setUnreadCount( unreadConversations );
+			const interactionConversationPairs = supportInteractions.reduce<
+				[ SupportInteraction, ZendeskConversation ][]
+			>( ( pairs, interaction ) => {
+				const matchingConversation = conversations.find(
+					( conversation ) => conversation.metadata?.supportInteractionId === interaction.uuid
+				);
+				if ( matchingConversation ) {
+					pairs.push( [ interaction, matchingConversation ] );
+				}
+				return pairs;
+			}, [] );
+
+			setInteractionConversationPairs( interactionConversationPairs );
 		}
-	}, [ getConversations, isChatLoaded, setUnreadCount ] );
+	}, [ supportInteractions, isChatLoaded, getConversations, setUnreadCount ] );
 
 	const EmptyArchivedConversations = () => {
 		return (
@@ -110,7 +138,7 @@ export const HelpCenterChatHistory = () => {
 
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
-		return <Conversations conversations={ recentConversations } />;
+		return <Conversations conversations={ interactionConversationPairs } />;
 	}
 
 	return (

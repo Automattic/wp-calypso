@@ -24,6 +24,7 @@ export const HelpCenterSupportChatMessage = ( {
 	badgeCount = 0,
 	isUnread = false,
 	navigateTo = '',
+	onClick,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
@@ -31,6 +32,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread: boolean;
 	navigateTo: string;
 	altText?: string;
+	onClick?: () => void;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -57,6 +59,7 @@ export const HelpCenterSupportChatMessage = ( {
 			to={ navigateTo }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName );
+				onClick?.();
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
