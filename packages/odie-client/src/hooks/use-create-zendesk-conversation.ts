@@ -45,18 +45,22 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId,
 		} ).then( () => {
-			Smooch.createConversation( { metadata: { odieChatId: chatId, createdAt: Date.now() } } ).then(
-				( conversation ) => {
-					setChatProvider( 'zendesk' );
-					setChatStatus( 'loaded' );
-					setHelpCenterZendeskConversationStarted();
-					setWaitAnswerToFirstMessageFromHumanSupport( true );
-					addEventToInteraction( {
-						interactionId: chat.supportInteractionId as string,
-						eventData: { event_source: 'zendesk', event_external_id: conversation.id },
-					} );
-				}
-			);
+			Smooch.createConversation( {
+				metadata: {
+					odieChatId: chatId,
+					createdAt: Date.now(),
+					supportInteractionId: chat.supportInteractionId,
+				},
+			} ).then( ( conversation ) => {
+				setChatProvider( 'zendesk' );
+				setChatStatus( 'loaded' );
+				setHelpCenterZendeskConversationStarted();
+				setWaitAnswerToFirstMessageFromHumanSupport( true );
+				addEventToInteraction( {
+					interactionId: chat.supportInteractionId as string,
+					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
+				} );
+			} );
 		} );
 	};
 

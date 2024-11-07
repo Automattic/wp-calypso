@@ -93,7 +93,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ openSupportInteraction, isLoadingOpenSupportInteractions, currentSupportInteraction ] );
+	}, [ openSupportInteraction, isLoadingOpenSupportInteractions ] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {

@@ -72,7 +72,7 @@ export const HelpCenterChatHistory = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const conversations = getConversations() as ZendeskConversation[];
+			const conversations = getConversations() as unknown as ZendeskConversation[];
 			setConversations( conversations );
 
 			const { unreadConversations } = calculateUnread( conversations );
