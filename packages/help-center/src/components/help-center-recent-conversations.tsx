@@ -42,7 +42,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			setConversations( conversations );
 			setUnreadCount( unreadConversations );
 		}
-	}, [ isChatLoaded, getConversations ] );
+	}, [ isChatLoaded, getConversations, setUnreadCount ] );
 
 	if ( ! conversations.length ) {
 		return null;
