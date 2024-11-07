@@ -36,19 +36,19 @@ const RestorePasswordDialog = ( {
 
 	const buttons = [
 		{
+			action: 'cancel',
+			label: translate( 'Cancel' ),
+			onClick: onCancel,
+		},
+		{
 			action: 'restore',
 			label: translate( 'Restore' ),
 			onClick: () => setShouldRestore( true ),
 			isPrimary: true,
 		},
-		{
-			action: 'cancel',
-			label: translate( 'Cancel' ),
-			onClick: onCancel,
-		},
 	];
 	return (
-		<Dialog isVisible={ isVisible } buttons={ buttons } onClose={ onCancel }>
+		<Dialog isVisible={ isVisible } buttons={ buttons } onClose={ onCancel } showCloseIcon>
 			<h1>{ translate( 'Restore database password' ) }</h1>
 			<p>
 				{ translate( 'Are you sure you want to restore the default password of your database?' ) }

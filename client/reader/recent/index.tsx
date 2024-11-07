@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { FullPostView } from 'calypso/blocks/reader-full-post';
+import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
@@ -140,10 +140,12 @@ const Recent = () => {
 			</div>
 			<div className="recent-feed__post-column">
 				{ selectedItem && getPostFromItem( selectedItem ) && (
-					<FullPostView
-						post={ getPostFromItem( selectedItem ) }
-						referralStream={ window.location.pathname }
-						notificationsOpen
+					<AsyncLoad
+						require="calypso/blocks/reader-full-post"
+						blogId={ selectedItem.blogId }
+						postId={ selectedItem.postId }
+						onClose={ () => setSelectedItem( null ) }
+						layout="recent"
 					/>
 				) }
 			</div>
