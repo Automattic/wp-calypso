@@ -47,13 +47,24 @@ const ReaderSidebarRecent = ( {
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
-	const selectedSiteId = useSelector< AppState, number >(
+	const selectedSiteFeedId = useSelector< AppState, number >(
 		( state ) => state.readerUi.sidebar.selectedRecentSite
 	);
 	const dispatch = useDispatch();
 
-	const sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
+	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
+
+	const selectedSite = sites.find( ( site ) => site.feed_ID === selectedSiteFeedId );
+	if ( selectedSite && ! sitesToShow.includes( selectedSite ) ) {
+		sitesToShow = [ ...sitesToShow, selectedSite ];
+	}
+
+	const shouldShowViewMoreButton =
+		sites.length > SITE_DISPLAY_CUTOFF &&
+		( showAllSites ||
+			sitesToShow.length < sites.length ||
+			sitesToShow[ sitesToShow.length - 1 ].feed_ID !== selectedSiteFeedId );
 
 	const toggleShowAllSites = () => {
 		setShowAllSites( ! showAllSites );
@@ -86,7 +97,7 @@ const ReaderSidebarRecent = ( {
 					className={ clsx(
 						'reader-sidebar-recent__item reader-sidebar-recent__item--without-icon',
 						{
-							'reader-sidebar-recent__item--selected': selectedSiteId === null,
+							'reader-sidebar-recent__item--selected': selectedSiteFeedId === null,
 						}
 					) }
 					onClick={ () => selectSite( null ) }
@@ -99,7 +110,7 @@ const ReaderSidebarRecent = ( {
 				<li key={ site.ID }>
 					<button
 						className={ clsx( 'reader-sidebar-recent__item', {
-							'reader-sidebar-recent__item--selected': site.feed_ID === selectedSiteId,
+							'reader-sidebar-recent__item--selected': site.feed_ID === selectedSiteFeedId,
 						} ) }
 						onClick={ () => selectSite( site.feed_ID ) }
 					>
@@ -111,7 +122,7 @@ const ReaderSidebarRecent = ( {
 					</button>
 				</li>
 			) ) }
-			{ sites.length > SITE_DISPLAY_CUTOFF && (
+			{ shouldShowViewMoreButton && (
 				<li>
 					<button
 						className="reader-sidebar-recent__item reader-sidebar-recent__item--without-icon reader-sidebar-recent__view-more"
