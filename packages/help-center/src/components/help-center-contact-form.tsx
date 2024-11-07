@@ -98,7 +98,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.source === 'odie' )
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
 			?.event_external_id ?? null;
 
 	const {

@@ -224,7 +224,7 @@ export type SupportInteractionUser = {
 };
 
 export type SupportInteractionEvent = {
-	event_external_id: number;
+	event_external_id: string | number;
 	event_source: SupportProvider;
 	metadata?: object;
 	event_order?: number;

@@ -53,8 +53,6 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 					setWaitAnswerToFirstMessageFromHumanSupport( true );
 					addEventToInteraction( {
 						interactionId: chat.supportInteractionId as string,
-						// TODO: We need to update the type of event_external_id in the schema to accept string.
-						// @ts-expect-error - there is a mismatch between the types
 						eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 					} );
 				}

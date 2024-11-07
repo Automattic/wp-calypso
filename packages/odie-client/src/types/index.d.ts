@@ -1,3 +1,5 @@
+declare const __i18n_text_domain__: string;
+
 declare module '*.svg' {
 	const content: string;
 	export default content;
@@ -38,7 +40,7 @@ declare module 'calypso/state/current-user/selectors' {
 }
 
 declare module 'calypso/components/async-load' {
-	import { FC, ReactNode, ComponentType } from 'react';
+	import { FC, ReactNode, ComponentType, FC } from 'react';
 
 	interface AsyncLoadProps {
 		placeholder?: ReactNode;
@@ -50,5 +52,3 @@ declare module 'calypso/components/async-load' {
 
 	export default AsyncLoad;
 }
-
-declare const __i18n_text_domain__: string;
