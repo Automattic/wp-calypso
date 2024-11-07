@@ -21,6 +21,14 @@
 		width: 100%;
 		@extend %column-shared;
 
+		&.has-overlay {
+			display: none;
+
+			@media ( min-width: $break-wide ) {
+				display: block;
+			}
+		}
+
 		@media ( min-width: $break-wide ) {
 			max-width: 320px;
 		}
@@ -115,6 +123,10 @@
 		display: none;
 		@extend %column-shared;
 
+		&.overlay {
+			display: block;
+		}
+
 		.reader-full-post__sidebar,
 		.reader-full-post__author-block,
 		.back-button {
@@ -123,6 +135,7 @@
 
 		@media ( min-width: $break-wide ) {
 			display: block;
+			position: relative;
 			flex: 3;
 		}
 	}

@@ -5,12 +5,12 @@ import type { PostItem, ReaderPost } from './types';
 interface RecentSeenFieldProps {
 	item: ReaderPost;
 	post: PostItem;
-	handleItemClick: ( item: ReaderPost ) => void;
+	setSelectedItem: ( item: ReaderPost ) => void;
 }
 
-const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, handleItemClick } ) => {
+const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, setSelectedItem } ) => {
 	return (
-		<Button className="recent-seen-field" onClick={ () => handleItemClick( item ) }>
+		<Button className="recent-seen-field" onClick={ () => setSelectedItem( item ) }>
 			<ReaderAvatar
 				siteIcon={ post.site_icon }
 				feedIcon={ post.feed_icon }

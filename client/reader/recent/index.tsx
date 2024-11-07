@@ -55,17 +55,6 @@ const Recent = () => {
 		[ posts ]
 	);
 
-	const handleItemClick = useCallback(
-		( item: ReaderPost ) => {
-			if ( isWide ) {
-				setSelectedItem( item );
-			} else {
-				// TODO: Fetch the post and navigate to it.
-			}
-		},
-		[ isWide ]
-	);
-
 	const fields = useMemo(
 		() => [
 			{
@@ -76,7 +65,7 @@ const Recent = () => {
 						<RecentSeenField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							handleItemClick={ handleItemClick }
+							setSelectedItem={ setSelectedItem }
 						/>
 					);
 				},
@@ -90,14 +79,14 @@ const Recent = () => {
 						<RecentPostField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							handleItemClick={ handleItemClick }
+							setSelectedItem={ setSelectedItem }
 						/>
 					);
 				},
 				enableHiding: false,
 			},
 		],
-		[ getPostFromItem, handleItemClick ]
+		[ getPostFromItem, setSelectedItem ]
 	);
 
 	const defaultLayouts = [
@@ -122,16 +111,16 @@ const Recent = () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Set the first item as selected if no item is selected.
+	// Set the first item as selected if no item is selected and screen is wide.
 	useEffect( () => {
-		if ( data?.items?.length > 0 && ! selectedItem ) {
+		if ( isWide && data?.items?.length > 0 && ! selectedItem ) {
 			setSelectedItem( data.items[ 0 ] );
 		}
-	}, [ data?.items, selectedItem ] );
+	}, [ isWide, data?.items, selectedItem ] );
 
 	return (
 		<div className="recent-feed">
-			<div className="recent-feed__list-column">
+			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="recent-feed__list-column-header">
 					<FormattedHeader align="left" headerText={ translate( 'All Recent' ) } />
 				</div>
@@ -151,7 +140,7 @@ const Recent = () => {
 					/>
 				</div>
 			</div>
-			<div className="recent-feed__post-column">
+			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 				{ selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
 						require="calypso/blocks/reader-full-post"
