@@ -35,7 +35,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const conversations = getConversations() as ZendeskConversation[];
+			const conversations = getConversations();
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 			setUnreadConversationsCount( unreadConversations );
 			setUnreadMessagesCount( unreadMessages );

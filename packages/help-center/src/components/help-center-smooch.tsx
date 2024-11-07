@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { ZendeskConversation } from '@automattic/odie-client';
 import {
 	useSmooch,
 	useLoadZendeskMessaging,
@@ -61,16 +60,16 @@ const HelpCenterSmooch: React.FC = () => {
 		return () => {
 			destroy();
 		};
-	}, [ isMessagingScriptLoaded, authData ] );
+	}, [ isMessagingScriptLoaded, authData, initSmooch, setIsChatLoaded, renderSmooch, destroy ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const conversations = getConversations() as ZendeskConversation[];
+			const conversations = getConversations();
 			const { unreadConversations } = calculateUnread( conversations );
 			setUnreadCount( unreadConversations );
 			setZendeskClientId( getClientId( conversations ) );
 		}
-	}, [ isChatLoaded, getConversations, setUnreadCount ] );
+	}, [ isChatLoaded, getConversations, setUnreadCount, setZendeskClientId ] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };
