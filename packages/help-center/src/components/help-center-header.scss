@@ -13,10 +13,6 @@
 		height: $head-foot-height;
 		padding: 16px;
 
-		&.chat-history {
-			border-bottom: none;
-		}
-
 		&.has-unread {
 			background: #3858E9;
 			color: var(--studio-white);
