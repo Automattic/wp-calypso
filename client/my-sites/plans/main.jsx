@@ -39,10 +39,12 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
@@ -548,12 +550,24 @@ const ConnectedPlans = connect(
 )( withCartKey( withShoppingCart( localize( PlansComponent ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	// For WP.com plans page, if intervalType is not explicitly specified in the URL,
+	// we want to show plans of the same term as plan that is currently active
+	const intervalType = useSelector( ( state ) => getCurrentPlanTerm( state, selectedSiteId ) );
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlans { ...props } currentPlan={ currentPlan } selectedSiteId={ selectedSiteId } />
+			<ConnectedPlans
+				{ ...props }
+				currentPlan={ currentPlan }
+				selectedSiteId={ selectedSiteId }
+				intervalType={
+					intervalTypeFromProps ?? longerPlanTermDefaultExperiment.term ?? intervalType
+				}
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }

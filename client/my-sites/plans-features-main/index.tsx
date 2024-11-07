@@ -282,6 +282,13 @@ const PlansFeaturesMain = ( {
 		! isPersonalPlan( selectedPlan ) &&
 		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
 
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		flowName,
+		paidDomainName,
+	} );
+
 	const term = usePlanBillingPeriod( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
@@ -456,13 +463,6 @@ const PlansFeaturesMain = ( {
 	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
 		_customerType = 'business';
 	}
-
-	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
-		productSlug: currentPlan?.productSlug,
-		displayedIntervals,
-		flowName,
-		paidDomainName,
-	} );
 
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
