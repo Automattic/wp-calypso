@@ -528,7 +528,7 @@ export class FullPostView extends Component {
 						{ isDefaultLayout && (
 							<div className="reader-full-post__sidebar">
 								{ isLoading && <AuthorCompactProfile author={ null } /> }
-								{ ! isLoading && post.author && (
+								{ ! isLoading && (
 									<AuthorCompactProfile
 										author={ post.author }
 										siteIcon={ get( site, 'icon.img' ) }
