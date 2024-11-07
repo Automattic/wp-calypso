@@ -10,6 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
@@ -51,13 +52,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, currentUser, site } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { data } = useSupportStatus();
 	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
 		useGetSupportInteractions( 'help-center' );
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
-	const helpCenterId = Number( `${ currentUser?.ID ?? site?.ID }${ Date.now() }` ); // Random ID to avoid conflicts
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -87,7 +87,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		) {
 			startNewInteraction( {
 				event_source: 'help-center',
-				event_external_id: helpCenterId,
+				event_external_id: uuidv4(),
 			} );
 		} else if ( openSupportInteraction ) {
 			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
