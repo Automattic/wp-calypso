@@ -25,9 +25,9 @@ interface Response {
 	status: 'success' | 'skipped';
 }
 
-export const useMigrationCanceller = ( siteId: SiteId | undefined ) => {
+export const useMigrationCancellation = ( siteId: SiteId | undefined ) => {
 	return useMutation< Response, Error >( {
-		mutationKey: [ 'migration-canceller', siteId ],
+		mutationKey: [ 'migration-cancellation', siteId ],
 		mutationFn: () => {
 			if ( ! siteId ) {
 				throw new Error( 'Site ID is required' );

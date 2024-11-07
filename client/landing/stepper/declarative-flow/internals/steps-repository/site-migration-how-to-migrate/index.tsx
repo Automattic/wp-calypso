@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useMigrationCanceller } from 'calypso/data/site-migration/landing/use-migration-canceller';
+import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -28,7 +28,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();
-	const { mutate: cancelMigration } = useMigrationCanceller( site?.ID );
+	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 
 	usePresalesChat( 'wpcom' );
 
