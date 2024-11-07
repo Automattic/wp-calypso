@@ -35,7 +35,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread: boolean;
 	navigateTo: string;
 	altText?: string;
-	supportInteractionId: number | null;
+	supportInteractionId: string | null;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
