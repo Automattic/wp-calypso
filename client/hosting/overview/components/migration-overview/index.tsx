@@ -1,4 +1,3 @@
-import { canInstallPlugins } from '@automattic/sites';
 import { globe, group, Icon, scheduled } from '@wordpress/icons';
 import { translate, useTranslate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
@@ -48,45 +47,17 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	const baseQueryArgs = {
 		siteId: site.ID,
 		siteSlug: site.slug,
-		start: 'true',
 		ref: 'hosting-migration-overview',
 	};
 
-	if ( ! canInstallPlugins( site ) ) {
-		// For the flows where the checkout is after the choice.
-		switch ( migrationType ) {
-			case 'diy':
-				return addQueryArgs(
-					{
-						...baseQueryArgs,
-						destination: 'upgrade',
-						how: 'myself',
-					},
-					'/setup/site-migration/site-migration-upgrade-plan'
-				);
-			case 'difm':
-				return addQueryArgs(
-					{
-						...baseQueryArgs,
-						destination: 'upgrade',
-						how: 'difm',
-					},
-					'/setup/site-migration/site-migration-upgrade-plan'
-				);
-			default:
-				return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-how-to-migrate' );
-		}
-	} else {
-		// For the /setup/migration, where the checkout is before the choice.
-		switch ( migrationType ) {
-			case 'diy':
-				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-instructions' );
-			case 'difm':
-				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-credentials' );
-			default:
-				return addQueryArgs( baseQueryArgs, '/setup/migration/migration-how-to-migrate' );
-		}
+	if ( migrationType === 'diy' ) {
+		return addQueryArgs(
+			baseQueryArgs,
+			'/setup/hosted-site-migration/site-migration-instructions'
+		);
 	}
+
+	return addQueryArgs( baseQueryArgs, '/setup/hosted-site-migration/site-migration-credentials' );
 };
 
 const Container = ( { children }: { children: ReactNode } ) => {

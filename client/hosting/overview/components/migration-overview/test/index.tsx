@@ -64,24 +64,7 @@ describe( 'MigrationOverview', () => {
 			).toBeVisible();
 		} );
 
-		it( 'shows a link to the upgrade plan page when the site cannot install plugins', () => {
-			const site = buildMigrationSite( {
-				status: 'pending',
-				how: 'diy',
-				canInstallPlugins: false,
-			} );
-
-			render( <MigrationOverview site={ site } /> );
-
-			const link = getStartMigrationLink();
-
-			expect( link ).toHaveAttribute(
-				'href',
-				'/setup/site-migration/site-migration-upgrade-plan?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview&destination=upgrade&how=myself'
-			);
-		} );
-
-		it( 'shows a link to the instructions page when the site is able to install plugins', () => {
+		it( 'shows a link to the instructions page', () => {
 			const site = buildMigrationSite( {
 				status: 'pending',
 				how: 'diy',
@@ -94,7 +77,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/migration/site-migration-instructions?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview'
+				'/setup/hosted-site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 	} );
@@ -110,24 +93,7 @@ describe( 'MigrationOverview', () => {
 			).toBeVisible();
 		} );
 
-		it( 'shows a link to the upgrade plan page when the site cannot install plugins', () => {
-			const site = buildMigrationSite( {
-				status: 'pending',
-				how: 'difm',
-				canInstallPlugins: false,
-			} );
-
-			render( <MigrationOverview site={ site } /> );
-
-			const link = getStartMigrationLink();
-
-			expect( link ).toHaveAttribute(
-				'href',
-				'/setup/site-migration/site-migration-upgrade-plan?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview&destination=upgrade&how=difm'
-			);
-		} );
-
-		it( 'shows a link to the instructions page when the site is able to install plugins', () => {
+		it( 'shows a link to the instructions page', () => {
 			const site = buildMigrationSite( {
 				status: 'pending',
 				how: 'difm',
@@ -140,7 +106,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/migration/site-migration-credentials?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview'
+				'/setup/hosted-site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 	} );
@@ -192,28 +158,6 @@ describe( 'MigrationOverview', () => {
 			render( <MigrationOverview site={ site } /> );
 
 			expect( getStartMigrationLink() ).not.toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'no migration strategy was selected', () => {
-		it( 'shows the how to migrate page', () => {
-			const site = buildMigrationSite( { status: 'pending', how: undefined } );
-
-			render( <MigrationOverview site={ site } /> );
-
-			expect( screen.queryByText( /Your WordPress site is ready to be migrated?/ ) ).toBeVisible();
-			expect(
-				screen.queryByText(
-					/Start your migration today and get ready for unmatched WordPress hosting./
-				)
-			).toBeVisible();
-
-			const link = getStartMigrationLink();
-
-			expect( link ).toHaveAttribute(
-				'href',
-				'/setup/site-migration/site-migration-how-to-migrate?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview'
-			);
 		} );
 	} );
 } );
