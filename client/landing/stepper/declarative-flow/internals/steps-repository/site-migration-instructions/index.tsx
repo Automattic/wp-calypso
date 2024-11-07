@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
@@ -87,7 +88,12 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( { status: MigrationStatus.PENDING_DIY } );
+			//TODO: We can stop to set the status to STARTED_DIY when the feature is enabled.
+			const status = isEnabled( 'automated-migration/pending-status' )
+				? MigrationStatus.PENDING_DIY
+				: MigrationStatus.STARTED_DIY;
+
+			updateMigrationStatus( { status } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
