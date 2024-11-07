@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
 import { translate, getLocaleSlug } from 'i18n-calypso';
@@ -34,7 +35,8 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 	// Rather than pass in additional props for the `recent` layout, we extract the props we need from authorProfile.
 	const { props: { author, siteIcon, feedIcon, siteName, followCount } = {} } = authorProfile || {};
 
-	const isDefaultLayout = layout !== 'recent';
+	const isDefaultLayout = layout === 'default';
+	const iconSrc = author?.avatar_URL || siteIcon || feedIcon;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -47,11 +49,15 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 						siteId={ post.blog_ID }
 						post={ post }
 					>
-						<img
-							src={ author?.avatar_URL || siteIcon || feedIcon }
-							alt={ siteName }
-							className="reader-full-post__site-icon"
-						/>
+						{ iconSrc ? (
+							<img src={ iconSrc } alt={ siteName } className="reader-full-post__site-icon" />
+						) : (
+							<Gridicon
+								icon="globe"
+								size={ 24 }
+								className="reader-full-post__site-icon is-missing-icon"
+							/>
+						) }
 					</ReaderSiteStreamLink>
 				</div>
 			) }

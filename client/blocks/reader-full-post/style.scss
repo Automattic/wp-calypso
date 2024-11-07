@@ -682,6 +682,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				border-radius: 50%;
 				height: 80px;
 				width: 80px;
+
+				&.is-missing-icon {
+					color: var( --color-neutral-70 );
+				}
 			}
 		}
 		.reader-full-post__header-title {
