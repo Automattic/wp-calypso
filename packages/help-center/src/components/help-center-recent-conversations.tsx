@@ -27,7 +27,12 @@ const HelpCenterRecentConversations: React.FC = () => {
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
-	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { data: supportInteractionsResolved } = useGetSupportInteractions(
+		'zendesk',
+		100,
+		'resolved'
+	);
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 100, 'open' );
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return { isChatLoaded: store.getIsChatLoaded() };
@@ -36,8 +41,17 @@ const HelpCenterRecentConversations: React.FC = () => {
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if ( isChatLoaded && getConversations && supportInteractions ) {
+		if (
+			isChatLoaded &&
+			getConversations &&
+			supportInteractionsResolved &&
+			supportInteractionsOpen
+		) {
 			const allConversations = getConversations();
+			const supportInteractions = [
+				...( supportInteractionsResolved || [] ),
+				...( supportInteractionsOpen || [] ),
+			];
 			const conversations = getConversationsFromSupportInteractions(
 				allConversations,
 				supportInteractions
@@ -48,7 +62,13 @@ const HelpCenterRecentConversations: React.FC = () => {
 			setConversations( conversations );
 			setUnreadCount( unreadConversations );
 		}
-	}, [ isChatLoaded, getConversations, setUnreadCount, supportInteractions ] );
+	}, [
+		isChatLoaded,
+		getConversations,
+		setUnreadCount,
+		supportInteractionsResolved,
+		supportInteractionsOpen,
+	] );
 
 	if ( ! conversations.length ) {
 		return null;
