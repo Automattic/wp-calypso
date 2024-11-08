@@ -2,14 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
-import CustomALink from '@automattic/odie-client/src/components/message/custom-a-link';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
-import { uriTransformer } from '@automattic/odie-client/src/components/message/uri-transformer';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import Markdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -128,17 +125,12 @@ const HelpCenterFeedbackForm = ( {
 				( shouldUseHelpCenterExperience ? (
 					<>
 						<div className="odie-chatbox-dislike-feedback-message">
-							<Markdown
-								urlTransform={ uriTransformer }
-								components={ {
-									a: CustomALink,
-								} }
-							>
+							<p>
 								{ __(
 									'Would you like to contact our support team? Select an option below:',
 									__i18n_text_domain__
 								) }
-							</Markdown>
+							</p>
 						</div>
 						<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
 					</>
