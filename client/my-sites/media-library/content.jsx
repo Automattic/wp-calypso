@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { withGooglePhotosPickerSession } from 'calypso/data/media/with-google-photos-picker-session';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +21,8 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
+import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
+import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
@@ -84,6 +86,12 @@ export class MediaLibraryContent extends Component {
 		onAddMedia: noop,
 		source: '',
 	};
+
+	componentDidMount() {
+		if ( this.props.photosPickerApiEnabled ) {
+			! this.props?.photosPickerSession && this.props?.createPhotosPickerSession();
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
@@ -172,8 +180,8 @@ export class MediaLibraryContent extends Component {
 					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
 					message = translate(
-						'%d file could not be uploaded because the file type is not supported.',
-						'%d files could not be uploaded because their file types are unsupported.',
+						'%(occurrences)d file could not be uploaded because the file type is not supported.',
+						'%(occurrences)d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					actionText = translate( 'See supported file types' );
@@ -182,15 +190,15 @@ export class MediaLibraryContent extends Component {
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
 					message = translate(
-						'%d file could not be uploaded because no image exists at the specified URL.',
-						'%d files could not be uploaded because no images exist at the specified URLs',
+						'%(occurrences)d file could not be uploaded because no image exists at the specified URL.',
+						'%(occurrences)d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
 					message = translate(
-						'%d file could not be uploaded because it exceeds the maximum upload size.',
-						'%d files could not be uploaded because they exceed the maximum upload size.',
+						'%(occurrences)d file could not be uploaded because it exceeds the maximum upload size.',
+						'%(occurrences)d files could not be uploaded because they exceed the maximum upload size.',
 						i18nOptions
 					);
 					break;
@@ -198,8 +206,8 @@ export class MediaLibraryContent extends Component {
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
 					message = translate(
-						'%d file could not be uploaded because there is not enough space left.',
-						'%d files could not be uploaded because there is not enough space left.',
+						'%(occurrences)d file could not be uploaded because there is not enough space left.',
+						'%(occurrences)d files could not be uploaded because there is not enough space left.',
 						i18nOptions
 					);
 					break;
@@ -213,8 +221,8 @@ export class MediaLibraryContent extends Component {
 						upgradeNudgeFeature = 'extra-storage';
 					}
 					message = translate(
-						'%d file could not be uploaded because you have reached your plan storage limit.',
-						'%d files could not be uploaded because you have reached your plan storage limit.',
+						'%(occurrences)d file could not be uploaded because you have reached your plan storage limit.',
+						'%(occurrences)d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
 					);
 					break;
@@ -236,8 +244,8 @@ export class MediaLibraryContent extends Component {
 
 				default:
 					message = translate(
-						'%d file could not be uploaded because an error occurred while uploading.',
-						'%d files could not be uploaded because errors occurred while uploading.',
+						'%(occurrences)d file could not be uploaded because an error occurred while uploading.',
+						'%(occurrences)d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
 					);
 					break;
@@ -405,6 +413,14 @@ export class MediaLibraryContent extends Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		if (
+			this.props.photosPickerApiEnabled &&
+			'google_photos' === this.props.source &&
+			! this.props.photosPickerSession?.mediaItemsSet
+		) {
+			return <GooglePhotosPickerButton />;
+		}
+
 		const listKey = [
 			'list',
 			this.props.site.ID,
@@ -444,6 +460,15 @@ export class MediaLibraryContent extends Component {
 		}
 
 		if ( this.props.source !== '' ) {
+			// Hide the header until we have the media items set from Google Photos
+			if (
+				'google_photos' === this.props.source &&
+				this.props.photosPickerApiEnabled &&
+				! this.props.photosPickerSession?.mediaItemsSet
+			) {
+				return null;
+			}
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
@@ -458,6 +483,10 @@ export class MediaLibraryContent extends Component {
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
+					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
+					photosPickerSession={ this.props.photosPickerSession }
+					createPhotosPickerSession={ this.props.createPhotosPickerSession }
+					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
 				/>
 			);
 		}
@@ -527,5 +556,5 @@ export default withMobileBreakpoint(
 			clearMediaErrors,
 			changeMediaSource,
 		}
-	)( localize( MediaLibraryContent ) )
+	)( withGooglePhotosPickerSession( localize( MediaLibraryContent ) ) )
 );

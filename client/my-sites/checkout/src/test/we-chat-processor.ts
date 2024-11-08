@@ -47,7 +47,7 @@ describe( 'weChatProcessor', () => {
 			country: 'US',
 			country_code: 'US',
 			name: 'test name',
-			payment_method: 'WPCOM_Billing_Stripe_Source_Wechat',
+			payment_method: 'WPCOM_Billing_Stripe_Wechat_Pay',
 			payment_partner: 'IE',
 			postal_code: '10001',
 			success_url:

@@ -6,8 +6,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-
 import 'calypso/state/plugins/init';
+import { PLUGINS_STATUS } from './status/constants';
 
 // TODO: Much of the functionality in this file is duplicated with selectors.js
 // which needs to be removed when this file is complete.
@@ -120,6 +120,45 @@ export const getPlugins = createSelector(
 	}
 );
 
+export const getPluginsWithUpdateStatuses = createSelector(
+	( state, allPlugins ) => {
+		const active = filter( allPlugins, _filters.active );
+		const inactive = filter( allPlugins, _filters.inactive );
+		const withUpdate = filter( allPlugins, _filters.updates );
+
+		return allPlugins.reduce( ( memo, plugin ) => {
+			const status = [];
+			plugin.allStatuses = [];
+
+			Object.entries( state.plugins.installed.status ).map( ( [ siteId, siteStatuses ] ) => {
+				Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+					if ( plugin.id === pluginId ) {
+						plugin.allStatuses.push( {
+							...pluginStatus,
+							siteId,
+							pluginId,
+						} );
+					}
+				} );
+			} );
+
+			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.UPDATE );
+			}
+
+			if ( find( inactive, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.INACTIVE );
+			}
+
+			if ( find( active, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.ACTIVE );
+			}
+			return [ ...memo, { ...plugin, status } ];
+		}, [] );
+	},
+	( plugins, pluginsUpdate ) => [ plugins, pluginsUpdate ]
+);
+
 export function getPluginsWithUpdates( state, siteIds ) {
 	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
 		...plugin,
@@ -128,17 +167,17 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );

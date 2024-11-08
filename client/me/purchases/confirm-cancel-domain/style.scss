@@ -10,9 +10,24 @@
 	}
 }
 
+.confirm-cancel-domain__card {
+	padding: 32px;
+	padding-top: 12px;
+
+	.purchases__cancel-domain & {
+		box-shadow: none;
+		padding: 0;
+	}
+}
+
 .confirm-cancel-domain__help-message,
 .confirm-cancel-domain__confirm-container {
 	margin-top: 20px;
+
+	.form-label {
+		margin-top: 0;
+		margin-bottom: 1.5em;
+	}
 }
 
 .confirm-cancel-domain__reason-details {

@@ -12,21 +12,21 @@ exports.modules = {
 /***/ (() => {
 
 
-;// CONCATENATED MODULE: ./constants2.js
+;// ./constants2.js
 /*
  * The export is eligible for inlining, but the module is not used directly but re-exported from \`./export.js\`.
  * Re-exporting is not supported, therefore no inlining should happen.
  */
 const FOO = 'bar';
 
-;// CONCATENATED MODULE: ./paths.js
+;// ./paths.js
 /*
  * The export is eligible for inlining, but the module is not specified in the plugin config.
  * Therefore no inlining should happen.
  */
 const HOME_PATH = '/';
 
-;// CONCATENATED MODULE: ./plans.js
+;// ./plans.js
 /*
  * Export two plan constants and a a constant array of all plans. The array should not be inlined
  * and the module should stay in the dependency graph.
@@ -35,7 +35,7 @@ const BLOGGER = 'BLOGGER_PLAN';
 const PREMIUM = 'PREMIUM_PLAN';
 /* harmony default export */ const plans = ([ BLOGGER, PREMIUM ]);
 
-;// CONCATENATED MODULE: ./index.js
+;// ./index.js
 
 
 

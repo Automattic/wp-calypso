@@ -79,7 +79,7 @@ const usePostsQueryPaged = (
 			// Fetch blazable posts
 			const postsResponse = await queryPosts( siteId, `page=${ pageParam }${ searchQueryParams }` );
 
-			const { posts, page, total_items, total_pages } = postsResponse;
+			const { posts, page, total_items, total_pages, warnings } = postsResponse;
 			const has_more_pages = page < total_pages;
 
 			return {
@@ -88,6 +88,7 @@ const usePostsQueryPaged = (
 				total_items,
 				total_pages,
 				page,
+				warnings,
 			};
 		},
 		...queryOptions,

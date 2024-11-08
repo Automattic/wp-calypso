@@ -17,13 +17,13 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/hosting/sites',
+		module: 'calypso/sites',
 		group: 'sites-dashboard',
 	},
 	{
 		name: 'sites-dashboard',
 		paths: [ '/p2s' ],
-		module: 'calypso/hosting/sites',
+		module: 'calypso/sites',
 		group: 'sites-dashboard',
 	},
 	{
@@ -416,6 +416,7 @@ const sections = [
 		group: 'reader',
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
+		isomorphic: true,
 	},
 	{
 		name: 'reader',
@@ -571,6 +572,24 @@ const sections = [
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
 		module: 'calypso/hosting/overview',
+		group: 'sites',
+	},
+	{
+		name: 'site-tools',
+		paths: [ '/sites/tools' ],
+		module: 'calypso/sites/tools',
+		group: 'sites',
+	},
+	{
+		name: 'site-marketing',
+		paths: [ '/sites/marketing' ],
+		module: 'calypso/sites/marketing',
+		group: 'sites',
+	},
+	{
+		name: 'site-settings',
+		paths: [ '/sites/settings' ],
+		module: 'calypso/sites/settings',
 		group: 'sites',
 	},
 	{
@@ -870,6 +889,12 @@ const sections = [
 			'/client/checkout',
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-agency-tier',
+		paths: [ '/agency-tier' ],
+		module: 'calypso/a8c-for-agencies/sections/agency-tier',
 		group: 'a8c-for-agencies',
 	},
 ];

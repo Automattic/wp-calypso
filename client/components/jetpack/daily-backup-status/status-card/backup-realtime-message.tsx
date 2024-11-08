@@ -48,6 +48,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 		gmtOffset: gmtOffset,
 	} );
 
+	const baseBackupDateLocal = applySiteOffset( moment( baseBackupDate ), { timezone, gmtOffset } );
 	const isBackupFromToday = baseBackupDate.isSame( today, 'day' );
 	const isBackupFromYesterday = baseBackupDate.isSame( today.subtract( 1, 'days' ), 'day' );
 	const daysDiff = selectedBackupDate.diff( baseBackupDate, 'days' );
@@ -61,7 +62,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 			{
 				count: eventsCount,
 				args: {
-					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					baseBackupDate: baseBackupDateLocal.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
 				comment: '%(eventsCount)d is the number of changes made since the backup.',
@@ -75,7 +76,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 			{
 				count: eventsCount,
 				args: {
-					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					baseBackupDate: baseBackupDateLocal.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
 				comment:
@@ -90,7 +91,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 			{
 				count: eventsCount,
 				args: {
-					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					baseBackupDate: baseBackupDateLocal.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
 				comment:
@@ -105,7 +106,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 			{
 				count: eventsCount,
 				args: {
-					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					baseBackupDate: baseBackupDateLocal.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
 				comment:
@@ -121,7 +122,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 				count: eventsCount,
 				args: {
 					daysAgo: daysDiff,
-					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					baseBackupDate: baseBackupDateLocal.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
 				comment:

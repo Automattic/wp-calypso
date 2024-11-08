@@ -130,7 +130,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
-			const site = requestSite( 2916284 )( spy );
+			const site = requestSite( 2916284 )( spy, () => {} );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST,
@@ -141,7 +141,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive site when request completes', async () => {
-			await requestSite( 2916284 )( spy );
+			await requestSite( 2916284 )( spy, () => {} );
 			expect( spy ).toHaveBeenCalledWith(
 				receiveSite( {
 					ID: 2916284,
@@ -152,7 +152,7 @@ describe( 'actions', () => {
 		} );
 
 		test( "should dispatch success and not receive action when request returns site we can't manage", async () => {
-			await requestSite( 8894098 )( spy );
+			await requestSite( 8894098 )( spy, () => {} );
 			expect( spy ).not.toHaveBeenCalledWith(
 				receiveSite( {
 					ID: 8894098,
@@ -166,7 +166,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request success action when request completes', async () => {
-			await requestSite( 2916284 )( spy );
+			await requestSite( 2916284 )( spy, () => {} );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -174,7 +174,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await requestSite( 77203074 )( spy ).catch( () => {} );
+			await requestSite( 77203074 )( spy, () => {} ).catch( () => {} );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST_FAILURE,
 				siteId: 77203074,

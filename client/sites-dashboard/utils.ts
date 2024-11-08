@@ -54,6 +54,11 @@ export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
 };
 
+// Sites connected through A4A plugin are listed on wordpress.com/sites even when Jetpack is deactivated.
+export const isDisconnectedJetpackAndNotAtomic = ( site: SiteExcerptNetworkData ) => {
+	return ! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack;
+};
+
 export const isSimpleSite = ( site: SiteExcerptNetworkData ) => {
 	return ! site?.jetpack && ! site?.is_wpcom_atomic;
 };
@@ -68,6 +73,47 @@ export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 
 export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
+};
+
+export const isMigrationInProgress = ( site: SiteExcerptData ): boolean => {
+	const migrationStatus = site?.site_migration?.migration_status;
+	if ( ! migrationStatus ) {
+		return false;
+	}
+
+	return ! migrationStatus.startsWith( 'migration-completed' );
+};
+
+export const getMigrationStatus = (
+	site: SiteExcerptData
+): 'pending' | 'started' | 'completed' | undefined => {
+	const migrationStatus = site?.site_migration?.migration_status;
+	if ( ! migrationStatus ) {
+		return undefined;
+	}
+
+	const status = migrationStatus.split( '-' )[ 1 ];
+
+	if ( ! [ 'pending', 'started', 'completed' ].includes( status ) ) {
+		return undefined;
+	}
+
+	return status as 'pending' | 'started' | 'completed';
+};
+
+export const getMigrationType = ( site: SiteExcerptData ): 'diy' | 'difm' | undefined => {
+	const migrationStatus = site?.site_migration?.migration_status;
+	if ( ! migrationStatus ) {
+		return undefined;
+	}
+
+	const type = migrationStatus.split( '-' )[ 2 ];
+
+	if ( ! [ 'difm', 'diy' ].includes( type ) ) {
+		return undefined;
+	}
+
+	return type as 'diy' | 'difm';
 };
 
 export const isHostingTrialSite = ( site: SiteExcerptNetworkData ) => {

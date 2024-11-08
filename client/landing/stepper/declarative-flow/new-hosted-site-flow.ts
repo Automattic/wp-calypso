@@ -1,4 +1,4 @@
-import { isFreeHostingTrial } from '@automattic/calypso-products';
+import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -8,6 +8,8 @@ import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -20,11 +22,25 @@ import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
+function useShowDomainStep(): boolean {
+	const query = useQuery();
+	return query.has( 'showDomainStep' );
+}
+
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	isSignupFlow: true,
 	useSteps() {
+		const showDomainStep = useShowDomainStep();
 		return [
+			...( showDomainStep
+				? [
+						{
+							slug: 'domains',
+							asyncComponent: () => import( './internals/steps-repository/domains' ),
+						},
+				  ]
+				: [] ),
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
@@ -53,10 +69,15 @@ const hosting: Flow = {
 
 		const query = useQuery();
 		const queryParams = Object.fromEntries( query );
+		const plan = queryParams.plan;
 		const flowName = this.name;
+		const showDomainStep = useShowDomainStep();
 
 		const goBack = () => {
 			if ( _currentStepSlug === 'plans' ) {
+				if ( showDomainStep ) {
+					return navigate( 'domains' );
+				}
 				return window.location.assign( '/sites?hosting-flow=true' );
 			}
 			if ( _currentStepSlug === 'trialAcknowledge' ) {
@@ -65,7 +86,21 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			if ( providedDependencies.siteId ) {
+				setSignupCompleteSiteID( providedDependencies.siteId );
+			}
+
 			switch ( _currentStepSlug ) {
+				case 'domains': {
+					// If the plan is already supplied as a query param, add it to cart, and skip plans step
+					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
+						setPlanCartItem( {
+							product_slug: plan,
+						} );
+						return navigate( 'createSite' );
+					}
+					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
@@ -83,6 +118,7 @@ const hosting: Flow = {
 						return navigate( 'trialAcknowledge' );
 					}
 
+					setSignupCompleteFlowName( flowName );
 					return navigate( 'createSite' );
 				}
 
@@ -96,12 +132,8 @@ const hosting: Flow = {
 				case 'processing': {
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId,
+						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
 					} );
-
-					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
-					setSignupCompleteFlowName( flowName );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
@@ -109,6 +141,10 @@ const hosting: Flow = {
 					}
 
 					if ( providedDependencies.goToCheckout ) {
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
 						couponCode && resetCouponCode();
 						return window.location.assign(
 							addQueryArgs(
@@ -120,7 +156,7 @@ const hosting: Flow = {
 						);
 					}
 
-					return window.location.assign( destination );
+					return navigate( 'plans' );
 				}
 			}
 		};

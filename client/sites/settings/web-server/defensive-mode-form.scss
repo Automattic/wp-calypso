@@ -1,0 +1,61 @@
+.defensive-mode-card__edge-cache-required {
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.defensive-mode-card__enabled-description {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+
+	p {
+		margin: 0;
+	}
+}
+
+@keyframes defensive-mode-card__enabled-indicator-pulse {
+	from {
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--studio-wordpress-blue-10) 0%);
+	}
+	to {
+		box-shadow: 0 0 0 3px var(--studio-wordpress-blue-10);
+	}
+}
+
+.defensive-mode-card__enabled-indicator {
+	animation: defensive-mode-card__enabled-indicator-pulse 1.5s linear infinite alternate;
+	background-color: var(--color-accent);
+	border-radius: 100%;
+	flex-shrink: 0;
+	height: 10px;
+	width: 10px;
+}
+
+.defensive-mode-card__a11n-description {
+	align-items: start;
+	background-color: var(--studio-wordpress-blue-5);
+	border-radius: 4px;
+	color: var(--studio-wordpress-blue-80);
+	display: flex;
+	gap: 12px;
+	margin-top: 24px;
+	padding: 16px;
+}
+.defensive-mode-card__a11n-text {
+	p {
+		margin: 0;
+	}
+	p + p {
+		margin-top: 4px;
+	}
+}
+
+.defensive-mode-card__ttl-select {
+	display: block;
+	margin-bottom: 1.5em;
+	width: 100%;
+}
+
+.defensive-mode-card__button {
+	margin-top: 1.5em;
+}

@@ -25,6 +25,7 @@
 
 .domain-analyzer--form-container {
 	display: flex;
+	position: relative;
 
 	@media (min-width: $break-small + 1px) {
 		@include input-style;
@@ -96,7 +97,13 @@
 
 
 .domain-analyzer--msg {
-	margin-top: 1rem;
+	margin-top: 0.5rem;
+
+	@media (min-width: $break-small + 1px) {
+		position: absolute;
+		left: 0;
+		margin-top: 1.5rem;
+	}
 
 	p {
 		font-size: 1rem !important;

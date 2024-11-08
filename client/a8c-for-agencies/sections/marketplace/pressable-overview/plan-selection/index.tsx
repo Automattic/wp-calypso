@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,6 +20,7 @@ type Props = {
 
 export default function PressableOverviewPlanSelection( { onAddToCart }: Props ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
@@ -81,14 +83,20 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 			} ) }
 		>
 			{ pressableOwnership !== 'regular' && ! isReferMode && (
-				<PlanSelectionFilter
-					selectedPlan={ selectedPlan }
-					plans={ pressablePlans }
-					onSelectPlan={ onSelectPlan }
-					existingPlan={ existingPlan }
-					pressablePlan={ pressablePlan }
-					isLoading={ ! isExistingPlanFetched }
-				/>
+				<>
+					{ existingPlan && (
+						<div className="pressable-overview-plan-selection__upgrade-title">
+							{ translate( 'Upgrade your plan' ) }
+						</div>
+					) }
+					<PlanSelectionFilter
+						selectedPlan={ selectedPlan }
+						plans={ pressablePlans }
+						onSelectPlan={ onSelectPlan }
+						pressablePlan={ pressablePlan }
+						isLoading={ ! isExistingPlanFetched }
+					/>
+				</>
 			) }
 
 			<PlanSelectionDetails

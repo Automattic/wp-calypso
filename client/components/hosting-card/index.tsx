@@ -8,6 +8,7 @@ interface HostingCardProps {
 	className?: string;
 	headingId?: string;
 	title?: string;
+	inGrid?: boolean;
 	children: ReactNode;
 }
 
@@ -22,9 +23,20 @@ interface HostingCardDescriptionProps {
 	children: string | ReactNode;
 }
 
-export function HostingCard( { className, headingId, title, children }: HostingCardProps ) {
+interface HostingCardLinkButtonProps {
+	to: string;
+	children: string | ReactNode;
+	hideOnMobile?: boolean;
+	onClick?: () => void;
+}
+
+interface HostingCardGridProps {
+	children: ReactNode;
+}
+
+export function HostingCard( { className, headingId, title, inGrid, children }: HostingCardProps ) {
 	return (
-		<Card className={ clsx( 'hosting-card', className ) }>
+		<Card className={ clsx( 'hosting-card', className, { 'hosting-card--in-grid': inGrid } ) }>
 			{ title && (
 				<h3 id={ headingId } className="hosting-card__title">
 					{ title }
@@ -52,16 +64,11 @@ export function HostingCardDescription( { children }: HostingCardDescriptionProp
 	return <p className="hosting-card__description">{ children }</p>;
 }
 
-interface HostingCardLinkButtonProps {
-	to: string;
-	children: string | ReactNode;
-	hideOnMobile?: boolean;
-}
-
 export function HostingCardLinkButton( {
 	to,
 	children,
 	hideOnMobile,
+	onClick,
 }: HostingCardLinkButtonProps ) {
 	return (
 		<Button
@@ -70,8 +77,13 @@ export function HostingCardLinkButton( {
 			} ) }
 			plain
 			href={ to }
+			onClick={ onClick }
 		>
 			{ children }
 		</Button>
 	);
+}
+
+export function HostingCardGrid( props: HostingCardGridProps ) {
+	return <div className="hosting-card-grid">{ props.children }</div>;
 }

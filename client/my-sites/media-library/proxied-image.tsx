@@ -15,7 +15,7 @@ export interface ProxiedImageProps {
 	query: string;
 	filePath: string;
 	siteId: number | string;
-	placeholder: ReactNode;
+	placeholder?: ReactNode;
 	component: RenderedComponent;
 	maxSize: number | null;
 	onError?: ( err: Error ) => any;
@@ -43,7 +43,7 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 	siteId,
 	filePath,
 	query,
-	placeholder,
+	placeholder = null,
 	maxSize,
 	onError,
 	component: Component,
@@ -84,10 +84,6 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <Component src={ imageObjectUrl } { ...rest } />;
-};
-
-ProxiedImage.defaultProps = {
-	placeholder: null,
 };
 
 export default ProxiedImage;

@@ -3,9 +3,7 @@ import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
-import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
-import VideoPressLogo from '../videopress-logo';
 import './style.scss';
 
 interface Props {
@@ -45,8 +43,6 @@ interface Props {
 	showJetpackPowered?: boolean;
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
-	showSenseiPowered?: boolean;
-	showVideoPressPowered?: boolean;
 	backUrl?: string;
 }
 
@@ -86,8 +82,6 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderJetpackPowered,
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
-	showSenseiPowered,
-	showVideoPressPowered,
 	showFooterWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
@@ -233,18 +227,6 @@ const StepContainer: React.FC< Props > = ( {
 			{ showFooterWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
 					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
-				</div>
-			) }
-
-			{ showSenseiPowered && (
-				<div className="step-container__sensei-powered">
-					<SenseiLogo /> <span>{ translate( 'Powered by Sensei' ) }</span>
-				</div>
-			) }
-
-			{ showVideoPressPowered && (
-				<div className="step-container__videopress-powered">
-					<VideoPressLogo size={ 24 } /> <span>{ translate( 'Powered by VideoPress' ) }</span>
 				</div>
 			) }
 		</div>

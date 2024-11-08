@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@automattic/components/src/highlight-cards/variables";
 @import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {
@@ -29,7 +29,7 @@
 
 	.highlight-cards-list {
 		display: grid;
-		grid-template-columns: 3fr 2fr;
+		grid-template-columns: minmax(600px, 3fr) minmax(200px, 1fr);
 		grid-template-rows: 1fr;
 		column-gap: 10px;
 		overflow-x: auto;
@@ -49,7 +49,6 @@
 			}
 
 			.highlight-card {
-				min-width: unset;
 				height: 180px;
 				margin: math.div($vertical-margin, 2) 0;
 				border-left: 0;
@@ -62,7 +61,6 @@
 	.post-stats-card {
 		margin: 0;
 		max-height: unset;
-		min-width: 770px;
 
 		@media (max-width: $break-small) {
 			gap: 24px 12px;
@@ -78,10 +76,10 @@
 	}
 
 	.highlight-card {
+		width: 100%;
+		max-height: 300px;
 		padding: 24px;
-		height: 300px;
 		overflow-y: auto;
-		min-width: 300px;
 	}
 
 	.highlight-card-heading {
@@ -111,6 +109,7 @@
 		padding: 0;
 		margin: 0 0 -7px 0;
 		box-shadow: none;
+		overflow: hidden;
 
 		.module-header {
 			display: none;

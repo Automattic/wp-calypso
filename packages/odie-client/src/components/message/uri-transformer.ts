@@ -4,7 +4,7 @@
 // protocols in the future, but for now, this is enough. That would REALLY simplify things for
 // us, because adding a new protocol would be as simple as adding it to the array above,
 // and extending the component custom-a-link.tsx to handle it. That's it.
-const protocols = [ 'http', 'https', 'mailto', 'tel', 'prompt' ];
+const protocols = [ 'http', 'https', 'mailto', 'tel', 'prompt', 'blob' ];
 
 const referralCodes: { [ key: string ]: string } = {
 	https: 'odie',
@@ -34,9 +34,11 @@ export function uriTransformer( uri: string ) {
 		const protocol = protocols[ index ];
 
 		if ( colon === protocol.length && url.slice( 0, protocol.length ).toLowerCase() === protocol ) {
-			// Add referral code to the URL
 			const urlObj = new URL( url );
-			urlObj.searchParams.set( 'ref', referralCodes[ protocol ] );
+			// Add referral code to the URL
+			if ( protocol !== 'blob' ) {
+				urlObj.searchParams.set( 'ref', referralCodes[ protocol ] );
+			}
 			return urlObj.toString();
 		}
 	}

@@ -6,7 +6,6 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
@@ -48,8 +47,6 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 			return 'plans-newsletter';
-		case LINK_IN_BIO_FLOW:
-			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
 			if ( isWordCampPromo ) {
 				return 'plans-new-hosted-site-business-only';

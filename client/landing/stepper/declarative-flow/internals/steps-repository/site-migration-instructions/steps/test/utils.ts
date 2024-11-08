@@ -1,48 +1,48 @@
-import { getPluginInstallationPage, getMigrateGuruPageURL } from '../utils';
+import { getMigrationPluginInstallURL, getMigrationPluginPageURL } from '../utils';
 
 describe( 'utils', () => {
-	describe( 'getPluginInstallationPage', () => {
+	describe( 'getMigrationPluginInstallURL', () => {
 		it( 'should return WordPress.org plugin page if fromUrl is empty', () => {
-			expect( getPluginInstallationPage( '' ) ).toBe(
-				'https://wordpress.org/plugins/migrate-guru/'
+			expect( getMigrationPluginInstallURL( '' ) ).toBe(
+				'https://wordpress.org/plugins/wpcom-migration/'
 			);
 		} );
 
 		it( 'should return correct plugin installation page for given URL', () => {
-			expect( getPluginInstallationPage( 'example.com' ) ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term'
+			expect( getMigrationPluginInstallURL( 'example.com' ) ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term'
 			);
 		} );
 
 		it( 'should handle URLs with existing protocol', () => {
-			expect( getPluginInstallationPage( 'http://example.com' ) ).toBe(
-				'http://example.com/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term'
+			expect( getMigrationPluginInstallURL( 'http://example.com' ) ).toBe(
+				'http://example.com/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term'
 			);
 		} );
 
 		it( 'should remove duplicate slashes from the URL', () => {
-			expect( getPluginInstallationPage( 'https://example.com///' ) ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term'
+			expect( getMigrationPluginInstallURL( 'https://example.com///' ) ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term'
 			);
 		} );
 	} );
 
-	describe( 'getMigrateGuruPageURL', () => {
-		it( 'should return correct Migrate Guru page URL', () => {
-			expect( getMigrateGuruPageURL( 'example.com' ) ).toBe(
-				'https://example.com/wp-admin/admin.php?page=migrateguru'
+	describe( 'getMigrationPluginPageURL', () => {
+		it( 'should return correct page URL', () => {
+			expect( getMigrationPluginPageURL( 'example.com' ) ).toBe(
+				'https://example.com/wp-admin/admin.php?page=wpcom-migration'
 			);
 		} );
 
 		it( 'should handle URLs with existing protocol', () => {
-			expect( getMigrateGuruPageURL( 'http://example.com' ) ).toBe(
-				'http://example.com/wp-admin/admin.php?page=migrateguru'
+			expect( getMigrationPluginPageURL( 'http://example.com' ) ).toBe(
+				'http://example.com/wp-admin/admin.php?page=wpcom-migration'
 			);
 		} );
 
 		it( 'should remove duplicate slashes from the URL', () => {
-			expect( getMigrateGuruPageURL( 'https://example.com///' ) ).toBe(
-				'https://example.com/wp-admin/admin.php?page=migrateguru'
+			expect( getMigrationPluginPageURL( 'https://example.com///' ) ).toBe(
+				'https://example.com/wp-admin/admin.php?page=wpcom-migration'
 			);
 		} );
 	} );

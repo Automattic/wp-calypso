@@ -62,5 +62,6 @@ export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-news
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';
 export const LAUNCHPAD_PRE_LAUNCH = 'home-launchpad-pre-launch';
 export const LAUNCHPAD_LEGACY_SITE_SETUP = 'home-launchpad-legacy-site-setup';
+export const LAUNCHPAD_POST_MIGRATION = 'home-launchpad-post-migration';
 export const NOTICE_HOME_LIMITED_TIME_OFFER_COUPON = 'home-limited-time-coupon';
 export const FEATURE_READER = 'home-feature-reader';

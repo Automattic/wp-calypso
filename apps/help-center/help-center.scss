@@ -56,6 +56,16 @@
 			display: none;
 		}
 
+		&.has-unread {
+			#help-center-icon {
+				display: none;
+			}
+
+			#help-center-icon-with-notification {
+				display: block;
+			}
+		}
+
 		svg {
 			position: absolute;
 			height: 22px;

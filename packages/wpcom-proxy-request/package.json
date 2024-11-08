@@ -1,6 +1,6 @@
 {
 	"name": "wpcom-proxy-request",
-	"version": "7.0.5",
+	"version": "7.0.6",
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -48,6 +48,6 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"postcss": "^8.4.5",
-		"webpack": "^5.94.0"
+		"webpack": "^5.95.0"
 	}
 }

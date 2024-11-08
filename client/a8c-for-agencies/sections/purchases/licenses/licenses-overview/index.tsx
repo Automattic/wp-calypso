@@ -7,6 +7,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
@@ -67,6 +68,7 @@ export default function LicensesOverview( {
 		<Layout className="licenses-overview" title={ title } wide withBorder>
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
+					<PressableUsageLimitNotice />
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						<Actions className="a4a-licenses__header-actions">

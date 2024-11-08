@@ -7,7 +7,12 @@ import {
 } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import {
+	filterRecommendations,
+	metricsNames,
+	highImpactAudits,
+} from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 
@@ -24,26 +29,29 @@ type InsightsSectionProps = {
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const { audits, fullPageScreenshot, isWpcom, hash, filter } = props;
+		const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
+			props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
-		const sumMetricSavings = ( key: string ) =>
-			Object.values( audits[ key ].metricSavings ?? {} ).reduce( ( acc, val ) => acc + val, 0 );
-
-		const sortInsightKeys = ( a: string, b: string ) =>
-			sumMetricSavings( b ) - sumMetricSavings( a );
-
+		const sortHighImpactAudits = ( a: string, b: string ) =>
+			highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
 		const filteredAudits = Object.keys( audits )
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
-			.sort( sortInsightKeys );
-		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
-			setSelectedFilter( option.value );
-			if ( props.onRecommendationsFilterChange ) {
-				props.onRecommendationsFilterChange( option.value );
-			} else {
-				updateQueryParams( { filter: option.value }, true );
-			}
-		}, [] );
+			.sort( sortHighImpactAudits );
+		const onFilter = useCallback(
+			( option: { label: string; value: string } ) => {
+				recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+					filter: option.value,
+				} );
+				setSelectedFilter( option.value );
+				if ( onRecommendationsFilterChange ) {
+					onRecommendationsFilterChange( option.value );
+				} else {
+					updateQueryParams( { filter: option.value }, true );
+				}
+			},
+			[ onRecommendationsFilterChange ]
+		);
 
 		useEffect( () => {
 			if ( filter && filter !== selectedFilter ) {
@@ -55,30 +63,9 @@ export const InsightsSection = forwardRef(
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<div className="header">
 					<div>
-						<h2 className="title">{ translate( 'Improve your site‘s performance' ) }</h2>
+						<h2 className="title">{ translate( 'Personalized Recommendations' ) }</h2>
 						<p className="subtitle">
-							{ filteredAudits.length
-								? translate(
-										'We found %(quantity)d thing you can do for improving %(metric)s.',
-										'We found %(quantity)d things you can do for improving %(metric)s.',
-										{
-											args: {
-												quantity: filteredAudits.length,
-												metric:
-													selectedFilter === 'all'
-														? translate( 'your site' )
-														: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-											},
-											count: filteredAudits.length,
-										}
-								  )
-								: translate( "Great job! We didn't find any recommendations for improving %s.", {
-										args: [
-											selectedFilter === 'all'
-												? translate( 'the speed of your site' )
-												: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-										],
-								  } ) }
+							{ getSubtitleText( selectedFilter, filteredAudits.length, translate ) }
 						</p>
 					</div>
 					<div className="filter">
@@ -120,6 +107,7 @@ export const InsightsSection = forwardRef(
 							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
 								url: props.url,
 								key,
+								version: profilerVersion(),
 							} )
 						}
 					/>
@@ -128,3 +116,45 @@ export const InsightsSection = forwardRef(
 		);
 	}
 );
+
+function getSubtitleText(
+	selectedFilter: string,
+	numRecommendations: number,
+	translate: ReturnType< typeof useTranslate >
+) {
+	if ( numRecommendations ) {
+		if ( selectedFilter === 'all' ) {
+			return translate(
+				'We found %(numRecommendations)d thing you can do for improving your page.',
+				'We found %(numRecommendations)d things you can do for improving your page.',
+				{
+					args: { numRecommendations },
+					count: numRecommendations,
+				}
+			);
+		}
+		return translate(
+			'We found %(numRecommendations)d thing you can do for improving %(metric)s.',
+			'We found %(numRecommendations)d things you can do for improving %(metric)s.',
+			{
+				args: {
+					numRecommendations,
+					metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+				},
+				count: numRecommendations,
+			}
+		);
+	}
+
+	if ( selectedFilter === 'all' ) {
+		return translate(
+			"Great job! We didn't find any recommendations for improving the speed of your page."
+		);
+	}
+
+	return translate( "Great job! We didn't find any recommendations for improving %(metric)s.", {
+		args: {
+			metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+		},
+	} );
+}

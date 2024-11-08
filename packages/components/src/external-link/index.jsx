@@ -13,6 +13,7 @@ class ExternalLink extends Component {
 		iconSize: 18,
 		showIconFirst: false,
 		iconComponent: null,
+		localizeUrl: true,
 	};
 
 	static propTypes = {
@@ -25,6 +26,7 @@ class ExternalLink extends Component {
 		showIconFirst: PropTypes.bool,
 		iconClassName: PropTypes.string,
 		iconComponent: PropTypes.object,
+		localizeUrl: PropTypes.bool,
 	};
 
 	render() {
@@ -34,7 +36,15 @@ class ExternalLink extends Component {
 		} );
 
 		const props = {
-			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName', 'iconComponent' ),
+			...omit(
+				this.props,
+				'icon',
+				'iconSize',
+				'showIconFirst',
+				'iconClassName',
+				'iconComponent',
+				'localizeUrl'
+			),
 			className: classes,
 			rel: 'external',
 		};
@@ -47,7 +57,7 @@ class ExternalLink extends Component {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
 
-		if ( props.href ) {
+		if ( props.href && props.localizeUrl ) {
 			props.href = localizeUrl( props.href );
 		}
 

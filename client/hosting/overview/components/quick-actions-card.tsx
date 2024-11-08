@@ -8,6 +8,8 @@ import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
@@ -18,17 +20,31 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
 	onClick?: () => void;
+	commandName?: string;
 	icon: ReactNode;
 	href?: string;
 	text: string;
 }
-export const Action: FC< ActionProps > = ( { icon, href, text, onClick } ) => {
+export const Action: FC< ActionProps > = ( { icon, href, text, commandName, onClick } ) => {
 	const isDisabled = ! href && ! onClick;
+	const dispatch = useDispatch();
+	const clickAction = () => {
+		if ( commandName ) {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_navigate', {
+					command: commandName,
+				} )
+			);
+		}
+
+		onClick?.();
+	};
+
 	return (
 		<li className="hosting-overview__action">
 			<Button
 				className="hosting-overview__action-button"
-				onClick={ onClick }
+				onClick={ clickAction }
 				plain
 				href={ href }
 				disabled={ isDisabled }
@@ -95,6 +111,7 @@ const QuickActionsCard: FC = () => {
 					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
 					href={ adminUrl }
 					text={ adminLabel }
+					commandName="openSiteDashboard"
 				/>
 				<Action
 					icon={
@@ -102,24 +119,33 @@ const QuickActionsCard: FC = () => {
 					}
 					href={ siteEditorUrl }
 					text={ translate( 'Edit site' ) }
+					commandName="openSiteEditor"
 				/>
-				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
+				<Action
+					icon={ <WriteIcon /> }
+					href={ editorUrl }
+					text={ translate( 'Write post' ) }
+					commandName="addNewPost"
+				/>
 				<Action
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
 					}
 					href={ themeInstallUrl }
 					text={ translate( 'Change theme' ) }
+					commandName="installTheme"
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
 					href={ pluginInstallUrl }
 					text={ translate( 'Install plugins' ) }
+					commandName="installPlugin"
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
+					commandName="openJetpackStats"
 				/>
 			</ul>
 		</HostingCard>

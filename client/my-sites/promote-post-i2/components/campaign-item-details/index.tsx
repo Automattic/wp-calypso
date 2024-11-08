@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import './style.scss';
-import { Badge, Button, Dialog } from '@automattic/components';
+import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button as WPButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +25,7 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
+	canPromoteAgainCampaign,
 	formatAmount,
 	getAdvertisingDashboardPath,
 	getCampaignActiveDays,
@@ -391,7 +392,7 @@ export default function CampaignItemDetails( props: Props ) {
 				<div>
 					<div className="campaign-item-breadcrumb">
 						{ ! isLoading ? (
-							<WPButton
+							<Button
 								className="campaign-item-details-back-button"
 								onClick={ () =>
 									page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
@@ -401,7 +402,7 @@ export default function CampaignItemDetails( props: Props ) {
 							>
 								<Icon icon={ chevronLeft } size={ 16 } />
 								{ translate( 'Go Back' ) }
-							</WPButton>
+							</Button>
 						) : (
 							<FlexibleSkeleton />
 						) }
@@ -448,35 +449,14 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-item-details__support-buttons">
 							{ ! isLoading && status ? (
 								<>
-									<Button
-										className="contact-support-button"
-										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-										target="_blank"
-									>
-										{ icon }
-										<span className="contact-support-button-text">
-											{ translate( 'Contact Support' ) }
-										</span>
-									</Button>
-
-									{ ! canCancelCampaign( status ) && (
-										<WPButton
+									{ canPromoteAgainCampaign( status ) && (
+										<Button
 											variant="primary"
 											className="promote-again-button"
 											disabled={ ! isLoadingBillingSummary && paymentBlocked }
 											onClick={ onClickPromote }
 										>
 											{ translate( 'Promote Again' ) }
-										</WPButton>
-									) }
-
-									{ canCancelCampaign( status ) && (
-										<Button
-											scary
-											className="cancel-campaign-button"
-											onClick={ () => setShowDeleteDialog( true ) }
-										>
-											{ cancelCampaignButtonText }
 										</Button>
 									) }
 								</>
@@ -976,6 +956,13 @@ export default function CampaignItemDetails( props: Props ) {
 						) : (
 							[]
 						) }
+						<div className="campaign-item-details__powered-by desktop">
+							{ isWooStore ? (
+								<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
+							) : (
+								<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
+							) }
+						</div>
 					</div>
 					<div className="campaign-item-details__preview">
 						<div className="campaign-item-details__preview-container">
@@ -1004,32 +991,6 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
-							<div className="campaign-item-details__support-buttons-mobile">
-								{ ! isLoading && status ? (
-									<>
-										<Button
-											className="contact-support-button"
-											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-											target="_blank"
-										>
-											{ icon }
-											{ translate( 'Contact Support' ) }
-										</Button>
-
-										{ canCancelCampaign( status ) && (
-											<Button
-												scary
-												className="cancel-campaign-button"
-												onClick={ () => setShowDeleteDialog( true ) }
-											>
-												{ cancelCampaignButtonText }
-											</Button>
-										) }
-									</>
-								) : (
-									<FlexibleSkeleton />
-								) }
-							</div>
 							<div className="campaign-item-details__support-articles-wrapper">
 								<div className="campaign-item-details__support-heading">
 									{ translate( 'Support articles' ) }
@@ -1050,13 +1011,35 @@ export default function CampaignItemDetails( props: Props ) {
 									{ translate( 'View documentation' ) }
 									{ getExternalLinkIcon() }
 								</InlineSupportLink>
-								<div className="campaign-item-details__powered-by">
-									{ isWooStore ? (
-										<span>{ translate( 'Woo Blaze - Powered by Jetpack' ) }</span>
-									) : (
-										<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
+							</div>
+
+							<Button
+								className="contact-support-button"
+								href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+								target="_blank"
+							>
+								{ icon }
+								{ translate( 'Get support' ) }
+							</Button>
+
+							{ ! isLoading && status && (
+								<>
+									{ canCancelCampaign( status ) && (
+										<Button
+											className="cancel-campaign-button"
+											onClick={ () => setShowDeleteDialog( true ) }
+										>
+											{ cancelCampaignButtonText }
+										</Button>
 									) }
-								</div>
+								</>
+							) }
+							<div className="campaign-item-details__powered-by mobile">
+								{ isWooStore ? (
+									<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
+								) : (
+									<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
+								) }
 							</div>
 						</div>
 					</div>

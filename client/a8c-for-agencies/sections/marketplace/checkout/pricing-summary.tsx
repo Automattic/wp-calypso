@@ -35,6 +35,7 @@ export default function PricingSummary( {
 
 	// Agency checkout is when the user is not purchasing automated referrals and not a client
 	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;
+
 	const showOriginalPrice = isAgencyCheckout && totalCost !== actualCost;
 
 	return (

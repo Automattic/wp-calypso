@@ -425,6 +425,7 @@ export const CheckoutStep = ( {
 	stepId,
 	className,
 	isCompleteCallback,
+	canEditStep = true,
 	editButtonText,
 	editButtonAriaLabel,
 	nextStepButtonText,
@@ -487,6 +488,7 @@ export const CheckoutStep = ( {
 			validatingButtonAriaLabel={ validatingButtonAriaLabel || __( 'Please wait…' ) }
 			isStepActive={ isStepActive }
 			isStepComplete={ isStepComplete }
+			canEditStep={ canEditStep }
 			stepNumber={ stepNumber }
 			stepId={ stepId }
 			titleContent={ titleContent }
@@ -724,6 +726,7 @@ export function CheckoutStepBody( {
 	validatingButtonAriaLabel,
 	isStepActive,
 	isStepComplete,
+	canEditStep,
 	className,
 	stepNumber,
 	stepId,
@@ -756,6 +759,7 @@ export function CheckoutStepBody( {
 					title={ titleContent }
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
+					canEditStep={ canEditStep }
 					onEdit={
 						formStatus === FormStatus.READY && isStepComplete && goToThisStep && ! isStepActive
 							? goToThisStep
@@ -812,6 +816,7 @@ interface CheckoutStepBodyProps {
 	nextStepButtonAriaLabel?: string;
 	isStepActive: boolean;
 	isStepComplete: boolean;
+	canEditStep?: boolean;
 	className?: string;
 	stepNumber?: number;
 	stepId: string;
@@ -834,6 +839,7 @@ CheckoutStepBody.propTypes = {
 	nextStepButtonAriaLabel: PropTypes.string,
 	isStepActive: PropTypes.bool.isRequired,
 	isStepComplete: PropTypes.bool.isRequired,
+	canEditStep: PropTypes.bool,
 	className: PropTypes.string,
 	stepNumber: PropTypes.number,
 	stepId: PropTypes.string.isRequired,
@@ -911,6 +917,7 @@ function CheckoutStepHeader( {
 	title,
 	isActive,
 	isComplete,
+	canEditStep,
 	onEdit,
 	editButtonText,
 	editButtonAriaLabel,
@@ -921,12 +928,13 @@ function CheckoutStepHeader( {
 	title: ReactNode;
 	isActive?: boolean;
 	isComplete?: boolean;
+	canEditStep?: boolean;
 	onEdit?: () => void;
 	editButtonText?: string;
 	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
-	const shouldShowEditButton = !! onEdit;
+	const shouldShowEditButton = canEditStep && !! onEdit;
 
 	return (
 		<StepHeader

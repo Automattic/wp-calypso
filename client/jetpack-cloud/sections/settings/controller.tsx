@@ -4,6 +4,7 @@ import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import BackupRetentionManagement from 'calypso/components/backup-retention-management';
 import DocumentHead from 'calypso/components/data/document-head';
 import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch';
+import BackupScheduleSetting from 'calypso/components/jetpack/backup-schedule-setting';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import JetpackStagingSitesManagement from 'calypso/components/jetpack-staging-sites-management';
@@ -75,6 +76,7 @@ export const advancedCredentials: Callback = ( context, next ) => {
 				falseComponent={ null }
 				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
 			/>
+			{ config.isEnabled( 'jetpack/backup-schedule-setting' ) ? <BackupScheduleSetting /> : null }
 		</Main>
 	);
 

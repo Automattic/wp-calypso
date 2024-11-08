@@ -2,17 +2,17 @@ import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Button, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
+import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -27,7 +27,7 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<HostingCard className="hosting-features__card" title={ title }>
+	<HostingCard inGrid className="hosting-features__card" title={ title }>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
 			components: {
@@ -41,6 +41,7 @@ const HostingFeatures = () => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
+	const redirectToParam = searchParams.get( 'redirect_to' );
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
@@ -59,31 +60,13 @@ const HostingFeatures = () => {
 
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
-		siteId || undefined
-	);
-	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
-	// we also look at `siteTransferData.status`
-	const isTransferInProgress =
+	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
+		refetchIntervalInBackground: true,
+	} );
+
+	const shouldRenderActivatingCopy =
 		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
 		! isPlanExpired;
-
-	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-
-		const interval = setInterval( () => {
-			if ( siteTransferData?.status !== transferStates.COMPLETED ) {
-				refetchSiteTransferData();
-			} else {
-				clearInterval( interval );
-				dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-			}
-		}, 3000 );
-
-		return () => clearInterval( interval );
-	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
@@ -136,7 +119,9 @@ const HostingFeatures = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
-			redirect_to: redirectUrl,
+			redirect_to: addQueryArgs( redirectToParam ?? redirectUrl, {
+				hosting_features: 'activated',
+			} ),
 			feature: FEATURE_SFTP,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
@@ -187,7 +172,7 @@ const HostingFeatures = () => {
 	let title;
 	let description;
 	let buttons;
-	if ( isTransferInProgress ) {
+	if ( shouldRenderActivatingCopy ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			"The hosting features will appear here automatically when they're ready!",
@@ -200,9 +185,7 @@ const HostingFeatures = () => {
 		description = activateDescription;
 		buttons = (
 			<>
-				<Button
-					variant="primary"
-					className="hosting-features__button"
+				<HostingHeroButton
 					onClick={ () => {
 						if ( showActivationButton ) {
 							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
@@ -211,7 +194,7 @@ const HostingFeatures = () => {
 					} }
 				>
 					{ translate( 'Activate now' ) }
-				</Button>
+				</HostingHeroButton>
 
 				<Dialog
 					additionalClassNames="plugin-details-cta__dialog-content"
@@ -235,36 +218,35 @@ const HostingFeatures = () => {
 		title = unlockTitle;
 		description = unlockDescription;
 		buttons = (
-			<Button
-				variant="primary"
-				className="hosting-features__button"
+			<HostingHeroButton
 				href={ upgradeLink }
 				onClick={ () =>
 					dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
 				}
 			>
 				{ translate( 'Upgrade now' ) }
-			</Button>
+			</HostingHeroButton>
 		);
 	}
 
 	return (
 		<div className="hosting-features">
-			<div className="hosting-features__hero">
-				{ isTransferInProgress && <Spinner className="hosting-features__content-spinner" /> }
+			<HostingHero>
+				{ shouldRenderActivatingCopy && <Spinner className="hosting-features__content-spinner" /> }
 				<h1>{ title }</h1>
 				<p>{ description }</p>
 				{ buttons }
-			</div>
-			<div className="hosting-features__cards">
+			</HostingHero>
+			<HostingCardGrid>
 				{ promoCards.map( ( card ) => (
 					<PromoCard
+						key={ card.title }
 						title={ card.title }
 						text={ card.text }
 						supportContext={ card.supportContext }
 					/>
 				) ) }
-			</div>
+			</HostingCardGrid>
 		</div>
 	);
 };

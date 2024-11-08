@@ -1,16 +1,31 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { Flow, ProvidedDependencies } from './internals/types';
+
+const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
+	const isDomainsStep = currentStepSlug === 'domains';
+	const isPlansStepWithQuery =
+		currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' );
+
+	if ( isDomainsStep || isPlansStepWithQuery ) {
+		const { pathname, search } = window.location;
+		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
+		window.history.replaceState( {}, document.title, newURL );
+	}
+};
 
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
@@ -43,30 +58,29 @@ const onboarding: Flow = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem, setSiteUrl } =
-			useDispatch( ONBOARD_STORE );
+		const {
+			setDomain,
+			setDomainCartItem,
+			setDomainCartItems,
+			setPlanCartItem,
+			setSiteUrl,
+			setSignupDomainOrigin,
+		} = useDispatch( ONBOARD_STORE );
 
-		const { planCartItem } = useSelect(
+		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
 		);
 
-		const clearUseMyDomainsQueryParams = () => {
-			if (
-				currentStepSlug === 'domains' ||
-				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
-			) {
-				window.history.replaceState( {}, document.title, window.location.pathname );
-			}
-		};
-
-		clearUseMyDomainsQueryParams();
-
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
+		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
+
+		clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
@@ -75,32 +89,75 @@ const onboarding: Flow = {
 					setDomain( providedDependencies.suggestion );
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+						currentQueryArgs.step = 'domain-input';
+
 						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = 'use-my-domain?step=domain-input';
-						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
-							useMyDomainURL = addQueryArgs( useMyDomainURL, {
-								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
-									?.lastQuery,
-							} );
+						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
+
+						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
+							?.lastQuery;
+
+						if ( lastQueryParam !== undefined ) {
+							currentQueryArgs.initialQuery = lastQueryParam;
+							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
+
+						setUseMyDomainTracksEventProps( {
+							site_url: providedDependencies.siteUrl,
+							signup_domain_origin: signupDomainOrigin,
+							domain_item: providedDependencies.domainItem,
+						} );
 						return navigate( useMyDomainURL );
 					}
 
 					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
+					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
-						return navigate(
-							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`
-						);
+						setUseMyDomainTracksEventProps( {
+							...useMyDomainTracksEventProps,
+							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+							site_url: providedDependencies.domain,
+						} );
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
+							step: providedDependencies.mode,
+							initialQuery: providedDependencies.domain,
+						} );
+						return navigate( destination );
 					}
+
+					// We trigger the event here, because we skip it in the domains step if
+					// the user chose use-my-domain
+					recordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+						flow: this.name,
+						intent: '',
+						step: 'domains',
+						providedDependencies: useMyDomainTracksEventProps,
+					} );
+
 					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
 					setPlanCartItem( cartItems?.[ 0 ] ?? null );
+					if ( ! cartItems?.[ 0 ] ) {
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
+					}
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );
 				}
@@ -138,11 +195,12 @@ const onboarding: Flow = {
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
 					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
-						const url = addQueryArgs( 'use-my-domain', {
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
 							step: 'domain-input',
 							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
 						} );
-						return navigate( url );
+						return navigate( destination );
 					}
 
 					if ( window.location.search ) {

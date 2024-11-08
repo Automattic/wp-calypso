@@ -10,6 +10,7 @@ export function createMockSite( {
 		is_redirect: false,
 		unmapped_url: '',
 	},
+	site_migration,
 }: {
 	ID?: number;
 	name?: string;
@@ -21,6 +22,9 @@ export function createMockSite( {
 	options?: {
 		is_redirect?: boolean;
 		unmapped_url?: string;
+	};
+	site_migration?: {
+		migration_status?: string;
 	};
 } = {} ) {
 	const slug = `site${ ID }.io`;
@@ -35,5 +39,6 @@ export function createMockSite( {
 		is_deleted,
 		visible,
 		options,
+		site_migration,
 	};
 }

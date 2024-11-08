@@ -1,20 +1,13 @@
-export default function ReaderSearchIcon() {
+export default function ReaderSearchIcon( { viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-search"
-			fill="none"
-			height="20"
-			viewBox="0 0 20 20"
-			width="20"
+			height="24"
+			viewBox={ viewBox }
+			width="24"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<g stroke="#a2aab2" strokeLinejoin="round" strokeWidth="1.5">
-				<path
-					d="m11.5 14.5c-3.31371 0-6-2.6863-6-6 0-3.31371 2.68629-6 6-6 3.3137 0 6 2.68629 6 6 0 3.3137-2.6863 6-6 6z"
-					strokeLinecap="round"
-				/>
-				<path d="m2.5 17.5 4.625-4.625" strokeLinecap="square" />
-			</g>
+			<path d="M13 5c-3.3 0-6 2.7-6 6 0 1.4.5 2.7 1.3 3.7l-3.8 3.8 1.1 1.1 3.8-3.8c1 .8 2.3 1.3 3.7 1.3 3.3 0 6-2.7 6-6S16.3 5 13 5zm0 10.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5z"></path>
 		</svg>
 	);
 }

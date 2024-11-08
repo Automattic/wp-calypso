@@ -1,7 +1,7 @@
-@import "./styles/theme.scss";
-@import "./styles/layout.scss";
-@import "./styles/wp-admin.scss";
-@import "./styles/typography.scss";
+@import "./styles/theme";
+@import "./styles/layout";
+@import "./styles/wp-admin";
+@import "./styles/typography";
 
 .wp-admin {
 	.card {
@@ -80,10 +80,12 @@
 	}
 
 	// Use base component styling of `@automattic/components/Button`
+	.inner-notice-container .banner__action a.button,
 	.button.jetpack-emerald-button {
 		padding: 0.5em 1.5em;
 		font-size: 1rem;
 		line-height: 1.375;
+		align-content: center;
 
 		&:focus {
 			box-shadow: none;
@@ -111,9 +113,21 @@
 			}
 		}
 	}
+
+	.inner-notice-container .banner__action a.button.is-compact {
+		font-size: 12px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 1;
+		padding: 7px;
+	}
 }
 
-// Hide Odyssey Stats preview JITM inside odyssey.
-.jitm-card.jitm-banner.odyssey-stats-preview {
+.inner-notice-container .card.banner.is-jetpack {
+	border-left: 3px solid var(--color-jetpack);
+}
+
+// Force any JITM from Jetpack to be hidden and it is removed in https://github.com/Automattic/jetpack/pull/39714.
+// We manage our own CTAs, including JITM, across Stats pages.
+.jetpack-jitm-message,
+.jitm-card.jitm-banner {
 	display: none;
 }

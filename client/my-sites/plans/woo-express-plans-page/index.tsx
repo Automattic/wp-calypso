@@ -11,20 +11,19 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
-import { Plans, type SiteDetails } from '@automattic/data-stores';
+import { Plans, type SiteDetails, SitePlan } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { WooExpressPlans } from '../ecommerce-trial/wooexpress-plans';
 
 import './style.scss';
 
 interface WooExpressPlansPageProps {
-	currentPlan: SitePlanData;
+	currentPlan: SitePlan;
 	interval?: 'monthly' | 'yearly';
 	selectedSite: SiteDetails;
 	showIntervalToggle: boolean;
@@ -74,8 +73,8 @@ const WooExpressPlansPage = ( {
 	const planInterval = isAnnualSubscription ? 'yearly' : 'monthly';
 
 	const goToSubscriptionPage = () => {
-		if ( selectedSite?.slug && currentPlan?.id ) {
-			page( `/purchases/subscriptions/${ selectedSite.slug }/${ currentPlan.id }` );
+		if ( selectedSite?.slug && currentPlan?.purchaseId ) {
+			page( `/purchases/subscriptions/${ selectedSite.slug }/${ currentPlan.purchaseId }` );
 		}
 	};
 
@@ -89,9 +88,11 @@ const WooExpressPlansPage = ( {
 					args: {
 						monthlyPrice: formatCurrency( annualPlanMonthlyPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 						annualPrice: formatCurrency( annualPlanPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 					},
 					components: {
@@ -106,6 +107,7 @@ const WooExpressPlansPage = ( {
 					args: {
 						monthlyPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 					},
 					components: {

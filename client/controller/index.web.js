@@ -201,7 +201,9 @@ export function redirectLoggedOutToSignup( context, next ) {
  */
 export function redirectMyJetpack( context, next ) {
 	const state = context.store.getState();
-	const product = getProductSlugFromContext( context );
+	const productSlug = getProductSlugFromContext( context );
+	// Strip the slug's quantity suffix, for upgradable quantity based products.
+	const product = productSlug.replace( /:-q-\d+/, '' );
 	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
 
 	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
@@ -286,8 +288,10 @@ export function redirectIfJetpackNonAtomic( context, next ) {
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+	const isDisconnectedJetpackAndNotAtomic =
+		! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack;
 
-	if ( isJetpackNonAtomic ) {
+	if ( isJetpackNonAtomic || isDisconnectedJetpackAndNotAtomic ) {
 		return redirectToDashboard( context );
 	}
 

@@ -8,6 +8,7 @@ const DESKTOP_EARTH_LOOP_URL = 'https://wpcom.files.wordpress.com/2023/09/earth-
 type LoaderProps = {
 	isMobile: boolean;
 	loadingText: TranslateResult;
+	hideVideoContainer?: boolean;
 };
 
 const FullPageContainer = styled.div< { isMobile: boolean } >`
@@ -51,7 +52,7 @@ export const VideoPreload = memo( ( { isMobile }: { isMobile: boolean } ) =>
 	)
 );
 
-function VideoLoader( { isMobile, loadingText }: LoaderProps ) {
+function VideoLoader( { isMobile, loadingText, hideVideoContainer }: LoaderProps ) {
 	const videoObject = useRef< HTMLVideoElement | null >( null );
 
 	const FullPageVideoContainer = styled( FullPageContainer )< { isMobile: boolean } >`
@@ -65,8 +66,9 @@ function VideoLoader( { isMobile, loadingText }: LoaderProps ) {
 			opacity: 25%;
 		}
 	`;
-	return (
-		<FullPageVideoContainer isMobile={ isMobile }>
+
+	const videoElement = (
+		<>
 			{ isMobile ? (
 				<video
 					ref={ videoObject }
@@ -92,7 +94,15 @@ function VideoLoader( { isMobile, loadingText }: LoaderProps ) {
 					loop
 				/>
 			) }
-			<h1 className="wp-brand-font">{ loadingText }</h1>
+		</>
+	);
+
+	return hideVideoContainer ? (
+		videoElement
+	) : (
+		<FullPageVideoContainer isMobile={ isMobile }>
+			{ videoElement }
+			{ !! loadingText && <h1 className="wp-brand-font">{ loadingText }</h1> }
 		</FullPageVideoContainer>
 	);
 }

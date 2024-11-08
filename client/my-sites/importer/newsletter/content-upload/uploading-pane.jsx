@@ -265,7 +265,7 @@ export class UploadingPane extends PureComponent {
 						onClick={ skipNextStep }
 						disabled={ skipButtonDisabled }
 					>
-						Skip for now
+						{ this.props.translate( 'Skip for now' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>

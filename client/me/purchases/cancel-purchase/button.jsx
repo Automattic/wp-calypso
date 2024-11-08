@@ -275,42 +275,51 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
-		let text;
-		let onClick;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			onClick = this.handleCancelPurchaseClick;
+		const isValidForRefund =
+			isDomainRegistration( purchase ) ||
+			isSubscription( purchase ) ||
+			isOneTimePurchase( purchase );
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+		const isValidForCancel = isDomainRegistration( purchase ) && isRefundable( purchase );
+
+		const onClick = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) && isValidForRefund ) {
+				return this.handleCancelPurchaseClick;
 			}
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
+			if ( ! hasAmountAvailableToRefund( purchase ) && isValidForCancel ) {
+				return this.handleCancelPurchaseClick;
 			}
 
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+			if ( ! hasAmountAvailableToRefund( purchase ) && isSubscription( purchase ) ) {
+				return this.handleCancelPurchaseClick;
 			}
-		} else {
-			onClick = () => {
-				this.cancelPurchase( purchase );
-			};
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
+			return () => this.cancelPurchase( purchase );
+		} )();
 
-				// Domain in AGP bought with domain credits should be canceled immediately
-				if ( isRefundable( purchase ) ) {
-					onClick = this.handleCancelPurchaseClick;
+		const text = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) ) {
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Cancel domain and refund' );
+				}
+				if ( isSubscription( purchase ) ) {
+					return translate( 'Cancel subscription' );
+				}
+				if ( isOneTimePurchase( purchase ) ) {
+					return translate( 'Cancel and refund' );
 				}
 			}
 
-			if ( isSubscription( purchase ) ) {
-				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel Subscription' );
+			if ( isDomainRegistration( purchase ) ) {
+				return translate( 'Cancel domain' );
 			}
-		}
+
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription' );
+			}
+		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
@@ -322,7 +331,7 @@ class CancelPurchaseButton extends Component {
 		const planName = getName( purchase );
 
 		return (
-			<div>
+			<div className="cancel-purchase__button-wrapper">
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }

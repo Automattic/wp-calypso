@@ -52,6 +52,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			domain.aftermarketAuction
 		);
 	};
@@ -112,7 +113,7 @@ const RegisteredDomainDetails = ( {
 			domain.pendingRegistrationAtRegistry ||
 			domain.pendingRegistration ||
 			! domain.currentUserCanManage ||
-			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);
@@ -129,11 +130,6 @@ const RegisteredDomainDetails = ( {
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				customLabel={
-					! domain.expired || domain.isRenewable
-						? translate( 'Renew now' )
-						: translate( 'Redeem now' )
-				}
 				disabled={ isLoadingPurchase }
 			/>
 		);

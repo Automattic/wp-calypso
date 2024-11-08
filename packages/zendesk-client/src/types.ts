@@ -11,7 +11,7 @@ export type APIFetchOptions = {
 };
 
 export type UserFields = {
-	messaging_ai_chat_id?: string;
+	messaging_ai_chat_id?: string | number;
 	messaging_initial_message?: string;
 	messaging_plan?: string;
 	messaging_source?: string;

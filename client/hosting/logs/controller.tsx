@@ -1,7 +1,7 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { SiteLogs } from 'calypso/sites/tools/logs/components/site-logs';
+import { SiteLogsHeader } from 'calypso/sites/tools/logs/components/site-logs-header';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteLogs } from './components/site-logs';
-import { SiteLogsHeader } from './components/site-logs-header';
 import type { Context as PageJSContext, Callback } from '@automattic/calypso-router';
 
 export function phpErrorLogs( context: PageJSContext, next: () => void ) {

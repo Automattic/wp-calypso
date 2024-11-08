@@ -43,6 +43,10 @@ $blueberry-color: #3858e9;
 		// !important needed here to override unrelated styles from "steps-repository/importer-migrate-message/style.scss"
 		// that are affecting this component in some instances
 		margin-bottom: 0 !important;
+
+		.badge--info-blue {
+			background-color: $blueberry-color;
+		}
 	}
 
 	.flow-question__description {

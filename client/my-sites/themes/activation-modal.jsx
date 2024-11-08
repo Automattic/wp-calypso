@@ -51,7 +51,7 @@ export class ActivationModal extends Component {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 					theme: newThemeId,
 				} );
-				return this.props.activateTheme( newThemeId, siteId, source, false );
+				return this.props.activateTheme( newThemeId, siteId, { source } );
 			} else if ( 'dismiss' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 					action: 'escape',

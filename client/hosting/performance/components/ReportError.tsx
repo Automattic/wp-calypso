@@ -7,7 +7,7 @@ export const ReportError = ( { onRetestClick }: { onRetestClick(): void } ) => {
 
 	return (
 		<NoticeBanner
-			level="error"
+			level="warning"
 			title={ translate( 'Results not available' ) }
 			hideCloseButton
 			actions={ [

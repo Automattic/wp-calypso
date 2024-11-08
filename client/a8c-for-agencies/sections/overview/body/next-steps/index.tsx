@@ -1,5 +1,6 @@
 import { Card, CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem } from '@automattic/launchpad';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import useOnboardingTours from 'calypso/a8c-for-agencies/hooks/use-onboarding-tours';
 
@@ -8,24 +9,30 @@ import './style.scss';
 export default function OverviewBodyNextSteps() {
 	const translate = useTranslate();
 
-	const tasks = useOnboardingTours();
+	const { tasks, completedTasks, isCompleted, isDismissed, dismiss } = useOnboardingTours();
 
-	const numberOfTasks = tasks.length;
-	const completedTasks = tasks.filter( ( task ) => task.completed ).length;
-
-	const isCompleted = completedTasks === numberOfTasks;
+	if ( isDismissed ) {
+		return null;
+	}
 
 	return (
 		<Card>
 			<div className="next-steps">
 				<div className="next-steps__header">
 					<h2>{ isCompleted ? translate( '🎉 Congratulations!' ) : translate( 'Next Steps' ) }</h2>
-					<CircularProgressBar
-						size={ 32 }
-						enableDesktopScaling
-						numberOfSteps={ numberOfTasks }
-						currentStep={ completedTasks }
-					/>
+
+					{ isCompleted ? (
+						<Button variant="tertiary" onClick={ dismiss }>
+							{ translate( 'Dismiss' ) }
+						</Button>
+					) : (
+						<CircularProgressBar
+							size={ 32 }
+							enableDesktopScaling
+							numberOfSteps={ tasks.length }
+							currentStep={ completedTasks.length }
+						/>
+					) }
 				</div>
 				{ isCompleted && (
 					<p>
@@ -34,6 +41,7 @@ export default function OverviewBodyNextSteps() {
 						) }
 					</p>
 				) }
+
 				<Checklist>
 					{ tasks.map( ( task ) => (
 						<ChecklistItem task={ task } key={ task.id } />

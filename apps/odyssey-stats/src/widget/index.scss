@@ -1,7 +1,7 @@
-@import "../styles/widget-base.scss";
-@import "../styles/scoped-theme-for-widget.scss";
-@import "../styles/wp-admin.scss";
-@import "../styles/typography.scss";
+@import "../styles/widget-base";
+@import "../styles/scoped-theme-for-widget";
+@import "../styles/wp-admin";
+@import "../styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
 $segmentedControlItemBorderRadius: 4px;

@@ -82,13 +82,14 @@ export const formatMastodonDate = new Intl.DateTimeFormat( 'en-US', {
 } ).format;
 
 export type Platform =
-	| 'twitter'
+	| 'bluesky'
 	| 'facebook'
-	| 'linkedin'
 	| 'instagram'
+	| 'linkedin'
 	| 'mastodon'
 	| 'nextdoor'
-	| 'threads';
+	| 'threads'
+	| 'twitter';
 
 type PreviewTextOptions = {
 	platform: Platform;
@@ -107,6 +108,7 @@ export const hashtagUrlMap: Record< Platform, string > = {
 	mastodon: 'https://%2$s/tags/%1$s',
 	nextdoor: 'https://nextdoor.com/hashtag/%1$s',
 	threads: 'https://www.threads.net/search?q=%1$s&serp_type=tags',
+	bluesky: 'https://bsky.app/hashtag/%1$s',
 };
 
 /**
@@ -130,7 +132,7 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 	result = result.replaceAll( /(?:\s*[\n\r]){2,}/g, '\n\n' );
 
 	if ( maxChars && result.length > maxChars ) {
-		result = result.substring( 0, maxChars );
+		result = hardTruncation( maxChars )( result );
 	}
 
 	if ( maxLines ) {

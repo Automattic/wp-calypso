@@ -14,7 +14,7 @@ import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
-import LoadStatsPage from './stats-redirect/load-stats-page';
+import StatsPageLoader from './stats-page-loader';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -141,14 +141,14 @@ export function overview( context, next ) {
 
 	context.primary =
 		siteId !== null ? (
-			<LoadStatsPage>
+			<StatsPageLoader>
 				<AsyncLoad
 					require="calypso/my-sites/stats/overview"
 					placeholder={ PageLoading }
 					period={ activeFilter.period }
 					path={ context.pathname }
 				/>
-			</LoadStatsPage>
+			</StatsPageLoader>
 		) : (
 			<AsyncLoad
 				require="calypso/my-sites/stats/overview"
@@ -185,6 +185,7 @@ export function site( context, next ) {
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
+	// startDate is the date the user clicked on the chart, which is basically the start of the period, i.e. Monday of weeks, 1st of months, or the selected date.
 	const date = isValidStartDate
 		? moment( queryOptions.startDate ).locale( 'en' )
 		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
@@ -202,7 +203,7 @@ export function site( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<StatsSite
 				path={ context.pathname }
 				date={ date }
@@ -210,7 +211,7 @@ export function site( context, next ) {
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
@@ -286,7 +287,7 @@ export function summary( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/summary"
 				placeholder={ PageLoading }
@@ -297,7 +298,7 @@ export function summary( context, next ) {
 				period={ period }
 				{ ...extraProps }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
@@ -315,7 +316,7 @@ export function post( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/stats-post-detail"
 				placeholder={ PageLoading }
@@ -323,7 +324,7 @@ export function post( context, next ) {
 				postId={ postId }
 				context={ context }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
@@ -353,7 +354,7 @@ export function follows( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/comment-follows"
 				placeholder={ PageLoading }
@@ -364,7 +365,7 @@ export function follows( context, next ) {
 				domain={ siteDomain }
 				siteId={ siteId }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();

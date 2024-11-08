@@ -1,6 +1,6 @@
 # Plugins List
 
-This component is used to represent a list `PluginItem`s, with a `PluginsListHeader` serving as a title for the whole bunch.
+This component is used to represent a list `PluginItem`s using the DataViews component.
 
 ## How to use
 

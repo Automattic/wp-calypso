@@ -22,6 +22,7 @@ const noop = () => {};
 export function generateSteps( {
 	addPlanToCart = noop,
 	addWithThemePlanToCart = noop,
+	addWithPluginPlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -107,7 +108,8 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideEcommercePlan: true,
+				intent: 'plans-site-selected-legacy',
+				deemphasizeFreePlan: true,
 			},
 		},
 
@@ -127,12 +129,14 @@ export function generateSteps( {
 				'marketing_price_group',
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -151,12 +155,14 @@ export function generateSteps( {
 				'marketing_price_group',
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -177,6 +183,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 				'oauth2_client_id',
 				'oauth2_redirect',
@@ -186,6 +193,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 				'oauth2_client_id',
 				'oauth2_redirect',
@@ -305,7 +313,7 @@ export function generateSteps( {
 
 		'plans-business-with-plugin': {
 			stepName: 'plans-business-with-plugin',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addWithPluginPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
@@ -517,9 +525,10 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 		},
 
 		'oauth2-name': {
@@ -533,9 +542,10 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,

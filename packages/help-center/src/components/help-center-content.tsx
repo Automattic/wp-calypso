@@ -6,7 +6,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import clsx from 'clsx';
 import React, { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
@@ -17,9 +16,10 @@ import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldRenderEmailOption } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
+import { HelpCenterChat } from './help-center-chat';
+import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
-import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -46,7 +46,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	currentRoute,
 } ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ hasBackButtonHeader, setHasBackButtonHeader ] = useState( false );
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
@@ -57,7 +56,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const { data, isLoading: isLoadingEligibility } = useSupportStatus();
 
-	const isUserEligible = data?.eligibility.is_user_eligible ?? false;
+	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
 	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus || isLoadingEligibility;
 
 	useEffect( () => {
@@ -67,9 +66,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			section: sectionName,
 			force_site_id: true,
 			location: 'help-center',
-			is_free_user: ! isUserEligible,
+			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
-	}, [ location, sectionName, isUserEligible ] );
+	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	const { navigateToRoute, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -97,20 +96,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ location ] );
 
-	// The back button header requires extra styling to the container.
-	useEffect( () => {
-		setHasBackButtonHeader(
-			Boolean( containerRef.current?.querySelector( '.help-center-back-button__header' ) )
-		);
-	}, [ location ] );
-
 	return (
-		<CardBody
-			ref={ containerRef }
-			className={ clsx( 'help-center__container-content', {
-				'has-back-button-header': hasBackButtonHeader,
-			} ) }
-		>
+		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route
@@ -126,13 +113,24 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterOdie
+							<HelpCenterChat
 								isLoadingEnvironment={ isLoadingEnvironment }
-								isUserEligible={ isUserEligible }
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 								searchTerm={ searchTerm }
 							/>
 						}
 					/>
+					<Route
+						path="/odie/:id"
+						element={
+							<HelpCenterChat
+								isLoadingEnvironment={ isLoadingEnvironment }
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								searchTerm={ searchTerm }
+							/>
+						}
+					/>
+					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
 				</Routes>
 			</Wrapper>
 		</CardBody>

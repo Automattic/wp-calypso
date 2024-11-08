@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,8 +7,6 @@ export class FilterResetNotice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool.isRequired,
 		lastFilters: PropTypes.shape( {
-			includeDashes: PropTypes.bool,
-			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.arrayOf( PropTypes.string ),
 		} ).isRequired,
@@ -17,9 +14,8 @@ export class FilterResetNotice extends Component {
 	};
 
 	hasActiveFilters() {
-		const { lastFilters: { includeDashes, exactSldMatchesOnly, maxCharacters, tlds = [] } = {} } =
-			this.props;
-		return includeDashes || exactSldMatchesOnly || maxCharacters !== '' || tlds.length > 0;
+		const { lastFilters: { exactSldMatchesOnly, tlds = [] } = {} } = this.props;
+		return exactSldMatchesOnly || tlds.length > 0;
 	}
 
 	hasTooFewSuggestions() {
@@ -33,7 +29,6 @@ export class FilterResetNotice extends Component {
 
 	render() {
 		return (
-			config.isEnabled( 'domains/kracken-ui/pagination' ) &&
 			this.hasActiveFilters() &&
 			this.hasTooFewSuggestions() && (
 				<Card

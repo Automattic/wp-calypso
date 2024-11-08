@@ -1,4 +1,4 @@
-import { category, Icon, brush } from '@wordpress/icons';
+import { category, Icon, brush, globe } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 
@@ -45,7 +45,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			  ]
 			: [] ),
 		{
-			icon: 'dashicons-admin-site-alt3',
+			icon: <Icon icon={ globe } size={ 24 } className="sidebar__menu-icon svg_all-domains" />,
 			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),

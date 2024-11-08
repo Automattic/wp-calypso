@@ -1,12 +1,15 @@
+import { createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
+import StripeLogoSvg from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
+import SuccessNotice from './success-notice';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -32,18 +35,27 @@ export default function ConnectStripe( {
 	selectedSite,
 	siteSlug,
 }: SubscribersStepProps ) {
+	const { __ } = useI18n();
 	if ( cardData?.connect_url === undefined ) {
 		return null;
 	}
 
 	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
+	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
 
 	return (
 		<>
-			<h2>Do you have paid subscribers?</h2>
+			<SuccessNotice allEmailsCount={ allEmailsCount } />
+			<h2>{ __( 'Do you have paid subscribers?' ) } </h2>
 			<p>
-				To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
-				connecting the <strong>same</strong> Stripe account you use with Substack.
+				{ createInterpolateElement(
+					__(
+						"To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're connecting the <strong>same</strong> Stripe account you use with Substack."
+					),
+					{
+						strong: <strong />,
+					}
+				) }
 			</p>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
@@ -52,8 +64,13 @@ export default function ConnectStripe( {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe' );
 					} }
+					ariaLabel={ __( 'Connect Stripe' ) }
 				>
-					Connect <img src={ StripeLogo } className="stripe-logo" width="48px" alt="Stripe logo" />
+					{ createInterpolateElement( __( 'Connect <StripeLogo />' ), {
+						StripeLogo: (
+							<img src={ StripeLogoSvg } className="stripe-logo" width="48" alt="Stripe" />
+						),
+					} ) }
 				</ImporterActionButton>
 				<StartImportButton
 					engine={ engine }
@@ -63,7 +80,7 @@ export default function ConnectStripe( {
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
-					label="Continue free subscriber import"
+					label={ __( 'I have only free subscribers' ) }
 				/>
 			</ImporterActionButtonContainer>
 		</>

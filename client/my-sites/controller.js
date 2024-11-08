@@ -50,6 +50,7 @@ import {
 	getNewTitanAccountPath,
 	getPurchaseNewEmailAccountPath,
 	getTitanControlPanelRedirectPath,
+	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -237,6 +238,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		getNewTitanAccountPath,
 		getPurchaseNewEmailAccountPath,
 		getTitanControlPanelRedirectPath,
+		getTitanSetUpMailboxPath,
 	];
 
 	// Builds a list of paths using a site slug plus any additional parameter that may be required

@@ -3,6 +3,7 @@ import i18n, { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,7 +20,9 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
@@ -55,10 +58,13 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
-		const { locale } = this.props;
+		const { locale, teams } = this.props;
+		const isAutomattician = isAutomatticTeamMember( teams );
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
+				<QueryReaderTeams />
+
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
@@ -235,6 +241,28 @@ class NotificationSubscriptions extends Component {
 							</FormLabel>
 						</FormFieldset>
 
+						{ isAutomattician && (
+							<FormFieldset>
+								<FormLegend>
+									Disable auto-follow P2 posts upon commenting (Automatticians only)
+								</FormLegend>
+								<FormLabel>
+									<FormCheckbox
+										checked={ this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
+										disabled={ this.props.getDisabledState() }
+										id="p2_disable_autofollow_on_comment"
+										name="p2_disable_autofollow_on_comment"
+										onChange={ this.props.toggleSetting }
+										onClick={ this.handleCheckboxEvent( 'Disable auto-follow P2 Upon Comment' ) }
+									/>
+									<span>
+										Don't automatically subscribe to notifications for a P2 post whenever you leave
+										a comment on it.
+									</span>
+								</FormLabel>
+							</FormFieldset>
+						) }
+
 						<FormButton
 							isSubmitting={ this.props.isUpdatingUserSettings }
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
@@ -251,8 +279,16 @@ class NotificationSubscriptions extends Component {
 	}
 }
 
+const mapStateToProps = ( state ) => ( {
+	teams: getReaderTeams( state ),
+} );
+
+const mapDispatchToProps = {
+	recordGoogleEvent,
+};
+
 export default compose(
-	connect( null, { recordGoogleEvent } ),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocalizedMoment,

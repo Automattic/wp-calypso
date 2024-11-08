@@ -1,11 +1,16 @@
 .select-card-checkbox__container {
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--color-surface-backdrop);
+	background: var(--color-surface-backdrop);
 	border-radius: 4px;
-	padding: 17px 25px;
+	padding: 16px;
 	font-size: 0.875rem;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
+
+	.components-checkbox-control {
+		--checkbox-input-margin: 16px;
+	}
 
 	.select-card-checkbox__label {
 		pointer-events: none;
@@ -14,17 +19,16 @@
 		align-items: center;
 	}
 
-	&.is-checked {
-		border: 2px solid #0675c4;
-		background: #f9fbfd;
-		padding: 16px 24px;
+	&:hover {
+		border-color: transparent;
 	}
 
-	.components-base-control__field {
-		margin-bottom: 0;
+	&:hover,
+	&:has(:checked) {
+		background: var(--color-accent-5);
 	}
 
-	.components-checkbox-control__input[type="checkbox"] {
-		border-color: #a7aaad;
+	&:has(:checked) {
+		border: 1px solid var(--color-accent);
 	}
 }

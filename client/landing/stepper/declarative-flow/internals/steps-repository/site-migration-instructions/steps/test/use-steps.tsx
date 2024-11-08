@@ -135,52 +135,54 @@ describe( 'useSteps', () => {
 		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
-	it( 'Should have a link to migrate guru plugin on the source site on the first step', () => {
+	it( 'Should have a link to migrate plugin on the source site on the first step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		const link = getByRole( 'link', {
-			name: /Migrate Guru plugin/,
+			name: /Migrate to WordPress.com plugin/,
 		} );
 
 		expect( link.getAttribute( 'href' ) ).toEqual(
-			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
+			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`
 		);
 	} );
 
-	it( 'Should have generic link to migrate guru plugin on the first step when the from is empty', () => {
+	it( 'Should have generic link to migrate plugin on the first step when the from is empty', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
 
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		const link = getByRole( 'link', {
-			name: /Migrate Guru plugin/,
+			name: /Migrate to WordPress.com plugin/,
 		} );
 
-		expect( link.getAttribute( 'href' ) ).toEqual( 'https://wordpress.org/plugins/migrate-guru/' );
+		expect( link.getAttribute( 'href' ) ).toEqual(
+			'https://wordpress.org/plugins/wpcom-migration/'
+		);
 	} );
 
-	it( 'Should have a link to migrate guru screen on the source site on the second step', () => {
+	it( 'Should have a link to the migrate plugin screen on the source site on the second step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
 		const link = getByRole( 'link', {
-			name: /Migrate Guru plugin screen on your source site/,
+			name: /Migrate to WordPress.com plugin screen on your source site/,
 		} );
 
 		expect( link.getAttribute( 'href' ) ).toEqual(
-			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=migrateguru`
+			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=wpcom-migration`
 		);
 	} );
 
-	it( 'Should have a text about migrate guru screen on the source site on the second step when the from is empty', () => {
+	it( 'Should have a text about the migrate plugin screen on the source site on the second step when the from is empty', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
 
 		const { getByText } = render( result.current.steps[ 1 ].expandable?.content );
 
-		const text = getByText( 'Migrate Guru plugin screen on your source site' );
+		const text = getByText( 'Migrate to WordPress.com plugin screen on your source site' );
 
 		expect( text.tagName ).toEqual( 'STRONG' );
 	} );

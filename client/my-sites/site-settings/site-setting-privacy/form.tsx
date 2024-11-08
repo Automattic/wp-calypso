@@ -1,6 +1,5 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -238,7 +237,7 @@ const SiteSettingPrivacyForm = ( {
 									disabled={ isRequestingSettings || discourageSearchChecked }
 									onClick={ () => recordEvent( 'Clicked Partnership Radio Button' ) }
 								/>
-								<span>
+								<span style={ { overflowWrap: 'anywhere' } }>
 									{ translate( 'Prevent third-party sharing for %(siteName)s', {
 										args: {
 											siteName: siteSlug || '',
@@ -253,10 +252,7 @@ const SiteSettingPrivacyForm = ( {
 												a: (
 													<InlineSupportLink
 														showIcon={ false }
-														supportLink={ localizeUrl(
-															'https://wordpress.com/support/privacy-settings/#public'
-														) }
-														showSupportModal={ false }
+														supportContext="privacy-prevent-third-party-sharing"
 													/>
 												),
 											},

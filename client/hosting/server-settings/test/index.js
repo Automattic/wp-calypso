@@ -133,7 +133,7 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 
 const stringsForAdvancedFeatureCards = [ 'Database access', 'Web server settings' ];
 
-const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear cache' ];
+const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
 
 const stringsForAllAtomicFeatureCards = [
 	...stringsForAdvancedFeatureCards,

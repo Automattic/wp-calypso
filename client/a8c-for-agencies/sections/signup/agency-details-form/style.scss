@@ -59,4 +59,21 @@
 		font-size: 1rem;
 	}
 
+	.company-details-form__phone-input {
+		display: flex;
+		flex-direction: column;
+
+		> * {
+			flex-grow: 1;
+		}
+
+		@include break-small {
+			flex-direction: row;
+			gap: 16px;
+		}
+
+		.form-label {
+			display: none;
+		}
+	}
 }

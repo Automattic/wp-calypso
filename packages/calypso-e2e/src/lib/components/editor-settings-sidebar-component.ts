@@ -400,9 +400,9 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		// TODO: Once WordPress/gutenberg#60632 is everywhere, remove the alternation.
-		await editorParent.getByRole( 'button', { name: /Change (link|URL):/ } ).click();
-		await editorParent.getByRole( 'textbox', { name: /^(Link|Permalink)$/ } ).fill( slug );
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the alternation.
+		await editorParent.getByRole( 'button', { name: /Change link:/ } ).click();
+		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }

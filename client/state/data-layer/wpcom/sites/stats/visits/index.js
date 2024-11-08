@@ -43,7 +43,8 @@ export const fetch = ( action ) => {
 	];
 };
 
-export const onSuccess = ( { siteId, period }, data ) => receiveChartCounts( siteId, period, data );
+export const onSuccess = ( { siteId, period, date, quantity }, data ) =>
+	receiveChartCounts( siteId, date, period, quantity, data );
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/visits/index.js', {
 	[ STATS_CHART_COUNTS_REQUEST ]: [

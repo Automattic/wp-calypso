@@ -142,11 +142,15 @@ export const getSiteStatsNormalizedData = treeSelect(
 		getSite( state, siteId ),
 	],
 	( [ siteStats, site ], siteId, statType, query ) => {
+		let normalizedStats = siteStats;
 		const normalizer = normalizers[ statType ];
-		if ( typeof normalizer !== 'function' ) {
-			return siteStats;
+		if ( typeof normalizer === 'function' ) {
+			normalizedStats = normalizer( normalizedStats, query, siteId, site );
 		}
-		return normalizer( siteStats, query, siteId, site );
+		// TODO: no need to slice the data here when the endpoint support `max` query param.
+		return normalizedStats?.length && query?.max
+			? normalizedStats.slice( 0, query.max )
+			: normalizedStats;
 	},
 	{
 		getCacheKey: ( siteId, statType, query ) =>

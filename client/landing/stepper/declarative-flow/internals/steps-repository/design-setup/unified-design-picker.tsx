@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -44,7 +45,7 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
@@ -130,7 +131,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
 
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
@@ -381,7 +382,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// It should be removed when this property is ready on useQueryThemes
 	useQueryTheme( 'wpcom', selectedDesignThemeId );
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
-	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
+	const screenshot = theme?.screenshots?.[ 0 ] ?? theme?.screenshot;
+	const fullLengthScreenshot = screenshot?.replace( /\?.*/, '' );
 
 	const marketplaceThemeProducts =
 		useSelector( ( state ) =>
@@ -570,13 +572,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
+			// @TODO Cleanup once the test phase is over.
+			const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' ) ? 'personal' : 'premium';
+
 			goToCheckout( {
 				flowName: flow,
 				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: 'premium',
+				plan: upgradeToPlan,
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -628,12 +633,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					return Promise.resolve()
 						.then( () =>
 							reduxDispatch(
-								activateOrInstallThenActivate(
-									themeId ?? '',
-									site?.ID ?? 0,
-									'assembler',
-									false
-								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+								activateOrInstallThenActivate( themeId ?? '', site?.ID ?? 0, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)
 						)
 						.then( ( activeThemeStylesheet: string ) =>

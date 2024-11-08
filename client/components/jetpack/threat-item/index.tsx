@@ -20,8 +20,9 @@ import './style.scss';
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
-	onFixThreat?: ( threat: Threat ) => void;
+	onFixThreat?: () => void;
 	onIgnoreThreat?: () => void;
+	onUnignoreThreat?: () => void;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
@@ -39,6 +40,7 @@ const ThreatItem: React.FC< Props > = ( {
 	isPlaceholder,
 	onFixThreat,
 	onIgnoreThreat,
+	onUnignoreThreat,
 	isFixing,
 } ) => {
 	const dispatch = useDispatch();
@@ -55,7 +57,7 @@ const ThreatItem: React.FC< Props > = ( {
 			// entire ThreatItem element as well
 			const onClickHandler = ( e: React.MouseEvent< HTMLElement > ) => {
 				e.stopPropagation();
-				onFixThreat && onFixThreat( threat );
+				onFixThreat && onFixThreat();
 			};
 			return (
 				<Button
@@ -68,7 +70,7 @@ const ThreatItem: React.FC< Props > = ( {
 				</Button>
 			);
 		},
-		[ isFixing, onFixThreat, threat ]
+		[ isFixing, onFixThreat ]
 	);
 
 	const getFix = React.useCallback( (): TranslateResult | undefined => {
@@ -130,7 +132,7 @@ const ThreatItem: React.FC< Props > = ( {
 	}, [ threat ] );
 
 	const isFixable = React.useMemo(
-		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),
+		() => threat.fixable && threat.status === 'current',
 		[ threat ]
 	);
 
@@ -191,6 +193,16 @@ const ThreatItem: React.FC< Props > = ( {
 						disabled={ isFixing }
 					>
 						{ translate( 'Ignore threat' ) }
+					</Button>
+				) }
+				{ threat.status === 'ignored' && (
+					<Button
+						scary
+						className="threat-item__unignore-button"
+						onClick={ onUnignoreThreat }
+						disabled={ isFixing }
+					>
+						{ translate( 'Unignore threat' ) }
 					</Button>
 				) }
 				{ ! threat.fixable && 'current' === threat.status && (

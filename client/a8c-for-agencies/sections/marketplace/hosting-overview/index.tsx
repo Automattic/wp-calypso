@@ -11,7 +11,7 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
+import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -78,10 +78,9 @@ function Hosting( { section }: Props ) {
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
-			compact
 		>
 			<LayoutTop>
-				<PendingPaymentNotification />
+				<PressableUsageLimitNotice />
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [

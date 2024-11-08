@@ -1,5 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
@@ -24,6 +24,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
+import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import photon from 'photon';
@@ -55,12 +56,10 @@ import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
@@ -103,6 +102,8 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
+	isActivatingTheme as getIsActivatingTheme,
+	isInstallingTheme as getIsInstallingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -302,7 +303,6 @@ class ThemeSheet extends Component {
 	 * Its assigned to state to guarantee the initial state will be the same for SSR
 	 */
 	state = {
-		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
@@ -322,23 +322,22 @@ class ThemeSheet extends Component {
 			themeStartActivationSync( siteId, themeId );
 		}
 
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { disabledButton: this.isLoading() } );
-
 		// Subscribe to breakpoint changes to switch to a compact breadcrumb on mobile.
 		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
 			this.setState( { isWide } );
 		} );
+
+		this.maybeAutoActivate();
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.themeId !== prevProps.themeId ) {
+		const { themeId, defaultOption } = this.props;
+		if ( themeId !== prevProps.themeId ) {
 			this.scrollToTop();
 		}
 
-		if ( this.state.disabledButton !== this.isLoading() ) {
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { disabledButton: this.isLoading() } );
+		if ( defaultOption?.key !== prevProps.defaultOption?.key ) {
+			this.maybeAutoActivate();
 		}
 	}
 
@@ -346,21 +345,32 @@ class ThemeSheet extends Component {
 		this.unsubscribeBreakpoint();
 	}
 
+	maybeAutoActivate() {
+		const { defaultOption } = this.props;
+		if ( defaultOption?.key === 'activate' && hasQueryArg( window.location.href, 'activating' ) ) {
+			this.onButtonClick();
+		}
+	}
+
 	isLoaded = () => {
 		// We need to make sure the theme object has been loaded including full details
 		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
-		// component used by the theme showcase's list view). However, these extra details
-		// aren't present for non-wpcom themes.
-		if ( ! this.props.isWpcomTheme ) {
-			return !! this.props.name;
-		}
-		return !! this.props.screenshots;
+		// component used by the theme showcase's list view).
+		return !! this.props.name;
 	};
 
 	isLoading = () => {
-		const { isLoading, isThemeActivationSyncStarted } = this.props;
+		return this.props.isLoading || this.isRequestingActivatingTheme();
+	};
+
+	isRequestingActivatingTheme = () => {
+		const { isThemeActivationSyncStarted, isActivatingTheme, isInstallingTheme } = this.props;
 		const { isAtomicTransferCompleted } = this.state;
-		return isLoading || ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted );
+		return (
+			( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) ||
+			isActivatingTheme ||
+			isInstallingTheme
+		);
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
@@ -487,17 +497,8 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	getFullLengthScreenshot() {
-		if ( this.isLoaded() ) {
-			// Results are being returned with photon params like `?w=…`. This makes the photon
-			// module abort and return null. Strip query string.
-			return this.props.screenshots[ 0 ]?.replace( /\?.*/, '' );
-		}
-		return null;
-	}
-
 	previewAction = ( event, type, source ) => {
-		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
+		const { demoUrl, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -515,7 +516,7 @@ class ThemeSheet extends Component {
 		} );
 
 		// The embed live demo works only for WP.com themes
-		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+		if ( this.isWpcomOnlyTheme() ) {
 			const { preview } = this.props.options;
 			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
@@ -553,6 +554,10 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 &&
 			isNonDefaultStyleVariation
 		);
+	}
+
+	isWpcomOnlyTheme() {
+		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
 	}
 
 	isThemeCurrentOne() {
@@ -599,17 +604,27 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
+	getFullLengthScreenshot() {
+		// Results are being returned with photon params like `?w=…`. This makes the photon
+		// module abort and return null. Strip query string.
+		return this.props.screenshots?.[ 0 ]?.replace( /\?.*/, '' ) ?? null;
+	}
+
+	/**
+	 * Render screenshot for either non-wpcom or externally-managed themes.
+	 */
 	renderScreenshot() {
 		const {
-			isWpcomTheme,
 			name: themeName,
 			demoUrl,
 			translate,
+			screenshot,
 			isExternallyManagedTheme,
 		} = this.props;
-		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+
+		// Partner themes have their fullpage screenshot in the first position of screenshots.
+		const screenshotFull = isExternallyManagedTheme ? this.getFullLengthScreenshot() : screenshot;
 		const width = 735;
-		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
 		// Photon may return null, allow fallbacks
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
@@ -639,7 +654,7 @@ class ThemeSheet extends Component {
 					{ this.shouldRenderPreviewButton() && (
 						<Button className="theme__sheet-preview-demo-site">
 							{ translate( 'Preview demo site' ) }
-							{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+							<Icon icon={ external } size={ 16 } />
 						</Button>
 					) }
 					{ img }
@@ -657,7 +672,7 @@ class ThemeSheet extends Component {
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
-						{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+						<Icon icon={ external } size={ 16 } />
 					</Button>
 				) }
 				{ img }
@@ -665,6 +680,9 @@ class ThemeSheet extends Component {
 		);
 	}
 
+	/**
+	 * Render web preview for wpcom themes.
+	 */
 	renderWebPreview = () => {
 		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
@@ -1199,7 +1217,8 @@ class ThemeSheet extends Component {
 					this.onButtonClick( event );
 				} }
 				primary
-				disabled={ this.state.disabledButton }
+				busy={ this.isRequestingActivatingTheme() }
+				disabled={ this.isLoading() }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -1212,6 +1231,7 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				primary
+				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
 				onClick={ this.onUnlockStyleButtonClick }
 			>
@@ -1257,7 +1277,9 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' ) ? 'personal' : 'premium';
+
+		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1334,11 +1356,8 @@ class ThemeSheet extends Component {
 			retired,
 			translate,
 			isLoggedIn,
-			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
-			isWpcomTheme,
 			successNotice: showSuccessNotice,
-			styleVariations,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -1435,7 +1454,6 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
 				<NavigationHeader
 					navigationItems={ navigationItems }
@@ -1453,9 +1471,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isWpcomTheme && ! isExternallyManagedTheme && styleVariations?.length
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
+							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
@@ -1669,6 +1685,8 @@ export default connect(
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 			isLivePreviewSupported,
 			themeType: getThemeType( state, themeId ),
+			isActivatingTheme: getIsActivatingTheme( state, siteId ),
+			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
 		};
 	},
 	{
@@ -1677,6 +1695,5 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
-		setProductToBeInstalled: productToBeInstalled,
 	}
 )( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );

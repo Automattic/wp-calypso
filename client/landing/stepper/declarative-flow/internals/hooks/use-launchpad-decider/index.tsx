@@ -1,6 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { ExperimentAssignment } from '@automattic/explat-client';
-import { useExperiment } from 'calypso/lib/explat';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
@@ -21,8 +20,8 @@ interface SiteProps {
 }
 
 export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
-	const showCustomerHome = shouldShowCustomerHome( isLoadingExperiment, experimentAssignment );
+	// placeholder field for the experiment assignment
+	const showCustomerHome = false;
 
 	let launchpadStateOnSkip: null | 'skipped' = null;
 	if ( showCustomerHome ) {

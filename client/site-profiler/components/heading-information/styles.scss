@@ -56,4 +56,14 @@
 			top: -3px !important;
 		}
 	}
+
+	@media (max-width: $break-mobile) {
+		.cta-wrapper {
+			flex-direction: column;
+
+			.button-action {
+				justify-content: center;
+			}
+		}
+	}
 }

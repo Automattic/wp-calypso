@@ -375,8 +375,6 @@ class Layout extends Component {
 					 */
 					activateKeyboard();
 					this.props.selectNote( this.state.selectedNote );
-				} else if ( this.props.selectedNoteId ) {
-					this.props.unselectNote();
 				}
 				break;
 			case KEY_DOWN:

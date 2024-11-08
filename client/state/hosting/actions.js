@@ -17,6 +17,7 @@ import {
 	HOSTING_STATIC_FILE_404_SET_REQUEST,
 	HOSTING_WP_VERSION_REQUEST,
 	HOSTING_WP_VERSION_SET_REQUEST,
+	HOSTING_CLEAR_EDGE_CACHE_SUCCESS,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
@@ -106,6 +107,11 @@ export const clearWordPressCache = ( siteId, reason ) => ( {
 			requestKey: `${ HOSTING_CLEAR_CACHE_REQUEST }-${ siteId }`,
 		},
 	},
+} );
+
+export const clearEdgeCacheSuccess = ( siteId ) => ( {
+	type: HOSTING_CLEAR_EDGE_CACHE_SUCCESS,
+	siteId,
 } );
 
 export const getAtomicGeoAffinity = ( siteId ) => ( {

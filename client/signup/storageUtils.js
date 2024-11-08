@@ -41,6 +41,21 @@ export const setSignupCompleteSlug = ( value ) =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
 	);
+export const getSignupCompleteSiteID = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_id' ) );
+export const setSignupCompleteSiteID = ( value ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_site_id', value )
+	);
+export const setDomainsDependencies = ( dependencies ) => {
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage.setItem( 'wpcom_domains_dependencies', JSON.stringify( dependencies ) )
+	);
+};
+export const getDomainsDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_domains_dependencies' ) );
+export const clearDomainsDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.removeItem( 'wpcom_domains_dependencies' ) );
 export const wasSignupCheckoutPageUnloaded = () =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' )
@@ -104,3 +119,16 @@ export const getSignupCompleteElapsedTime = () => {
 
 	return Math.floor( performance.now() - startTime );
 };
+
+export const setSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( `wpcom_signup_is_new_user_${ username }`, true )
+	);
+export const getSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.getItem( `wpcom_signup_is_new_user_${ username }` )
+	);
+export const clearSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.removeItem( `wpcom_signup_is_new_user_${ username }` )
+	);

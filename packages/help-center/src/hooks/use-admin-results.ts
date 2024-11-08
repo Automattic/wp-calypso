@@ -1,6 +1,7 @@
 import { generateAdminSections } from '@automattic/data-stores';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useCustomizerUrls } from './use-customizer-url';
+import { useSiteEditorUrls } from './use-site-editor-urls';
 import { useSiteSlug } from './use-site-slug';
 
 /**
@@ -64,16 +65,20 @@ export function filterListBySearchTerm(
 }
 
 export function useAdminResults( searchTerm: string ) {
+	const { site } = useHelpCenterContext();
 	const siteSlug = useSiteSlug();
 	const customizerUrls = useCustomizerUrls();
+	const siteEditorUrls = useSiteEditorUrls();
 	const { googleMailServiceFamily, locale, onboardingUrl } = useHelpCenterContext();
 
 	if ( siteSlug ) {
 		const sections = generateAdminSections(
 			siteSlug,
 			customizerUrls,
+			siteEditorUrls,
 			googleMailServiceFamily,
-			onboardingUrl
+			onboardingUrl,
+			site?.jetpack
 		);
 		const filteredSections = filterListBySearchTerm( searchTerm, sections, 4, locale );
 

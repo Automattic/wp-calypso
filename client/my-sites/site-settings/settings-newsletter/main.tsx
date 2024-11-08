@@ -20,6 +20,7 @@ import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { PaidNewsletterSection } from './PaidNewsletterSection';
 import { ReplyToSetting } from './ReplyToSetting';
 import { SenderNameSetting } from './SenderNameSetting';
+import { SubscribeFloatingButtonSetting } from './SubscribeFloatingButtonSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
 import { SubscribeNavigationSetting } from './SubscribeNavigationSetting';
@@ -47,6 +48,7 @@ type Fields = {
 	jetpack_subscriptions_from_name?: string;
 	sm_enabled?: boolean;
 	jetpack_subscribe_overlay_enabled?: boolean;
+	jetpack_subscribe_floating_button_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
 	jetpack_subscriptions_subscribe_navigation_enabled?: boolean;
 	jetpack_subscriptions_login_navigation_enabled?: boolean;
@@ -72,6 +74,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		jetpack_subscriptions_from_name,
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
+		jetpack_subscribe_floating_button_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
@@ -92,6 +95,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		jetpack_subscriptions_from_name: jetpack_subscriptions_from_name || '',
 		sm_enabled: !! sm_enabled,
 		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
+		jetpack_subscribe_floating_button_enabled: !! jetpack_subscribe_floating_button_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_subscribe_navigation_enabled:
@@ -136,6 +140,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		subscription_options,
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
+		jetpack_subscribe_floating_button_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
@@ -208,6 +213,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ jetpack_subscribe_overlay_enabled }
+				/>
+				<SubscribeFloatingButtonSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscribe_floating_button_enabled }
 				/>
 				<FormLabel>{ translate( 'Navigation' ) }</FormLabel>
 				<SubscribeNavigationSetting

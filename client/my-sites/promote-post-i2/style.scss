@@ -177,12 +177,18 @@ body.is-section-promote-post-i2 {
 					}
 				}
 
+				.promote-post-i2__divider {
+					width: 100%;
+					border-top: 1px solid rgba(0, 0, 0, 0.05);
+					margin-top: 32px;
+				}
 				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
 				.campaigns-list__table,
 				.posts-list__loading-container,
+				.campaigns-total-stats__container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
 					margin: 0 64px;
@@ -395,6 +401,17 @@ body.is-section-promote-post-i2 {
 		border-color: #ddd !important;
 		border-radius: 4px;
 	}
+
+	.promote-post-i2__warnings-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding-bottom: 32px;
+
+		.notice {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .promote-post-i2__loading-container {
@@ -488,6 +505,7 @@ body.is-section-promote-post-i2 {
 				.promote-post-i2__debt-notifier,
 				.posts-list__table,
 				.posts-list__loading-container,
+				.campaigns-total-stats__container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
 					margin: 0 16px !important;
@@ -599,6 +617,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 	.promote-post-i2__table,
 	.promote-post-i2__aux-wrapper,
 	.promote-post-i2__debt-notifier,
+	.campaigns-total-stats__container,
 	.posts-list-banner__container .posts-list-banner__content,
 	.posts-list-woo-banner__container .posts-list-banner__content {
 		margin-left: auto;

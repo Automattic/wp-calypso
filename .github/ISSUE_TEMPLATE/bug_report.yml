@@ -1,6 +1,7 @@
 name: Bug Report
 description: Helps us improve our product!
-labels: "Needs triage, [Type] Bug"
+labels: ["Needs triage", "[Type] Bug"]
+type: 'Bug'
 body:
   - type: markdown
     attributes:
@@ -93,7 +94,7 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ## Optional Information
 
         The following section is optional.

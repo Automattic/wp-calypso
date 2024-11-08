@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
 
-import './style.scss';
-
 // This component will be extended in the future to support other types of links.
 // For now, it only supports prompt:// links. But in the future might be more protocols like:
 // - navigate:// to navigate within calypso
@@ -15,10 +13,12 @@ const CustomALink = ( {
 	href,
 	children,
 	inline = true,
+	target = '_self',
 }: {
 	href?: string;
 	children?: React.ReactNode;
 	inline?: boolean;
+	target?: string;
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
 	const [ transformedHref, setTransformedHref ] = useState( '' );
@@ -43,7 +43,7 @@ const CustomALink = ( {
 			<a
 				className="odie-sources-link"
 				href={ transformedHref }
-				target="_self"
+				target={ target }
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {

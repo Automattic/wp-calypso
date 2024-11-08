@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.backup-schedule-setting {
+	box-sizing: border-box;
+	margin: auto;
+	max-width: 720px;
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include break-medium {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	h3 {
+		font-size: $font-body;
+	}
+
+    p {
+        font-size: $font-body-small;
+    }
+
+	.components-select-control {
+		width: fit-content;
+	}
+}

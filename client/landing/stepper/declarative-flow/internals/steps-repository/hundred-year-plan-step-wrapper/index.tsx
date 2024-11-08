@@ -1,8 +1,12 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { Gridicon, WordPressLogo, FoldableCard } from '@automattic/components';
+import { Gridicon, WordPressWordmark, FoldableCard } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import { StepContainer } from '@automattic/onboarding';
+import {
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	StepContainer,
+} from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -24,6 +28,7 @@ type Props = {
 	stepContent: ReactElement;
 	justifyStepContent?: string;
 	formattedHeader?: ReactElement;
+	hideInfoColumn?: boolean;
 };
 
 const FlexWrapper = styled.div< { justifyStepContent?: string } >`
@@ -156,6 +161,11 @@ const StyledFoldableCard = styled( FoldableCard )`
 		.foldable-card__header {
 			.foldable-card__main {
 				justify-content: flex-end;
+				margin-right: 0;
+				max-width: calc( 100% - 20px );
+			}
+			.foldable-card__action {
+				width: 32px;
 			}
 			.gridicons-chevron-down {
 				fill: var( --studio-gray-0 );
@@ -173,12 +183,17 @@ const StyledFoldableCard = styled( FoldableCard )`
 
 const WordPressLogoWrapper = styled.div`
 	position: absolute;
-	top: 24px;
-	left: 24px;
+	top: 20px;
+	left: 0;
 `;
 
-function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobile: boolean } > ) {
-	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+function InfoColumnWrapper( {
+	isMobile,
+	flowName,
+	children,
+}: PropsWithChildren< { isMobile: boolean; flowName: string } > ) {
+	const planTitle =
+		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
 
 	return isMobile ? (
 		<StyledFoldableCard smooth hideSummary header={ planTitle }>
@@ -189,7 +204,15 @@ function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobil
 	);
 }
 
-function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: () => void } ) {
+function InfoColumn( {
+	isMobile,
+	openModal,
+	flowName,
+}: {
+	isMobile: boolean;
+	openModal: () => void;
+	flowName: string;
+} ) {
 	const translate = useTranslate();
 
 	const productPrice = useSelect(
@@ -200,14 +223,20 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
 		[]
 	);
-	const displayCost =
+	let displayCost =
 		productPrice &&
 		currencyCode &&
 		formatCurrency( productPrice, currencyCode, {
 			stripZeros: true,
 		} );
 
-	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+	// TODO: Replace hardcoded value by 100-eyar domain product price when we have it
+	if ( flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
+		displayCost = '$2,000';
+	}
+
+	const planTitle =
+		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
 
 	return (
 		<>
@@ -218,7 +247,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 				isMobile={ isMobile }
 			>
 				<WordPressLogoWrapper>
-					<WordPressLogo size={ 24 } />
+					<WordPressWordmark size={ { width: 200, height: 25 } } />
 				</WordPressLogoWrapper>
 
 				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
@@ -250,7 +279,8 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 }
 
 function HundredYearPlanStepWrapper( props: Props ) {
-	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent } = props;
+	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent, hideInfoColumn } =
+		props;
 
 	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
@@ -273,10 +303,12 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						className={ `hundred-year-plan-step-wrapper ${ stepName }` }
 						isMobile={ isMobile }
 					>
-						{ isOpen && <InfoModal onClose={ closeModal } /> }
-						<InfoColumnWrapper isMobile={ isMobile }>
-							<InfoColumn isMobile={ isMobile } openModal={ openModal } />
-						</InfoColumnWrapper>
+						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
+						{ ! hideInfoColumn && (
+							<InfoColumnWrapper isMobile={ isMobile } flowName={ flowName }>
+								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
+							</InfoColumnWrapper>
+						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
 							<div className="step-container__header">{ formattedHeader }</div>
 							{ stepContent }

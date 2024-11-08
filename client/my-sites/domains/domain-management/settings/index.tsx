@@ -762,8 +762,12 @@ const Settings = ( {
 				{ ! domain.isGravatarDomain && (
 					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
-				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
-				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isHundredYearDomain && (
+					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
+				{ ! domain.isHundredYearDomain && (
+					<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
 		);

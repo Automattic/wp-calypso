@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
-	calculateMonthlyPriceForPlan,
 	getPlan,
 	Plan,
 	PLAN_BUSINESS,
@@ -116,6 +115,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					args: {
 						discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 						originalPrice: formatCurrency( originalFullPrice, currencyCode, {
 							isSmallestUnit: true,
@@ -142,9 +142,9 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 				}
 		  );
 
-	const badgeText = hasEnTranslation( 'One time offer' )
-		? translate( 'One time offer' )
-		: translate( 'One time discount' );
+	const badgeText = hasEnTranslation( '50% off your first year' )
+		? translate( '50% off your first year' )
+		: translate( 'One time offer' );
 
 	return (
 		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>
@@ -159,9 +159,10 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					isSmallestUnit
 				/>
 				<PlanPrice
-					className="improt__upgrade-plan-price-discounted"
+					className="import__upgrade-plan-price-discounted"
 					rawPrice={ introOfferMonthlyPrice }
 					currencyCode={ currencyCode }
+					isSmallestUnit
 				/>
 			</div>
 		</UpgradePlanPrice>
@@ -169,7 +170,6 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 };
 
 const preparePlanPriceOfferProps = (
-	selectedPlan: string,
 	introOfferAvailable: boolean,
 	plan?: Plan,
 	pricing?: PricingMetaForGridPlan
@@ -177,10 +177,8 @@ const preparePlanPriceOfferProps = (
 	const currencyCode = pricing?.currencyCode;
 	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;
 
-	const introOfferFullPrice = pricing?.introOffer?.rawPrice ?? undefined;
-	const introOfferMonthlyPrice = introOfferFullPrice
-		? calculateMonthlyPriceForPlan( selectedPlan, introOfferFullPrice )
-		: undefined;
+	const introOfferFullPrice = pricing?.introOffer?.rawPrice.full ?? undefined;
+	const introOfferMonthlyPrice = pricing?.introOffer?.rawPrice.monthly ?? undefined;
 
 	const originalFullPrice = pricing?.originalPrice.full ?? undefined;
 
@@ -207,12 +205,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	const plan = getPlan( selectedPlan );
 
-	const planPriceOfferProps = preparePlanPriceOfferProps(
-		selectedPlan,
-		introOfferAvailable,
-		plan,
-		pricing
-	);
+	const planPriceOfferProps = preparePlanPriceOfferProps( introOfferAvailable, plan, pricing );
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 

@@ -13,7 +13,7 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
@@ -48,12 +48,14 @@ const MarketplaceThankYou = ( {
 	const [
 		pluginsSection,
 		allPluginsFetched,
+		allPluginsActivated,
 		pluginsGoBackSection,
 		pluginTitle,
 		pluginSubtitle,
 		pluginsProgressbarSteps,
 		isAtomicNeededForPlugins,
-		thankYouHeaderAction,
+		thankYouHeaderActionForPlugins,
+		isLoadedPlugins,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
 		firstTheme,
@@ -64,6 +66,8 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
+		thankYouHeaderActionForThemes,
+		isLoadedThemes,
 	] = useThemesThankYouData( themeSlugs, isOnboardingFlow, continueWithPluginBundle );
 
 	useEffect( () => {
@@ -93,7 +97,13 @@ const MarketplaceThankYou = ( {
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
 
-	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
+	const isPageReady =
+		allPluginsFetched &&
+		allPluginsActivated &&
+		allThemesFetched &&
+		isAtomicTransferCheckComplete &&
+		isLoadedPlugins &&
+		isLoadedThemes;
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -114,6 +124,9 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ isRequestingPlugins, isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
 
+	const pluginsUrl = useSelector( ( state ) => {
+		return getSiteAdminUrl( state, siteId, 'plugins.php?activate=true&plugin_status=active' );
+	} );
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
 		// We don't want to show the progress bar again when it is hidden.
@@ -121,8 +134,21 @@ const MarketplaceThankYou = ( {
 			return;
 		}
 
+		// Redirect to plugins.php if there are only plugins and no themes.
+		if ( isPageReady && pluginSlugs.length > 0 && themeSlugs.length === 0 && pluginsUrl ) {
+			window.location.href = pluginsUrl;
+			return;
+		}
+
 		setShowProgressBar( ! isPageReady );
-	}, [ setShowProgressBar, showProgressBar, isPageReady ] );
+	}, [
+		setShowProgressBar,
+		showProgressBar,
+		isPageReady,
+		pluginSlugs.length,
+		themeSlugs.length,
+		pluginsUrl,
+	] );
 
 	const { steps, additionalSteps } = useThankYouSteps( {
 		pluginSlugs,
@@ -174,7 +200,7 @@ const MarketplaceThankYou = ( {
 					<ThankYouV2
 						title={ title }
 						subtitle={ subtitle }
-						headerButtons={ thankYouHeaderAction }
+						headerButtons={ thankYouHeaderActionForPlugins || thankYouHeaderActionForThemes }
 						products={ products }
 						footerDetails={ footerDetails }
 						showSuccessAnimation={ hasThemes }

@@ -1,6 +1,10 @@
 .wpnc__note-actions {
 	.wpnc__note-actions__buttons {
 		padding-bottom: 16px;
+
+		button:focus {
+			outline: var(--color-primary-light) solid 2px;
+		}
 	}
 
 	.wpnc__reply-box {

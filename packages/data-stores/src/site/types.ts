@@ -134,6 +134,7 @@ export interface SiteDetails {
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;
 	jetpack: boolean;
+	jetpack_connection?: boolean;
 	lang?: string;
 	launch_status: string;
 	locale: string;
@@ -273,6 +274,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_partner_bundle?: string;
 	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
@@ -618,6 +620,7 @@ export interface SourceSiteMigrationBase {
 	// Migration meta
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
+	migration_status?: string;
 }
 
 export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {

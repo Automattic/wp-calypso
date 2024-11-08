@@ -67,7 +67,6 @@ import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import DatePicker from './stats-date-picker';
-import StatsModule from './stats-module';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -85,6 +84,14 @@ const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
 	date: endOf,
+} ) );
+
+const chartRangeToQuery = memoizeLast( ( chartRange ) => ( {
+	period: 'day',
+	start_date: chartRange.chartStart,
+	date: chartRange.chartEnd,
+	summarize: 1,
+	max: 10,
 } ) );
 
 const CHART_VIEWS = {
@@ -242,7 +249,7 @@ class StatsSite extends Component {
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
 		} = this.props;
-		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -284,22 +291,28 @@ class StatsSite extends Component {
 		} else {
 			// if start date is missing let the frequency of data take over to avoid showing one bar
 			// (e.g. months defaulting to 30 days and showing one point)
-			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = moment()
+				.subtract( daysInRange - 1, 'days' )
+				.format( 'YYYY-MM-DD' );
 		}
+
+		customChartRange.daysInRange = daysInRange;
 
 		// Calculate diff between requested start and end in `priod` units.
 		// Move end point (most recent) to the end of period to account for partial periods
 		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
-		const adjustedChartEndDate =
-			period === 'day'
-				? moment( customChartRange.chartEnd )
-				: moment( customChartRange.chartEnd ).endOf( period );
-
-		let customChartQuantity = Math.ceil(
-			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+		// TODO: We need to align the start day of week from the backend.
+		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf(
+			period === 'week' ? 'isoWeek' : period
+		);
+		// TODO: We need to align the start day of week from the backend.
+		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf(
+			period === 'week' ? 'isoWeek' : period
 		);
 
-		customChartRange.daysInRange = daysInRange;
+		let customChartQuantity = Math.ceil(
+			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
+		);
 
 		// Force the default date range to be 7 days if the 30-day option is locked.
 		if ( shouldForceDefaultDateRange ) {
@@ -312,7 +325,9 @@ class StatsSite extends Component {
 			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
 		}
 
-		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+		const query = isNewDateFilteringEnabled
+			? chartRangeToQuery( customChartRange )
+			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
 		const traffic = {
@@ -333,11 +348,13 @@ class StatsSite extends Component {
 			'stats__module-list',
 			'stats__module-list--traffic',
 			'stats__module--unified',
-			'stats__flexible-grid-container',
-			{
-				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
-				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
-			}
+			'stats__flexible-grid-container'
+		);
+
+		const halfWidthModuleClasses = clsx(
+			'stats__flexible-grid-item--half',
+			'stats__flexible-grid-item--full--large',
+			'stats__flexible-grid-item--full--medium'
 		);
 
 		return (
@@ -367,119 +384,142 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<div id="jp-admin-notices"></div>
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
-				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
-				<div id="my-stats-content" className={ wrapperClass }>
-					<>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-								queryParams={ context.query }
-								pathTemplate={ pathTemplate }
-								charts={ CHARTS }
-								availableLegend={ this.getAvailableLegend() }
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateControl
-								slug={ slug }
-								dateRange={ customChartRange }
-							>
-								{ ' ' }
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-									isShort
-								/>
-							</StatsPeriodNavigation>
-						</StatsPeriodHeader>
-
-						<ChartTabs
+				{ isNewDateFilteringEnabled && (
+					<div
+						className="stats-new-date-filtering-callout"
+						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
+					>
+						<p>New date filtering enabled.</p>
+					</div>
+				) }
+				{ ! isNewDateFilteringEnabled && (
+					// @TODO: remove highlight section completely once flag is released
+					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
+				) }
+				{ isNewDateFilteringEnabled && (
+					// moves date range block into new location
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation
+							date={ date }
+							period={ period }
+							url={ `/stats/${ period }/${ slug }` }
+							queryParams={ context.query }
+							pathTemplate={ pathTemplate }
+							charts={ CHARTS }
+							availableLegend={ this.getAvailableLegend() }
 							activeTab={ getActiveTab( this.props.chartTab ) }
 							activeLegend={ this.state.activeLegend }
-							availableLegend={ this.getAvailableLegend() }
 							onChangeLegend={ this.onChangeLegend }
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ CHARTS }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.props.chartTab }
-							customQuantity={ customChartQuantity }
-							customRange={ customChartRange }
-							hideLegend
-						/>
+							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+							isWithNewDateControl
+							showArrows
+							slug={ slug }
+							dateRange={ customChartRange }
+						>
+							{ ' ' }
+							<DatePicker
+								period={ period }
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+								isShort
+							/>
+						</StatsPeriodNavigation>
+					</StatsPeriodHeader>
+				) }
+				<div id="my-stats-content" className={ wrapperClass }>
+					<>
+						{ ! isNewDateFilteringEnabled && (
+							<StatsPeriodHeader>
+								<StatsPeriodNavigation
+									date={ date }
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+									queryParams={ context.query }
+									pathTemplate={ pathTemplate }
+									charts={ CHARTS }
+									availableLegend={ this.getAvailableLegend() }
+									activeTab={ getActiveTab( this.props.chartTab ) }
+									activeLegend={ this.state.activeLegend }
+									onChangeLegend={ this.onChangeLegend }
+									isWithNewDateControl
+									showArrows
+									slug={ slug }
+									dateRange={ customChartRange }
+								>
+									{ ' ' }
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+										isShort
+									/>
+								</StatsPeriodNavigation>
+							</StatsPeriodHeader>
+						) }
+
+						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								className="is-date-filtering-enabled"
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+							/>
+						) }
+						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
+							/>
+						) }
 					</>
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className={ moduleListClasses }>
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="posts"
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopPosts"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ isNewStateEnabled && (
-							<StatsModuleTopPosts
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink
-								className={ clsx(
-									'stats__flexible-grid-item--40--once-space',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ isNewStateEnabled && (
-							<StatsModuleReferrers
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
-								className={ clsx(
-									'stats__flexible-grid-item--40--once-space',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleTopPosts
+							moduleStrings={ moduleStrings.posts }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
+						<StatsModuleReferrers
+							moduleStrings={ moduleStrings.referrers }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
 						<StatsModuleCountries
 							moduleStrings={ moduleStrings.countries }
@@ -497,22 +537,14 @@ class StatsSite extends Component {
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'utm', slug ) }
 								summary={ false }
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
 						{ supportsUTMStats && isOldJetpack && (
 							<StatsModuleUTMOverlay
 								siteId={ siteId }
-								className={ clsx(
-									'stats__flexible-grid-item--60',
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 								overlay={
 									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
@@ -523,274 +555,78 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
-						{ isNewStateEnabled && (
-							<StatsModuleClicks
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
-								className={ clsx(
-									{
-										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-										'stats__flexible-grid-item--full--large': supportsUTMStats,
-										'stats__flexible-grid-item--full--medium': supportsUTMStats,
-									},
-									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
-										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleClicks
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-								className={ clsx(
-									{
-										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-										'stats__flexible-grid-item--full--large': supportsUTMStats,
-										'stats__flexible-grid-item--full--medium': supportsUTMStats,
-									},
-									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
-										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && ! isNewStateEnabled && (
-							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className={ clsx(
-									{
-										'stats__author-views': ! supportsUTMStats,
-									},
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
-								showSummaryLink
-							/>
-						) }
-
-						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
+						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModuleAuthors
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'authors', slug ) }
-								className={ clsx(
-									{
-										'stats__author-views': ! supportsUTMStats,
-									},
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
+						{ ! isNewDateFilteringEnabled && supportsEmailStats && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'emails', slug ) }
-								className={ clsx(
-									{
-										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
-										'stats__flexible-grid-item--half':
-											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
-										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
-										'stats__flexible-grid-item--full':
-											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
-									},
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
-						{ isNewStateEnabled && (
-							<StatsModuleSearch
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
-								className={ clsx(
-									{
-										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-										'stats__flexible-grid-item--one-third--two-spaces':
-											! isJetpack && ! this.isModuleHidden( 'videos' ),
-									},
-									{
-										'stats__flexible-grid-item--full--large':
-											isJetpack && this.isModuleHidden( 'videos' ),
-									},
-									{
-										// 1/2 for all other cases to stack with Devices or empty space
-										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										// Avoid 1/3 on smaller screen if Videos is visible
-										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ ! isNewStateEnabled && (
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink
-								className={ clsx(
-									{
-										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-										'stats__flexible-grid-item--one-third--two-spaces':
-											! isJetpack && ! this.isModuleHidden( 'videos' ),
-									},
-									{
-										'stats__flexible-grid-item--full--large':
-											isJetpack && this.isModuleHidden( 'videos' ),
-									},
-									{
-										// 1/2 for all other cases to stack with Devices or empty space
-										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										// Avoid 1/3 on smaller screen if Videos is visible
-										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
+						<StatsModuleSearch
+							moduleStrings={ moduleStrings.search }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
+							className={ halfWidthModuleClasses }
+						/>
 
-						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModuleVideos
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }
 								summaryUrl={ this.getStatHref( this.props.period, 'videoplays', slug ) }
-								className={ clsx(
-									{
-										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
-										'stats__flexible-grid-item--half': isJetpack,
-									},
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-
-						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
-							<StatsModule
-								path="videoplays"
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								statType="statsVideoPlays"
-								showSummaryLink
-								className={ clsx(
-									{
-										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
-										'stats__flexible-grid-item--half': isJetpack,
-									},
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
 
 						{
 							// File downloads are not yet supported in Jetpack environment
-							isNewStateEnabled && ! isJetpack && (
+							! isJetpack && (
 								<StatsModuleDownloads
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }
 									summaryUrl={ this.getStatHref( this.props.period, 'filedownloads', slug ) }
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										},
-										{
-											'stats__flexible-grid-item--one-third--two-spaces':
-												! this.isModuleHidden( 'videos' ),
-										},
-										{
-											// Avoid 1/3 on smaller screen if Videos is visible
-											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-										},
-										'stats__flexible-grid-item--full--medium'
-									) }
+									className={ halfWidthModuleClasses }
 								/>
 							)
 						}
-						{
-							// File downloads are not yet supported in Jetpack environment
-							// TODO: Confirm the above statement.
-							! isNewStateEnabled && ! isJetpack && (
-								<StatsModule
-									path="filedownloads"
-									metricLabel={ translate( 'Downloads' ) }
-									moduleStrings={ moduleStrings.filedownloads }
-									period={ this.props.period }
-									query={ query }
-									statType="statsFileDownloads"
-									showSummaryLink
-									useShortLabel
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-										},
-										{
-											'stats__flexible-grid-item--one-third--two-spaces':
-												! this.isModuleHidden( 'videos' ),
-										},
 
-										{
-											// Avoid 1/3 on smaller screen if Videos is visible
-											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-										},
-										'stats__flexible-grid-item--full--medium'
-									) }
-								/>
-							)
-						}
 						{ supportsDevicesStats && ! isOldJetpack && (
 							<StatsModuleDevices
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
+								className={ halfWidthModuleClasses }
 							/>
 						) }
+
 						{ ! supportsDevicesStats && isOldJetpack && (
 							<StatsModuleUpgradeDevicesOverlay
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
+								className={ halfWidthModuleClasses }
 								siteId={ siteId }
 								overlay={
 									<StatsCardUpdateJetpackVersion

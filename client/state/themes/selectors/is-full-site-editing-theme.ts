@@ -1,5 +1,4 @@
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
-import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/themes/init';
@@ -20,7 +19,5 @@ export function isFullSiteEditingTheme(
 		return false;
 	}
 
-	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
-
-	return themeFeatures.includes( 'full-site-editing' );
+	return !! theme.block_theme;
 }

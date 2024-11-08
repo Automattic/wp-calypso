@@ -15,6 +15,12 @@ import './tabs.scss';
  */
 const MOBILE_PANEL_THRESHOLD = 480;
 
+/**
+ * The NavTabs is a responsive components that provides multiple layout to fit both the container and the window.
+ * 1. Horizontal Tabs - On desktop (viewport width > 480px).
+ * 2. Expandable Vertical Tabs - On mobile (viewport width <= 480px).
+ * 3. Dropdown - On desktop but the container width is smaller than the content width.
+ */
 class NavTabs extends Component {
 	static propTypes = {
 		selectedText: TranslatableString,
@@ -32,18 +38,41 @@ class NavTabs extends Component {
 
 	state = {
 		isDropdown: false,
+		isFirstOverflow: false,
+		isLastOverflow: false,
 	};
 
 	navGroupRef = createRef();
+	tabListRef = createRef();
 	tabRefMap = new Map();
+	observer = null;
 
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
-		window.addEventListener( 'resize', this.setDropdownDebounced );
+		if ( ! this.props.enforceTabsView ) {
+			window.addEventListener( 'resize', this.setDropdownDebounced );
+		}
+
+		this.observe();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps, prevState ) {
+		const { enforceTabsView } = this.props;
+		const { isDropdown } = this.state;
+
 		this.setDropdownAfterLayoutFlush();
+
+		if ( ! prevProps.enforceTabsView && enforceTabsView ) {
+			window.removeEventListener( 'resize', this.setDropdownDebounced );
+		} else if ( prevProps.enforceTabsView && ! enforceTabsView ) {
+			window.addEventListener( 'resize', this.setDropdownDebounced );
+		}
+
+		if ( prevState.isDropdown && ! isDropdown ) {
+			this.observe();
+		} else if ( ! prevState.isDropdown && isDropdown ) {
+			this.unobserve();
+		}
 	}
 
 	componentWillUnmount() {
@@ -52,6 +81,7 @@ class NavTabs extends Component {
 		// see https://lodash.com/docs/4.17.4#debounce to learn about the `cancel` method.
 		this.setDropdownDebounced.cancel();
 		this.setDropdownAfterLayoutFlush.cancel();
+		this.unobserve();
 	}
 
 	/* Ref that stores the given tab element */
@@ -66,11 +96,12 @@ class NavTabs extends Component {
 	}
 
 	render() {
+		const { isFirstOverflow, isLastOverflow } = this.state;
 		const tabs = Children.map( this.props.children, ( child, index ) => {
 			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
-		const isDropdownEnabled = ! this.props.enforceTabsView && this.state.isDropdown;
+		const isDropdownEnabled = this.isDropdownEnabled();
 
 		const tabsClassName = clsx( 'section-nav-tabs', {
 			'is-dropdown': isDropdownEnabled,
@@ -85,14 +116,23 @@ class NavTabs extends Component {
 				className={ clsx( {
 					'section-nav-group': true,
 					'has-horizontal-scroll':
-						this.props.hasHorizontalScroll && innerWidth > MOBILE_PANEL_THRESHOLD,
+						this.props.hasHorizontalScroll &&
+						( innerWidth > MOBILE_PANEL_THRESHOLD || this.props.enforceTabsView ),
 					'enforce-tabs-view': this.props.enforceTabsView,
 				} ) }
 				ref={ this.navGroupRef }
 			>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
-					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
+					<ul
+						className={ clsx( 'section-nav-tabs__list', {
+							'is-overflowing-first': isFirstOverflow,
+							'is-overflowing-last': isLastOverflow,
+						} ) }
+						role="menu"
+						ref={ this.tabListRef }
+						onKeyDown={ this.keyHandler }
+					>
 						{ tabs }
 					</ul>
 
@@ -113,6 +153,10 @@ class NavTabs extends Component {
 
 		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
 	}
+
+	isDropdownEnabled = () => {
+		return ! this.props.enforceTabsView && this.state.isDropdown;
+	};
 
 	getDropdown() {
 		const dropdownOptions = Children.map( this.props.children, ( child, index ) => {
@@ -184,6 +228,48 @@ class NavTabs extends Component {
 				document.activeElement.click();
 				break;
 		}
+	};
+
+	observe = () => {
+		this.observer = new IntersectionObserver( this.checkIfOverflow, {
+			threshold: 0.1,
+		} );
+
+		const { firstChild, lastChild } = this.tabListRef.current;
+		if ( firstChild ) {
+			this.observer?.observe( firstChild );
+		}
+
+		if ( lastChild ) {
+			this.observer?.observe( lastChild );
+		}
+	};
+
+	unobserve = () => {
+		const { firstChild, lastChild } = this.tabListRef.current;
+		if ( firstChild ) {
+			this.observer?.unobserve( firstChild );
+		}
+
+		if ( lastChild ) {
+			this.observer?.unobserve( lastChild );
+		}
+
+		this.observer?.disconnect();
+		this.observer = null;
+	};
+
+	checkIfOverflow = ( entries ) => {
+		const { firstChild, lastChild } = this.tabListRef.current;
+
+		entries.forEach( ( entry ) => {
+			if ( entry.target === firstChild ) {
+				this.setState( { isFirstOverflow: ! entry.isIntersecting } );
+			}
+			if ( entry.target === lastChild ) {
+				this.setState( { isLastOverflow: ! entry.isIntersecting } );
+			}
+		} );
 	};
 }
 

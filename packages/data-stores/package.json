@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.0.1",
+	"version": "3.1.0",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -26,7 +26,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
@@ -35,19 +35,20 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
-		"@automattic/design-picker": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
+		"@automattic/load-script": "workspace:^",
+		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/api-fetch": "^7.7.0",
-		"@wordpress/data-controls": "^4.7.0",
-		"@wordpress/deprecated": "^4.7.0",
-		"@wordpress/element": "^6.7.0",
-		"@wordpress/i18n": "^5.7.0",
-		"@wordpress/primitives": "^4.7.0",
-		"@wordpress/url": "^4.7.0",
+		"@wordpress/api-fetch": "^7.8.0",
+		"@wordpress/data-controls": "^4.8.0",
+		"@wordpress/deprecated": "^4.8.0",
+		"@wordpress/element": "^6.8.0",
+		"@wordpress/i18n": "^5.8.0",
+		"@wordpress/primitives": "^4.8.0",
+		"@wordpress/url": "^4.8.0",
 		"debug": "^4.3.3",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
@@ -58,22 +59,23 @@
 		"tslib": "^2.3.0",
 		"use-debounce": "^3.1.0",
 		"utility-types": "^3.10.0",
-		"validator": "^13.5.2"
+		"validator": "^13.5.2",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.7.0",
+		"@wordpress/data": "^10.8.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/design-picker": "workspace:^",
 		"@remix-run/router": "^1.5.0",
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.4",
 		"node-fetch": "^2.6.6",
 		"typescript": "^5.3.3",
-		"wait-for-expect": "^3.0.2",
-		"wpcom-proxy-request": "workspace:^"
+		"wait-for-expect": "^3.0.2"
 	}
 }

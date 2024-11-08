@@ -26,9 +26,14 @@ class SiteRedirect extends Component {
 		isSiteUpgradeable: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
+		backUrl: PropTypes.string,
 	};
 
 	handleBackToDomainSearch = () => {
+		if ( this.props.backUrl ) {
+			page( this.props.backUrl );
+			return;
+		}
 		page( '/domains/add/' + this.props.selectedSiteSlug );
 	};
 

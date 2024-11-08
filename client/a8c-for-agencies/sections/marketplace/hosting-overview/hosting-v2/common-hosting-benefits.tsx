@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
+import { BackgroundType3 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingBenefitsSection from '../../common/hosting-benefits-section';
-import { BackgroundType3 } from '../../common/hosting-section/backgrounds';
 
 export default function CommonHostingBenefits() {
 	const translate = useTranslate();

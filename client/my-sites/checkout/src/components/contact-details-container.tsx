@@ -84,11 +84,6 @@ export default function ContactDetailsContainer( {
 		case 'domain':
 			return (
 				<Fragment>
-					<ContactDetailsFormDescription>
-						{ translate(
-							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-						) }
-					</ContactDetailsFormDescription>
 					<DomainContactDetails
 						domainNames={ domainNames }
 						contactDetails={ contactDetails }

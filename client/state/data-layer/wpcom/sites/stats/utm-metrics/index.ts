@@ -25,6 +25,7 @@ export const fetch = ( action: AnyAction ) => {
 					max: processedQuery.max,
 					date: processedQuery.date,
 					days: processedQuery.days,
+					start_date: processedQuery.start_date || '',
 					post_id: postId || '',
 					// Only query top posts if postId is not provided or 0.
 					query_top_posts: ! postId ? true : false,

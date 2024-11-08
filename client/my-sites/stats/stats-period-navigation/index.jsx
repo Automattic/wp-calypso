@@ -46,6 +46,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		isWithNewDateFiltering: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +58,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
+		isWithNewDateFiltering: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -190,6 +192,7 @@ class StatsPeriodNavigation extends PureComponent {
 			queryParams,
 			slug,
 			isWithNewDateControl,
+			isWithNewDateFiltering,
 			dateRange,
 			shortcutList,
 			gateDateControl,
@@ -203,10 +206,55 @@ class StatsPeriodNavigation extends PureComponent {
 			<div
 				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
+					'stats-period-navigation__is-with-new-date-filtering': isWithNewDateFiltering,
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ isWithNewDateControl ? (
+
+				{ /* Legacy view: Show only navigation arrows when not using new date control */ }
+				{ ! isWithNewDateControl && showArrows && (
+					<NavigationArrows
+						disableNextArrow={ disableNextArrow || isToday }
+						disablePreviousArrow={ disablePreviousArrow }
+						onClickNext={ this.handleArrowNext }
+						onClickPrevious={ this.handleArrowPrevious }
+					/>
+				) }
+
+				{ /* New filtering view: Shows date control in a simplified layout */ }
+				{ isWithNewDateControl && isWithNewDateFiltering && (
+					<div className="stats-period-navigation__date-range-control">
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
+						<div className="stats-period-navigation__date-control">
+							<StatsDateControl
+								slug={ slug }
+								queryParams={ queryParams }
+								dateRange={ dateRange }
+								shortcutList={ shortcutList }
+								onGatedHandler={ this.onGatedHandler }
+								overlay={
+									gateDateControl && (
+										<StatsCardUpsell
+											className="stats-module__upsell"
+											statType={ STATS_FEATURE_DATE_CONTROL }
+											siteId={ siteId }
+										/>
+									)
+								}
+							/>
+						</div>
+					</div>
+				) }
+
+				{ /* Standard new date control view: Shows date control with additional controls (Legend, IntervalDropdown) */ }
+				{ isWithNewDateControl && ! isWithNewDateFiltering && (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
 							slug={ slug }
@@ -251,17 +299,6 @@ class StatsPeriodNavigation extends PureComponent {
 							/>
 						</div>
 					</div>
-				) : (
-					<>
-						{ showArrows && (
-							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isToday }
-								disablePreviousArrow={ disablePreviousArrow }
-								onClickNext={ this.handleArrowNext }
-								onClickPrevious={ this.handleArrowPrevious }
-							/>
-						) }
-					</>
 				) }
 			</div>
 		);

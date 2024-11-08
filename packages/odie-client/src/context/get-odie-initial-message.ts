@@ -1,14 +1,14 @@
-import { __ } from '@wordpress/i18n';
+import { getOdieInitialMessageConstant } from '../constants';
 import type { Context, Message, OdieAllowedBots } from '../types/index';
 
-const getOdieInitialPrompt = ( botNameSlug: OdieAllowedBots ): string => {
+const getOdieInitialPrompt = (
+	botNameSlug: OdieAllowedBots,
+	shouldUseHelpCenterExperience: boolean | undefined
+): string => {
 	switch ( botNameSlug ) {
 		case 'wpcom-support-chat':
 		case 'wpcom-plan-support':
-			return __(
-				'Hi there 👋 I’m Wapuu, WordPress.com’s AI assistant! Having an issue with your site or account? Tell me all about it and I’ll be happy to help.',
-				__i18n_text_domain__
-			);
+			return getOdieInitialMessageConstant( shouldUseHelpCenterExperience );
 	}
 };
 
@@ -28,10 +28,12 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
-	odieInitialPromptText?: string
+	odieInitialPromptText?: string,
+	shouldUseHelpCenterExperience?: boolean
 ): Message => {
 	return {
-		content: odieInitialPromptText || getOdieInitialPrompt( botNameSlug ),
+		content:
+			odieInitialPromptText || getOdieInitialPrompt( botNameSlug, shouldUseHelpCenterExperience ),
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),

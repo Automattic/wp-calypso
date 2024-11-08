@@ -1,0 +1,79 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-hosting-options__container {
+	display: grid;
+	gap: 32px;
+	margin-block-end: 32px;
+
+	@include break-large {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.migrations-hosting-options-card__banner {
+	width: 100%;
+	height: auto;
+}
+
+.components-card.migrations-hosting-options-card {
+	padding: 24px;
+	box-shadow: none;
+	border: 1px solid var(--color-primary-5);
+	border-radius: 4px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+}
+
+
+.migrations-hosting-options-card__content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.migrations-hosting-options-card__title {
+	@include a4a-font-heading-xl;
+}
+
+.migrations-hosting-options-card__description {
+	@include a4a-font-body-lg;
+	margin: 0;
+}
+
+.migrations-hosting-options-card__footnote {
+	@include a4a-font-body-lg($font-weight: 500);
+	font-style: italic;
+	margin-block-end: 8px;
+}
+
+.migrations-hosting-options-card__footer {
+	margin-block-start: auto;
+	display: flex;
+
+	> * {
+		flex-grow: 1;
+	}
+
+	@include break-large {
+		> * {
+			flex-grow: 0;
+		}
+	}
+}
+
+.migrations-hosting-options__footnote {
+	@include a4a-font-body-lg;
+
+	a,
+	a:hover,
+	a:active,
+	a:visited {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}

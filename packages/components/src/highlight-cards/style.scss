@@ -4,7 +4,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 @import "@automattic/components/src/styles/mixins";
-@import "./variables.scss";
+@import "./variables";
 
 $header-margin-bottom: math.div($vertical-margin, 2);
 
@@ -235,6 +235,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		z-index: z-index("root", ".tooltip.popover.page-modules-settings-popover");
 		.popover__inner {
 			padding: 14px 16px;
+			width: 244px;
 		}
 	}
 

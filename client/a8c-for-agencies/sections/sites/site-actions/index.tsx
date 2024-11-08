@@ -131,6 +131,7 @@ export default function SiteActions( {
 						<PopoverMenuItem
 							key={ action.name }
 							isExternalLink={ action.isExternalLink }
+							localizeUrl={ false }
 							onClick={ action.onClick }
 							href={ action.href }
 							className={ clsx( 'site-actions__menu-item', action.className ) }

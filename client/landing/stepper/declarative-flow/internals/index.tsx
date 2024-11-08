@@ -1,11 +1,7 @@
-import {
-	isNewsletterOrLinkInBioFlow,
-	isSenseiFlow,
-	isWooExpressFlow,
-} from '@automattic/onboarding';
+import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, lazy } from 'react';
+import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
@@ -20,9 +16,10 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
-import { StepRoute, StepperLoader } from './components';
+import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
+import SurveyManager from './components/survery-manager';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
@@ -75,10 +72,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
+	const isValidStep = params.step != null && stepPaths.includes( params.step );
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
-	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
+	useFlowAnalytics(
+		{ flow: params.flow, step: params.step, variant: flow.variantSlug },
+		{ enabled: isValidStep }
+	);
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
@@ -112,7 +113,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		flow,
 		currentStepRoute,
 		navigate,
-		steps: flowSteps,
 	} );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
@@ -189,11 +189,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	};
 
 	const getDocumentHeadTitle = () => {
-		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
-			return flow.title;
-		} else if ( isSenseiFlow( flow.name ) ) {
-			return __( 'Course Creator' );
-		}
+		return flow.title ?? __( 'Create a site' );
 	};
 
 	useSignUpStartTracking( { flow } );
@@ -202,6 +198,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
+			<SurveyManager />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
-import { getMigrateGuruPageURL } from './utils';
+import { getMigrationPluginPageURL } from './utils';
 import type { FC } from 'react';
 
 interface Props {
@@ -26,7 +26,7 @@ export const StepGetYourSiteReady: FC< Props > = ( { fromUrl } ) => {
 							strong: <strong />,
 							a: fromUrl ? (
 								<ExternalLink
-									href={ getMigrateGuruPageURL( fromUrl ) }
+									href={ getMigrationPluginPageURL( fromUrl ) }
 									icon
 									iconSize={ 14 }
 									target="_blank"

@@ -1,4 +1,5 @@
 import { Card, Badge } from '@automattic/components';
+import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
@@ -40,7 +41,9 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							</Fragment>
 						) }
 						<span className="eligibility-warnings__message-description">
-							<span>{ description } </span>
+							<span
+								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
+							/>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
 								<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">

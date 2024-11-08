@@ -58,7 +58,7 @@ const connectDomain: Flow = {
 		);
 
 		if ( ! domain ) {
-			redirect( ` /setup/${ CONNECT_DOMAIN_FLOW }` ); //TODO
+			redirect( '/start' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'connect-domain requires a domain query parameter',

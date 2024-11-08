@@ -38,7 +38,6 @@ import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
-import { BackButtonHeader } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
@@ -542,7 +541,6 @@ export const HelpCenterContactForm = () => {
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
 			<>
-				<BackButtonHeader />
 				<div className="help-center-contact-form__wrapper">
 					<div className="help-center__articles-page">
 						<HelpCenterGPT
@@ -591,7 +589,6 @@ export const HelpCenterContactForm = () => {
 
 	return (
 		<>
-			<BackButtonHeader />
 			<div className="help-center-contact-form__wrapper">
 				{ showingSearchResults ? (
 					<div className="help-center__articles-page">

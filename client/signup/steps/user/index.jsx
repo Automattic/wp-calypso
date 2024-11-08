@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { WPCC } from '@automattic/urls';
@@ -745,6 +746,11 @@ export class UserStep extends Component {
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
 			return this.renderGravatarSignupStep();
+		}
+
+		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.userLoggedIn ) {
+			page( this.getLoginUrl() );
+			return null;
 		}
 
 		// TODO: decouple hideBack flag from the flow name.

@@ -9,6 +9,6 @@ export function shouldRateLimitAtomicCacheClear( state, siteId ) {
 		return false;
 	}
 
-	const rateLimitTime = new Date().valueOf() - ONE_MINUTE_IN_MILLISECONDS;
+	const rateLimitTime = Date.now() - ONE_MINUTE_IN_MILLISECONDS;
 	return lastCacheCleared > rateLimitTime;
 }

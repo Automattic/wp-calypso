@@ -27,7 +27,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 				icon: <WordPressLogo />,
 				url: 'https://wordpress.com/development-services/',
 				urlProfile: `https://wordpress.com/development-services/${ agencySlug }/${ agencyId }`,
-				isAvailable: false,
+				isAvailable: true,
 			};
 
 		case 'WooCommerce.com':

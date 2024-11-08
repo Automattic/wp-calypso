@@ -1,5 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography.scss";
+@import "@automattic/components/src/styles/typography";
 
 $button-padding: 8px 32px;
 
@@ -545,6 +545,11 @@ $button-padding: 8px 32px;
 		.is-link {
 			color: var(--jp-black);
 			font-weight: normal;
+		}
+
+		&.connection-notice {
+			margin-bottom: 32px;
+			text-align: center;
 		}
 	}
 

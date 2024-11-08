@@ -45,7 +45,7 @@ export function requestThenActivate( themeId, siteId, source = 'unknown', purcha
 			requests.push( dispatch( requestTheme( themeId, siteId ) ) );
 		}
 		return Promise.all( requests ).then( () => {
-			dispatch( activate( themeId, siteId, source, purchased ) );
+			dispatch( activate( themeId, siteId, { source, purchased } ) );
 		} );
 	};
 }

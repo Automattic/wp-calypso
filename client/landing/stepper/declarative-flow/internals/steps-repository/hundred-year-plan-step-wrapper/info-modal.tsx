@@ -1,6 +1,7 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -142,9 +143,18 @@ const RowContent = styled.div`
 	}
 `;
 
-export default function InfoModal( { onClose }: { onClose: () => void } ) {
+export default function InfoModal( {
+	onClose,
+	flowName,
+}: {
+	onClose: () => void;
+	flowName: string;
+} ) {
 	const translate = useTranslate();
-	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+	const planTitle =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate( '100-Year Domain' )
+			: getPlan( PLAN_100_YEARS )?.getTitle();
 
 	return (
 		<StyledModal title="" onRequestClose={ onClose } isFullScreen>

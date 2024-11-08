@@ -146,7 +146,9 @@ const PluginsBrowserList = ( {
 					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
 				/>
 			) }
-			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
+			<Card tagName="ul" className="plugins-browser-list__elements">
+				{ renderViews() }
+			</Card>
 		</div>
 	);
 };

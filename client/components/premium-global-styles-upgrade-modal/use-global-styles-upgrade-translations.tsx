@@ -1,4 +1,5 @@
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -11,9 +12,15 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const planTitle = plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '';
 
-	const features = [
+	// @TODO Cleanup once the test phase is over.
+	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+		? PLAN_PERSONAL
+		: PLAN_PREMIUM;
+
+	const planTitle = plans?.data?.[ upgradeToPlan ]?.productNameShort ?? '';
+
+	const premiumFeatures = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
 		<strong>{ translate( 'Premium themes' ) }</strong>,
 		translate( 'Style customization' ),
@@ -24,12 +31,19 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		translate( 'Earn with WordAds' ),
 	];
 
+	const personalFeatures = [
+		<strong>{ translate( 'Free domain for one year' ) }</strong>,
+		<strong>{ translate( 'Dozens of premium themes' ) }</strong>,
+		translate( 'Style customization' ),
+		translate( 'Ad-free experience' ),
+	];
+
 	return {
 		planTitle,
 		featuresTitle: translate( 'Included with your %(planTitle)s plan', {
 			args: { planTitle },
 		} ),
-		features: features,
+		features: isEnabled( 'global-styles/on-personal-plan' ) ? personalFeatures : premiumFeatures,
 		description: translate(
 			'You’ve selected a premium style that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
 			'You’ve selected premium styles that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',

@@ -44,6 +44,11 @@ function ReaderSubscriptionListItem( {
 	railcar,
 	isLoggedIn,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
+	disableSuggestedFollows,
+	onItemClick,
+	isSelected,
+	onFollowToggle,
+	replaceStreamClickWithItemClick,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -90,12 +95,22 @@ function ReaderSubscriptionListItem( {
 
 	const streamClicked = ( event, streamLink ) => {
 		recordTitleClick();
-		if ( ! isLoggedIn ) {
+
+		// Prevent default if we need to handle the click differently.
+		if ( ! isLoggedIn || ( replaceStreamClickWithItemClick && onItemClick ) ) {
 			event.preventDefault();
+		}
+
+		if ( ! isLoggedIn ) {
 			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
 				redirectTo: streamLink,
 			} );
+			return;
+		}
+
+		if ( replaceStreamClickWithItemClick && onItemClick ) {
+			onItemClick();
 		}
 	};
 
@@ -110,8 +125,21 @@ function ReaderSubscriptionListItem( {
 		}
 	};
 
+	const handleClick = () => {
+		onItemClick();
+	};
+
 	return (
-		<div className={ clsx( 'reader-subscription-list-item', className ) }>
+		<div
+			className={ clsx( 'reader-subscription-list-item', className, {
+				'is-selected': isSelected,
+			} ) }
+			onClick={ handleClick }
+			onKeyDown={ ( e ) => e.key === 'Enter' && handleClick( e ) }
+			role="button"
+			tabIndex={ 0 }
+			aria-pressed={ isSelected }
+		>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
@@ -204,13 +232,13 @@ function ReaderSubscriptionListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
-					onFollowToggle={ openSuggestedFollowsModal }
+					onFollowToggle={ disableSuggestedFollows ? onFollowToggle : openSuggestedFollowsModal }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
-			{ siteId && (
+			{ siteId && ! disableSuggestedFollows && (
 				<ReaderSuggestedFollowsDialog
 					onClose={ onCloseSuggestedFollowModal }
 					siteId={ +siteId }

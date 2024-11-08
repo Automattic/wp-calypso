@@ -329,7 +329,7 @@ describe( 'Site Migration Flow', () => {
 			config.disable( 'automated-migration/collect-credentials' );
 		} );
 
-		it( 'Redirects back to the credentials step when failing to create the ticket', () => {
+		it( 'redirects back to the credentials step when failing to create the ticket', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -345,7 +345,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'Skipping the credentials step redirects the user to the instructions page', () => {
+		it( 'skipping the credentials step redirects the user to the instructions page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -436,6 +436,120 @@ describe( 'Site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-assisted-migration step skipping ticket creation', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'continue',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&preventTicketCreation=true`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-assisted-migration creating the ticket', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'skip',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-already-wpcom step when the user is already on WPCOM', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'already-wpcom',
+					from: 'https://site-to-be-migrated.com',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-other-platform-detected-import step when the site platform is not wordpress', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'site-is-not-using-wordpress',
+					platform: 'squarespace',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&platform=squarespace`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-other-platform-detected-import step to the importer flow', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&siteId=123&from=oldsite.com`,
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+				dependencies: {
+					action: 'import',
+					platform: 'squarespace',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						from: 'oldsite.com',
+						backToFlow: `site-migration/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
+						siteId: 123,
+						ref: 'site-migration',
+					},
+					'/setup/site-setup/importerSquarespace'
+				)
+			);
+		} );
+
+		it( 'redirects from site-migration-other-platform-detected-import step to the assisted migration step when the user skips the import', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&siteId=123&from=oldsite.com`,
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+				dependencies: {
+					action: 'skip',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: addQueryArgs(
+					{ siteId: 123, from: 'oldsite.com', siteSlug: 'example.wordpress.com' },
+					`/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`
+				),
+				state: null,
 			} );
 		} );
 
@@ -537,6 +651,19 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the other platform detected import step when going back from the credentials step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );

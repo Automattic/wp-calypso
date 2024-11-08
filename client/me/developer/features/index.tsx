@@ -20,7 +20,13 @@ export const DeveloperFeatures = () => {
 		const featureItemId = event?.currentTarget?.id;
 		// Opens the following feature articles in Help Center:
 		// "Custom code" and "Free SSL certificate"
-		const featureArticlesToOpenInHelpCenter = [ 'code', 'https-ssl' ];
+		const featureArticlesToOpenInHelpCenter = [
+			'connect-to-ssh-on-wordpress-com',
+			'how-to-create-a-staging-site',
+			'code',
+			'https-ssl',
+			'help-support-options',
+		];
 
 		if (
 			openArticleInHelpCenter &&
@@ -41,7 +47,7 @@ export const DeveloperFeatures = () => {
 
 			<h2 className="developer-features-sub-title">{ translate( 'Popular features' ) }</h2>
 			<div className="developer-features-list">
-				{ features.map( ( { id, title, description, linkLearnMore } ) => (
+				{ features.map( ( { id, title, description, linkLearnMore, linkTarget = '_blank' } ) => (
 					<Card className="developer-features-list__item" key={ id }>
 						<div className="developer-features-list__item-title">{ title }</div>
 						<div className="developer-features-list__item-description">{ description }</div>
@@ -50,7 +56,7 @@ export const DeveloperFeatures = () => {
 								<a
 									id={ id }
 									href={ linkLearnMore }
-									target="_blank"
+									target={ linkTarget }
 									rel="noopener noreferrer"
 									onClick={ handleFeatureClickLink }
 								>

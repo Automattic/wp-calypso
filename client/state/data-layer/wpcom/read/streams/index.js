@@ -191,6 +191,11 @@ const streamApis = {
 		path: () => '/read/following',
 		dateProperty: 'date',
 	},
+	recent: {
+		path: () => '/read/streams/following',
+		dateProperty: 'date',
+		apiNamespace: 'wpcom/v2',
+	},
 	search: {
 		path: () => '/read/search',
 		dateProperty: 'date',
@@ -318,6 +323,13 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
+		apiVersion: '1.3',
+		query: ( extras, { pageHandle } ) => {
+			return {
+				...{ extras, number: 40 },
+				...pageHandle,
+			};
+		},
 	},
 };
 

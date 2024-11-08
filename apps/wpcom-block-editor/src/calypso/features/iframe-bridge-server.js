@@ -16,6 +16,7 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import {
 	getPages,
+	getPostTypeRecords,
 	inIframe,
 	isEditorReady,
 	isEditorReadyWithBlocks,
@@ -25,27 +26,45 @@ import {
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
-let addedListener = false;
+let addedClickListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-	if ( ! addedListener ) {
+	if ( ! addedClickListener ) {
 		document
 			.querySelector( 'body.is-iframed' )
 			?.addEventListener( 'click', triggerOverrideHandler );
-		addedListener = true;
+		addedClickListener = true;
 	}
 }
 
+const enterOverrides = {};
+let addedEnterListener = false;
 function addCommandsInputListener( selector, cb ) {
-	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
-		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
-		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+	enterOverrides[ selector ] = cb;
 
-		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
-			cb( e );
-		}
-	} );
+	if ( ! addedEnterListener ) {
+		document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+			const isInputActive = document.activeElement?.matches(
+				'.commands-command-menu__header input'
+			);
+			const selectedCommand = document.querySelector( '[data-selected=true]' );
+
+			if ( e.key === 'Enter' && isInputActive && !! selectedCommand ) {
+				const matchingSelector = Object.keys( enterOverrides ).find( ( _selector ) => {
+					return selectedCommand.matches( _selector );
+				} );
+
+				if ( matchingSelector ) {
+					const callback = enterOverrides[ matchingSelector ];
+
+					callback?.( e );
+				}
+			}
+		} );
+
+		addedEnterListener = true;
+	}
 }
 
 /**
@@ -560,12 +579,69 @@ async function openLinksInParentFrame( calypsoPort ) {
 		} );
 	} );
 
-	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
-	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
+	await isEditorReadyWithBlocks();
+
+	// Observes the popover slot for the "Manage Patterns" link which can be found
+	// in the block's more menu or in the block-editor menu, and for the navigation link.
+	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				// For some reason, some nodes might be `undefined`, see:
+				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
+				// We skip the iteration if that's the case.
+				if ( ! node ) {
+					continue;
+				}
+
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
+						'a[href$="site-editor.php?path=%2Fpatterns"]'
+					);
+
+					if ( manageReusableBlocksAnchorElem ) {
+						manageReusableBlocksAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageReusableBlocksAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
+
+					const manageNavigationMenusAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_navigation"]'
+					);
+
+					if ( manageNavigationMenusAnchorElem ) {
+						manageNavigationMenusAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageNavigationMenusAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
+				}
+			}
+		}
+	} );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
+
+	const { createNewPostUrl } = calypsoifyGutenberg;
+	if ( ! createNewPostUrl ) {
 		return;
 	}
-
-	await isEditorReadyWithBlocks();
 
 	// Handle the view post link in the snackbar, which unfortunately has a click
 	// handler which stops propagation, so we can't override it with the global handler.
@@ -610,25 +686,8 @@ async function openLinksInParentFrame( calypsoPort ) {
 	};
 	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
 
-	// Manage reusable blocks link in the global block inserter's Reusable tab
-	// Post editor only
-	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
-		const node = mutations[ 0 ].target;
-		if ( node.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true' ) {
-			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
-			if ( hyperlink ) {
-				hyperlink.href = manageReusableBlocksUrl;
-				hyperlink.target = '_top';
-			}
-		}
-	} );
-
 	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
 		createNewPostUrl && node.classList.contains( 'interface-interface-skeleton__sidebar' );
-
-	const shouldReplaceManageReusableBlockLinksFor = ( node ) =>
-		manageReusableBlocksUrl &&
-		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
 
 	const observeSidebarMutations = ( node ) => {
 		if (
@@ -639,16 +698,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 			// If a Query block is selected, then the sidebar will
 			// directly open on the block settings tab
 			tryToReplaceCreateNewPostLink();
-		} else if (
-			// Block inserter sidebar, Reusable tab
-			shouldReplaceManageReusableBlockLinksFor( node )
-		) {
-			const reusableTab = node.querySelector( '.components-tab-panel__tabs-item[id*="reusable"]' );
-			if ( reusableTab ) {
-				inserterManageReusableBlocksObserver.observe( reusableTab, {
-					attributeFilter: [ 'aria-selected' ],
-				} );
-			}
 		}
 	};
 
@@ -658,11 +707,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 			shouldReplaceCreateNewPostLinksFor( node )
 		) {
 			createNewPostLinkObserver.disconnect();
-		} else if (
-			// Block inserter sidebar, Reusable tab
-			shouldReplaceManageReusableBlockLinksFor( node )
-		) {
-			inserterManageReusableBlocksObserver.disconnect();
 		}
 	};
 
@@ -696,58 +740,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// They are always direct children of the body element.
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
-
-	// Observes the popover slot for the "Manage reusable blocks" link which can be found
-	// in the reusable block's more menu or in the block-editor menu
-	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
-			// We should leave the URL alone so it goes to the fancy site-editor view, not a regular old post listing
-			anchorElem.href = manageReusableBlocksUrl;
-			anchorElem.target = '_top';
-		};
-
-		for ( const record of mutations ) {
-			for ( const node of record.addedNodes ) {
-				// For some reason, some nodes might be `undefined`, see:
-				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
-				// We skip the iteration if that's the case.
-				if ( ! node ) {
-					continue;
-				}
-
-				if ( node?.classList?.contains( 'components-popover' ) ) {
-					const manageReusableBlocksAnchorElem = node.querySelector(
-						'a[href$="site-editor.php?path=%2Fpatterns"]'
-					);
-
-					const manageNavigationMenusAnchorElem = node.querySelector(
-						'a[href$="edit.php?post_type=wp_navigation"]'
-					);
-
-					manageReusableBlocksAnchorElem &&
-						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
-
-					if ( manageNavigationMenusAnchorElem ) {
-						manageNavigationMenusAnchorElem.addEventListener(
-							'click',
-							( e ) => {
-								calypsoPort.postMessage( {
-									action: 'openLinkInParentFrame',
-									payload: { postUrl: manageNavigationMenusAnchorElem.href },
-								} );
-								e.preventDefault();
-							},
-							false
-						);
-					}
-				}
-			}
-		}
-	} );
-
-	// Observe children of the Popover Container
-	const popoverContainer = getPopoverFallbackContainer();
-	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -1114,6 +1106,34 @@ function handleAddPost( calypsoPort ) {
 	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
+async function handleWpTemplateCommands( calypsoPort ) {
+	const callback = ( e, postType, postId ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'wpAdminRedirect',
+			payload: {
+				destinationUrl: `/wp-admin/site-editor.php?postType=${ postType }&postId=${ encodeURIComponent(
+					postId
+				) }&canvas=edit`,
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	const entityNames = [ 'wp_template', 'wp_template_part' ];
+
+	entityNames.forEach( async ( entityName ) => {
+		const records = await getPostTypeRecords( entityName );
+
+		records.forEach( ( record ) => {
+			const selector = `[data-value$="${ record.id }"]`;
+			addEditorListener( selector, ( e ) => callback( e, entityName, record.id ) );
+			addCommandsInputListener( selector, ( e ) => callback( e, entityName, record.id ) );
+		} );
+	} );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1220,6 +1240,8 @@ function initPort( message ) {
 		handleAddPage( calypsoPort );
 
 		handleAddPost( calypsoPort );
+
+		handleWpTemplateCommands( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

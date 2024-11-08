@@ -32,6 +32,11 @@ const Card = styled( FoldableCard )`
 	font-size: 16px;
 	line-height: normal;
 	letter-spacing: -0.1px;
+
+	&.foldable-card.card.is-expanded,
+	&.is-compact {
+		margin: 0;
+	}
 `;
 
 type Header = {
@@ -60,10 +65,10 @@ const Header = styled.div`
 
 	.impact {
 		padding: 4px 10px;
-		border-radius: 14px;
+		border-radius: 4px;
 		border: 1px solid transparent;
 		float: right;
-		font-size: 14px;
+		font-size: 12px;
 		color: var( --studio-black );
 
 		&.fail {
@@ -94,16 +99,10 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
 	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash } = props;
-	// Creates a list of URLs from the insight details to be used as context for the LLM query.
-	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
-		context += `* '${ item.url }' `;
-		return context;
-	}, '' );
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
-		insight.title ?? '',
-		insightDetailsContext ?? '',
+		insight,
 		hash,
 		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight

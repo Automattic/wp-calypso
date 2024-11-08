@@ -1,6 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { recordSignupStart } from 'calypso/lib/analytics/signup';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from 'calypso/landing/stepper/constants';
+import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
+import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
+import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { setSignupStartTime } from 'calypso/signup/storageUtils';
 import { type Flow } from '../../types';
 
 /**
@@ -13,24 +18,43 @@ interface Props {
 export const useSignUpStartTracking = ( { flow }: Props ) => {
 	const [ queryParams ] = useSearchParams();
 	const ref = queryParams.get( 'ref' ) || '';
-	const flowVariant = flow.variantSlug;
 	const flowName = flow.name;
+	const flowVariant = flow.variantSlug;
 	const isSignupFlow = flow.isSignupFlow;
-	const signupStartEventProps = flow.useSignupStartEventProps?.();
+	const signupStartEventProps = useSnakeCasedKeys( {
+		input: flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
+	} );
 
-	const extraProps = useMemo(
-		() => ( {
-			...signupStartEventProps,
-			...( flowVariant && { flow_variant: flowVariant } ),
-		} ),
-		[ signupStartEventProps, flowVariant ]
-	);
+	/**
+	 * Timers and other analytics
+	 *
+	 * Important: Ideally, this hook should only run once per signup (`isSignupFlow`) session.
+	 * Avoid introducing more dependencies.
+	 */
+	useEffect( () => {
+		if ( ! isSignupFlow ) {
+			return;
+		}
+
+		setSignupStartTime();
+		// Google Analytics
+		gaRecordEvent( 'Signup', 'calypso_signup_start' );
+		// Marketing
+		adTrackSignupStart( flowName );
+	}, [ isSignupFlow, flowName ] );
 
 	useEffect( () => {
 		if ( ! isSignupFlow ) {
 			return;
 		}
 
-		recordSignupStart( flowName, ref, extraProps || {} );
-	}, [ extraProps, flowName, ref, isSignupFlow ] );
+		recordSignupStart( {
+			flow: flowName,
+			ref,
+			optionalProps: {
+				...signupStartEventProps,
+				...( flowVariant && { flow_variant: flowVariant } ),
+			},
+		} );
+	}, [ isSignupFlow, flowName, ref, signupStartEventProps, flowVariant ] );
 };

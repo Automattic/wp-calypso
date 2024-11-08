@@ -1,44 +1,95 @@
 import { useEffect, useState } from 'react';
-import { useOdieGetChat } from '../query';
-import { Chat, OdieAllowedBots } from '../types/';
+import { getZendeskConversation } from '../data/use-get-zendesk-conversation';
+import { useOdieChat } from '../query/use-odie-chat';
+import { Chat, OdieAllowedBots, Message, SupportProvider } from '../types/';
 import { getOdieInitialMessage } from './get-odie-initial-message';
+import { useOdieAssistantContext } from '.';
 
 export const useLoadPreviousChat = ( {
 	botNameSlug,
-	chatId,
 	odieInitialPromptText,
+	setSupportProvider,
+	isChatLoaded,
+	selectedConversationId,
+	setChatStatus,
 }: {
 	botNameSlug: OdieAllowedBots;
-	chatId: number | null | undefined;
 	odieInitialPromptText?: string;
+	setSupportProvider: ( supportProvider: SupportProvider ) => void;
+	isChatLoaded: boolean;
+	selectedConversationId?: string | null;
+	setChatStatus: ( chatStatus: 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' ) => void;
 } ) => {
-	const { data: existingChat, isLoading: loadingChat } = useOdieGetChat(
-		botNameSlug,
-		chatId,
-		1,
-		30
-	);
+	const { chat: existingChat } = useOdieChat( 1, 30 );
+	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
-		messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+		messages: [
+			getOdieInitialMessage( botNameSlug, odieInitialPromptText, shouldUseHelpCenterExperience ),
+		],
 	} );
 
-	const [ isLoading, setIsLoading ] = useState( true );
-
 	useEffect( () => {
-		setIsLoading( loadingChat );
-		if ( existingChat ) {
-			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
-			const messages = [ initialMessage, ...existingChat.messages ];
-			setChat( { ...existingChat, messages } );
+		if ( existingChat || selectedConversationId ) {
+			const initialMessage = getOdieInitialMessage(
+				botNameSlug,
+				odieInitialPromptText,
+				shouldUseHelpCenterExperience
+			);
+			const messages = [ initialMessage ];
+
+			if ( existingChat ) {
+				messages.push( ...( existingChat as Chat ).messages );
+			}
+
+			if ( selectedConversationId && isChatLoaded ) {
+				getZendeskConversation( {
+					chatId: existingChat?.chat_id,
+					conversationId: selectedConversationId,
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						setSupportProvider( 'zendesk' );
+						setChat( {
+							chat_id: conversation.metadata[ 'odieChatId' ]
+								? Number( conversation.metadata[ 'odieChatId' ] )
+								: null,
+							conversationId: conversation.id,
+							clientId: conversation.clientId,
+							messages: [ ...messages, ...( conversation.messages as Message[] ) ],
+						} );
+					}
+					setChatStatus( 'loaded' );
+					return;
+				} );
+			} else {
+				setChat( { ...existingChat, messages } );
+				setChatStatus( 'loaded' );
+			}
 		} else {
 			setChat( {
 				chat_id: null,
-				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
+				messages: [
+					getOdieInitialMessage(
+						botNameSlug,
+						odieInitialPromptText,
+						shouldUseHelpCenterExperience
+					),
+				],
 			} );
+			setChatStatus( 'loaded' );
 		}
-	}, [ botNameSlug, chatId, existingChat, loadingChat, odieInitialPromptText ] );
+	}, [
+		botNameSlug,
+		existingChat?.chat_id,
+		odieInitialPromptText,
+		setSupportProvider,
+		isChatLoaded,
+		setChatStatus,
+		existingChat,
+		selectedConversationId,
+		shouldUseHelpCenterExperience,
+	] );
 
-	return { chat, isLoading: loadingChat || isLoading };
+	return { chat };
 };

@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
+import type { SupportInteraction } from '@automattic/odie-client/src/types/';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -41,10 +42,36 @@ const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	return state;
 };
 
+const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
+		return action.supportInteraction;
+	}
+	return state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
 			return action.minimized;
+	}
+	return state;
+};
+
+const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
+			return action.isChatLoaded;
+	}
+	return state;
+};
+
+const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
+			return action.zendeskClientId;
 	}
 	return state;
 };
@@ -122,6 +149,7 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 };
 
 const reducer = combineReducers( {
+	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
@@ -131,6 +159,8 @@ const reducer = combineReducers( {
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,
 	isMinimized,
+	isChatLoaded,
+	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,

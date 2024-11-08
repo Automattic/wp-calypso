@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -29,6 +30,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
+import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -124,7 +126,11 @@ const noop = () => {
 	return;
 };
 
-function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
+function debounceSpeak( {
+	message = '',
+	priority = 'polite' as 'polite' | 'assertive',
+	timeout = 800,
+} ) {
 	return debounce( () => {
 		speak( message, priority );
 	}, timeout );
@@ -184,6 +190,7 @@ function HelpSearchResults( {
 	currentRoute,
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const shouldDisplayRecentConversations = config.isEnabled( 'help-center-experience' );
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -248,13 +255,16 @@ function HelpSearchResults( {
 				section: sectionName,
 			} );
 
+			event.preventDefault();
+
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
-				event.preventDefault();
 				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
-				onAdminSectionSelect( event );
+			} else {
+				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
 			}
 
+			onAdminSectionSelect( event );
 			return;
 		}
 
@@ -348,6 +358,7 @@ function HelpSearchResults( {
 				</p>
 			) : null }
 
+			{ shouldDisplayRecentConversations && <HelpCenterRecentConversations /> }
 			{ sections }
 		</div>
 	);

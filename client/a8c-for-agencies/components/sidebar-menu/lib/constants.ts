@@ -1,3 +1,6 @@
+// IMPORTANT: We need to make sure that we update
+// the 'calypso/a8c-for-agencies/lib/permission.ts' file
+// to include the necessary permissions for the new routes.
 export const A4A_LANDING_LINK = '/landing';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
@@ -40,6 +43,7 @@ export const A4A_TEAM_LINK = '/team';
 export const A4A_TEAM_INVITE_LINK = '/team/invite';
 export const A4A_TEAM_ACCEPT_INVITE_LINK = '/team/invite/accept';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
+export const A4A_AGENCY_TIER_LINK = '/agency-tier';
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

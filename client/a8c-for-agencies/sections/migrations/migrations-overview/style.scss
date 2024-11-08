@@ -19,7 +19,12 @@
 	margin-block-end: 24px;
 }
 
-.migrations-overview__section-intro {
+.migrations-overview__asterisk {
+	color: var(--studio-gray-80);
+	font-size: 0.75rem;
+	font-weight: 400;
+	margin-block-start: 12px;
+	margin-bottom: 0;
 	margin-block-end: 48px;
 }
 

@@ -5,7 +5,7 @@ import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
 import clsx from 'clsx';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -28,7 +28,6 @@ import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collectio
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -72,25 +71,6 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
-
-const staticFilters = {
-	MYTHEMES: {
-		key: STATIC_FILTERS.MYTHEMES,
-		text: translate( 'My Themes' ),
-	},
-	RECOMMENDED: {
-		key: STATIC_FILTERS.RECOMMENDED,
-		text: translate( 'Recommended' ),
-	},
-	ALL: {
-		key: STATIC_FILTERS.ALL,
-		text: translate( 'All' ),
-	},
-};
-
-const defaultStaticFilter = Object.values( staticFilters ).find(
-	( staticFilter ) => staticFilter.key === DEFAULT_STATIC_FILTER
-);
 
 class ThemeShowcase extends Component {
 	state = {
@@ -172,7 +152,28 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
-	getDefaultStaticFilter = () => defaultStaticFilter;
+	getStaticFilters() {
+		const { translate } = this.props;
+		return {
+			MYTHEMES: {
+				key: STATIC_FILTERS.MYTHEMES,
+				text: translate( 'My Themes' ),
+			},
+			RECOMMENDED: {
+				key: STATIC_FILTERS.RECOMMENDED,
+				text: translate( 'Recommended' ),
+			},
+			ALL: {
+				key: STATIC_FILTERS.ALL,
+				text: translate( 'All' ),
+			},
+		};
+	}
+
+	getDefaultStaticFilter = () =>
+		Object.values( this.getStaticFilters() ).find(
+			( staticFilter ) => staticFilter.key === DEFAULT_STATIC_FILTER
+		);
 
 	isStaticFilter = ( tabFilter ) => isStaticFilter( tabFilter.key );
 
@@ -184,6 +185,8 @@ class ThemeShowcase extends Component {
 	};
 
 	getTabFilters = () => {
+		const { translate } = this.props;
+		const staticFilters = this.getStaticFilters();
 		if ( this.props.siteId && ! this.props.areSiteFeaturesLoaded ) {
 			return null;
 		}
@@ -209,7 +212,7 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { themeTiers } = this.props;
+		const { themeTiers, translate } = this.props;
 
 		const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
 			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
@@ -234,6 +237,7 @@ class ThemeShowcase extends Component {
 	getSelectedTabFilter = () => {
 		const filter = this.props.filter ?? '';
 		const filterArray = filter.split( '+' );
+		const staticFilters = this.getStaticFilters();
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
@@ -281,6 +285,7 @@ class ThemeShowcase extends Component {
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
+		const staticFilters = this.getStaticFilters();
 
 		const filters =
 			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
@@ -334,6 +339,7 @@ class ThemeShowcase extends Component {
 		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
 		const showCollection =
 			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
+		const staticFilters = this.getStaticFilters();
 
 		const url = this.constructUrl( {
 			tier,
@@ -354,6 +360,7 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
+		const staticFilters = this.getStaticFilters();
 		const { filter = '', filterToTermTable } = this.props;
 		const subjectFilters = Object.values( this.subjectTermTable );
 		const filterWithoutSubjects = filter
@@ -556,6 +563,7 @@ class ThemeShowcase extends Component {
 
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
+		const staticFilters = this.getStaticFilters();
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
@@ -626,9 +634,11 @@ class ThemeShowcase extends Component {
 			isSiteWooExpress,
 			isCollectionView,
 			lastNonEditorRoute,
+			translate,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
+		const staticFilters = this.getStaticFilters();
 
 		const themeProps = {
 			forceWpOrgSearch: true,
@@ -717,34 +727,36 @@ class ThemeShowcase extends Component {
 									'is-sticky': this.state.shouldThemeControlsSticky,
 								} ) }
 							>
-								<div className="theme__search">
-									<div className="theme__search-input">
-										{ isSearchV2 ? (
-											<SearchThemesV2
-												query={ featureStringFilter + search }
-												onSearch={ this.doSearch }
-											/>
-										) : (
-											<SearchThemes
-												query={ filterString + search }
-												onSearch={ this.doSearch }
-												recordTracksEvent={ this.recordSearchThemesTracksEvent }
-											/>
+								<div className="theme__search-container">
+									<div className="theme__search">
+										<div className="theme__search-input">
+											{ isSearchV2 ? (
+												<SearchThemesV2
+													query={ featureStringFilter + search }
+													onSearch={ this.doSearch }
+												/>
+											) : (
+												<SearchThemes
+													query={ filterString + search }
+													onSearch={ this.doSearch }
+													recordTracksEvent={ this.recordSearchThemesTracksEvent }
+												/>
+											) }
+										</div>
+										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+											<>
+												<SelectDropdown
+													className="section-nav-tabs__dropdown"
+													onSelect={ this.onTierSelectFilter }
+													selectedText={ translate( 'View: %s', {
+														args: getOptionLabel( tiers, tier ) || '',
+													} ) }
+													options={ tiers }
+													initialSelected={ tier }
+												></SelectDropdown>
+											</>
 										) }
 									</div>
-									{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-										<>
-											<SelectDropdown
-												className="section-nav-tabs__dropdown"
-												onSelect={ this.onTierSelectFilter }
-												selectedText={ translate( 'View: %s', {
-													args: getOptionLabel( tiers, tier ) || '',
-												} ) }
-												options={ tiers }
-												initialSelected={ tier }
-											></SelectDropdown>
-										</>
-									) }
 								</div>
 								<div
 									className={ clsx( 'themes__filters', {
@@ -791,7 +803,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
-					<ThanksModal source="list" />
 					<ActivationModal source="list" />
 					<EligibilityWarningModal />
 					<ThemePreview />

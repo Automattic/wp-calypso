@@ -19,10 +19,6 @@ jest.mock( 'calypso/state/products-list/selectors/get-product-price-tiers', () =
 	getProductPriceTierList: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getPlanDiscountedRawPrice: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	applyTestFiltersToPlansList: jest.fn( ( x ) => x ),

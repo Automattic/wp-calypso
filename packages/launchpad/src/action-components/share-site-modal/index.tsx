@@ -2,8 +2,8 @@ import { Popover } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, link } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -15,7 +15,6 @@ interface ShareSiteModalProps {
 }
 
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
-	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const getSiteSlug = ( site: SiteDetails | null ): string | null => {
 		if ( ! site ) {
@@ -57,9 +56,14 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 			>
 				<div className="share-site-modal__modal-content">
 					<div className="share-site-modal__modal-text">
-						<h1 className="share-site-modal__modal-heading">{ translate( 'Share your site' ) }</h1>
+						<h1 className="share-site-modal__modal-heading">
+							{ __( 'Share your site', 'launchpad' ) }
+						</h1>
 						<p className="share-site-modal__modal-body">
-							{ translate( 'Now you can head over to your site and share it with the world.' ) }
+							{ __(
+								'Now you can head over to your site and share it with the world.',
+								'launchpad'
+							) }
 						</p>
 					</div>
 					<div className="share-site-modal__modal-actions">
@@ -75,7 +79,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 									context={ clipboardTextEl.current }
 									position="top"
 								>
-									{ translate( 'Copied to clipboard!' ) }
+									{ __( 'Copied to clipboard!', 'launchpad' ) }
 								</Popover>
 							</div>
 
@@ -86,7 +90,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 							>
 								<Icon icon={ link } size={ 22 } />
 								<span className="share-site-modal__modal-view-site-text">
-									{ translate( 'Copy' ) }
+									{ __( 'Copy', 'launchpad' ) }
 								</span>
 							</Button>
 						</div>

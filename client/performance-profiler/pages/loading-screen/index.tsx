@@ -31,7 +31,19 @@ const StyledLoadingScreen = styled.div`
 `;
 
 const TipContainer = styled.div`
-	margin-top: 65px;
+	margin-top: 64px;
+	position: relative;
+	overflow: hidden;
+	height: 200px;
+`;
+
+const TipWrapper = styled.div< { isActive: boolean } >`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	opacity: ${ ( props ) => ( props.isActive ? 1 : 0 ) };
+	transition: opacity 0.5s ease;
 `;
 
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
@@ -39,7 +51,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 
 	const heading = isSavedReport
 		? translate( 'Your site‘s results are ready' )
-		: translate( 'Testing your site‘s speed…' );
+		: translate( 'Testing your site‘s speed' );
 
 	const tips = [
 		{
@@ -76,18 +88,16 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		},
 	];
 	const [ currentTip, setCurrentTip ] = useState( 0 );
+	const [ previousTip, setPreviousTip ] = useState( 0 );
 
 	useEffect( () => {
-		const updateCurrentTip = () => {
-			setTimeout( () => {
-				const randomTip = Math.floor( Math.random() * tips.length );
-				setCurrentTip( randomTip );
+		const intervalId = setInterval( () => {
+			setPreviousTip( currentTip );
+			const randomTip = Math.floor( Math.random() * tips.length );
+			setCurrentTip( randomTip );
+		}, 10000 );
 
-				updateCurrentTip();
-			}, 10000 );
-		};
-
-		updateCurrentTip();
+		return () => clearInterval( intervalId );
 	}, [] );
 
 	return (
@@ -96,15 +106,13 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				<h2 className={ isSavedReport ? 'saved-report' : '' }>{ heading }</h2>
 				{ ! isSavedReport && <p>{ translate( 'This may take around 30 seconds.' ) }</p> }
 				<PerformanceReportLoadingProgress isSavedReport={ isSavedReport } />
-				{ tips[ currentTip ] && (
-					<TipContainer>
-						<Tip
-							title={ tips[ currentTip ].heading }
-							content={ tips[ currentTip ].description }
-							link={ tips[ currentTip ].link }
-						/>
-					</TipContainer>
-				) }
+				<TipContainer>
+					{ tips.map( ( tip, index ) => (
+						<TipWrapper key={ index } isActive={ index === currentTip || index === previousTip }>
+							<Tip title={ tip.heading } content={ tip.description } link={ tip.link } />
+						</TipWrapper>
+					) ) }
+				</TipContainer>
 			</StyledLoadingScreen>
 		</LayoutBlock>
 	);

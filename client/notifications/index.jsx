@@ -21,12 +21,14 @@ import { connect } from 'react-redux';
 import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { requestAdminMenu as requestAdminMenuAction } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { setUnseenCount } from 'calypso/state/notifications/actions';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
@@ -135,6 +137,18 @@ export class Notifications extends Component {
 		CLOSE_PANEL: [
 			() => {
 				this.props.checkToggle();
+			},
+		],
+		APPROVE_NOTE: [
+			() => {
+				this.props.requestAdminMenu( this.props.selectedSiteId );
+			},
+		],
+		NOTES_REMOVE: [
+			( _, { isComment } ) => {
+				if ( isComment ) {
+					this.props.requestAdminMenu( this.props.selectedSiteId );
+				}
 			},
 		],
 	};
@@ -292,10 +306,13 @@ export default connect(
 	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 		forceRefresh: shouldForceRefresh( state ),
+		selectedSiteId: getSelectedSiteId( state ),
 	} ),
-	{
-		recordTracksEventAction,
-		setUnseenCount,
-		didForceRefresh,
-	}
+	( dispatch ) => ( {
+		recordTracksEventAction: ( name, properties ) =>
+			dispatch( recordTracksEventAction( name, properties ) ),
+		setUnseenCount: ( count ) => dispatch( setUnseenCount( count ) ),
+		didForceRefresh: () => dispatch( didForceRefresh() ),
+		requestAdminMenu: ( siteId ) => dispatch( requestAdminMenuAction( siteId ) ),
+	} )
 )( Notifications );

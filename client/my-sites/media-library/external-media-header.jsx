@@ -28,6 +28,9 @@ class MediaLibraryExternalHeader extends Component {
 		site: PropTypes.object.isRequired,
 		sticky: PropTypes.bool,
 		visible: PropTypes.bool.isRequired,
+		photosPickerApiEnabled: PropTypes.bool,
+		photosPickerSession: PropTypes.object,
+		createPhotosPickerSession: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -91,6 +94,28 @@ class MediaLibraryExternalHeader extends Component {
 		} );
 	};
 
+	onChangeSelection = () => {
+		const { photosPickerSession, createPhotosPickerSession, deletePhotosPickerSession } =
+			this.props;
+
+		deletePhotosPickerSession && deletePhotosPickerSession( photosPickerSession?.id );
+		createPhotosPickerSession && createPhotosPickerSession();
+	};
+
+	renderChangeSelectionButton() {
+		const { photosPickerSession, translate } = this.props;
+
+		return (
+			<Button
+				compact
+				onClick={ this.onChangeSelection }
+				disable={ ! photosPickerSession?.mediaItemsSet }
+			>
+				{ translate( 'Change selection' ) }
+			</Button>
+		);
+	}
+
 	renderCopyButton() {
 		const { selectedItems, translate } = this.props;
 
@@ -112,7 +137,15 @@ class MediaLibraryExternalHeader extends Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange, translate, canCopy, hasRefreshButton, hasAttribution } = this.props;
+		const {
+			source,
+			onMediaScaleChange,
+			translate,
+			canCopy,
+			hasRefreshButton,
+			hasAttribution,
+			photosPickerApiEnabled,
+		} = this.props;
 
 		return (
 			<Card className="media-library__header">
@@ -126,6 +159,9 @@ class MediaLibraryExternalHeader extends Component {
 					</Button>
 				) }
 
+				{ photosPickerApiEnabled &&
+					source === 'google_photos' &&
+					this.renderChangeSelectionButton() }
 				{ canCopy && this.renderCopyButton() }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } mediaScale={ this.props.mediaScale } />

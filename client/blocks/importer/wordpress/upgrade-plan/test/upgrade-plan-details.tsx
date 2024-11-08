@@ -38,7 +38,10 @@ function getPricing(): PricingMetaForGridPlan {
 		},
 		introOffer: {
 			formattedPrice: '$150',
-			rawPrice: 150,
+			rawPrice: {
+				monthly: 1250,
+				full: 15000,
+			},
 			isOfferComplete: false,
 			intervalUnit: 'year',
 			intervalCount: 1,
@@ -58,7 +61,7 @@ describe( 'UpgradePlanDetails', () => {
 		} );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'One time offer' ) ).toBeInTheDocument();
+			expect( screen.getByText( '50% off your first year' ) ).toBeInTheDocument();
 
 			// Introductory offer price per month (calculated from the full price).
 			expect( screen.getByText( '12' ) ).toBeInTheDocument();
@@ -87,7 +90,7 @@ describe( 'UpgradePlanDetails', () => {
 		} );
 
 		await waitFor( () => {
-			expect( screen.queryByText( 'One time offer' ) ).toBeNull();
+			expect( screen.queryByText( '50% off your first year' ) ).toBeNull();
 
 			// Introductory offer price per month (calculated from the full price).
 			expect( screen.queryByText( '12' ) ).toBeNull();

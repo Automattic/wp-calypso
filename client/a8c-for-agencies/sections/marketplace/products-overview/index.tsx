@@ -10,7 +10,6 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -84,10 +83,8 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
-			compact
 		>
 			<LayoutTop withNavigation>
-				<PendingPaymentNotification />
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [

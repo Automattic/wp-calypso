@@ -83,10 +83,7 @@ class MediaLibraryListNoContent extends Component {
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.props.translate( 'Would you like to upload something?' );
 			action = (
-				<UploadButton
-					className="media-library__no-content-upload-button is-primary"
-					site={ this.props.site }
-				>
+				<UploadButton className="media-library__no-content-upload-button" site={ this.props.site }>
 					{ this.props.translate( 'Upload media' ) }
 				</UploadButton>
 			);

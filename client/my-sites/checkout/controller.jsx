@@ -200,12 +200,9 @@ export function checkout( context, next ) {
 			context.pathname.includes( '/checkout/no-site' ) &&
 			'no-user' === context.query.cart );
 
-	const searchParams = new URLSearchParams( window.location.search );
-	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
-
 	// Tracks if checkout page was unloaded before purchase completion,
 	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
-	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
+	if ( ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
@@ -480,7 +477,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId, fromSiteSlug } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -498,6 +495,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
 				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
 			/>
 		);
 	}
@@ -506,12 +504,13 @@ export function licensingThankYouAutoActivation( context, next ) {
 }
 
 export function licensingThankYouAutoActivationCompleted( context, next ) {
-	const { destinationSiteId } = context.query;
+	const { destinationSiteId, redirect_to } = context.query;
 
 	context.primary = (
 		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
 			destinationSiteId={ destinationSiteId }
+			redirectTo={ redirect_to }
 		/>
 	);
 

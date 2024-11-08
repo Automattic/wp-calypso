@@ -98,7 +98,7 @@ const PartnerDirectoryDashboard = () => {
 	const onSubmitPublishProfileSuccess = useCallback(
 		( response: Agency ) => {
 			// Update the store with the new agency data
-			response && reduxDispatch( setActiveAgency( response ) );
+			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
 
 			reduxDispatch(
 				successNotice( translate( 'Your profile has been saved!' ), {
@@ -106,7 +106,7 @@ const PartnerDirectoryDashboard = () => {
 				} )
 			);
 		},
-		[ translate ]
+		[ agency, translate ]
 	);
 
 	const { onSubmit: submitPublishProfile, isSubmitting: isSubmittingPublishProfile } =

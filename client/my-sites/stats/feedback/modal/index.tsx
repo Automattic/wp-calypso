@@ -55,13 +55,11 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 
 	const handleClose = useCallback(
 		( isDirectClose: boolean = false ) => {
-			setTimeout( () => {
-				onClose();
+			onClose();
 
-				if ( isDirectClose ) {
-					trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
-				}
-			}, 200 );
+			if ( isDirectClose ) {
+				trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+			}
 		},
 		[ onClose ]
 	);

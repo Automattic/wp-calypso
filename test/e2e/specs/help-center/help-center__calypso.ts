@@ -14,9 +14,7 @@ import { skipDescribeIf } from '../../jest-helpers';
 declare const browser: Browser;
 
 // Only run on desktop when merging to wp-calypso/trunk
-skipDescribeIf(
-	envVariables.VIEWPORT_NAME === 'mobile' || envVariables.JETPACK_TARGET !== 'wpcom-production'
-)( 'Help Center in Calypso', () => {
+skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calypso', () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
@@ -36,11 +34,9 @@ skipDescribeIf(
 
 		// Set Zendesk to staging environment to prevent calling Zendesk API in test environment.
 		await helpCenterComponent.setZendeskStaging();
-	} );
 
-	// Close the page after the tests
-	afterAll( async function () {
-		await page.close();
+		// Force Odie to Test mode.
+		await helpCenterComponent.setOdieTestMode();
 	} );
 
 	/**
@@ -136,8 +132,6 @@ skipDescribeIf(
 	 */
 	describe( 'Support Flow', () => {
 		it( 'start support flow', async () => {
-			await helpCenterComponent.openPopover();
-
 			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
 				name: 'Still need help?',
 			} );
@@ -148,11 +142,14 @@ skipDescribeIf(
 			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
 		} );
 
-		it( 'get forwarded to a human', async () => {
+		// It's rare that chat is disabled so I'm opting to add a message to the test
+		// description about muting the test instead of working around the failure
+		// mode some other way. If this becomes tedious to maintain, please revisit and fix.
+		it( 'get forwarded to a human. Note: This test fails when chat is disabled. Search "WP.com contact via email" in #dotcom-support to confirm. Mute the test for the duration.', async () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.waitFor( { state: 'visible' } );
+			await contactSupportButton.waitFor( { state: 'visible', timeout: 30000 } );
 
 			expect( await contactSupportButton.count() ).toBeTruthy();
 		} );
@@ -162,12 +159,9 @@ skipDescribeIf(
 		 */
 		it( 'start talking with a human', async () => {
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.dispatchEvent( 'click' );
+			await contactSupportButton.click();
 
-			const zendeskMessaging = await page
-				.frameLocator( 'iframe[title="Messaging window"]' )
-				.getByPlaceholder( 'Type a message' );
-
+			const zendeskMessaging = await page.locator( 'iframe[title="Messaging window"]' );
 			await zendeskMessaging.waitFor( { state: 'visible' } );
 
 			expect( await zendeskMessaging.count() ).toBeTruthy();

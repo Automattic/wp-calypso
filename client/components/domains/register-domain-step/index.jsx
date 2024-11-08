@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import { isHundredYearDomainFlow } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -83,9 +83,6 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
-// TODO: Enable A/B test handling for M2.1 release
-const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
-
 const noop = () => {};
 const domains = wpcom.domains();
 
@@ -93,7 +90,7 @@ const domains = wpcom.domains();
 const PAGE_SIZE = 10;
 const EXACT_MATCH_PAGE_SIZE = 4;
 const MAX_PAGES = 3;
-const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
+const SUGGESTION_QUANTITY = PAGE_SIZE * MAX_PAGES;
 const MIN_QUERY_LENGTH = 2;
 
 // session storage key for query cache
@@ -268,8 +265,6 @@ class RegisterDomainStep extends Component {
 
 	getInitialFiltersState() {
 		return {
-			includeDashes: false,
-			maxCharacters: '',
 			exactSldMatchesOnly: false,
 			tlds: [],
 		};
@@ -413,14 +408,8 @@ class RegisterDomainStep extends Component {
 	getSuggestionsFromProps() {
 		const { pageNumber, pageSize } = this.state;
 		const searchResults = this.state.searchResults || [];
-		const isKrackenUi = isPaginationEnabled;
 
-		let suggestions;
-		if ( isKrackenUi ) {
-			suggestions = searchResults.slice( 0, pageNumber * pageSize );
-		} else {
-			suggestions = [ ...searchResults ];
-		}
+		const suggestions = searchResults.slice( 0, pageNumber * pageSize );
 
 		if ( this.isSubdomainResultsVisible() ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -532,16 +521,11 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi =
-			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
-			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
-			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters =
-			( isKrackenUi && ! isRenderingInitialSuggestions ) || this.props.isReskinned;
+		const showFilters = ! isRenderingInitialSuggestions || this.props.isReskinned;
 
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
@@ -679,10 +663,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderPaginationControls() {
-		if ( ! isPaginationEnabled ) {
-			return null;
-		}
-
 		const { searchResults, pageNumber, pageSize, loadingResults: isLoading } = this.state;
 
 		if ( searchResults === null ) {
@@ -805,6 +785,7 @@ class RegisterDomainStep extends Component {
 						{
 							domainName,
 							blogId: get( this.props, 'selectedSite.ID', null ),
+							vendor: this.props.vendor,
 						},
 						( err, availabilityResult ) => {
 							if ( err ) {
@@ -1023,6 +1004,7 @@ class RegisterDomainStep extends Component {
 					domainName: domain,
 					blogId: get( this.props, 'selectedSite.ID', null ),
 					isCartPreCheck: true,
+					vendor: this.props.vendor,
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
@@ -1069,9 +1051,22 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
+		// Skip availability check for the 100-year domain flow if the domain is not com/net/org
+		if (
+			isHundredYearDomainFlow( this.props.flowName ) &&
+			! [ 'com', 'net', 'org' ].includes( getTld( domain ) )
+		) {
+			this.showSuggestionErrorMessage( domain, 'hundred_year_domain_tld_restriction', {} );
+			return;
+		}
+
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{
+					domainName: domain,
+					blogId: get( this.props, 'selectedSite.ID', null ),
+					vendor: this.props.vendor,
+				},
 				( error, result ) => {
 					const timeDiff = Date.now() - timestamp;
 					const status = get( result, 'status', error );
@@ -1083,13 +1078,15 @@ class RegisterDomainStep extends Component {
 						AVAILABLE_PREMIUM,
 						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
+						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+						MAPPED_SAME_SITE_REGISTRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
 
-					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN, MAPPED_SAME_SITE_REGISTRABLE ];
 
 					if ( error ) {
 						resolve( null );
@@ -1118,7 +1115,12 @@ class RegisterDomainStep extends Component {
 					let availabilityStatus = status;
 
 					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
-					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+					if (
+						isDomainMapped &&
+						status !== REGISTERED_OTHER_SITE_SAME_USER &&
+						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
+						status !== MAPPED_SAME_SITE_REGISTRABLE
+					) {
 						availabilityStatus = mappable;
 					}
 
@@ -1482,7 +1484,11 @@ class RegisterDomainStep extends Component {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
-		const { DOMAIN_AVAILABILITY_THROTTLED, REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
+		const {
+			DOMAIN_AVAILABILITY_THROTTLED,
+			REGISTERED_OTHER_SITE_SAME_USER,
+			MAPPED_SAME_SITE_REGISTRABLE,
+		} = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1503,6 +1509,7 @@ class RegisterDomainStep extends Component {
 				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
+			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
@@ -1516,7 +1523,8 @@ class RegisterDomainStep extends Component {
 					const skipAvailabilityErrors =
 						! status ||
 						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions ) ||
-						status === DOMAIN_AVAILABILITY_THROTTLED;
+						status === DOMAIN_AVAILABILITY_THROTTLED ||
+						status === MAPPED_SAME_SITE_REGISTRABLE;
 
 					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );

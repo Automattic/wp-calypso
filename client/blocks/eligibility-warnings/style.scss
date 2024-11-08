@@ -23,7 +23,6 @@
 
 			.button {
 				width: 100%;
-				margin-top: 20px;
 			}
 		}
 	}
@@ -296,4 +295,8 @@
 		padding-bottom: 0;
 		margin-bottom: 0;
 	}
+}
+
+.card.eligibility-warnings__data-center-picker.is-compact {
+	padding-bottom: 8px;
 }

@@ -78,4 +78,33 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 	'mailpoet-business',
 ];
 
-export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping' ];
+export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping', 'wp-fusion-lite' ];
+
+export const WPBEGINNER_PLUGINS = [
+	'optinmonster',
+	'wpforms-lite',
+	'google-analytics-for-wordpress',
+	'all-in-one-seo-pack',
+	'coming-soon',
+	'wp-mail-smtp',
+	'custom-facebook-feed',
+	'insert-headers-and-footers',
+	'pushengage',
+	'searchwp-live-ajax-search',
+	'rafflepress',
+	'easy-digital-downloads',
+	'affiliatewp-checkout-referrals',
+	'stripe',
+	'sugar-calendar-lite',
+	'trustpulse-api',
+	'charitable',
+	'igotweb-wp-mp-links',
+	'uncanny-automator',
+	'pretty-link',
+	'formidable',
+	'woocommerce-wholesale-prices',
+	'advanced-coupons-for-woocommerce-free',
+	'thirstyaffiliates',
+	'uncanny-learndash-toolkit',
+	'nutrifox',
+];

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -18,12 +19,13 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
+import CacheCard from 'calypso/hosting/server-settings/components/cache-card/card';
+import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card/card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
-import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
-import SFTPCard from 'calypso/hosting/server-settings/components/sftp-card';
-import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
+import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/card';
+import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card/card';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -109,7 +111,7 @@ const AllCards = ( {
 	const allCards: CardEntry[] = [
 		{
 			feature: 'sftp',
-			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			content: <SftpCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
 		{
@@ -134,6 +136,14 @@ const AllCards = ( {
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
+		} );
+	}
+
+	if ( config.isEnabled( 'hosting-server-settings-enhancements' ) ) {
+		allCards.push( {
+			feature: 'defensive-mode',
+			content: <DefensiveModeCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
 		} );
 	}
 

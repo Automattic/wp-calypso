@@ -183,7 +183,7 @@ export function resolveEmailPlanStatus(
 		}
 
 		// Check for unused mailboxes
-		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
+		if ( ! isLoadingEmails && emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
 			return errorStatus;
 		}
 

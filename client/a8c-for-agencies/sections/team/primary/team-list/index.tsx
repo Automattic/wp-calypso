@@ -97,7 +97,7 @@ export default function TeamList( { currentTab }: Props ) {
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
 			<LayoutTop withNavigation>
 				<LayoutHeader>
 					<Title>{ title }</Title>

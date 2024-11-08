@@ -1,26 +1,19 @@
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { FC, useEffect } from 'react';
+import useCanvasMode from '../../hooks/use-canvas-mode';
 import tracksRecordEvent from '../tracking/track-record-event';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
-import { getUnlock } from './utils';
 
 import './upgrade-button.scss';
 
 const SAVE_HUB_SAVE_BUTTON_SELECTOR = '.edit-site-save-hub__button';
 const HEADER_SAVE_BUTTON_SELECTOR = '.edit-site-save-button__button';
 
-const unlock = getUnlock();
-
 export const LivePreviewUpgradeButton: FC< {
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 	upgradePlan: () => void;
 } > = ( { previewingTheme, upgradePlan } ) => {
-	const canvasMode = useSelect(
-		( select ) =>
-			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
-		[]
-	);
+	const canvasMode = useCanvasMode();
 
 	/**
 	 * This overrides the `SaveButton` behavior by adding a listener and changing the copy.
@@ -102,17 +95,21 @@ export const LivePreviewUpgradeButton: FC< {
 			} );
 		};
 
-		if ( canvasMode === 'view' ) {
-			overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
-			overrideSaveButtonHover( SAVE_HUB_SAVE_BUTTON_SELECTOR );
-		} else if ( canvasMode === 'edit' ) {
-			overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
-			overrideSaveButtonHover( HEADER_SAVE_BUTTON_SELECTOR );
-		}
+		// Delay it to ensure the element is visible.
+		const timeout = window.setTimeout( () => {
+			if ( canvasMode === 'view' ) {
+				overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
+				overrideSaveButtonHover( SAVE_HUB_SAVE_BUTTON_SELECTOR );
+			} else if ( canvasMode === 'edit' ) {
+				overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
+				overrideSaveButtonHover( HEADER_SAVE_BUTTON_SELECTOR );
+			}
+		}, 0 );
 
 		return () => {
 			resetSaveButton();
 			resetSaveButtonHover();
+			clearTimeout( timeout );
 		};
 	}, [ canvasMode, previewingTheme.id, previewingTheme.type, upgradePlan ] );
 

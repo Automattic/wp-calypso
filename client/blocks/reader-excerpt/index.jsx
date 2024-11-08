@@ -124,7 +124,7 @@ const ReaderExcerpt = ( { post, hasExcerpt, showExcerpt, setHasExcerpt } ) => {
 		setHasExcerpt?.( excerpt !== '' && excerpt !== null && showExcerpt );
 	}, [ excerpt ] );
 
-	if ( ! hasExcerpt || ! showExcerpt ) {
+	if ( hasExcerpt === false || showExcerpt === false ) {
 		return null;
 	}
 

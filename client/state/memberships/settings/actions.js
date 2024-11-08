@@ -20,7 +20,7 @@ const requestDisconnectStripeAccountByUrl = (
 	return ( dispatch ) => {
 		dispatch(
 			warningNotice( noticeTextOnProcessing, {
-				duration: 10000,
+				duration: 5000,
 			} )
 		);
 

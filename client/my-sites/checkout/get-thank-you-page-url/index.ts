@@ -53,7 +53,10 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
+import {
+	getEmailManagementPath,
+	getProfessionalEmailCheckoutUpsellPath,
+} from 'calypso/my-sites/email/paths';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -259,6 +262,7 @@ export default function getThankYouPageUrl( {
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
 					productSlug,
+					redirect_to: redirectTo,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);
@@ -283,6 +287,7 @@ export default function getThankYouPageUrl( {
 			{
 				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+				redirect_to: redirectTo,
 			},
 			thankYouUrl
 		);
@@ -588,6 +593,14 @@ function getFallbackDestination( {
 		const emails = titanProducts[ 0 ].extra?.email_users;
 		if ( emails && emails.length > 0 ) {
 			debug( 'site with titan products' );
+			if ( cart?.products?.length === 1 ) {
+				const domain = titanProducts[ 0 ].meta;
+				if ( domain ) {
+					return getEmailManagementPath( siteSlug, domain, null, {
+						'new-email': emails[ 0 ].email,
+					} );
+				}
+			}
 			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
 		}
 	}

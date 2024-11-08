@@ -11,18 +11,14 @@ import './style.scss';
 
 interface Props {
 	siteSlug: string | null;
-	isUnsupportedPlan?: boolean;
 	defaultDevice?: Device;
 	showDeviceSwitcher?: boolean;
-	enableInteractions?: boolean;
 }
 
 const SitePreview = ( {
 	siteSlug = '',
-	isUnsupportedPlan,
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	showDeviceSwitcher = false,
-	enableInteractions = false,
 }: Props ) => {
 	const translate = useTranslate();
 	const site = useSite();
@@ -33,14 +29,10 @@ const SitePreview = ( {
 		DEVICE_TYPES.PHONE,
 	];
 
-	const previewUrl = ! isUnsupportedPlan && siteSlug ? `https://${ siteSlug }` : null;
-	const loadingMessage = ! isUnsupportedPlan
-		? translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-				components: { strong: <strong /> },
-		  } )
-		: translate( '{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.', {
-				components: { strong: <strong /> },
-		  } );
+	const previewUrl = siteSlug ? `https://${ siteSlug }` : null;
+	const loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
 
 	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
 		useSitePreviewShareCode();
@@ -58,7 +50,7 @@ const SitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: ! enableInteractions,
+			do_preview_no_interactions: true,
 			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	};
