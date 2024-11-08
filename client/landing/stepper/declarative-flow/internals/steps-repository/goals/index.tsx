@@ -48,10 +48,12 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const isAddedGoalsExp = addedGoalsExpAssignment?.variationName === 'treatment';
 
 	const translate = useTranslate();
-	const whatAreYourGoalsText = translate( 'What would you like to do?' );
-	const subHeaderText = translate(
-		'Pick one or more goals and we’ll tailor the setup experience for you.'
-	);
+	const whatAreYourGoalsText = isAddedGoalsExp
+		? translate( 'What would you like to do?' )
+		: translate( 'What are your goals?' );
+	const subHeaderText = isAddedGoalsExp
+		? translate( 'Pick one or more goals and we’ll tailor the setup experience for you.' )
+		: translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),

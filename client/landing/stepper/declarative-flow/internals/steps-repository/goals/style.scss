@@ -34,6 +34,12 @@
 			}
 		}
 
+		.select-goals__cards-hint {
+			font-weight: 400;
+			line-height: 24px;
+			color: #787c82;
+		}
+
 		.step-container__skip-wrapper {
 			// I really hate this, but forcing a specificity is not much better.
 			margin-inline-start: 0 !important;
@@ -61,6 +67,10 @@
 		@include break-small {
 			width: auto;
 			grid-template-columns: repeat(2, 1fr);
+
+			.select-goals__cards-hint {
+				grid-column: span 2;
+			}
 		}
 
 		.select-goals__goal-title {
