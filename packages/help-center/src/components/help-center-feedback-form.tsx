@@ -5,16 +5,21 @@ import { HelpCenterSite } from '@automattic/data-stores';
 import CustomALink from '@automattic/odie-client/src/components/message/custom-a-link';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
 import { uriTransformer } from '@automattic/odie-client/src/components/message/uri-transformer';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
-import './help-center-feedback-form.scss';
 import { generateContactOnClickEvent } from './utils';
+
+import './help-center-feedback-form.scss';
+
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: number | null;
@@ -37,6 +42,8 @@ const HelpCenterFeedbackForm = ( {
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
 	const productId = plan?.getProductId();
+	const resetSupportInteraction = useResetSupportInteraction();
+	const { startNewInteraction } = useManageSupportInteraction();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -101,8 +108,13 @@ const HelpCenterFeedbackForm = ( {
 		);
 	};
 
-	const handleContactSupportClick = () => {
+	const handleContactSupportClick = async () => {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
+		await resetSupportInteraction();
+		startNewInteraction( {
+			event_source: 'help-center',
+			event_external_id: uuidv4(),
+		} );
 		navigate( '/odie' );
 	};
 
