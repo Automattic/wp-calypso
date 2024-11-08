@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useOdieAssistantContext } from '../../context';
-import { useCreateZendeskConversation } from '../../query/use-create-zendesk-conversation';
+import { useCreateZendeskConversation } from '../../hooks';
 
 import './get-support.scss';
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import FoldableCard from '../foldable';
 import SupportDocLink from '../support-link';
-import type { Message, Source } from '../../types/';
+import type { Message, Source } from '../../types';
 
 export const Sources = ( { message }: { message: Message } ) => {
 	const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import Smooch from 'smooch';
 import { zendeskMessageConverter } from '../utils';
-import type { ZendeskMessage } from '../types/';
+import type { ZendeskMessage } from '../types';
 
 const parseResponse = ( conversation: Conversation ) => {
 	let clientId;
@@ -14,6 +14,7 @@ const parseResponse = ( conversation: Conversation ) => {
 
 	return { ...conversation, clientId, messages };
 };
+
 /**
  * Get the conversation for the Zendesk conversation.
  */

@@ -1,20 +1,46 @@
-import type { OdieUserTracking } from '../track-location/useOdieUserTracking';
+import { ODIE_ALLOWED_BOTS } from './constants';
+import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
-export type Source = {
-	title: string;
-	url: string;
-	heading: string;
-	blog_id: number;
-	post_id: number;
-	content: string;
-	railcar?: {
-		ui_position: number;
-		ui_algo: string;
-		fetch_algo: string;
-		fetch_position: number;
-		railcar: string;
-	};
+export type OdieAssistantContextInterface = {
+	isChatLoaded: boolean;
+	shouldUseHelpCenterExperience: boolean;
+	addMessage: ( message: Message | Message[] ) => void;
+	botName?: string;
+	botNameSlug: OdieAllowedBots;
+	chat: Chat;
+	clearChat: () => void;
+	currentUser: CurrentUser;
+	isMinimized?: boolean;
+	isUserEligibleForPaidSupport: boolean;
+	extraContactOptions?: ReactNode;
+	odieBroadcastClientId: string;
+	selectedSiteId?: number | null;
+	selectedConversationId?: string | null;
+	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
+	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
+	setChatStatus: ( status: ChatStatus ) => void;
+	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
+	version?: string | null;
+	setWaitAnswerToFirstMessageFromHumanSupport: (
+		waitAnswerToFirstMessageFromHumanSupport: boolean
+	) => void;
 };
+
+export type OdieAssistantProviderProps = {
+	shouldUseHelpCenterExperience?: boolean;
+	botName?: string;
+	botNameSlug?: OdieAllowedBots;
+	isUserEligibleForPaidSupport?: boolean;
+	isMinimized?: boolean;
+	currentUser: CurrentUser;
+	extraContactOptions?: ReactNode;
+	selectedSiteId?: number | null;
+	selectedConversationId?: string | null;
+	version?: string | null;
+	children?: ReactNode;
+	setChatStatus?: ( status: ChatStatus ) => void;
+} & PropsWithChildren;
 
 export type CurrentUser = {
 	display_name: string;
@@ -38,6 +64,22 @@ type Feature =
 	| 'facebook'
 	| 'unrelated-to-wordpress';
 
+export type Source = {
+	title: string;
+	url: string;
+	heading: string;
+	blog_id: number;
+	post_id: number;
+	content: string;
+	railcar?: {
+		ui_position: number;
+		ui_algo: string;
+		fetch_algo: string;
+		fetch_position: number;
+		railcar: string;
+	};
+};
+
 type InquiryType =
 	| 'help'
 	| 'user-is-greeting'
@@ -46,6 +88,12 @@ type InquiryType =
 	| 'billing'
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
+
+export type OdieUserTracking = {
+	path: string;
+	time_spent: number;
+	elements_clicked: string[];
+};
 
 export type Context = {
 	nudge_id?: string | undefined;
@@ -66,12 +114,6 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
 	};
-};
-
-export type Nudge = {
-	nudge: string;
-	initialMessage: string;
-	context?: Record< string, unknown >;
 };
 
 export type MessageRole = 'user' | 'bot' | 'business';
@@ -103,28 +145,27 @@ export type Message = {
 	created_at?: string;
 };
 
-export type Chat = {
-	conversationId?: string;
-	clientId?: string;
-	chat_id?: number | null;
-	wpcom_user_id?: number | null;
+export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer';
+
+export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
+
+export type OdieChat = {
 	messages: Message[];
+	odieId: number | null;
+	wpcomUserId: number | null;
 };
 
-export type OdieAllowedSectionNames =
-	| 'plans'
-	| 'add-ons'
-	| 'domains'
-	| 'email'
-	| 'site-purchases'
-	| 'checkout'
-	| 'help-center';
+export type Chat = OdieChat & {
+	supportInteractionId: string | null;
+	conversationId: string | null;
+	clientId?: string;
+	provider: SupportProvider;
+	status: ChatStatus;
+};
 
-export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as const;
+export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
 
-export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
-
-export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging';
+export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 
 interface ConversationParticipant {
 	id: string;
@@ -161,6 +202,12 @@ export type ZendeskContentType =
 	| 'location'
 	| 'template';
 
+type Metadata = {
+	odieChatId: number;
+	createdAt: string;
+	supportInteractionId: string;
+};
+
 export type ZendeskConversation = {
 	id: string;
 	lastUpdatedAt: number;
@@ -174,11 +221,6 @@ export type ZendeskConversation = {
 	metadata: Metadata;
 };
 
-export type Metadata = {
-	odieChatId: number;
-	createdAt: string;
-};
-
 export type SupportInteractionUser = {
 	user_id: string;
 	provider: 'wpcom';
@@ -186,8 +228,8 @@ export type SupportInteractionUser = {
 };
 
 export type SupportInteractionEvent = {
-	event_external_id: number;
-	source: SupportProvider;
+	event_external_id: string;
+	event_source: SupportProvider;
 	metadata?: object;
 	event_order?: number;
 };

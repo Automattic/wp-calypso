@@ -153,6 +153,11 @@
 			}
 		}
 	}
+
+	// Color overrides for focus states of Action button
+	.components-button:focus:not(:disabled) {
+		--wp-components-color-accent: var(--color-primary-light);
+	}
 }
 
 // TODO: remove when updating to dataviews@4.3.0.

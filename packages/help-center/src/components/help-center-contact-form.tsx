@@ -7,7 +7,6 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
@@ -85,14 +84,22 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
-	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			subject: helpCenterSelect.getSubject(),
-			message: helpCenterSelect.getMessage(),
-			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
-		};
-	}, [] );
+	const { currentSupportInteraction, subject, message, userDeclaredSiteUrl } = useSelect(
+		( select ) => {
+			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+			return {
+				currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
+				subject: helpCenterSelect.getSubject(),
+				message: helpCenterSelect.getMessage(),
+				userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
+			};
+		},
+		[]
+	);
+
+	const odieId =
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+			?.event_external_id ?? null;
 
 	const {
 		resetStore,
@@ -110,8 +117,6 @@ export const HelpCenterContactForm = () => {
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
-
-	const wapuuChatId = useGetOdieStorage( 'last_chat_id' );
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -178,7 +183,6 @@ export const HelpCenterContactForm = () => {
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const skipResources = params.get( 'skip-resources' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
-	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const redirectToArticle = useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
@@ -269,7 +273,6 @@ export const HelpCenterContactForm = () => {
 		if ( wapuuFlow ) {
 			params.set( 'disable-gpt', 'true' );
 			params.set( 'show-gpt', 'false' );
-			setOdieStorage( null ); // clear the chat id
 		}
 
 		// Domain only sites don't have plans.
@@ -279,7 +282,7 @@ export const HelpCenterContactForm = () => {
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
 
-		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
+		const aiChatId = wapuuFlow ? odieId?.toString() ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
 			case 'CHAT':
@@ -308,8 +311,8 @@ export const HelpCenterContactForm = () => {
 
 					if ( wapuuFlow ) {
 						initialChatMessage += '<br /><br />';
-						initialChatMessage += wapuuChatId
-							? `<strong>Wapuu chat reference: ${ wapuuChatId }</strong>:<br />`
+						initialChatMessage += odieId
+							? `<strong>Wapuu chat reference: ${ odieId }</strong>:<br />`
 							: '<strong>Wapuu chat reference is not available</strong>:<br />';
 						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
 					}

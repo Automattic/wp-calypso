@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { requestPage } from 'calypso/state/reader/streams/actions';
+import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import RecentPostField from './recent-post-field';
 import RecentSeenField from './recent-seen-field';
@@ -25,6 +25,8 @@ const Recent = () => {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'seen', 'post' ],
+		perPage: 10,
+		page: 1,
 	} );
 
 	const data = useSelector( ( state: AppState ) => state.reader?.streams?.recent );
@@ -37,11 +39,11 @@ const Recent = () => {
 
 		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
 			const post = getPostByKey( state, {
-				feedId: item.blogId,
+				feedId: item.feedId,
 				postId: item.postId,
 			} );
 			if ( post ) {
-				acc[ `${ item.blogId }-${ item.postId }` ] = post;
+				acc[ `${ item.feedId }-${ item.postId }` ] = post;
 			}
 			return acc;
 		}, {} );
@@ -49,7 +51,7 @@ const Recent = () => {
 
 	const getPostFromItem = useCallback(
 		( item: ReaderPost ) => {
-			const postKey = `${ item.blogId }-${ item.postId }`;
+			const postKey = `${ item.feedId }-${ item.postId }`;
 			return posts[ postKey ];
 		},
 		[ posts ]
@@ -98,18 +100,38 @@ const Recent = () => {
 
 	const fetchData = useCallback( () => {
 		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( ( requestPage as any )( { streamKey: 'recent' } ) );
-	}, [ dispatch ] );
+		dispatch(
+			requestPaginatedStream( {
+				streamKey: 'recent',
+				page: view.page,
+				perPage: view.perPage,
+			} ) as AnyAction
+		);
+		// Fetch the next page in advance.
+		dispatch(
+			requestPaginatedStream( {
+				streamKey: 'recent',
+				page: view?.page ? view.page + 1 : undefined,
+				perPage: view.perPage,
+			} ) as AnyAction
+		);
+	}, [ dispatch, view ] );
 
-	const { data: shownData, paginationInfo } = useMemo( () => {
+	const paginationInfo = useMemo( () => {
+		return {
+			totalItems: data?.pagination?.totalItems ?? 0,
+			totalPages: data?.pagination?.totalPages ?? 0,
+		};
+	}, [ data?.pagination ] );
+
+	const { data: shownData } = useMemo( () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
-	}, [ data, view, fields ] );
+	}, [ data?.items, view, fields ] );
 
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
-	}, [ fetchData ] );
+	}, [ fetchData, view ] );
 
 	// Set the first item as selected if no item is selected and screen is wide.
 	useEffect( () => {
@@ -164,7 +186,13 @@ const Recent = () => {
 						fields={ fields }
 						data={ shownData }
 						onChangeView={ ( newView: View ) =>
-							setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
+							setView( {
+								type: newView.type,
+								fields: newView.fields ?? [],
+								layout: view.layout,
+								perPage: newView.perPage,
+								page: newView.page,
+							} )
 						}
 						paginationInfo={ paginationInfo }
 						defaultLayouts={ defaultLayouts as SupportedLayouts }

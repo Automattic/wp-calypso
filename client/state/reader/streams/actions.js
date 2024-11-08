@@ -2,6 +2,7 @@ import { getStreamType } from 'calypso/reader/utils';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
+	READER_STREAMS_PAGINATED_REQUEST,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
@@ -46,7 +47,7 @@ export function requestPage( {
 	};
 }
 
-export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
+export function receivePage( { streamKey, pageHandle, streamItems, gap, totalItems, totalPages } ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
@@ -54,6 +55,8 @@ export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
 			streamItems,
 			pageHandle,
 			gap,
+			totalItems,
+			totalPages,
 		},
 	};
 }
@@ -108,5 +111,21 @@ export function clearStream( { streamKey } ) {
 	return {
 		type: READER_STREAMS_CLEAR,
 		payload: { streamKey },
+	};
+}
+
+export function requestPaginatedStream( { streamKey, page = 1, perPage = 10, localeSlug = null } ) {
+	const streamType = getStreamType( streamKey );
+
+	return {
+		type: READER_STREAMS_PAGINATED_REQUEST,
+		payload: {
+			streamKey,
+			streamType,
+			isPoll: false,
+			page,
+			perPage,
+			localeSlug,
+		},
 	};
 }

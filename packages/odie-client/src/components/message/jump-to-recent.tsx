@@ -9,7 +9,7 @@ export const JumpToRecent = ( {
 }: {
 	containerReference: RefObject< HTMLDivElement >;
 } ) => {
-	const { trackEvent, isMinimized, chat, chatStatus } = useOdieAssistantContext();
+	const { trackEvent, isMinimized, chat } = useOdieAssistantContext();
 	const lastMessageRef = useRef< Element | null >( null );
 	const [ isLastMessageVisible, setIsLastMessageVisible ] = useState( false );
 
@@ -27,7 +27,7 @@ export const JumpToRecent = ( {
 			! containerReference.current ||
 			isMinimized ||
 			chat.messages.length < 2 ||
-			chatStatus !== 'loaded'
+			chat.status !== 'loaded'
 		) {
 			return;
 		}
@@ -52,7 +52,7 @@ export const JumpToRecent = ( {
 		};
 	}, [ chat.messages.length ] );
 
-	if ( isMinimized || chat.messages.length < 2 || chatStatus !== 'loaded' ) {
+	if ( isMinimized || chat.messages.length < 2 || chat.status !== 'loaded' ) {
 		return null;
 	}
 
