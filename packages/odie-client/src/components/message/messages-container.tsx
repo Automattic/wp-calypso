@@ -44,8 +44,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 	useEffect( () => {
-		chat.conversationId !== null && setChatLoaded( true );
+		chat?.status === 'loaded' && setChatLoaded( true );
 	}, [ chat ] );
+
+	const shouldLoadChat: boolean =
+		! shouldUseHelpCenterExperience || ( shouldUseHelpCenterExperience && chatMessagesLoaded );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
@@ -56,9 +59,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
-				{ shouldUseHelpCenterExperience && chatMessagesLoaded === false && <LoadingChatSpinner /> }
-				{ ( ! shouldUseHelpCenterExperience ||
-					( shouldUseHelpCenterExperience && chatMessagesLoaded ) ) && (
+				{ ! shouldLoadChat ? (
+					<LoadingChatSpinner />
+				) : (
 					<>
 						<ChatMessage
 							message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
