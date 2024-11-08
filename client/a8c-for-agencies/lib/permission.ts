@@ -35,6 +35,9 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_MIGRATIONS_OVERVIEW_LINK,
+	A4A_MIGRATIONS_COMMISSIONS_LINK,
+	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 	A4A_TEAM_INVITE_LINK,
 	A4A_AGENCY_TIER_LINK,
 } from '../components/sidebar-menu/lib/constants';
@@ -77,6 +80,9 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_ADD_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_MIGRATIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_OVERVIEW_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_COMMISSIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_PAYMENT_SETTINGS ]: [ 'a4a_read_migrations' ],
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
 };
