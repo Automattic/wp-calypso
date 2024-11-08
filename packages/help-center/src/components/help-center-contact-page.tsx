@@ -244,7 +244,17 @@ const HelpCenterFooterButton = ( {
 
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
-	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { data: supportInteractionsResolved } = useGetSupportInteractions(
+		'zendesk',
+		100,
+		'resolved'
+	);
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+
+	const supportInteractions = [
+		...( supportInteractionsResolved || [] ),
+		...( supportInteractionsOpen || [] ),
+	];
 
 	return config.isEnabled( 'help-center-experience' ) &&
 		supportInteractions &&

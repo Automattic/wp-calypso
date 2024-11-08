@@ -44,8 +44,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 		if (
 			isChatLoaded &&
 			getConversations &&
-			supportInteractionsResolved &&
-			supportInteractionsOpen
+			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
+				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
 		) {
 			const allConversations = getConversations();
 			const supportInteractions = [

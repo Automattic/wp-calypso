@@ -92,10 +92,8 @@ export const HelpCenterChatHistory = () => {
 		if (
 			isChatLoaded &&
 			getConversations &&
-			supportInteractionsResolved &&
-			supportInteractionsOpen &&
-			supportInteractionsResolved?.length > 0 &&
-			supportInteractionsOpen?.length > 0
+			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
+				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
 		) {
 			const conversations = getConversations();
 			const supportInteractions = [
