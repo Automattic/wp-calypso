@@ -9,7 +9,8 @@ import { PluginActions } from '../hooks/types';
 import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
-	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
+	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
+	pluginUpdateCount: number
 ) {
 	const fields = useMemo(
 		() => [
@@ -83,7 +84,12 @@ export function useFields(
 			},
 			{
 				id: 'update',
-				label: translate( 'Update available' ),
+				label:
+					pluginUpdateCount > 0
+						? translate( 'Update available (%(count)s)', {
+								args: { count: pluginUpdateCount },
+						  } )
+						: translate( 'Update available' ),
 				getValue: ( { item }: { item: Plugin } ) => {
 					// Used exclusively for sorting
 					return item.status?.includes( PLUGINS_STATUS.UPDATE ) ? 'a' : 'b';
@@ -109,7 +115,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog ]
+		[ bulkActionDialog, pluginUpdateCount ]
 	);
 
 	return fields;

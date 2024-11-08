@@ -5,6 +5,7 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
@@ -29,7 +30,10 @@ export default function PluginsListDataViews( {
 	bulkActionDialog,
 }: Props ) {
 	const translate = useTranslate();
-	const fields = useFields( bulkActionDialog );
+	const pluginUpdateCount = currentPlugins.filter(
+		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
+	).length;
+	const fields = useFields( bulkActionDialog, pluginUpdateCount );
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
