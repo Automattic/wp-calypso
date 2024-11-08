@@ -1,6 +1,6 @@
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import { useAutoScroll, useZendeskMessageListener } from '../../hooks';
@@ -39,10 +39,13 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, shouldUseHelpCenterExperience, botNameSlug } = useOdieAssistantContext();
-
+	const [ chatMessagesLoaded, setChatLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
+	useEffect( () => {
+		chat.conversationId !== null && setChatLoaded( true );
+	}, [ chat ] );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
@@ -53,26 +56,30 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
-				<ChatMessage
-					message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
-					key={ 0 }
-					currentUser={ currentUser }
-					isNextMessageFromSameSender={ false }
-					displayChatWithSupportLabel={ false }
-				/>
-				{ chat.conversationId === null && <LoadingChatSpinner /> }
-				{ chat.messages.map( ( message, index ) => (
-					<ChatMessage
-						message={ message }
-						key={ index }
-						currentUser={ currentUser }
-						isNextMessageFromSameSender={ isNextMessageFromSameSender(
-							message.role,
-							chat.messages[ index + 1 ]?.role
-						) }
-						displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
-					/>
-				) ) }
+				{ chatMessagesLoaded === false && <LoadingChatSpinner /> }
+				{ chatMessagesLoaded && (
+					<>
+						<ChatMessage
+							message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
+							key={ 0 }
+							currentUser={ currentUser }
+							isNextMessageFromSameSender={ false }
+							displayChatWithSupportLabel={ false }
+						/>
+						{ chat.messages.map( ( message, index ) => (
+							<ChatMessage
+								message={ message }
+								key={ index }
+								currentUser={ currentUser }
+								isNextMessageFromSameSender={ isNextMessageFromSameSender(
+									message.role,
+									chat.messages[ index + 1 ]?.role
+								) }
+								displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
+							/>
+						) ) }
+					</>
+				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 				{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
 				{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
