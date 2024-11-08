@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
+import { useExperiment } from 'calypso/lib/explat';
 import userAgent from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
 import { ONBOARD_STORE } from '../stores';
@@ -19,6 +20,23 @@ export function useIsBigSkyEligible() {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[ site ]
 	);
+
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_bigsky_soft_launch_v1',
+		{
+			isEligible: featureFlagEnabled,
+		}
+	);
+
+	if ( isLoading ) {
+		return { isLoading, isEligible: false };
+	}
+
+	const isInBigSkyExperiment = experimentAssignment?.variationName === 'treatment';
+
+	if ( ! isInBigSkyExperiment ) {
+		return { isLoading: false, isEligible: false };
+	}
 
 	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
