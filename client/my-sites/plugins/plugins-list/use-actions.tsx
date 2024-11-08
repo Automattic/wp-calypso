@@ -49,7 +49,7 @@ export function useActions(
 			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
-			label: translate( 'Enable Autoupdate' ),
+			label: translate( 'Enable auto-updates' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: true,
@@ -60,7 +60,7 @@ export function useActions(
 			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
-			label: translate( 'Disable Autoupdate' ),
+			label: translate( 'Disable auto-updates' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: true,

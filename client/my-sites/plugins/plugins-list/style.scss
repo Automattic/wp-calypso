@@ -17,3 +17,36 @@ body.is-section-plugins .plugin-management-wrapper,
         }
     }
 }
+
+.is-section-jetpack-cloud-plugin-management {
+    --wp-admin-theme-color: var(--studio-jetpack-green-50);
+
+    .select-partner-key {
+        padding: 0 40px;
+    }
+
+    .dataviews-wrapper {
+        button {
+            border: none;
+            background-color: transparent;
+    
+            &:hover {
+                background-color: var(--color-background-alt);
+            }
+        }
+
+        thead .dataviews-view-table__row button {
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+
+    .layout__content {
+        padding: 79px 0 32px calc(var(--sidebar-width-max));
+    }
+
+    .plugins__top-container-jc {
+        padding-left: 80px;
+    }
+}

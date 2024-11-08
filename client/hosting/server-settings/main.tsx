@@ -19,13 +19,13 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
-import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card';
+import CacheCard from 'calypso/hosting/server-settings/components/cache-card/card';
+import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card/card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
-import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
-import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card';
-import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
+import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/card';
+import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card/card';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -285,12 +285,14 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	};
 
 	/* We want to show the upsell banner for the following cases:
-	 *  1. The site does not have the Atomic feature.
-	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * 1. The site is on an eCommerce trial.
+	 * 2. The site does not have the Atomic feature.
+	 * 3. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
 	const shouldShowUpgradeBanner =
-		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+		( ! isLoadingSftpData || isECommerceTrial ) &&
+		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (

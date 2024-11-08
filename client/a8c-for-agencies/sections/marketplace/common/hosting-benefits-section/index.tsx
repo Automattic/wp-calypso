@@ -4,6 +4,7 @@ import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/componen
 import './style.scss';
 
 type Props = Omit< PageSectionProps, 'children' > & {
+	className?: string;
 	items: {
 		title: string;
 		description: string;
@@ -12,6 +13,7 @@ type Props = Omit< PageSectionProps, 'children' > & {
 };
 
 export default function HostingBenefitsSection( {
+	className,
 	icon,
 	heading,
 	subheading,
@@ -21,6 +23,7 @@ export default function HostingBenefitsSection( {
 }: Props ) {
 	return (
 		<PageSection
+			className={ className }
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }

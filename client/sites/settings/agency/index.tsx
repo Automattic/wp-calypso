@@ -1,10 +1,11 @@
-import { __ } from '@wordpress/i18n';
-import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
+import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
 import { A4AFullyManagedSiteSetting } from 'calypso/my-sites/site-settings/a4a-fully-managed-site-setting';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import useIsAgencySettingSupported from './hooks/use-is-agency-setting-supported';
 
 interface Fields {
 	is_fully_managed_agency_site: boolean;
@@ -27,18 +28,22 @@ const AgencySettings = ( {
 	isSavingSettings,
 }: AgencySettingsProps ) => {
 	const site = useSelector( getSelectedSite );
-	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID ?? 0, { enabled: !! site?.ID } );
+	const translate = useTranslate();
+	const isSupported = useIsAgencySettingSupported();
 
-	const isAtomicSite = site?.is_wpcom_atomic;
+	const renderNotSupportedNotice = () => {
+		return (
+			<Notice showDismiss={ false } status="is-warning">
+				{ translate( 'This setting is not supported for non-agency sites.' ) }
+			</Notice>
+		);
+	};
 
-	const shouldShowToggle = agencySite && isAtomicSite;
-
-	return (
-		<div className="agency-settings">
-			<NavigationHeader title={ __( 'Agency' ) } />
-			{ shouldShowToggle && site && (
+	const renderSetting = () => {
+		return (
+			site && (
 				<A4AFullyManagedSiteSetting
-					title={ __( 'Client Access' ) }
+					title={ translate( 'Client Access' ) }
 					site={ site }
 					isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
 					onChange={ handleToggle( 'is_fully_managed_agency_site' ) }
@@ -46,12 +51,14 @@ const AgencySettings = ( {
 					onSaveSetting={ handleSubmitForm }
 					disabled={ isRequestingSettings || isSavingSettings }
 				/>
-			) }
-			{ ! shouldShowToggle && (
-				<div>
-					<p>{ __( 'Agency settings are not available for this site.' ) }</p>
-				</div>
-			) }
+			)
+		);
+	};
+
+	return (
+		<div className="agency-settings">
+			<NavigationHeader title={ translate( 'Agency' ) } />
+			{ isSupported ? renderSetting() : renderNotSupportedNotice() }
 		</div>
 	);
 };

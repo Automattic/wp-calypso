@@ -1,5 +1,9 @@
 export const SMOOCH_INTEGRATION_ID = '6453b7fc45cea5c267e60fed';
 export const SMOOCH_INTEGRATION_ID_STAGING = '63d2ab28dc6b88010e60f38c';
+export const SMOOCH_APP_ID = '624dbbd4e6b51f00f3e3864a';
+export const SMOOCH_APP_ID_STAGING = '633dcb21690c2c00f4ca2eb8';
+export const WIDGET_URL = 'https://wpcomsupport.zendesk.com';
+export const WIDGET_URL_STAGING = 'https://woothemes1654197491support.zendesk.com';
 export const ZENDESK_SOURCE_URL_TICKET_FIELD_ID = 23752099174548;
 export const ZENDESK_SCRIPT_ID = 'ze-snippet';
 export const ZENDESK_SUPPORT_CHAT_KEY = 'cec07bc9-4da6-4dd2-afa7-c7e01ae73584';

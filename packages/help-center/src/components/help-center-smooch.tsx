@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { ZendeskConversation } from '@automattic/odie-client';
 import {
 	useSmooch,
 	useLoadZendeskMessaging,
@@ -10,7 +9,7 @@ import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data'
 import { useEffect, useRef } from '@wordpress/element';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { calculateUnread } from './utils';
+import { calculateUnread, getClientId } from './utils';
 
 const HelpCenterSmooch: React.FC = () => {
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
@@ -29,7 +28,8 @@ const HelpCenterSmooch: React.FC = () => {
 		isHelpCenterShown && isEligibleForChat,
 		isEligibleForChat
 	);
-	const { setIsChatLoaded, setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { initSmooch, destroy, getConversations, renderSmooch } = useSmooch();
 
 	// Initialize Smooch which communicates with Zendesk
@@ -60,16 +60,16 @@ const HelpCenterSmooch: React.FC = () => {
 		return () => {
 			destroy();
 		};
-	}, [ isMessagingScriptLoaded, authData ] );
+	}, [ isMessagingScriptLoaded, authData, initSmooch, setIsChatLoaded, renderSmooch, destroy ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const { unreadConversations } = calculateUnread(
-				getConversations() as ZendeskConversation[]
-			);
+			const conversations = getConversations();
+			const { unreadConversations } = calculateUnread( conversations );
 			setUnreadCount( unreadConversations );
+			setZendeskClientId( getClientId( conversations ) );
 		}
-	}, [ isChatLoaded, getConversations, setUnreadCount ] );
+	}, [ isChatLoaded, getConversations, setUnreadCount, setZendeskClientId ] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };

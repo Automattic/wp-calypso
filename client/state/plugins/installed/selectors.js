@@ -121,8 +121,12 @@ export const getPlugins = createSelector(
 );
 
 export const getPluginsWithUpdateStatuses = createSelector(
-	( state, plugins, withUpdate, inactive, active ) => {
-		return plugins.reduce( ( memo, plugin ) => {
+	( state, allPlugins ) => {
+		const active = filter( allPlugins, _filters.active );
+		const inactive = filter( allPlugins, _filters.inactive );
+		const withUpdate = filter( allPlugins, _filters.updates );
+
+		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
 			plugin.allStatuses = [];
 
@@ -163,17 +167,17 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );

@@ -40,35 +40,6 @@ const MyApp = () => (
 - `extraContactOptions?: ReactNode` - Show extra options for exiting the chat.
 - `children?: ReactNode` - Child components within the provider.
 
-## Odie Storage
-
-Odie stores user's chat ID in Calypso's user preferences. So that the chat continuity works across Calypso, wp-admin, and wp-admin in Atomic sites.
-
-### Types
-
-```tsx
-type OdieStorageKey = 'chat_id' | 'last_chat_id';
-```
-
-### Methods
-
-```tsx
-import {
-	useGetOdieStorage,
-	useSetOdieStorage,
-} from '@automattic/odie-client';
-
-// Usage examples
-function Examples() {
-	const updateChatId = useSetOdieStorage( 'chat_id' )
-	updateChatId( 'new_chat_id' );
-
-	const chatId = useGetOdieStorage( 'chat_id' );
-}
-```
-
-_Note: Setting `chat_id` fetches a new chat from the server and also sets `last_chat_id`. Clearing `chat_id` does not clear `last_chat_id`._
-
 ## Context API
 
 ### Context properties
@@ -82,17 +53,9 @@ const defaultContextInterfaceValues = {
 	clearChat: noop, // Function to clear the current chat.
 	isLoading: false, // Flag for general loading state.
 	isMinimized: false, // Flag to check if the chat is minimized.
-	isNudging: false, // Flag to check if a nudge action is occurring.
-	isVisible: false, // Flag to check if the chat is visible.
-	lastNudge: null, // Information about the last nudge action.
-	sendNudge: noop, // Function to trigger a nudge action.
-	setChat: noop, // Function to set the current chat.
 	setMessageLikedStatus: noop, // Function to set the liked status of a message.
-	setIsNudging: noop, // Function to set the nudge state.
-	setIsVisible: noop, // Function to set the visibility of the chat.
 	setIsLoading: noop, // Function to set the general loading state.
 	trackEvent: noop, // Function to track events.
-	updateMessage: noop, // Function to update a message in the chat.
 };
 ```
 

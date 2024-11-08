@@ -191,6 +191,11 @@ const streamApis = {
 		path: () => '/read/following',
 		dateProperty: 'date',
 	},
+	recent: {
+		path: () => '/read/streams/following',
+		dateProperty: 'date',
+		apiNamespace: 'wpcom/v2',
+	},
 	search: {
 		path: () => '/read/search',
 		dateProperty: 'date',

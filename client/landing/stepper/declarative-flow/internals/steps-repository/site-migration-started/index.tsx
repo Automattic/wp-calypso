@@ -1,5 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -48,6 +49,17 @@ const SiteMigrationStarted: Step = function () {
 		</div>
 	);
 
+	const sitesDashboardButton = (
+		<Button
+			className="migration-started__cta"
+			href="/sites"
+			variant="primary"
+			onClick={ () => recordLinkClick( 'view-sites-dashboard' ) }
+		>
+			{ translate( 'View Sites dashboard' ) }
+		</Button>
+	);
+
 	return (
 		<StepContainer
 			stepName="site-migration-started"
@@ -57,9 +69,13 @@ const SiteMigrationStarted: Step = function () {
 					headerText={ translate( 'Migration started' ) }
 					subHeaderText={
 						<>
-							{ translate( 'Your migration process has started.' ) }
+							{ translate(
+								"Your migration process has started. We'll email you when the process is finished."
+							) }
 							<br />
-							{ translate( "We'll email you when the process is finished." ) }
+							{ translate( 'You can keep track of the progress from your Sites dashboard.' ) }
+							<br />
+							{ sitesDashboardButton }
 						</>
 					}
 					align="center"

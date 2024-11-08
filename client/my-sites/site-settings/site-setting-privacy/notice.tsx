@@ -1,5 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FEATURE_STYLE_CUSTOMIZATION, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	FEATURE_STYLE_CUSTOMIZATION,
+	PLAN_PREMIUM,
+	getPlan,
+	PLAN_PERSONAL,
+} from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -11,7 +17,11 @@ interface SiteSettingPrivacyNoticeProps {
 
 const SiteSettingPrivacyNotice = ( { selectedSite, siteSlug }: SiteSettingPrivacyNoticeProps ) => {
 	const translate = useTranslate();
-	const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
+	// @TODO Cleanup once the test phase is over.
+	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+		? PLAN_PERSONAL
+		: PLAN_PREMIUM;
+	const upgradeUrl = `/plans/${ siteSlug }?plan=${ upgradeToPlan }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
 
 	return (
 		<>
@@ -23,7 +33,7 @@ const SiteSettingPrivacyNotice = ( { selectedSite, siteSlug }: SiteSettingPrivac
 							'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
 							{
 								args: {
-									planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+									planName: getPlan( upgradeToPlan )?.getTitle() ?? '',
 								},
 							}
 						) }

@@ -67,6 +67,7 @@ const createTestStore = ( {
 		atomicHosting: {
 			[ TEST_SITE_ID ]: {
 				isLoadingSftpUsers: false,
+				isLoadingSshAccess: false,
 			},
 		},
 		automatedTransfer: {

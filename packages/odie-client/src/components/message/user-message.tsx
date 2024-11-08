@@ -8,7 +8,7 @@ import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message } from '../../types/';
+import type { Message } from '../../types';
 
 export const UserMessage = ( {
 	message,
@@ -98,7 +98,9 @@ export const UserMessage = ( {
 				<Markdown
 					urlTransform={ uriTransformer }
 					components={ {
-						a: CustomALink,
+						a: ( props: React.ComponentProps< 'a' > ) => (
+							<CustomALink { ...props } target="_blank" />
+						),
 					} }
 				>
 					{ isRequestingHumanSupport ? displayMessage : message.content }

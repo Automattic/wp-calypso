@@ -1,7 +1,7 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { USE_ATOMIC_SSH_KEYS_QUERY_KEY } from 'calypso/hosting/server-settings/components/sftp-card/use-atomic-ssh-keys';
 import wp from 'calypso/lib/wp';
+import { USE_ATOMIC_SSH_KEYS_QUERY_KEY } from 'calypso/sites/tools/sftp-ssh/use-atomic-ssh-keys';
 import { SSH_KEY_QUERY_KEY } from './use-ssh-key-query';
 
 interface MutationVariables {

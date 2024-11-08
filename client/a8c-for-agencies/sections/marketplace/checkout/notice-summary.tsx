@@ -99,9 +99,11 @@ export default function NoticeSummary( { type }: Props ) {
 			case 'request-client-payment':
 				return [
 					translate(
-						"Your client will be sent an invoice where they will be asked to create a WordPress.com account to pay for these products. Once paid, you'll be able to manage these products on behalf of the client."
+						'Your client will be sent an invoice asking them to create a WordPress.com account to pay for these products. They will be invoiced at the start of each month until they choose to cancel. Depending on how many days are left in the month, your client may be charged less than the total above for their first invoice.'
 					),
-					translate( 'The client can cancel their products at any time.' ),
+					translate(
+						'Once paid, you can manage these products on behalf of your client. The client can cancel their products at any time.'
+					),
 				];
 
 			case 'request-payment-method':

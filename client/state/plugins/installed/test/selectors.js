@@ -449,48 +449,38 @@ describe( 'Installed plugin selectors', () => {
 				{
 					id: 'jetpack/jetpack',
 					slug: 'jetpack/jetpack',
+					sites: {
+						'site.one': {
+							active: true,
+							autoupdate: true,
+							update: true,
+							version: '1.0',
+						},
+					},
 				},
 				{
 					id: 'hello-dolly/hello-dolly',
 					slug: 'hello-dolly/hello-dolly',
+					sites: {
+						'site.one': {
+							active: true,
+						},
+					},
 				},
 				{
 					id: 'vaultpress/vaultpress',
 					slug: 'vaultpress/vaultpress',
-				},
-			];
-
-			const pluginsWithUpdates = [
-				{
-					id: 'jetpack/jetpack',
-					slug: 'jetpack/jetpack',
-				},
-			];
-
-			const activePlugins = [
-				{
-					id: 'jetpack/jetpack',
-					slug: 'jetpack/jetpack',
-				},
-				{
-					id: 'hello-dolly/hello-dolly',
-					slug: 'hello-dolly/hello-dolly',
-				},
-			];
-
-			const inactivePlugins = [
-				{
-					id: 'vaultpress/vaultpress',
-					slug: 'vaultpress/vaultpress',
+					sites: {
+						'site.one': {
+							active: false,
+						},
+					},
 				},
 			];
 
 			const pluginsWithUpdatesAndStatuses = selectors.getPluginsWithUpdateStatuses(
 				state,
-				allPlugins,
-				pluginsWithUpdates,
-				inactivePlugins,
-				activePlugins
+				allPlugins
 			);
 
 			expect( pluginsWithUpdatesAndStatuses ).toEqual(
@@ -498,6 +488,14 @@ describe( 'Installed plugin selectors', () => {
 					{
 						id: 'jetpack/jetpack',
 						slug: 'jetpack/jetpack',
+						sites: {
+							'site.one': {
+								active: true,
+								autoupdate: true,
+								update: true,
+								version: '1.0',
+							},
+						},
 						status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
 						allStatuses: [
 							{
@@ -517,12 +515,14 @@ describe( 'Installed plugin selectors', () => {
 					{
 						id: 'hello-dolly/hello-dolly',
 						slug: 'hello-dolly/hello-dolly',
+						sites: { 'site.one': { active: true } },
 						status: [ PLUGINS_STATUS.ACTIVE ],
 						allStatuses: [],
 					},
 					{
 						id: 'vaultpress/vaultpress',
 						slug: 'vaultpress/vaultpress',
+						sites: { 'site.one': { active: false } },
 						status: [ PLUGINS_STATUS.INACTIVE ],
 						allStatuses: [],
 					},

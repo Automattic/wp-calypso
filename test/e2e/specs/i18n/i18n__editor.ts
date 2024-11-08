@@ -341,14 +341,6 @@ describe( 'I18N: Editor', function () {
 
 				it( 'Render block title translations', async function () {
 					await editorPage.openSettings();
-					await editorParent.locator( block.blockEditorSelector ).click();
-
-					// Ensure the block is highlighted.
-					await editorParent
-						.locator(
-							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
-						)
-						.click();
 
 					// If on block insertion, one of the sub-blocks are selected, click on
 					// the first button in the floating toolbar which selects the overall

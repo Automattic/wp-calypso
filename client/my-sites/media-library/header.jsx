@@ -75,7 +75,7 @@ class MediaLibraryHeader extends Component {
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="media-library__upload-button button is-compact"
+					className="media-library__upload-button button is-compact is-primary"
 				>
 					<Gridicon icon="add-image" />
 					<span className="media-library__upload-button-label">

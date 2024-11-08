@@ -67,7 +67,6 @@ class DomainSuggestion extends Component {
 			'domain-suggestion',
 			'card',
 			'is-compact',
-			'is-clickable',
 			{
 				'is-added': isAdded,
 			},
@@ -82,18 +81,8 @@ class DomainSuggestion extends Component {
 			? children
 			: [];
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
-			<div
-				className={ classes }
-				onClick={ () => {
-					this.props.onButtonClick( isAdded );
-				} }
-				data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-				role="button"
-				data-e2e-domain={ this.props.domain }
-			>
+			<div className={ classes } data-e2e-domain={ this.props.domain }>
 				{ badges }
 				<div className={ contentClassName }>
 					{ domainContent }
@@ -103,7 +92,14 @@ class DomainSuggestion extends Component {
 						<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
 					) }
 					<div className="domain-suggestion__action-container">
-						<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
+						<Button
+							className="domain-suggestion__action"
+							onClick={ () => {
+								this.props.onButtonClick( isAdded );
+							} }
+							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+							{ ...this.props.buttonStyles }
+						>
 							{ this.props.buttonContent }
 						</Button>
 					</div>
@@ -114,8 +110,6 @@ class DomainSuggestion extends Component {
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events */
-		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 }
 

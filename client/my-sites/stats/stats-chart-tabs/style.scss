@@ -229,6 +229,7 @@ ul.module-tabs {
 }
 
 .is-chart-tabs {
+
 	.chart__bars {
 		justify-content: space-between;
 	}
@@ -237,6 +238,39 @@ ul.module-tabs {
 	}
 	.chart__bar {
 		max-width: 156px;
+	}
+
+	/* styles border around chart for new date filtering design */
+	&.is-date-filtering-enabled {    
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+		padding: 24px;
+		margin: 32px 0;
+
+		/* styling for chart header with new date filtering design */
+		.stats-chart-tabs__header {
+			display: flex;
+			flex-direction: row;
+			gap: 20px; /* adds space between the divs */
+		}
+
+		.chart__legend{
+			margin-left: auto; /* makes all items take equal width */
+		}
+
+		.chart__y-axis-marker {
+			border-top-color: #DCDCDE;
+		}
+	}
+
+	/* styling for the chart header component */
+	.stats-chart-tabs__header {
+
+		.stats-chart-tabs__header-title {
+			font-size: $font-body-large;
+			font-weight: 500;
+		}
 	}
 
 }
