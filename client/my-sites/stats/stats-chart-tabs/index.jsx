@@ -5,7 +5,6 @@ import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -15,9 +14,7 @@ import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsEmptyState from '../stats-empty-state';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatTabs from '../stats-tabs';
+import StatsChartBase from './stats-chart-base';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -107,23 +104,19 @@ class StatModuleChartTabs extends Component {
 		];
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<div className={ clsx( ...classes ) }>
-				{ headerSlot }
-
-				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
-					<StatsEmptyState />
-				</Chart>
-				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
-					activeKey="period"
-					aggregate={ isNewDateFilteringEnabled }
-				/>
-			</div>
+			<StatsChartBase
+				className={ className }
+				isLoading={ isActiveTabLoading }
+				chartData={ chartData }
+				barClick={ barClick }
+				counts={ counts }
+				charts={ charts }
+				switchTab={ this.props.switchTab }
+				chartTab={ chartTab }
+				queryDate={ queryDate }
+			>
+				{ children }
+			</StatsChartBase>
 		);
 	}
 }
