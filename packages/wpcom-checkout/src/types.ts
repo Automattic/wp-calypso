@@ -10,6 +10,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	paypal_order_id?: string;
 	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
@@ -48,6 +49,8 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 export type WPCOMTransactionEndpointResponsePayPal = {
 	order_id: number | '';
 	paypal_order_id: string;
+	redirect_url?: string;
+	qr_code?: string;
 };
 
 export type WPCOMTransactionEndpointResponse =
