@@ -11,12 +11,7 @@ interface RecentSeenFieldProps {
 const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, setSelectedItem } ) => {
 	return (
 		<Button className="recent-seen-field" onClick={ () => setSelectedItem( item ) }>
-			<ReaderAvatar
-				siteIcon={ post.site_icon }
-				feedIcon={ post.feed_icon }
-				author={ post.author }
-				iconSize={ 24 }
-			/>
+			<ReaderAvatar siteIcon={ post?.site_icon?.img || post?.author?.avatar_URL } iconSize={ 24 } />
 		</Button>
 	);
 };

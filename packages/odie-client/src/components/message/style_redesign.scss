@@ -67,14 +67,12 @@ $blueberry-color: #3858e9;
 			}
 		}
 	}
-	h3 {
-		padding: 0 16px;
-	}
 
 	&.odie-chatbox-message-bot {
 		.odie-chatbox-message__content {
 			background-color: var(--studio-gray-0);
 			flex: 1;
+			padding: 16px;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px 8px 8px 0;
 			max-width: 256px;
@@ -126,6 +124,10 @@ $blueberry-color: #3858e9;
 	overflow-x: hidden !important;
 }
 
+.odie-chatbox-message p:first-of-type {
+	padding-top: 0;
+}
+
 .odie-chatbox-message p:last-of-type {
 	margin-bottom: 0;
 }
@@ -154,9 +156,8 @@ $blueberry-color: #3858e9;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px 8px 8px 0 !important;
 		background-color:#F7F8FE !important;
-		
+		padding: 16px;
 	}
-	
 }
 
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
@@ -168,7 +169,8 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox-message p {
 	font-size: 0.875rem;
-	padding: 16px;
+	padding-bottom: 16px;
+	padding-top: 16px;
 	margin-bottom: 0;
 }
 
@@ -181,6 +183,7 @@ $blueberry-color: #3858e9;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	max-width: 256px;
+	padding: 16px;
 	p {
 		color: var(--studio-gray-80);
 		line-height: 20px;

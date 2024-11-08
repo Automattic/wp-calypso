@@ -44,6 +44,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'jetpackAtomicPrivateUser',
 	'jetpackAtomicWpBetaUser',
 	'jetpackAtomicWpPreviousUser',
+	'automatticForAgenciesUser',
 ] as const;
 
 /**
@@ -258,6 +259,9 @@ export class SecretsManager {
 					...fakeFullAccount,
 				},
 				jetpackAtomicWpPreviousUser: {
+					...fakeFullAccount,
+				},
+				automatticForAgenciesUser: {
 					...fakeFullAccount,
 				},
 			},

@@ -210,58 +210,6 @@
 				align-items: center;
 				height: 28px;
 			}
-
-			ul.dataviews-view-list {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				overflow-y: auto;
-				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
-
-				.dataviews-view-list__fields {
-					display: flex;
-					justify-content: space-between;
-				}
-
-				.components-h-stack,
-				.dataviews-view-list__item {
-					width: 100%;
-				}
-
-				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
-				 * to hide the other fields when in preview mode.
-				 */
-				.dataviews-view-list__field {
-					// Hide the field except first (Site name) and last (actions menu)
-					&:not(:first-child):not(:last-child) {
-						display: none;
-					}
-
-					// Force the site name to take up the full width
-					&:first-child {
-						flex-grow: 1;
-
-						.sites-dataviews__site {
-							width: 100%;
-							justify-content: flex-start;
-						}
-					}
-				}
-
-				.sites-overview__stats-trend,
-				.sites-overview__column-action-button,
-				.sites-overview__row-status,
-				.toggle-activate-monitoring__toggle-button,
-				.sites-dataviews__favorite-btn-wrapper,
-				.sites-overview__boost-score {
-					display: none;
-				}
-
-				.site-actions__actions-large-screen {
-					display: block;
-				}
-
-			}
 		}
 	}
 
@@ -347,12 +295,6 @@
 
 		.sites-overview__add-new-site {
 			white-space: nowrap;
-		}
-
-		.dataviews-wrapper {
-			.components-button:focus:not(:disabled) {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-			}
 		}
 
 		.sites-overview {
@@ -952,4 +894,3 @@
 		border-color: var(--color-border-subtle);
 	}
 }
-

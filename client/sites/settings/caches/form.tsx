@@ -118,7 +118,7 @@ export default function CacheForm( {
 	const edgeCacheToggleDescription = isEdgeCacheEligible
 		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
-				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
+				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings{{/a}}',
 				{
 					components: {
 						a: config.isEnabled( 'untangling/hosting-menu' ) ? (
@@ -141,7 +141,7 @@ export default function CacheForm( {
 		>
 			<div className="cache-card__all-cache-block">
 				<DescriptionComponent>
-					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
+					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
@@ -258,7 +258,7 @@ export default function CacheForm( {
 					</div>
 					<SubdescriptionComponent>
 						{ translate(
-							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
+							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}',
 							{
 								comment: 'Explanation for how object cache works',
 								components: {
@@ -303,7 +303,7 @@ export default function CacheForm( {
 							<JetpackLogo size={ 16 } />
 							<SubdescriptionComponent>
 								{ translate(
-									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
+									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}',
 									{
 										comment:
 											'Refers to how Jetpack Search uses Elasticsearch to index posts and pages on some WordPress.com sites',

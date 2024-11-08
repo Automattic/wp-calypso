@@ -1,8 +1,12 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CredentialsForm } from './components/credentials-form';
 import type { Step } from '../../types';
@@ -26,6 +30,9 @@ const getAction = ( siteInfo?: UrlData ) => {
 
 const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
+	const siteId = parseInt( useSiteIdParam() ?? '' );
+
+	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const handleSubmit = ( siteInfo?: UrlData | undefined ) => {
 		const action = getAction( siteInfo );
@@ -37,6 +44,12 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 			action: 'skip',
 		} );
 	};
+
+	useEffect( () => {
+		if ( siteId ) {
+			updateMigrationStatus( { status: MigrationStatus.PENDING_DIFM } );
+		}
+	}, [ siteId, updateMigrationStatus ] );
 
 	return (
 		<>

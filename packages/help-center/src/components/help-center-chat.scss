@@ -23,5 +23,15 @@
 			/* stylelint-disable-next-line length-zero-no-unit */
 			margin: 0px 11px 0px 0px;
 		}
+
+		.components-form-file-upload {
+			button {
+				padding: 7px;
+				&:focus {
+					outline: 2px solid #3858e9;
+					outline-offset: 1px;
+				}
+			}
+		}
 	}
 }
