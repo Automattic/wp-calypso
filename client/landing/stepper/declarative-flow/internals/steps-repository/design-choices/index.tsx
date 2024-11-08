@@ -100,8 +100,10 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							{ ! isLoading && isEligible && (
 								<DesignChoice
 									className="design-choices__try-big-sky"
-									title={ translate( 'Try Big Sky' ) }
-									description={ translate( 'The AI website builder for WordPress.' ) }
+									title={ translate( 'Design with AI' ) }
+									description={ translate(
+										'Use our AI website builder to easily and quickly build the site of your dreams.'
+									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
 									onSelect={ () => {
