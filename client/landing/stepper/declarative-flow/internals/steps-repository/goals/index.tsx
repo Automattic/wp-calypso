@@ -26,6 +26,7 @@ type TracksGoalsSelectEventProperties = {
 	total: number;
 	ref?: string;
 	intent: string;
+	is_added_goals_exp: boolean;
 } & {
 	[ key in Onboard.SiteGoal as KebabToSnakeCase< key > ]?: number;
 };
@@ -74,9 +75,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		goals: Onboard.SiteGoal[],
 		intent: Onboard.SiteIntent
 	) => {
-		const commonEventProps: Pick< TracksGoalsSelectEventProperties, 'intent' | 'ref' > = {
+		const commonEventProps = {
 			intent,
 			ref: refParameter ?? null,
+			is_added_goals_exp: isAddedGoalsExp,
 		};
 
 		const goalsSelectProperties: TracksGoalsSelectEventProperties = {
@@ -94,6 +96,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			recordTracksEvent( 'calypso_signup_goals_single_select', {
 				goal,
 				ref: commonEventProps.ref,
+				is_added_goals_exp: isAddedGoalsExp,
 			} );
 		} );
 
@@ -103,6 +106,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const recordIntentSelectTracksEvent = ( intent: Onboard.SiteIntent ) => {
 		const eventProperties = {
 			intent,
+			is_added_goals_exp: isAddedGoalsExp,
 		};
 
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
@@ -164,9 +168,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
-				onSkip={ handleSkip }
+				onSkip={ isAddedGoalsExp ? handleSkip : handleDashboardClick }
 				goNext={ handleNext }
 				nextLabelText={ translate( 'Next' ) }
+				skipLabelText={ isAddedGoalsExp ? translate( 'Skip' ) : translate( 'Skip to dashboard' ) }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
@@ -182,26 +187,28 @@ const GoalsStep: Step = ( { navigation } ) => {
 								variant="primary"
 								onClick={ handleNext }
 							>
-								{ translate( 'Next' ) }
+								{ isAddedGoalsExp ? translate( 'Next' ) : translate( 'Continue' ) }
 							</Button>
 						) }
-						<div className="select-goals__alternative-flows-container">
-							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
-								{ translate( 'Import or migrate an existing site' ) }
-							</Button>
-							<span className="select-goals__link-separator" />
-							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-								{ translate( 'Let us build a custom site for you' ) }
-							</Button>
-							<Button
-								variant="link"
-								onClick={ handleDashboardClick }
-								className="select-goals__link select-goals__dashboard-button"
-							>
-								<DashboardIcon />
-								{ translate( 'Skip to dashboard' ) }
-							</Button>
-						</div>
+						{ isAddedGoalsExp && (
+							<div className="select-goals__alternative-flows-container">
+								<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+									{ translate( 'Import or migrate an existing site' ) }
+								</Button>
+								<span className="select-goals__link-separator" />
+								<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+									{ translate( 'Let us build a custom site for you' ) }
+								</Button>
+								<Button
+									variant="link"
+									onClick={ handleDashboardClick }
+									className="select-goals__link select-goals__dashboard-button"
+								>
+									<DashboardIcon />
+									{ translate( 'Skip to dashboard' ) }
+								</Button>
+							</div>
+						) }
 					</>
 				}
 			/>
