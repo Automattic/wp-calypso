@@ -83,8 +83,8 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 
 	return (
 		<div
-			className={ `recent-feed__post-column-bottom-bar ${
-				isActionsVisible ? 'is-actions-visible' : ''
+			className={ `recent-feed__post-column-engagement-bar ${
+				isActionsVisible ? 'engagement-bar-is-hidden' : ''
 			} ${ className }` }
 		>
 			{ post && (

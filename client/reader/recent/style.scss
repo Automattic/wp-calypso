@@ -133,27 +133,41 @@
 			display: block;
 		}
 
-		&-bottom-bar {
+		&-engagement-bar {
 			position: fixed;
 			bottom: 0;
-			height: 100px;
+			height: 60px;
 			background: var( --color-surface );
 			box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.05 );
 			z-index: 100;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			border-radius: 0 0 8px 8px;
 			transition: opacity 0.2s ease-in-out;
 			opacity: 1;
+			width: -webkit-fill-available;
+			width: -moz-available;
 
-			&.is-actions-visible {
+			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
+				margin-right: 24px;
+			}
+
+			@media ( min-width: $break-medium ) {
+				margin-right: 16px;
+			}
+
+			&.engagement-bar-is-hidden {
 				opacity: 0;
 				pointer-events: none;
 			}
 
-			@media ( min-width: $break-wide ) {
-				width: calc( ( 100% - 317px ) * 0.75 );
+			.reader-post-actions {
+				margin: 0;
+				span,
+				svg {
+					color: var( --color-text );
+					fill: currentColor;
+				}
 			}
 		}
 
