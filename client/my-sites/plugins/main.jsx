@@ -625,6 +625,7 @@ export default flow(
 			const selectedSiteId = getSelectedSiteId( state );
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const pluginsWithAutoUpdate = getPlugins( state, siteIds, 'autoupdates' );
 			const activePlugins = getPlugins( state, siteIds, 'active' );
 			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
@@ -632,6 +633,7 @@ export default flow(
 				state,
 				allPlugins,
 				pluginsWithUpdates,
+				pluginsWithAutoUpdate,
 				inactivePlugins,
 				activePlugins
 			);

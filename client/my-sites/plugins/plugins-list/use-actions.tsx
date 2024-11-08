@@ -1,6 +1,7 @@
 import { Icon, link, linkOff, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
+import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 
@@ -27,7 +28,9 @@ export function useActions(
 			},
 			label: translate( 'Activate' ),
 			isExternalLink: true,
-			isEnabled: true,
+			isEligible( plugin: Plugin ) {
+				return plugin.status?.includes( PLUGINS_STATUS.INACTIVE ) ?? true;
+			},
 			supportsBulk: true,
 			icon: <Icon icon={ link } />,
 		},
@@ -39,7 +42,9 @@ export function useActions(
 			},
 			label: translate( 'Deactivate' ),
 			isExternalLink: true,
-			isEnabled: true,
+			isEligible( plugin: Plugin ) {
+				return plugin.status?.includes( PLUGINS_STATUS.ACTIVE ) ?? true;
+			},
 			supportsBulk: true,
 			icon: <Icon icon={ linkOff } />,
 		},
@@ -51,7 +56,9 @@ export function useActions(
 			},
 			label: translate( 'Enable Autoupdate' ),
 			isExternalLink: true,
-			isEnabled: true,
+			isEligible( plugin: Plugin ) {
+				return ! plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE ) ?? true;
+			},
 			supportsBulk: true,
 		},
 		{
@@ -62,7 +69,9 @@ export function useActions(
 			},
 			label: translate( 'Disable Autoupdate' ),
 			isExternalLink: true,
-			isEnabled: true,
+			isEligible( plugin: Plugin ) {
+				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE ) ?? true;
+			},
 			supportsBulk: true,
 		},
 		{
