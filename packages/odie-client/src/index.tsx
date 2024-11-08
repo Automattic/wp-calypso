@@ -10,7 +10,7 @@ export const OdieAssistant: React.FC = () => {
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
-	}, [ trackEvent ] );
+	}, [] );
 
 	return (
 		<div className="chatbox">
