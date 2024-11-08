@@ -198,8 +198,6 @@ const HelpCenterFooterButton = ( {
 	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 	const navigate = useNavigate();
-	const resetSupportInteraction = useResetSupportInteraction();
-	const startSupportInteraction = useStartSupportInteraction();
 	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
 	const handleContactButtonClicked = ( {
 		buttonTextEventProp,
@@ -228,11 +226,6 @@ const HelpCenterFooterButton = ( {
 		setIsCreatingChat( true );
 		handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } );
 
-		if ( redirectTo === '/odie' ) {
-			await resetSupportInteraction();
-			await startSupportInteraction();
-		}
-
 		setIsCreatingChat( false );
 		const url = redirectionURL();
 		navigate( url );
@@ -258,10 +251,10 @@ export const HelpCenterContactButton: FC = () => {
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
-				buttonTextEventProp="New conversation"
+				buttonTextEventProp="Still need help?"
 				redirectTo="/odie"
 			>
-				{ __( 'New conversation', __i18n_text_domain__ ) }
+				<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
 			</HelpCenterFooterButton>
 			<HelpCenterFooterButton
 				icon={ backup }
