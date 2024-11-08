@@ -50,20 +50,23 @@ const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 
-export function useCreatePayPal( {
+export function useCreatePayPalExpress( {
 	labelText,
 	shouldShowTaxFields,
 }: {
 	labelText?: string | null;
 	shouldShowTaxFields?: boolean;
 } ): PaymentMethod {
-	// const store = useMemo( () => createPayPalStore(), [] );
-	// const paypalMethod = useMemo(
-	// 	() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
-	// 	[ labelText, shouldShowTaxFields, store ]
-	// );
-	const paypalMethod = useMemo( () => createPayPal(), [] );
+	const store = useMemo( () => createPayPalStore(), [] );
+	const paypalMethod = useMemo(
+		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields, store ]
+	);
 	return paypalMethod;
+}
+
+export function useCreatePayPalPPCP(): PaymentMethod {
+	return useMemo( () => createPayPal(), [] );
 }
 
 export function useCreateCreditCard( {
