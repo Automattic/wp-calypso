@@ -184,7 +184,14 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight(
+// Create the enhanced component with the static properties preserved
+const EnhancedChartTabs = flowRight(
 	localize,
 	connectComponent
 )( withPerformanceTrackerStop( StatModuleChartTabs ) );
+
+// Add static components to the enhanced version
+EnhancedChartTabs.Header = StatModuleChartTabs.Header;
+EnhancedChartTabs.Content = StatModuleChartTabs.Content;
+
+export default EnhancedChartTabs;
