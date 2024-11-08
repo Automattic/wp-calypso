@@ -1,7 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import { EllipsisMenu, useSetOdieStorage } from '@automattic/odie-client';
+import { EllipsisMenu } from '@automattic/odie-client';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
@@ -17,8 +18,10 @@ import {
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { usePostByUrl } from '../hooks';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
@@ -72,10 +75,15 @@ const SupportModeTitle = () => {
 
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
-	const setChatId = useSetOdieStorage( 'chat_id' );
+	const resetSupportInteraction = useResetSupportInteraction();
+	const { startNewInteraction } = useManageSupportInteraction();
 
-	const clearChat = () => {
-		setChatId( null );
+	const clearChat = async () => {
+		await resetSupportInteraction();
+		startNewInteraction( {
+			event_source: 'help-center',
+			event_external_id: uuidv4(),
+		} );
 	};
 
 	return (
