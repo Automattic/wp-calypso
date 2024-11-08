@@ -141,37 +141,6 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
-	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
-
-	useEffect( () => {
-		const observer = new IntersectionObserver(
-			( entries ) => {
-				entries.forEach( ( entry ) => {
-					setIsActionsVisible( entry.isIntersecting );
-				} );
-			},
-			{
-				threshold: 0.1,
-				rootMargin: '0px',
-			}
-		);
-
-		setTimeout( () => {
-			const actionsElement = document.querySelector( '.reader-post-actions' );
-
-			if ( actionsElement ) {
-				observer.observe( actionsElement );
-			}
-		}, 100 );
-
-		return () => {
-			const actionsElement = document.querySelector( '.reader-post-actions' );
-			if ( actionsElement ) {
-				observer.unobserve( actionsElement );
-			}
-		};
-	}, [ selectedItem ] );
-
 	return (
 		<div className="recent-feed">
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
@@ -210,7 +179,7 @@ const Recent = () => {
 							onClose={ () => setSelectedItem( null ) }
 							layout="recent"
 						/>
-						<EngagementBar />
+						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
 					</>
 				) }
 			</div>

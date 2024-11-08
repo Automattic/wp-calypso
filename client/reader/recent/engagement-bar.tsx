@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import { useSelector } from 'calypso/state';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
 interface EngagementBarProps {
 	className?: string;
+	feedId?: string | number;
+	postId?: string | number;
 }
 
-const EngagementBar = ( { className = '' }: EngagementBarProps ) => {
+const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps ) => {
 	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
+
+	const post = useSelector( ( state ) =>
+		feedId && postId ? getPostByKey( state, { feedId, postId } ) : null
+	);
 
 	useEffect( () => {
 		const observer = new IntersectionObserver(
@@ -41,7 +50,7 @@ const EngagementBar = ( { className = '' }: EngagementBarProps ) => {
 				isActionsVisible ? 'is-actions-visible' : ''
 			} ${ className }` }
 		>
-			<p>Hello world</p>
+			{ post && <ReaderPostActions post={ post } /> }
 		</div>
 	);
 };
