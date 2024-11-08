@@ -75,8 +75,14 @@
 .tools__header-image-wrapper {
 	@include wide-screen {
 		display: flex;
+<<<<<<< HEAD
 		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
 		margin-left: auto;
+||||||| parent of 4209204614 (Update styles for better responsiveness in both screens)
+		margin-left: auto;
+=======
+		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
+>>>>>>> 4209204614 (Update styles for better responsiveness in both screens)
 	}
 
 	.tools__header-image {
