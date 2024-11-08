@@ -40,6 +40,13 @@ const _filters = {
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
+	autoupdates: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
 	},
@@ -121,7 +128,7 @@ export const getPlugins = createSelector(
 );
 
 export const getPluginsWithUpdateStatuses = createSelector(
-	( state, plugins, withUpdate, inactive, active ) => {
+	( state, plugins, withUpdate, withAutoUpdate, inactive, active ) => {
 		return plugins.reduce( ( memo, plugin ) => {
 			const status = [];
 			plugin.allStatuses = [];
@@ -148,6 +155,10 @@ export const getPluginsWithUpdateStatuses = createSelector(
 
 			if ( find( active, { slug: plugin.slug } ) ) {
 				status.push( PLUGINS_STATUS.ACTIVE );
+			}
+
+			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE );
 			}
 			return [ ...memo, { ...plugin, status } ];
 		}, [] );

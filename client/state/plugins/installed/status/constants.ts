@@ -11,4 +11,5 @@ export const PLUGINS_STATUS = {
 	ACTIVE: 1,
 	INACTIVE: 2,
 	UPDATE: 3,
+	AUTOUPDATE: 4,
 };
