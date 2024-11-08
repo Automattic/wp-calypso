@@ -134,10 +134,10 @@ const Recent = () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
 	}, [ data?.items, view, fields ] );
 
-	// Fetch the data when the component is mounted and when the view changes.
+	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
-	}, [ fetchData, view ] );
+	}, [ fetchData ] );
 
 	// Set the first item as selected if no item is selected and screen is wide.
 	useEffect( () => {
