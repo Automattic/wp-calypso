@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
@@ -245,7 +246,9 @@ export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
 
-	return supportInteractions && supportInteractions?.length > 0 ? (
+	return config.isEnabled( 'help-center-experience' ) &&
+		supportInteractions &&
+		supportInteractions?.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
