@@ -30,7 +30,13 @@ const Recent = () => {
 		page: 1,
 	} );
 
-	const data = useSelector( ( state: AppState ) => state.reader?.streams?.recent );
+	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
+		( state ) => state.readerUi.sidebar.selectedRecentSite
+	);
+	const streamKey =
+		selectedRecentSidebarFeedId !== null ? `feed:${ selectedRecentSidebarFeedId }` : 'recent';
+
+	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
 
 	const posts = useSelector( ( state: AppState ) => {
 		const items = data?.items;
@@ -105,10 +111,10 @@ const Recent = () => {
 	];
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
+		dispatch( viewStream( streamKey, window.location.pathname ) as AnyAction );
 		dispatch(
 			requestPaginatedStream( {
-				streamKey: 'recent',
+				streamKey,
 				page: view.page,
 				perPage: view.perPage,
 			} ) as AnyAction
@@ -116,12 +122,12 @@ const Recent = () => {
 		// Fetch the next page in advance.
 		dispatch(
 			requestPaginatedStream( {
-				streamKey: 'recent',
+				streamKey,
 				page: view?.page ? view.page + 1 : undefined,
 				perPage: view.perPage,
 			} ) as AnyAction
 		);
-	}, [ dispatch, view ] );
+	}, [ dispatch, view, streamKey ] );
 
 	const paginationInfo = useMemo( () => {
 		return {
