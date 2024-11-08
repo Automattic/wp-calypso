@@ -16,7 +16,7 @@ export const useGetSupportInteractions = (
 
 	return useQuery( {
 		// eslint-disable-next-line
-		queryKey: [ 'support-interactions', 'get-interactions', provider ],
+		queryKey: [ 'support-interactions', 'get-interactions', provider, status ],
 		queryFn: async () => {
 			const response = await handleSupportInteractionsFetch( 'GET', path );
 
