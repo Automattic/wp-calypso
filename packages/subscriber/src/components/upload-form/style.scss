@@ -1,0 +1,227 @@
+// On-boarding flow
+.step-container.subscribers {
+	padding: 0 1.5rem;
+
+	.add-subscriber .add-subscriber__title-container {
+		text-align: center;
+
+		.onboarding-subtitle {
+			margin-bottom: 1.5rem;
+			font-size: 1.25rem;
+		}
+	}
+
+	.add-subscriber__form-submit-btn {
+		display: block;
+		width: 100%;
+		margin: 2rem 0 1rem 0;
+	}
+}
+
+// People section
+.is-section-people {
+	.add-subscriber .add-subscriber__title-container {
+		.onboarding-title {
+			font-size: 2rem;
+			line-height: 2.25;
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	.add-subscriber .add-subscriber__form--container form > div:first-child {
+		.components-base-control__field {
+			margin-top: 0;
+		}
+	}
+
+	.add-subscriber__form--container input {
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+			outline: none;
+		}
+	}
+
+	.add-subscriber__form-submit-btn {
+		margin-top: 0.5rem;
+	}
+}
+
+.add-subscriber {
+	.components-notice {
+		margin: 0 0 1rem;
+	}
+
+	.components-notice.is-info {
+		background: var(--studio-gray-0);
+	}
+
+	.add-subscriber__form-skip-link-wrapper {
+		display: flex;
+		justify-content: flex-start;
+		padding: 1rem 0;
+		.add-subscriber__form-skip-link {
+			color: var(--color-primary);
+			font-weight: 500;
+			cursor: pointer;
+		}
+	}
+}
+
+.add-subscriber .add-subscriber__title-container {
+	margin-bottom: 1rem;
+
+	.onboarding-title,
+	.onboarding-subtitle {
+		margin-bottom: 1.5rem;
+	}
+}
+
+.add-subscriber .add-subscriber__form--container label,
+.add-subscriber .add-subscriber__form--container .form-input-validation {
+	.components-base-control__field {
+		margin: 0.5rem auto;
+	}
+
+	.components-button {
+		height: auto;
+		padding: 0;
+		font-size: 0.875rem;
+		color: var(--color-text);
+		text-decoration: underline;
+		border: none;
+
+		&:hover {
+			color: var(--color-text-subtle);
+		}
+	}
+}
+
+.add-subscriber .add-subscriber__form--container {
+	label {
+		display: block;
+		width: 100%;
+		font-size: 0.875rem;
+		line-height: 1.25;
+		margin: 1rem 0;
+
+		&.add-subscriber__form-label-links {
+			.components-button {
+				margin: 0 0.2rem;
+			}
+		}
+
+		&.add-subscriber__form-label-emails {
+			margin-bottom: 0.5rem;
+		}
+	}
+
+	.components-base-control.is-error input {
+		border-color: var(--color-error);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
+	}
+
+	.components-base-control__field {
+		margin: 1rem auto;
+	}
+
+	.components-text-control__input {
+		min-height: 2.75rem;
+		border-color: var(--studio-gray-10);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		padding: 0.875rem 1rem;
+		/* We need to allow space for the SVG checkmark */
+		padding-right: calc(0.5rem + 24px);
+
+		&::placeholder {
+			color: var(--studio-gray-20);
+		}
+
+		&[disabled] {
+			background: var(--studio-gray-5);
+		}
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
+	}
+
+	.components-form-file-upload {
+		display: inline-block;
+	}
+
+	.components-base-control {
+		position: relative;
+	}
+
+	.components-base-control__help {
+		position: absolute;
+		top: 3px;
+		right: 0.5rem;
+
+		svg {
+			fill: var(--color-success-50);
+		}
+	}
+
+	.form-input-validation {
+		padding: 0;
+		padding-inline-start: 2rem;
+		padding-inline-end: 0;
+		margin-bottom: 1rem;
+
+		svg {
+			position: absolute;
+			margin-inline-start: -2rem;
+		}
+
+		&:not(.is-error):not(.is-warning) {
+			color: var(--studio-gray-40);
+		}
+
+		&.is-warning {
+			color: var(--studio-gray-100);
+
+			svg * {
+				stroke: var(--studio-yellow-40);
+			}
+		}
+
+		&:not(.is-error) {
+			svg {
+				fill: none;
+			}
+		}
+	}
+
+	.add-subscriber__form--disclaimer {
+		font-size: $font-body-small;
+		line-height: 1.25;
+		color: var(--studio-gray-50);
+		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
+
+		a,
+		button {
+			font-size: $font-body-small;
+			color: var(--color-text);
+			text-decoration: underline;
+			height: unset;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
+		}
+
+		.components-button {
+			padding: 0;
+		}
+	}
+}

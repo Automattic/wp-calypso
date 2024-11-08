@@ -1,13 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Gridicon, FlowQuestion } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { AddSubscriberForm } from '@automattic/subscriber';
+import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
-import { Modal } from '@wordpress/components';
+import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -26,11 +28,16 @@ type AddSubscribersModalProps = {
 
 const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
+	const [ addingMethod, setAddingMethod ] = useState( '' );
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
 	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
+	const isSubscriberCsvUploadEnabled = isEnabled( 'subscriber-csv-upload' );
+	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
+	// This flag refers to Substack free/paid subscriber + content importer.
+	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
 
 	useEffect( () => {
 		const handleHashChange = () => {
@@ -78,6 +85,20 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		? localizeUrl( 'https://jetpack.com/contact-support' )
 		: localizeUrl( 'https://wordpress.com/support/help-support-options' );
 
+	const trackAndSetAddingMethod = ( method: string ) => {
+		recordTracksEvent( `calypso_subscribers_add_question`, {
+			method,
+		} );
+		setAddingMethod( method );
+	};
+
+	const importFromSubstack = () => {
+		recordTracksEvent( `calypso_subscribers_add_question`, {
+			method: 'substack',
+		} );
+		page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
+	};
+
 	return (
 		<Modal
 			title={ modalTitle as string }
@@ -92,71 +113,168 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					);
 				}
 				setShowAddSubscribersModal( false );
+				setAddingMethod( '' );
 			} }
 			overlayClassName="add-subscribers-modal"
 		>
-			{ isUploading && (
+			{ addingMethod === '' && (
 				<>
-					<LoadingBar progress={ 0.5 } />
-					<span className="add-subscribers-modal__loading-text">
-						{ translate( 'Uploading CSV file…' ) }
-					</span>
+					<p>
+						{ translate(
+							'We’ll automatically clean duplicate, incomplete, outdated, or spammy emails to boost open rates and engagement.'
+						) }
+					</p>
+					<VStack>
+						<FlowQuestion
+							icon={ copy }
+							title={ translate( 'Add subscribers manually' ) }
+							text={ translate( 'Paste their email or username to add them to your site.' ) }
+							onClick={ () => {
+								trackAndSetAddingMethod( 'manually' );
+							} }
+						/>
+						{ isSubscriberCsvUploadEnabled && (
+							<FlowQuestion
+								icon={ upload }
+								title={ translate( 'Use a CSV file' ) }
+								text={ translate( 'Upload a file with your existing subscribers list.' ) }
+								onClick={ () => {
+									trackAndSetAddingMethod( 'upload' );
+								} }
+							/>
+						) }
+						{ isSubstackSubscriberImporterEnabled && (
+							<FlowQuestion
+								icon={ reusableBlock }
+								title={ translate( 'Import from Substack' ) }
+								text={ translate( 'Quickly bring your subscribers (and even your content!).' ) }
+								onClick={ importFromSubstack }
+							/>
+						) }
+					</VStack>
 				</>
 			) }
 
-			{ ! isUploading && isImportInProgress && ! hasStaleImportJobs && (
-				<Notice
-					className="add-subscribers-modal__notice"
-					icon={ <Gridicon icon="info" /> }
-					isCompact
-					isReskinned
-					status="is-info"
-					showDismiss={ false }
-				>
-					<span className="add-subscribers-modal__notice-text">
-						{ translate(
-							'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
-						) }
-					</span>
-				</Notice>
+			{ addingMethod === 'manually' && (
+				<>
+					{ isUploading && (
+						<>
+							<LoadingBar progress={ 0.5 } />
+							<span className="add-subscribers-modal__loading-text">
+								{ translate( 'Uploading CSV file…' ) }
+							</span>
+						</>
+					) }
+					{ ! isUploading && isImportInProgress && ! hasStaleImportJobs && (
+						<Notice
+							className="add-subscribers-modal__notice"
+							icon={ <Gridicon icon="info" /> }
+							isCompact
+							isReskinned
+							status="is-info"
+							showDismiss={ false }
+						>
+							<span className="add-subscribers-modal__notice-text">
+								{ translate(
+									'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
+								) }
+							</span>
+						</Notice>
+					) }
+					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
+						<Notice
+							className="add-subscribers-modal__notice"
+							icon={ <Gridicon icon="notice" /> }
+							isCompact
+							isReskinned
+							status="is-warning"
+							showDismiss={ false }
+						>
+							<span className="add-subscribers-modal__notice-text">
+								{ translate(
+									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
+								) }
+							</span>
+							<InlineSupportLink supportLink={ supportLink } />
+						</Notice>
+					) }
+					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
+					<AddSubscriberForm
+						siteId={ site.ID }
+						hasSubscriberLimit={ hasSubscriberLimit }
+						submitBtnAlwaysEnable
+						onImportStarted={ onImportStarted }
+						onImportFinished={ onImportFinished }
+						showTitle={ false }
+						showSubtitle={ false }
+						showCsvUpload={ false }
+						recordTracksEvent={ recordTracksEvent }
+						hidden={ isUploading }
+						isWPCOMSite={ isWPCOMSite }
+						disabled={ isImportInProgress }
+					/>
+				</>
 			) }
 
-			{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
-				<Notice
-					className="add-subscribers-modal__notice"
-					icon={ <Gridicon icon="notice" /> }
-					isCompact
-					isReskinned
-					status="is-warning"
-					showDismiss={ false }
-				>
-					<span className="add-subscribers-modal__notice-text">
-						{ translate(
-							'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
-						) }
-					</span>
-					<InlineSupportLink supportLink={ supportLink } />
-				</Notice>
+			{ addingMethod === 'upload' && (
+				<>
+					{ isUploading && (
+						<>
+							<LoadingBar progress={ 0.5 } />
+							<span className="add-subscribers-modal__loading-text">
+								{ translate( 'Uploading CSV file…' ) }
+							</span>
+						</>
+					) }
+					{ ! isUploading && isImportInProgress && ! hasStaleImportJobs && (
+						<Notice
+							className="add-subscribers-modal__notice"
+							icon={ <Gridicon icon="info" /> }
+							isCompact
+							isReskinned
+							status="is-info"
+							showDismiss={ false }
+						>
+							<span className="add-subscribers-modal__notice-text">
+								{ translate(
+									'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
+								) }
+							</span>
+						</Notice>
+					) }
+					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
+						<Notice
+							className="add-subscribers-modal__notice"
+							icon={ <Gridicon icon="notice" /> }
+							isCompact
+							isReskinned
+							status="is-warning"
+							showDismiss={ false }
+						>
+							<span className="add-subscribers-modal__notice-text">
+								{ translate(
+									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
+								) }
+							</span>
+							<InlineSupportLink supportLink={ supportLink } />
+						</Notice>
+					) }
+					<UploadSubscribersForm
+						siteId={ site.ID }
+						hasSubscriberLimit={ hasSubscriberLimit }
+						submitBtnAlwaysEnable
+						onImportStarted={ onImportStarted }
+						onImportFinished={ onImportFinished }
+						showTitle={ false }
+						showSubtitle={ false }
+						showCsvUpload
+						recordTracksEvent={ recordTracksEvent }
+						hidden={ isUploading }
+						isWPCOMSite={ isWPCOMSite }
+						disabled={ isImportInProgress }
+					/>
+				</>
 			) }
-
-			{ ! isUploading && (
-				<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
-			) }
-
-			<AddSubscriberForm
-				siteId={ site.ID }
-				hasSubscriberLimit={ hasSubscriberLimit }
-				submitBtnAlwaysEnable
-				onImportStarted={ onImportStarted }
-				onImportFinished={ onImportFinished }
-				showTitle={ false }
-				showSubtitle={ false }
-				showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
-				recordTracksEvent={ recordTracksEvent }
-				hidden={ isUploading }
-				isWPCOMSite={ isWPCOMSite }
-				disabled={ isImportInProgress }
-			/>
 		</Modal>
 	);
 };
