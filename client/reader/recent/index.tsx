@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
@@ -204,18 +205,12 @@ const Recent = () => {
 					<>
 						<AsyncLoad
 							require="calypso/blocks/reader-full-post"
-							blogId={ selectedItem.blogId }
+							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => setSelectedItem( null ) }
 							layout="recent"
 						/>
-						<div
-							className={ `recent-feed__post-column-bottom-bar ${
-								isActionsVisible ? 'is-actions-visible' : ''
-							}` }
-						>
-							<p>Hello world</p>
-						</div>
+						<EngagementBar />
 					</>
 				) }
 			</div>
