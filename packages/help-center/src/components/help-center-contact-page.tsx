@@ -23,8 +23,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
-import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
-import { useStartSupportInteraction } from '../hooks/use-start-support-interaction';
 import { Mail } from '../icons';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
