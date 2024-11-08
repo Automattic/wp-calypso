@@ -152,6 +152,11 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
+	// When the selected feed changes, clear the selected item.
+	useEffect( () => {
+		setSelectedItem( null );
+	}, [ selectedRecentSidebarFeedId ] );
+
 	return (
 		<div className="recent-feed">
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
