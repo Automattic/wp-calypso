@@ -1,4 +1,5 @@
 import { getShortDateString } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { useRef } from 'react';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
@@ -14,6 +15,13 @@ const DislikeThumb = () => {
 	return (
 		<div className="chatbox-message__dislike-thumb">
 			<ThumbsDown />
+		</div>
+	);
+};
+const LoadingChatSpinner = () => {
+	return (
+		<div className="chatbox-loading-chat__spinner">
+			<Spinner />
 		</div>
 	);
 };
@@ -52,6 +60,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					isNextMessageFromSameSender={ false }
 					displayChatWithSupportLabel={ false }
 				/>
+				{ chat.conversationId === null && <LoadingChatSpinner /> }
 				{ chat.messages.map( ( message, index ) => (
 					<ChatMessage
 						message={ message }
