@@ -8,7 +8,7 @@ function prepareMarkdownImage( imgUrl: string ): string {
 
 // Format markdown to support links inside text
 function convertUrlsToMarkdown( text: string ): string {
-	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+\b)/g;
+	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+[^\s]*)/g;
 
 	return text.replace( urlRegex, ( url ) => {
 		const fullUrl = url.startsWith( 'http' ) ? url : `https://${ url }`;
