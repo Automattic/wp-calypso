@@ -10,11 +10,11 @@ interface EngagementBarProps {
 }
 
 const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps ) => {
-	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
-
 	const post = useSelector( ( state ) =>
 		feedId && postId ? getPostByKey( state, { feedId, postId } ) : null
 	);
+
+	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
 
 	useEffect( () => {
 		const observer = new IntersectionObserver(
@@ -30,19 +30,20 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		);
 
 		setTimeout( () => {
-			const actionsElement = document.querySelector( '.reader-post-actions' );
+			const actionsElement = document.querySelector( '.reader-full-post .reader-post-actions' );
+
 			if ( actionsElement ) {
 				observer.observe( actionsElement );
 			}
 		}, 100 );
 
 		return () => {
-			const actionsElement = document.querySelector( '.reader-post-actions' );
+			const actionsElement = document.querySelector( '.reader-full-post .reader-post-actions' );
 			if ( actionsElement ) {
 				observer.unobserve( actionsElement );
 			}
 		};
-	}, [] );
+	}, [ post ] );
 
 	return (
 		<div
@@ -50,7 +51,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 				isActionsVisible ? 'is-actions-visible' : ''
 			} ${ className }` }
 		>
-			{ post && <ReaderPostActions post={ post } /> }
+			{ post && <ReaderPostActions className="engagement-bar__actions" post={ post } /> }
 		</div>
 	);
 };
