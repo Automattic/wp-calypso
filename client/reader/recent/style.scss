@@ -126,8 +126,6 @@
 	&__post-column {
 		display: none;
 		@extend %column-shared;
-		position: relative;
-		flex: 3;
 
 		&.overlay {
 			display: block;
@@ -145,8 +143,6 @@
 			justify-content: center;
 			transition: opacity 0.2s ease-in-out;
 			opacity: 1;
-			width: -webkit-fill-available;
-			width: -moz-available;
 
 			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
 				margin-right: 24px;
@@ -183,6 +179,8 @@
 
 		@media ( min-width: $break-wide ) {
 			display: block;
+			position: relative;
+			flex: 3;
 		}
 	}
 }

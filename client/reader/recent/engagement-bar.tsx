@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useSelector } from 'calypso/state';
@@ -11,6 +11,7 @@ interface EngagementBarProps {
 }
 
 const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps ) => {
+	const barRef = useRef< HTMLDivElement >( null );
 	const post = useSelector( ( state ) =>
 		feedId && postId ? getPostByKey( state, { feedId, postId } ) : null
 	);
@@ -29,6 +30,21 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 			commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		}
 	};
+
+	// Set the width of the engagement bar to the width of its parent.
+	useEffect( () => {
+		const updateWidth = () => {
+			if ( barRef.current ) {
+				const parentWidth = barRef.current.parentElement?.clientWidth || 0;
+				barRef.current.style.width = `${ parentWidth }px`;
+			}
+		};
+
+		updateWidth();
+		window.addEventListener( 'resize', updateWidth );
+
+		return () => window.removeEventListener( 'resize', updateWidth );
+	}, [] );
 
 	useEffect( () => {
 		// Set up a MutationObserver to detect when the "Reader Post Actions" aka `actionsElement` appears in the DOM
@@ -83,6 +99,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 
 	return (
 		<div
+			ref={ barRef }
 			className={ `recent-feed__post-column-engagement-bar ${
 				isActionsVisible ? 'engagement-bar-is-hidden' : ''
 			} ${ className }` }
