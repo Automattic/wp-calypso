@@ -16,18 +16,29 @@ afterEach( () => {
 
 describe( 'SelectGoals', () => {
 	it( 'preserves goals order on page refresh', () => {
-		const { rerender } = render( <SelectGoals onChange={ jest.fn() } selectedGoals={ [] } /> );
+		const { rerender } = render(
+			<SelectGoals onChange={ jest.fn() } selectedGoals={ [] } isAddedGoalsExp />
+		);
 		const firstRenderGoals = screen.getAllByTestId( 'goal-title' ).map( ( e ) => e.textContent );
 
 		// I'm simulating a page load by rerendering the component with a different key.
-		rerender( <SelectGoals key="second-instance" onChange={ jest.fn() } selectedGoals={ [] } /> );
+		rerender(
+			<SelectGoals
+				key="second-instance"
+				onChange={ jest.fn() }
+				selectedGoals={ [] }
+				isAddedGoalsExp
+			/>
+		);
 		const secondRenderGoals = screen.getAllByTestId( 'goal-title' ).map( ( e ) => e.textContent );
 
 		expect( firstRenderGoals ).toEqual( secondRenderGoals );
 	} );
 
 	it( 'randomizes goals between sessions', () => {
-		const { rerender } = render( <SelectGoals onChange={ jest.fn() } selectedGoals={ [] } /> );
+		const { rerender } = render(
+			<SelectGoals onChange={ jest.fn() } selectedGoals={ [] } isAddedGoalsExp />
+		);
 		const firstRenderGoals = screen.getAllByTestId( 'goal-title' ).map( ( e ) => e.textContent );
 
 		seedManager.clearSeed();
@@ -36,7 +47,14 @@ describe( 'SelectGoals', () => {
 		jest.spyOn( global.Math, 'random' ).mockReturnValue( 0.98765 );
 
 		// I'm simulating a page load by rerendering the component with a different key.
-		rerender( <SelectGoals key="second-instance" onChange={ jest.fn() } selectedGoals={ [] } /> );
+		rerender(
+			<SelectGoals
+				key="second-instance"
+				onChange={ jest.fn() }
+				selectedGoals={ [] }
+				isAddedGoalsExp
+			/>
+		);
 		const secondRenderGoals = screen.getAllByTestId( 'goal-title' ).map( ( e ) => e.textContent );
 
 		expect( firstRenderGoals ).not.toEqual( secondRenderGoals );
