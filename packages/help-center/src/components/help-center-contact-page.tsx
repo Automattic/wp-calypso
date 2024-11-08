@@ -7,19 +7,16 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import {
-	useGetSupportInteractions,
-	useManageSupportInteraction,
-} from '@automattic/odie-client/src/data';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { backup, comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FC, ReactNode, ReactElement } from 'react';
-import { Link } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { Link, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -27,6 +24,7 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
+import { useStartSupportInteraction } from '../hooks/use-start-support-interaction';
 import { Mail } from '../icons';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
@@ -189,18 +187,19 @@ const HelpCenterFooterButton = ( {
 	buttonTextEventProp,
 	redirectTo,
 	icon,
-	onClick,
 }: {
 	children: ReactNode;
 	buttonTextEventProp: string;
 	redirectTo: string;
 	icon: ReactElement;
-	onClick?: () => void;
 } ) => {
 	const { url, isLoading } = useStillNeedHelpURL();
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
+	const navigate = useNavigate();
+	const resetSupportInteraction = useResetSupportInteraction();
+	const startSupportInteraction = useStartSupportInteraction();
 
 	const handleContactButtonClicked = ( {
 		buttonTextEventProp,
@@ -225,29 +224,34 @@ const HelpCenterFooterButton = ( {
 		return redirectTo;
 	};
 
-	const handleClick = () => {
+	const handleClick = async ( e ) => {
+		e.preventDefault();
 		handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } );
-		onClick?.();
+
+		if ( redirectTo === '/odie' ) {
+			await resetSupportInteraction();
+			await startSupportInteraction();
+		}
+
+		const url = redirectionURL();
+		if ( redirectToWpcom ) {
+			// window.open( url, '_blank' );
+		} else {
+			navigate( url );
+		}
 	};
 
 	return (
-		<Link
-			to={ redirectionURL() }
-			target={ redirectToWpcom ? '_blank' : '_self' }
-			onClick={ handleClick }
-			className="button help-center-contact-page__button"
-		>
+		<Button onClick={ handleClick } className="button help-center-contact-page__button">
 			<Icon icon={ icon } />
 			{ children }
-		</Link>
+		</Button>
 	);
 };
 
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
-	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
 
 	return supportInteractions && supportInteractions?.length > 0 ? (
 		<>
@@ -255,13 +259,6 @@ export const HelpCenterContactButton: FC = () => {
 				icon={ comment }
 				buttonTextEventProp="New conversation"
 				redirectTo="/odie"
-				onClick={ async () => {
-					await resetSupportInteraction();
-					await startNewInteraction( {
-						event_source: 'help-center',
-						event_external_id: uuidv4(),
-					} );
-				} }
 			>
 				{ __( 'New conversation', __i18n_text_domain__ ) }
 			</HelpCenterFooterButton>
