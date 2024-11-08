@@ -3,7 +3,7 @@ import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { FormFileUpload, Button, ExternalLink } from '@wordpress/components';
+import { FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -25,7 +25,6 @@ interface Props {
 	showSubtitle?: boolean;
 	showCsvUpload?: boolean;
 	showFormManualListLabel?: boolean;
-	submitBtnName?: string;
 	submitBtnAlwaysEnable?: boolean;
 	allowEmptyFormSubmit?: boolean;
 	manualListEmailInviting?: boolean;
@@ -55,9 +54,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		showTitle = true,
 		showSubtitle,
 		showCsvUpload,
-		submitBtnName = translate( 'Add subscribers' ),
-		submitBtnAlwaysEnable,
-		allowEmptyFormSubmit,
 		recordTracksEvent,
 		onImportStarted,
 		onImportFinished,
@@ -95,12 +91,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		} )
 	);
 
-	// This useState call has been moved below getValidEmails() to resolve
-	// an error with calling getValidEmails() before it is initialized.
-	// The next line calls isSubmitButtonReady() which invokes getValidEmails()
-	// if submitBtnAlwaysEnable and allowEmptyFormSubmit are both false.
-	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
-
 	/**
 	 * ↓ Effects
 	 */
@@ -119,10 +109,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevSubmitAttemptCount.current = submitAttemptCount;
 	}, [ submitAttemptCount ] );
-
-	useEffect( () => {
-		setIsSubmitBtnReady( isSubmitButtonReady() );
-	}, [ selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
 
 	useEffect( () => {
 		if ( isSelectedFileValid && selectedFile ) {
@@ -183,10 +169,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	function onFileRemoveClick() {
 		setSelectedFile( undefined );
 		importCsvSubscribersUpdate( undefined );
-	}
-
-	function isSubmitButtonReady(): boolean {
-		return submitBtnAlwaysEnable || !! allowEmptyFormSubmit || !! selectedFile;
 	}
 
 	function resetFormState(): void {
@@ -280,12 +262,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 			selectedFile && (
 				<p className="add-subscriber__form--disclaimer">
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: the first string variable shows CTA button name */
-							translate(
-								'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
-							),
-							submitBtnName
+						translate(
+							'By clicking "Add subscribers" you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 						),
 						{
 							Button: (
@@ -396,21 +374,25 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 			<div className="add-subscriber__form--container">
 				<p>
 					{ translate(
-						'Upload a CSV file with your existing subscribers list from platforms like {{BeehiivLink}}Beehiiv{{/BeehiivBeehiivLink}}, {{GhostLink}}Ghost{{/GhostLink}}, {{KitLink}}Kit{{/KitLink}}, {{MailChimpLink}}MailChimp{{/MailChimpLink}}, {{MediumLink}}Medium{{/MediumLink}}, {{PatreonLink}}Patreon{{/PatreonLink}}, and many others.',
+						'Upload a CSV file with your existing subscribers list from platforms like {{BeehiivLink}}Beehiiv{{/BeehiivLink}}, {{GhostLink}}Ghost{{/GhostLink}}, {{KitLink}}Kit{{/KitLink}}, {{MailChimpLink}}MailChimp{{/MailChimpLink}}, {{MediumLink}}Medium{{/MediumLink}}, {{PatreonLink}}Patreon{{/PatreonLink}}, and many others.',
 						{
 							components: {
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								BeehiivLink: <ExternalLink href="https://www.beehiiv.com/" />,
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								GhostLink: <ExternalLink href="https://ghost.org/" />,
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								KitLink: <ExternalLink href="https://kit.com/" />,
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								MailChimpLink: <ExternalLink href="https://mailchimp.com/" />,
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								MediumLink: <ExternalLink href="https://medium.com/" />,
-								// @ts-expect-error Children must be passed to External link. This is done by translate(), but the types don't see that.
-								PatreonLink: <ExternalLink href="https://patreon.com/" />,
+								BeehiivLink: (
+									<a href="https://www.beehiiv.com/" target="_blank" rel="noopener noreferrer" />
+								),
+								GhostLink: (
+									<a href="https://ghost.org/" target="_blank" rel="noopener noreferrer" />
+								),
+								KitLink: <a href="https://kit.com/" target="_blank" rel="noopener noreferrer" />,
+								MailChimpLink: (
+									<a href="https://mailchimp.com/" target="_blank" rel="noopener noreferrer" />
+								),
+								MediumLink: (
+									<a href="https://medium.com/" target="_blank" rel="noopener noreferrer" />
+								),
+								PatreonLink: (
+									<a href="https://patreon.com/" target="_blank" rel="noopener noreferrer" />
+								),
 							},
 						}
 					) }
@@ -430,9 +412,9 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 						type="submit"
 						className="add-subscriber__form-submit-btn"
 						isBusy={ inProgress && ! disabled }
-						disabled={ ! submitBtnReady || disabled }
+						disabled={ ! selectedFile || disabled }
 					>
-						{ submitBtnName }
+						{ translate( 'Add subscribers' ) }
 					</NextButton>
 					{ showSkipLink && (
 						<div className="add-subscriber__form-skip-link-wrapper">
