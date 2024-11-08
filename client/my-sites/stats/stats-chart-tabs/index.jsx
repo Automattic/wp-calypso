@@ -48,7 +48,7 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		headerSlot: PropTypes.node,
+		children: PropTypes.node,
 	};
 
 	intervalId = null;
@@ -62,6 +62,12 @@ class StatModuleChartTabs extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( this.props.query && prevProps.queryKey !== this.props.queryKey ) {
 			this.startQueryInterval();
+		}
+	}
+
+	componentWillUnmount() {
+		if ( Number.isFinite( this.intervalId ) ) {
+			clearInterval( this.intervalId );
 		}
 	}
 
@@ -93,16 +99,18 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading, className, headerSlot } = this.props;
-		const classes = [
-			'is-chart-tabs',
+		const {
+			isActiveTabLoading,
 			className,
-			{
-				'is-loading': isActiveTabLoading,
-				'has-less-than-three-bars': this.props.chartData.length < 3,
-			},
-		];
-		/* pass bars count as `key` to disable transitions between tabs with different column count */
+			chartData,
+			barClick,
+			counts,
+			charts,
+			chartTab,
+			queryDate,
+			children,
+		} = this.props;
+
 		return (
 			<StatsChartBase
 				className={ className }
@@ -120,6 +128,10 @@ class StatModuleChartTabs extends Component {
 		);
 	}
 }
+
+// Add static components for compound pattern
+StatModuleChartTabs.Header = StatsChartBase.Header;
+StatModuleChartTabs.Content = StatsChartBase.Content;
 
 const NO_SITE_STATE = {
 	siteId: null,
