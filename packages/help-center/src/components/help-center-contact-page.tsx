@@ -7,7 +7,6 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useOdieAssistantContext } from '@automattic/odie-client';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -23,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { Mail } from '../icons';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
@@ -242,7 +242,7 @@ const HelpCenterFooterButton = ( {
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
-	const { clearChat } = useOdieAssistantContext();
+	const resetSupportInteraction = useResetSupportInteraction();
 
 	return supportInteractions && supportInteractions?.length > 0 ? (
 		<>
@@ -251,7 +251,7 @@ export const HelpCenterContactButton: FC = () => {
 				buttonTextEventProp="New conversation"
 				redirectTo="/odie"
 				onClick={ () => {
-					clearChat();
+					resetSupportInteraction();
 				} }
 			>
 				{ __( 'New conversation', __i18n_text_domain__ ) }
