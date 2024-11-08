@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -33,7 +34,7 @@ export default function PluginsListDataViews( {
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
-	const fields = useFields( bulkActionDialog, pluginUpdateCount );
+	const fields = useFields( bulkActionDialog );
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
@@ -43,12 +44,56 @@ export default function PluginsListDataViews( {
 		fields: [ 'plugins', 'sites', 'update' ],
 	} ) );
 
+	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
+
+	const header = (
+		<>
+			<Button
+				isPressed={ isFilteringUpdates }
+				onClick={ () => {
+					if ( isFilteringUpdates ) {
+						setDataViewsState( {
+							...dataViewsState,
+							filters: [],
+						} );
+					} else {
+						setDataViewsState( {
+							...dataViewsState,
+							filters: [
+								{
+									field: 'status',
+									operator: 'isAny',
+									value: [ PLUGINS_STATUS.UPDATE ],
+								},
+							],
+						} );
+					}
+					setIsFilteringUpdates( ! isFilteringUpdates );
+				} }
+			>
+				{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
+			</Button>
+		</>
+	);
+
 	// When search changes, notify the parent component
 	useEffect( () => {
 		if ( dataViewsState.search !== initialSearch ) {
 			onSearch && onSearch( dataViewsState.search || '' );
 		}
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
+
+	useEffect( () => {
+		if (
+			dataViewsState.filters?.length === 1 &&
+			dataViewsState.filters[ 0 ].field === 'status' &&
+			dataViewsState.filters[ 0 ].value.includes( PLUGINS_STATUS.UPDATE )
+		) {
+			setIsFilteringUpdates( true );
+		} else {
+			setIsFilteringUpdates( false );
+		}
+	}, [ dataViewsState.filters ] );
 
 	const { data, paginationInfo } = useMemo( () => {
 		const result = filterSortAndPaginate( currentPlugins, dataViewsState, fields );
@@ -73,6 +118,7 @@ export default function PluginsListDataViews( {
 				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ defaultLayouts }
+				header={ header }
 			/>
 		</>
 	);
