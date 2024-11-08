@@ -2,7 +2,6 @@ import {
 	getAssemblerDesign,
 	themesIllustrationImage,
 	assemblerIllustrationV2Image,
-	hiBigSky,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -16,6 +15,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import hiBigSky from './big-sky-no-text-small.png';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
