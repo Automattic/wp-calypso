@@ -50,8 +50,6 @@ const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 
-const shouldUsePayPalPPCP = false;
-
 export function useCreatePayPalExpress( {
 	labelText,
 	shouldShowTaxFields,
@@ -60,16 +58,18 @@ export function useCreatePayPalExpress( {
 	shouldShowTaxFields?: boolean;
 } ): PaymentMethod | null {
 	const store = useMemo( () => createPayPalStore(), [] );
+	const shouldUsePayPalPPCP = isEnabled( 'checkout/paypal-ppcp' );
 	const paypalMethod = useMemo(
 		() =>
 			shouldUsePayPalPPCP ? null : createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
-		[ labelText, shouldShowTaxFields, store ]
+		[ labelText, shouldShowTaxFields, store, shouldUsePayPalPPCP ]
 	);
 	return paypalMethod;
 }
 
 export function useCreatePayPalPPCP(): PaymentMethod | null {
-	return useMemo( () => ( shouldUsePayPalPPCP ? createPayPal() : null ), [] );
+	const shouldUsePayPalPPCP = isEnabled( 'checkout/paypal-ppcp' );
+	return useMemo( () => ( shouldUsePayPalPPCP ? createPayPal() : null ), [ shouldUsePayPalPPCP ] );
 }
 
 export function useCreateCreditCard( {
