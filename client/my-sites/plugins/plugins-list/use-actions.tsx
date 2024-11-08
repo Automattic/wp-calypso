@@ -29,7 +29,7 @@ export function useActions(
 			label: translate( 'Activate' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.INACTIVE );
+				return plugin.status?.includes( PLUGINS_STATUS.INACTIVE ) ?? true;
 			},
 			supportsBulk: true,
 			icon: <Icon icon={ link } />,
@@ -43,7 +43,7 @@ export function useActions(
 			label: translate( 'Deactivate' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.ACTIVE );
+				return plugin.status?.includes( PLUGINS_STATUS.ACTIVE ) ?? true;
 			},
 			supportsBulk: true,
 			icon: <Icon icon={ linkOff } />,
@@ -57,7 +57,7 @@ export function useActions(
 			label: translate( 'Enable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
+				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_DISABLED ) ?? true;
 			},
 			supportsBulk: true,
 		},
@@ -70,7 +70,7 @@ export function useActions(
 			label: translate( 'Disable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
+				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_ENABLED ) ?? true;
 			},
 			supportsBulk: true,
 		},
