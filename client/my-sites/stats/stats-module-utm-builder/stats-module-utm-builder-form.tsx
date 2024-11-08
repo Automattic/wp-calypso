@@ -107,7 +107,7 @@ const UtmBuilder: React.FC = () => {
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset>
+				<FormFieldset className="stats-utm-builder__form-fieldset">
 					<InputField
 						id="url"
 						name="url"
@@ -136,6 +136,7 @@ const UtmBuilder: React.FC = () => {
 				<div className="stats-utm-builder__url">{ utmString }</div>
 			</div>
 			<StatsButton
+				className="stats-utm-builder__copy-button"
 				primary
 				onClick={ () => {
 					navigator.clipboard.writeText( utmString );
