@@ -66,7 +66,7 @@ import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
-import ChartHeader from './stats-chart-tabs/chart-header';
+import NewFilteringChartHeader from './stats-chart-tabs/new-filtering-chart-header';
 import DatePicker from './stats-date-picker';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
@@ -342,6 +342,7 @@ class StatsSite extends Component {
 
 		const wrapperClass = clsx( 'stats-content', {
 			'is-period-year': period === 'year',
+			'date-filtering-enabled': isNewDateFilteringEnabled,
 		} );
 
 		const moduleListClasses = clsx(
@@ -435,75 +436,63 @@ class StatsSite extends Component {
 					</StatsPeriodHeader>
 				) }
 				<div id="my-stats-content" className={ wrapperClass }>
-					<>
-						{ ! isNewDateFilteringEnabled && (
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
+					{ ! isNewDateFilteringEnabled && (
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
+								date={ date }
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateControl
+								showArrows
+								slug={ slug }
+								dateRange={ customChartRange }
+							>
+								{ ' ' }
+								<DatePicker
 									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-									queryParams={ context.query }
-									pathTemplate={ pathTemplate }
-									charts={ CHARTS }
-									availableLegend={ this.getAvailableLegend() }
-									activeTab={ getActiveTab( this.props.chartTab ) }
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+								/>
+							</StatsPeriodNavigation>
+						</StatsPeriodHeader>
+					) }
+
+					<ChartTabs
+						activeTab={ getActiveTab( this.props.chartTab ) }
+						activeLegend={ this.state.activeLegend }
+						availableLegend={ this.getAvailableLegend() }
+						onChangeLegend={ this.onChangeLegend }
+						barClick={ this.barClick }
+						switchTab={ this.switchChart }
+						charts={ CHARTS }
+						queryDate={ queryDate }
+						period={ this.props.period }
+						chartTab={ this.props.chartTab }
+						customQuantity={ customChartQuantity }
+						customRange={ customChartRange }
+					>
+						{ isNewDateFilteringEnabled && (
+							<ChartTabs.Header>
+								<NewFilteringChartHeader
 									activeLegend={ this.state.activeLegend }
-									onChangeLegend={ this.onChangeLegend }
-									isWithNewDateControl
-									showArrows
-									slug={ slug }
-									dateRange={ customChartRange }
-								>
-									{ ' ' }
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-										isShort
-									/>
-								</StatsPeriodNavigation>
-							</StatsPeriodHeader>
+									activeTab={ getActiveTab( this.props.chartTab ) }
+									availableLegend={ this.getAvailableLegend() }
+									onLegendClick={ this.onLegendClick }
+									charts={ CHARTS }
+								/>
+							</ChartTabs.Header>
 						) }
-
-						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								className="is-date-filtering-enabled"
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-								headerSlot={ this.renderNewDateFilteringChartHeader() }
-							/>
-						) }
-						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-								headerSlot={ this.renderDefaultChartHeader() }
-							/>
-						) }
-					</>
-
+					</ChartTabs>
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className={ moduleListClasses }>
@@ -639,15 +628,15 @@ class StatsSite extends Component {
 							/>
 						) }
 					</div>
+					{ supportsPlanUsage && (
+						<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+					) }
+					{ ! shouldShowUpsells ? null : (
+						<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+					) }
+					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+					{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				</div>
-				{ supportsPlanUsage && (
-					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
-				) }
-				{ ! shouldShowUpsells ? null : (
-					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
-				) }
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
-				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
@@ -741,33 +730,6 @@ class StatsSite extends Component {
 					{ ( isInternal ) => this.renderBody( isInternal ) }
 				</StatsGlobalValuesContext.Consumer>
 			</Main>
-		);
-	}
-
-	renderDefaultChartHeader() {
-		return (
-			<ChartHeader
-				showLegend
-				activeLegend={ this.state.activeLegend }
-				activeTab={ getActiveTab( this.props.chartTab ) }
-				availableLegend={ this.getAvailableLegend() }
-				onLegendClick={ this.onLegendClick }
-				charts={ CHARTS }
-			/>
-		);
-	}
-
-	renderNewDateFilteringChartHeader() {
-		// Example of a different header implementation
-		return (
-			<ChartHeader
-				showLegend
-				activeLegend={ this.state.activeLegend }
-				activeTab={ getActiveTab( this.props.chartTab ) }
-				availableLegend={ this.getAvailableLegend() }
-				onLegendClick={ this.onLegendClick }
-				charts={ CHARTS }
-			/>
 		);
 	}
 }
