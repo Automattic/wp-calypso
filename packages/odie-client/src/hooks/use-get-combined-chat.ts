@@ -66,7 +66,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 					}
 				} );
 			}
-		} else {
+		} else if ( currentSupportInteraction ) {
 			setMainChatState( ( prevChat ) => ( {
 				...prevChat,
 				supportInteractionId: currentSupportInteraction!.uuid,
