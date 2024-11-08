@@ -10,7 +10,7 @@ import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/vie
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { capitalize, flow, isEmpty } from 'lodash';
+import { filter as capitalize, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -373,13 +373,11 @@ export class PluginsMain extends Component {
 					header={ this.props.translate( 'Manage Plugins' ) }
 					plugins={ this.getCurrentPlugins() }
 					isPlaceholder={ this.shouldShowPluginListPlaceholders() }
-					isLoading={ this.props.requestingPluginsForSites }
+					isLoading={ this.props.requestingPluginsForSites || this.props.isLoadingSites }
 					isJetpackCloud={ this.props.isJetpackCloud }
 					searchTerm={ this.props.search }
 					filter={ this.props.filter }
 					requestPluginsError={ this.props.requestPluginsError }
-					activePlugins={ this.props.activePlugins }
-					inactivePlugins={ this.props.inactivePlugins }
 					onSearch={ this.props.doSearch }
 				/>
 			);
@@ -624,19 +622,9 @@ export default flow(
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
-			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
-			const pluginsWithAutoUpdate = getPlugins( state, siteIds, 'autoupdates' );
-			const activePlugins = getPlugins( state, siteIds, 'active' );
-			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
+			const isLoadingSites = isRequestingSites( state );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
-			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses(
-				state,
-				allPlugins,
-				pluginsWithUpdates,
-				pluginsWithAutoUpdate,
-				inactivePlugins,
-				activePlugins
-			);
+			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses( state, allPlugins );
 
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
@@ -656,6 +644,7 @@ export default flow(
 				sites,
 				selectedSite,
 				selectedSiteId,
+				isLoadingSites,
 				selectedSiteSlug: getSelectedSiteSlug( state ),
 				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 				siteIds,
@@ -669,10 +658,6 @@ export default flow(
 				currentPluginsOnVisibleSites: newBulkPluginManagement
 					? []
 					: getPlugins( state, siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [], filter ),
-				pluginsWithUpdates,
-				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
-				activePlugins,
-				inactivePlugins,
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
@@ -687,6 +672,9 @@ export default flow(
 				breadcrumbs,
 				requestPluginsError: requestPluginsError( state ),
 				newBulkPluginManagement,
+				pluginUpdateCount: newBulkPluginManagement
+					? 0
+					: getPlugins( state, siteIds, 'updates' )?.length,
 			};
 		},
 		{

@@ -128,8 +128,13 @@ export const getPlugins = createSelector(
 );
 
 export const getPluginsWithUpdateStatuses = createSelector(
-	( state, plugins, withUpdate, withAutoUpdate, inactive, active ) => {
-		return plugins.reduce( ( memo, plugin ) => {
+	( state, allPlugins ) => {
+		const active = filter( allPlugins, _filters.active );
+		const inactive = filter( allPlugins, _filters.inactive );
+		const withUpdate = filter( allPlugins, _filters.updates );
+		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
+
+		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
 			plugin.allStatuses = [];
 

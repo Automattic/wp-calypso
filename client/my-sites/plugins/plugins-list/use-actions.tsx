@@ -54,7 +54,7 @@ export function useActions(
 			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
-			label: translate( 'Enable Autoupdate' ),
+			label: translate( 'Enable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
 				return ! plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE ) ?? true;
@@ -67,7 +67,7 @@ export function useActions(
 			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
-			label: translate( 'Disable Autoupdate' ),
+			label: translate( 'Disable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
 				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE ) ?? true;
