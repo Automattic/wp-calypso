@@ -56,8 +56,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
-				{ chatMessagesLoaded === false && <LoadingChatSpinner /> }
-				{ chatMessagesLoaded && (
+				{ shouldUseHelpCenterExperience && chatMessagesLoaded === false && <LoadingChatSpinner /> }
+				{ ( ! shouldUseHelpCenterExperience ||
+					( shouldUseHelpCenterExperience && chatMessagesLoaded ) ) && (
 					<>
 						<ChatMessage
 							message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
@@ -78,15 +79,15 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
 							/>
 						) ) }
+						<JumpToRecent containerReference={ messagesContainerRef } />
+						{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
+						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
+							<div className="odie-chatbox__action-message">
+								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
+								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+							</div>
+						) }
 					</>
-				) }
-				<JumpToRecent containerReference={ messagesContainerRef } />
-				{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
-				{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
-					<div className="odie-chatbox__action-message">
-						{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-						{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
-					</div>
 				) }
 			</div>
 		</>
