@@ -10,7 +10,7 @@ import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-uti
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { backup, comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -200,7 +200,7 @@ const HelpCenterFooterButton = ( {
 	const navigate = useNavigate();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const startSupportInteraction = useStartSupportInteraction();
-
+	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
 	const handleContactButtonClicked = ( {
 		buttonTextEventProp,
 	}: {
@@ -224,8 +224,8 @@ const HelpCenterFooterButton = ( {
 		return redirectTo;
 	};
 
-	const handleClick = async ( e ) => {
-		e.preventDefault();
+	const handleClick = async () => {
+		setIsCreatingChat( true );
 		handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } );
 
 		if ( redirectTo === '/odie' ) {
@@ -233,16 +233,17 @@ const HelpCenterFooterButton = ( {
 			await startSupportInteraction();
 		}
 
+		setIsCreatingChat( false );
 		const url = redirectionURL();
-		if ( redirectToWpcom ) {
-			// window.open( url, '_blank' );
-		} else {
-			navigate( url );
-		}
+		navigate( url );
 	};
 
 	return (
-		<Button onClick={ handleClick } className="button help-center-contact-page__button">
+		<Button
+			onClick={ handleClick }
+			disabled={ isCreatingChat }
+			className="button help-center-contact-page__button"
+		>
 			<Icon icon={ icon } />
 			{ children }
 		</Button>
