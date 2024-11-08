@@ -101,25 +101,32 @@ const Recent = () => {
 	const fetchData = useCallback( () => {
 		dispatch( viewStream( 'recent', window.location.pathname ) as AnyAction );
 		dispatch(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			( requestPaginatedStream as any )( {
+			requestPaginatedStream( {
 				streamKey: 'recent',
 				page: view.page,
 				perPage: view.perPage,
-			} )
+			} ) as AnyAction
+		);
+		// Fetch the next page in advance.
+		dispatch(
+			requestPaginatedStream( {
+				streamKey: 'recent',
+				page: view?.page ? view.page + 1 : undefined,
+				perPage: view.perPage,
+			} ) as AnyAction
 		);
 	}, [ dispatch, view ] );
 
 	const paginationInfo = useMemo( () => {
 		return {
-			totalItems: data?.totalItems ?? 0,
-			totalPages: data?.totalPages ?? 0,
+			totalItems: data?.pagination?.totalItems ?? 0,
+			totalPages: data?.pagination?.totalPages ?? 0,
 		};
-	}, [ data ] );
+	}, [ data?.pagination ] );
 
 	const { data: shownData } = useMemo( () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
-	}, [ data, view, fields ] );
+	}, [ data?.items, view, fields ] );
 
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
@@ -148,7 +155,13 @@ const Recent = () => {
 						fields={ fields }
 						data={ shownData }
 						onChangeView={ ( newView: View ) =>
-							setView( { type: newView.type, fields: newView.fields ?? [], layout: view.layout } )
+							setView( {
+								type: newView.type,
+								fields: newView.fields ?? [],
+								layout: view.layout,
+								perPage: newView.perPage,
+								page: newView.page,
+							} )
 						}
 						paginationInfo={ paginationInfo }
 						defaultLayouts={ defaultLayouts as SupportedLayouts }

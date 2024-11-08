@@ -198,12 +198,7 @@ const streamApis = {
 		path: () => '/read/streams/following',
 		dateProperty: 'date',
 		apiNamespace: 'wpcom/v2',
-		query: ( extras, { page, perPage } ) =>
-			getQueryString( {
-				...extras,
-				page: page || 1,
-				per_page: perPage || PER_FETCH,
-			} ),
+		query: ( extras ) => getQueryString( extras ),
 	},
 	search: {
 		path: () => '/read/search',
