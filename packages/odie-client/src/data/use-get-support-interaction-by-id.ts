@@ -6,7 +6,7 @@ import { handleSupportInteractionsFetch } from './handle-support-interactions-fe
  * @param interactionId - The uuid of the Support Interaction.
  * @returns The support interaction.
  */
-export const useGetSupportInteractionById = ( interactionId: string | null ) => {
+export const useGetSupportInteractionById = ( interactionId: number | null ) => {
 	return useQuery( {
 		queryKey: [ 'support-interactions', 'get-interaction-by-id', interactionId ],
 		queryFn: () => handleSupportInteractionsFetch( 'GET', `/${ interactionId }` ),

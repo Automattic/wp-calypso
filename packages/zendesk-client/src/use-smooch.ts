@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { ZendeskConversation } from '@automattic/odie-client/src/types';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
@@ -72,11 +71,6 @@ const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => 
 	Smooch.on( 'unreadCount', callback );
 };
 
-const getConversations = () => {
-	const conversations = Smooch.getConversations();
-	return conversations as unknown as ZendeskConversation[];
-};
-
 export const useSmooch = () => {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
@@ -101,7 +95,7 @@ export const useSmooch = () => {
 		renderSmooch: Smooch.render,
 		destroy,
 		getConversation,
-		getConversations,
+		getConversations: Smooch.getConversations,
 		createConversation,
 		addMessengerListener,
 		addUnreadCountListener,

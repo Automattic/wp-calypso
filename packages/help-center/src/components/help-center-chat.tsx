@@ -17,9 +17,13 @@ import { ExtraContactOptions } from './help-center-extra-contact-option';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
+	isLoadingEnvironment,
 	isUserEligibleForPaidSupport,
+	searchTerm,
 }: {
+	isLoadingEnvironment: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	searchTerm: string;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
@@ -39,8 +43,10 @@ export function HelpCenterChat( {
 
 	return (
 		<OdieAssistantProvider
+			isLoadingEnvironment={ isLoadingEnvironment }
 			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
 			currentUser={ currentUser }
+			initialUserMessage={ searchTerm }
 			selectedSiteId={ site?.ID as number }
 			selectedConversationId={ conversationId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }

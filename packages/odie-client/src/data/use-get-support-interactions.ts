@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportProvider } from '../types';
+import type { SupportInteraction, SupportProvider } from '../types/';
 
 /**
  * Get the support interactions.
@@ -15,22 +15,19 @@ export const useGetSupportInteractions = (
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 
 	return useQuery( {
-		// eslint-disable-next-line
-		queryKey: [ 'support-interactions', 'get-interactions', provider ],
-		queryFn: async () => {
-			const response = await handleSupportInteractionsFetch( 'GET', path );
-
-			if ( response.length === 0 ) {
-				return null;
+		queryKey: [ 'support-interactions', 'get-interactions', path ],
+		queryFn: () => handleSupportInteractionsFetch( 'GET', path ) as Promise< SupportInteraction[] >,
+		select: ( data: SupportInteraction[] ) => {
+			if ( ! provider ) {
+				return data;
 			}
 
-			if ( provider ) {
-				return response.filter( ( interaction ) =>
-					interaction.events.some( ( event ) => event.event_source === provider )
-				);
-			}
-
-			return response;
+			return data.filter( ( interaction ) =>
+				interaction.events.some( ( event ) => event.source === provider )
+			);
 		},
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		refetchIntervalInBackground: false,
 	} );
 };

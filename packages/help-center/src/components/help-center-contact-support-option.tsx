@@ -1,12 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
-import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
+import { HelpCenterSite } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useSetOdieStorage } from '@automattic/odie-client';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -20,6 +21,7 @@ import './help-center-contact-support-option.scss';
 
 interface HelpCenterContactSupportOptionProps {
 	productId: number | undefined;
+	wapuuChatId: string | undefined;
 	sectionName: string;
 	site: HelpCenterSite;
 	triggerSource?: string;
@@ -29,6 +31,7 @@ interface HelpCenterContactSupportOptionProps {
 
 const HelpCenterContactSupportOption = ( {
 	productId,
+	wapuuChatId,
 	sectionName,
 	site,
 	triggerSource,
@@ -39,15 +42,7 @@ const HelpCenterContactSupportOption = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const currentSupportInteraction = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
-		[]
-	);
-	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-			?.event_external_id ?? null;
-
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
@@ -84,7 +79,7 @@ const HelpCenterContactSupportOption = ( {
 			section: sectionName,
 		} );
 
-		const escapedWapuuChatId = encodeURIComponent( odieId || '' );
+		const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
 
 		const zendeskWidgetProps = {
 			aiChatId: escapedWapuuChatId,
@@ -92,6 +87,9 @@ const HelpCenterContactSupportOption = ( {
 			siteId: site?.ID,
 			onError: () => setHasSubmittingError( true ),
 			onSuccess: () => {
+				// Reset Odie chat after passing to support
+				setWapuuChatId( null );
+
 				resetStore();
 				setShowHelpCenter( false );
 			},

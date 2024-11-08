@@ -4,8 +4,8 @@ import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { zendeskMessageConverter } from '../utils';
-import type { ZendeskMessage } from '../types';
+import { zendeskMessageConverter } from './zendesk-message-converter';
+import type { ZendeskMessage } from '../types/';
 
 /**
  * Listens for messages from Zendesk and converts them to Odie messages.
@@ -13,33 +13,31 @@ import type { ZendeskMessage } from '../types';
 export const useZendeskMessageListener = () => {
 	const { setChat, chat } = useOdieAssistantContext();
 
-	const { isChatLoaded, currentSupportInteraction } = useSelect( ( select ) => {
+	const { isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 		};
 	}, [] );
 
-	const currentZendeskConversationId = currentSupportInteraction?.events.find(
-		( event ) => event.event_source === 'zendesk'
-	)?.event_external_id;
-
 	useEffect( () => {
-		if ( ! isChatLoaded ) {
+		if ( ! isChatLoaded || ! chat?.conversationId ) {
 			return;
 		}
 
-		Smooch.on( 'message:received', ( message, data ) => {
+		// Smooch types are not up to date
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		Smooch.on( 'message:received', ( message: any, data ) => {
 			const zendeskMessage = message as ZendeskMessage;
 
-			if ( data.conversation.id === chat.conversationId ) {
+			if ( data.conversation.id === chat?.conversationId ) {
 				const convertedMessage = zendeskMessageConverter( zendeskMessage );
-				setChat( ( prevChat ) => ( {
-					...prevChat,
-					messages: [ ...prevChat.messages, convertedMessage ],
-					status: 'loaded',
-				} ) );
+				setChat( ( prevChat ) => {
+					return {
+						...prevChat,
+						messages: [ ...prevChat.messages, convertedMessage ],
+					};
+				} );
 				Smooch.markAllAsRead( data.conversation.id );
 			}
 		} );
@@ -48,5 +46,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off( 'message:received' );
 		};
-	}, [ isChatLoaded, currentZendeskConversationId, chat, setChat, currentSupportInteraction ] );
+	}, [ isChatLoaded, chat?.conversationId ] );
 };

@@ -3,9 +3,10 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src"
+		"rootDir": "src",
+		"types": []
 	},
-	"include": [ "src", "src/*.json", "src/types/index.d.ts", "types" ],
-	"exclude": [ "**/__tests__/*" ],
+	"include": [ "src", "src/*.json", "types" ],
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
 	"references": [ { "path": "../components" }, { "path": "../zendesk-client" } ]
 }

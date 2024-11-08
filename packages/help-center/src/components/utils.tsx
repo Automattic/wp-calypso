@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import type { ContactOption } from '../types';
-import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
@@ -22,7 +22,7 @@ export const getLastMessage = ( { conversation }: { conversation: ZendeskConvers
 		: null;
 };
 
-export const getSortedRecentAndArchivedConversations = ( {
+export const getFilteredConversations = ( {
 	conversations,
 }: {
 	conversations: ZendeskConversation[];
@@ -104,14 +104,3 @@ export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
 		.find( ( message ) => message.source.type === 'web' && message.source.id )?.source.id || '';
-
-export const getConversationsFromSupportInteractions = (
-	conversations: ZendeskConversation[],
-	supportInteractions: SupportInteraction[]
-) => {
-	return conversations.filter( ( conversation ) =>
-		supportInteractions.some(
-			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
-		)
-	);
-};

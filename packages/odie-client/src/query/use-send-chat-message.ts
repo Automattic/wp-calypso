@@ -1,18 +1,20 @@
 import { useCallback } from '@wordpress/element';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, useSendOdieMessage } from '../data';
-import { getHelpCenterZendeskConversationStartedElapsedTime } from '../utils';
+import { broadcastOdieMessage } from '../data';
+import { getHelpCenterZendeskConversationStartedElapsedTime } from '../utils/storage-utils';
+import { useSendOdieMessage } from './use-send-odie-message';
 import { useSendZendeskMessage } from './use-send-zendesk-message';
-import type { Message } from '../types';
+import type { Message } from '../types/';
 
 /**
  * This is the gate that manages which message provider to use.
  */
 export const useSendChatMessage = () => {
 	const {
+		supportProvider,
 		shouldUseHelpCenterExperience,
 		addMessage,
-		odieBroadcastClientId,
+		odieClientId,
 		waitAnswerToFirstMessageFromHumanSupport,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		trackEvent,
@@ -26,9 +28,9 @@ export const useSendChatMessage = () => {
 		async ( message: Message ) => {
 			// Add the user message to the chat and broadcast it to the client.
 			addMessage( message );
-			broadcastOdieMessage( message, odieBroadcastClientId );
+			broadcastOdieMessage( message, odieClientId );
 
-			if ( shouldUseHelpCenterExperience && chat.provider === 'zendesk' ) {
+			if ( shouldUseHelpCenterExperience && supportProvider === 'zendesk' ) {
 				if (
 					message.role === 'user' &&
 					message.type === 'message' &&
@@ -40,7 +42,7 @@ export const useSendChatMessage = () => {
 						trackEvent( 'first_answer_to_human_support', {
 							elapsed_time: elapsedTime,
 							role: message.role,
-							user_id: chat?.wpcomUserId,
+							user_id: chat?.wpcom_user_id,
 						} );
 					}
 					setWaitAnswerToFirstMessageFromHumanSupport( false );
@@ -52,15 +54,15 @@ export const useSendChatMessage = () => {
 		},
 		[
 			shouldUseHelpCenterExperience,
+			supportProvider,
 			sendOdieMessage,
 			sendZendeskMessage,
 			addMessage,
-			odieBroadcastClientId,
+			odieClientId,
 			waitAnswerToFirstMessageFromHumanSupport,
 			setWaitAnswerToFirstMessageFromHumanSupport,
 			trackEvent,
-			chat?.wpcomUserId,
-			chat?.provider,
+			chat?.wpcom_user_id,
 		]
 	);
 

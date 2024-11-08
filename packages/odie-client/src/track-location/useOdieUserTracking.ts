@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import type { OdieUserTracking } from '../types';
+
+export type OdieUserTracking = {
+	path: string;
+	time_spent: number;
+	elements_clicked: string[];
+};
 
 const isUserReadableInteractiveElement = ( element: HTMLElement ) => {
 	const tagName = element.tagName.toLocaleUpperCase();
@@ -21,7 +26,7 @@ const isUserReadableInteractiveElement = ( element: HTMLElement ) => {
  * interactive elements that were clicked on that path.
  * @returns {OdieUserTracking[]} An array of user tracking data.
  */
-export const useOdieUserTracking = (): OdieUserTracking[] => {
+const useOdieUserTracking = (): OdieUserTracking[] => {
 	const [ userLocations, setUserLocations ] = useState< OdieUserTracking[] >( [] );
 	const currentPath = useRef( window.location.pathname );
 	const startTime = useRef( Date.now() );
@@ -75,3 +80,5 @@ export const useOdieUserTracking = (): OdieUserTracking[] => {
 
 	return userLocations;
 };
+
+export default useOdieUserTracking;
