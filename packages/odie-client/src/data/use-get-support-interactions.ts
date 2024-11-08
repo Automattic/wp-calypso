@@ -32,7 +32,5 @@ export const useGetSupportInteractions = (
 
 			return response;
 		},
-		refetchOnMount: true,
-		staleTime: 0,
 	} );
 };

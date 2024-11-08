@@ -2,7 +2,6 @@ import { ODIE_ALLOWED_BOTS } from './constants';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
-	setChatProvider: ( provider: SupportProvider ) => void;
 	isChatLoaded: boolean;
 	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;

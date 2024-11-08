@@ -12,7 +12,6 @@ import type {
 	Message,
 	OdieAllowedBots,
 	ChatStatus,
-	SupportProvider,
 	OdieAssistantContextInterface,
 	OdieAssistantProviderProps,
 } from '../types';
@@ -43,7 +42,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isUserEligibleForPaidSupport: false,
 	odieBroadcastClientId: '',
 	setChat: noop,
-	setChatProvider: noop,
 	setChatStatus: noop,
 	setMessageLikedStatus: noop,
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
@@ -155,14 +153,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
-	/**
-	 * Set the provider of the chat.
-	 * This is used to switch between Odie and Zendesk.
-	 */
-	const setChatProvider = ( provider: SupportProvider ) => {
-		setMainChatState( ( prevChat ) => ( { ...prevChat, provider } ) );
-	};
-
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
 
 	/**
@@ -189,7 +179,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isUserEligibleForPaidSupport,
 				odieBroadcastClientId,
 				selectedSiteId,
-				setChatProvider,
 				setChatStatus,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
