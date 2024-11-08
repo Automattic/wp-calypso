@@ -78,7 +78,8 @@ const Recent = () => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost } ) => getPostFromItem( item )?.title ?? '',
+				getValue: ( { item }: { item: ReaderPost } ) =>
+					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
 					return (
 						<RecentPostField
