@@ -7,7 +7,10 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
+import {
+	useGetSupportInteractions,
+	useManageSupportInteraction,
+} from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -16,6 +19,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FC, ReactNode, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
@@ -243,6 +247,7 @@ export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
 	const resetSupportInteraction = useResetSupportInteraction();
+	const { startNewInteraction } = useManageSupportInteraction();
 
 	return supportInteractions && supportInteractions?.length > 0 ? (
 		<>
@@ -250,8 +255,12 @@ export const HelpCenterContactButton: FC = () => {
 				icon={ comment }
 				buttonTextEventProp="New conversation"
 				redirectTo="/odie"
-				onClick={ () => {
-					resetSupportInteraction();
+				onClick={ async () => {
+					await resetSupportInteraction();
+					await startNewInteraction( {
+						event_source: 'help-center',
+						event_external_id: uuidv4(),
+					} );
 				} }
 			>
 				{ __( 'New conversation', __i18n_text_domain__ ) }
