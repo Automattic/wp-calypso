@@ -50,23 +50,26 @@ const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 
+const shouldUsePayPalPPCP = false;
+
 export function useCreatePayPalExpress( {
 	labelText,
 	shouldShowTaxFields,
 }: {
 	labelText?: string | null;
 	shouldShowTaxFields?: boolean;
-} ): PaymentMethod {
+} ): PaymentMethod | null {
 	const store = useMemo( () => createPayPalStore(), [] );
 	const paypalMethod = useMemo(
-		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		() =>
+			shouldUsePayPalPPCP ? null : createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
 		[ labelText, shouldShowTaxFields, store ]
 	);
 	return paypalMethod;
 }
 
-export function useCreatePayPalPPCP(): PaymentMethod {
-	return useMemo( () => createPayPal(), [] );
+export function useCreatePayPalPPCP(): PaymentMethod | null {
+	return useMemo( () => ( shouldUsePayPalPPCP ? createPayPal() : null ), [] );
 }
 
 export function useCreateCreditCard( {
@@ -409,7 +412,8 @@ export default function useCreatePaymentMethods( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { currency } = responseCart;
-	const paypalMethod = useCreatePayPal( {} );
+	const paypalExpressMethod = useCreatePayPalExpress( {} );
+	const paypalPPCPMethod = useCreatePayPalPPCP();
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
@@ -510,7 +514,8 @@ export default function useCreatePaymentMethods( {
 		applePayMethod,
 		googlePayMethod,
 		freePaymentMethod,
-		paypalMethod,
+		paypalExpressMethod,
+		paypalPPCPMethod,
 		idealMethod,
 		sofortMethod,
 		netbankingMethod,
