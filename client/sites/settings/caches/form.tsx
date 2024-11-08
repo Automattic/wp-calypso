@@ -118,7 +118,7 @@ export default function CacheForm( {
 	const edgeCacheToggleDescription = isEdgeCacheEligible
 		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
-				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings.{{/a}}',
+				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings{{/a}}',
 				{
 					components: {
 						a: config.isEnabled( 'untangling/hosting-menu' ) ? (
