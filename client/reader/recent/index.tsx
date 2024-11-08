@@ -24,6 +24,7 @@ const Recent = () => {
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
+		search: '',
 		fields: [ 'seen', 'post' ],
 		perPage: 10,
 		page: 1,
@@ -72,10 +73,12 @@ const Recent = () => {
 					);
 				},
 				enableHiding: false,
+				enableSorting: false,
 			},
 			{
 				id: 'post',
 				label: translate( 'Post' ),
+				getValue: ( { item }: { item: ReaderPost } ) => getPostFromItem( item )?.title ?? '',
 				render: ( { item }: { item: ReaderPost } ) => {
 					return (
 						<RecentPostField
@@ -86,6 +89,8 @@ const Recent = () => {
 					);
 				},
 				enableHiding: false,
+				enableSorting: false,
+				enableGlobalSearch: true,
 			},
 		],
 		[ getPostFromItem, setSelectedItem ]
@@ -128,7 +133,7 @@ const Recent = () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
 	}, [ data?.items, view, fields ] );
 
-	// Fetch the data when the component is mounted.
+	// Fetch the data when the component is mounted and when the view changes.
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData, view ] );
@@ -161,10 +166,12 @@ const Recent = () => {
 								layout: view.layout,
 								perPage: newView.perPage,
 								page: newView.page,
+								search: newView.search,
 							} )
 						}
 						paginationInfo={ paginationInfo }
 						defaultLayouts={ defaultLayouts as SupportedLayouts }
+						isLoading={ data?.isRequesting }
 					/>
 				</div>
 			</div>
