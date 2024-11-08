@@ -24,7 +24,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', post );
 
 		// Find and scroll to comments section.
-		const commentsForm = document.querySelector( '.comments__form' );
+		const commentsForm = document.querySelector( '.reader-full-post__comments-wrapper' );
 		if ( commentsForm ) {
 			commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		}
