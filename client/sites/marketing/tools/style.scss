@@ -22,7 +22,8 @@
 	@include wide-screen {
 		max-height: 300px;
 		flex-direction: row;
-		padding: 0;
+		padding: 42px 60px;
+		justify-content: space-between;
 	}
 }
 
@@ -31,9 +32,6 @@
 	flex-direction: column;
 	justify-content: center;
 	padding: 0;
-	@include wide-screen {
-		padding: 40px 40px 40px 0;
-	}
 }
 
 .tools__header-title {
@@ -44,20 +42,33 @@
 }
 
 .tools__header-description {
-	font-size: $font-body;
+	margin-top: 16px;
+	font-size: $font-body-small;
 	font-weight: 400;
+	text-wrap: pretty;
+	max-width: 450px;
 }
 
 .tools__header-button-row {
 	align-content: center;
 	display: flex;
 	flex-direction: row;
-	margin: 20px 0;
+	margin-top: 32px;
 
-	.button {
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 100%;
-			text-align: center;
+	@include breakpoint-deprecated( "<1040px" ) {
+	margin-bottom: 16px;
+	}
+
+	.components-button {
+		&.tools__header-button-row-button.is-link {
+			font-size: $font-body-small;
+			font-weight: 500;
+			text-decoration: none;
+			color: var(--color-gray-80);
+			
+			svg {
+				margin-left: 8px;
+			}
 		}
 	}
 }
@@ -65,13 +76,14 @@
 .tools__header-image-wrapper {
 	@include wide-screen {
 		display: flex;
-		margin: 0 40px;
+		margin-left: auto;
 	}
 
 	.tools__header-image {
 		position: relative;
+		object-fit: contain;
 		@include wide-screen {
-			max-width: 220px;
+			max-width: 330px;
 		}
 	}
 }
