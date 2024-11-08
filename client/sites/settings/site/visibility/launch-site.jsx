@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -8,6 +9,8 @@ import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelSection } from 'calypso/sites/components/panel';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -26,7 +29,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import SettingsSectionHeader from '../settings-section-header';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
@@ -159,9 +161,9 @@ const LaunchSite = () => {
 					}
 			  );
 
-	return (
-		<>
-			{ isLaunchConfirmationModalOpen && (
+	const renderConfirmationModal = () => {
+		return (
+			isLaunchConfirmationModalOpen && (
 				<LaunchConfirmationModal
 					message={ agencyBillingMessage }
 					closeModal={ closeLaunchConfirmationModal }
@@ -170,9 +172,13 @@ const LaunchSite = () => {
 						closeLaunchConfirmationModal();
 					} }
 				/>
-			) }
-			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-			<LaunchCard>
+			)
+		);
+	};
+
+	const renderContent = () => {
+		return (
+			<>
 				<LaunchSiteTrialUpsellNotice />
 				<div className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
@@ -196,13 +202,31 @@ const LaunchSite = () => {
 						</div>
 					) }
 				</div>
-			</LaunchCard>
-			{ showPreviewLink && (
-				<Card>
-					<SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
-				</Card>
-			) }
+			</>
+		);
+	};
 
+	const renderPreviewLinks = () => {
+		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
+	};
+
+	return (
+		<>
+			{ renderConfirmationModal() }
+			{ ! isEnabled( 'untangling/hosting-menu' ) ? (
+				<>
+					<SettingsSectionHeader title={ translate( 'Launch site' ) } />
+					<LaunchCard>{ renderContent() }</LaunchCard>
+				</>
+			) : (
+				<PanelSection title={ translate( 'Launch site' ) }>{ renderContent() }</PanelSection>
+			) }
+			{ showPreviewLink &&
+				( ! isEnabled( 'untangling/hosting-menu' ) ? (
+					<Card>{ renderPreviewLinks() }</Card>
+				) : (
+					renderPreviewLinks()
+				) ) }
 			{ querySiteDomainsComponent }
 		</>
 	);

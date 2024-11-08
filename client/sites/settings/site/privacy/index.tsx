@@ -1,9 +1,11 @@
-import { Card } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelSection } from 'calypso/sites/components/panel';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -56,8 +58,8 @@ const SiteSettingPrivacy = ( {
 		return <></>;
 	}
 
-	return (
-		<>
+	const renderSectionHeader = () => {
+		return (
 			<SettingsSectionHeader
 				id="site-privacy-settings"
 				disabled={ isRequestingSettings || isSavingSettings }
@@ -75,7 +77,12 @@ const SiteSettingPrivacy = ( {
 					}
 				) }
 			/>
-			<Card>
+		);
+	};
+
+	const renderForm = () => {
+		return (
+			<>
 				<SiteSettingPrivacyForm
 					fields={ fields }
 					updateFields={ updateFields }
@@ -89,8 +96,36 @@ const SiteSettingPrivacy = ( {
 					siteIsAtomic={ siteIsAtomic }
 					siteIsJetpack={ siteIsJetpack }
 				/>
-			</Card>
-		</>
+			</>
+		);
+	};
+
+	if ( ! isEnabled( 'untangling/hosting-menu' ) ) {
+		return (
+			<>
+				{ renderSectionHeader() }
+				<Card>{ renderForm() }</Card>
+			</>
+		);
+	}
+	return (
+		<PanelSection
+			title={ translate( 'Privacy' ) }
+			subtitle={ translate( 'Control who can view your site. {{a}}Learn more{{/a}}', {
+				components: {
+					a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
+				},
+			} ) }
+		>
+			{ renderForm() }
+			<Button
+				busy={ isSavingSettings }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ handleSubmitForm as () => void }
+			>
+				{ translate( 'Save settings' ) }
+			</Button>
+		</PanelSection>
 	);
 };
 

@@ -1,14 +1,14 @@
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import SiteSettingPrivacy from 'calypso/sites/settings/site/privacy';
+import LaunchSite from 'calypso/sites/settings/site/visibility/launch-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SiteSettingPrivacy from '../site-setting-privacy';
 import SiteTools from '../site-tools';
 import { SOURCE_SETTINGS_SITE_TOOLS } from '../site-tools/utils';
-import LaunchSite from '../site-visibility/launch-site';
 import wrapSettingsForm from '../wrap-settings-form';
 
 const SiteSettingsGeneral = ( {
