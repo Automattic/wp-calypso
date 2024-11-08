@@ -325,6 +325,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'eps'
 	| 'ideal'
 	| 'p24'
+	| 'paypal-express'
 	// NOTE: we cannot use the key `paypal` because composite-checkout
 	// ends up using this as an `id`, which overwrites `window.paypal`
 	// which is the namespace used by the PayPal JS SDK.
@@ -353,6 +354,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
+	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_PayPal_PPCP'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'
