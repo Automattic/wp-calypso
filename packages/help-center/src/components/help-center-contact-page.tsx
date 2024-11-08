@@ -7,13 +7,15 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
+import { useOdieAssistantContext } from '@automattic/odie-client';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
-import { comment, Icon } from '@wordpress/icons';
+import { backup, comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { FC } from 'react';
+import { FC, ReactNode, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -178,36 +180,97 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	);
 };
 
-export const HelpCenterContactButton: FC = () => {
-	const { __ } = useI18n();
+const HelpCenterFooterButton = ( {
+	children,
+	buttonTextEventProp,
+	redirectTo,
+	icon,
+	onClick,
+}: {
+	children: ReactNode;
+	buttonTextEventProp: string;
+	redirectTo: string;
+	icon: ReactElement;
+	onClick?: () => void;
+} ) => {
 	const { url, isLoading } = useStillNeedHelpURL();
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
-	const trackContactButtonClicked = () => {
+	const handleContactButtonClicked = ( {
+		buttonTextEventProp,
+	}: {
+		buttonTextEventProp: string;
+	} ) => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
+			button_type: buttonTextEventProp,
 		} );
 	};
 
-	let to = redirectToWpcom ? { pathname: url } : url;
+	const redirectionURL = () => {
+		if ( buttonTextEventProp === 'Still need help?' ) {
+			if ( isLoading ) {
+				return '';
+			}
+			return redirectToWpcom ? { pathname: url } : url;
+		}
+		return redirectTo;
+	};
 
-	if ( isLoading ) {
-		to = '';
-	}
+	const handleClick = () => {
+		handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } );
+		onClick?.();
+	};
 
 	return (
 		<Link
-			to={ to }
+			to={ redirectionURL() }
 			target={ redirectToWpcom ? '_blank' : '_self' }
-			onClick={ trackContactButtonClicked }
+			onClick={ handleClick }
 			className="button help-center-contact-page__button"
 		>
-			<Icon icon={ comment } />
-			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
+			<Icon icon={ icon } />
+			{ children }
 		</Link>
+	);
+};
+
+export const HelpCenterContactButton: FC = () => {
+	const { __ } = useI18n();
+	const { data: supportInteractions } = useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { clearChat } = useOdieAssistantContext();
+
+	return supportInteractions && supportInteractions?.length > 0 ? (
+		<>
+			<HelpCenterFooterButton
+				icon={ comment }
+				buttonTextEventProp="New conversation"
+				redirectTo="/odie"
+				onClick={ () => {
+					clearChat();
+				} }
+			>
+				{ __( 'New conversation', __i18n_text_domain__ ) }
+			</HelpCenterFooterButton>
+			<HelpCenterFooterButton
+				icon={ backup }
+				buttonTextEventProp="History"
+				redirectTo="/chat-history"
+			>
+				{ __( 'History', __i18n_text_domain__ ) }
+			</HelpCenterFooterButton>
+		</>
+	) : (
+		<HelpCenterFooterButton
+			icon={ comment }
+			buttonTextEventProp="Still need help?"
+			redirectTo="/odie"
+		>
+			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
+		</HelpCenterFooterButton>
 	);
 };

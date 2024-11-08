@@ -113,7 +113,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		trackEvent( 'chat_cleared', {} );
 		setMainChatState( emptyChat );
 		resetSupportInteraction();
-	}, [ trackEvent, resetSupportInteraction ] );
+	}, [ trackEvent, resetSupportInteraction, setMainChatState ] );
 
 	const [ waitAnswerToFirstMessageFromHumanSupport, setWaitAnswerToFirstMessageFromHumanSupport ] =
 		useState( getHelpCenterZendeskConversationStarted() !== null );

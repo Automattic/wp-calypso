@@ -6,18 +6,10 @@ import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
-import {
-	backup,
-	closeSmall,
-	chevronUp,
-	lineSolid,
-	commentContent,
-	page,
-	Icon,
-} from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { usePostByUrl } from '../hooks';
@@ -104,26 +96,22 @@ const ChatEllipsisMenu = () => {
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
-	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
 
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const shouldDisplayClearChatButton =
 		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
-	const shouldDisplayChatHistoryButton =
-		shouldUseHelpCenterExperience && pathname !== '/chat-history' && pathname !== '/odie';
-
 	const isHelpCenterHome = key === 'default';
 
 	const headerText = useMemo( () => {
 		if ( pathname.startsWith( '/odie' ) ) {
-			return config.isEnabled( 'help-center-experience' )
+			return shouldUseHelpCenterExperience
 				? __( 'Support Assistant', __i18n_text_domain__ )
 				: __( 'Wapuu', __i18n_text_domain__ );
 		}
 		switch ( pathname ) {
 			case '/contact-form':
-				return config.isEnabled( 'help-center-experience' )
+				return shouldUseHelpCenterExperience
 					? __( 'Support Assistant', __i18n_text_domain__ )
 					: __( 'Wapuu', __i18n_text_domain__ );
 			case '/chat-history':
@@ -140,16 +128,6 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 				{ headerText }
 			</span>
 			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
-			{ shouldDisplayChatHistoryButton && (
-				<Button
-					className="help-center-header__chat-history"
-					label={ __( 'Chat history', __i18n_text_domain__ ) }
-					icon={ backup }
-					tooltipPosition="top left"
-					onClick={ () => navigate( '/chat-history' ) }
-					onTouchStart={ () => navigate( '/chat-history' ) }
-				/>
-			) }
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
