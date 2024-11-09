@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -98,7 +97,7 @@ export class MediaLibraryFilterBar extends Component {
 
 	shouldSkipFilters() {
 		const { source } = this.props;
-		return config.isEnabled( 'google-photos-picker' ) && source === 'google_photos';
+		return this.props.photosPickerApiEnabled && source === 'google_photos';
 	}
 
 	changeFilter = ( filter ) => () => {
