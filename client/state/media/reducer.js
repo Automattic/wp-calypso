@@ -23,6 +23,7 @@ import {
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_PHOTOS_PICKER_SESSION_SET,
+	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
 import { combineReducers } from 'calypso/state/utils';
@@ -452,6 +453,13 @@ export const googlePhotosPicker = ( state = {}, action ) => {
 			return {
 				...state,
 				session: action.session,
+			};
+		}
+
+		case MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET: {
+			return {
+				...state,
+				featureEnabled: action.enabled,
 			};
 		}
 	}

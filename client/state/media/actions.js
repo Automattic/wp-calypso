@@ -1,3 +1,4 @@
+import wp from 'calypso/lib/wp';
 import {
 	MEDIA_DELETE,
 	MEDIA_ERRORS_CLEAR,
@@ -18,6 +19,7 @@ import {
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
 	MEDIA_PHOTOS_PICKER_SESSION_SET,
+	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/media';
@@ -307,4 +309,22 @@ export function setPhotoPickerSession( session ) {
 		type: MEDIA_PHOTOS_PICKER_SESSION_SET,
 		session,
 	};
+}
+
+/**
+ * Request the status of the Google Photos picker feature flag.
+ */
+export function requestPhotosPickerFeatureStatus() {
+	return ( dispatch ) =>
+		wp.req
+			.get( {
+				apiNamespace: 'wpcom/v2',
+				path: '/meta/external-media/connection/google_photos/picker_status',
+			} )
+			.then( ( response ) =>
+				dispatch( {
+					type: MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
+					enabled: response.enabled,
+				} )
+			);
 }
