@@ -1,4 +1,4 @@
-import { type SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
+import { useExperiment } from 'calypso/lib/explat';
 
 /**
  * This hook although used for the experiment, it can be refactored in the end to
@@ -6,12 +6,21 @@ import { type SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
  */
 const useLongerPlanTermDefaultExperiment = (): {
 	isLoading: boolean;
-	term: SupportedUrlFriendlyTermType | undefined;
+	// TODO: Do we need undefined and null type here?
+	term?: string | null;
 	eligibleForExperiment: boolean;
 } => {
+	// TODO: Figure out how to define explicit types for the experiment assignment
+	// variation names 'default_to_three_year_plans', 'default_to_two_year_plans'
+	// and 'emphasize_savings_only'.
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_plans_page_emphasize_longer_plan_savings'
+	);
+
 	return {
-		isLoading: false,
-		term: '2yearly', // '3yearly', 'yearly', undefined
+		isLoading: isLoadingExperimentAssignment,
+		term: experimentAssignment?.variationName,
+		// TODO: Consider eligibility criteria ( en locale, etc. )
 		eligibleForExperiment: true,
 	};
 };
