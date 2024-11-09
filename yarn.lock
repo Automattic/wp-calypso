@@ -12955,6 +12955,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@github/webauthn-json": "npm:^2.1.1"
+    "@paypal/react-paypal-js": "npm:^8.7.0"
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@storybook/addon-actions": "npm:^7.6.19"
     "@stripe/react-stripe-js": "npm:^2.1.0"
