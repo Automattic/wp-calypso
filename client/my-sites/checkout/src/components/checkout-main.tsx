@@ -753,14 +753,15 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
-	// PayPalScriptProvider must be in this file and not in CheckoutMainWrapper because it needs access to the shopping cart, which is provided by that wrapper.
+	// PayPalScriptProvider must be in this file and not in CheckoutMainWrapper
+	// because it needs access to the shopping cart, which is provided by that
+	// wrapper.
 	const payPalScriptOptions: ReactPayPalScriptOptions = {
 		clientId: 'AVmW-gfCD37zbDNtj7yQCeLXhnSoZ8hzmBKSMdo0MKHeM9wv9hBRqnIQteAEx4OSnYYs70uljYSMST4W',
 		components: 'buttons',
 		currency: responseCart.currency,
 		commit: true,
-		intent: 'capture', // Or should this be 'capture'?
-		//intent: 'subscription', // Or should this be 'capture'?
+		intent: 'capture',
 		vault: true,
 	};
 
