@@ -95,7 +95,7 @@ export async function payPalJsProcessor(
 	debug( 'sending paypal transaction', formattedTransactionData );
 	try {
 		const response = await submitWpcomTransaction( formattedTransactionData, transactionOptions );
-		if ( ! ( 'paypal_order_id' in response ) ) {
+		if ( ! ( 'paypal_order_id' in response ) || ! response.paypal_order_id ) {
 			return makeErrorResponse( 'PayPal response did not include order ID' );
 		}
 
