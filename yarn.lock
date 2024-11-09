@@ -13054,7 +13054,7 @@ __metadata:
     react-transition-group: "npm:^4.3.0"
     redux: "npm:^5.0.1"
     redux-dynamic-middlewares: "npm:^2.2.0"
-    redux-mock-store: "npm:^1.5.4"
+    redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
     social-logos: "npm:^2.5.9"
@@ -28607,12 +28607,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-mock-store@npm:^1.5.4":
-  version: 1.5.4
-  resolution: "redux-mock-store@npm:1.5.4"
+"redux-mock-store@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "redux-mock-store@npm:1.5.5"
   dependencies:
     lodash.isplainobject: "npm:^4.0.6"
-  checksum: 674fc7a68ffdb9a9ad50c9f987a2711387b1fc348a8ed3d07b7abd4d2560762347a9565cf9080e786d9f66012ff47f90bef244623c62136511d9b4f2411fb658
+  peerDependencies:
+    redux: "*"
+  checksum: 99cdb89b4b8db9046c2fe1eae82072bb77fba079606cbde87c47c7a2dcc8c3c51c4c553fcce80b935a61bbc2eeb10c6f5e32077c997a35715a4c8bf867499856
   languageName: node
   linkType: hard
 
