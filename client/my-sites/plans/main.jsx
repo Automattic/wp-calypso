@@ -12,6 +12,8 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	getBillingMonthsForTerm,
+	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WpcomPlansUI, Plans } from '@automattic/data-stores';
@@ -554,9 +556,21 @@ export default function PlansWrapper( props ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
-	// For WP.com plans page, if intervalType is not explicitly specified in the URL,
-	// we want to show plans of the same term as plan that is currently active
-	const intervalType = useSelector( ( state ) => getCurrentPlanTerm( state, selectedSiteId ) );
+	/**
+	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
+	 * we want to show plans of the same term as plan that is currently active
+	 * We want to show the highest term between the current plan and the longer plan term default experiment
+	 */
+	const currentPlanTerm = useSelector( ( state ) =>
+		getIntervalTypeForTerm( getCurrentPlanTerm( state, selectedSiteId ) )
+	);
+	const intervalType =
+		longerPlanTermDefaultExperiment.term &&
+		currentPlanTerm &&
+		getBillingMonthsForTerm( URL_FRIENDLY_TERMS_MAPPING[ currentPlanTerm ] ) >
+			getBillingMonthsForTerm( URL_FRIENDLY_TERMS_MAPPING[ longerPlanTermDefaultExperiment.term ] )
+			? currentPlanTerm
+			: longerPlanTermDefaultExperiment.term;
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -564,9 +578,7 @@ export default function PlansWrapper( props ) {
 				{ ...props }
 				currentPlan={ currentPlan }
 				selectedSiteId={ selectedSiteId }
-				intervalType={
-					intervalTypeFromProps ?? longerPlanTermDefaultExperiment.term ?? intervalType
-				}
+				intervalType={ intervalTypeFromProps ?? intervalType ?? currentPlanTerm }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
