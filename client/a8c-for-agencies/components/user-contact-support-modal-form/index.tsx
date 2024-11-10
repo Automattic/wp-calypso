@@ -48,8 +48,7 @@ export default function UserContactSupportModalForm( {
 
 	const isPressableSelected = product === 'pressable';
 	const isClient = isClientView();
-	const hasCompletedForm =
-		!! message && !! name && !! email && !! product && ( !! agency || isClient );
+	const hasCompletedForm = !! message && !! name && !! email && ( !! agency || isClient );
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
