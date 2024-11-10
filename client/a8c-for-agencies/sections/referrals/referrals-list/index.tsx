@@ -1,4 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +9,7 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useHandleReferralArchive from '../hooks/use-handle-referral-archive';
 import { Referral, ReferralInvoice } from '../types';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
@@ -20,6 +22,7 @@ interface Props {
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	referralInvoices: ReferralInvoice[];
+	isArchiveView?: boolean;
 }
 
 export default function ReferralList( {
@@ -27,6 +30,7 @@ export default function ReferralList( {
 	dataViewsState,
 	setDataViewsState,
 	referralInvoices,
+	isArchiveView,
 }: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
@@ -43,6 +47,8 @@ export default function ReferralList( {
 		},
 		[ dispatch, setDataViewsState ]
 	);
+
+	const handleArchiveReferral = useHandleReferralArchive();
 
 	const fields: Field< any >[] = useMemo(
 		() =>
@@ -88,36 +94,40 @@ export default function ReferralList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-						{
-							id: 'commissions',
-							label: translate( 'Commissions' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								const clientReferralInvoices = referralInvoices.filter(
-									( invoice ) => invoice.clientId === item.client.id
-								);
-								return (
-									<CommissionsColumn
-										referral={ item }
-										referralInvoices={ clientReferralInvoices }
-									/>
-								);
-							},
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
-							id: 'subscription-status',
-							label: translate( 'Subscription Status' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => (
-								<SubscriptionStatus item={ item } />
-							),
-							enableHiding: false,
-							enableSorting: false,
-						},
+						...( ! isArchiveView
+							? [
+									{
+										id: 'commissions',
+										label: translate( 'Commissions' ).toUpperCase(),
+										getValue: () => '-',
+										render: ( { item }: { item: Referral } ): ReactNode => {
+											const clientReferralInvoices = referralInvoices.filter(
+												( invoice ) => invoice.clientId === item.client.id
+											);
+											return (
+												<CommissionsColumn
+													referral={ item }
+													referralInvoices={ clientReferralInvoices }
+												/>
+											);
+										},
+										enableHiding: false,
+										enableSorting: false,
+									},
+									{
+										id: 'subscription-status',
+										label: translate( 'Subscription Status' ).toUpperCase(),
+										getValue: () => '-',
+										render: ( { item }: { item: Referral } ): ReactNode => (
+											<SubscriptionStatus item={ item } />
+										),
+										enableHiding: false,
+										enableSorting: false,
+									},
+							  ]
+							: [] ),
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, referralInvoices, translate ]
+		[ dataViewsState.selectedItem, isDesktop, referralInvoices, translate, isArchiveView ]
 	);
 
 	useEffect( () => {
@@ -177,15 +187,57 @@ export default function ReferralList( {
 						openSitePreviewPane( items[ 0 ] );
 					},
 				},
+				{
+					id: 'archive-referral',
+					label: translate( 'Archive' ),
+					isPrimary: false,
+					modalHeader: translate( 'Are you sure you want to archive this referral?' ),
+					RenderModal: ( { items, closeModal } ) => (
+						<>
+							<p>
+								{ translate(
+									"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+								) }
+							</p>
+							<div className="referral-archive-buttons">
+								<Button onClick={ () => closeModal?.() }>{ translate( 'Keep Referral' ) }</Button>
+								<Button
+									onClick={ () => {
+										handleArchiveReferral( items[ 0 ] );
+										closeModal?.();
+									} }
+									isDestructive
+								>
+									{ translate( 'Archive referral' ) }
+								</Button>
+							</div>
+						</>
+					),
+					isEligible( referral: Referral ) {
+						return ! isArchiveView && ! referral.referralStatuses.includes( 'active' );
+					},
+				},
 			];
 		}
 
 		return [];
-	}, [ openSitePreviewPane, translate, dataViewsState.type ] );
+	}, [
+		openSitePreviewPane,
+		translate,
+		dataViewsState.type,
+		isArchiveView,
+		handleArchiveReferral,
+	] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
-		return filterSortAndPaginate( referrals, dataViewsState, fields );
-	}, [ referrals, dataViewsState, fields ] );
+		const filteredReferrals = referrals.filter( ( referral ) => {
+			return isArchiveView
+				? referral.referralStatuses.includes( 'archived' )
+				: ! referral.referralStatuses.includes( 'archived' );
+		} );
+
+		return filterSortAndPaginate( filteredReferrals, dataViewsState, fields );
+	}, [ referrals, dataViewsState, fields, isArchiveView ] );
 
 	return (
 		<div className="redesigned-a8c-table full-width">

@@ -42,8 +42,10 @@ import './style.scss';
 
 export default function ReferralsOverview( {
 	isAutomatedReferral = false,
+	isArchiveView = false,
 }: {
 	isAutomatedReferral?: boolean;
+	isArchiveView?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -179,6 +181,7 @@ export default function ReferralsOverview( {
 						setDataViewsState={ setDataViewsState }
 						referralInvoices={ referralInvoices ?? [] }
 						isFetchingInvoices={ isFetchingReferralInvoices }
+						isArchiveView={ isArchiveView }
 					/>
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
@@ -188,6 +191,7 @@ export default function ReferralsOverview( {
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
 						referralInvoices={ referralInvoices ?? [] }
+						isArchiveView={ isArchiveView }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
 								...dataViewsState,
