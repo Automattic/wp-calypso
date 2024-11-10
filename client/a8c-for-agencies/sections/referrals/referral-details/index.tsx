@@ -6,6 +6,7 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
+import ArchivedStatus from './components/archived-status';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral, ReferralInvoice } from '../types';
@@ -16,6 +17,7 @@ import './style.scss';
 interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
+	isArchiveView: boolean;
 	referralInvoices: ReferralInvoice[];
 }
 
@@ -26,6 +28,7 @@ export default function ReferralDetails( {
 	referral,
 	closeSitePreviewPane,
 	referralInvoices,
+	isArchiveView,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -41,7 +44,7 @@ export default function ReferralDetails( {
 					},
 					comment: '%(status) is subscription status',
 					components: {
-						badge: <SubscriptionStatus item={ referral } />,
+						badge: ! isArchiveView ? <SubscriptionStatus item={ referral } /> : <ArchivedStatus />,
 					},
 				} ) }
 			</div>

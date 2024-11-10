@@ -21,6 +21,7 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 			purchases,
 			purchaseStatuses: purchases.map( ( purchase ) => purchase.status ),
 			referralStatuses: [ referral.status ],
+			referralId: referral.id,
 		};
 	} );
 
