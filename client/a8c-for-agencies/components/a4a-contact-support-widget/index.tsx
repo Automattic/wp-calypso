@@ -39,7 +39,9 @@ export default function A4AContactSupportWidget() {
 		translate( '[your message here]' );
 
 	const defaultProduct =
-		window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ? getDefaultProduct() : '';
+		window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT
+			? getDefaultProduct()
+			: undefined;
 
 	return isNewHostingPage &&
 		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ? (
