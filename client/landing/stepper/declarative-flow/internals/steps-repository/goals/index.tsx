@@ -100,43 +100,49 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_goals_select', goalsSelectProperties );
 	};
 
-	const recordIntentSelectTracksEvent = ( intent: Onboard.SiteIntent ) => {
-		const eventProperties = {
-			intent,
+	const recordNavigationSelectTracksEvent = ( intent: Onboard.SiteIntent, action: string ) => {
+		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
+		recordTracksEvent( 'calypso_signup_goals_nav_click', { action } );
+	};
+
+	const getStepSubmissionHandler =
+		( action: string, eventProps: Record< string, unknown > = {} ) =>
+		() => {
+			const intent = goalsToIntent( goals );
+			setIntent( intent );
+
+			recordGoalsSelectTracksEvent( goals, intent );
+			recordNavigationSelectTracksEvent( intent, action );
+
+			navigation.submit?.( { intent, ...eventProps } );
 		};
 
-		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
-	};
-
-	const getStepSubmissionHandler = ( eventProps: Record< string, unknown > ) => () => {
-		const intent = goalsToIntent( goals );
-		setIntent( intent );
-
-		recordGoalsSelectTracksEvent( goals, intent );
-		recordIntentSelectTracksEvent( intent );
-
-		navigation.submit?.( { intent, ...eventProps } );
-	};
-
-	const handleSkip = getStepSubmissionHandler( { action: 'skip' } );
-	const handleNext = getStepSubmissionHandler( { action: 'next' } );
+	const handleSkip = getStepSubmissionHandler( 'skip', { shouldSkipSubmitTracking: true } );
+	const handleNext = getStepSubmissionHandler( 'next' );
 
 	const handleImportClick = () => {
 		setIntent( SiteIntent.Import );
-		recordIntentSelectTracksEvent( SiteIntent.Import );
-		navigation.submit?.( { intent: SiteIntent.Import, action: 'import' } );
+		recordNavigationSelectTracksEvent( SiteIntent.Import, 'import' );
+		navigation.submit?.( { intent: SiteIntent.Import, shouldSkipSubmitTracking: true } );
 	};
 
 	const handleDIFMClick = () => {
 		setIntent( SiteIntent.DIFM );
-		recordIntentSelectTracksEvent( SiteIntent.DIFM );
-		navigation.submit?.( { intent: SiteIntent.DIFM, action: 'difm' } );
+		recordNavigationSelectTracksEvent( SiteIntent.DIFM, 'difm' );
+		navigation.submit?.( { intent: SiteIntent.DIFM, shouldSkipSubmitTracking: true } );
 	};
 
 	const handleDashboardClick = () => {
 		setIntent( SiteIntent.Build );
-		recordIntentSelectTracksEvent( SiteIntent.Build );
-		navigation.submit?.( { intent: SiteIntent.Build, skip: true, action: 'dashboard' } );
+		recordNavigationSelectTracksEvent( SiteIntent.Build, 'dashboard' );
+		navigation.submit?.( {
+			intent: SiteIntent.Build,
+			skip: true,
+			action: 'dashboard',
+
+			// This is a "skip" event when isAddedGoalsExp is false, and otherwise it's an exit flow event
+			shouldSkipSubmitTracking: true,
+		} );
 	};
 
 	useEffect( () => {
