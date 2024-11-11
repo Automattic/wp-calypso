@@ -167,7 +167,13 @@ export class AuthFormHeader extends Component {
 
 		if ( isWooPasswordlessJPC ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
-			const reviewDocLink = <a href="https://woocommerce.com/documentation/woocommerce/" />;
+			const reviewDocLink = (
+				<a
+					href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+					target="_blank"
+					rel="noreferrer"
+				/>
+			);
 			const translateParams = {
 				components: {
 					br: <br />,

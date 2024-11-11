@@ -645,7 +645,13 @@ class Login extends Component {
 								components: {
 									signupLink,
 									br: <br />,
-									doc: <a href="https://woocommerce.com/documentation/woocommerce/" />,
+									doc: (
+										<a
+											href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+											target="_blank"
+											rel="noreferrer"
+										/>
+									),
 								},
 								args: { pluginName },
 							}
