@@ -15,6 +15,7 @@ import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -32,7 +33,6 @@ import {
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import scrollTo from 'calypso/lib/scroll-to';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -222,7 +222,7 @@ export class FullPostView extends Component {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
-		this.scrollToComments();
+		this.scrollToComments( { focusTextArea: true } );
 	};
 
 	handleLike = () => {
@@ -286,41 +286,21 @@ export class FullPostView extends Component {
 			: undefined;
 
 	// Scroll to the top of the comments section.
-	scrollToComments = () => {
-		if ( ! this.props.post ) {
-			return;
-		}
-		if ( this.props.post._state ) {
-			return;
-		}
-		if ( this._scrolling ) {
+	scrollToComments = ( { focusTextArea = false } = {} ) => {
+		if ( ! this.props.post || this.props.post._state || this._scrolling ) {
 			return;
 		}
 
 		this._scrolling = true;
-		setTimeout( () => {
-			const commentsNode = this.commentsWrapper.current;
-			if ( commentsNode && commentsNode.offsetTop ) {
-				scrollTo( {
-					x: 0,
-					container: this.readerMainWrapper.current,
-					y: commentsNode.offsetTop - 48,
-					duration: 300,
-					onComplete: () => {
-						// check to see if the comment node moved while we were scrolling
-						// and scroll to the end position
-						const commentsNodeAfterScroll = this.commentsWrapper.current;
-						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
-							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
-						}
-						this._scrolling = false;
-					},
-				} );
+		scrollToComments( {
+			focusTextArea,
+			onScrollComplete: () => {
+				this._scrolling = false;
 				if ( this.hasCommentAnchor ) {
 					this.hasScrolledToCommentAnchor = true;
 				}
-			}
-		}, 0 );
+			},
+		} );
 	};
 
 	attemptToSendPageView = () => {

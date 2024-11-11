@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useSelector } from 'calypso/state';
@@ -23,31 +24,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', post );
-
-		// Find and scroll to comments section
-		const commentsForm = document.querySelector( '.reader-full-post__comments-wrapper' );
-		const commentTextarea = document.querySelector( '.form-textarea' );
-
-		if ( commentsForm ) {
-			// Create a promise that resolves when scrolling ends.
-			const scrollPromise = new Promise< void >( ( resolve ) => {
-				const handleScrollEnd = () => {
-					document.removeEventListener( 'scrollend', handleScrollEnd );
-					resolve();
-				};
-				document.addEventListener( 'scrollend', handleScrollEnd, { once: true } );
-
-				// Trigger the scroll.
-				commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-			} );
-
-			// Focus textarea after scroll completes.
-			scrollPromise.then( () => {
-				if ( commentTextarea instanceof HTMLTextAreaElement ) {
-					commentTextarea.focus();
-				}
-			} );
-		}
+		scrollToComments( { focusTextArea: true } );
 	};
 
 	// Set the width of the "engagement bar" and "reader post actions" to the width of the parent because CSS `fill-available` is unreliable.
