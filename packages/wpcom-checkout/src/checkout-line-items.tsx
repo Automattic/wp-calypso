@@ -691,6 +691,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<LineItemExpiryDates product={ product } />
 				</>
 			);
 		}
@@ -700,6 +701,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<LineItemExpiryDates product={ product } />
 				</>
 			);
 		}
@@ -763,6 +765,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				{ ! product.is_included_for_100yearplan && (
 					<>: { GetBillingIntervalLabel( { product } ) }</>
 				) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -820,7 +823,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		);
 	}
 
-	return <DefaultLineItemSublabel product={ product } />;
+	return (
+		<>
+			<DefaultLineItemSublabel product={ product } />
+			<LineItemExpiryDates product={ product } />
+		</>
+	);
 }
 
 function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
