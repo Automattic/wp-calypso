@@ -22,12 +22,11 @@
 	}
 
 	.migrations-commissions__content {
-		padding: 16px;
+		.consolidated-commissions {
+			padding: 16px;
 
-		@include break-large {
-			padding: 16px 64px 48px;
-
-			.consolidated-commissions {
+			@include break-large {
+				padding: 16px 64px 48px;
 				flex-direction: row;
 			}
 		}
