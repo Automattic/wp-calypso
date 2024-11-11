@@ -55,6 +55,7 @@
 		"google-photos-picker": false,
 		"help": true,
 		"help/gpt-response": true,
+		"help-center-experience": false,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,

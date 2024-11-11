@@ -11,6 +11,7 @@ window.configData = {
 	zendesk_support_chat_key: isProxied ? ZENDESK_STAGING_SUPPORT_CHAT_KEY : ZENDESK_SUPPORT_CHAT_KEY,
 	features: {
 		'help/gpt-response': true,
+		'help-center-experience': false,
 	},
 	wapuu: false,
 };
