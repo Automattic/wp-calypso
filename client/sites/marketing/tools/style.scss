@@ -96,10 +96,6 @@
 	flex-wrap: wrap;
 	// margins of the items will "hang off the side" invisibly
 	width: calc(100% + 1rem);
-
-	a.components-button.is-link {
-		text-decoration: none;
-	}
 }
 
 .tools__feature-list-item {
@@ -145,6 +141,7 @@
 	> h1 {
 		font-size: $font-body;
 		font-weight: 500;
+		margin: 0;
 	}
 }
 
@@ -179,6 +176,7 @@
 
 	.components-button.is-link{
 		text-decoration: none;
+		font-weight: 500;
 	}
 
 	.purchase-detail__info {
