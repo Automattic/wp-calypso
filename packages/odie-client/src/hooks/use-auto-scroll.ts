@@ -20,7 +20,7 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 			debounceTimeoutRef.current = 0;
 			requestAnimationFrame( () => {
 				const messages = messagesContainerRef.current?.querySelectorAll(
-					'[data-is-message="true"]'
+					'[data-is-message="true"],.odie-chatbox__action-message'
 				);
 				const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
 				lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
