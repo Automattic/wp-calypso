@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import { READER_SHARE_MENU_CLOSE } from 'calypso/blocks/reader-share';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useSelector } from 'calypso/state';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -115,6 +116,11 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		};
 	}, [ actionsElement ] );
 
+	// Close the share popovers anytime the engagement bar changes visibility.
+	useEffect( () => {
+		READER_SHARE_MENU_CLOSE.trigger();
+	}, [ isActionsVisible ] );
+
 	return (
 		<div
 			ref={ barRef }
@@ -127,7 +133,6 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 					className="engagement-bar__actions"
 					post={ post }
 					onCommentClick={ handleCommentClick }
-					forceMenuClosed={ isActionsVisible }
 				/>
 			) }
 		</div>
