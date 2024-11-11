@@ -10,6 +10,7 @@
 	.button.help-center-contact-page__button {
 		background-color: transparent;
 		border: 1px solid var(--studio-gray-10);
+		color: var(--studio-gray-100);
 		padding: 5px;
 		width: 100%;
 		display: flex;
@@ -19,6 +20,7 @@
 		line-height: 2.15;
 
 		&:hover {
+			color: var(--studio-gray-100);
 			border-color: var(--color-neutral-20);
 			box-shadow: none;
 			outline: none;
@@ -33,6 +35,7 @@
 		svg {
 			margin-right: 10px;
 			vertical-align: middle;
+			fill: var(--studio-gray-100);
 		}
 
 		span {
