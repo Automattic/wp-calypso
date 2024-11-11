@@ -29,7 +29,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		const commentTextarea = document.querySelector( '.form-textarea' );
 
 		if ( commentsForm ) {
-			// Create a promise that resolves when scrolling ends
+			// Create a promise that resolves when scrolling ends.
 			const scrollPromise = new Promise< void >( ( resolve ) => {
 				const handleScrollEnd = () => {
 					document.removeEventListener( 'scrollend', handleScrollEnd );
@@ -37,11 +37,11 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 				};
 				document.addEventListener( 'scrollend', handleScrollEnd, { once: true } );
 
-				// Trigger the scroll
+				// Trigger the scroll.
 				commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 			} );
 
-			// Focus textarea after scroll completes
+			// Focus textarea after scroll completes.
 			scrollPromise.then( () => {
 				if ( commentTextarea instanceof HTMLTextAreaElement ) {
 					commentTextarea.focus();
