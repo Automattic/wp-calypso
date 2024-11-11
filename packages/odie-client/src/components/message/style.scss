@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
+.help-center-experience-disabled {
+
 .odie-chatbox__action-message {
 	display: flex;
 	flex-direction: column;
@@ -484,10 +486,11 @@ $custom-border-corner-size: 16px;
 	.odie-chatbox-message-sources {
 		margin: 12px;
 	}
-	
+
 	&:nth-last-child(2) {
 		.foldable-card {
 			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
 		}
 	}
+}
 }
