@@ -13,6 +13,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
 import MigrationsCommissionsEmptyState from './empty-state';
 
 import './style.scss';
@@ -28,7 +29,7 @@ export default function MigrationsCommissions() {
 		// TODO: Implement the tagging functionality
 	}, [ dispatch ] );
 
-	const showEmptyState = true;
+	const showEmptyState = false;
 
 	return (
 		<Layout
@@ -61,7 +62,15 @@ export default function MigrationsCommissions() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ showEmptyState ? <MigrationsCommissionsEmptyState /> : null }</LayoutBody>
+			<LayoutBody>
+				{ showEmptyState ? (
+					<MigrationsCommissionsEmptyState />
+				) : (
+					<div className="migrations-commissions__content">
+						<MigrationsConsolidatedCommissions />
+					</div>
+				) }
+			</LayoutBody>
 		</Layout>
 	);
 }
