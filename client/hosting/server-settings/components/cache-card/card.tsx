@@ -1,5 +1,5 @@
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
-import CacheForm from 'calypso/sites/settings/caches/form';
+import CacheForm from 'calypso/sites/settings/caching/form';
 
 type CacheCardProps = {
 	disabled?: boolean;

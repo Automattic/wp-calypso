@@ -5,7 +5,7 @@ import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
 	SETTINGS_AGENCY,
-	SETTINGS_CACHES,
+	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
@@ -13,7 +13,7 @@ import {
 	siteSettings,
 	administrationSettings,
 	agencySettings,
-	cachesSettings,
+	cachingSettings,
 	webServerSettings,
 } from './controller';
 
@@ -51,13 +51,13 @@ export default function () {
 		clientRender
 	);
 
-	page( '/sites/settings/caches', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/settings/caching', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sites/settings/caches/:site',
+		'/sites/settings/caching/:site',
 		siteSelection,
 		navigation,
-		cachesSettings,
-		siteDashboard( SETTINGS_CACHES ),
+		cachingSettings,
+		siteDashboard( SETTINGS_CACHING ),
 		makeLayout,
 		clientRender
 	);

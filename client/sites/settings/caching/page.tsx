@@ -10,14 +10,14 @@ function Container( { children }: { children: React.ReactNode } ) {
 
 function Description( { children }: { children?: React.ReactNode } ) {
 	const translate = useTranslate();
-	return <NavigationHeader title={ translate( 'Caches' ) } subtitle={ children } />;
+	return <NavigationHeader title={ translate( 'Caching' ) } subtitle={ children } />;
 }
 
 function Subdescription( { children }: { children?: React.ReactNode } ) {
 	return <div>{ children }</div>;
 }
 
-export default function CacheSettings() {
+export default function CachingSettings() {
 	const translate = useTranslate();
 	const isSupported = useAreHostingFeaturesSupported();
 
@@ -43,7 +43,7 @@ export default function CacheSettings() {
 	};
 
 	return (
-		<div className="tools-caches">
+		<div className="tools-caching">
 			{ isSupported ? renderSetting() : renderNotSupportedNotice() }
 		</div>
 	);
