@@ -6,4 +6,8 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	display: flex;
+
+	&:has( .migration-overview ) {
+		justify-content: center;
+	}
 }

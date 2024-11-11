@@ -10,17 +10,17 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	const migrationStatus = getMigrationStatus( site );
 	const isPending = 'pending' === migrationStatus;
 
+	let component;
+
 	if ( isPending ) {
-		return <MigrationPending site={ site } />;
+		component = <MigrationPending site={ site } />;
+	} else if ( migrationType === 'difm' ) {
+		component = <MigrationStartedDIFM site={ site } />;
+	} else if ( migrationType === 'diy' ) {
+		component = <MigrationStartedDIY site={ site } />;
 	}
 
-	if ( migrationType === 'difm' ) {
-		return <MigrationStartedDIFM site={ site } />;
-	}
-
-	if ( migrationType === 'diy' ) {
-		return <MigrationStartedDIY site={ site } />;
-	}
+	return <div className="migration-overview">{ component }</div>;
 };
 
 export default MigrationOverview;
