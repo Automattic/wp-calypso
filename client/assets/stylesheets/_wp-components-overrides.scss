@@ -6,13 +6,6 @@
 }
 
 /* @wordpress/components Button overrides */
-.components-button {
-	&,
-	&:hover:not(:disabled):not([aria-disabled="true"]) {
-		color: var(--color-neutral-70);
-	}
-}
-
 .components-button.is-primary {
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);
