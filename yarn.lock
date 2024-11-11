@@ -27532,14 +27532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-polyfill@npm:^8.1.3":
-  version: 8.2.0
-  resolution: "promise-polyfill@npm:8.2.0"
-  checksum: 9c57f475c74d159c6cb93413f2461f509cf6aa422ba3e498574453b85765118d5fa55c5d7a22920694afebdf0e34e22acd5992b00af09f8adcd18496da20bb21
-  languageName: node
-  linkType: hard
-
-"promise-polyfill@npm:^8.3.0":
+"promise-polyfill@npm:^8.1.3, promise-polyfill@npm:^8.3.0":
   version: 8.3.0
   resolution: "promise-polyfill@npm:8.3.0"
   checksum: 97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
