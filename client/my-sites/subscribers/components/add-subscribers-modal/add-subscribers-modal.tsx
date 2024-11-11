@@ -124,7 +124,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							'We’ll automatically clean duplicate, incomplete, outdated, or spammy emails to boost open rates and engagement.'
 						) }
 					</p>
-					<VStack>
+					<VStack spacing="5">
 						<FlowQuestion
 							icon={ copy }
 							title={ translate( 'Add subscribers manually' ) }

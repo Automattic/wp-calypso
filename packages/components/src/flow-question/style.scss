@@ -1,14 +1,9 @@
 @import "@automattic/typography/styles/variables";
 
-$blueberry-color: #3858e9;
-
-.flow-question {
-	margin: 0 10px 18px;
-	// !important needed here to override component styles
-	border-radius: 4px !important;
-
+button.flow-question {
+	margin: 0;
+	border-radius: 4px;
 	cursor: pointer;
-	max-width: 433px;
 	text-align: left;
 
 	.components-card__body {
@@ -17,15 +12,15 @@ $blueberry-color: #3858e9;
 
 	&:hover,
 	&:focus {
-		box-shadow: 0 0 0 1px $blueberry-color;
+		box-shadow: 0 0 0 1px var(--studio-blue-50);
 
 		svg path {
-			fill: $blueberry-color;
+			fill: var(--studio-blue-50);
 		}
 
 		.flow-question__description,
 		.flow-question__heading {
-			color: $blueberry-color;
+			color: var(--studio-blue-50);
 		}
 	}
 
@@ -40,13 +35,6 @@ $blueberry-color: #3858e9;
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
-		// !important needed here to override unrelated styles from "steps-repository/importer-migrate-message/style.scss"
-		// that are affecting this component in some instances
-		margin-bottom: 0 !important;
-
-		.badge--info-blue {
-			background-color: $blueberry-color;
-		}
 	}
 
 	.flow-question__description {
