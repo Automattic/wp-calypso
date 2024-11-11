@@ -5,6 +5,10 @@
 	& .button.domain-suggestion__action.is-borderless {
 		flex: 1 0 auto;
 	}
+
+	.domain-suggestion__action-container {
+		display: flex;
+	}
 }
 
 .domain-skip-suggestion__domain-description {

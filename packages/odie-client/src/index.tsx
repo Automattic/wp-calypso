@@ -10,7 +10,7 @@ export const OdieAssistant: React.FC = () => {
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
-	}, [ trackEvent ] );
+	}, [] );
 
 	return (
 		<div className="chatbox">
@@ -24,7 +24,5 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
-export { isOdieAllowedBot } from './utils/is-odie-allowed-bot';
-export type { ZendeskConversation, ZendeskMessage } from './types/index';
+export type { ZendeskConversation, ZendeskMessage, SupportInteraction } from './types';

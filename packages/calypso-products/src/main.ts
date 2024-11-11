@@ -78,6 +78,10 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
+	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
+}
+
 export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
 	return resolveFeatureGroupsForFeaturesGrid();
 }

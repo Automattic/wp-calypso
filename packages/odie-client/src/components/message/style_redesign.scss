@@ -67,14 +67,12 @@ $blueberry-color: #3858e9;
 			}
 		}
 	}
-	h3 {
-		padding: 0 16px;
-	}
 
 	&.odie-chatbox-message-bot {
 		.odie-chatbox-message__content {
 			background-color: var(--studio-gray-0);
 			flex: 1;
+			padding: 16px;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px 8px 8px 0;
 			max-width: 256px;
@@ -126,8 +124,13 @@ $blueberry-color: #3858e9;
 	overflow-x: hidden !important;
 }
 
+.odie-chatbox-message p:first-of-type {
+	padding-top: 0;
+}
+
 .odie-chatbox-message p:last-of-type {
 	margin-bottom: 0;
+	padding-bottom: 0;
 }
 
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
@@ -154,9 +157,8 @@ $blueberry-color: #3858e9;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px 8px 8px 0 !important;
 		background-color:#F7F8FE !important;
-		
+		padding: 16px;
 	}
-	
 }
 
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
@@ -168,7 +170,8 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox-message p {
 	font-size: 0.875rem;
-	padding: 16px;
+	padding-bottom: 16px;
+	padding-top: 16px;
 	margin-bottom: 0;
 }
 
@@ -181,6 +184,7 @@ $blueberry-color: #3858e9;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	max-width: 256px;
+	padding: 16px;
 	p {
 		color: var(--studio-gray-80);
 		line-height: 20px;
@@ -577,17 +581,6 @@ $custom-border-corner-size: 16px;
 	&.next-chat-message-same-sender {
 		padding-bottom: 8px;
 	}
-}
-
-
-.odie-chat__date {
-	display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-    padding-bottom: 16px;
-    color: var(--studio-gray-50);
-    font-size: 0.75rem;
 }
 
 .odie-chatbox-thinking-icon {

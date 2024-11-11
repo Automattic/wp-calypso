@@ -195,13 +195,13 @@ export class ReaderSidebar extends Component {
 				<SidebarSeparator />
 
 				{ isEnabled( 'reader/recent-feed-overhaul' ) ? (
-					<ReaderSidebarRecent
-						onClick={ this.props.toggleFollowingVisibility }
-						isOpen={ this.props.isFollowingOpen }
-						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-							'sidebar-streams__following': true,
-						} ) }
-					/>
+					<li className="sidebar-streams__following">
+						<ReaderSidebarRecent
+							onClick={ this.props.toggleFollowingVisibility }
+							isOpen={ this.props.isFollowingOpen }
+							path={ path }
+						/>
+					</li>
 				) : (
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {

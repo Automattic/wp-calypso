@@ -162,7 +162,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 			>
 				<HostingCardDescription>
 					{ translate(
-						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
+						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}',
 						{
 							components: {
 								supportLink: (

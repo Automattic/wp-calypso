@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutThankYou,
+	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
@@ -42,6 +43,14 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutJetpackSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/jetpack/thank-you/licensing-pending-async-activation/:product',
+		noSite,
+		licensingPendingAsyncActivation,
 		makeLayout,
 		clientRender
 	);

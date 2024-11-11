@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles/src/constants';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -249,6 +250,28 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	function* resetGlobalStyles(
+		siteIdOrSlug: number | string,
+		stylesheet: string,
+		activatedTheme?: ActiveTheme
+	) {
+		const globalStylesId: number =
+			activatedTheme?.global_styles_id || ( yield getGlobalStylesId( siteIdOrSlug, stylesheet ) );
+
+		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
+			apiNamespace: 'wp/v2',
+			method: 'POST',
+			body: {
+				id: globalStylesId,
+				settings: {},
+				styles: {},
+			},
+		} );
+
+		return updatedGlobalStyles;
+	}
+
 	function* getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
 		const theme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
@@ -392,8 +415,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			method: 'POST',
 		} );
 
+		if ( styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
+			yield* resetGlobalStyles( siteSlug, activatedTheme.stylesheet, activatedTheme );
+		}
 		// @todo Always use the global styles for consistency
-		if ( styleVariation?.slug ) {
+		else if ( styleVariation?.slug ) {
 			const variations: GlobalStyles[] = yield* getGlobalStylesVariations(
 				siteSlug,
 				activatedTheme.stylesheet

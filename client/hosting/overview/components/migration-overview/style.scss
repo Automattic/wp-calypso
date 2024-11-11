@@ -1,9 +1,9 @@
-	.migration-pending__loading {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
+.migration-pending__loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 
 .migration-overview__container {
 	& > .migration-overview__content {
@@ -52,12 +52,11 @@
 			align-items: center;
 		}
 		.migration-started-difm__icon {
-				fill: #3858E9;
+			fill: #3858E9;
 		}
 		.migration-started-difm__icon-wrapper {
 			width: 52px;
 			height: 52px;
-			// box-sizing: border-box;
 			display: flex;
 			align-items: center;
 			justify-content: center;

@@ -17,15 +17,37 @@ class StatsTabs extends Component {
 		switchTab: PropTypes.func,
 		tabs: PropTypes.array,
 		borderless: PropTypes.bool,
+		aggregate: PropTypes.bool,
 	};
 
 	render() {
-		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } =
-			this.props;
+		const {
+			children,
+			data,
+			activeIndex,
+			activeKey,
+			tabs,
+			switchTab,
+			selectedTab,
+			borderless,
+			aggregate,
+		} = this.props;
+
 		let statsTabs;
 
 		if ( data && ! children ) {
-			const activeData = find( data, { [ activeKey ]: activeIndex } );
+			let activeData = {};
+			if ( ! aggregate ) {
+				activeData = find( data, { [ activeKey ]: activeIndex } );
+			} else {
+				// TODO: not major but we might want to cache the data.
+				data.map( ( day ) =>
+					tabs.map( ( tab ) => {
+						activeData[ tab.attr ] = ( activeData?.[ tab.attr ] ?? 0 ) + ( day[ tab.attr ] ?? 0 );
+					} )
+				);
+			}
+
 			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;

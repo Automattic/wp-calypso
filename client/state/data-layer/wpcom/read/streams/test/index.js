@@ -275,6 +275,8 @@ describe( 'streams', () => {
 					streamItems: data.posts,
 					gap: null,
 					pageHandle: { before: '2018' },
+					totalItems: 1,
+					totalPages: 1,
 				} ),
 			] );
 		} );

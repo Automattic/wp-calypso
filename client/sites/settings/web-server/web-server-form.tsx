@@ -431,8 +431,8 @@ export default function WebServerSettingsForm( {
 				) }
 			</DescriptionComponent>
 			{ ! isLoading && getWpVersionContent() }
-			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getPhpVersionContent() }
+			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
 		</ContainerComponent>

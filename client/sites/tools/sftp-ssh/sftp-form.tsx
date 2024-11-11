@@ -247,7 +247,7 @@ export const SftpForm = ( {
 					checked={ isSshAccessEnabled }
 					onChange={ handleToggleSshAccess }
 					label={ translate(
-						'Enable SSH access for this site. {{supportLink}}Learn more{{/supportLink}}.',
+						'Enable SSH access for this site. {{supportLink}}Learn more{{/supportLink}}',
 						{
 							components: {
 								supportLink: (

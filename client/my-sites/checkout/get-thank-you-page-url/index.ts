@@ -157,7 +157,7 @@ export default function getThankYouPageUrl( {
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
 	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
 	// (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo ) {
+	if ( redirectTo && ! connectAfterCheckout ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
 
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
@@ -264,7 +264,7 @@ export default function getThankYouPageUrl( {
 					productSlug,
 					redirect_to: redirectTo,
 				},
-				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
+				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }`
 			);
 
 			const remoteSiteConnectUrl = addQueryArgs(

@@ -1,9 +1,9 @@
 import { BadgeType, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import StatusBadge from '../../common/step-section-item/status-badge';
 import { ReferralPurchase } from '../../types';
 
 type Props = {

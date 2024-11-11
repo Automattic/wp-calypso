@@ -2,8 +2,8 @@ import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
-import { useCreateZendeskConversation } from '../../query/use-create-zendesk-conversation';
-import { getHelpCenterZendeskConversationStarted } from '../../utils/storage-utils';
+import { useCreateZendeskConversation } from '../../hooks';
+import { getHelpCenterZendeskConversationStarted } from '../../utils';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
