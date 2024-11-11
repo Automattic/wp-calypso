@@ -117,7 +117,10 @@
 
 .panel-with-sidebar  {
 	.tools__feature-list-item {
-		width: calc(50% - 1rem);
+		@include breakpoint-deprecated( ">1400px" ) {
+			width: calc(50% - 1rem);
+		}
+
 	}
 }
 
