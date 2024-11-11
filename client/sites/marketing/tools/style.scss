@@ -108,7 +108,7 @@
 	margin: 0.5rem;
 	width: calc(100% - 1rem);
 	border-radius: 4px;
-
+	padding: 30px;
 
 	@include wide-screen {
 		width: calc(33.33% - 1rem);
