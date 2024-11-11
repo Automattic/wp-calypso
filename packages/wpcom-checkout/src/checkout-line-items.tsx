@@ -831,6 +831,13 @@ function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
 	const postRenewExpiry = product.subscription_post_purchase_expiry_date
 		? formatDate( product.subscription_post_purchase_expiry_date )
 		: undefined;
+
+	// We only currently show the expiry date for renewals, although it is
+	// accurate for new products as well.
+	if ( ! product.is_renewal ) {
+		return null;
+	}
+
 	return (
 		<>
 			{ expiryDate && (
