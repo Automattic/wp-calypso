@@ -20,6 +20,7 @@ const ReaderPostActions = ( {
 	iconSize = 20,
 	className,
 	fullPost,
+	forceMenuClosed,
 } ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
@@ -41,6 +42,7 @@ const ReaderPostActions = ( {
 						tagName="div"
 						iconSize={ iconSize }
 						showLabel
+						forceMenuClosed={ forceMenuClosed }
 					/>
 				</li>
 			) }
@@ -53,6 +55,7 @@ const ReaderPostActions = ( {
 						iconSize={ iconSize }
 						isReblogSelection
 						showLabel
+						forceMenuClosed={ forceMenuClosed }
 					/>
 				</li>
 			) }
@@ -100,6 +103,7 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
+	forceMenuClosed: PropTypes.bool,
 };
 
 export default ReaderPostActions;

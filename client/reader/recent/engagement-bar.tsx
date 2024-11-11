@@ -127,6 +127,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 					className="engagement-bar__actions"
 					post={ post }
 					onCommentClick={ handleCommentClick }
+					forceMenuClosed={ isActionsVisible }
 				/>
 			) }
 		</div>

@@ -93,6 +93,12 @@ class ReaderShare extends Component {
 		}
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.forceMenuClosed && this.props.forceMenuClosed && this.state.showingMenu ) {
+			this.closeMenu();
+		}
+	}
+
 	render() {
 		const buttonClasses = clsx( {
 			'reader-share__button': true,
@@ -167,12 +173,9 @@ class ReaderShare extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
-	return {
+export default connect(
+	( state ) => ( {
 		hasSites: !! getPrimarySiteId( state ),
-	};
-};
-
-const mapDispatchToProps = { recordReaderTracksEvent };
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ReaderShare ) );
+	} ),
+	{ recordReaderTracksEvent }
+)( localize( ReaderShare ) );
