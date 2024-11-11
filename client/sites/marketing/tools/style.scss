@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 @mixin wide-screen() {
 	// nav unification (Tools/Hosting -> Marketing)
 	.sharing & {
@@ -55,7 +57,7 @@
 	margin-top: 32px;
 
 	@include breakpoint-deprecated( "<1040px" ) {
-	margin-bottom: 16px;
+	margin-bottom: 1rem;
 	}
 
 	.components-button {
@@ -96,18 +98,23 @@
 
 .tools__feature-list {
 	position: relative;
-	left: calc(-0.5em);
+	left: calc(-0.5rem);
 	display: flex;
 	flex-wrap: wrap;
 	// margins of the items will "hang off the side" invisibly
-	width: calc(100% + 1em);
+	width: calc(100% + 1rem);
+
+	a.components-button.is-link {
+		text-decoration: none;
+	}
 }
 
 .tools__feature-list-item {
 	display: flex;
 	flex-direction: column;
-	margin: 0.5em;
-	width: calc(100% - 1em);
+	margin: 0.5rem;
+	width: calc(100% - 1rem);
+	border-radius: 4px;
 
 	// Reduce top margin of GMB logo
 	&:nth-child(3) .tools__feature-list-item-body-image {
@@ -120,9 +127,16 @@
 	}
 
 	@include wide-screen {
-		width: calc(50% - 1em);
+		width: calc(33.33% - 1rem);
 	}
 }
+
+.panel-with-sidebar  {
+	.tools__feature-list-item {
+		width: calc(50% - 1rem);
+	}
+}
+
 
 .tools__feature-list-item-disclaimer {
 	color: var(--color-text-subtle);
@@ -132,7 +146,18 @@
 .tools__feature-list-item-body {
 	align-items: flex-start;
 	display: flex; // grow this, leave buttons on the bottom of the card
+	flex-direction: column;
 	flex: 1 0 auto;
+	margin-bottom: 1rem;
+}
+
+.tools__feature-list-item-header {
+	display: flex;
+	margin-bottom: 16px;
+	> h1 {
+		font-size: $font-body;
+		font-weight: 500;
+	}
 }
 
 .tools__feature-list-item-body-text {
@@ -142,10 +167,6 @@
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		margin-bottom: 0;
-	}
-
-	@include wide-screen {
-		width: 75%;
 	}
 }
 
@@ -168,13 +189,9 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	margin-top: 1em;
 
-	.button {
-		margin: 0;
-		margin-left: calc(15% + 20px);
-		text-align: center;
-		width: auto;
+	.components-button.is-link{
+		text-decoration: none;
 	}
 
 	.purchase-detail__info {
