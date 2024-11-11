@@ -158,8 +158,10 @@ const UtmBuilder: React.FC = () => {
 		  }`;
 
 	const handleCopy = () => {
-		navigator.clipboard.writeText( utmString );
-		triggerConfirmation();
+		if ( url ) {
+			navigator.clipboard.writeText( utmString );
+			triggerConfirmation();
+		}
 	};
 
 	return (
@@ -194,7 +196,12 @@ const UtmBuilder: React.FC = () => {
 				<div className="stats-utm-builder__url">{ utmString }</div>
 			</div>
 			<div className="stats-utm-builder__copy-area">
-				<StatsButton className="stats-utm-builder__copy-button" primary onClick={ handleCopy }>
+				<StatsButton
+					className="stats-utm-builder__copy-button"
+					primary
+					onClick={ handleCopy }
+					disabled={ ! url }
+				>
 					{ translate( 'Copy to clipboard' ) }
 				</StatsButton>
 				<CopyConfirmation show={ showConfirmation } fadeOut={ fadeOut } />
