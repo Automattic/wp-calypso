@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -107,23 +108,25 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
-									footer={ translate(
-										'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
-										{
-											components: {
-												a: (
-													<a
-														href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-														target="_blank"
-														rel="noreferrer noopener"
-														onClick={ ( event ) => {
-															recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-															event.stopPropagation();
-														} }
-													/>
-												),
-											},
-										}
+									footer={ preventWidows(
+										translate(
+											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
+											{
+												components: {
+													a: (
+														<a
+															href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
+															target="_blank"
+															rel="noreferrer noopener"
+															onClick={ ( event ) => {
+																recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
+																event.stopPropagation();
+															} }
+														/>
+													),
+												},
+											}
+										)
 									) }
 									onSelect={ () => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
