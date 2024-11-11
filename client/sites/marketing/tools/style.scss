@@ -167,9 +167,8 @@
 
 .tools__feature-list-item-body-image {
 	margin-right: 1rem;
-	max-width: 75px;
-	max-height: 75px;
-	width: 16%;
+	max-width: 32px;
+	max-height: 32px;
 
 	@include wide-screen {
 		display: flex;
