@@ -60,6 +60,8 @@ $blueberry-color: #3858e9;
 		padding: 16px;
 		font-size: 0.875rem;
     	font-style: normal;
+		list-style: inherit;
+
 		li {
 			margin-bottom: 6px;
 			p {
@@ -173,6 +175,7 @@ $blueberry-color: #3858e9;
 	padding-bottom: 16px;
 	padding-top: 16px;
 	margin-bottom: 0;
+	margin-top: 0;
 }
 
 .odie-introduction-message-content {
