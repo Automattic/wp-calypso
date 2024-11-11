@@ -30,6 +30,7 @@ class StatModuleChartTabs extends Component {
 		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
 		charts: PropTypes.arrayOf( ChartTabShape ),
+		children: PropTypes.node,
 		className: PropTypes.string,
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -44,7 +45,6 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		children: PropTypes.node,
 	};
 
 	intervalId = null;
@@ -102,9 +102,9 @@ class StatModuleChartTabs extends Component {
 			barClick,
 			counts,
 			charts,
+			children,
 			chartTab,
 			queryDate,
-			children,
 		} = this.props;
 
 		return (
