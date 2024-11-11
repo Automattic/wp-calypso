@@ -1,7 +1,7 @@
 import { category, cog, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import {

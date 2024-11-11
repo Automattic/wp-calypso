@@ -1,0 +1,22 @@
+.migrations-commissions {
+	&:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
+		max-width: 900px;
+	}
+
+	.step-section-item__content {
+		max-width: none;
+
+		ul {
+			color: var(--color-text-black);
+			list-style: decimal;
+			margin: 8px 0 16px 16px;
+
+			li a {
+				color: var(--color-text-black);
+				text-decoration: underline;
+			}
+		}
+
+
+	}
+}

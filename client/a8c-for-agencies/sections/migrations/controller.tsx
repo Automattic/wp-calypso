@@ -4,8 +4,9 @@ import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-t
 import MigrationsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/migrations';
 import MainSidebar from '../../components/sidebar-menu/main';
 import ReferralsBankDetails from '../referrals/primary/bank-details';
-import MigrationsOverview from './migrations-overview';
-import MigrationsOverviewV2 from './migrations-overview-v2';
+import MigrationsCommissions from './primary/migrations-commissions';
+import MigrationsOverview from './primary/migrations-overview';
+import MigrationsOverviewV2 from './primary/migrations-overview-v2';
 
 export const migrationsContext: Callback = ( context, next ) => {
 	context.primary = (
@@ -22,7 +23,7 @@ export const migrationsOverviewContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Overview" path={ context.path } />
-			<div>Migrations Overview</div>
+			<MigrationsOverviewV2 />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;
@@ -33,7 +34,7 @@ export const migrationsCommissionsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Commissions" path={ context.path } />
-			<div>Migrations Commissions</div>
+			<MigrationsCommissions />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;

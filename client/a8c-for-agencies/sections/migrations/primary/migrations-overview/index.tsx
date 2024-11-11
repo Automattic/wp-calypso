@@ -15,7 +15,7 @@ import {
 	A4A_REFERRALS_BANK_DETAILS_LINK,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
