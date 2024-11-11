@@ -10,10 +10,7 @@ const NewFilteringChartHeader = ( {
 } ) => {
 	return (
 		<div className="stats-chart-tabs__header">
-			{ /*ActiveTab Label Section */ }
 			<div className="stats-chart-tabs__header-title">{ activeTab?.label }</div>
-
-			{ /* Legend Section */ }
 			<Legend
 				activeCharts={ activeLegend }
 				activeTab={ activeTab }

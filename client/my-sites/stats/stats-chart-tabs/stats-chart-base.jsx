@@ -44,10 +44,8 @@ const StatsChartBase = ( {
 
 	return (
 		<div className={ classes }>
-			{ /* Header slot with wrapper */ }
 			{ slots.header && <div className="stats-chart-tabs__header-wrapper">{ slots.header }</div> }
 
-			{ /* Content slot */ }
 			<div className="stats-chart-tabs__content">
 				{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 				{ ! isLoading &&
