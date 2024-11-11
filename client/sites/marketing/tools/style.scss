@@ -109,15 +109,6 @@
 	width: calc(100% - 1rem);
 	border-radius: 4px;
 
-	// Reduce top margin of GMB logo
-	&:nth-child(3) .tools__feature-list-item-body-image {
-		margin-top: 18px;
-	}
-
-	// Reduce top margin of Upwork logo
-	&:nth-child(5) .tools__feature-list-item-body-image {
-		margin-top: 20px;
-	}
 
 	@include wide-screen {
 		width: calc(33.33% - 1rem);
@@ -146,6 +137,7 @@
 
 .tools__feature-list-item-header {
 	display: flex;
+	align-items: center;
 	margin-bottom: 16px;
 	> h1 {
 		font-size: $font-body;
@@ -164,7 +156,7 @@
 }
 
 .tools__feature-list-item-body-image {
-	margin: 10px 20px 0 0;
+	margin-right: 1rem;
 	max-width: 75px;
 	max-height: 75px;
 	width: 16%;
