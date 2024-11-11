@@ -7,7 +7,7 @@
 	overflow-x: hidden;
 	display: flex;
 
-	&:has( .migration-overview ) {
+	&:has( .migration-overview, .hosting-features ) {
 		justify-content: center;
 	}
 }
