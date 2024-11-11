@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import Cards from './cards';
+import { FeaturesList } from './feature-list';
 import { Container, Header } from './layout';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -16,7 +16,7 @@ export const MigrationStartedDIY = ( { site }: { site: SiteDetails } ) => {
 	return (
 		<Container>
 			<Header title={ title } subTitle={ subTitle } />
-			<Cards />
+			<FeaturesList />
 		</Container>
 	);
 };

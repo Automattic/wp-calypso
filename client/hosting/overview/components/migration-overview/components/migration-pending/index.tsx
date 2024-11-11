@@ -8,7 +8,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
-import Cards from '../cards';
+import { FeaturesList } from '../feature-list';
 import { Container, Header } from '../layout';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -87,7 +87,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 					</div>
 				) }
 			</Header>
-			<Cards />
+			<FeaturesList />
 		</Container>
 	);
 };
