@@ -53,8 +53,28 @@ $modal-content-padding: 32px;
 	margin-bottom: 0;
 }
 
+.stats-utm-builder__copy-area {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
 .stats-utm-builder__copy-button {
 	align-self: baseline;
+}
+
+.stats-utm-builder__copy-confirmation {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: $studio-jetpack-green-50;
+	fill: $studio-jetpack-green-50;
+	opacity: 1;
+	transition: opacity 0.5s ease;
+
+	&.fade-out {
+		opacity: 0;
+	}
 }
 
 .stats-utm-builder__url {
