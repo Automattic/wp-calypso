@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -18,8 +16,6 @@ import StatsChartBase from './stats-chart-base';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
-
-const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
