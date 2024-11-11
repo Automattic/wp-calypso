@@ -89,6 +89,7 @@
 	}
 
 	.components-base-control__field {
+		font-family: $font-sf-pro-text;
 		margin-bottom: 1.25rem;
 		background-color: var(--studio-white);
 		padding: 1.2rem;
@@ -98,6 +99,8 @@
 		align-items: center;
 
 		.components-checkbox-control__label {
+			font-family: $font-sf-pro-text;
+			line-height: 20px;
 			font-size: 0.875rem;
 			color: var(--studio-gray-100);
 			text-wrap: pretty;
@@ -108,6 +111,7 @@
 		svg.components-checkbox-control__checked {
 			width: 1rem;
 			height: 1rem;
+			margin-top: 0.125rem;
 		}
 	}
 
@@ -171,7 +175,7 @@
 .cancel-purchase-form__actions {
 	font-family: $font-sf-pro-text;
 	display: block;
-	margin: 0 auto;
+	margin: 0 auto 2rem;
 	text-align: center;
 	overflow: hidden;
 }
@@ -289,6 +293,7 @@
 			font-weight: 500;
 			line-height: 20px;
 			letter-spacing: -0.32px;
+			white-space: break-spaces;
 			color: var(--studio-gray-60);
 		}
 	}
