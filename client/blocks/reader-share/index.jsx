@@ -181,9 +181,12 @@ class ReaderShare extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
+const mapStateToProps = ( state ) => {
+	return {
 		hasSites: !! getPrimarySiteId( state ),
-	} ),
-	{ recordReaderTracksEvent }
-)( localize( ReaderShare ) );
+	};
+};
+
+const mapDispatchToProps = { recordReaderTracksEvent };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReaderShare ) );
