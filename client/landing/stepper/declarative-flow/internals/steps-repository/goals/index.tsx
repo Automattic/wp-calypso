@@ -26,7 +26,6 @@ type TracksGoalsSelectEventProperties = {
 	total: number;
 	ref?: string;
 	intent: string;
-	is_added_goals_exp: boolean;
 } & {
 	[ key in Onboard.SiteGoal as KebabToSnakeCase< key > ]?: number;
 };
@@ -78,7 +77,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 		const commonEventProps = {
 			intent,
 			ref: refParameter ?? null,
-			is_added_goals_exp: isAddedGoalsExp,
 		};
 
 		const goalsSelectProperties: TracksGoalsSelectEventProperties = {
@@ -96,7 +94,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 			recordTracksEvent( 'calypso_signup_goals_single_select', {
 				goal,
 				ref: commonEventProps.ref,
-				is_added_goals_exp: isAddedGoalsExp,
 			} );
 		} );
 
@@ -106,7 +103,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const recordIntentSelectTracksEvent = ( intent: Onboard.SiteIntent ) => {
 		const eventProperties = {
 			intent,
-			is_added_goals_exp: isAddedGoalsExp,
 		};
 
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
