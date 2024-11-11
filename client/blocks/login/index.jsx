@@ -1154,12 +1154,12 @@ export default connect(
 		...stateProps,
 		...dispatchProps,
 		sendEmailLogin: ( options = {} ) => {
-			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+			return dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
 				source: stateProps.isWooPasswordlessJPC
-					? 'woo-passwordless-jpc' + '-' + get( getCurrentQueryArguments( stateProps ), 'from' )
+					? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' )
 					: '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
