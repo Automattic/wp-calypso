@@ -24,28 +24,68 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', post );
 
-		// Find and scroll to comments section.
+		// Find and scroll to comments section
 		const commentsForm = document.querySelector( '.reader-full-post__comments-wrapper' );
+		const commentTextarea = document.querySelector( '.form-textarea' );
+
 		if ( commentsForm ) {
-			commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			// Create a promise that resolves when scrolling ends
+			const scrollPromise = new Promise< void >( ( resolve ) => {
+				const handleScrollEnd = () => {
+					document.removeEventListener( 'scrollend', handleScrollEnd );
+					resolve();
+				};
+				document.addEventListener( 'scrollend', handleScrollEnd, { once: true } );
+
+				// Trigger the scroll
+				commentsForm.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			} );
+
+			// Focus textarea after scroll completes
+			scrollPromise.then( () => {
+				if ( commentTextarea instanceof HTMLTextAreaElement ) {
+					commentTextarea.focus();
+				}
+			} );
 		}
 	};
 
-	// Set the width of the engagement bar to the width of its parent.
+	// Set the width of the "engagement bar" and "reader post actions" to the width of the parent because CSS `fill-available` is unreliable.
 	useEffect( () => {
-		const updateWidth = () => {
+		if ( ! barRef.current ) {
+			return;
+		}
+
+		const updateWidth = ( parentWidth: number ) => {
 			if ( barRef.current ) {
-				const parentWidth = barRef.current.parentElement?.clientWidth || 0;
 				barRef.current.style.width = `${ parentWidth }px`;
+				const actionsElement = barRef.current.querySelector( '.reader-post-actions' );
+				if ( actionsElement ) {
+					( actionsElement as HTMLElement ).style.width = `${ parentWidth }px`;
+				}
 			}
 		};
 
-		updateWidth();
-		window.addEventListener( 'resize', updateWidth );
+		// Create ResizeObserver to watch the parent element
+		const resizeObserver = new ResizeObserver( ( entries ) => {
+			for ( const entry of entries ) {
+				const parentWidth = entry.contentRect.width;
+				updateWidth( parentWidth );
+			}
+		} );
 
-		return () => window.removeEventListener( 'resize', updateWidth );
+		// Start observing the parent element
+		if ( barRef.current.parentElement ) {
+			resizeObserver.observe( barRef.current.parentElement );
+		}
+
+		// Cleanup: stop observing when component unmounts.
+		return () => {
+			resizeObserver.disconnect();
+		};
 	}, [] );
 
+	// Find the `actionsElement` in the DOM.
 	useEffect( () => {
 		// Set up a MutationObserver to detect when the "Reader Post Actions" aka `actionsElement` appears in the DOM
 		// This is needed because the FullPostView component loads asynchronously.
@@ -68,6 +108,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 		return () => observer.disconnect();
 	}, [] );
 
+	// Look for the `actionsElement` in the viewport.
 	useEffect( () => {
 		// If the `actionsElement` does not exist, do nothing.
 		if ( ! actionsElement ) {

@@ -159,6 +159,11 @@
 
 			.reader-post-actions {
 				margin: 0;
+				justify-content: space-evenly;
+
+				@media ( min-width: $break-medium ) {
+					justify-content: center;
+				}
 				span,
 				svg {
 					color: var( --color-text );
