@@ -130,11 +130,8 @@ export function sitesDashboard( context: Context, next: () => void ) {
 
 export function siteDashboard( feature: string ) {
 	return ( context: Context, next: () => void ) => {
-		const state = context.store.getState();
-
 		context.primary = (
 			<SitesDashboard
-				selectedSite={ getSelectedSite( state ) }
 				initialSiteFeature={ feature }
 				selectedSiteFeaturePreview={ context.primary }
 				queryParams={ getQueryParams( context ) }
