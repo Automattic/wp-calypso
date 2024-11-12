@@ -1,7 +1,7 @@
 import './style.scss';
 
-const StatsPeriodHeader = ( { children } ) => {
-	return <div className="stats__period-header">{ children }</div>;
+const StatsPeriodHeader = ( { children, className } ) => {
+	return <div className={ `stats__period-header ${ className || '' }` }>{ children }</div>;
 };
 
 export default StatsPeriodHeader;
