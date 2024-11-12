@@ -50,7 +50,7 @@ const getAgencyTierInfo = (
 					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
 				),
 				description: translate(
-					'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
+					'Progress towards the Agency Partner Tier and access extra benefits with additional purchases and referrals.'
 				),
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
