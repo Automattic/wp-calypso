@@ -35,7 +35,7 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	return addQueryArgs( baseQueryArgs, '/setup/hosted-site-migration/site-migration-credentials' );
 };
 
-const useCancelllation = ( site: SiteDetails ) => {
+const useCancellation = ( site: SiteDetails ) => {
 	const dispatch = useDispatch();
 	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
 
@@ -115,7 +115,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		closeModal: closeCancellationModal,
 		showErrorNotice: showCancellationErrorNotice,
 		dismissErrorNotice: dismissCancellationErrorNotice,
-	} = useCancelllation( site );
+	} = useCancellation( site );
 
 	if ( isCancelling ) {
 		return (
