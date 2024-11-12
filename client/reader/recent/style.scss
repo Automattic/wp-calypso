@@ -121,6 +121,33 @@
 				align-self: flex-end;
 			}
 		}
+
+		&.recent-feed-empty {
+			max-width: none;
+
+			.recent-feed__list-column-header {
+				max-width: none;
+				margin: 0;
+				padding: 16px 0;
+				border-bottom: 1px solid var( --studio-gray-0 );
+
+				header {
+					max-width: $break-medium;
+					margin: 0 auto;
+					padding: 0 24px;
+				}
+			}
+
+			.recent-feed__list-column-content {
+				max-width: $break-medium;
+				margin: 0 auto;
+				padding: 24px 24px 0;
+			}
+
+			@media ( min-width: $break-wide ) {
+				max-width: none;
+			}
+		}
 	}
 
 	&__post-column {
