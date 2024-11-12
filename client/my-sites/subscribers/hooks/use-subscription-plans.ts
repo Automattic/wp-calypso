@@ -26,7 +26,11 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	const translate = useTranslate();
 	const freePlan = translate( 'Free' );
 
-	const getPaymentInterval = ( renew_interval: string ): string => {
+	const getPaymentInterval = (
+		renew_interval: string,
+		inactive_renew_interval: string
+	): string => {
+		renew_interval = renew_interval || inactive_renew_interval;
 		if ( renew_interval === null ) {
 			return translate( 'one time' );
 		} else if ( renew_interval === PLAN_MONTHLY_FREQUENCY ) {
@@ -61,10 +65,17 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 
 		if ( subscriptions ) {
 			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
-				const { is_gift, currency, renewal_price, renew_interval, start_date, title } =
-					subscription;
+				const {
+					is_gift,
+					currency,
+					renewal_price,
+					renew_interval,
+					inactive_renew_interval,
+					start_date,
+					title,
+				} = subscription;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
-				const when = getPaymentInterval( renew_interval );
+				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
 
 				return { is_gift, renewalPrice, when, start_date, title };
 			} );
