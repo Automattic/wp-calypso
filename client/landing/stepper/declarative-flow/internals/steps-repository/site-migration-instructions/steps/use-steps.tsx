@@ -8,7 +8,7 @@ import { StepButton } from './step-button';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
 import { StepInstallMigrationPlugin } from './step-install-migration-plugin';
 import { StepLinkCta } from './step-link-cta';
-import { getMigrationPluginPageURL, getPluginInstallationPage } from './utils';
+import { getMigrationPluginPageURL, getMigrationPluginInstallURL } from './utils';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const INSTALL_MIGRATION_PLUGIN = 'install-the-migrate-plugin';
@@ -66,7 +66,7 @@ const useStepsData = ( {
 			title: translate( 'Install the Migrate to WordPress.com plugin' ),
 			content: <StepInstallMigrationPlugin />,
 			action: (
-				<StepLinkCta url={ getPluginInstallationPage( fromUrl ) } linkname="install-plugin">
+				<StepLinkCta url={ getMigrationPluginInstallURL( fromUrl ) } linkname="install-plugin">
 					{ translate( 'Install plugin' ) }
 				</StepLinkCta>
 			),
