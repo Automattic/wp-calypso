@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/components/src/styles/typography";
 
 .cancel-purchase-form__site-slug {
 	margin-left: 0.25rem;
@@ -22,24 +23,55 @@
 }
 
 .cancel-purchase-form__feedback,
+.cancel-purchase-form,
+.cancel-purchase-form__remove-plan {
+	.cancel-purchase-form__buttons {
+		max-width: 350px;
+		display: flex;
+	}
+}
+
+.cancel-purchase-form__feedback,
 .cancel-purchase-form__atomic-revert,
 .cancel-purchase-form__remove-plan {
-	max-width: 730px;
-	margin: 0 auto 2rem;
+	max-width: 600px;
+	margin: 0 auto 1.25rem;
+}
+
+.cancel-purchase-form__feedback, .cancel-purchase-form__remove-plan {
+	margin-bottom: 0;
+	max-width: 350px;
+}
+
+.blank-canvas .formatted-header .formatted-header__subtitle {
+	font-family: $font-sf-pro-text;
+	font-size: 0.875rem;
+	font-weight: 400;
+	margin: 0 auto;
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	color: var(--studio-gray-50);
+}
+
+.blank-canvas .cancel-purchase-form__feedback .formatted-header .formatted-header__subtitle {
+	max-width: 320px;
 }
 
 .cancel-purchase-form__remove-plan .formatted-header__subtitle {
-	max-width: 500px;
 	margin: 0 auto;
 }
 
 .cancel-purchase-form__feedback-questions {
-	max-width: 540px;
+	font-family: $font-sf-pro-text;
 	margin: 0 auto;
 }
 
 .cancel-purchase-form__feedback-question {
-	margin-bottom: 1.5rem;
+	margin-bottom: 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: -0.31px;
+	text-align: left;
 }
 
 .cancel-purchase-form__atomic-revert {
@@ -48,7 +80,8 @@
 	}
 
 	> p {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-60);
+		font-size: 0.875rem;
 
 		@include break-small {
 			text-align: center;
@@ -56,17 +89,20 @@
 	}
 
 	.components-base-control__field {
+		font-family: $font-sf-pro-text;
+		margin-bottom: 1.25rem;
 		background-color: var(--studio-white);
-		padding: 0.8125rem 1.25rem;
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+		padding: 1.2rem;
+		border-radius: 4px;
 		border: 1px solid var(--studio-gray-5);
 		display: flex;
 		align-items: center;
 
 		.components-checkbox-control__label {
+			font-family: $font-sf-pro-text;
+			line-height: 20px;
 			font-size: 0.875rem;
-			color: var(--studio-gray-60);
+			color: var(--studio-gray-100);
 			text-wrap: pretty;
 		}
 
@@ -75,22 +111,28 @@
 		svg.components-checkbox-control__checked {
 			width: 1rem;
 			height: 1rem;
+			margin-top: 0.125rem;
 		}
+	}
 
-		.components-checkbox-control__input-container {
-			margin-top: auto;
-			margin-bottom: auto;
+	.cancel-purchase-form__atomic-revert-checkbox-enabled {
+		.components-base-control__field {
+			border: 1px solid var(--studio-blue-50);
+			background: #f9fbfd;
 		}
 	}
 }
 
+
 .cancel-purchase-form__atomic-revert,
 .cancel-purchase-form__remove-plan {
 	strong.is-highlighted {
-		background-color: var(--studio-yellow-5);
-		padding: 0.25rem 0.5rem;
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-		color: var(--stugio-gray-80);
+		font-size: 0.75rem;
+		display: inline-block;
+		background-color: var(--studio-yellow-20);
+		padding: 0 0.625rem;
+		border-radius: 4px;
+		color: var(--studio-yellow-80);
 	}
 }
 
@@ -103,52 +145,66 @@
 }
 
 .cancel-purchase-form__backups {
-	background-color: var(--studio-blue-0);
-	border: 1px solid var(--studio-blue-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
-	padding: 1.25rem;
-	margin-top: 2rem;
-	font-size: 0.875rem;
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	border: 1px solid var(--studio-gray-5);
+	padding: 12px 10px 12px 20px;
+	font-size: 0.75rem;
+	border-left: 3px solid var(--studio-blue-50);
 
 	h4 {
-		color: var(--studio-gray-80);
+		color: var(--studio-gray-70);
 		font-weight: 600;
-		margin-bottom: 0.5rem;
-		font-size: 1rem;
+		margin-bottom: 0;
+		font-size: 0.875rem;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+
+	a {
+		font-size: 0.75rem;
+		padding: 0.5rem;
+		border-radius: 2px;
+		height: 28px;
 	}
 }
 
 .cancel-purchase-form__actions {
-	@include break-small {
-		max-width: 730px;
-		display: block;
-		margin: 0 auto;
-		text-align: center;
-		overflow: hidden;
-	}
+	font-family: $font-sf-pro-text;
+	display: block;
+	margin: 0 auto 2rem;
+	text-align: center;
+	overflow: hidden;
 }
 
 .cancel-purchase-form__buttons {
-	display: flex;
 	position: relative;
 	padding: 3px;
-
-	@include break-small {
-		display: inline-block;
-	}
-
+	margin: 0 auto;
 
 	.components-button {
+		font-size: 0.875rem;
+		font-weight: 500;
 		flex: 1;
+		height: auto;
 		padding: 0.625rem 1rem;
 		border-radius: 4px;
 		justify-content: center;
-
-		@include break-small {
-			padding: 0.625rem 2rem;
-			justify-content: unset;
-		}
 	}
+}
+
+.cancel-purchase-form__buttons.cancel-purchase-form__atomic_revert_step-buttons {
+	justify-content: center;
+	.components-button {
+		flex: initial;
+	}
+}
+
+.blank-canvas .formatted-header .formatted-header__title {
+	font-size: 2rem;
 }
 
 .cancel-purchase-form__upsell {
@@ -213,9 +269,33 @@
 }
 
 .blank-canvas.cancel-purchase-form {
+	.precancellation-chat-button__main-button {
+		color: var(--studio-gray-100);
+		span {
+			border-bottom: 1px solid var(--studio-gray-100);
+		}
+	}
+
 	.blank-canvas__back {
 		z-index: 1;
 		font-size: 0.875rem;
+	}
+
+	.components-base-control__field {
+		.components-input-control__container {
+			color: var(--studio-gray-70);
+			border-radius: 4px;
+		}
+
+		.components-input-control__label {
+			text-transform: initial;
+			font-size: 0.875rem;
+			font-weight: 500;
+			line-height: 20px;
+			letter-spacing: -0.32px;
+			white-space: break-spaces;
+			color: var(--studio-gray-60);
+		}
 	}
 
 	.blank-canvas__header {
@@ -248,6 +328,7 @@
 	}
 
 	.blank-canvas__footer {
+		padding: 0;
 		position: static;
 		box-shadow: none;
 	}
