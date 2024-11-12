@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 .is-section-reader .recent-feed {
 	@media ( min-width: $break-wide ) {
@@ -129,6 +129,51 @@
 
 		&.overlay {
 			display: block;
+		}
+
+		&-engagement-bar {
+			position: fixed;
+			bottom: 0;
+			height: 60px;
+			background: var( --color-surface );
+			box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.05 );
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: opacity 0.2s ease-in-out;
+			opacity: 1;
+
+			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
+				margin-right: 24px;
+			}
+
+			@media ( min-width: $break-medium ) {
+				margin-right: 16px;
+			}
+
+			&.engagement-bar-is-hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			.reader-post-actions {
+				margin: 0;
+				justify-content: space-evenly;
+
+				@media ( min-width: $break-medium ) {
+					justify-content: center;
+				}
+				span,
+				svg {
+					color: var( --color-text );
+					fill: currentColor;
+				}
+			}
+		}
+
+		.reader-full-post__story {
+			padding-bottom: 132px;
 		}
 
 		.reader-full-post__sidebar,
