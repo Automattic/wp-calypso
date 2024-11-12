@@ -1,4 +1,4 @@
-import { DataViews, View, Field, Action, SortDirection } from '@wordpress/dataviews';
+import { DataViews, View, ViewProps, Field, Action, SortDirection } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -11,11 +11,6 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
-import type {
-	DataViewsPaginationInfo,
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 import './style.scss';
 
@@ -44,9 +39,9 @@ import './style.scss';
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
-	paginationInfo: DataViewsPaginationInfo;
-	dataViewsState: DataViewsState;
-	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	paginationInfo: { totalItems: number; totalPages: number };
+	viewState: View;
+	setViewState: ( callback: ( prevState: View ) => View ) => void;
 };
 
 export function useSiteStatusGroups() {
@@ -69,21 +64,21 @@ const DotcomSitesDataViews = ( {
 	sites,
 	isLoading,
 	paginationInfo,
-	dataViewsState,
-	setDataViewsState,
+	viewState,
+	setViewState,
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
+			setViewState( ( prevState: View ) => ( {
 				...prevState,
 				selectedItem: site,
 				type: 'list',
 			} ) );
 		},
-		[ setDataViewsState ]
+		[ setViewState ]
 	);
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
@@ -95,8 +90,8 @@ const DotcomSitesDataViews = ( {
 	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
 	// (See the `getSelection()` function below.)
 	const onSelectionChange = () => {};
-	const getSelection = ( dataViewsState: DataViewsState ) =>
-		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
+	const getSelection = ( viewState: View ) =>
+		viewState.selectedItem ? [ viewState.selectedItem.ID ] : undefined;
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
@@ -206,20 +201,22 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
+		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
 	const siteSearchLabel = __( 'Search sites…' );
 
 	// Create the itemData packet state
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
+	const [ itemsData, setItemsData ] = useState< ViewProps< SiteExcerptData > >( {
 		items: sites,
 		itemFieldId: 'ID',
 		searchLabel: siteSearchLabel,
+		// See https://github.com/Automattic/wp-calypso/blob/27cb24ca2bf112f8a844233021e6fb3ad86d279a/client/a8c-for-agencies/components/items-dashboard/items-dataviews/index.tsx#L44
+		// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 		fields,
 		actions: [],
-		setDataViewsState: setDataViewsState,
-		dataViewsState: dataViewsState,
+		setViewState: setViewState,
+		viewState: viewState,
 		onSelectionChange,
 		pagination: paginationInfo,
 		defaultLayouts: { table: {} },
@@ -227,19 +224,19 @@ const DotcomSitesDataViews = ( {
 
 	// Update the itemData packet
 	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteExcerptData > ) => ( {
+		setItemsData( ( prevState: ViewProps< SiteExcerptData > ) => ( {
 			...prevState,
 			items: sites,
 			fields,
 			// actions: actions,
-			setDataViewsState,
-			dataViewsState,
+			setViewState,
+			viewState,
 			searchLabel: siteSearchLabel,
-			selectedItem: dataViewsState.selectedItem,
-			selection: getSelection( dataViewsState ),
+			selectedItem: viewState.selectedItem,
+			selection: getSelection( viewState ),
 			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
+	}, [ fields, viewState, paginationInfo, setViewState, sites, siteSearchLabel ] ); // add actions when implemented
 
 	return (
 		<DataViews data={ itemsData } isLoading={ isLoading } className="sites-overview__content" />

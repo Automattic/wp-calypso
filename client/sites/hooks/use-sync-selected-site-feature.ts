@@ -1,18 +1,19 @@
 import page from '@automattic/calypso-router';
 import { useEffect, useState } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { View } from '@wordpress/dataviews';
 import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 export function useSyncSelectedSiteFeature( {
 	selectedSite,
 	initialSiteFeature,
-	dataViewsState,
+	viewState,
 	featureToRouteMap,
 	queryParamKeys,
 }: {
 	selectedSite?: SiteDetails | null;
 	initialSiteFeature: string;
-	dataViewsState: DataViewsState;
+	viewState: DataViewsState | View;
 	featureToRouteMap: { [ key: string ]: string };
 	queryParamKeys: string[];
 } ) {
@@ -24,7 +25,8 @@ export function useSyncSelectedSiteFeature( {
 	}, [ initialSiteFeature ] );
 
 	const syncUrl = () => {
-		const siteSlug = dataViewsState.selectedItem?.slug;
+		// @ts-expect-error -- Need to replace this code
+		const siteSlug = viewState.selectedItem?.slug;
 		const newSearchParams = new URLSearchParams();
 
 		// Retain sites dashboard query params only.
@@ -50,21 +52,21 @@ export function useSyncSelectedSiteFeature( {
 	// Update URL when a new site or feature is selected.
 	useEffect( () => {
 		if (
-			selectedSite?.slug === dataViewsState.selectedItem?.slug &&
+			selectedSite?.slug === viewState.selectedItem?.slug &&
 			selectedSiteFeature === initialSiteFeature
 		) {
 			return;
 		}
 
 		// Whether the left sidebar should animate (grow or collapse)
-		const shouldAnimate = Boolean( selectedSite ) !== Boolean( dataViewsState.selectedItem?.slug );
+		const shouldAnimate = Boolean( selectedSite ) !== Boolean( viewState.selectedItem?.slug );
 
 		window.setTimeout(
 			syncUrl,
 			// Delay the update while the left sidebar is animating.
 			shouldAnimate ? 300 : 0
 		);
-	}, [ dataViewsState.selectedItem?.slug, selectedSiteFeature ] );
+	}, [ viewState.selectedItem?.slug, selectedSiteFeature ] );
 
 	return { selectedSiteFeature, setSelectedSiteFeature };
 }
