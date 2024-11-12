@@ -9,7 +9,16 @@ export const ResizableTextarea: React.FC< {
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
-} > = ( { className, sendMessageHandler, inputRef, keyUpHandle, setSubmitDisabled } ) => {
+	hidePlaceholder: boolean;
+} > = ( {
+	className,
+	sendMessageHandler,
+	inputRef,
+	keyUpHandle,
+	setSubmitDisabled,
+	hidePlaceholder = false,
+} ) => {
+	const textAreaPlaceholder = hidePlaceholder ? '' : __( 'Type a message…', __i18n_text_domain__ );
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
@@ -54,7 +63,7 @@ export const ResizableTextarea: React.FC< {
 			rows={ 1 }
 			className={ className }
 			onKeyUp={ onKeyUp }
-			placeholder={ __( 'Type a message…', __i18n_text_domain__ ) }
+			placeholder={ textAreaPlaceholder }
 			style={ { transition: 'none' } }
 		/>
 	);
