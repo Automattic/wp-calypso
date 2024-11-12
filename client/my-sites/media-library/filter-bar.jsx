@@ -96,8 +96,8 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	shouldSkipFilters() {
-		const { source } = this.props;
-		return this.props.photosPickerApiEnabled && source === 'google_photos';
+		const { source, photosPickerApiEnabled } = this.props;
+		return photosPickerApiEnabled && source === 'google_photos';
 	}
 
 	changeFilter = ( filter ) => () => {
