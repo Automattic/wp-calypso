@@ -1,19 +1,14 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
-import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
-import { useSiteExcerptsQueryInvalidator } from 'calypso/data/sites/use-site-excerpts-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
-import { useDispatch } from 'calypso/state';
-import { requestSite } from 'calypso/state/sites/actions';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
+import useCancellation from './use-cancellation';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
@@ -33,70 +28,6 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	}
 
 	return addQueryArgs( baseQueryArgs, '/setup/hosted-site-migration/site-migration-credentials' );
-};
-
-const useCancellation = ( site: SiteDetails ) => {
-	const dispatch = useDispatch();
-	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
-
-	const {
-		mutate: mutateCancelMigration,
-		isSuccess: isCancellationSuccess,
-		isPending: isCancelling,
-		error: cancellationError,
-	} = useMigrationCancellation( site.ID );
-
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const [ errorNoticeDismissed, setErrorNoticeDismissed ] = useState( false );
-
-	const reloadSite = useCallback( () => {
-		dispatch( requestSite( site.ID ) );
-		// invalidate the site excerpts query to refresh the /sites sidebar
-		invalidateSiteExcerptsQuery();
-	}, [ dispatch, invalidateSiteExcerptsQuery, site.ID ] );
-
-	useEffect( () => {
-		if ( isCancellationSuccess ) {
-			recordTracksEvent( 'calypso_pending_migration_canceled' );
-			reloadSite();
-		}
-	}, [ isCancellationSuccess, reloadSite ] );
-
-	useEffect( () => {
-		if ( cancellationError ) {
-			recordTracksEvent( 'calypso_pending_migration_cancel_error', {
-				error: cancellationError.message,
-			} );
-		}
-	}, [ cancellationError ] );
-
-	const openModal = useCallback( () => {
-		setIsModalVisible( true );
-	}, [] );
-
-	const closeModal = useCallback( () => {
-		setIsModalVisible( false );
-	}, [] );
-
-	const dismissErrorNotice = useCallback( () => {
-		setErrorNoticeDismissed( true );
-	}, [] );
-
-	const cancelMigration = useCallback( () => {
-		setErrorNoticeDismissed( false );
-		mutateCancelMigration();
-		setIsModalVisible( false );
-	}, [ mutateCancelMigration ] );
-
-	return {
-		isModalVisible,
-		isLoading: isCancelling || isCancellationSuccess,
-		showErrorNotice: cancellationError && ! errorNoticeDismissed,
-		cancelMigration,
-		openModal,
-		closeModal,
-		dismissErrorNotice,
-	};
 };
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
