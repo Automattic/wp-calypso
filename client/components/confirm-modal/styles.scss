@@ -7,21 +7,15 @@
 	}
 
 	.components-modal__header {
-		border-bottom-color: $studio-gray-0;
-		padding: 18px 24px;
+		padding: 24px 32px 8px 32px;
 
 		.components-modal__header-heading {
-			font-size: $font-body;
+			font-size: 1.25rem;
 		}
 	}
 
 	.components-modal__content {
-		padding: 0 24px 24px;
-
-		p {
-			margin-top: 24px;
-			margin-bottom: 24px;
-		}
+		padding: 0 32px 24px 32px;
 	}
 
 	.confirm-modal__buttons {
