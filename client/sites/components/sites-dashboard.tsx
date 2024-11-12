@@ -9,6 +9,7 @@ import {
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -64,7 +65,7 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	{ dataView: 'site', sortKey: 'alphabetically' },
+	{ dataView: 'icon', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
@@ -74,10 +75,9 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
-// Limit fields on breakpoints smaller than 960px wide.
-const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'site' ];
-const listViewFields = [ 'site' ];
+const desktopFields = [ 'icon', 'site', 'title-text', 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields = [ 'icon', 'title-text', 'site-url', 'admin-url' ];
+const listViewFields = [ 'title-text', 'site-url' ];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	if ( selectedSite ) {
@@ -190,10 +190,33 @@ const SitesDashboard = ( {
 			  }
 			: {} ),
 		...( selectedSite
-			? { type: 'list', layout: {} }
+			? {
+					type: 'list',
+					layout: {
+						primaryField: 'title-text',
+						mediaField: 'icon',
+					},
+			  }
 			: {
 					type: 'table',
 					layout: {
+						primaryField: 'site',
+						combinedFields: [
+							{
+								id: 'site-title',
+								label: '',
+								header: '',
+								children: [ 'title-text', 'site-url', 'admin-url' ],
+								direction: 'vertical',
+							},
+							{
+								id: 'site',
+								label: __( 'Site' ),
+								header: '',
+								children: [ 'icon', 'site-title' ],
+								direction: 'horizontal',
+							},
+						],
 						styles: {
 							site: {
 								width: getSiteNameColWidth( isDesktop, isWide ),

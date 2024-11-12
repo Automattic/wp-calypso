@@ -9,6 +9,9 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
+import SiteAdminUrl from './site-admin-url';
+import SiteIcon from './site-icon';
+import SiteUrl from './site-url';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -119,13 +122,29 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
-				id: 'site',
+				id: 'title-text',
 				label: __( 'Site' ),
-				header: <span>{ __( 'Site' ) }</span>,
-				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
+				header: <span></span>,
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'site-url',
+				label: __( 'URL' ),
+				header: <span>{ __( 'URL' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteUrl site={ item } />,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'admin-url',
+				label: __( 'Admin URL' ),
+				header: <span>{ __( 'Admin URL' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteAdminUrl site={ item } />,
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -179,6 +198,17 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: true,
 				getValue: () => null,
+			},
+			{
+				id: 'icon',
+				label: 'Icon',
+				header: <span>{ __( 'Site' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) => {
+					return <SiteIcon site={ item } />;
+				},
+				enableHiding: false,
+				enableSorting: true,
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 			},
 		],
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]

@@ -8,16 +8,8 @@
 		width: 100%;
 	}
 
-	.dataviews-view-list {
-		// DataView overrides: Ideally instead of reusing the site name full field
-		// We should be setting a media field and a primary field.
-		// Or update Core to hide them when not specified.
-		.dataviews-view-list__media-wrapper {
-			display: none;
-		}
-		.dataviews-view-list__primary-field {
-			display: none;
-		}
+	.dataviews-view-list__primary-field:hover {
+		// todo: need to fix deleted site text style somehow, ideally without an override
 	}
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
@@ -31,6 +23,15 @@
 
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
+
+		// We use combined fields on Site title, url, admin url to form the vertical "site-title" field.
+		// We then combine the icon and site-title to form the horizontal "site" field.
+		// Without this rule the combined field receives justify-content: space-between but we want the icon to be aligned with the text.
+		.components-h-stack {
+			&:has(.sites-dataviews__site) {
+				justify-content: flex-start;
+			}
+		}
 	}
 
 	thead tr.dataviews-view-table__row:hover {

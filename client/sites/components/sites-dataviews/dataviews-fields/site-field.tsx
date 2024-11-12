@@ -45,8 +45,8 @@ const SiteListTile = styled( ListTile )`
 		gap: 12px;
 		max-width: 500px;
 		width: 100%;
-		/*  
-		 * Ensures the row fits within the device width on mobile in most cases, 
+		/*
+		 * Ensures the row fits within the device width on mobile in most cases,
 		 * as it's not apparent to users that they can scroll horizontally.
 		*/
 		@media ( max-width: 480px ) {
@@ -108,23 +108,6 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						text-align: start;
 					`
 				) }
-				leading={
-					<Button
-						className="sites-dataviews__preview-trigger"
-						onClick={ onSiteClick }
-						borderless
-						disabled={ site.is_deleted }
-					>
-						<ThumbnailLink title={ title }>
-							<SiteFavicon
-								className="sites-site-favicon"
-								blogId={ site.ID }
-								fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
-								size={ 56 }
-							/>
-						</ThumbnailLink>
-					</Button>
-				}
 				title={
 					<ListTileTitle>
 						<SiteName className="sites-dataviews__site-title" as="div" title={ title }>
@@ -137,21 +120,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						) }
 					</ListTileTitle>
 				}
-				subtitle={
-					site.is_deleted ? (
-						<>
-							<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-						</>
-					) : (
-						<>
-							<div className="sites-dataviews__site-urls">
-								<Truncated className="sites-dataviews__site-url">
-									{ displaySiteUrl( siteUrl ) }
-								</Truncated>
-							</div>
-						</>
-					)
-				}
+				subtitle=""
 			/>
 		</button>
 	);
