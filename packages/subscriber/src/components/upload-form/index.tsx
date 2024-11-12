@@ -3,13 +3,18 @@ import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { FormFileUpload, Button } from '@wordpress/components';
+import {
+	Button,
+	DropZone,
+	FormFileUpload,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, FormEvent, FunctionComponent, useState, useEffect, useRef } from 'react';
+import { Icon, cloudUpload } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import { useCallback, FormEvent, FunctionComponent, useState, useEffect, useRef } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
@@ -23,7 +28,6 @@ interface Props {
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
-	showCsvUpload?: boolean;
 	showFormManualListLabel?: boolean;
 	submitBtnAlwaysEnable?: boolean;
 	allowEmptyFormSubmit?: boolean;
@@ -36,35 +40,33 @@ interface Props {
 	titleText?: string;
 	subtitleText?: string;
 	showSkipLink?: boolean;
-	hidden?: boolean;
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
+	hidden?: boolean;
+	renderLearnMoreLink?: () => React.ReactNode;
 }
 
 export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const HANDLED_ERROR = {
 		IMPORT_LIMIT: 'subscriber_import_limit_reached',
 		IMPORT_BLOCKED: 'blocked_import',
 	};
 	const {
 		siteId,
-		hasSubscriberLimit,
 		flowName,
 		showTitle = true,
 		showSubtitle,
-		showCsvUpload,
 		recordTracksEvent,
 		onImportStarted,
 		onImportFinished,
 		onChangeIsImportValid,
-		onSkipBtnClick,
 		titleText,
 		subtitleText,
-		showSkipLink,
-		hidden = false,
+		hidden,
 		isWPCOMSite = false,
 		disabled,
+		renderLearnMoreLink,
 	} = props;
 
 	const { importCsvSubscribersUpdate, getSubscribersImports } = useDispatch( Subscriber.store );
@@ -83,13 +85,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
 		[]
 	);
-	const [ formFileUploadElement ] = useState(
-		createElement( FormFileUpload, {
-			name: 'import',
-			onChange: onFileInputChange,
-			disabled: inProgress || disabled,
-		} )
-	);
+
+	const formFileUploadElement = <a href="./" />;
 
 	/**
 	 * ↓ Effects
@@ -152,24 +149,18 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
 	}
 
-	function onFileInputChange( e: ChangeEvent< HTMLInputElement > ) {
-		const f = e.target.files;
-		if ( ! f || ! f.length ) {
+	const onFileSelect = useCallback( ( files: FileList | Array< File > ) => {
+		if ( ! files || ! files.length ) {
 			return;
 		}
 
-		const file = f[ 0 ];
+		const file = files[ 0 ];
 		const isValid = isValidExtension( file.name );
 
 		setIsSelectedFileValid( isValid );
 		isValid && setSelectedFile( file );
 		importCsvSubscribersUpdate( undefined );
-	}
-
-	function onFileRemoveClick() {
-		setSelectedFile( undefined );
-		importCsvSubscribersUpdate( undefined );
-	}
+	}, [] );
 
 	function resetFormState(): void {
 		setSelectedFile( undefined );
@@ -202,14 +193,14 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 						switch ( error.code ) {
 							case HANDLED_ERROR.IMPORT_LIMIT:
 								return createInterpolateElement(
-									translate(
+									__(
 										'We couldn’t import your subscriber list as you’ve hit the 100 email limit for our free plan. The good news? You can upload a list of any size after upgrading to any paid plan. If you’d like to import a smaller list now, you can <uploadBtn>upload a different file</uploadBtn>.'
 									),
 									{ uploadBtn: formFileUploadElement }
 								);
 
 							case HANDLED_ERROR.IMPORT_BLOCKED:
-								return translate(
+								return __(
 									'We ran into a security issue with your subscriber list. It’s nothing to worry about. If you reach out to our support team when you’ve finished setting things up, they’ll help resolve this for you.'
 								);
 
@@ -227,7 +218,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 			! isSelectedFileValid && (
 				<FormInputValidation className="is-file-validation" isError text="">
 					{ createInterpolateElement(
-						translate(
+						__(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
 						),
 						{ uploadBtn: formFileUploadElement }
@@ -238,12 +229,9 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderEmptyFormValidationMsg() {
-		const validationMsg = showCsvUpload
-			? translate(
-					"You'll need to add at least one email address " +
-						'or upload a CSV file of current subscribers to continue.'
-			  )
-			: translate( "You'll need to add at least one subscriber to continue." );
+		const validationMsg = __(
+			"You'll need to upload a CSV file of current subscribers to continue."
+		);
 
 		return (
 			!! submitAttemptCount &&
@@ -262,7 +250,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 			selectedFile && (
 				<p className="add-subscriber__form--disclaimer">
 					{ createInterpolateElement(
-						translate(
+						__(
 							'By clicking "Add subscribers" you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 						),
 						{
@@ -280,75 +268,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	function renderImportCsvLabel() {
-		const ariaLabelMsg = hasSubscriberLimit
-			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
-			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
-
-		const importSubscribersUrl = ! isWPCOMSite
-			? 'https://jetpack.com/support/newsletter/import-subscribers/'
-			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
-
-		const interpolateElement = {
-			uploadBtn: formFileUploadElement,
-			Button: (
-				<Button
-					variant="link"
-					target="_blank"
-					rel="noreferrer"
-					href={ localizeUrl( importSubscribersUrl ) }
-				/>
-			),
-		};
-
-		const labelText = hasSubscriberLimit
-			? createInterpolateElement(
-					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'
-					),
-					interpolateElement
-			  )
-			: createInterpolateElement(
-					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more</Button>.'
-					),
-					interpolateElement
-			  );
-
-		return (
-			isSelectedFileValid &&
-			! selectedFile && (
-				<div aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
-					{ labelText }
-				</div>
-			)
-		);
-	}
-
-	function renderImportCsvSelectedFileLabel() {
-		return (
-			isSelectedFileValid &&
-			selectedFile && (
-				<label className="add-subscriber__form-label-links">
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: the first string variable shows a selected file name, Replace and Remove are links */
-							translate(
-								'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
-							),
-							selectedFile?.name
-						),
-						{
-							strong: createElement( 'strong' ),
-							uploadBtn: formFileUploadElement,
-							removeBtn: <Button variant="link" onClick={ onFileRemoveClick } />,
-						}
-					) }
-				</label>
-			)
-		);
-	}
-
 	if ( hidden ) {
 		return null;
 	}
@@ -357,13 +276,11 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
 				<div className="add-subscriber__title-container">
-					{ showTitle && (
-						<Title>{ titleText ?? translate( 'Let’s add your first subscribers' ) }</Title>
-					) }
+					{ showTitle && <Title>{ titleText ?? __( 'Let’s add your first subscribers' ) }</Title> }
 					{ showSubtitle && (
 						<SubTitle>
 							{ subtitleText ??
-								translate(
+								__(
 									'Your subscribers will receive an email notification whenever you publish a new post.'
 								) }
 						</SubTitle>
@@ -373,40 +290,83 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 
 			<div className="add-subscriber__form--container">
 				<p>
-					{ translate(
-						'Upload a CSV file with your existing subscribers list from platforms like {{BeehiivLink}}Beehiiv{{/BeehiivLink}}, {{GhostLink}}Ghost{{/GhostLink}}, {{KitLink}}Kit{{/KitLink}}, {{MailChimpLink}}MailChimp{{/MailChimpLink}}, {{MediumLink}}Medium{{/MediumLink}}, {{PatreonLink}}Patreon{{/PatreonLink}}, and many others.',
+					{ createInterpolateElement(
+						__(
+							'Upload a CSV file with your existing subscribers list from platforms like <BeehiivLink>Beehiiv</BeehiivLink>, <GhostLink>Ghost</GhostLink>, <KitLink>Kit</KitLink>, <MailChimpLink>MailChimp</MailChimpLink>, <MediumLink>Medium</MediumLink>, <PatreonLink>Patreon</PatreonLink>, and many others.'
+						),
 						{
-							components: {
-								BeehiivLink: (
-									<a href="https://www.beehiiv.com/" target="_blank" rel="noopener noreferrer" />
-								),
-								GhostLink: (
-									<a href="https://ghost.org/" target="_blank" rel="noopener noreferrer" />
-								),
-								KitLink: <a href="https://kit.com/" target="_blank" rel="noopener noreferrer" />,
-								MailChimpLink: (
-									<a href="https://mailchimp.com/" target="_blank" rel="noopener noreferrer" />
-								),
-								MediumLink: (
-									<a href="https://medium.com/" target="_blank" rel="noopener noreferrer" />
-								),
-								PatreonLink: (
-									<a href="https://patreon.com/" target="_blank" rel="noopener noreferrer" />
-								),
-							},
+							BeehiivLink: (
+								<a href="https://www.beehiiv.com/" target="_blank" rel="noopener noreferrer" />
+							),
+							GhostLink: <a href="https://ghost.org/" target="_blank" rel="noopener noreferrer" />,
+							KitLink: <a href="https://kit.com/" target="_blank" rel="noopener noreferrer" />,
+							MailChimpLink: (
+								<a href="https://mailchimp.com/" target="_blank" rel="noopener noreferrer" />
+							),
+							MediumLink: (
+								<a href="https://medium.com/" target="_blank" rel="noopener noreferrer" />
+							),
+							PatreonLink: (
+								<a href="https://patreon.com/" target="_blank" rel="noopener noreferrer" />
+							),
 						}
 					) }
 				</p>
-				<form onSubmit={ onFormSubmit } autoComplete="off">
+				<form onSubmit={ onFormSubmit } autoComplete="off" className="subscriber-upload-form">
 					{ renderFileValidationMsg() }
 					{ renderImportErrorMsg() }
-
-					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-
 					{ renderEmptyFormValidationMsg() }
+					{ ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
+					{ ! isSelectedFileValid && selectedFile && (
+						<FormInputValidation className="is-file-validation" isError text="">
+							{ __( 'Sorry, you can only upload CSV files. Please try again with a valid file.' ) }
+						</FormInputValidation>
+					) }
+					<div className="subscriber-upload-form__dropzone">
+						<DropZone onFilesDrop={ onFileSelect } />
+						<VStack alignment="center" justify="center">
+							<FormFileUpload
+								accept="text/csv"
+								onChange={ ( event ) => {
+									onFileSelect( event.currentTarget?.files || [] );
+								} }
+								multiple={ false }
+							>
+								<VStack direction="column" alignment="center" justify="center">
+									<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
+									{ ! selectedFile && (
+										<p>{ __( 'Drag a file here, or click to upload a file' ) }</p>
+									) }
+									{ selectedFile && (
+										<p>
+											{ createInterpolateElement(
+												sprintf(
+													// translators: %s is a file name, e.g. example.csv
+													__(
+														'To replace this <fileName>%s</fileName> drag a file, or click to upload different one.'
+													),
+													selectedFile?.name || '-'
+												),
+												{
+													fileName: <em />,
+												}
+											) }
+										</p>
+									) }
+								</VStack>
+							</FormFileUpload>
+						</VStack>
+					</div>
+
+					{ isSelectedFileValid && selectedFile && ! importSelector?.error && (
+						<p>
+							{ __(
+								'By clicking "Add Subscribers," you represent that you\'ve obtained the appropriate consent to email each person.'
+							) }{ ' ' }
+							{ renderLearnMoreLink && renderLearnMoreLink() }
+						</p>
+					) }
 
 					<NextButton
 						type="submit"
@@ -414,15 +374,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 						isBusy={ inProgress && ! disabled }
 						disabled={ ! selectedFile || disabled }
 					>
-						{ translate( 'Add subscribers' ) }
+						{ __( 'Add subscribers' ) }
 					</NextButton>
-					{ showSkipLink && (
-						<div className="add-subscriber__form-skip-link-wrapper">
-							<button className="add-subscriber__form-skip-link" onClick={ onSkipBtnClick }>
-								{ translate( 'Skip for now' ) }
-							</button>
-						</div>
-					) }
 				</form>
 			</div>
 		</div>

@@ -102,4 +102,35 @@
 		font-weight: 400;
 		line-height: rem(20px);
 	}
+
+	.subscriber-upload-form__dropzone {
+		cursor: pointer;
+		position: relative;
+		height: 190px;
+		margin-bottom: 1.5em;
+		background-color: var(--color-neutral-0);
+		border: 2px dashed var(--color-neutral-light);
+		transition: all 200ms ease-out, color 100ms ease-out;
+		fill: var(--color-neutral-20);
+		font-size: 1rem;
+		color: var(--color-neutral-70);
+		text-align: center;
+		p {
+			margin-bottom: 12px;
+		}
+		.components-form-file-upload {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			button {
+				height: auto;
+			}
+			svg {
+				width: 48px;
+				height: 48px;
+				text-align: center;
+				fill: var(--studio-gray-20);
+			}
+		}
+	}
 }

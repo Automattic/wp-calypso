@@ -99,6 +99,20 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
 	};
 
+	const renderLearnMoreLink = () => {
+		return (
+			<InlineSupportLink
+				showIcon={ false }
+				supportLink={ localizeUrl(
+					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+				) }
+				supportPostId={ 220199 }
+			>
+				{ translate( 'Learn more' ) }
+			</InlineSupportLink>
+		);
+	};
+
 	return (
 		<Modal
 			title={ modalTitle as string }
@@ -198,7 +212,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							<InlineSupportLink supportLink={ supportLink } />
 						</Notice>
 					) }
-					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
+					<label className="add-subscribers-modal__label">
+						{ translate( 'Email or username' ) }
+					</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
 						hasSubscriberLimit={ hasSubscriberLimit }
@@ -267,11 +283,11 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						onImportFinished={ onImportFinished }
 						showTitle={ false }
 						showSubtitle={ false }
-						showCsvUpload
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						isWPCOMSite={ isWPCOMSite }
 						disabled={ isImportInProgress }
+						renderLearnMoreLink={ renderLearnMoreLink }
 					/>
 				</>
 			) }
