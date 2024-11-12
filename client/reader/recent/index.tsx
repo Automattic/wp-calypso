@@ -153,9 +153,13 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
-	// When the selected feed changes, clear the selected item.
+	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
 		setSelectedItem( null );
+		setView( ( prevView ) => ( {
+			...prevView,
+			page: 1,
+		} ) );
 	}, [ selectedRecentSidebarFeedId ] );
 
 	return (
