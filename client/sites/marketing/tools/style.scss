@@ -78,7 +78,6 @@
 	@include wide-screen {
 		display: flex;
 		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
-		margin-left: auto;
 	}
 
 	.tools__header-image {
