@@ -41,9 +41,7 @@ describe( 'MigrationPending', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
 
-		await userEvent.click(
-			screen.getByRole( 'button', { name: 'Yes, I want to cancel my migration' } )
-		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
 
 		await waitFor( () => {
 			expect( requestSite ).toHaveBeenCalledWith( site.ID );
@@ -56,7 +54,7 @@ describe( 'MigrationPending', () => {
 		renderWithProvider( <MigrationPending site={ site } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'No, I want to continue' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: "Don't cancel migration" } ) );
 
 		await waitFor( () => {
 			expect( requestSite ).not.toHaveBeenCalled();

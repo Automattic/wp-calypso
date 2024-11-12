@@ -88,10 +88,12 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				isVisible={ isConfirmModalVisible }
 				onCancel={ () => setIsConfirmModalVisible( false ) }
 				onConfirm={ handleCancelButtonClick }
-				title={ translate( 'Are you sure?' ) }
-				text={ translate( 'Are you sure you want to cancel your migration?' ) }
-				confirmButtonLabel={ translate( 'Yes, I want to cancel my migration' ) }
-				cancelButtonLabel={ translate( 'No, I want to continue' ) }
+				title={ translate( 'Cancel migration' ) }
+				text={ translate(
+					"When you cancel your migration your original site will stay as is. You can always restart the migration when you're ready."
+				) }
+				confirmButtonLabel={ translate( 'Cancel migration' ) }
+				cancelButtonLabel={ translate( "Don't cancel migration" ) }
 			/>
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
