@@ -32,8 +32,9 @@ export default function MigrationsConsolidatedCommissions( {
 			<Card compact>
 				<div className="consolidated-commissions__value"> ${ migrationCommissions }</div>
 				<div className="consolidated-commissions__label">
-					{ translate( 'Migration commissions expected in %(currentQuarter)s', {
-						args: { currentQuarter: `Q${ currentQuarter }` },
+					{ translate( 'Migration commissions expected in Q%(currentQuarter)s', {
+						args: { currentQuarter },
+						comment: 'Quarterly commission value, where Q is the short form of "Quarter"',
 					} ) }
 				</div>
 			</Card>
