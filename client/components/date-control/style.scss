@@ -4,7 +4,7 @@
 $date-control-shortcut-min-width: 140px;
 $date-control-mobile-layout-switch: $break-small;
 
-.stats-date-control-picker-date {
+.date-control-picker-date {
 	margin: 16px;
 
 	// Internal layout
@@ -12,12 +12,12 @@ $date-control-mobile-layout-switch: $break-small;
 	flex-direction: column;
 	justify-content: space-between;
 
-	&.stats-date-control-picker-date__hasoverlay {
+	&.date-control-picker-date__hasoverlay {
 		display: grid;
 		position: relative;
 
-		.stats-date-control-picker-date__content,
-		.stats-date-control-picker-date__overlay {
+		.date-control-picker-date__content,
+		.date-control-picker-date__overlay {
 			grid-column: 1;
 			grid-row: 1;
 
@@ -26,13 +26,13 @@ $date-control-mobile-layout-switch: $break-small;
 			}
 		}
 
-		.stats-date-control-picker-dates__inputs,
-		.stats-date-control-picker-dates__buttons {
+		.date-control-picker-dates__inputs,
+		.date-control-picker-dates__buttons {
 			filter: blur(10px);
 			z-index: 0;
 		}
 
-		.stats-date-control-picker-date__overlay {
+		.date-control-picker-date__overlay {
 			position: absolute;
 			z-index: 1;
 		}
@@ -78,7 +78,7 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker-dates__inputs-input-group {
+.date-control-picker-dates__inputs-input-group {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 16px; // spacing between "From" and "To" groups
@@ -89,12 +89,12 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control {
+.date-control {
 	display: flex;
 	flex-direction: row-reverse;
 }
 
-.stats-date-control-picker {
+.date-control-picker {
 	> .components-button {
 		align-items: center;
 		background: #fff;
@@ -113,13 +113,13 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker-dates__inputs {
+.date-control-picker-dates__inputs {
 	align-items: flex-start; // this prevents flex children from stretching
 	display: flex; // to position "From" and "To" groups side by side
 	gap: 16px; // spacing between the "From" input and the "To" input
 
 	input[type="date"],
-	.stats-date-control-picker-dates__input {
+	.date-control-picker-dates__input {
 		font-family: $font-sf-pro-text;
 		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
 		font-style: normal;
@@ -135,12 +135,12 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker-dates__calendar {
+.date-control-picker-dates__calendar {
 	display: flex;
 	gap: 18px;
 	padding-bottom: 18px;
 
-	.stats-date-control-picker-dates__calendar--from {
+	.date-control-picker-dates__calendar--from {
 		.components-datetime__date {
 			h3 + button {
 				display: none;
@@ -155,7 +155,7 @@ $date-control-mobile-layout-switch: $break-small;
 		}
 	}
 
-	.stats-date-control-picker-dates__calendar--to {
+	.date-control-picker-dates__calendar--to {
 		.components-datetime__date {
 			button:first-of-type {
 				display: none;
@@ -183,7 +183,7 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker__popover-content {
+.date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;
 	flex-direction: row-reverse;
@@ -193,13 +193,13 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker__popover-wrapper {
+.date-control-picker__popover-wrapper {
 	.popover__inner {
 		border-radius: 4px;
 	}
 }
 
-.stats-date-control-picker-dates__buttons {
+.date-control-picker-dates__buttons {
 	display: flex;
 	justify-content: flex-end;
 
@@ -221,7 +221,7 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
-.stats-date-control-picker__popover-content .stats-date-control-picker-date .stats-date-control-picker-date__heading {
+.date-control-picker__popover-content .date-control-picker-date .date-control-picker-date__heading {
 	display: flex;
 	align-items: center;
 	color: var(--gray-gray-80, #2c3338);
