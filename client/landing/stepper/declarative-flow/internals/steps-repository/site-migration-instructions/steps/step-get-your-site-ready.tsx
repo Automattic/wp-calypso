@@ -19,7 +19,6 @@ export const StepGetYourSiteReady: FC = () => {
 					}
 				) }
 			</p>
-			<p>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</p>
 			<p>
 				{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
 					components: {
