@@ -200,8 +200,12 @@ const streamApis = {
 		apiNamespace: 'wpcom/v2',
 		query: ( extras, { streamKey } ) => {
 			const feedId = streamKeySuffix( streamKey );
-			const queryParams = feedId !== 'recent' ? { ...extras, feed_id: feedId } : { ...extras };
-			return getQueryString( { queryParams } );
+			const queryParams = { ...extras };
+			if ( feedId !== 'recent' ) {
+				// 'recent' without a suffix means don't filter by feedId
+				queryParams.feed_id = feedId;
+			}
+			return getQueryString( queryParams );
 		},
 	},
 	search: {
