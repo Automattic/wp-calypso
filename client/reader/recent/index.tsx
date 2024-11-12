@@ -33,8 +33,9 @@ const Recent = () => {
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
 		( state ) => state.readerUi.sidebar.selectedRecentSite
 	);
+
 	const streamKey =
-		selectedRecentSidebarFeedId !== null ? `feed:${ selectedRecentSidebarFeedId }` : 'recent';
+		selectedRecentSidebarFeedId !== null ? `recent:${ selectedRecentSidebarFeedId }` : 'recent';
 
 	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
 
