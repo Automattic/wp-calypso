@@ -48,7 +48,15 @@ export const planProducts: Reducer< PlanProduct[], PlanAction > = ( state = [], 
 	}
 };
 
-const reducer = combineReducers( {
+const reducer: Reducer<
+	{
+		features: Record< Locale, Record< string, PlanFeature > >;
+		featuresByType: Record< Locale, Array< FeaturesByType > >;
+		planProducts: PlanProduct[];
+		plans: Record< Locale, Plan[] >;
+	},
+	PlanAction
+> = combineReducers( {
 	features,
 	featuresByType,
 	planProducts,

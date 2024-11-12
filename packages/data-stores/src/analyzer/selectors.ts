@@ -1,6 +1,6 @@
 import type { State } from './reducers';
 
-export const getState = ( state: State ) => state;
+export const getState = ( state: State ): State => state;
 export const isSiteColorsInAnalysis = ( state: State ) => state.analyzer.analyzing;
 export const getSiteColors = ( state: State, url: null | string ) => {
 	if ( ! url ) {

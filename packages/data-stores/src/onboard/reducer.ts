@@ -612,7 +612,60 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer: Reducer<
+	{
+		domain: DomainSuggestion | undefined;
+		domainCartItem: MinimalRequestCartProduct | undefined;
+		domainSearch: string;
+		domainCategory: string | undefined;
+		domainForm: DomainForm;
+		siteUrl: string | undefined;
+		isRedirecting: boolean;
+		hasUsedDomainsStep: boolean;
+		hasUsedPlansStep: boolean;
+		selectedFeatures: FeatureId[];
+		domainTransferNames: DomainTransferNames | undefined;
+		domainTransferAuthCodes: DomainTransferAuthCodes | undefined;
+		shouldImportDomainTransferDnsRecords: boolean;
+		storeType: string;
+		selectedDesign: Design | undefined;
+		selectedStyleVariation: StyleVariation | undefined;
+		selectedSite: number | undefined;
+		siteTitle: string;
+		showSignupDialog: boolean;
+		planProductId: number | undefined;
+		randomizedDesigns: { featured: Design[] };
+		hasOnboardingStarted: boolean;
+		lastLocation: string;
+		intent: string;
+		startingPoint: string;
+		pendingAction: undefined | ( () => Promise< any > );
+		progress: number;
+		progressTitle: string | undefined;
+		goals: SiteGoal[];
+		hideFreePlan: boolean;
+		hidePlansFeatureComparison: boolean;
+		siteDescription: string;
+		siteLogo: null | string;
+		siteAccentColor: string;
+		readymadeTemplate: ReadymadeTemplate | undefined;
+		verticalId: string;
+		storeLocationCountryCode: string;
+		ecommerceFlowRecurType: string;
+		couponCode: string;
+		storageAddonSlug: string;
+		planCartItem: MinimalRequestCartProduct | null;
+		productCartItems: MinimalRequestCartProduct[] | null;
+		isMigrateFromWp: boolean;
+		domainCartItems: MinimalRequestCartProduct[] | undefined;
+		pluginsToVerify: string[] | undefined;
+		profilerData: ProfilerData | undefined;
+		paidSubscribers: boolean;
+		partnerBundle: string | null;
+		signupDomainOrigin: string | undefined;
+	},
+	OnboardAction
+> = combineReducers( {
 	domain,
 	domainCartItem,
 	domainSearch,

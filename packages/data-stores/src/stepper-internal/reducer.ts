@@ -22,7 +22,12 @@ export const stepData: Reducer< StepData | null, StepperInternalAction > = (
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer: Reducer<
+	{
+		stepData: StepData | null;
+	},
+	StepperInternalAction
+> = combineReducers( {
 	stepData,
 } );
 

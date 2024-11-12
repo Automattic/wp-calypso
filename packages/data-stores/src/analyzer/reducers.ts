@@ -29,7 +29,9 @@ const analyzer: Reducer< ColorsState, Action > = ( state = {}, action ) => {
 	return state;
 };
 
-const reducers = combineReducers( { analyzer } );
+const reducers: Reducer< { analyzer: ColorsState }, Action > = combineReducers( {
+	analyzer,
+} );
 
 export type State = ReturnType< typeof reducers >;
 

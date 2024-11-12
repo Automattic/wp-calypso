@@ -426,7 +426,33 @@ const newSite = combineReducers( {
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( {
+const reducer: Reducer<
+	{
+		isFetchingSiteDetails: boolean | undefined;
+		newSite: {
+			data: NewSiteBlogDetails | undefined;
+			error: NewSiteErrorResponse | undefined;
+			isFetching: boolean | undefined;
+		};
+		fetchingSiteError: SiteError | undefined;
+		sites: { [ key: number | string ]: SiteDetails | undefined };
+		launchStatus: { [ key: number ]: SiteLaunchState };
+		sitesDomains: { [ key: number ]: Domain[] };
+		sitesSettings: { [ key: number ]: SiteSettings };
+		siteTheme: { [ key: number ]: CurrentTheme };
+		sitesGlobalStyles: { [ key: number ]: GlobalStyles };
+		siteSetupErrors: {
+			error?: string;
+			message?: string;
+		};
+		atomicTransferStatus: { [ key: number ]: AtomicTransferState };
+		latestAtomicTransferStatus: { [ key: number ]: LatestAtomicTransferState };
+		atomicSoftwareStatus: { [ key: number ]: AtomicSoftwareStatusState };
+		atomicSoftwareInstallStatus: { [ key: number ]: AtomicSoftwareInstallState };
+		bundledPluginSlug: { [ key: string ]: string | undefined };
+	},
+	Action
+> = combineReducers( {
 	isFetchingSiteDetails,
 	newSite,
 	fetchingSiteError,

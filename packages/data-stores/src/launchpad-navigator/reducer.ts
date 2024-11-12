@@ -25,7 +25,13 @@ const checklistsSlug: Reducer< string[], LaunchpadNavigatorAction > = ( state = 
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer: Reducer<
+	{
+		activeChecklistSlug: string | null | undefined;
+		checklistsSlug: string[];
+	},
+	LaunchpadNavigatorAction
+> = combineReducers( {
 	activeChecklistSlug,
 	checklistsSlug,
 } );
