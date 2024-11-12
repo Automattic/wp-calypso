@@ -413,7 +413,8 @@
 		"@wordpress/warning": "3.8.0",
 		"@wordpress/widgets": "4.8.0",
 		"@wordpress/wordcount": "4.8.0",
-		"@wordpress/data/redux": "^4.1.2"
+		"@wordpress/data/redux": "^4.1.2",
+		"@automattic/design-picker/redux": "^5.0.1"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
