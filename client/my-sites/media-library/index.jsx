@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
-import { selectMediaItems } from 'calypso/state/media/actions';
+import { selectMediaItems, requestPhotosPickerFeatureStatus } from 'calypso/state/media/actions';
+import getGooglePhotosPickerFeatureStatus from 'calypso/state/selectors/get-google-photos-picker-feature-status';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -73,6 +74,10 @@ class MediaLibrary extends Component {
 		if ( this.props.needsKeyring ) {
 			// Are we connected to anything yet?
 			this.props.requestKeyringConnections();
+		}
+
+		if ( this.props.photosPickerApiEnabled === null ) {
+			this.props.requestPhotosPickerFeatureStatus();
 		}
 	}
 
@@ -174,6 +179,7 @@ class MediaLibrary extends Component {
 					post={ !! this.props.postId }
 					disableLargeImageSources={ this.props.disableLargeImageSources }
 					disabledDataSources={ this.props.disabledDataSources }
+					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
 				/>
 				<Content
 					site={ this.props.site }
@@ -207,9 +213,11 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
 		hasVideoUploadFeature: siteHasFeature( state, site?.ID, 'upload-video-files' ),
+		photosPickerApiEnabled: getGooglePhotosPickerFeatureStatus( state ),
 	} ),
 	{
 		requestKeyringConnections,
+		requestPhotosPickerFeatureStatus,
 		selectMediaItems,
 	}
 )( MediaLibrary );

@@ -8,20 +8,25 @@ export const ResizableTextarea: React.FC< {
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
-} > = ( { className, sendMessageHandler, inputRef, keyUpHandle } ) => {
+	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
+} > = ( { className, sendMessageHandler, inputRef, keyUpHandle, setSubmitDisabled } ) => {
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
 				// call the handler to remove the validation message if visible.
 				keyUpHandle();
+				setSubmitDisabled( true );
 				return;
 			}
+
+			setSubmitDisabled( false );
+
 			if ( event.key === 'Enter' && ! event.shiftKey ) {
 				event.preventDefault();
 				await sendMessageHandler();
 			}
 		},
-		[ inputRef, sendMessageHandler, keyUpHandle ]
+		[ inputRef, sendMessageHandler, keyUpHandle, setSubmitDisabled ]
 	);
 
 	useEffect( () => {

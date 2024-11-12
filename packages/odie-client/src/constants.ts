@@ -53,8 +53,8 @@ export const ODIE_TRANSFER_MESSAGE = (
 	shouldUseHelpCenterExperience: boolean | undefined
 ): Message => ( {
 	content: shouldUseHelpCenterExperience
-		? "Help's on the way!"
-		: "We're connecting you to our support team.",
+		? __( "Help's on the way!", __i18n_text_domain__ )
+		: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
 	role: 'bot',
 	type: 'message',
 	context: {

@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
@@ -178,13 +179,16 @@ const Recent = () => {
 			</div>
 			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 				{ selectedItem && getPostFromItem( selectedItem ) && (
-					<AsyncLoad
-						require="calypso/blocks/reader-full-post"
-						blogId={ selectedItem.feedId }
-						postId={ selectedItem.postId }
-						onClose={ () => setSelectedItem( null ) }
-						layout="recent"
-					/>
+					<>
+						<AsyncLoad
+							require="calypso/blocks/reader-full-post"
+							feedId={ selectedItem.feedId }
+							postId={ selectedItem.postId }
+							onClose={ () => setSelectedItem( null ) }
+							layout="recent"
+						/>
+						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+					</>
 				) }
 			</div>
 		</div>

@@ -16,6 +16,10 @@
 	}
 }
 
+.is-section-marketing .layout__content {
+	background-color: #fff;
+}
+
 .tools__header-body {
 	display: flex;
 	flex-direction: row;
@@ -25,6 +29,7 @@
 	flex-wrap: wrap;
 	border-radius: 4px;
 	background-color: var(--color-neutral-0);
+  box-shadow: none;
 }
 
 .tools__header-info {

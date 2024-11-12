@@ -56,7 +56,7 @@ body .customer-home__layout .domain-upsell__card {
 		padding: 24px 0 0;
 		gap: 16px;
 		@media (min-width: ($break-large + 1)) {
-			flex-direction: row-reverse;
+			flex-direction: row;
 		}
 	}
 

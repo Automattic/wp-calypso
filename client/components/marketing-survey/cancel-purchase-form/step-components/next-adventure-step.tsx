@@ -80,35 +80,41 @@ export default function NextAdventureStep( props: Props ) {
 				} ) }
 			/>
 			<div className="cancel-purchase-form__feedback-questions">
-				<TextareaControl
-					label={ translate( "What's one thing we could have done better?" ) }
-					value={ text }
-					onChange={ ( value: string ) => {
-						setText( value );
-						props.onChangeText?.( value );
-					} }
-					placeholder={ translate( 'Optional' ) }
-					name="improvementInput"
-					id="improvementInput"
-				/>
-				{ props.isPlan && (
-					<SelectControl
-						label={ translate( 'Where is your next adventure taking you?' ) }
-						value={ nextAdventure }
-						options={ options }
+				<div className="cancel-purchase-form__feedback-question">
+					<TextareaControl
+						label={ translate( "What's one thing we could have done better?" ) }
+						value={ text }
 						onChange={ ( value: string ) => {
-							onDetailsChange( '' );
-							setNextAdventure( value );
-							props.onSelectNextAdventure?.( value );
+							setText( value );
+							props.onChangeText?.( value );
 						} }
+						placeholder={ translate( 'Optional' ) }
+						name="improvementInput"
+						id="improvementInput"
 					/>
+				</div>
+				{ props.isPlan && (
+					<div className="cancel-purchase-form__feedback-question">
+						<SelectControl
+							label={ translate( 'Where is your next adventure taking you?' ) }
+							value={ nextAdventure }
+							options={ options }
+							onChange={ ( value: string ) => {
+								onDetailsChange( '' );
+								setNextAdventure( value );
+								props.onSelectNextAdventure?.( value );
+							} }
+						/>
+					</div>
 				) }
 				{ selectedAdventureOption?.textPlaceholder && (
-					<TextControl
-						placeholder={ selectedAdventureOption.textPlaceholder }
-						value={ nextAdventureDetails }
-						onChange={ onDetailsChange }
-					/>
+					<div className="cancel-purchase-form__feedback-question">
+						<TextControl
+							placeholder={ selectedAdventureOption.textPlaceholder }
+							value={ nextAdventureDetails }
+							onChange={ onDetailsChange }
+						/>
+					</div>
 				) }
 			</div>
 		</div>
