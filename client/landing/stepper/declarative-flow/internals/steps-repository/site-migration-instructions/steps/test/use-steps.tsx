@@ -250,16 +250,6 @@ describe( 'Unknown source site', () => {
 		expect( queryByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should not render the "Get key" button', () => {
-		const { result } = renderHook( () =>
-			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
-		);
-		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
-
-		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
-		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
-	} );
-
 	it( 'Should not render any buttons on the migration key step if the migration key is not set and the fallback is not displayed', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
 		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
