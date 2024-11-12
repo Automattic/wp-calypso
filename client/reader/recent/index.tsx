@@ -149,6 +149,20 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
+	const [ hasLoadedItems, setHasLoadedItems ] = useState( false );
+
+	useEffect( () => {
+		const isEmpty = ! data?.items || data.items.length === 0;
+		if ( ! isEmpty ) {
+			setHasLoadedItems( true );
+		}
+	}, [ data ] );
+
+	// To prevent content flashing, don't render the component until data has loaded for the first time.
+	if ( ! hasLoadedItems && data?.isRequesting ) {
+		return null;
+	}
+
 	const isEmpty = ! data?.items || data.items.length === 0;
 
 	return (
