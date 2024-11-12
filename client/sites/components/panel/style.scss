@@ -20,4 +20,9 @@
 	p.panel-description {
 		margin-bottom: 12px;
 	}
+
+	.form-text-input,
+	.form-select {
+		font-size: rem(14px) !important;
+	}
 }

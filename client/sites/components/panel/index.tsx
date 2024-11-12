@@ -19,15 +19,17 @@ export function PanelSection( {
 
 export function PanelHeading( {
 	asFormLabel,
+	id,
 	children,
 }: {
 	asFormLabel?: boolean;
+	id?: string;
 	children: React.ReactNode;
 } ) {
 	if ( asFormLabel ) {
 		return <FormLabel>{ children }</FormLabel>;
 	}
-	return <h2>{ children }</h2>;
+	return <h2 id={ id }>{ children }</h2>;
 }
 
 export function PanelDescription( { children }: { children: React.ReactNode } ) {
