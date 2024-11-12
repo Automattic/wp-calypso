@@ -7,7 +7,7 @@ import fromApi from './from-api';
 
 export const fetch = ( action ) => {
 	const { chartTab, date, period, quantity, siteId, statFields } = action;
-	const currentTabFields = chartTab === 'views' ? [ 'views', 'visitors' ] : [ chartTab ];
+	const currentTabFields = chartTab === 'views' ? [ 'views' ] : [ chartTab ];
 	const otherTabFields =
 		statFields?.filter( ( field ) => ! currentTabFields.includes( field ) ) ?? [];
 

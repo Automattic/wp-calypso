@@ -95,7 +95,9 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		this.props.requestChartCounts( this.props.query );
+	};
 
 	render() {
 		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
@@ -151,7 +153,8 @@ const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) 
 	period,
 	quantity,
 	siteId,
-	statFields: QUERY_FIELDS,
+	// We only support hourly data for views.
+	statFields: period !== 'hour' ? QUERY_FIELDS : [ 'views' ],
 } ) );
 
 const connectComponent = connect(
@@ -169,7 +172,6 @@ const connectComponent = connect(
 		const quantity = customQuantity ? customQuantity : defaultQuantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 
-		// The end date of the chart depends on the customRange.
 		// If not provided we compute the value. (maintains previous behaviour)
 		const date = customRange
 			? customRange.chartEnd

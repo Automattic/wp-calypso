@@ -314,6 +314,10 @@ class StatsSite extends Component {
 			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
 		);
 
+		if ( adjustedChartStartDate.isSame( adjustedChartEndDate, 'day' ) ) {
+			customChartQuantity = 24;
+		}
+
 		// Force the default date range to be 7 days if the 30-day option is locked.
 		if ( shouldForceDefaultDateRange ) {
 			// For ChartTabs

@@ -10,7 +10,7 @@ const week = { value: 'week', label: translate( 'Weeks' ) };
 const month = { value: 'month', label: translate( 'Months' ) };
 const year = { value: 'year', label: translate( 'Years' ) };
 
-export const intervals = [ day, week, month, year ];
+export const intervals = [ hour, day, week, month, year ];
 export const emailIntervals = [ hour, day ];
 
 export const AVAILABLE_PAGE_MODULES = {

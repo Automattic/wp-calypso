@@ -22,6 +22,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	let numPeriodAgo;
 
 	switch ( period ) {
+		case 'hour':
+			numPeriodAgo = durationAgo.asHours();
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
 			break;
@@ -107,6 +109,12 @@ export function redirectToDefaultModulePage( context ) {
 export function overview( context, next ) {
 	const filters = function () {
 		return [
+			{
+				title: i18n.translate( 'Hours' ),
+				path: '/stats/hour',
+				id: 'stats-hour',
+				period: 'hour',
+			},
 			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
