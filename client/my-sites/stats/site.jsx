@@ -402,8 +402,8 @@ class StatsSite extends Component {
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				) }
 				{ isNewDateFilteringEnabled && (
-					// moves date range block into new location
-					<StatsPeriodHeader>
+					// moves date range block into new location + adds sticky header
+					<StatsPeriodHeader className="is-sticky">
 						<StatsPeriodNavigation
 							date={ date }
 							period={ period }
