@@ -27,6 +27,7 @@ jest.mock( 'calypso/state/sites/actions', () => ( {
 describe( 'MigrationPending', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
+		jest.clearAllMocks();
 	} );
 
 	it( 'cancels the migration', async () => {
@@ -40,8 +41,25 @@ describe( 'MigrationPending', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
 
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Yes, I want to cancel my migration' } )
+		);
+
 		await waitFor( () => {
 			expect( requestSite ).toHaveBeenCalledWith( site.ID );
+		} );
+	} );
+
+	it( 'skips the migration dialog', async () => {
+		const mockedDispatch = jest.fn();
+		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		renderWithProvider( <MigrationPending site={ site } /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'No, I want to continue' } ) );
+
+		await waitFor( () => {
+			expect( requestSite ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
