@@ -165,9 +165,17 @@ const Recent = () => {
 					{ isEmpty ? (
 						<>
 							<p>
-								<strong>Welcome!</strong> Follow your favorite sites and their latest posts will
-								appear here. Read, like, and comment in a distraction-free environment. Get started
-								by selecting your interests below:
+								{ translate(
+									'%(welcome)s Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
+									{
+										args: {
+											welcome: translate( 'Welcome!' ),
+										},
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
 							</p>
 							<ReaderOnboarding />
 						</>
