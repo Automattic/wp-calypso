@@ -634,7 +634,7 @@ class Login extends Component {
 					headerText = (
 						<h3>
 							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-								? translate( 'Connect your account' )
+								? translate( 'Log in to your account' )
 								: translate( 'One last step' ) }
 						</h3>
 					);
