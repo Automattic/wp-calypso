@@ -122,7 +122,7 @@ describe( 'Steps', () => {
 	} );
 } );
 
-describe( 'Step 1 - Install the Migrate Guru plugin', () => {
+describe( 'Step 1 - Install the Migrate to WordPress.com plugin', () => {
 	it( 'Should render the "Install plugin" and "Next" buttons in the first step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
@@ -131,7 +131,7 @@ describe( 'Step 1 - Install the Migrate Guru plugin', () => {
 		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should open the Migrate Guru plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
+	it( 'Should open the Migrate to WordPress.com plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
@@ -139,7 +139,7 @@ describe( 'Step 1 - Install the Migrate Guru plugin', () => {
 		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
 
 		expect( window.open ).toHaveBeenCalledWith(
-			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`,
+			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`,
 			'_blank'
 		);
 	} );
@@ -154,7 +154,7 @@ describe( 'Step 2 - Get your site ready', () => {
 		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should open the Migrate Guru plugin page on the source site when the "Get started" button is clicked', () => {
+	it( 'Should open the Migrate to WordPress.com plugin page on the source site when the "Get started" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
@@ -162,7 +162,7 @@ describe( 'Step 2 - Get your site ready', () => {
 		fireEvent.click( getByRole( 'button', { name: /Get started/ } ) );
 
 		expect( window.open ).toHaveBeenCalledWith(
-			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=migrateguru`,
+			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=wpcom-migration`,
 			'_blank'
 		);
 	} );
@@ -194,7 +194,7 @@ describe( 'Step 3 - Add your migration key', () => {
 		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
+	it( 'Should open the Migrate to WordPress.com plugin page on the new site when the "Get key" button is clicked', () => {
 		const { result } = renderHook( () =>
 			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
 		);
@@ -204,7 +204,7 @@ describe( 'Step 3 - Add your migration key', () => {
 		fireEvent.click( getByRole( 'button', { name: /Get key/ } ) );
 
 		expect( window.open ).toHaveBeenCalledWith(
-			`${ siteUrl }/wp-admin/admin.php?page=migrateguru`,
+			`${ siteUrl }/wp-admin/admin.php?page=wpcom-migration`,
 			'_blank'
 		);
 	} );
@@ -237,7 +237,7 @@ describe( 'Unknown source site', () => {
 		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
 
 		expect( window.open ).toHaveBeenCalledWith(
-			'https://wordpress.org/plugins/migrate-guru/',
+			'https://wordpress.org/plugins/wpcom-migration/',
 			'_blank'
 		);
 	} );

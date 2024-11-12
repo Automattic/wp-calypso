@@ -6,12 +6,12 @@ import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepButton } from './step-button';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
-import { StepInstallMigrateGuru } from './step-install-migrate-guru';
+import { StepInstallMigrationPlugin } from './step-install-migration-plugin';
 import { StepLinkCta } from './step-link-cta';
-import { getMigrateGuruPageURL, getPluginInstallationPage } from './utils';
+import { getMigrationPluginPageURL, getPluginInstallationPage } from './utils';
 import type { Task, Expandable } from '@automattic/launchpad';
 
-const INSTALL_MIGRATE_GURU = 'install-the-migrate-guru-plugin';
+const INSTALL_MIGRATION_PLUGIN = 'install-the-migrate-plugin';
 const GET_SITE_READY = 'get-your-site-ready';
 const ADD_MIGRATION_KEY = 'add-your-migration-key';
 
@@ -62,9 +62,9 @@ const useStepsData = ( {
 
 	return [
 		{
-			key: INSTALL_MIGRATE_GURU,
+			key: INSTALL_MIGRATION_PLUGIN,
 			title: translate( 'Install the Migrate to WordPress.com plugin' ),
-			content: <StepInstallMigrateGuru />,
+			content: <StepInstallMigrationPlugin />,
 			action: (
 				<StepLinkCta url={ getPluginInstallationPage( fromUrl ) } linkname="install-plugin">
 					{ translate( 'Install plugin' ) }
@@ -76,7 +76,7 @@ const useStepsData = ( {
 			title: translate( 'Get your site ready' ),
 			content: <StepGetYourSiteReady />,
 			action: fromUrl ? (
-				<StepLinkCta url={ getMigrateGuruPageURL( fromUrl ) } linkname="go-to-plugin-page">
+				<StepLinkCta url={ getMigrationPluginPageURL( fromUrl ) } linkname="go-to-plugin-page">
 					{ translate( 'Get started' ) }
 				</StepLinkCta>
 			) : undefined,
