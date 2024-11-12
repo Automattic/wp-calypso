@@ -35,23 +35,19 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	return addQueryArgs( baseQueryArgs, '/setup/hosted-site-migration/site-migration-credentials' );
 };
 
-export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
-	const continueMigrationUrl = getContinueMigrationUrl( site );
-	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
-
-	const title = translate( 'Your WordPress site is ready to be migrated' );
-	const subTitle = translate(
-		'Start your migration today and get ready for unmatched WordPress hosting.'
-	);
+const useCancelllation = ( site: SiteDetails ) => {
+	const dispatch = useDispatch();
+	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
 
 	const {
-		mutate: cancelMigration,
+		mutate: mutateCancelMigration,
 		isSuccess: isCancellationSuccess,
 		isPending: isCancelling,
 		error: cancellationError,
 	} = useMigrationCancellation( site.ID );
-	const dispatch = useDispatch();
-	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
+
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const [ errorNoticeDismissed, setErrorNoticeDismissed ] = useState( false );
 
 	const reloadSite = useCallback( () => {
 		dispatch( requestSite( site.ID ) );
@@ -66,21 +62,60 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		}
 	}, [ isCancellationSuccess, reloadSite ] );
 
-	const [ errorNoticeDismissed, setErrorNoticeDismissed ] = useState( false );
-
 	useEffect( () => {
 		if ( cancellationError ) {
 			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
 		}
 	}, [ cancellationError ] );
 
-	const handleCancelButtonClick = useCallback( () => {
-		setErrorNoticeDismissed( false );
-		cancelMigration();
-		setIsConfirmModalVisible( false );
-	}, [ cancelMigration ] );
+	const openModal = useCallback( () => {
+		setIsModalVisible( true );
+	}, [] );
 
-	if ( isCancelling || isCancellationSuccess ) {
+	const closeModal = useCallback( () => {
+		setIsModalVisible( false );
+	}, [] );
+
+	const dismissErrorNotice = useCallback( () => {
+		setErrorNoticeDismissed( true );
+	}, [] );
+
+	const cancelMigration = useCallback( () => {
+		setErrorNoticeDismissed( false );
+		mutateCancelMigration();
+		setIsModalVisible( false );
+	}, [ mutateCancelMigration ] );
+
+	return {
+		isModalVisible,
+		isLoading: isCancelling || isCancellationSuccess,
+		showErrorNotice: cancellationError && ! errorNoticeDismissed,
+		cancelMigration,
+		openModal,
+		closeModal,
+		dismissErrorNotice,
+	};
+};
+
+export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
+	const continueMigrationUrl = getContinueMigrationUrl( site );
+
+	const title = translate( 'Your WordPress site is ready to be migrated' );
+	const subTitle = translate(
+		'Start your migration today and get ready for unmatched WordPress hosting.'
+	);
+
+	const {
+		isModalVisible: isCancellationModalVisible,
+		isLoading: isCancelling,
+		cancelMigration,
+		openModal: openCancellationModal,
+		closeModal: closeCancellationModal,
+		showErrorNotice: showCancellationErrorNotice,
+		dismissErrorNotice: dismissCancellationErrorNotice,
+	} = useCancelllation( site );
+
+	if ( isCancelling ) {
 		return (
 			<LoadingPlaceholder
 				aria-busy
@@ -93,9 +128,9 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	return (
 		<Container>
 			<ConfirmModal
-				isVisible={ isConfirmModalVisible }
-				onCancel={ () => setIsConfirmModalVisible( false ) }
-				onConfirm={ handleCancelButtonClick }
+				isVisible={ isCancellationModalVisible }
+				onCancel={ closeCancellationModal }
+				onConfirm={ cancelMigration }
 				title={ translate( 'Cancel migration' ) }
 				text={ translate(
 					"When you cancel your migration your original site will stay as is. You can always restart the migration when you're ready."
@@ -104,13 +139,8 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				cancelButtonLabel={ translate( "Don't cancel migration" ) }
 			/>
 
-			{ cancellationError && ! errorNoticeDismissed && (
-				<Notice
-					status="is-warning"
-					onDismissClick={ () => {
-						setErrorNoticeDismissed( true );
-					} }
-				>
+			{ showCancellationErrorNotice && (
+				<Notice status="is-warning" onDismissClick={ dismissCancellationErrorNotice }>
 					{ translate(
 						'We ran into a problem cancelling your migration. Please try again shortly.'
 					) }
@@ -126,7 +156,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 						<Button
 							variant="link"
 							className="migration-pending__cancel-button"
-							onClick={ () => setIsConfirmModalVisible( true ) }
+							onClick={ openCancellationModal }
 						>
 							{ translate( 'Cancel migration' ) }
 						</Button>
