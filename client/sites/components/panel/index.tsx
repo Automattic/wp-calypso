@@ -1,19 +1,35 @@
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
+
 import './style.scss';
 
 export function PanelSection( {
-	title,
-	subtitle,
+	isBorderless,
 	children,
 }: {
-	title: string;
-	subtitle?: string | React.ReactNode;
+	isBorderless?: boolean;
 	children: React.ReactNode;
 } ) {
 	return (
-		<div className="panel-section">
-			<h2>{ title }</h2>
-			{ subtitle && <p className="subtitle">{ subtitle }</p> }
+		<div className={ clsx( 'panel-section', { 'panel-section--borderless': isBorderless } ) }>
 			{ children }
 		</div>
 	);
+}
+
+export function PanelHeading( {
+	asFormLabel,
+	children,
+}: {
+	asFormLabel?: boolean;
+	children: React.ReactNode;
+} ) {
+	if ( asFormLabel ) {
+		return <FormLabel>{ children }</FormLabel>;
+	}
+	return <h2>{ children }</h2>;
+}
+
+export function PanelDescription( { children }: { children: React.ReactNode } ) {
+	return <p className="panel-description">{ children }</p>;
 }

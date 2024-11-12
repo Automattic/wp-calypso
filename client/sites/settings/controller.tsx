@@ -10,7 +10,7 @@ import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
 import AgencySettings from './agency';
 import useIsAgencySettingSupported from './agency/hooks/use-is-agency-setting-supported';
-import CachingSettings from './caching/page';
+import CachingSettings from './caching';
 import SiteSettings from './site';
 import WebServerSettings from './web-server/page';
 import type { Context as PageJSContext } from '@automattic/calypso-router';

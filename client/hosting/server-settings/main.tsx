@@ -19,7 +19,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card/card';
 import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card/card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
 import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
@@ -33,6 +32,7 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
+import CacheCard from 'calypso/sites/settings/caching/form';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';

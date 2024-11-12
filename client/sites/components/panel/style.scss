@@ -1,8 +1,23 @@
 .panel-section {
+	&.panel-section--borderless{
+		margin-top: 24px;
+	}
+
+	&:not(.panel-section--borderless) {
+		padding: 22px;
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 3px;
+		box-shadow: none;
+	}
+
 	h2 {
 		font-size: 1rem;
 		font-weight: 500;
 		line-height: 24px;
-		margin-bottom: 10px;
+		margin-bottom: 12px;
+	}
+
+	p.panel-description {
+		margin-bottom: 12px;
 	}
 }
