@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
@@ -19,7 +20,11 @@ import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
+import {
+	requestPage,
+	clearStream,
+	requestPaginatedStream,
+} from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
@@ -256,6 +261,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const handleContinue = useCallback( () => {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+
+		// Refresh the recent stream data.
+		dispatch(
+			requestPaginatedStream( {
+				streamKey: 'recent',
+				page: 1,
+				perPage: 10,
+			} ) as AnyAction
+		);
 
 		handleClose();
 	}, [ dispatch, handleClose ] );
