@@ -64,7 +64,9 @@ const useCancelllation = ( site: SiteDetails ) => {
 
 	useEffect( () => {
 		if ( cancellationError ) {
-			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
+			recordTracksEvent( 'calypso_pending_migration_cancel_error', {
+				error: cancellationError.message,
+			} );
 		}
 	}, [ cancellationError ] );
 
