@@ -6,7 +6,7 @@
 	@include a8c-clear-fix;
 	position: relative;
 	transition: margin 0.15s linear;
-	padding: 0;
+	padding: 0 !important;
 	width: 100%;
 
 	&.is-expanded {

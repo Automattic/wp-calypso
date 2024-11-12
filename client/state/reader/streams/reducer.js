@@ -3,6 +3,7 @@ import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
+	READER_STREAMS_PAGINATED_REQUEST,
 	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_SELECT_NEXT_ITEM,
@@ -211,6 +212,7 @@ export const isRequesting = ( state = false, action ) => {
 	// placeholders at the bottom of the stream
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_REQUEST:
+		case READER_STREAMS_PAGINATED_REQUEST:
 			return state || ( ! action.payload.isPoll && ! action.payload.isGap );
 		case READER_STREAMS_PAGE_RECEIVE:
 			return false;
@@ -246,6 +248,20 @@ export const pageHandle = ( state = null, action ) => {
 	return state;
 };
 
+export const pagination = ( state = { totalItems: 0, totalPages: 0 }, action ) => {
+	switch ( action.type ) {
+		case READER_STREAMS_PAGE_RECEIVE:
+			return {
+				totalItems: action.payload.totalItems,
+				totalPages: action.payload.totalPages,
+			};
+		case READER_STREAMS_CLEAR:
+			return { totalItems: 0, totalPages: 0 };
+		default:
+			return state;
+	}
+};
+
 const streamReducer = combineReducers( {
 	items,
 	pendingItems,
@@ -253,6 +269,7 @@ const streamReducer = combineReducers( {
 	lastPage,
 	isRequesting,
 	pageHandle,
+	pagination,
 } );
 
 export default keyedReducer( 'payload.streamKey', streamReducer );

@@ -15,10 +15,12 @@ export const setHelpCenterZendeskConversationStarted = () =>
 				performance.now().toString()
 			)
 	);
+
 export const getHelpCenterZendeskConversationStarted = () =>
 	ignoreFatalsForSessionStorage(
 		() => sessionStorage?.getItem( 'help_center_zendesk_conversation_started' )
 	);
+
 export const clearHelpCenterZendeskConversationStarted = () =>
 	ignoreFatalsForSessionStorage(
 		() => sessionStorage?.removeItem( 'help_center_zendesk_conversation_started' )

@@ -1,19 +1,39 @@
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
-import type { SupportInteractionEvent } from '../types/';
+import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
 /**
  * Manage support interaction events.
  */
 export const useManageSupportInteraction = () => {
+	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
+
 	/**
 	 * Start a new support interaction.
 	 */
 	const startNewInteraction = useMutation( {
 		mutationKey: [ 'support-interaction', 'new-conversation' ],
 		mutationFn: ( eventData: SupportInteractionEvent ) =>
-			handleSupportInteractionsFetch( 'POST', null, eventData ),
-	} ).mutateAsync;
+			handleSupportInteractionsFetch(
+				'POST',
+				null,
+				eventData
+			) as unknown as Promise< SupportInteraction >,
+		onSuccess: (
+			newSupportInteraction: SupportInteraction,
+			eventData: SupportInteractionEvent
+		) => {
+			const hasExpectedEvent = newSupportInteraction?.events?.some(
+				( event ) => event.event_external_id === eventData.event_external_id
+			);
+
+			if ( hasExpectedEvent ) {
+				setCurrentSupportInteraction( newSupportInteraction );
+			}
+		},
+	} ).mutate;
 
 	/**
 	 * Add an event to a support interaction.
@@ -27,7 +47,7 @@ export const useManageSupportInteraction = () => {
 			interactionId: string;
 			eventData: SupportInteractionEvent;
 		} ) => handleSupportInteractionsFetch( 'POST', `/${ interactionId }/events`, eventData ),
-	} ).mutateAsync;
+	} ).mutate;
 
 	/**
 	 * Resolve a support interaction.
@@ -36,7 +56,7 @@ export const useManageSupportInteraction = () => {
 		mutationKey: [ 'support-interaction', 'resolve' ],
 		mutationFn: ( { interactionId }: { interactionId: string } ) =>
 			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, { status: 'resolved' } ),
-	} ).mutateAsync;
+	} ).mutate;
 
 	return {
 		startNewInteraction,

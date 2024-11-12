@@ -34,7 +34,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
+import SiteSettingPrivacy from 'calypso/sites/settings/site/privacy';
+import LaunchSite from 'calypso/sites/settings/site/visibility/launch-site';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -67,7 +68,6 @@ import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
 import SiteIconSetting from './site-icon-setting';
-import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {

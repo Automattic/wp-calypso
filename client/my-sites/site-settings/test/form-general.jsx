@@ -26,6 +26,7 @@ import {
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import SiteSettingPrivacyForm from 'calypso/sites/settings/site/privacy/form';
 import editorReducer from 'calypso/state/editor/reducer';
 import jetpackReducer from 'calypso/state/jetpack/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
@@ -35,7 +36,6 @@ import timezonesReducer from 'calypso/state/timezones/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteSettingsFormGeneral } from '../form-general';
-import SiteSettingPrivacyForm from '../site-setting-privacy/form';
 
 moment.tz = {
 	guess: () => moment(),

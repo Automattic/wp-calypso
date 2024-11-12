@@ -1,10 +1,23 @@
 .domain-skip-suggestion {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 
 	& .button.domain-suggestion__action.is-borderless {
 		flex: 1 0 auto;
 	}
+
+	.domain-suggestion__action-container {
+		display: flex;
+	}
+
+	.domain-suggestion__content {
+		width: auto;
+	}
+}
+
+.domain-skip-suggestion::after {
+	display: none;
 }
 
 .domain-skip-suggestion__domain-description {

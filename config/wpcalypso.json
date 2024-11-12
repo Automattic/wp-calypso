@@ -61,6 +61,7 @@
 		"google-photos-picker": false,
 		"help": true,
 		"help/gpt-response": true,
+		"help-center-experience": false,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
 		"hosting-server-settings-enhancements": true,

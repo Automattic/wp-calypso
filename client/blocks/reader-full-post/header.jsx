@@ -33,10 +33,10 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 	}
 
 	// Rather than pass in additional props for the `recent` layout, we extract the props we need from authorProfile.
-	const { props: { author, siteIcon, feedIcon, siteName, followCount } = {} } = authorProfile || {};
+	const { props: { siteName, followCount } = {} } = authorProfile || {};
 
 	const isDefaultLayout = layout === 'default';
-	const iconSrc = author?.avatar_URL || siteIcon || feedIcon;
+	const iconSrc = post?.site_icon?.img || post?.author?.avatar_URL;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (

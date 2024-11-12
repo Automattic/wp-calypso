@@ -283,10 +283,14 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<LicensingActivation
 				title={
-					<>
-						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</>
+					source === 'connect-after-checkout' ? (
+						<>{ translate( 'Activate your product:' ) }</>
+					) : (
+						<>
+							{ translate( 'Thank you for your purchase!' ) }{ ' ' }
+							{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+						</>
+					)
 				}
 				footerImage={ footerCardImg }
 				showProgressIndicator

@@ -1,7 +1,7 @@
 export interface ReaderPost {
 	site_name: string;
 	postId: number;
-	blogId: number;
+	feedId: number;
 }
 
 export interface PostItem {

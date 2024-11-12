@@ -496,7 +496,11 @@ describe( 'Installed plugin selectors', () => {
 								version: '1.0',
 							},
 						},
-						status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
+						status: [
+							PLUGINS_STATUS.UPDATE,
+							PLUGINS_STATUS.ACTIVE,
+							PLUGINS_STATUS.AUTOUPDATE_ENABLED,
+						],
 						allStatuses: [
 							{
 								action: 'DEACTIVATE_PLUGIN',
@@ -516,14 +520,14 @@ describe( 'Installed plugin selectors', () => {
 						id: 'hello-dolly/hello-dolly',
 						slug: 'hello-dolly/hello-dolly',
 						sites: { 'site.one': { active: true } },
-						status: [ PLUGINS_STATUS.ACTIVE ],
+						status: [ PLUGINS_STATUS.ACTIVE, PLUGINS_STATUS.AUTOUPDATE_DISABLED ],
 						allStatuses: [],
 					},
 					{
 						id: 'vaultpress/vaultpress',
 						slug: 'vaultpress/vaultpress',
 						sites: { 'site.one': { active: false } },
-						status: [ PLUGINS_STATUS.INACTIVE ],
+						status: [ PLUGINS_STATUS.INACTIVE, PLUGINS_STATUS.AUTOUPDATE_DISABLED ],
 						allStatuses: [],
 					},
 				] )

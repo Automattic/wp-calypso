@@ -1,4 +1,4 @@
-import { Button, PremiumBadge } from '@automattic/components';
+import { PremiumBadge } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -7,8 +7,8 @@ import { useGoals } from './goals';
 
 type SelectGoalsProps = {
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
-	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
+	isAddedGoalsExp: boolean;
 };
 
 const Placeholder = styled.div`
@@ -33,9 +33,9 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
+export const SelectGoals = ( { onChange, selectedGoals, isAddedGoalsExp }: SelectGoalsProps ) => {
 	const translate = useTranslate();
-	const goalOptions = useGoals();
+	const goalOptions = useGoals( isAddedGoalsExp );
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
@@ -65,16 +65,13 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 		onChange( newSelectedGoals );
 	};
 
-	const handleContinueButtonClick = () => {
-		onSubmit( selectedGoals );
-	};
-
 	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
-			<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-
 			<div className="select-goals__cards-container">
+				{ ! isAddedGoalsExp && (
+					<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
+				) }
 				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
 				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (
@@ -93,16 +90,12 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 								onChange={ ( checked ) => handleChange( checked, key ) }
 								checked={ selectedGoals.includes( key ) }
 							>
-								<span className="select-goals__goal-title">{ title }</span>
+								<span data-testid="goal-title" className="select-goals__goal-title">
+									{ title }
+								</span>
 								{ isPremium && <PremiumBadge shouldHideTooltip /> }
 							</SelectCardCheckbox>
 					  ) ) }
-			</div>
-
-			<div className="select-goals__actions-container">
-				<Button primary onClick={ handleContinueButtonClick }>
-					{ translate( 'Continue' ) }
-				</Button>
 			</div>
 		</>
 	);

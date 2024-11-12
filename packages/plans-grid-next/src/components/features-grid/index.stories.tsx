@@ -2,8 +2,6 @@ import {
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
-	setSimplifiedFeaturesGridExperimentVariant,
-	type SimplifiedFeaturesGridExperimentVariant,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -13,11 +11,7 @@ import {
 } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = (
-	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
-		simplifiedFeaturesGridExperimentVariant?: SimplifiedFeaturesGridExperimentVariant;
-	}
-) => {
+const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' > ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -92,17 +86,16 @@ const defaultProps = {
 		},
 		postButtonText: '',
 	} ),
+	enableCategorisedFeatures: true,
+	enableStorageAsBadge: false,
+	enableReducedFeatureGroupSpacing: true,
+	enableLogosOnlyForEnterprisePlan: true,
+	hideFeatureGroupTitles: true,
 };
 
 const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
-	decorators: [
-		( Story, { args: { simplifiedFeaturesGridExperimentVariant = 'control' } } ) => {
-			setSimplifiedFeaturesGridExperimentVariant( simplifiedFeaturesGridExperimentVariant );
-			return <Story />;
-		},
-	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
@@ -146,30 +139,5 @@ export const CuratedPlanMixByIntent = {
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
-	},
-} satisfies Story;
-
-export const FewerFeaturesExperimentTreatmentVariantA = {
-	name: 'Experiment [Simplified features grid]: Treatment A',
-	args: {
-		...PlansInSignup.args,
-		intent: 'plans-default-wpcom',
-		isInSignup: true,
-		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
-	},
-} satisfies Story;
-
-export const FewerFeaturesExperimentTreatmentVariantB = {
-	name: 'Experiment [Simplified features grid]: Treatment B',
-	args: {
-		...PlansInSignup.args,
-		intent: 'plans-default-wpcom',
-		isInSignup: true,
-		enableCategorisedFeatures: true,
-		enableStorageAsBadge: false,
-		enableReducedFeatureGroupSpacing: true,
-		enableLogosOnlyForEnterprisePlan: true,
-		hideFeatureGroupTitles: true,
-		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;
