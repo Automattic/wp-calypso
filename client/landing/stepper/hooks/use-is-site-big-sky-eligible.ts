@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { Onboard } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
@@ -7,8 +8,18 @@ import { ONBOARD_STORE } from '../stores';
 import { useSite } from './use-site';
 import type { OnboardSelect } from '@automattic/data-stores';
 
+const { SiteGoal } = Onboard;
+
 const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
-const validGoals = [ 'other', 'promote' ];
+const invalidGoals = [
+	SiteGoal.PaidSubscribers,
+	SiteGoal.Courses,
+	SiteGoal.DIFM,
+	SiteGoal.Import,
+	SiteGoal.Newsletter,
+	SiteGoal.SellPhysical,
+	SiteGoal.SellDigital,
+];
 
 export function useIsBigSkyEligible() {
 	const { isOwner } = useIsSiteOwner();
@@ -20,11 +31,11 @@ export function useIsBigSkyEligible() {
 		[ site ]
 	);
 
-	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
+	const hasInvalidGoal = goals.some( ( value ) => invalidGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 
 	const eligibilityResult =
-		( featureFlagEnabled && isOwner && isEligiblePlan && hasValidGoal && onSupportedDevice ) ||
+		( featureFlagEnabled && isOwner && isEligiblePlan && ! hasInvalidGoal && onSupportedDevice ) ||
 		false;
 
 	return { isLoading: false, isEligible: eligibilityResult };

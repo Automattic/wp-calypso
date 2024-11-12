@@ -1,4 +1,5 @@
-import { Button, Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 
@@ -11,14 +12,6 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 
 	return (
 		<Card className="tools__header-body">
-			<div className="tools__header-image-wrapper">
-				<img
-					className="tools__header-image"
-					src="/calypso/images/illustrations/illustration-marketing-tools.svg"
-					alt={ String( translate( 'Marketing Tools' ) ) }
-				/>
-			</div>
-
 			<div className="tools__header-info">
 				<h1 className="tools__header-title">{ translate( 'Explore our premium plugins' ) }</h1>
 
@@ -29,10 +22,22 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 				</h2>
 
 				<div className="tools__header-button-row">
-					<Button onClick={ handleButtonClick } primary>
+					<Button
+						className="tools__header-button-row-button"
+						onClick={ handleButtonClick }
+						variant="link"
+					>
 						{ translate( 'Explore now' ) }
+						<Gridicon icon="chevron-right" size={ 16 } />
 					</Button>
 				</div>
+			</div>
+			<div className="tools__header-image-wrapper">
+				<img
+					className="tools__header-image"
+					src="/calypso/images/marketing-tools/premium-plugins-blocks.png"
+					alt={ String( translate( 'Marketing Tools' ) ) }
+				/>
 			</div>
 		</Card>
 	);

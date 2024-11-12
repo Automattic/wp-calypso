@@ -22,13 +22,20 @@ const MarketingToolsFeature: FunctionComponent< Props > = ( {
 	return (
 		<Card className="tools__feature-list-item">
 			<div className="tools__feature-list-item-body">
-				{ imagePath && (
-					<img alt={ imageAlt } className="tools__feature-list-item-body-image" src={ imagePath } />
-				) }
+				<div className="tools__feature-list-item-header">
+					{ imagePath && (
+						<img
+							alt={ imageAlt }
+							className="tools__feature-list-item-body-image"
+							src={ imagePath }
+							height={ 32 }
+							width={ 32 }
+						/>
+					) }
+					<CardHeading>{ title }</CardHeading>
+				</div>
 
 				<div className="tools__feature-list-item-body-text">
-					<CardHeading>{ title }</CardHeading>
-
 					<p>{ description }</p>
 
 					{ disclaimer && <p className="tools__feature-list-item-disclaimer">{ disclaimer }</p> }

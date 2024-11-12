@@ -124,15 +124,6 @@
 			min-width: 40px;
 		}
 
-		.sites-overview__stats-trend,
-		.sites-overview__column-action-button,
-		.sites-overview__row-status,
-		.toggle-activate-monitoring__toggle-button,
-		.sites-dataviews__favorite-btn-wrapper,
-		.sites-overview__boost-score {
-			display: none;
-		}
-
 		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
@@ -218,18 +209,6 @@
 		font-weight: 500;
 		line-height: 14px;
 		color: var(--color-accent-80);
-	}
-
-	tr.dataviews-view-table__row th[data-field-id="favorite"] {
-		vertical-align: top;
-	}
-
-	tr.dataviews-view-table__row {
-		&:hover {
-			.site-set-favorite__favorite-icon {
-				visibility: visible;
-			}
-		}
 	}
 
 	.sites-overview__content-wrapper {
@@ -824,26 +803,6 @@
 
 	.margin-top-16 {
 		margin-top: 16px;
-	}
-
-	.sites-dataviews__favorite-btn-wrapper {
-		display: flex;
-		align-items: center;
-
-		.site-set-favorite__favorite-icon {
-			visibility: hidden;
-			color: var(--color-primary);
-		}
-
-		button.site-set-favorite__favorite-icon {
-			position: unset;
-		}
-
-		&:hover {
-			.site-set-favorite__favorite-icon {
-				visibility: visible;
-			}
-		}
 	}
 }
 

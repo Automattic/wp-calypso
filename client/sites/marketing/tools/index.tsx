@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { Fragment, FunctionComponent } from 'react';
+import { Fragment, FunctionComponent, ReactNode } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -19,6 +20,20 @@ import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
 
 import './style.scss';
+
+const FeaturedButton: FunctionComponent< {
+	children: ReactNode;
+	onClick: () => void;
+	href?: string;
+	target?: string;
+} > = ( { children, onClick, href, target } ) => {
+	return (
+		<Button onClick={ onClick } href={ href } target={ target } variant="link">
+			{ children }
+			<Gridicon style={ { marginLeft: '8px' } } icon="chevron-right" size={ 12 } />
+		</Button>
+	);
+};
 
 export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -77,13 +92,13 @@ export const MarketingTools: FunctionComponent = () => {
 					) }
 					imagePath={ wordPressLogo }
 				>
-					<Button
+					<FeaturedButton
 						onClick={ handleBuiltByWpClick }
 						href={ localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ) }
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }
-					</Button>
+					</FeaturedButton>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
@@ -94,7 +109,9 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath={ earnIllustration }
 					imageAlt={ translate( 'A stack of coins' ) }
 				>
-					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
+					<FeaturedButton onClick={ handleEarnClick }>
+						{ translate( 'Start earning' ) }
+					</FeaturedButton>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
@@ -105,13 +122,13 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath={ fiverrLogo }
 					imageAlt={ translate( 'Fiverr logo' ) }
 				>
-					<Button
+					<FeaturedButton
 						onClick={ handleCreateALogoClick }
 						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
 						target="_blank"
 					>
 						{ translate( 'Make your brand' ) }
-					</Button>
+					</FeaturedButton>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
@@ -122,13 +139,13 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath={ fiverrLogo }
 					imageAlt={ translate( 'Fiverr logo' ) }
 				>
-					<Button
+					<FeaturedButton
 						onClick={ handleHireAnSEOExpertClick }
 						href="https://wp.me/hire-seo-expert/?utm_source=marketing_tab"
 						target="_blank"
 					>
 						{ translate( 'Talk to an SEO expert today' ) }
-					</Button>
+					</FeaturedButton>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
@@ -139,7 +156,9 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 					imageAlt={ translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ) }
 				>
-					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
+					<FeaturedButton onClick={ handleStartSharingClick }>
+						{ translate( 'Start sharing' ) }
+					</FeaturedButton>
 				</MarketingToolsFeature>
 
 				{ isEnglish && (
@@ -151,13 +170,13 @@ export const MarketingTools: FunctionComponent = () => {
 						imagePath={ rocket }
 						imageAlt={ translate( 'A rocketship' ) }
 					>
-						<Button
+						<FeaturedButton
 							onClick={ handleSEOCourseClick }
 							href="https://wordpress.com/learn/courses/intro-to-seo/"
 							target="_blank"
 						>
 							{ translate( 'Register now' ) }
-						</Button>
+						</FeaturedButton>
 					</MarketingToolsFeature>
 				) }
 			</div>

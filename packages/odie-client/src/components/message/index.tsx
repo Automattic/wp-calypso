@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -14,6 +14,8 @@ import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types';
+import './style.scss';
+import './style_redesign.scss';
 
 export type ChatMessageProps = {
 	message: Message;
@@ -108,17 +110,9 @@ const MessageAvatarHeader = ( {
 
 const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
-	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
-
-	useEffect( () => {
-		if ( shouldUseHelpCenterExperience ) {
-			import( './style_redesign.scss' );
-		} else {
-			import( './style.scss' );
-		}
-	}, [ shouldUseHelpCenterExperience ] );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );

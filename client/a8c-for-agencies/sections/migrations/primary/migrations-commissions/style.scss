@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .migrations-commissions {
 	&:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
 		max-width: 900px;
@@ -16,7 +19,17 @@
 				text-decoration: underline;
 			}
 		}
+	}
 
+	.migrations-commissions__content {
+		.consolidated-commissions {
+			padding: 16px;
 
+			@include break-large {
+				padding: 16px 64px 48px;
+				flex-direction: row;
+			}
+		}
 	}
 }
+
