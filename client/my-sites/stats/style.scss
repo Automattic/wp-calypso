@@ -226,6 +226,20 @@ $stats-card-min-width: 390px;
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
+
+	// Sticky header styling
+	.layout__content {
+		&:has(.stats__period-header.is-sticky) {
+			overflow: clip;
+		}
+	}
+
+	.stats__period-header.is-sticky {
+		position: sticky;
+		top: 32px;
+		z-index: 20;
+		background-color: var(--studio-white);
+	}
 }
 
 .list-emails {
