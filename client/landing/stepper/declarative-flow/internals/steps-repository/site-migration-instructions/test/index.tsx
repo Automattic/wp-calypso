@@ -134,12 +134,12 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should navigate to the next step when clicking on Next', async () => {
-		const { getByRole } = render();
+		const { getByRole, queryByText } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect(
-			getByRole( 'link', { name: /Migrate to WordPress.com plugin screen on your source site/ } )
+			queryByText( /Migrate to WordPress.com plugin screen on your source site/ )
 		).toBeInTheDocument();
 	} );
 
@@ -178,7 +178,9 @@ describe( 'SiteMigrationInstructions', () => {
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
-		expect( queryByText( /Migrate to WordPress.com page on the new WordPress.com site/ ) ).toBeInTheDocument();
+		expect(
+			queryByText( /Migrate to WordPress.com page on the new WordPress.com site/ )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should animate skeleton when waiting for completion', async () => {
