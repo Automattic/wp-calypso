@@ -52,7 +52,7 @@ export const getStoreLocationCountryCode = ( state: State ) => state.storeLocati
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;
 export const getCouponCode = ( state: State ) => state.couponCode;
 export const getStorageAddonSlug = ( state: State ) => state.storageAddonSlug;
-export const getState = ( state: State ): State => state;
+export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
 		return false;
