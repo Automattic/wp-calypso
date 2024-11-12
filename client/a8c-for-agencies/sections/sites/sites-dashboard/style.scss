@@ -409,10 +409,6 @@
 				align-items: stretch;
 				overflow: hidden;
 			}
-
-			.components-button:focus:not(:disabled) {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-			}
 		}
 
 		.a4a-layout__top-wrapper,

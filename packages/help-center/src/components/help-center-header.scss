@@ -13,10 +13,6 @@
 		height: $head-foot-height;
 		padding: 16px;
 
-		&.chat-history {
-			border-bottom: none;
-		}
-
 		&.has-unread {
 			background: #3858E9;
 			color: var(--studio-white);
@@ -81,6 +77,14 @@
 				border-radius: 45%;
 				font-size: $font-body-extra-small;
 				color: #3858E9;
+			}
+		}
+
+		.ellipsis-menu {
+			.ellipsis-menu__toggle {
+				width: 36px;
+				height: 36px;
+				padding: 6px;
 			}
 		}
 	}

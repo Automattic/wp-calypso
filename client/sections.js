@@ -850,7 +850,12 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-migrations',
-		paths: [ '/migrations' ],
+		paths: [
+			'/migrations',
+			'/migrations/overview',
+			'/migrations/commissions',
+			'/migrations/payment-settings',
+		],
 		module: 'calypso/a8c-for-agencies/sections/migrations',
 		group: 'a8c-for-agencies',
 	},

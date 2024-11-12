@@ -1,5 +1,8 @@
 @import "@wordpress/base-styles/mixins";
 
+$newsletter_importer_font-size: rem(14px);
+$newsletter_importer_line-height: 20px;
+
 .newsletter-importer {
 	margin: 24px auto 0;
 	max-width: 720px;
@@ -18,8 +21,8 @@
 		}
 
 		p {
-			font-size: rem(14px);
-			line-height: 20px;
+			font-size: $newsletter_importer_font-size;
+			line-height: $newsletter_importer_line-height;
 			color: var(--studio-gray-50);
 		}
 
@@ -43,24 +46,50 @@
 	.summary__content {
 		clear: both;
 		margin-bottom: 12px;
+	}
 
-		p {
-			position: relative;
-			overflow: hidden;
-			margin-bottom: 0;
-		}
+	/**
+	 * Summary table of numbers of posts/pages/subscribers imported
+	 */
+	.summary__content-stats {
+		max-width: 250px;
+		font-size: $newsletter_importer_font-size;
+		line-height: $newsletter_importer_line-height;
+	}
 
-		svg {
-			float: left;
-			margin-right: 6px;
-			margin-top: -1px;
-			fill: var(--studio-gray-50);
+	.summary__content-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		gap: 8px;
+		margin-bottom: 4px;
+		color: var( --studio-gray-70 );
+		> * {
+			align-content: center;
 		}
 	}
 
+	.summary__content-stats-icon {
+		flex-shrink: 0;
+	}
+
+	.summary__content-stats-count {
+		font-weight: 600;
+		margin-left: auto;
+		text-align: left;
+		min-width: 60px;
+		flex-shrink: 0;
+	}
+
 	.summary__content-indent {
-		margin-top: -20;
-		margin-left: 20px;
+		margin-left: 28px;
+		color: var( --studio-gray-50 );
+		svg {
+			fill: var( --studio-gray-50 );
+		}
+		.summary__content-stats-count {
+			font-weight: 400;
+		}
 	}
 
 	.stripe-logo {

@@ -3,11 +3,14 @@ import { Gravatar } from '@automattic/components';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
 import { type ZendeskMessage } from '@automattic/odie-client';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
+import { useGetSupportInteractionById } from '@automattic/odie-client/src/data/use-get-support-interaction-by-id';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { HELP_CENTER_STORE } from '../stores';
 
 import './help-center-support-chat-message.scss';
 
@@ -24,19 +27,24 @@ export const HelpCenterSupportChatMessage = ( {
 	badgeCount = 0,
 	isUnread = false,
 	navigateTo = '',
+	supportInteractionId,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
 	avatarSize?: number;
 	isUnread: boolean;
 	navigateTo: string;
+	altText?: string;
+	supportInteractionId: string | null;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, text } = message;
+	const { displayName, received, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
+	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const renderAvatar = () => {
 		if ( message.role === 'business' ) {
@@ -54,7 +62,12 @@ export const HelpCenterSupportChatMessage = ( {
 	return (
 		<Link
 			to={ navigateTo }
-			onClick={ () => trackContactButtonClicked( sectionName ) }
+			onClick={ () => {
+				trackContactButtonClicked( sectionName );
+				if ( supportInteraction ) {
+					setCurrentSupportInteraction( supportInteraction );
+				}
+			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
 			} ) }
@@ -71,7 +84,9 @@ export const HelpCenterSupportChatMessage = ( {
 				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
-				<div className="help-center-support-chat__conversation-information-message">{ text }</div>
+				<div className="help-center-support-chat__conversation-information-message">
+					{ text || altText }
+				</div>
 				<div className="help-center-support-chat__conversation-sub-information">
 					<span className="help-center-support-chat__conversation-information-name">
 						{ displayName }

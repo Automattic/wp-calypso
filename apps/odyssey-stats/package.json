@@ -62,11 +62,11 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@babel/core": "^7.25.8",
 		"@size-limit/file": "^8.2.6",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.9.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.11.0",
 		"autoprefixer": "^10.2.5",
 		"babel-jest": "^29.6.1",
 		"gettext-parser": "^6.0.0",
-		"html-webpack-plugin": "^5.6.0",
+		"html-webpack-plugin": "^5.6.3",
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",
@@ -74,7 +74,7 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
 		"size-limit": "^8.2.6",
-		"webpack": "^5.94.0",
+		"webpack": "^5.95.0",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }

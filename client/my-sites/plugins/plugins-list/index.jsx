@@ -72,7 +72,7 @@ export class PluginsList extends Component {
 	};
 
 	componentWillMount() {
-		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( this.props.newBulkPluginManagement ) {
 			import( './style.scss' );
 		} else {
 			import( './style-compatibilty.scss' );
@@ -176,7 +176,7 @@ export class PluginsList extends Component {
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += this.props.selectedSite ? '' : ' on Multisite';
 		if ( includeSelectedPlugins ) {
-			const pluginSlugs = config.isEnabled( 'bulk-plugin-management' )
+			const pluginSlugs = this.props.newBulkPluginManagement
 				? this.state.selectedPlugins.map( ( plugin ) => plugin.slug )
 				: this.getSelected().map( ( plugin ) => plugin.slug );
 
@@ -206,7 +206,7 @@ export class PluginsList extends Component {
 	}
 
 	doActionOverSelected( actionName, action, selectedPlugins ) {
-		if ( ! selectedPlugins && ! config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( ! selectedPlugins && ! this.props.newBulkPluginManagement ) {
 			selectedPlugins = this.props.plugins.filter( this.isSelected );
 		}
 
@@ -216,7 +216,7 @@ export class PluginsList extends Component {
 		this.removePluginStatuses();
 
 		const pluginAndSiteObjects = (
-			config.isEnabled( 'bulk-plugin-management' ) ? this.state.selectedPlugins : selectedPlugins
+			this.props.newBulkPluginManagement ? this.state.selectedPlugins : selectedPlugins
 		)
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
@@ -248,7 +248,7 @@ export class PluginsList extends Component {
 	}
 
 	bulkActionDialog = ( actionName, selectedPlugins ) => {
-		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( this.props.newBulkPluginManagement ) {
 			this.setState( {
 				selectedPlugins,
 			} );
@@ -256,7 +256,7 @@ export class PluginsList extends Component {
 
 		const { plugins, allSites, showPluginActionDialog } = this.props;
 
-		if ( ! config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( ! this.props.newBulkPluginManagement ) {
 			selectedPlugins = selectedPlugins ? [ selectedPlugins ] : plugins.filter( this.isSelected );
 		}
 
@@ -432,7 +432,7 @@ export class PluginsList extends Component {
 	}
 
 	render() {
-		if ( config.isEnabled( 'bulk-plugin-management' ) ) {
+		if ( this.props.newBulkPluginManagement ) {
 			return (
 				<div className="plugins-list">
 					<PluginsListDataViews
@@ -533,10 +533,15 @@ export class PluginsList extends Component {
 export default connect(
 	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
+		const newBulkPluginManagement = config.isEnabled( 'bulk-plugin-management' );
+
 		return {
 			allSites: getSites( state ),
-			pluginsOnSites: getPluginsOnSites( state, plugins ),
+			// This is critical and destroys the performance of the page
+			// TODO: Remove when launched
+			pluginsOnSites: newBulkPluginManagement ? [] : getPluginsOnSites( state, plugins ),
 			selectedSite,
+			newBulkPluginManagement,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			hasManagePlugins: siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),

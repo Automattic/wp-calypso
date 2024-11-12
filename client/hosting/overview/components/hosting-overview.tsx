@@ -6,12 +6,7 @@ import PlanCard from 'calypso/hosting/overview/components/plan-card';
 import QuickActionsCard from 'calypso/hosting/overview/components/quick-actions-card';
 import SiteBackupCard from 'calypso/hosting/overview/components/site-backup-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import {
-	isNotAtomicJetpack,
-	isMigrationInProgress,
-	getMigrationStatus,
-	getMigrationType,
-} from 'calypso/sites-dashboard/utils';
+import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import MigrationOverview from './migration-overview';
@@ -23,16 +18,7 @@ const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 
 	if ( site ) {
-		const migrationType = getMigrationType( site );
-		const migrationStatus = getMigrationStatus( site );
-
-		if (
-			isMigrationInProgress( site ) &&
-			// TODO: Remove the following checks when we support all migration types.
-			// It's just missing the started / difm case for now.
-			( 'pending' === migrationStatus ||
-				( 'started' === migrationStatus && migrationType === 'diy' ) )
-		) {
+		if ( isMigrationInProgress( site ) ) {
 			return <MigrationOverview site={ site } />;
 		}
 	}

@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
 import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import { Subscription } from '../../types';

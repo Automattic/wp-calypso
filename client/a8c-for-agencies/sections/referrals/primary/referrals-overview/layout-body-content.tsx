@@ -12,6 +12,8 @@ import {
 	A4A_REFERRALS_FAQ,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import StepSection from 'calypso/a8c-for-agencies/components/step-section';
+import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import {
@@ -26,8 +28,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import StepSection from '../../common/step-section';
-import StepSectionItem from '../../common/step-section-item';
 import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';

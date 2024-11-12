@@ -376,11 +376,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			};
 
 			return (
-				<div>
+				<>
 					{ this.props.siteId && <QuerySiteSettings siteId={ this.props.siteId } /> }
 					{ this.props.siteIsJetpack && <QueryJetpackSettings siteId={ this.props.siteId } /> }
 					<SettingsForm { ...this.props } { ...utils } />
-				</div>
+				</>
 			);
 		}
 	}

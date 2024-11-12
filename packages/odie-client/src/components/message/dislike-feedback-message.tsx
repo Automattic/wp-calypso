@@ -3,9 +3,7 @@ import Markdown from 'react-markdown';
 import { WapuuAvatar } from '../../assets/wapuu-avatar';
 import WapuuAvatarSquared from '../../assets/wapuu-squared-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
-import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
-import { uriTransformer } from './uri-transformer';
 
 export const DislikeFeedbackMessage = () => {
 	const { shouldUseHelpCenterExperience, extraContactOptions, botName } = useOdieAssistantContext();
@@ -18,14 +16,9 @@ export const DislikeFeedbackMessage = () => {
 					<strong className="message-header-name"></strong>
 				</div>
 				<div className="odie-chatbox-dislike-feedback-message">
-					<Markdown
-						urlTransform={ uriTransformer }
-						components={ {
-							a: CustomALink,
-						} }
-					>
+					<Markdown>
 						{ __(
-							'Would you like to contact our support team? Select an option below:',
+							'Let’s get the information you need. Would you like to contact our support team?',
 							__i18n_text_domain__
 						) }
 					</Markdown>
@@ -48,12 +41,7 @@ export const DislikeFeedbackMessage = () => {
 					<strong className="message-header-name">{ botName }</strong>
 				</div>
 				<div className="odie-chatbox-dislike-feedback-message">
-					<Markdown
-						urlTransform={ uriTransformer }
-						components={ {
-							a: CustomALink,
-						} }
-					>
+					<Markdown>
 						{ __(
 							'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
 							__i18n_text_domain__

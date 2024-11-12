@@ -20,7 +20,7 @@ class DomainSkipSuggestion extends Component {
 				extraClasses="is-visible domain-skip-suggestion"
 				hidePrice
 				onButtonClick={ this.props.onButtonClick }
-				showChevron
+				showChevron={ false }
 				// tracksButtonClickSource={ this.props.tracksButtonClickSource }
 			>
 				<div className="domain-skip-suggestion__domain-description">

@@ -23,10 +23,11 @@ import {
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 	MARKETING_TOOLS,
+	MARKETING_CONNECTIONS,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
 	SETTINGS_AGENCY,
-	SETTINGS_CACHES,
+	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
 	TOOLS_SFTP_SSH,
 	TOOLS_STAGING_SITE,
@@ -122,7 +123,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ MARKETING_TOOLS ],
+				featureIds: [ MARKETING_TOOLS, MARKETING_CONNECTIONS ],
 			},
 			{
 				label: __( 'Advanced Tools' ),
@@ -145,7 +146,7 @@ const DotcomPreviewPane = ( {
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION,
 					SETTINGS_AGENCY,
-					SETTINGS_CACHES,
+					SETTINGS_CACHING,
 					SETTINGS_WEB_SERVER,
 				],
 			},
@@ -153,7 +154,7 @@ const DotcomPreviewPane = ( {
 				label: hasEnTranslation( 'Server Settings' )
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
 			},
 		];

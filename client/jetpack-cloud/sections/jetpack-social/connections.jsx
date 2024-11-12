@@ -8,12 +8,12 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import SharingServicesGroup from 'calypso/my-sites/marketing/connections/services-group';
+import SharingServicesGroup from 'calypso/sites/marketing/connections/services-group';
 import { useSelector } from 'calypso/state';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import 'calypso/my-sites/marketing/style.scss';
+import 'calypso/sites/marketing/style.scss';
 import './style.scss';
 
 export const Connections = () => {

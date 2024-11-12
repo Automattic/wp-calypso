@@ -4,7 +4,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
 import type { APIFetchOptions } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types/';
+import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
@@ -78,6 +78,12 @@ export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_IS_CHAT_LOADED',
 		isChatLoaded,
+	} ) as const;
+
+export const setZendeskClientId = ( zendeskClientId: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_ZENDESK_CLIENT_ID',
+		zendeskClientId,
 	} ) as const;
 
 export const setShowMessagingLauncher = ( show: boolean ) =>
@@ -168,6 +174,7 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setIsChatLoaded
+			| typeof setZendeskClientId
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug

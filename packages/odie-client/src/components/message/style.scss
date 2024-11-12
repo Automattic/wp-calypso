@@ -1,238 +1,335 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
-.odie-chatbox__action-message {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 16px;
+.help-center-experience-disabled {
+
+	.odie-chatbox__action-message {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 16px;
+
+		.message-header {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			gap: 8px;
+		}
+	}
+
+	.odie-chatbox-message {
+		display: flex;
+		justify-content: space-between;
+		word-wrap: break-word;
+		font-size: $font-body;
+		line-height: 1.4;
+		color: #000;
+		flex-direction: column;
+		padding: 16px;
+		gap: 8px;
+		width: 100%;
+		box-sizing: border-box;
+		min-height: 64px;
+		text-wrap: pretty;
+
+		ol,
+		ul {
+			margin: 0 0 1.5em 1.5em;
+			width: calc(100% - 1.5em);
+			padding: 0;
+		}
+
+		.help-center-contact-page {
+			.help-center-contact-page__content {
+				margin-bottom: 0 !important;
+			}
+		}
+
+		.disclaimer {
+			color: var(--studio-gray-50);
+			font-size: $font-body-extra-small;
+			text-align: right;
+		}
+	}
+
+	.odie-button-link {
+		background: none;
+		border: none;
+		color: var(--color-link);
+		text-decoration: underline;
+		cursor: pointer;
+		padding: 0;
+		font-family: inherit;
+		font-size: inherit;
+	}
+
+	.odie-button-link:hover {
+		text-decoration: none;
+		color: var(--color-link-dark);
+	}
+
+	.odie-sources-foldable-card {
+		overflow-x: hidden !important;
+	}
+
+	.odie-chatbox-message p:last-of-type {
+		margin-bottom: 0;
+	}
+
+	.odie-chatbox-message.odie-chatbox-message-user {
+		background-color: var(--studio-gray-0);
+	}
+
+	.odie-chatbox-message.odie-chatbox-message-user p {
+		font-size: 1rem;
+	}
+
+	.odie-chatbox-message.odie-chatbox-message-user > :last-child {
+		margin-bottom: 0;
+	}
+
+	.odie-chatbox-message.odie-chatbox-message-bot {
+		background-color: var(--studio-white);
+	}
+
+	.odie-chatbox-message.odie-chatbox-message-bot p {
+		font-size: 1rem;
+	}
+
+	.odie-introduction-message-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.odie-chatbox-message-avatar {
+		width: 32px;
+		height: 32px;
+		justify-content: center;
+		align-items: center;
+	}
 
 	.message-header {
 		display: flex;
 		align-items: center;
 		width: 100%;
 		gap: 8px;
-	}
-}
 
-.odie-chatbox-message {
-	display: flex;
-	justify-content: space-between;
-	word-wrap: break-word;
-	font-size: $font-body;
-	line-height: 1.4;
-	color: #000;
-	flex-direction: column;
-	padding: 16px;
-	gap: 8px;
-	width: 100%;
-	box-sizing: border-box;
-	min-height: 64px;
-	text-wrap: pretty;
+		.user {
+			justify-content: flex-start;
+		}
 
-	ol,
-	ul {
-		margin: 0 0 1.5em 1.5em;
-		width: calc(100% - 1.5em);
-		padding: 0;
-	}
-
-	.help-center-contact-page {
-		.help-center-contact-page__content {
-			margin-bottom: 0 !important;
+		.bot {
+			justify-content: space-between;
 		}
 	}
 
-	.disclaimer {
-		color: var(--studio-gray-50);
-		font-size: $font-body-extra-small;
-		text-align: right;
-	}
-}
-
-.odie-button-link {
-	background: none;
-	border: none;
-	color: var(--color-link);
-	text-decoration: underline;
-	cursor: pointer;
-	padding: 0;
-	font-family: inherit;
-	font-size: inherit;
-}
-
-.odie-button-link:hover {
-	text-decoration: none;
-	color: var(--color-link-dark);
-}
-
-.odie-sources-foldable-card {
-	overflow-x: hidden !important;
-}
-
-.odie-chatbox-message p:last-of-type {
-	margin-bottom: 0;
-}
-
-.odie-chatbox-message.odie-chatbox-message-user {
-	background-color: var(--studio-gray-0);
-}
-
-.odie-chatbox-message.odie-chatbox-message-user p {
-	font-size: 1rem;
-}
-
-.odie-chatbox-message.odie-chatbox-message-user > :last-child {
-	margin-bottom: 0;
-}
-
-.odie-chatbox-message.odie-chatbox-message-bot {
-	background-color: var(--studio-white);
-}
-
-.odie-chatbox-message.odie-chatbox-message-bot p {
-	font-size: 1rem;
-}
-
-.odie-introduction-message-content {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.odie-chatbox-message-avatar {
-	width: 32px;
-	height: 32px;
-	justify-content: center;
-	align-items: center;
-}
-
-.message-header {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	gap: 8px;
-
-	.user {
-		justify-content: flex-start;
+	.message-header-name {
+		flex: 1;
+		text-align: left;
 	}
 
-	.bot {
-		justify-content: space-between;
+	.message-header-buttons {
+		flex: 1;
+		text-align: end;
 	}
-}
 
-.message-header-name {
-	flex: 1;
-	text-align: left;
-}
+	.odie-fullscreen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 999999;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: rgba(0, 0, 0, 0.1);
 
-.message-header-buttons {
-	flex: 1;
-	text-align: end;
-}
+		.odie-fullscreen-backdrop {
+			width: 75vw;
+			height: 85vh;
+			overflow: scroll;
 
-.odie-fullscreen {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 999999;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: rgba(0, 0, 0, 0.1);
+			.odie-chatbox-message {
+				box-shadow: 0 0 0 1px var(--color-border-subtle);
+				width: auto;
+				height: auto;
+				margin: auto;
+				font-size: $font-body;
+				padding-top: 0;
 
-	.odie-fullscreen-backdrop {
-		width: 75vw;
-		height: 85vh;
-		overflow: scroll;
+				.message-header {
+					padding-top: 16px;
+					position: sticky;
+					top: 0;
+					background-color: #fff;
+					z-index: 1;
+				}
+			}
 
-		.odie-chatbox-message {
-			box-shadow: 0 0 0 1px var(--color-border-subtle);
-			width: auto;
-			height: auto;
-			margin: auto;
-			font-size: $font-body;
-			padding-top: 0;
+			.odie-chatbox-message-sources-container-fullscreen {
+				max-width: 800px;
+				max-height: 80vh;
+				overflow-y: auto;
+			}
 
-			.message-header {
-				padding-top: 16px;
-				position: sticky;
-				top: 0;
-				background-color: #fff;
-				z-index: 1;
+			.odie-foldable-card.odie-sources-foldable-card {
+				margin-bottom: 0;
 			}
 		}
+	}
 
-		.odie-chatbox-message-sources-container-fullscreen {
-			max-width: 800px;
-			max-height: 80vh;
-			overflow-y: auto;
+	.chatbox-messages:last-child {
+		margin-bottom: 64px;
+	}
+
+	.odie-sources {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		align-self: stretch;
+		border-radius: 4px;
+		background-color: var(--studio-gray-0);
+		width: fit-content;
+		padding: 0;
+		margin: 4px 0;
+
+		.odie-sources-link {
+			overflow-wrap: anywhere;
+			color: var(--studio-blue-40);
+			font-style: normal;
+			font-weight: 600;
+			padding: 4px 16px;
 		}
 
-		.odie-foldable-card.odie-sources-foldable-card {
-			margin-bottom: 0;
+		svg.gridicons-external {
+			min-width: 18px;
 		}
 	}
-}
 
-.chatbox-messages:last-child {
-	margin-bottom: 64px;
-}
+	.odie-sources-inline {
+		display: inline;
+		padding: 0;
+		margin: 0;
 
-.odie-sources {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	align-self: stretch;
-	border-radius: 4px;
-	background-color: var(--studio-gray-0);
-	width: fit-content;
-	padding: 0;
-	margin: 4px 0;
-
-	.odie-sources-link {
-		overflow-wrap: anywhere;
-		color: var(--studio-blue-40);
-		font-style: normal;
-		font-weight: 600;
-		padding: 4px 16px;
+		.odie-sources-link {
+			padding: 0 4px;
+		}
 	}
 
-	svg.gridicons-external {
-		min-width: 18px;
+	$feedback-button-size: 28px;
+
+	.odie-feedback-component-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.odie-feedback-component-button-container {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+
+			.odie-feedback-component-button {
+				font-family: $a8c-font-family-sans;
+				background: transparent;
+				border-style: solid;
+				border-width: 1px;
+				cursor: pointer;
+				margin: 0;
+				outline: 0;
+				overflow: hidden;
+				text-align: center;
+				text-overflow: ellipsis;
+				text-decoration: none;
+				vertical-align: top;
+				box-sizing: border-box;
+				border-radius: 2px;
+				font-size: $font-body-extra-small;
+				line-height: 1;
+				appearance: none;
+				background-color: var(--color-surface);
+				color: var(--color-neutral-70);
+				border-color: var(--color-neutral-10);
+				display: flex;
+				height: $feedback-button-size;
+				padding: 7px;
+				justify-content: center;
+				align-items: center;
+
+				&:hover {
+					border-color: var(--color-neutral-20);
+					color: var(--color-neutral-70);
+				}
+
+				&.is-active {
+					border-width: 1px;
+				}
+			}
+
+			.odie-feedback-component-button-liked-pressed,
+			.odie-feedback-component-button-disliked-pressed {
+				background-color: var(--color-primary);
+				cursor: default;
+				pointer-events: none;
+			}
+
+			.odie-feedback-component-button-disliked-disabled,
+			.odie-feedback-component-button-liked-disabled {
+				background-color: var(--color-surface);
+				pointer-events: none;
+			}
+		}
 	}
-}
 
-.odie-sources-inline {
-	display: inline;
-	padding: 0;
-	margin: 0;
-
-	.odie-sources-link {
-		padding: 0 4px;
+	.odie-feedback-component-button-icon-disabled {
+		background-color: var(--color-surface);
+		pointer-events: none;
+		fill: var(--color-neutral-20);
 	}
-}
 
-$feedback-button-size: 28px;
+	.odie-feedback-component-button-icon-pressed {
+		background-color: var(--color-primary);
+		fill: var(--color-text-inverted);
+	}
 
-.odie-feedback-component-container {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	$custom-border-corner-size: 16px;
 
-	.odie-feedback-component-button-container {
+	.odie-gradient-to-white {
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		height: 100px;
+		justify-content: center;
+		z-index: 5;
+		pointer-events: none;
+		position: fixed;
+		width: 100%;
 
-		.odie-feedback-component-button {
+		&.is-hidden {
+			opacity: 0;
+			bottom: 0 !important;
+			transition: opacity 0.3s ease 0.3s,
+			bottom 0.3s ease 0.3s;
+
+			.odie-jump-to-recent-message-button {
+				pointer-events: none;
+			}
+		}
+
+		&.is-visible {
+			opacity: 1;
+			bottom: 24px;
+			transition: opacity 0.3s ease 1.2s,
+			bottom 0.3s ease 1.2s;
+		}
+
+		.odie-jump-to-recent-message-button {
+			pointer-events: auto;
+			position: relative;
+			bottom: 24px;
 			font-family: $a8c-font-family-sans;
-			background: transparent;
-			border-style: solid;
-			border-width: 1px;
 			cursor: pointer;
 			margin: 0;
 			outline: 0;
@@ -242,252 +339,156 @@ $feedback-button-size: 28px;
 			text-decoration: none;
 			vertical-align: top;
 			box-sizing: border-box;
-			border-radius: 2px;
-			font-size: $font-body-extra-small;
+			font-size: $font-body;
 			line-height: 1;
 			appearance: none;
-			background-color: var(--color-surface);
-			color: var(--color-neutral-70);
-			border-color: var(--color-neutral-10);
+			background-color: var(--color-primary);
+			color: var(--studio-white);
+			border: 1px none;
 			display: flex;
-			height: $feedback-button-size;
-			padding: 7px;
+			height: 28px;
+			padding: 12px 16px;
+			padding-right: 8px;
 			justify-content: center;
 			align-items: center;
-
-			&:hover {
-				border-color: var(--color-neutral-20);
-				color: var(--color-neutral-70);
-			}
+			border-radius: $custom-border-corner-size;
 
 			&.is-active {
 				border-width: 1px;
 			}
 		}
-
-		.odie-feedback-component-button-liked-pressed,
-		.odie-feedback-component-button-disliked-pressed {
-			background-color: var(--color-primary);
-			cursor: default;
-			pointer-events: none;
-		}
-
-		.odie-feedback-component-button-disliked-disabled,
-		.odie-feedback-component-button-liked-disabled {
-			background-color: var(--color-surface);
-			pointer-events: none;
-		}
 	}
-}
 
-.odie-feedback-component-button-icon-disabled {
-	background-color: var(--color-surface);
-	pointer-events: none;
-	fill: var(--color-neutral-20);
-}
+	.odie-chatbox-message-avatar-wapuu-liked {
+		-webkit-animation: wapuu-joy-animation 1300ms both;
+		animation: wapuu-joy-animation 1300ms both;
+	}
 
-.odie-feedback-component-button-icon-pressed {
-	background-color: var(--color-primary);
-	fill: var(--color-text-inverted);
-}
+	@keyframes wapuu-joy-animation {
+		0% {
+			-webkit-transform: scale3d(1, 1, 1);
+			transform: scale3d(1, 1, 1);
+		}
 
-$custom-border-corner-size: 16px;
+		30% {
+			-webkit-transform: scale3d(1.25, 0.75, 1);
+			transform: scale3d(1.25, 0.75, 1);
+		}
 
-.odie-gradient-to-white {
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	height: 100px;
-	justify-content: center;
-	z-index: 5;
-	pointer-events: none;
-	position: fixed;
-	width: 100%;
+		40% {
+			-webkit-transform: scale3d(0.75, 1.25, 1);
+			transform: scale3d(0.75, 1.25, 1);
+		}
 
-	&.is-hidden {
-		opacity: 0;
-		bottom: 0 !important;
-		transition:
-			opacity 0.3s ease 0.3s,
-			bottom 0.3s ease 0.3s;
+		50% {
+			-webkit-transform: scale3d(1.15, 0.85, 1);
+			transform: scale3d(1.15, 0.85, 1);
+		}
 
-		.odie-jump-to-recent-message-button {
-			pointer-events: none;
+		65% {
+			-webkit-transform: scale3d(0.95, 1.05, 1);
+			transform: scale3d(0.95, 1.05, 1);
+		}
+
+		75% {
+			-webkit-transform: scale3d(1.05, 0.95, 1);
+			transform: scale3d(1.05, 0.95, 1);
+		}
+
+		100% {
+			-webkit-transform: scale3d(1, 1, 1);
+			transform: scale3d(1, 1, 1);
 		}
 	}
 
-	&.is-visible {
-		opacity: 1;
-		bottom: 24px;
-		transition:
-			opacity 0.3s ease 1.2s,
-			bottom 0.3s ease 1.2s;
-	}
-
-	.odie-jump-to-recent-message-button {
-		pointer-events: auto;
+	.odie-feedback-message {
 		position: relative;
-		bottom: 24px;
-		font-family: $a8c-font-family-sans;
-		cursor: pointer;
-		margin: 0;
-		outline: 0;
-		overflow: hidden;
-		text-align: center;
-		text-overflow: ellipsis;
-		text-decoration: none;
-		vertical-align: top;
-		box-sizing: border-box;
-		font-size: $font-body;
-		line-height: 1;
-		appearance: none;
-		background-color: var(--color-primary);
-		color: var(--studio-white);
-		border: 1px none;
-		display: flex;
-		height: 28px;
-		padding: 12px 16px;
-		padding-right: 8px;
-		justify-content: center;
-		align-items: center;
-		border-radius: $custom-border-corner-size;
-
-		&.is-active {
-			border-width: 1px;
-		}
-	}
-}
-
-.odie-chatbox-message-avatar-wapuu-liked {
-	-webkit-animation: wapuu-joy-animation 1300ms both;
-	animation: wapuu-joy-animation 1300ms both;
-}
-
-@keyframes wapuu-joy-animation {
-	0% {
-		-webkit-transform: scale3d(1, 1, 1);
-		transform: scale3d(1, 1, 1);
-	}
-
-	30% {
-		-webkit-transform: scale3d(1.25, 0.75, 1);
-		transform: scale3d(1.25, 0.75, 1);
-	}
-
-	40% {
-		-webkit-transform: scale3d(0.75, 1.25, 1);
-		transform: scale3d(0.75, 1.25, 1);
-	}
-
-	50% {
-		-webkit-transform: scale3d(1.15, 0.85, 1);
-		transform: scale3d(1.15, 0.85, 1);
-	}
-
-	65% {
-		-webkit-transform: scale3d(0.95, 1.05, 1);
-		transform: scale3d(0.95, 1.05, 1);
-	}
-
-	75% {
-		-webkit-transform: scale3d(1.05, 0.95, 1);
-		transform: scale3d(1.05, 0.95, 1);
-	}
-
-	100% {
-		-webkit-transform: scale3d(1, 1, 1);
-		transform: scale3d(1, 1, 1);
-	}
-}
-
-.odie-feedback-message {
-	position: relative;
-	font-weight: 600;
-	font-size: 1rem;
-	width: 100%;
-	height: 100%;
-
-	.odie-feedback-component-thanks,
-	.odie-feedback-component-question {
-		display: flex;
-		align-items: center;
-		transition: opacity 0.3s ease;
-		position: absolute;
+		font-weight: 600;
+		font-size: 1rem;
+		width: 100%;
 		height: 100%;
-	}
 
-	.odie-question-out {
-		animation: question-out-animation 0.3s ease both;
-	}
+		.odie-feedback-component-thanks,
+		.odie-feedback-component-question {
+			display: flex;
+			align-items: center;
+			transition: opacity 0.3s ease;
+			position: absolute;
+			height: 100%;
+		}
 
-	.odie-question-hidden {
-		opacity: 0;
-	}
+		.odie-question-out {
+			animation: question-out-animation 0.3s ease both;
+		}
 
-	.odie-thanks-in {
-		animation: thanks-in-animation 0.3s ease-out both;
-	}
+		.odie-question-hidden {
+			opacity: 0;
+		}
 
-	.odie-thanks-hidden {
-		opacity: 0;
-	}
-}
+		.odie-thanks-in {
+			animation: thanks-in-animation 0.3s ease-out both;
+		}
 
-.odie-question-collapse {
-	animation: odie-question-collapse-animation 0.3s ease-in-out 1s forwards;
-	overflow: hidden;
-}
-
-@keyframes odie-question-collapse-animation {
-	0% {
-		height: $feedback-button-size;
-	}
-
-	100% {
-		height: 0;
-	}
-}
-
-@keyframes question-out-animation {
-	0% {
-		opacity: 1;
-	}
-
-	100% {
-		opacity: 0;
-	}
-}
-
-@keyframes thanks-in-animation {
-	0% {
-		transform: translateY(1rem);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-.odie-chatbox-message-sources-container {
-	.foldable-card {
-		margin: 0 !important;
-		width: 100% !important;
-
-		.foldable-card__header > span.foldable-card__main > button > span {
-			display: none;
+		.odie-thanks-hidden {
+			opacity: 0;
 		}
 	}
 
-	.odie-chatbox-message-sources {
-		margin: 12px;
+	.odie-question-collapse {
+		animation: odie-question-collapse-animation 0.3s ease-in-out 1s forwards;
+		overflow: hidden;
 	}
-	
-	&:nth-last-child(2) {
+
+	@keyframes odie-question-collapse-animation {
+		0% {
+			height: $feedback-button-size;
+		}
+
+		100% {
+			height: 0;
+		}
+	}
+
+	@keyframes question-out-animation {
+		0% {
+			opacity: 1;
+		}
+
+		100% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes thanks-in-animation {
+		0% {
+			transform: translateY(1rem);
+			opacity: 0;
+		}
+
+		100% {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+
+	.odie-chatbox-message-sources-container {
 		.foldable-card {
-			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+			margin: 0 !important;
+			width: 100% !important;
+
+			.foldable-card__header > span.foldable-card__main > button > span {
+				display: none;
+			}
+		}
+
+		.odie-chatbox-message-sources {
+			margin: 12px;
+		}
+
+		&:nth-last-child(2) {
+			.foldable-card {
+				box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+			}
 		}
 	}
 }

@@ -43,17 +43,17 @@ class AuthorCompactProfile extends Component {
 			post,
 		} = this.props;
 
-		if ( ! author ) {
+		if ( ! author && ! siteName ) {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
-		const hasAuthorName = author.hasOwnProperty( 'name' );
+		const hasAuthorName = author?.hasOwnProperty( 'name' );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = clsx( {
 			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
-			'has-author-icon': siteIcon || feedIcon || author.has_avatar,
+			'has-author-icon': siteIcon || feedIcon || author?.has_avatar,
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 
@@ -63,7 +63,7 @@ class AuthorCompactProfile extends Component {
 		return (
 			<div className={ classes }>
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
-					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
+					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author || {} } />
 				</a>
 				<div className="author-compact-profile__names">
 					{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (

@@ -7,20 +7,29 @@
 
 	&.two-columns {
 		.step-container__header {
-			margin-bottom: 64px;
+			margin-bottom: 16px;
+			margin-top: 20px;
 
 			.formatted-header {
-				padding-top: 44px;
-
 				.formatted-header__subtitle,
 				.formatted-header__title {
-					@include break-mobile {
-						text-align: center;
-					}
+					text-align: center;
 				}
 
-				@include break-mobile {
-					padding-top: 72px;
+				.formatted-header__title {
+					text-wrap-style: pretty;
+				}
+
+				.formatted-header__subtitle {
+					margin-top: 8px;
+					text-wrap-style: balance;
+				}
+
+				margin-bottom: 24px;
+
+				@include break-small {
+					margin-top: 32px;
+					margin-bottom: 40px;
 				}
 			}
 		}
@@ -31,29 +40,20 @@
 			color: #787c82;
 		}
 
-		.select-goals__cards-container {
-			padding-top: 16px;
+		.step-container__skip-wrapper {
+			// I really hate this, but forcing a specificity is not much better.
+			margin-inline-start: 0 !important;
 
 			@include break-small {
-				grid-template-columns: repeat(2, 1fr);
+				margin-inline-start: auto !important;
 			}
 		}
 
-		.select-goals__actions-container {
-			padding-top: 32px;
-			padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
-
-			@include break-small {
-				padding-top: 48px;
-				padding-bottom: 48px;
-				justify-content: center;
-			}
-		}
-	}
-
-	.step-container__header {
-		.formatted-header {
-			text-align: left;
+		.step-container__content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 24px;
 		}
 	}
 
@@ -61,14 +61,20 @@
 		font-family: Inter, $sans;
 		display: grid;
 		gap: 16px;
+		width: 100%;
 		grid-template-columns: repeat(1, 1fr);
+
+		@include break-small {
+			width: auto;
+			grid-template-columns: repeat(2, 1fr);
+
+			.select-goals__cards-hint {
+				grid-column: span 2;
+			}
+		}
 
 		.select-goals__goal-title {
 			margin-inline-end: 4px;
-		}
-
-		@include break-small {
-			grid-template-columns: repeat(1, 1fr);
 		}
 	}
 
@@ -91,8 +97,49 @@
 		}
 	}
 
-	.select-goals__links-container {
-		padding-bottom: 60px; // height of sticky footer
+	.select-goals__alternative-flows-container {
+		display: grid;
+		grid-template-columns: max-content;
+		justify-content: center;
+		gap: 20px 8px;
+		padding-bottom: 60px + 48px; // height of sticky footer
+
+		@include break-small {
+			padding-bottom: 60px;
+			grid-template-columns: repeat(3, max-content);
+			gap: 16px 8px;
+		}
+	}
+
+	.select-goals__next {
+		width: 160px;
+	}
+
+	.select-goals__link.is-link { // extra specificity to override default link styles
+		color: var(--studio-gray-100);
+		font-size: $font-body-small;
+	}
+
+	.select-goals__dashboard-button.select-goals__link { // extra specificity to override default link styles
+		margin-left: auto;
+		margin-right: auto;
+		gap: 8px;
+
+		@include break-small {
+			grid-column: span 3;
+		}
+	}
+
+	.select-goals__link-separator {
+		display: none;
+
+		&::before {
+			content: "•";
+		}
+
+		@include break-small {
+			display: block;
+		}
 	}
 }
 

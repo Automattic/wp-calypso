@@ -104,12 +104,15 @@ function MessageForTermsOfServiceRecordUnknown( {
 		);
 
 		const termLengthText = translate(
-			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
+			'The promotional period for your {{b}}%(productName)s{{/b}} subscription lasts from %(startDate)s to %(endDate)s.',
 			{
 				args: {
 					productName,
 					startDate,
 					endDate: promotionEndDate,
+				},
+				components: {
+					b: <strong />,
 				},
 			}
 		);

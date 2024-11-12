@@ -22,23 +22,3 @@ export const setPlansListExperiment = ( experimentName: string, variation: strin
 export const getPlansListExperiment = ( experimentName: string ): string | undefined => {
 	return getExperiment( PLANS_LIST_NAMESPACE, experimentName );
 };
-
-/* START: Experiment calypso_pricing_grid_fewer_features */
-
-export const SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID = 'calypso_pricing_grid_fewer_features';
-
-export type SimplifiedFeaturesGridExperimentVariant = 'control' | 'simplified' | 'fix_inaccuracies';
-
-export const setSimplifiedFeaturesGridExperimentVariant = (
-	variant: SimplifiedFeaturesGridExperimentVariant
-) => setExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID, variant );
-
-export const isAssignedToSimplifiedFeaturesGridExperiment = (): boolean =>
-	getExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID ) !== 'control';
-
-export const isAssignedToSimplifiedFeaturesGridExperimentVariant = (
-	variant: SimplifiedFeaturesGridExperimentVariant
-): boolean =>
-	getExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID ) === variant;
-
-/* END: Experiment calypso_pricing_grid_fewer_features */

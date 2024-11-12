@@ -1,9 +1,10 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -26,6 +27,9 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const site = useSite();
+	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
+
 	usePresalesChat( 'wpcom' );
 
 	const hasEnTranslation = useHasEnTranslation();
@@ -70,7 +74,6 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const site = useSite();
 	const handleClick = async ( value: string ) => {
 		const canInstallPlugins = site?.plan?.features?.active.find(
 			( feature ) => feature === 'install-plugins'
@@ -110,6 +113,11 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		  } )
 		: '';
 
+	const goBack = useCallback( () => {
+		cancelMigration();
+		navigation.goBack?.();
+	}, [ cancelMigration, navigation ] );
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
@@ -128,7 +136,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
-				goBack={ navigation.goBack }
+				goBack={ goBack }
 			/>
 		</>
 	);

@@ -2,8 +2,8 @@ import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
-import { useCreateZendeskConversation } from '../../query/use-create-zendesk-conversation';
-import { getHelpCenterZendeskConversationStarted } from '../../utils/storage-utils';
+import { useCreateZendeskConversation } from '../../hooks';
+import { getHelpCenterZendeskConversationStarted } from '../../utils';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
@@ -11,6 +11,10 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 	const { shouldUseHelpCenterExperience, trackEvent, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 	const navigate = useNavigate();
+
+	const disclaimerText = shouldUseHelpCenterExperience
+		? __( 'Feeling stuck?', __i18n_text_domain__ )
+		: __( 'Did you find the answer to your question?', __i18n_text_domain__ );
 	const handleClick = useCallback( () => {
 		trackEvent( 'chat_message_direct_escalation_link_click', {
 			message_id: messageId,
@@ -41,7 +45,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 
 	return (
 		<div className="disclaimer">
-			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
+			{ disclaimerText }{ ' ' }
 			<button onClick={ handleClick } className="odie-button-link" disabled={ conversationStarted }>
 				{ isUserEligibleForPaidSupport
 					? __( 'Contact our support team.', __i18n_text_domain__ )

@@ -8,9 +8,9 @@ import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons'
 import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import './style.scss';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -19,6 +19,7 @@ import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
+import './style.scss';
 
 interface WhatToExpectProps {
 	icon: JSX.Element;
@@ -52,13 +53,13 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		},
 	} );
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
 	const site = useSite();
 	const siteId = site?.ID;
+	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-started-difm' );
+			updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 

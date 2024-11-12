@@ -10,6 +10,7 @@
 	align-items: center;
 	border-bottom: 1px solid;
 	border-color: rgba(0, 0, 0, 0.1);
+	text-decoration: none;
 
 	&:hover {
 		border-bottom: 1px solid;
@@ -107,5 +108,12 @@
 		align-items: center;
 		fill: #787C82;
 	}
+}
+.help-center-chat-history__no-results {
+	display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border-top: solid 1px #C3C4C7;
+    padding-top: 20px;
 }
 

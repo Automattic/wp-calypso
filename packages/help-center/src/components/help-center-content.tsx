@@ -3,17 +3,19 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
-import { useChatStatus, useShouldRenderEmailOption } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
@@ -45,19 +47,17 @@ function Wrapper( {
 const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = ( {
 	currentRoute,
 } ) => {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName } = useHelpCenterContext();
-	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
-	const { isLoading: isLoadingChatStatus } = useChatStatus();
-
-	const { data, isLoading: isLoadingEligibility } = useSupportStatus();
-
+	const { startNewInteraction } = useManageSupportInteraction();
+	const { data } = useSupportStatus();
+	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
+		useGetSupportInteractions( 'help-center' );
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
-	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus || isLoadingEligibility;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -70,13 +70,30 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} );
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
-	const { navigateToRoute, isMinimized } = useSelect( ( select ) => {
+	const { currentSupportInteraction, navigateToRoute, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
 			navigateToRoute: store.getNavigateToRoute(),
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+
+	useEffect( () => {
+		if (
+			! isLoadingOpenSupportInteractions &&
+			openSupportInteraction === null &&
+			! currentSupportInteraction
+		) {
+			startNewInteraction( {
+				event_source: 'help-center',
+				event_external_id: uuidv4(),
+			} );
+		} else if ( openSupportInteraction ) {
+			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ openSupportInteraction, isLoadingOpenSupportInteractions ] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
@@ -90,7 +107,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		setSearchTerm( '' );
 		if ( containerRef.current && ! location.hash && ! location.pathname.includes( '/odie' ) ) {
 			containerRef.current.scrollTo( 0, 0 );
 		}
@@ -100,12 +116,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
-					<Route
-						path="/"
-						element={
-							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-						}
-					/>
+					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
 					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
@@ -113,21 +124,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterChat
-								isLoadingEnvironment={ isLoadingEnvironment }
-								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
-								searchTerm={ searchTerm }
-							/>
-						}
-					/>
-					<Route
-						path="/odie/:id"
-						element={
-							<HelpCenterChat
-								isLoadingEnvironment={ isLoadingEnvironment }
-								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
-								searchTerm={ searchTerm }
-							/>
+							<HelpCenterChat isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport } />
 						}
 					/>
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />

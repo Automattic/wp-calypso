@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { SupportInteraction } from '@automattic/odie-client/src/types/';
+import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -64,6 +64,14 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
 			return action.isChatLoaded;
+	}
+	return state;
+};
+
+const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
+			return action.zendeskClientId;
 	}
 	return state;
 };
@@ -152,6 +160,7 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
+	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,

@@ -40,6 +40,20 @@ const _filters = {
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
+	autoupdates: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
+	autoupdates_disabled: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
 	},
@@ -121,8 +135,14 @@ export const getPlugins = createSelector(
 );
 
 export const getPluginsWithUpdateStatuses = createSelector(
-	( state, plugins, withUpdate, inactive, active ) => {
-		return plugins.reduce( ( memo, plugin ) => {
+	( state, allPlugins ) => {
+		const active = filter( allPlugins, _filters.active );
+		const inactive = filter( allPlugins, _filters.inactive );
+		const withUpdate = filter( allPlugins, _filters.updates );
+		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
+		const withAutoUpdateDisabled = filter( allPlugins, _filters.autoupdates_disabled );
+
+		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
 			plugin.allStatuses = [];
 
@@ -149,6 +169,15 @@ export const getPluginsWithUpdateStatuses = createSelector(
 			if ( find( active, { slug: plugin.slug } ) ) {
 				status.push( PLUGINS_STATUS.ACTIVE );
 			}
+
+			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
+			}
+
+			if ( find( withAutoUpdateDisabled, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
+			}
+
 			return [ ...memo, { ...plugin, status } ];
 		}, [] );
 	},
@@ -163,17 +192,17 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );

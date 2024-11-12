@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import StepSection from 'calypso/a8c-for-agencies/components/step-section';
+import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
@@ -11,8 +13,6 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import StepSection from '../../referrals/common/step-section';
-import StepSectionItem from '../../referrals/common/step-section-item';
 import useDetailsForm from '../agency-details/hooks/use-details-form';
 import useSubmitExpertiseForm from '../agency-expertise/hooks/use-submit-form';
 import { useFormSelectors } from '../components/hooks/use-form-selectors';

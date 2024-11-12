@@ -1,20 +1,19 @@
+/* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import { EllipsisMenu } from '@automattic/odie-client';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
-import {
-	backup,
-	closeSmall,
-	chevronUp,
-	lineSolid,
-	commentContent,
-	page,
-	Icon,
-} from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { usePostByUrl } from '../hooks';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
@@ -66,23 +65,55 @@ const SupportModeTitle = () => {
 	}
 };
 
+const ChatEllipsisMenu = () => {
+	const { __ } = useI18n();
+	const resetSupportInteraction = useResetSupportInteraction();
+	const { startNewInteraction } = useManageSupportInteraction();
+
+	const clearChat = async () => {
+		await resetSupportInteraction();
+		startNewInteraction( {
+			event_source: 'help-center',
+			event_external_id: uuidv4(),
+		} );
+	};
+
+	return (
+		<EllipsisMenu
+			popoverClassName="help-center help-center__container-header-menu"
+			position="bottom"
+		>
+			<PopoverMenuItem
+				onClick={ clearChat }
+				className="help-center help-center__container-header-menu-item"
+			>
+				<Gridicon icon="comment" />
+				{ __( 'Clear Conversation' ) }
+			</PopoverMenuItem>
+		</EllipsisMenu>
+	);
+};
+
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
-	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
 
-	const shouldDisplayChatHistoryButton =
-		config.isEnabled( 'help-center-experience' ) &&
-		pathname !== '/chat-history' &&
-		pathname !== '/odie';
-
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const shouldDisplayClearChatButton =
+		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
 	const isHelpCenterHome = key === 'default';
 
 	const headerText = useMemo( () => {
+		if ( pathname.startsWith( '/odie' ) ) {
+			return shouldUseHelpCenterExperience
+				? __( 'Support Assistant', __i18n_text_domain__ )
+				: __( 'Wapuu', __i18n_text_domain__ );
+		}
 		switch ( pathname ) {
-			case '/odie':
 			case '/contact-form':
-				return __( 'Wapuu', __i18n_text_domain__ );
+				return shouldUseHelpCenterExperience
+					? __( 'Support Assistant', __i18n_text_domain__ )
+					: __( 'Wapuu', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
@@ -96,16 +127,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 			<span id="header-text" role="presentation" className="help-center-header__text">
 				{ headerText }
 			</span>
-			{ shouldDisplayChatHistoryButton && (
-				<Button
-					className="help-center-header__chat-history"
-					label={ __( 'Chat history', __i18n_text_domain__ ) }
-					icon={ backup }
-					tooltipPosition="top left"
-					onClick={ () => navigate( '/chat-history' ) }
-					onTouchStart={ () => navigate( '/chat-history' ) }
-				/>
-			) }
+			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
@@ -149,8 +171,15 @@ const ContentMinimized = ( {
 					<Route path="/contact-form" element={ <SupportModeTitle /> } />
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route path="/odie" element={ __( 'Wapuu', __i18n_text_domain__ ) } />
-					<Route path="/chat-history" element={ __( 'Chat History', __i18n_text_domain__ ) } />
+					<Route
+						path="/odie"
+						element={
+							config.isEnabled( 'help-center-experience' )
+								? __( 'Support Assistant', __i18n_text_domain__ )
+								: __( 'Wapuu', __i18n_text_domain__ )
+						}
+					/>
+					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>

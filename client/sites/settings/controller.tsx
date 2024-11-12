@@ -2,13 +2,17 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import {
+	useAreAdvancedHostingFeaturesSupported,
+	useAreHostingFeaturesSupported,
+} from '../features';
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
 import AgencySettings from './agency';
 import useIsAgencySettingSupported from './agency/hooks/use-is-agency-setting-supported';
-import CachesSettings from './caches';
+import CachingSettings from './caching/page';
 import SiteSettings from './site';
-import WebServerSettings from './web-server';
+import WebServerSettings from './web-server/page';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -16,6 +20,9 @@ export function SettingsSidebar() {
 
 	const shouldShowAdministration = useIsAdministrationSettingSupported();
 	const shouldShowAgency = useIsAgencySettingSupported();
+
+	const shouldShowHostingFeatures = useAreHostingFeaturesSupported();
+	const shouldShowAdvancedHostingFeatures = useAreAdvancedHostingFeaturesSupported();
 
 	return (
 		<Sidebar>
@@ -29,9 +36,17 @@ export function SettingsSidebar() {
 			<SidebarItem enabled={ shouldShowAgency } href={ `/sites/settings/agency/${ slug }` }>
 				{ __( 'Agency' ) }
 			</SidebarItem>
-			<SidebarItem href={ `/sites/settings/caches/${ slug }` }>{ __( 'Caches' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/settings/web-server/${ slug }` }>
-				{ __( 'Web Server' ) }
+			<SidebarItem
+				enabled={ shouldShowHostingFeatures }
+				href={ `/sites/settings/caching/${ slug }` }
+			>
+				{ __( 'Caching' ) }
+			</SidebarItem>
+			<SidebarItem
+				enabled={ !! shouldShowAdvancedHostingFeatures }
+				href={ `/sites/settings/web-server/${ slug }` }
+			>
+				{ __( 'Web server' ) }
 			</SidebarItem>
 		</Sidebar>
 	);
@@ -67,11 +82,11 @@ export function agencySettings( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export function cachesSettings( context: PageJSContext, next: () => void ) {
+export function cachingSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar />
-			<CachesSettings />
+			<CachingSettings />
 		</PanelWithSidebar>
 	);
 	next();

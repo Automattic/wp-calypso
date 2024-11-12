@@ -203,6 +203,7 @@ body.is-section-reader {
 		margin-right: 8px;
 	}
 
+	/* @holdercp TODO: This can be removed once calypso/reader/stream/reader-list-followed-sites is removed */
 	.sidebar-streams__following-load-more {
 		color: var(--color-link);
 		cursor: pointer;
