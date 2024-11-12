@@ -50,6 +50,23 @@
 			margin-bottom: 64px;
 		}
 	}
+	
+	.chatbox-loading-chat__spinner {
+		display: flex;
+		width: 100%;
+		justify-content: center;
+		padding: 16px 0;
+	}
+
+	.odie-chat__date {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+		padding-bottom: 16px;
+		color: var(--studio-gray-50);
+		font-size: 0.75rem;
+	}
 }
 
 .odie-chatbox-message-dislike-feedback {

@@ -1,14 +1,16 @@
 import { SiteSettings as SiteSettingsType } from '@automattic/data-stores';
-import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
-import LaunchSite from 'calypso/my-sites/site-settings/site-visibility/launch-site';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import SiteSettingPrivacy from 'calypso/sites/settings/site/privacy';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import LaunchSite from './visibility/launch-site';
+
+import './style.scss';
 
 interface Fields {
 	blog_public: number;
@@ -32,6 +34,7 @@ const SiteSettings = ( {
 	isRequestingSettings,
 	isSavingSettings,
 }: SiteSettingsProps ) => {
+	const translate = useTranslate();
 	const isUnlaunchedSite = useSelectedSiteSelector( getIsUnlaunchedSite );
 	const editingToolkitIsActive = useSelectedSiteSelector(
 		getSiteOption,
@@ -42,8 +45,11 @@ const SiteSettings = ( {
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
 
 	return (
-		<div className="site-settings">
-			<NavigationHeader title={ __( 'Site' ) } />
+		<div className="settings-site">
+			<NavigationHeader
+				title={ translate( 'Site' ) }
+				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
+			/>
 			{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
 				<LaunchSite />
 			) : (

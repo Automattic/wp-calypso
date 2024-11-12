@@ -363,10 +363,12 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
-		flex-direction: column;
 		box-shadow: none;
-
 		margin: 0;
+
+		&:not(.domain-skip-suggestion) {
+			flex-direction: column;
+		}
 
 		@include break-small {
 			margin: 0 20px;
@@ -544,6 +546,7 @@ body.is-section-signup.is-white-signup {
 				}
 				.domain-suggestion__chevron {
 					fill: $cod-grey;
+					margin-right: 20px;
 					margin-left: 0;
 				}
 			}

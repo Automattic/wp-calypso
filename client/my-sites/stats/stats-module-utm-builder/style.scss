@@ -5,6 +5,8 @@
 
 $stats-utm-builder-modal-header-margin: 76px;
 $stats-utm-builder-help-padding: 38px;
+$stats-utm-builder-vertical-spacing: 24px;
+$modal-content-padding: 32px;
 
 .stats-utm-builder__overlay {
 	@media (min-width: $break-large) {
@@ -26,12 +28,22 @@ $stats-utm-builder-help-padding: 38px;
 
 .stats-utm-builder-modal {
 	display: flex;
+
+	@media (max-width: $break-small) {
+		flex-wrap: wrap;
+		gap: $stats-utm-builder-vertical-spacing;
+	}
 }
 
 .stats-utm-builder__fields {
 	flex: 1 0 55%;
 	padding: 0 32px 0 0;
 	width: 500px;
+
+	@media (max-width: $break-small) {
+		padding: 0;
+		flex: 1 auto;
+	}
 }
 
 .stats-utm-builder__url {
@@ -48,6 +60,11 @@ $stats-utm-builder-help-padding: 38px;
 	flex: 1 0 45%;
 	padding: 0 0 0 $stats-utm-builder-help-padding;
 
+	@media (max-width: $break-small) {
+		padding: $stats-utm-builder-vertical-spacing 0 0 0;
+		position: relative;
+	}
+
 	section + section {
 		padding-top: 12px;
 	}
@@ -60,10 +77,18 @@ $stats-utm-builder-help-padding: 38px;
 	position: absolute;
 	background-color: $studio-gray-0;
 	z-index: -1;
+
+	@media (max-width: $break-small) {
+		width: unset;
+		height: unset;
+		inset: -$modal-content-padding;
+		top: 0;
+		margin: 0;
+	}
 }
 
 .stats-utm-builder__description {
-	padding: 0 0 24px 0;
+	padding: 0 0 $stats-utm-builder-vertical-spacing 0;
 }
 
 .stats-utm-builder__form-field {

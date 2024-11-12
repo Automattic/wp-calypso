@@ -9,10 +9,10 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import StepSection from 'calypso/a8c-for-agencies/components/step-section';
+import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import StepSection from '../../../referrals/common/step-section';
-import StepSectionItem from '../../../referrals/common/step-section-item';
 
 import './style.scss';
 

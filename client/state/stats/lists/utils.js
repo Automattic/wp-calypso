@@ -473,7 +473,11 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
+			[]
+		);
 
 		return videoPlaysData.map( ( item ) => {
 			const detailPage = site
@@ -645,7 +649,8 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
+		const authorsData = get( data, dataPath, [] );
 
 		return authorsData.map( ( item ) => {
 			const record = {

@@ -122,7 +122,9 @@ const LaunchBigSky: Step = function () {
 		return (
 			<div className="processing-step__container">
 				<div className="processing-step">
-					<h1 className="processing-step__progress-step">{ __( 'Launching Big Sky' ) }</h1>
+					<h1 className="processing-step__progress-step">
+						{ __( 'Launching the AI Website Builder' ) }
+					</h1>
 					{ ! isError && <LoadingEllipsis /> }
 					{ isError && (
 						<p className="processing-step__error">

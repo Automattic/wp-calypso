@@ -40,6 +40,20 @@ const _filters = {
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
+	autoupdates: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
+	autoupdates_disabled: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
 	},
@@ -125,6 +139,8 @@ export const getPluginsWithUpdateStatuses = createSelector(
 		const active = filter( allPlugins, _filters.active );
 		const inactive = filter( allPlugins, _filters.inactive );
 		const withUpdate = filter( allPlugins, _filters.updates );
+		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
+		const withAutoUpdateDisabled = filter( allPlugins, _filters.autoupdates_disabled );
 
 		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
@@ -153,6 +169,15 @@ export const getPluginsWithUpdateStatuses = createSelector(
 			if ( find( active, { slug: plugin.slug } ) ) {
 				status.push( PLUGINS_STATUS.ACTIVE );
 			}
+
+			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
+			}
+
+			if ( find( withAutoUpdateDisabled, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
+			}
+
 			return [ ...memo, { ...plugin, status } ];
 		}, [] );
 	},

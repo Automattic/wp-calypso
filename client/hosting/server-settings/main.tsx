@@ -285,12 +285,14 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	};
 
 	/* We want to show the upsell banner for the following cases:
-	 *  1. The site does not have the Atomic feature.
-	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * 1. The site is on an eCommerce trial.
+	 * 2. The site does not have the Atomic feature.
+	 * 3. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
 	const shouldShowUpgradeBanner =
-		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+		( ! isLoadingSftpData || isECommerceTrial ) &&
+		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (

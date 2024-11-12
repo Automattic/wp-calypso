@@ -132,7 +132,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 */
 	describe( 'Support Flow', () => {
 		it( 'start support flow', async () => {
-			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
+			const stillNeedHelpButton = helpCenterLocator.getByRole( 'button', {
 				name: 'Still need help?',
 			} );
 
