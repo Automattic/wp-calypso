@@ -833,8 +833,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const expiryDate = product.subscription_expiry_date
-		? formatDate( product.subscription_expiry_date )
+	const expiryDate = product.subscription_current_expiry_date
+		? formatDate( product.subscription_current_expiry_date )
 		: undefined;
 	const postRenewExpiry = product.subscription_post_purchase_expiry_date
 		? formatDate( product.subscription_post_purchase_expiry_date )

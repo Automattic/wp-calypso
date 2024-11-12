@@ -525,7 +525,7 @@ export interface ResponseCartProduct {
 	 * Only set if we can easily determine when the product will renew. Does not
 	 * apply to domain transfers or multi-year domains.
 	 */
-	subscription_expiry_date?: string;
+	subscription_current_expiry_date?: string;
 
 	/**
 	 * The date when the product's subscription will expire if not renewed
