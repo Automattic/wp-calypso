@@ -177,7 +177,7 @@ const Recent = () => {
 									}
 								) }
 							</p>
-							<ReaderOnboarding />
+							<ReaderOnboarding forceShow />
 						</>
 					) : (
 						<DataViews
