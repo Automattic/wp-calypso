@@ -5,6 +5,7 @@ import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
+import Notice from 'calypso/components/notice';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useSiteExcerptsQueryInvalidator } from 'calypso/data/sites/use-site-excerpts-query';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -65,6 +66,8 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		}
 	}, [ isCancellationSuccess, reloadSite ] );
 
+	const [ errorNoticeDismissed, setErrorNoticeDismissed ] = useState( false );
+
 	useEffect( () => {
 		if ( cancellationError ) {
 			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
@@ -72,6 +75,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	}, [ cancellationError ] );
 
 	const handleCancelButtonClick = useCallback( () => {
+		setErrorNoticeDismissed( false );
 		cancelMigration();
 		setIsConfirmModalVisible( false );
 	}, [ cancelMigration ] );
@@ -99,6 +103,20 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				confirmButtonLabel={ translate( 'Cancel migration' ) }
 				cancelButtonLabel={ translate( "Don't cancel migration" ) }
 			/>
+
+			{ cancellationError && ! errorNoticeDismissed && (
+				<Notice
+					status="is-warning"
+					onDismissClick={ () => {
+						setErrorNoticeDismissed( true );
+					} }
+				>
+					{ translate(
+						'We ran into a problem cancelling your migration. Please try again shortly.'
+					) }
+				</Notice>
+			) }
+
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
