@@ -49,12 +49,6 @@
 	@media (min-width: $break-large) {
 		background: inherit;
 
-		.dataviews-view-table thead {
-			position: sticky;
-			top: 0;
-			z-index: 2;
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
 			font-weight: 500;
