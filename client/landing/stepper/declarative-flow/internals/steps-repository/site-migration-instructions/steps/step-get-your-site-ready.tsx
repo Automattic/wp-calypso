@@ -14,15 +14,12 @@ export const StepGetYourSiteReady: FC = () => {
 							strong: <strong />,
 						},
 						args: {
-							pluginName,
 							migrateLabel: 'Continue',
 						},
 					}
 				) }
 			</p>
-			<p>
-				{ translate( 'Then, pick WordPress.com as your destination host.' ) }
-			</p>
+			<p>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</p>
 			<p>
 				{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
 					components: {
