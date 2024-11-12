@@ -12,10 +12,11 @@ import type { Chat, Message } from '../types';
  * @returns The combined chat.
  */
 export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
-	const { currentSupportInteraction } = useSelect( ( select ) => {
+	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
+			isChatLoaded: store.getIsChatLoaded(),
 		};
 	}, [] );
 
@@ -45,7 +46,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 				} );
 			}
 		} else if ( odieId && conversationId && shouldUseHelpCenterExperience ) {
-			if ( odieChat ) {
+			if ( odieChat && isChatLoaded ) {
 				getZendeskConversation( {
 					chatId: odieChat.odieId,
 					conversationId: conversationId.toString(),
@@ -75,7 +76,14 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 				status: 'loaded',
 			} ) );
 		}
-	}, [ isOdieChatLoading, odieChat, conversationId, odieId, currentSupportInteraction ] );
+	}, [
+		isOdieChatLoading,
+		isChatLoaded,
+		odieChat,
+		conversationId,
+		odieId,
+		currentSupportInteraction,
+	] );
 
 	return { mainChatState, setMainChatState };
 };
