@@ -1,6 +1,6 @@
+import { DataViews, View, Field, Action, SortDirection } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -11,7 +11,6 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
-import type { Field } from '@wordpress/dataviews';
 import type {
 	DataViewsPaginationInfo,
 	DataViewsState,
@@ -19,6 +18,28 @@ import type {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 import './style.scss';
+
+// What ItemsDataViews provides with selectedItem DataViewsState
+// useLayoutEffect( () => {
+// 		if (
+// 			! scrollContainerRef.current ||
+// 			previousDataViewsState?.type !== data.dataViewsState.type
+// 		) {
+// 			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
+// 		}
+
+// 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
+// 			window.setTimeout(
+// 				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+// 				300
+// 			);
+// 			return;
+// 		}
+
+// 		if ( previousDataViewsState?.page !== data.dataViewsState.page ) {
+// 			scrollContainerRef.current?.scrollTo( 0, 0 );
+// 		}
+// 	}, [ data.dataViewsState.type, data.dataViewsState.page ] );
 
 type Props = {
 	sites: SiteExcerptData[];
@@ -221,11 +242,7 @@ const DotcomSitesDataViews = ( {
 	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
 
 	return (
-		<ItemsDataViews
-			data={ itemsData }
-			isLoading={ isLoading }
-			className="sites-overview__content"
-		/>
+		<DataViews data={ itemsData } isLoading={ isLoading } className="sites-overview__content" />
 	);
 };
 
