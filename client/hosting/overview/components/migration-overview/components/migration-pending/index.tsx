@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -45,6 +46,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		mutate: cancelMigration,
 		isSuccess: isCancellationSuccess,
 		isPending: isCancelling,
+		error: cancellationError,
 	} = useMigrationCancellation( site.ID );
 	const dispatch = useDispatch();
 
@@ -54,9 +56,16 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 
 	useEffect( () => {
 		if ( isCancellationSuccess ) {
+			recordTracksEvent( 'calypso_pending_migration_canceled' );
 			reloadSite();
 		}
 	}, [ isCancellationSuccess, reloadSite ] );
+
+	useEffect( () => {
+		if ( cancellationError ) {
+			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
+		}
+	}, [ cancellationError ] );
 
 	const handleCancelButtonClick = useCallback( () => {
 		cancelMigration();
