@@ -8,7 +8,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
-import useCancellation from './use-cancellation';
+import useCancelMigration from './use-cancel-migration';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
@@ -46,7 +46,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		closeModal: closeCancellationModal,
 		showErrorNotice: showCancellationErrorNotice,
 		dismissErrorNotice: dismissCancellationErrorNotice,
-	} = useCancellation( site );
+	} = useCancelMigration( site );
 
 	if ( isCancelling ) {
 		return (

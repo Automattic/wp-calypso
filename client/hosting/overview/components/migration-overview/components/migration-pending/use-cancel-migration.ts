@@ -6,7 +6,7 @@ import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const useCancellation = ( site: SiteDetails ) => {
+const useCancelMigration = ( site: SiteDetails ) => {
 	const dispatch = useDispatch();
 	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
 
@@ -70,4 +70,4 @@ const useCancellation = ( site: SiteDetails ) => {
 	};
 };
 
-export default useCancellation;
+export default useCancelMigration;
