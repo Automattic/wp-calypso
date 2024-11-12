@@ -6,7 +6,6 @@ import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
-	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
@@ -27,7 +26,7 @@ export default function AgencyTierOverview() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const title = translate( 'Agency Tiers' );
+	const title = translate( 'Agency Tier and benefits' );
 	const benefits = getTierBenefits( translate );
 
 	const currentAgencyTier = agency?.tier?.id;
@@ -47,9 +46,6 @@ export default function AgencyTierOverview() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
-					<Subtitle>
-						{ translate( 'Experience the rewards of selling Automattic products and hosting.' ) }
-					</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
 						{ showDownloadBadges && <DownloadBadges /> }
@@ -149,7 +145,7 @@ export default function AgencyTierOverview() {
 						{ translate( 'Take a closer look' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-heading">
-						{ translate( 'Explore the benefits of using Automattic for Agencies' ) }
+						{ translate( 'Experience the benefits of being an Automattic Agency Partner' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-cards">
 						{ benefits.map( ( benefit ) => (
