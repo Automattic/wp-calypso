@@ -222,9 +222,10 @@ class RegisterDomainStep extends Component {
 
 	isSubdomainResultsVisible() {
 		return (
-			this.props.includeWordPressDotCom ||
-			this.props.includeDotBlogSubdomain ||
-			this.props.otherManagedSubdomains?.length > 0
+			this.props.shouldQuerySubdomains &&
+			( this.props.includeWordPressDotCom ||
+				this.props.includeDotBlogSubdomain ||
+				this.props.otherManagedSubdomains?.length > 0 )
 		);
 	}
 
