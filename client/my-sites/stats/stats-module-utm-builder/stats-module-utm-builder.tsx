@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { trackStatsAnalyticsEvent } from '../utils';
 import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
@@ -14,7 +14,26 @@ interface Props {
 
 const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
+	const scrollY = useRef( { y: 0, mobile: false } );
+
+	const openModal = () => {
+		const isMobile = document.body.scrollTop > 0;
+		scrollY.current.mobile = isMobile;
+		scrollY.current.y = isMobile ? document.body.scrollTop : window.scrollY;
+
+		setOpen( true );
+	};
+
+	// Prevent scroll to top when modal is opened
+	useEffect( () => {
+		if ( isOpen && ! scrollY.current.mobile ) {
+			document.body.scrollTo( 0, scrollY.current.y );
+		} else if ( ! isOpen ) {
+			const element = scrollY.current.mobile ? document.body : window;
+			element.scrollTo( 0, scrollY.current.y );
+		}
+	}, [ isOpen ] );
+
 	const closeModal = () => setOpen( false );
 	const translate = useTranslate();
 
