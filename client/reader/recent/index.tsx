@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
@@ -165,19 +166,8 @@ const Recent = () => {
 		} ) );
 	}, [ selectedRecentSidebarFeedId ] );
 
-	const [ hasLoadedItems, setHasLoadedItems ] = useState( false );
-	const isEmpty = ! data?.items || data.items.length === 0;
-
-	useEffect( () => {
-		if ( ! isEmpty ) {
-			setHasLoadedItems( true );
-		}
-	}, [ data, isEmpty ] );
-
-	// To prevent content flashing, don't render the component until data has loaded for the first time.
-	if ( ! hasLoadedItems && data?.isRequesting ) {
-		return null;
-	}
+	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
+	const isEmpty = subscriptionsCount?.blogs === 0;
 
 	return (
 		<div className="recent-feed">

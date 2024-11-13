@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -74,6 +74,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
+	const queryClient = useQueryClient();
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -262,7 +263,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 
-		// Refresh the recent stream data.
+		// Invalidate the subscriptions count query to refresh the Recent stream.
+		queryClient.invalidateQueries( {
+			queryKey: [ 'read', 'subscriptions-count' ],
+		} );
+
+		// Refresh the Recent stream data.
 		dispatch(
 			requestPaginatedStream( {
 				streamKey: 'recent',
@@ -272,7 +278,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		);
 
 		handleClose();
-	}, [ dispatch, handleClose ] );
+	}, [ dispatch, handleClose, queryClient ] );
 
 	const headerActions = (
 		<>
