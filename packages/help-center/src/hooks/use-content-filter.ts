@@ -24,8 +24,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 						 * Handle links to Calypso.
 						 */
 						if ( href.includes( '://wordpress.com/' ) ) {
-							// Create a Calypso URL that includes the site slug and the query param to open Help Center again
-							const pageUrl = new URL( `${ href }/` );
+							const pageUrl = new URL( `${ href }` );
 							pageUrl.searchParams.set( 'help-center', link );
 
 							element.onclick = ( event: Event ) => {
