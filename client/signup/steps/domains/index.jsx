@@ -931,15 +931,11 @@ export class RenderDomainsStep extends Component {
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
-		const isPaidPlan = [
-			'starter',
-			'pro',
-			'personal',
-			'premium',
-			'business',
-			'ecommerce',
-			'domain',
-		].includes( flowName );
+		const isFreeFlow = flowName === 'free';
+		const explainerType =
+			this.props.isPlanSelectionAvailableLaterInFlow || isFreeFlow
+				? 'free-domain-explainer'
+				: 'free-domain-explainer-paid-plans';
 
 		return (
 			<div className="domains__domain-side-content-container">
@@ -963,7 +959,7 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-side-content domains__free-domain">
 							<ReskinSideExplainer
 								onClick={ this.handleDomainExplainerClick }
-								type={ isPaidPlan ? 'free-domain-explainer-paid-plans' : 'free-domain-explainer' }
+								type={ explainerType }
 								flowName={ flowName }
 							/>
 						</div>
