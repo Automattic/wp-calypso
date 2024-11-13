@@ -62,7 +62,7 @@ class PurchasesList extends Component<
 		WithStoredPaymentMethodsProps
 > {
 	isDataLoading() {
-		if ( this.props.userPurchasesState.isFetching ) {
+		if ( this.props.userPurchasesState.isLoading ) {
 			return true;
 		}
 

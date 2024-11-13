@@ -31,7 +31,7 @@ class PaymentMethodList extends Component<
 		// NOTE: we wait for user purchases to load because they are needed by
 		// some sub-components of PaymentMethod (eg: PaymentMethodDelete) and
 		// those components don't have their own loading states.
-		if ( this.props.paymentMethodsState.isLoading || this.props.userPurchasesState.isFetching ) {
+		if ( this.props.paymentMethodsState.isLoading || this.props.userPurchasesState.isLoading ) {
 			return (
 				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />

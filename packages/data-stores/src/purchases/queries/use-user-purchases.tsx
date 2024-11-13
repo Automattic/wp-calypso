@@ -6,7 +6,7 @@ import type { ComponentType } from 'react';
 
 export interface UserPurchasesState {
 	purchases: Purchase[];
-	isFetching: boolean;
+	isLoading: boolean;
 	isError: boolean;
 	error: Error | undefined | null;
 }
@@ -18,6 +18,7 @@ export interface WithUserPurchasesProps {
 async function fetchUserPurchases(): Promise< RawPurchase[] > {
 	return await wpcomRequest( {
 		path: '/me/purchases',
+		apiVersion: '1.1',
 	} );
 }
 
@@ -38,7 +39,7 @@ export function useUserPurchases(): UserPurchasesState {
 	} );
 	return {
 		purchases: result.data ?? [],
-		isFetching: result.isFetching || result.isLoading,
+		isLoading: result.isLoading,
 		isError: result.isError,
 		error: result.error,
 	};
