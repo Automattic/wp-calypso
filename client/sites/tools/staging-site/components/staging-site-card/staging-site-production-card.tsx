@@ -22,6 +22,7 @@ import {
 	usePullFromStagingMutation,
 	usePushToStagingMutation,
 } from '../../hooks/use-staging-sync';
+import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { ConfirmationModal } from './confirmation-modal';
 import { LoadingPlaceholder } from './loading-placeholder';
