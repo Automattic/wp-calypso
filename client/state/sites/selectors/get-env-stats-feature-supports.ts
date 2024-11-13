@@ -12,7 +12,7 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
+function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ): boolean | null {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
@@ -66,7 +66,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		),
 		isOldJetpack:
 			isSiteJetpackNotAtomic &&
-			statsAdminVersion &&
+			// Returns null when the version is not available.
+			( statsAdminVersion || null ) &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
