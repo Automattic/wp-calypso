@@ -47,8 +47,7 @@ import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { View, Field, Action, SortDirection } from '@wordpress/dataviews';
-import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -195,6 +194,7 @@ const SitesDashboard = ( {
 		},
 	} as View;
 	const [ viewState, setViewState ] = useState< View >( defaultViewState );
+	const [ selectedItem, setSelectedItem ] = useState< SiteExcerptData | null >( null );
 
 	useEffect( () => {
 		const fields = getFieldsByBreakpoint( isDesktop );
@@ -339,21 +339,22 @@ const SitesDashboard = ( {
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
-		if ( viewState.selectedItem ) {
-			setViewState( { ...viewState, type: 'table', selectedItem: undefined } );
+		if ( selectedItem ) {
+			setSelectedItem( null );
+			setViewState( { ...viewState, type: 'table' } );
 			//setHideListing( false );
 		}
-	}, [ viewState, setViewState ] );
+	}, [ viewState, setViewState, selectedItem, setSelectedItem ] );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
+			setSelectedItem( site );
 			setViewState( ( prevState ) => ( {
 				...prevState,
-				selectedItem: site,
 				type: 'list',
 			} ) );
 		},
-		[ setViewState ]
+		[ setViewState, setSelectedItem ]
 	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
@@ -374,10 +375,10 @@ const SitesDashboard = ( {
 			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! dataViewsState.selectedItem && 'preview-hidden'
+				! selectedItem && 'preview-hidden'
 			) }
 			wide
-			title={ dataViewsState.selectedItem ? null : dashboardTitle }
+			title={ selectedItem ? null : dashboardTitle }
 			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
@@ -405,11 +406,13 @@ const SitesDashboard = ( {
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						viewState={ viewState }
 						setViewState={ setViewState }
+						selectedItem={ selectedItem }
+						openSitePreviewPane={ openSitePreviewPane }
 					/>
 				</LayoutColumn>
 			) }
 
-			{ viewState.selectedItem && (
+			{ selectedItem && (
 				<GuidedTourContextProvider
 					guidedTours={ onboardingTours }
 					preferenceNames={ CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME }
@@ -417,7 +420,7 @@ const SitesDashboard = ( {
 				>
 					<LayoutColumn className="site-preview-pane" wide>
 						<DotcomPreviewPane
-							site={ viewState.selectedItem }
+							site={ selectedItem }
 							selectedSiteFeature={ selectedSiteFeature }
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 							setSelectedSiteFeature={ setSelectedSiteFeature }

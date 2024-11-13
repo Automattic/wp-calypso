@@ -1,6 +1,6 @@
-import { DataViews, View, ViewProps, Field, Action, SortDirection } from '@wordpress/dataviews';
+import { DataViews, View, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -14,7 +14,8 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 import './style.scss';
 
-// What ItemsDataViews provides with selectedItem DataViewsState
+// todo: What ItemsDataViews (now using DataViews) provides with selectedItem DataViewsState - need to port here
+
 // useLayoutEffect( () => {
 // 		if (
 // 			! scrollContainerRef.current ||
@@ -42,6 +43,8 @@ type Props = {
 	paginationInfo: { totalItems: number; totalPages: number };
 	viewState: View;
 	setViewState: ( callback: ( prevState: View ) => View ) => void;
+	selectedItem: SiteExcerptData | null;
+	openSitePreviewPane: ( site: SiteExcerptData ) => void;
 };
 
 export function useSiteStatusGroups() {
@@ -66,20 +69,11 @@ const DotcomSitesDataViews = ( {
 	paginationInfo,
 	viewState,
 	setViewState,
+	selectedItem,
+	openSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
-
-	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
-			setViewState( ( prevState: View ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: 'list',
-			} ) );
-		},
-		[ setViewState ]
-	);
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
 	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
@@ -90,8 +84,10 @@ const DotcomSitesDataViews = ( {
 	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
 	// (See the `getSelection()` function below.)
 	const onSelectionChange = () => {};
-	const getSelection = ( viewState: View ) =>
-		viewState.selectedItem ? [ viewState.selectedItem.ID ] : undefined;
+	const getSelection = useCallback(
+		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
+		[ selectedItem ]
+	);
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
@@ -204,42 +200,28 @@ const DotcomSitesDataViews = ( {
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
-	const siteSearchLabel = __( 'Search sites…' );
-
-	// Create the itemData packet state
-	const [ itemsData, setItemsData ] = useState< ViewProps< SiteExcerptData > >( {
-		items: sites,
-		itemFieldId: 'ID',
-		searchLabel: siteSearchLabel,
-		// See https://github.com/Automattic/wp-calypso/blob/27cb24ca2bf112f8a844233021e6fb3ad86d279a/client/a8c-for-agencies/components/items-dashboard/items-dataviews/index.tsx#L44
-		// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-		fields,
-		actions: [],
-		setViewState: setViewState,
-		viewState: viewState,
-		onSelectionChange,
-		pagination: paginationInfo,
-		defaultLayouts: { table: {} },
-	} );
-
-	// Update the itemData packet
-	useEffect( () => {
-		setItemsData( ( prevState: ViewProps< SiteExcerptData > ) => ( {
-			...prevState,
-			items: sites,
-			fields,
-			// actions: actions,
-			setViewState,
-			viewState,
-			searchLabel: siteSearchLabel,
-			selectedItem: viewState.selectedItem,
-			selection: getSelection( viewState ),
-			pagination: paginationInfo,
-		} ) );
-	}, [ fields, viewState, paginationInfo, setViewState, sites, siteSearchLabel ] ); // add actions when implemented
-
 	return (
-		<DataViews data={ itemsData } isLoading={ isLoading } className="sites-overview__content" />
+		<div className="sites-overview__content">
+			<DataViews
+				data={ sites }
+				fields={ fields }
+				onChangeView={ ( newView: View ) => setViewState( () => newView ) }
+				view={ viewState }
+				search
+				searchLabel={ __( 'Search sites…' ) }
+				selection={ getSelection() }
+				paginationInfo={ paginationInfo }
+				// a4a port
+				getItemId={ ( item ) => {
+					// @ts-expect-error -- this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
+					item.id = item.ID.toString();
+					return item.ID.toString();
+				} }
+				isLoading={ isLoading }
+				defaultLayouts={ { table: {} } }
+				onChangeSelection={ onSelectionChange }
+			/>
+		</div>
 	);
 };
 
