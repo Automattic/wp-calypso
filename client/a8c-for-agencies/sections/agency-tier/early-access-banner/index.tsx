@@ -17,7 +17,7 @@ export default function EarlyAccessBanner() {
 
 	const handleDismiss = () => {
 		dispatch( savePreference( EARLY_ACCESS_BANNER_DISMISSED, true ) );
-		dispatch( recordTracksEvent( 'calypso_a4a_early_access_banner_dismiss_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_agency_tier_early_access_banner_dismiss_click' ) );
 	};
 
 	if ( bannerDismissed ) {
