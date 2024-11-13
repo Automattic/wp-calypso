@@ -8,6 +8,11 @@ $stats-utm-builder-help-padding: 38px;
 $stats-utm-builder-vertical-spacing: 24px;
 $modal-content-padding: 32px;
 
+.stats-utm-builder__body-modal-open {
+	// Not added by default on Calypso
+	overflow: hidden;
+}
+
 .stats-utm-builder__overlay {
 	@media (min-width: $break-large) {
 		.components-modal__frame {

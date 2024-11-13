@@ -65,6 +65,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
+					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
 						<div className="stats-utm-builder__fields">
