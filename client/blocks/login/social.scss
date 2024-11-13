@@ -6,6 +6,11 @@
 	margin-bottom: 5px;
 	font-size: 0.875rem;
 	font-weight: 600;
+
+	& + [data-e2e-link="magic-login-link"].social-buttons__button > span.social-buttons__service-name {
+		max-width: 295px;
+		margin-right: -10px;
+	}
 }
 
 .auth-form__social.is-login {
