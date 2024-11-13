@@ -3,7 +3,7 @@ import type { links } from './table/links';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export type ProductToCompare = {
-	id: 'FREE' | 'SECURITY' | 'COMPLETE';
+	id: 'FREE' | 'SECURITY' | 'COMPLETE' | 'GROWTH';
 	name: React.ReactNode;
 	productSlug: string;
 };

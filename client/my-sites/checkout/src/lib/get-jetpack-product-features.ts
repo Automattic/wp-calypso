@@ -3,6 +3,7 @@ import {
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
 	isJetpackCompleteSlug,
+	isJetpackGrowthPlan,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecurityT1Slug,
@@ -26,6 +27,7 @@ type featureString =
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
+	| 'growth'
 	| 'scan'
 	| 'search'
 	| 'social-basic'
@@ -89,6 +91,20 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+			];
+		case 'growth':
+			// JetPack Creator features
+			return [
+				translate( 'Display ads with WordAds' ),
+				translate( 'Pay with PayPal' ),
+				translate( 'Import unlimited subscribers' ),
+				translate( '40+ Jetpack blocks' ),
+				translate( 'Paid content gating' ),
+				translate( 'Paywall access' ),
+				translate( 'Newsletter' ),
+				translate( 'Priority support' ),
+				translate( '2% transaction fees' ),
+				translate( 'Jetpack Stats' ),
 			];
 		case 'scan':
 			return [
@@ -197,6 +213,14 @@ export default function getJetpackProductFeatures(
 	if ( isJetpackCompleteSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'complete', translate ),
+			...getFeatureStrings( 'support', translate ),
+		];
+	}
+
+	if ( isJetpackGrowthPlan( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'growth', translate ),
+			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'support', translate ),
 		];
 	}
