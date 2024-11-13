@@ -7,15 +7,20 @@ import { render, screen, waitForElementToBeRemoved } from '@testing-library/reac
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import { createReduxStore } from 'calypso/state';
+import { RawPurchase } from '../../../../lib/purchases/types';
 import PaymentMethodList from '../payment-method-list';
 import type {
 	StoredPaymentMethodCard,
 	StoredPaymentMethodPayPal,
 } from '../../../../lib/checkout/payment-methods';
 
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+
 const card: StoredPaymentMethodCard = {
 	stored_details_id: '1234',
+	display_brand: null,
 	user_id: '5432',
 	name: 'Card Person',
 	country_code: 'US',
@@ -75,6 +80,17 @@ const mockPurchases = [
 	},
 ];
 
+const mockRawPurchases: Partial< RawPurchase >[] = [
+	{
+		product_name: 'WordPress.com Business Plan',
+		domain: 'associatedsubscription.wordpress.com',
+		meta: 'associatedsubscription.wordpress.com',
+		stored_details_id: '1234',
+		auto_renew: '1',
+		renew_date: '2080-12-31',
+	},
+];
+
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getUserPurchases: jest.fn( () => mockPurchases ),
 	getSitePurchases: jest.fn( () => mockPurchases ),
@@ -102,6 +118,12 @@ describe( 'PaymentMethod', () => {
 	const currentData = { cards: [] };
 	beforeEach( () => {
 		nock.cleanAll();
+		( wpcomRequest as jest.Mock ).mockImplementation( ( args ) => {
+			if ( args.path === '/me/purchases' ) {
+				return Promise.resolve( mockRawPurchases );
+			}
+			return Promise.reject( `Unknown endpoint in test ${ args.path }` );
+		} );
 		currentData.cards = [ card, payPalAgreement ];
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
@@ -164,7 +186,7 @@ describe( 'PaymentMethod', () => {
 		const store = createMockReduxStoreForPurchase();
 		const queryClient = new QueryClient();
 
-		mockPurchases[ 0 ].payment.storedDetailsId = '5678';
+		mockRawPurchases[ 0 ].stored_details_id = '5678';
 
 		render(
 			<ReduxProvider store={ store }>
