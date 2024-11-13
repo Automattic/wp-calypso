@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -11,8 +12,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { HostingCardDescription } from 'calypso/components/hosting-card';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useSelector } from 'calypso/state';
 import {
 	updateAtomicPhpVersion,
@@ -29,7 +32,7 @@ import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fet
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-import './web-server-form.scss';
+import './server-configuration-form.scss';
 
 const ParagraphPlaceholder = styled( LoadingPlaceholder )( {
 	height: 24,
@@ -49,17 +52,11 @@ const InputPlaceholder = styled( LoadingPlaceholder )( {
 	marginBottom: '1em',
 } );
 
-type WebServerSettingsFormProps = {
-	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+type ServerConfigurationFormProps = {
 	disabled?: boolean;
 };
 
-export default function WebServerSettingsForm( {
-	ContainerComponent,
-	DescriptionComponent,
-	disabled,
-}: WebServerSettingsFormProps ) {
+export default function ServerConfigurationForm( { disabled }: ServerConfigurationFormProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -105,6 +102,8 @@ export default function WebServerSettingsForm( {
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
+
+	const isUntangled = config.isEnabled( 'untangling/hosting-menu' );
 
 	useEffect( () => {
 		function scrollTo( hash: string ) {
@@ -210,20 +209,25 @@ export default function WebServerSettingsForm( {
 					</>
 				) }
 				{ ! isWpcomStagingSite && (
-					<p
-						className="web-server-settings-card__wp-version-description"
-						ref={ wpVersionExplainerRef }
-					>
+					<FormSettingExplanation ref={ wpVersionExplainerRef }>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
 							{
 								components: {
-									a: <a href={ `/staging-site/${ selectedSiteSlug }` } />,
+									a: (
+										<a
+											href={
+												isUntangled
+													? `/sites/tools/staging-site/${ selectedSiteSlug }`
+													: `/staging-site/${ selectedSiteSlug }`
+											}
+										/>
+									),
 								},
 							}
 						) }
-					</p>
+					</FormSettingExplanation>
 				) }
 			</FormFieldset>
 		);
@@ -416,25 +420,25 @@ export default function WebServerSettingsForm( {
 	};
 
 	return (
-		<ContainerComponent
-			className="web-server-settings-card"
-			headingId="web-server-settings"
-			title={ translate( 'Web server settings' ) }
-		>
+		<PanelSection>
 			<QuerySiteGeoAffinity siteId={ siteId } />
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
-			<DescriptionComponent>
+
+			<PanelHeading id="web-server-settings">
+				{ isUntangled ? translate( 'Server configuration' ) : translate( 'Web server settings' ) }
+			</PanelHeading>
+			<HostingCardDescription hide={ isUntangled }>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
-			</DescriptionComponent>
+			</HostingCardDescription>
 			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getPhpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
-		</ContainerComponent>
+		</PanelSection>
 	);
 }

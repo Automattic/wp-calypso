@@ -1,4 +1,6 @@
 import { FormLabel } from '@automattic/components';
+import { Icon, check } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -23,6 +25,56 @@ type UtmKeyType = ( typeof utmKeys )[ number ];
 
 type inputValuesType = Record< UtmKeyType, string >;
 type formLabelsType = Record< UtmKeyType, { label: string; placeholder: string } >;
+
+const useConfirmationMessage = ( visibleDuration = 2000, fadeOutDuration = 500 ) => {
+	const [ showConfirmation, setShowConfirmation ] = useState( false );
+	const [ fadeOut, setFadeOut ] = useState( false );
+	const timeoutRef = useRef< NodeJS.Timeout | null >( null );
+
+	useEffect( () => {
+		return () => {
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current );
+			}
+		};
+	}, [] );
+
+	const triggerConfirmation = () => {
+		if ( timeoutRef.current ) {
+			clearTimeout( timeoutRef.current );
+		}
+
+		setFadeOut( false );
+		setShowConfirmation( true );
+
+		timeoutRef.current = setTimeout( () => {
+			setFadeOut( true );
+
+			timeoutRef.current = setTimeout( () => {
+				setShowConfirmation( false );
+			}, fadeOutDuration );
+		}, visibleDuration );
+	};
+
+	return { showConfirmation, fadeOut, triggerConfirmation };
+};
+
+const CopyConfirmation = ( { show, fadeOut }: { show: boolean; fadeOut: boolean } ) => {
+	const translate = useTranslate();
+
+	return (
+		show && (
+			<div
+				className={ clsx( 'stats-utm-builder__copy-confirmation', {
+					'fade-out': fadeOut,
+				} ) }
+			>
+				<Icon size={ 24 } icon={ check } />
+				{ translate( 'Copied' ) }
+			</div>
+		)
+	);
+};
 
 const InputField: React.FC< InputFieldProps > = ( {
 	id,
@@ -59,6 +111,7 @@ const UtmBuilder: React.FC = () => {
 	} );
 	// Focus the initial input field when rendered.
 	const initialInputReference = useRef< HTMLInputElement >( null );
+	const { showConfirmation, fadeOut, triggerConfirmation } = useConfirmationMessage();
 
 	useEffect( () => {
 		initialInputReference.current!.focus();
@@ -104,10 +157,17 @@ const UtmBuilder: React.FC = () => {
 				campaignString ? `${ url.includes( '?' ) ? '&' : '?' }${ campaignString }` : ''
 		  }`;
 
+	const handleCopy = () => {
+		if ( url ) {
+			navigator.clipboard.writeText( utmString );
+			triggerConfirmation();
+		}
+	};
+
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset>
+				<FormFieldset className="stats-utm-builder__form-fieldset">
 					<InputField
 						id="url"
 						name="url"
@@ -135,14 +195,17 @@ const UtmBuilder: React.FC = () => {
 				<div className="stats-utm-builder__label">{ translate( 'Your URL to share' ) }</div>
 				<div className="stats-utm-builder__url">{ utmString }</div>
 			</div>
-			<StatsButton
-				primary
-				onClick={ () => {
-					navigator.clipboard.writeText( utmString );
-				} }
-			>
-				{ translate( 'Copy to clipboard' ) }
-			</StatsButton>
+			<div className="stats-utm-builder__copy-area">
+				<StatsButton
+					className="stats-utm-builder__copy-button"
+					primary
+					onClick={ handleCopy }
+					disabled={ ! url }
+				>
+					{ translate( 'Copy to clipboard' ) }
+				</StatsButton>
+				<CopyConfirmation show={ showConfirmation } fadeOut={ fadeOut } />
+			</div>
 		</>
 	);
 };

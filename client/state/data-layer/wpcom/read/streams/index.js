@@ -198,7 +198,15 @@ const streamApis = {
 		path: () => '/read/streams/following',
 		dateProperty: 'date',
 		apiNamespace: 'wpcom/v2',
-		query: ( extras ) => getQueryString( extras ),
+		query: ( extras, { streamKey } ) => {
+			const feedId = streamKeySuffix( streamKey );
+			const queryParams = { ...extras };
+			if ( feedId !== 'recent' ) {
+				// 'recent' without a suffix means don't filter by feedId
+				queryParams.feed_id = feedId;
+			}
+			return getQueryString( queryParams );
+		},
 	},
 	search: {
 		path: () => '/read/search',

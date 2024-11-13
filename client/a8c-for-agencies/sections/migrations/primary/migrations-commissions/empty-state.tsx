@@ -7,7 +7,11 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export default function MigrationsCommissionsEmptyState() {
+export default function MigrationsCommissionsEmptyState( {
+	setShowAddSitesModal,
+}: {
+	setShowAddSitesModal: ( show: boolean ) => void;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -15,8 +19,8 @@ export default function MigrationsCommissionsEmptyState() {
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' )
 		);
-		// TODO: Implement the tagging functionality
-	}, [ dispatch ] );
+		setShowAddSitesModal( true );
+	}, [ dispatch, setShowAddSitesModal ] );
 
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 

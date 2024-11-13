@@ -1,0 +1,83 @@
+.migrations-tag-sites-modal__instruction {
+	@include a4a-font-body-sm;
+	margin: 0;
+	color: var(--color-accent-60);
+
+	svg {
+		position: relative;
+		top: 4px;
+		right: 2px;
+	}
+}
+
+.add-sites-table.redesigned-a8c-table {
+	overflow-y: auto;
+	margin-block: 24px;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(155, 155, 155, 0.5);
+		border-radius: 4px;
+		border: transparent;
+	}
+
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: 80px;
+		width: 100%;
+		height: 5%;
+		display: inline-block;
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 1) 100%);
+		transition: opacity 0.3s ease-out;
+	}
+
+	.dataviews-wrapper {
+		tr.dataviews-view-table__row {
+			.components-checkbox-control__input {
+				opacity: 1;
+			}
+
+			.components-checkbox-control__label {
+				cursor: pointer;
+			}
+
+			td {
+				border-bottom: none;
+				padding-block: 8px;
+			}
+
+			th {
+				border-color: #F1F1F1;
+			}
+		}
+
+		.dataviews__view-actions {
+			display: none;
+		}
+	}
+
+	.dataviews-view-table {
+		padding-block-end: 80px;
+		margin: 0 0 32px;
+
+		tr {
+			border-top: none;
+		}
+	}
+
+	.dataviews-view-table thead {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+	}
+}

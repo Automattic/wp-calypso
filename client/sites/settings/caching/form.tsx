@@ -4,12 +4,14 @@ import { Button } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useDispatch, useSelector } from 'calypso/state';
 import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -22,19 +24,11 @@ import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 
 import './form.scss';
 
-type CacheFormProps = {
-	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	SubdescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+type CachingFormProps = {
 	disabled?: boolean;
 };
 
-export default function CacheForm( {
-	ContainerComponent,
-	DescriptionComponent,
-	SubdescriptionComponent,
-	disabled,
-}: CacheFormProps ) {
+export default function CachingForm( { disabled }: CachingFormProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -130,8 +124,11 @@ export default function CacheForm( {
 				}
 		  );
 
+	const isUntangled = config.isEnabled( 'untangling/hosting-menu' );
+
 	return (
-		<ContainerComponent
+		<HostingCard
+			fallthrough={ isUntangled }
 			className="cache-card"
 			headingId="cache"
 			title={ translate( 'Performance optimization', {
@@ -139,15 +136,20 @@ export default function CacheForm( {
 				textOnly: true,
 			} ) }
 		>
-			<div className="cache-card__all-cache-block">
-				<DescriptionComponent>
+			<>
+				<HostingCardDescription hide={ isUntangled }>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
 					} ) }
-				</DescriptionComponent>
-
+				</HostingCardDescription>
+			</>
+			<PanelSection isBorderless={ ! isUntangled }>
+				<PanelHeading asFormLabel={ ! isUntangled }>{ translate( 'All caches' ) }</PanelHeading>
+				<PanelDescription>
+					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
+				</PanelDescription>
 				<Tooltip
 					placement="top"
 					text={
@@ -173,24 +175,20 @@ export default function CacheForm( {
 						</Button>
 					</div>
 				</Tooltip>
+			</PanelSection>
 
-				<div className="cache-card__nb">
-					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-				</div>
-			</div>
+			{ ! isUntangled && <div className="cache-card__hr" /> }
 
-			<div className="cache-card__hr" />
-
-			<div className="cache-card__global-edge-cache-block">
+			<PanelSection isBorderless={ ! isUntangled }>
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<div className="cache-card__subtitle">
+						<PanelHeading asFormLabel={ ! isUntangled }>
 							{ translate( 'Global edge cache', {
 								comment: 'Edge cache is a type of CDN that stores generated HTML pages',
 							} ) }
-						</div>
+						</PanelHeading>
 						<ToggleControl
 							__nextHasNoMarginBottom
 							className="cache-card__edge-cache-toggle"
@@ -247,16 +245,16 @@ export default function CacheForm( {
 							) }
 					</>
 				) }
-			</div>
+			</PanelSection>
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-				<div className="cache-card__global-object-cache-block">
-					<div className="cache-card__subtitle">
+				<PanelSection isBorderless={ ! isUntangled }>
+					<PanelHeading asFormLabel={ ! isUntangled }>
 						{ translate( 'Object cache', {
 							comment: 'Object cache stores database lookups and some network requests',
 						} ) }
-					</div>
-					<SubdescriptionComponent>
+					</PanelHeading>
+					<PanelDescription>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}',
 							{
@@ -266,7 +264,7 @@ export default function CacheForm( {
 								},
 							}
 						) }
-					</SubdescriptionComponent>
+					</PanelDescription>
 
 					<Tooltip
 						placement="top"
@@ -290,8 +288,8 @@ export default function CacheForm( {
 							</Button>
 						</div>
 					</Tooltip>
-				</div>
+				</PanelSection>
 			) }
-		</ContainerComponent>
+		</HostingCard>
 	);
 }

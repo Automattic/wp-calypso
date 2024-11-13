@@ -462,6 +462,7 @@ export class Login extends Component {
 			isBlazePro,
 			currentQuery,
 			isWooPasswordlessJPC,
+			currentRoute,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
@@ -469,9 +470,11 @@ export class Login extends Component {
 		}
 
 		if (
-			currentQuery.lostpassword_flow === 'true' &&
-			isWooPasswordlessJPC &&
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+			( currentQuery.lostpassword_flow === 'true' &&
+				isWooPasswordlessJPC &&
+				config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) ||
+			// We don't want to show lost password option if the user is already on lost password's page
+			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {
 			return null;
 		}
