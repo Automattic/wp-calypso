@@ -11,10 +11,8 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import {
-	hasLoadedSitePurchasesFromServer,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import { WithUserPurchasesProps, withUserPurchases } from '../hooks/use-user-purchases';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
@@ -26,17 +24,17 @@ interface PaymentMethodListProps {
 	translate: typeof translate;
 	isAgencyUser: boolean;
 	hasLoadedSitePurchasesFromServer: boolean;
-	hasLoadedUserPurchasesFromServer: boolean;
 }
 
 class PaymentMethodList extends Component<
-	PaymentMethodListProps & WithStoredPaymentMethodsProps
+	PaymentMethodListProps & WithStoredPaymentMethodsProps & WithUserPurchasesProps
 > {
 	renderPaymentMethods( paymentMethods: StoredPaymentMethod[] ) {
-		const hasLoadedPurchases =
-			this.props.hasLoadedUserPurchasesFromServer || this.props.hasLoadedSitePurchasesFromServer;
-
-		if ( this.props.paymentMethodsState.isLoading || ! hasLoadedPurchases ) {
+		if (
+			this.props.paymentMethodsState.isLoading ||
+			this.props.userPurchasesState.isFetching ||
+			! this.props.hasLoadedSitePurchasesFromServer
+		) {
 			return (
 				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />
@@ -113,5 +111,8 @@ class PaymentMethodList extends Component<
 export default connect( ( state: IAppState ) => ( {
 	isAgencyUser: isAgencyUser( state ),
 	hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-} ) )( withStoredPaymentMethods( localize( PaymentMethodList ), { type: 'all', expired: true } ) );
+} ) )(
+	withUserPurchases(
+		withStoredPaymentMethods( localize( PaymentMethodList ), { type: 'all', expired: true } )
+	)
+);
