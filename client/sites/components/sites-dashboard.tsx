@@ -1,3 +1,4 @@
+import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -33,8 +34,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
-import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
-import { useSyncSelectedSiteFeature } from '../hooks/use-sync-selected-site-feature';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -46,7 +45,8 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { SiteDetails } from '@automattic/data-stores';
+// todo: fix sitedetails / site excerpt casting
+// import type { SiteDetails } from '@automattic/data-stores';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -194,7 +194,6 @@ const SitesDashboard = ( {
 		},
 	} as View;
 	const [ viewState, setViewState ] = useState< View >( defaultViewState );
-	const [ selectedItem, setSelectedItem ] = useState< SiteExcerptData | null >( null );
 
 	useEffect( () => {
 		const fields = getFieldsByBreakpoint( isDesktop );
@@ -234,19 +233,6 @@ const SitesDashboard = ( {
 		// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
 		viewState?.layout?.styles?.site?.width,
 	] );
-
-	useSyncSelectedSite( viewState, setViewState, selectedSite );
-
-	// todo: add this
-	// const siteId = useSelector( getSelectedSiteId );
-
-	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
-		selectedSite,
-		initialSiteFeature,
-		viewState,
-		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'siteType' ],
-	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -339,22 +325,26 @@ const SitesDashboard = ( {
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
-		if ( selectedItem ) {
-			setSelectedItem( null );
-			setViewState( { ...viewState, type: 'table' } );
+		if ( selectedSite ) {
+			// setViewState( { ...viewState, type: 'table' } );
+			pagejs( '/sites' );
 			//setHideListing( false );
 		}
-	}, [ viewState, setViewState, selectedItem, setSelectedItem ] );
+	}, [ selectedSite ] );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
-			setSelectedItem( site );
+			const newUrl = `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace(
+				':site',
+				site.slug
+			) }`;
+			pagejs.show( newUrl );
 			setViewState( ( prevState ) => ( {
 				...prevState,
 				type: 'list',
 			} ) );
 		},
-		[ setViewState, setSelectedItem ]
+		[ setViewState, initialSiteFeature ]
 	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
@@ -375,10 +365,10 @@ const SitesDashboard = ( {
 			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! selectedItem && 'preview-hidden'
+				! selectedSite && 'preview-hidden'
 			) }
 			wide
-			title={ selectedItem ? null : dashboardTitle }
+			title={ selectedSite ? null : dashboardTitle }
 			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
@@ -389,7 +379,7 @@ const SitesDashboard = ( {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
-								<SitesDashboardHeader isPreviewPaneOpen={ !! viewState.selectedItem } />
+								<SitesDashboardHeader isPreviewPaneOpen={ !! selectedSite } />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
@@ -406,13 +396,13 @@ const SitesDashboard = ( {
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						viewState={ viewState }
 						setViewState={ setViewState }
-						selectedItem={ selectedItem }
+						selectedItem={ selectedSite as SiteExcerptData | null }
 						openSitePreviewPane={ openSitePreviewPane }
 					/>
 				</LayoutColumn>
 			) }
 
-			{ selectedItem && (
+			{ selectedSite && (
 				<GuidedTourContextProvider
 					guidedTours={ onboardingTours }
 					preferenceNames={ CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME }
@@ -420,10 +410,9 @@ const SitesDashboard = ( {
 				>
 					<LayoutColumn className="site-preview-pane" wide>
 						<DotcomPreviewPane
-							site={ selectedItem }
-							selectedSiteFeature={ selectedSiteFeature }
+							site={ selectedSite as SiteExcerptData }
+							selectedSiteFeature={ initialSiteFeature }
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
-							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
 						/>

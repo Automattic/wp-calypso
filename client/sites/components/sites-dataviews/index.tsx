@@ -211,8 +211,8 @@ const DotcomSitesDataViews = ( {
 				searchLabel={ __( 'Search sites…' ) }
 				selection={ getSelection() }
 				paginationInfo={ paginationInfo }
-				// a4a port
 				getItemId={ ( item ) => {
+					// a4a port - ItemsDataViews
 					// @ts-expect-error -- this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
 					item.id = item.ID.toString();
 					return item.ID.toString();

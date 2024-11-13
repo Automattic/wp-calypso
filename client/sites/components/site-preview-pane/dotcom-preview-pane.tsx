@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -36,6 +37,7 @@ import {
 	TOOLS_DATABASE,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
+	FEATURE_TO_ROUTE_MAP,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -47,7 +49,6 @@ import type {
 interface Props {
 	site: SiteExcerptData;
 	selectedSiteFeature: string;
-	setSelectedSiteFeature: ( feature: string ) => void;
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
@@ -62,7 +63,6 @@ const OVERLAY_MODAL_SELECTORS = [
 const DotcomPreviewPane = ( {
 	site,
 	selectedSiteFeature,
-	setSelectedSiteFeature,
 	selectedSiteFeaturePreview,
 	closeSitePreviewPane,
 	changeSitePreviewPane,
@@ -170,7 +170,11 @@ const DotcomPreviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							setSelectedSiteFeature( defaultFeatureId );
+							const newUrl = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
+								':site',
+								site.slug
+							) }`;
+							page( newUrl );
 						}
 					},
 				},
@@ -180,8 +184,9 @@ const DotcomPreviewPane = ( {
 		} );
 	}, [
 		__,
+		site,
+		hasEnTranslation,
 		selectedSiteFeature,
-		setSelectedSiteFeature,
 		selectedSiteFeaturePreview,
 		isSimpleSite,
 		isPlanExpired,
