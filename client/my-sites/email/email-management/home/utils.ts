@@ -138,7 +138,7 @@ export function resolveEmailPlanStatus(
 		statusClass: 'warning',
 		icon: 'info',
 		text: translate( 'Gravatar domain', {
-			comment: 'Current user is not allowed to manage email subscription',
+			comment: 'Current user is not allowed to purchase new email subscriptions',
 		} ),
 	};
 

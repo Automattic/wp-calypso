@@ -309,7 +309,7 @@ const EmailProvidersStackedComparison = ( {
 				{ isGravatarDomain && (
 					<Notice showDismiss={ false } className="email-providers-stacked-comparison__notice">
 						{ translate(
-							'This is a Gravatar domain and cannot have email services purchased for it.'
+							'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
 						) }
 					</Notice>
 				) }

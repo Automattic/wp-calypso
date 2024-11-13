@@ -77,7 +77,9 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 
 	const content = isGravatarDomain ? (
 		<Notice showDismiss={ false } className="email-forwards-add__notice">
-			{ translate( 'This is a Gravatar domain and cannot have email services purchased for it.' ) }
+			{ translate(
+				'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
+			) }
 		</Notice>
 	) : (
 		<Card>
