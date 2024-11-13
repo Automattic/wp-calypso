@@ -102,7 +102,7 @@ class PurchasesList extends Component<
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( purchases && purchases.length ) {
+		if ( ! this.isDataLoading() && purchases.length ) {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
@@ -124,7 +124,7 @@ class PurchasesList extends Component<
 			);
 		}
 
-		if ( purchases && ! purchases.length && ! subscriptions.length ) {
+		if ( ! this.isDataLoading() && ! purchases.length && ! subscriptions.length ) {
 			if ( ! sites.length ) {
 				return (
 					<Main wideLayout className="purchases-list">
