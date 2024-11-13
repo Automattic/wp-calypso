@@ -9,16 +9,18 @@ export const ResizableTextarea: React.FC< {
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
-	hidePlaceholder: boolean;
+	setInputFieldDisabled: boolean;
 } > = ( {
 	className,
 	sendMessageHandler,
 	inputRef,
 	keyUpHandle,
 	setSubmitDisabled,
-	hidePlaceholder = false,
+	setInputFieldDisabled = false,
 } ) => {
-	const textAreaPlaceholder = hidePlaceholder ? '' : __( 'Type a message…', __i18n_text_domain__ );
+	const textAreaPlaceholder = setInputFieldDisabled
+		? __( 'Just a moment, finding the best info...', __i18n_text_domain__ )
+		: __( 'Type a message…', __i18n_text_domain__ );
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
@@ -76,6 +78,7 @@ export const ResizableTextarea: React.FC< {
 			placeholder={ textAreaPlaceholder }
 			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }
+			disabled={ setInputFieldDisabled }
 		/>
 	);
 };
