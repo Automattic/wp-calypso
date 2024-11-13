@@ -10,6 +10,7 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
+import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
@@ -52,7 +53,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === 'domain-gravatar-domain';
+	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {

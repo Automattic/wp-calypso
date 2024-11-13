@@ -24,6 +24,7 @@ import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
+import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
@@ -99,7 +100,7 @@ const EmailProvidersStackedComparison = ( {
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === 'domain-gravatar-domain';
+	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
