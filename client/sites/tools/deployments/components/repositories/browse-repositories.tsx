@@ -1,12 +1,11 @@
 import { Card, Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, SearchControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps, useState } from 'react';
 import { GitHubInstallationsDropdown } from '../installations-dropdown';
 import { useLiveInstallations } from '../installations-dropdown/use-live-installations';
 import { GitHubLoadingPlaceholder } from '../loading-placeholder';
 import { GitHubBrowseRepositoriesList } from './repository-list';
-import { SearchRepos } from './search-repos';
 
 import './style.scss';
 
@@ -90,8 +89,9 @@ export const GitHubBrowseRepositories = ( {
 					value={ installation }
 					onChange={ setInstallation }
 				/>
-				<SearchRepos
-					disabled={ ! installations.length }
+				<SearchControl
+					css={ { flex: 1 } }
+					__nextHasNoMarginBottom
 					value={ query }
 					onChange={ handleQueryChange }
 				/>

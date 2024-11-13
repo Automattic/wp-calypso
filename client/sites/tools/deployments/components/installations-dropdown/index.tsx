@@ -41,11 +41,7 @@ export const GitHubInstallationsDropdown = ( {
 				</SelectDropdown.Item>
 			) ) }
 			<SelectDropdown.Separator />
-			<SelectDropdown.Item
-				onClick={ onAddInstallation }
-				key="add"
-				className="github-deployments-installations-select__add-installation"
-			>
+			<SelectDropdown.Item onClick={ onAddInstallation } key="add">
 				{ __( 'Add GitHub account' ) }
 			</SelectDropdown.Item>
 		</SelectDropdown>
