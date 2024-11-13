@@ -1,5 +1,14 @@
-import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
+import {
+	getPlanSlugForTermVariant,
+	isWpcomEnterpriseGridPlan,
+	PERIOD_LIST,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	type PlanSlug,
+} from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
+import { AddOns, Plans } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
@@ -14,12 +23,31 @@ interface HeaderPriceProps {
 	visibleGridPlans: GridPlan[];
 }
 
+const getTermVariantPlanSlugForSavings = ( {
+	planSlug,
+	billingPeriod,
+}: {
+	planSlug: PlanSlug;
+	billingPeriod?: -1 | ( typeof PERIOD_LIST )[ number ];
+} ) => {
+	if ( 365 === billingPeriod ) {
+		return getPlanSlugForTermVariant( planSlug, TERM_MONTHLY );
+	} else if ( 730 === billingPeriod ) {
+		return getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
+	} else if ( 1095 === billingPeriod ) {
+		return getPlanSlugForTermVariant( planSlug, TERM_BIENNIALLY );
+	}
+
+	return null;
+};
+
 const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, enableTermSavingsPriceDisplay, siteId, coupon, helpers } =
+		usePlansGridContext();
 	const {
 		current,
-		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
+		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
 	} = gridPlansIndex[ planSlug ];
 	const isPricedPlan = null !== originalPrice.monthly;
 
@@ -44,6 +72,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		currencyCode: currencyCode || 'USD',
 		ignoreWhitespace: true,
 	} );
+
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
+	const termVariantPlanSlug = getTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
+	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
+		planSlugs: termVariantPlanSlug ? [ termVariantPlanSlug ] : [],
+		storageAddOns,
+		coupon,
+		siteId,
+		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
+	} )?.[ termVariantPlanSlug ?? '' ];
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
@@ -123,7 +161,43 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	if ( isAnyVisibleGridPlanOneTimeDiscounted || isAnyVisibleGridPlanOnIntroOffer ) {
+	if ( enableTermSavingsPriceDisplay && termVariantPricing ) {
+		return (
+			<div className="plans-grid-next-header-price">
+				<div className="plans-grid-next-header-price__badge">{ `Save from ${ termVariantPricing.originalPrice.monthly }` }</div>
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ termVariantPricing.originalPrice.monthly }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ discountedPrice.monthly ?? originalPrice.monthly }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	if (
+		isAnyVisibleGridPlanOneTimeDiscounted ||
+		isAnyVisibleGridPlanOnIntroOffer ||
+		enableTermSavingsPriceDisplay
+	) {
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge is-hidden">' '</div>

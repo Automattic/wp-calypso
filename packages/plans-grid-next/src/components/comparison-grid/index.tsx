@@ -1153,6 +1153,7 @@ const WrappedComparisonGrid = ( {
 	hideUnsupportedFeatures,
 	enableFeatureTooltips,
 	featureGroupMap,
+	enableTermSavingsPriceDisplay,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -1186,6 +1187,7 @@ const WrappedComparisonGrid = ( {
 				enableFeatureTooltips={ enableFeatureTooltips }
 				featureGroupMap={ featureGroupMap }
 				hideUnsupportedFeatures={ hideUnsupportedFeatures }
+				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
