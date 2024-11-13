@@ -834,7 +834,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
+	repeatSearch = ( stateOverride = {} ) => {
 		this.save();
 
 		const { lastQuery } = this.state;
@@ -858,7 +858,7 @@ class RegisterDomainStep extends Component {
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
 		this.setState( nextState, () => {
-			loadingResults && this.onSearch( lastQuery, { shouldQuerySubdomains } );
+			loadingResults && this.onSearch( lastQuery );
 		} );
 	};
 
@@ -1382,7 +1382,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = async ( searchQuery ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
@@ -1427,7 +1427,7 @@ class RegisterDomainStep extends Component {
 					.catch( () => [] ) // handle the error and return an empty list
 					.then( this.handleDomainSuggestions( domain ) );
 
-				if ( shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
+				if ( this.props.shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
 					this.getSubdomainSuggestions( domain, timestamp );
 				}
 			}
