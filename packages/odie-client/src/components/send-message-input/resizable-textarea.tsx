@@ -19,7 +19,7 @@ export const ResizableTextarea: React.FC< {
 	setInputFieldDisabled = false,
 } ) => {
 	const textAreaPlaceholder = setInputFieldDisabled
-		? __( 'Just a moment, finding the best info...', __i18n_text_domain__ )
+		? __( 'Just a moment…', __i18n_text_domain__ )
 		: __( 'Type a message…', __i18n_text_domain__ );
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
