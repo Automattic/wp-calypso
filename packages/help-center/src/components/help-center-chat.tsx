@@ -42,6 +42,7 @@ export function HelpCenterChat( {
 			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
 			currentUser={ currentUser }
 			selectedSiteId={ site?.ID as number }
+			selectedSiteURL={ site?.URL as string }
 			selectedConversationId={ conversationId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={

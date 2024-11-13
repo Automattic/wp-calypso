@@ -294,6 +294,7 @@ export class FullPostView extends Component {
 		this._scrolling = true;
 		scrollToComments( {
 			focusTextArea,
+			container: this.readerMainWrapper.current,
 			onScrollComplete: () => {
 				this._scrolling = false;
 				if ( this.hasCommentAnchor ) {

@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
-import { Modal } from '@wordpress/components';
-import './styles.scss';
+import { Button, Modal } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import './styles.scss';
 
 type ConfirmModalProps = {
 	isVisible: boolean;
@@ -30,12 +29,12 @@ const ConfirmModal = ( {
 
 	return (
 		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onCancel }>
-			{ text && <p>{ text }</p> }
+			{ text && <p className="confirm-modal__text">{ text }</p> }
 			<div className="confirm-modal__buttons">
-				<Button className="confirm-modal__cancel" onClick={ onCancel }>
+				<Button variant="tertiary" onClick={ onCancel }>
 					{ cancelButtonLabel ?? translate( 'Cancel' ) }
 				</Button>
-				<Button onClick={ onConfirm } primary>
+				<Button onClick={ onConfirm } variant="primary">
 					{ confirmButtonLabel ?? translate( 'Confirm' ) }
 				</Button>
 			</div>

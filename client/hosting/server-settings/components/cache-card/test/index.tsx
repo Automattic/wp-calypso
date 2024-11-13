@@ -11,10 +11,10 @@ import {
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
+import CacheCard from 'calypso/sites/settings/caching/form';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
-import CacheCard from '../card';
 
 const INITIAL_STATE = {
 	sites: {

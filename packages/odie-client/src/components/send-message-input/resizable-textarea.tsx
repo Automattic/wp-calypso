@@ -38,6 +38,16 @@ export const ResizableTextarea: React.FC< {
 		[ inputRef, sendMessageHandler, keyUpHandle, setSubmitDisabled ]
 	);
 
+	const onKeyDown = useCallback(
+		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			// Prevent line break when user sends a message
+			if ( event.key === 'Enter' && ! event.shiftKey && inputRef.current?.value.trim() !== '' ) {
+				event.preventDefault();
+			}
+		},
+		[ inputRef ]
+	);
+
 	useEffect( () => {
 		// Set's back the textarea height after sending messages, it is needed for long messages.
 		if ( inputRef.current ) {
@@ -64,6 +74,7 @@ export const ResizableTextarea: React.FC< {
 			className={ className }
 			onKeyUp={ onKeyUp }
 			placeholder={ textAreaPlaceholder }
+			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }
 		/>
 	);

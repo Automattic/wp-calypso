@@ -11,6 +11,7 @@ import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
 } from 'calypso/data/hosting/use-cache';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/sites/settings/caching/edge-cache-loading-placeholder';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,16 +20,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './defensive-mode-form.scss';
 
 type DefensiveModeFormProps = {
-	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	disabled?: boolean;
 };
 
-export default function DefensiveModeForm( {
-	ContainerComponent,
-	DescriptionComponent,
-	disabled,
-}: DefensiveModeFormProps ) {
+export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
@@ -66,14 +61,14 @@ export default function DefensiveModeForm( {
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
-		<ContainerComponent
-			className="defensive-mode-card"
-			title={ translate( 'Defensive mode', {
-				comment: 'Defensive mode is a feature to protect against DDoS attacks.',
-				textOnly: true,
-			} ) }
-		>
-			<DescriptionComponent>
+		<PanelSection>
+			<PanelHeading>
+				{ translate( 'Defensive mode', {
+					comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+					textOnly: true,
+				} ) }
+			</PanelHeading>
+			<PanelDescription>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
 					{
@@ -84,7 +79,7 @@ export default function DefensiveModeForm( {
 						},
 					}
 				) }
-			</DescriptionComponent>
+			</PanelDescription>
 
 			{ isLoadingDefensiveMode && <EdgeCacheLoadingPlaceholder /> }
 
@@ -93,7 +88,7 @@ export default function DefensiveModeForm( {
 					<div className="defensive-mode-card__enabled-description">
 						<div className="defensive-mode-card__enabled-indicator" />
 
-						<DescriptionComponent>
+						<div className="defensive-mode__description">
 							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(date)s.', {
 								args: {
 									date: enabledUntil.format( 'LLL' ),
@@ -103,7 +98,7 @@ export default function DefensiveModeForm( {
 									b: <strong />,
 								},
 							} ) }
-						</DescriptionComponent>
+						</div>
 					</div>
 
 					{ ! defensiveModeData.enabled_by_a11n && (
@@ -196,6 +191,6 @@ export default function DefensiveModeForm( {
 					</Button>
 				</>
 			) }
-		</ContainerComponent>
+		</PanelSection>
 	);
 }

@@ -21,7 +21,14 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
-async function createStripeSetupIntent( countryCode: string ): Promise< StripeSetupIntentId > {
+/**
+ * Call our endpoint to create the Stripe Setup Intent to later be confirmed by
+ * `confirmStripeSetupIntentAndAttachCard()`.
+ *
+ * NOTE: if countryCode is not provided, geolocation will be used to determine
+ * which Stripe account to use to create the Payment Method.
+ */
+async function createStripeSetupIntent( countryCode?: string ): Promise< StripeSetupIntentId > {
 	const configuration = await wp.req.post( '/me/stripe-setup-intent', {
 		country: countryCode,
 	} );
@@ -167,7 +174,11 @@ export async function assignNewCardProcessor(
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
-		const stripeSetupIntentId = await createStripeSetupIntent( countryCode );
+		// @todo: we should pass the countryCode to createStripeSetupIntent,
+		// but since `prepareAndConfirmStripeSetupIntent()` uses the `stripe`
+		// object created by `StripeHookProvider`, that object must also be
+		// created with the same countryCode, and right now it is not.
+		const stripeSetupIntentId = await createStripeSetupIntent();
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',

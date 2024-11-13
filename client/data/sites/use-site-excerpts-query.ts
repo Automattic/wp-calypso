@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { SITE_EXCERPT_REQUEST_FIELDS, SITE_EXCERPT_REQUEST_OPTIONS } from '@automattic/sites';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -27,6 +28,15 @@ const fetchSites = (
 		options: additional_options.concat( SITE_EXCERPT_REQUEST_OPTIONS ).join( ',' ),
 		filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 	} );
+};
+
+export const useSiteExcerptsQueryInvalidator = () => {
+	const queryClient = useQueryClient();
+	const invalidate = useCallback(
+		() => queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } ),
+		[ queryClient ]
+	);
+	return invalidate;
 };
 
 export const useSiteExcerptsQuery = (

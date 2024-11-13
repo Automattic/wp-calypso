@@ -67,7 +67,6 @@
 			padding: 16px;
 			font-size: 0.875rem;
 			font-style: normal;
-			list-style: inherit;
 
 			li {
 				margin-bottom: 6px;
@@ -76,6 +75,10 @@
 					padding: 0;
 				}
 			}
+		}
+
+		ul {
+			list-style: initial;
 		}
 
 		&.odie-chatbox-message-bot {

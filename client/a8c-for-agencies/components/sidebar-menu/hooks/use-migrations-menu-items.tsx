@@ -1,4 +1,4 @@
-import { category, cog, help } from '@wordpress/icons';
+import { category, cog, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
@@ -36,7 +36,7 @@ const useMigrationsMenuItems = ( path: string ) => {
 			),
 			createItem(
 				{
-					icon: help,
+					icon: currencyDollar,
 					path: A4A_MIGRATIONS_LINK,
 					link: A4A_MIGRATIONS_COMMISSIONS_LINK,
 					title: translate( 'Commissions' ),
