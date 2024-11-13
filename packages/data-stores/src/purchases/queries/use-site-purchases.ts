@@ -12,24 +12,38 @@ interface Props {
 	siteId?: string | number | null;
 }
 
+async function fetchSitePurchases( siteId: string | number ): Promise< RawPurchase[] > {
+	return await wpcomRequest( {
+		path: `/sites/${ encodeURIComponent( siteId ) }/purchases`,
+		apiVersion: '1.1',
+	} );
+}
+
+async function fetchAndTransformSitePurchases(
+	siteId: string | number
+): Promise< PurchasesIndex > {
+	const rawPurchases = await fetchSitePurchases( siteId );
+	return Object.fromEntries(
+		rawPurchases.map( ( rawPurchase ) => {
+			const purchase = createPurchaseObject( rawPurchase );
+			return [ purchase.id, purchase ];
+		} )
+	);
+}
+
 export function getUseSitePurchasesOptions(
 	{ siteId }: Props,
 	queryKey: ( string | number | null | undefined )[]
 ) {
 	return {
+		// The queryKey should be hopefully generated with the siteId included.
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey,
 		queryFn: async (): Promise< PurchasesIndex > => {
-			const purchases: RawPurchase[] = await wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
-				apiVersion: '1.1',
-			} );
-
-			return Object.fromEntries(
-				purchases.map( ( rawPurchase ) => {
-					const purchase = createPurchaseObject( rawPurchase );
-					return [ purchase.id, purchase ];
-				} )
-			);
+			if ( ! siteId ) {
+				return Promise.resolve( {} );
+			}
+			return await fetchAndTransformSitePurchases( siteId );
 		},
 		enabled: !! siteId,
 	};
@@ -37,16 +51,11 @@ export function getUseSitePurchasesOptions(
 
 /**
  * Fetches all purchases for a given site, transformed into a map of purchaseId => Purchase
- * @param {Object} props - The properties for the function
- * @param props.siteId Site ID
- * @returns Query result
  */
-function useSitePurchases( { siteId }: Props ) {
+export default function useSitePurchases( { siteId }: Props ) {
 	const queryKeys = useQueryKeysFactory();
 
-	return useQuery< any, unknown, PurchasesIndex >(
+	return useQuery< PurchasesIndex, Error, PurchasesIndex >(
 		getUseSitePurchasesOptions( { siteId }, queryKeys.sitePurchases( siteId ) )
 	);
 }
-
-export default useSitePurchases;
