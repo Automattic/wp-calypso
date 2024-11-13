@@ -4,7 +4,7 @@ import {
 } from 'calypso/me/concierge/constants';
 import ConciergeBanner from 'calypso/me/purchases/concierge-banner/index';
 
-type Props = {
+export type PurchaseListConciergeBannerProps = {
 	nextAppointment?: {
 		id: number;
 		siteId: number;
@@ -15,7 +15,7 @@ type Props = {
 	isUserBlocked: boolean;
 };
 
-export function PurchaseListConciergeBanner( props: Props ) {
+export function PurchaseListConciergeBanner( props: PurchaseListConciergeBannerProps ) {
 	const { nextAppointment, availableSessions, siteId, isUserBlocked } = props;
 
 	if ( isUserBlocked ) {
