@@ -530,7 +530,7 @@ class StatsSite extends Component {
 						/>
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
-						{ supportsUTMStats && isOldJetpack === false && (
+						{ supportsUTMStats && ! isOldJetpack && (
 							<StatsModuleUTM
 								siteId={ siteId }
 								period={ this.props.period }
@@ -615,7 +615,7 @@ class StatsSite extends Component {
 							)
 						}
 
-						{ supportsDevicesStats && isOldJetpack === false && (
+						{ supportsDevicesStats && ! isOldJetpack && (
 							<StatsModuleDevices
 								siteId={ siteId }
 								period={ this.props.period }
