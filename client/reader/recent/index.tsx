@@ -150,20 +150,18 @@ const Recent = () => {
 	}, [ isWide, data?.items, selectedItem ] );
 
 	const [ hasLoadedItems, setHasLoadedItems ] = useState( false );
+	const isEmpty = ! data?.items || data.items.length === 0;
 
 	useEffect( () => {
-		const isEmpty = ! data?.items || data.items.length === 0;
 		if ( ! isEmpty ) {
 			setHasLoadedItems( true );
 		}
-	}, [ data ] );
+	}, [ data, isEmpty ] );
 
 	// To prevent content flashing, don't render the component until data has loaded for the first time.
 	if ( ! hasLoadedItems && data?.isRequesting ) {
 		return null;
 	}
-
-	const isEmpty = ! data?.items || data.items.length === 0;
 
 	return (
 		<div className="recent-feed">
