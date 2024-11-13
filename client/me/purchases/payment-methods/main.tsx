@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -19,7 +18,6 @@ function PaymentMethods() {
 		<Main wideLayout className="payment-methods__main">
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
-			<QueryUserPurchases />
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ titles.sectionTitle }
