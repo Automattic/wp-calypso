@@ -33,7 +33,7 @@ import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
-import { withUserPurchases } from '../hooks/use-user-purchases';
+import { WithUserPurchasesProps, withUserPurchases } from '../hooks/use-user-purchases';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import PurchasesListHeader from './purchases-list-header';
@@ -55,7 +55,11 @@ export interface PurchasesListConnectedProps {
 }
 
 class PurchasesList extends Component<
-	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
+	PurchasesListProps &
+		PurchasesListConnectedProps &
+		WithUserPurchasesProps &
+		LocalizeProps &
+		WithStoredPaymentMethodsProps
 > {
 	isDataLoading() {
 		if ( this.props.userPurchasesState.isFetching ) {
