@@ -147,6 +147,9 @@ class RegisterDomainStep extends Component {
 		 * It will be removed if there is still no need of it once the test concludes.
 		 */
 		hasPendingRequests: PropTypes.bool,
+
+		// Whether subdomains (.wordpress.com, .blog subdomains) should be queried - used for hiding free subdomains in specific cases
+		shouldQuerySubdomains: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -169,6 +172,7 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
 		forceExactSuggestion: false,
+		shouldQuerySubdomains: true,
 	};
 
 	constructor( props ) {
