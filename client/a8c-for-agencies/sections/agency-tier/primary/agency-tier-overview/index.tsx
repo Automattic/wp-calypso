@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DownloadBadges from '../../download-badges';
+import EarlyAccessBanner from '../../early-access-banner';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
 import { AgencyTier } from '../../types';
@@ -54,6 +55,8 @@ export default function AgencyTierOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
+				<EarlyAccessBanner />
+
 				{ currentAgencyTierInfo && (
 					<div className="agency-tier-overview__top-content">
 						<div className="agency-tier-overview__top-content-left">
