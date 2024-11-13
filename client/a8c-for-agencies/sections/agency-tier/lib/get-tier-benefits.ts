@@ -55,7 +55,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Networking & Community' ),
 		description: translate(
-			'Access Automattic’s community platforms and network with like-minded agencies.'
+			"Access Automattic's community platforms and network with like-minded agencies."
 		),
 		features: [],
 		isComingSoon: true,
@@ -65,7 +65,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		title: translate( 'Directory Visibility & Badging' ),
 		description: preventWidows(
 			translate(
-				'Eligible for inclusion in Automattic’s agency directories and increased exposure to potential clients.'
+				"Eligible for inclusion in Automattic's agency directories and increased exposure to potential clients."
 			)
 		),
 		features: [],
@@ -111,7 +111,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Automattic Advisory Board' ),
 		description: translate(
-			'Pro partners are eligible to receive an invitation to the Automattic for Agencies advisory board to influence the program and Automattic’s products.'
+			"Pro partners are eligible to receive an invitation to the Automattic for Agencies advisory board to influence the program and Automattic's products."
 		),
 		features: [],
 		isComingSoon: false,

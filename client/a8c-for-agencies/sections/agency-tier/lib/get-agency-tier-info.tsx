@@ -55,9 +55,9 @@ const getAgencyTierInfo = (
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
 				celebrationModal: {
-					title: translate( 'Woo-hoo! You’ve made your first purchase.' ),
+					title: translate( "Woo-hoo! You've made your first purchase." ),
 					description: translate(
-						'Your account is now activated, and you’re on your way to reaching the next tier of benefits: Agency Partner.'
+						"Your account is now activated, and you're on your way to reaching the next tier of benefits: Agency Partner."
 					),
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/emerging_partner_tier_celebration.mp4',
@@ -91,7 +91,7 @@ const getAgencyTierInfo = (
 				logo: AgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner' ],
 				celebrationModal: {
-					title: translate( 'Congrats! You’ve reached the Agency Partner Tier.' ),
+					title: translate( "Congrats! You've reached the Agency Partner Tier." ),
 					description: translate(
 						"You've reached at least $1,200 in influenced revenue and have unlocked these additional benefits:"
 					),
@@ -127,7 +127,7 @@ const getAgencyTierInfo = (
 				celebrationModal: {
 					title: translate( "Congratulations, you've reached the Pro Partner Tier!" ),
 					description: translate(
-						'You’ve reached top-tier status and unlocked these additional benefits:'
+						"You've reached top-tier status and unlocked these additional benefits:"
 					),
 					benefits: [
 						translate( 'A dedicated partner manager and priority support access.' ),
