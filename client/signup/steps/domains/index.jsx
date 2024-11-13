@@ -353,6 +353,12 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
+		const navigate = this.props.page || page;
+		if ( this.props.flowName === 'free' ) {
+			navigate( '/start/plans-first' );
+			return;
+		}
+
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 	};
@@ -925,6 +931,16 @@ export class RenderDomainsStep extends Component {
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
+		const isPaidPlan = [
+			'starter',
+			'pro',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'domain',
+		].includes( flowName );
+
 		return (
 			<div className="domains__domain-side-content-container">
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
@@ -947,11 +963,7 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-side-content domains__free-domain">
 							<ReskinSideExplainer
 								onClick={ this.handleDomainExplainerClick }
-								type={
-									this.props.isPlanSelectionAvailableLaterInFlow
-										? 'free-domain-explainer-check-paid-plans'
-										: 'free-domain-explainer'
-								}
+								type={ isPaidPlan ? 'free-domain-explainer-paid-plans' : 'free-domain-explainer' }
 								flowName={ flowName }
 							/>
 						</div>
