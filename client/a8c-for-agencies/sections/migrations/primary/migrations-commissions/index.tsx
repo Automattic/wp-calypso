@@ -27,7 +27,7 @@ export default function MigrationsCommissions() {
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 
-	const title = translate( 'Migrations' );
+	const title = translate( 'Migrations: Commissions' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
@@ -55,6 +55,7 @@ export default function MigrationsCommissions() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
+						hideOnMobile
 						items={ [
 							{
 								label: translate( 'Migrations' ),
@@ -65,9 +66,8 @@ export default function MigrationsCommissions() {
 							},
 						] }
 					/>
-					<Actions>
+					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-
 						<Button variant="primary" onClick={ onTagSitesClick }>
 							{ translate( 'Tag sites for commission' ) }
 						</Button>
