@@ -22,7 +22,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Earning Opportunities' ),
 		description: translate(
-			'All partners get access to referral and reseller earning opportunities across all of Automattic’s suite of products.'
+			"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products."
 		),
 		features: [],
 		isComingSoon: false,
