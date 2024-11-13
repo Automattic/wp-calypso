@@ -45,7 +45,7 @@ export default function ReferralsBankDetails( {
 	if ( isMigrations ) {
 		title = isDesktop
 			? translate( 'Migrations: Set up secure payments' )
-			: translate( 'Payment Settings' );
+			: translate( 'Migrations: Payment Settings' );
 	}
 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
