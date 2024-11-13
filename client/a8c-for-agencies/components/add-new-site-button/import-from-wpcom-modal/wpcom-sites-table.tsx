@@ -64,9 +64,7 @@ export default function WPCOMSitesTable( {
 		},
 	} );
 
-	const { map: managedSitesMap } = useManagedSitesMap( { size: data?.total } );
-
-	const isPending = true;
+	const { map: managedSitesMap, isPending } = useManagedSitesMap( { size: data?.total } );
 
 	const sites = useSelector( getSites );
 

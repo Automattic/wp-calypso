@@ -12,6 +12,7 @@
 
 .add-sites-table.redesigned-a8c-table {
 	overflow-y: auto;
+	margin-block: 24px;
 
 	&::-webkit-scrollbar {
 		width: 4px;
@@ -40,22 +41,28 @@
 		transition: opacity 0.3s ease-out;
 	}
 
-	.dataviews-wrapper tr.dataviews-view-table__row {
-		.components-checkbox-control__input {
-			opacity: 1;
+	.dataviews-wrapper {
+		tr.dataviews-view-table__row {
+			.components-checkbox-control__input {
+				opacity: 1;
+			}
+
+			.components-checkbox-control__label {
+				cursor: pointer;
+			}
+
+			td {
+				border-bottom: none;
+				padding-block: 8px;
+			}
+
+			th {
+				border-color: #F1F1F1;
+			}
 		}
 
-		.components-checkbox-control__label {
-			cursor: pointer;
-		}
-
-		td {
-			border-bottom: none;
-			padding-block: 8px;
-		}
-
-		th {
-			border-color: #F1F1F1;
+		.dataviews__view-actions {
+			display: none;
 		}
 	}
 
