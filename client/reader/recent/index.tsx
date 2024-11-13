@@ -156,6 +156,15 @@ const Recent = () => {
 		}
 	}, [ isWide, data?.items, selectedItem ] );
 
+	// When the selected feed changes, clear the selected item and reset the page to 1.
+	useEffect( () => {
+		setSelectedItem( null );
+		setView( ( prevView ) => ( {
+			...prevView,
+			page: 1,
+		} ) );
+	}, [ selectedRecentSidebarFeedId ] );
+
 	const [ hasLoadedItems, setHasLoadedItems ] = useState( false );
 	const isEmpty = ! data?.items || data.items.length === 0;
 
@@ -169,15 +178,6 @@ const Recent = () => {
 	if ( ! hasLoadedItems && data?.isRequesting ) {
 		return null;
 	}
-
-	// When the selected feed changes, clear the selected item and reset the page to 1.
-	useEffect( () => {
-		setSelectedItem( null );
-		setView( ( prevView ) => ( {
-			...prevView,
-			page: 1,
-		} ) );
-	}, [ selectedRecentSidebarFeedId ] );
 
 	return (
 		<div className="recent-feed">
