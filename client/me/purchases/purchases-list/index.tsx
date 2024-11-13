@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -165,6 +166,7 @@ class PurchasesList extends Component<
 
 		return (
 			<Main wideLayout className="purchases-list">
+				<QueryUserPurchases />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 
