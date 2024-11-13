@@ -2,6 +2,7 @@ import { createPurchaseObject, createPurchasesArray } from './lib/assembler';
 
 /** Queries */
 export { default as useSitePurchases } from './queries/use-site-purchases';
+export * from './queries/use-user-purchases';
 
 /** Hooks/Selectors */
 export { default as useSitePurchaseById } from './hooks/use-site-purchase-by-id';

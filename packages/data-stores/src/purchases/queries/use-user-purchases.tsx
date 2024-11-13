@@ -1,7 +1,7 @@
-import { Purchases } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
-import type { Purchase, RawPurchase } from 'calypso/lib/purchases/types';
+import wpcomRequest from 'wpcom-proxy-request';
+import { createPurchaseObject } from '../lib/assembler';
+import type { Purchase, RawPurchase } from '../types';
 import type { ComponentType } from 'react';
 
 export interface UserPurchasesState {
@@ -16,14 +16,14 @@ export interface WithUserPurchasesProps {
 }
 
 async function fetchUserPurchases(): Promise< RawPurchase[] > {
-	return await wpcom.req.get( {
+	return await wpcomRequest( {
 		path: '/me/purchases',
 	} );
 }
 
 async function fetchAndTransformUserPurchases(): Promise< Purchase[] > {
 	const rawPurchases = await fetchUserPurchases();
-	return rawPurchases.map( Purchases.utils.createPurchaseObject );
+	return rawPurchases.map( createPurchaseObject );
 }
 
 export function useUserPurchases(): UserPurchasesState {

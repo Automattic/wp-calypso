@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
+import { SiteDetails, Purchases } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -34,7 +34,6 @@ import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
-import { WithUserPurchasesProps, withUserPurchases } from '../hooks/use-user-purchases';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import PurchasesListHeader from './purchases-list-header';
@@ -58,7 +57,7 @@ export interface PurchasesListConnectedProps {
 class PurchasesList extends Component<
 	PurchasesListProps &
 		PurchasesListConnectedProps &
-		WithUserPurchasesProps &
+		Purchases.WithUserPurchasesProps &
 		LocalizeProps &
 		WithStoredPaymentMethodsProps
 > {
@@ -199,7 +198,7 @@ export default connect( ( state: AppState ) => ( {
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
 } ) )(
-	withUserPurchases(
+	Purchases.withUserPurchases(
 		withStoredPaymentMethods( localize( PurchasesList ), { type: 'card', expired: true } )
 	)
 );

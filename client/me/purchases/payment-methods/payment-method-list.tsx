@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, CompactCard } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
+import { Purchases } from '@automattic/data-stores';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +13,6 @@ import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
-import { WithUserPurchasesProps, withUserPurchases } from '../hooks/use-user-purchases';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
@@ -27,7 +27,7 @@ interface PaymentMethodListProps {
 }
 
 class PaymentMethodList extends Component<
-	PaymentMethodListProps & WithStoredPaymentMethodsProps & WithUserPurchasesProps
+	PaymentMethodListProps & WithStoredPaymentMethodsProps & Purchases.WithUserPurchasesProps
 > {
 	renderPaymentMethods( paymentMethods: StoredPaymentMethod[] ) {
 		if (
@@ -112,7 +112,7 @@ export default connect( ( state: IAppState ) => ( {
 	isAgencyUser: isAgencyUser( state ),
 	hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 } ) )(
-	withUserPurchases(
+	Purchases.withUserPurchases(
 		withStoredPaymentMethods( localize( PaymentMethodList ), { type: 'all', expired: true } )
 	)
 );
