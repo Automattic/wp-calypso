@@ -151,25 +151,23 @@ export const GitHubConnectionForm = ( {
 					</HostingCardDescription>
 					<FormFieldset className="github-deployments-connect-repository__repository">
 						<FormLabel>{ __( 'Repository' ) }</FormLabel>
-						<div
-							className={ clsx( 'github-deployments-connect-repository__repository-input', {
-								'github-deployments-connect-repository__repository-input--has-error':
-									displayMissingRepositoryError,
-							} ) }
-						>
-							{ repository ? (
-								<ExternalLink
-									href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+						<div css={ { display: 'flex', gap: '8px', flexWrap: 'wrap' } }>
+							{ repository && (
+								<div
+									className={ clsx( 'github-deployments-connect-repository__repository-input', {
+										'github-deployments-connect-repository__repository-input--has-error':
+											displayMissingRepositoryError,
+									} ) }
 								>
-									{ repository.owner }/{ repository.name }
-								</ExternalLink>
-							) : (
-								<FormSettingExplanation css={ { margin: '0 !important' } }>
-									{ __( 'No repository selected' ) }
-								</FormSettingExplanation>
+									<ExternalLink
+										href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+									>
+										{ repository.owner }/{ repository.name }
+									</ExternalLink>
+								</div>
 							) }
 							{ changeRepository && (
-								<Button variant="secondary" size="compact" onClick={ changeRepository }>
+								<Button variant="secondary" onClick={ changeRepository }>
 									{ __( 'Select repository' ) }
 								</Button>
 							) }
