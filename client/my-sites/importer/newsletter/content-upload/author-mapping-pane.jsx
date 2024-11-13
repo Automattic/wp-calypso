@@ -156,10 +156,8 @@ class AuthorMappingPane extends PureComponent {
 		return (
 			<div className="importer__mapping-pane">
 				<Notice status="success" className="importer__notice" isDismissible={ false }>
-					<p>
-						<strong>{ this.props.translate( 'All set! We’ve found:' ) }</strong>
-					</p>
-					<div className="summary__content-stats">
+					<p>{ this.props.translate( 'All set! We’ve found:' ) }</p>
+					<div className="importer__notice-stats">
 						{ posts > 0 && (
 							<SummaryStat
 								count={ posts }
