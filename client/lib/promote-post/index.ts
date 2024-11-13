@@ -284,9 +284,10 @@ export const requestDSP = async < T >(
 	siteId: number,
 	apiUri: string,
 	method: SupportedDSPMethods = 'GET',
-	body: Record< string, unknown > | undefined = undefined
+	body: Record< string, unknown > | undefined = undefined,
+	apiVersion = 1
 ): Promise< T > => {
-	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
+	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v${ apiVersion }`;
 
 	let requestBody = body;
 	let path = `${ URL_BASE }${ apiUri }`;
@@ -328,10 +329,11 @@ export const requestDSPHandleErrors = async < T >(
 	siteId: number,
 	apiUri: string,
 	method: SupportedDSPMethods = 'GET',
-	body: Record< string, unknown > | undefined = undefined
+	body: Record< string, unknown > | undefined = undefined,
+	apiVersion = 1
 ): Promise< T > => {
 	try {
-		return await requestDSP( siteId, apiUri, method, body );
+		return await requestDSP( siteId, apiUri, method, body, apiVersion );
 	} catch ( error ) {
 		if ( ( error as DSPError ).errorCode === DSP_ERROR_NO_LOCAL_USER ) {
 			const createUserQuery = await requestDSP< NewDSPUserResult >(

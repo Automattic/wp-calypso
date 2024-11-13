@@ -3,7 +3,7 @@ import { translate, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
-import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { useCampaignsQuery } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CampaignItemDetails from '../campaign-item-details';
 import './style.scss';
@@ -28,8 +28,8 @@ export default function CampaignItemPage( props: Props ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const campaignQuery = useCampaignsQuery( siteId || 0, campaignId );
-	const { isLoading: campaignsIsLoading, isError } = campaignQuery;
 	const { data: campaign } = campaignQuery;
+	const { isLoading: campaignsIsLoading, isError } = campaignQuery;
 
 	if ( isError ) {
 		return (
@@ -51,7 +51,9 @@ export default function CampaignItemPage( props: Props ) {
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising - Campaign details' ) } />
-			<CampaignItemDetails isLoading={ isLoading } siteId={ +siteId } campaign={ campaign } />
+			{ ! isLoading && campaign && (
+				<CampaignItemDetails isLoading={ isLoading } siteId={ +siteId } campaign={ campaign } />
+			) }
 		</MainWrapper>
 	);
 }
