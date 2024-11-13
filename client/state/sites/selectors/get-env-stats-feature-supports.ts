@@ -12,7 +12,7 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ): boolean | null {
+function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
