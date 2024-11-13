@@ -25,7 +25,7 @@ import {
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
-import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-item-page/campaign-stats-line-chart';
+import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/campaign-stats-line-chart';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,

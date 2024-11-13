@@ -1,16 +1,16 @@
 import { hexToRgb } from '@automattic/onboarding';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import { CampaignChartSeriesData } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
-import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
+import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/index';
 import 'uplot/dist/uPlot.min.css';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
-	width: 700,
+	width: 650,
 };
 
 type GraphProps = {
@@ -19,11 +19,34 @@ type GraphProps = {
 };
 
 const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
+	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
+	const containerRef = useRef< HTMLDivElement >( null );
+
 	const primaryColor = getComputedStyle( document.body )
 		.getPropertyValue( '--color-primary' )
 		.trim();
-
 	const primaryRGB = hexToRgb( primaryColor );
+
+	const updateWidth = () => {
+		const wrapperElement = document.querySelector(
+			'.campaign-item-details__graph-stats-row'
+		) as HTMLElement;
+		if ( wrapperElement ) {
+			const newWidth = wrapperElement.offsetWidth - 32;
+			setWidth( newWidth );
+		}
+	};
+
+	useEffect( () => {
+		// set initial width
+		updateWidth();
+		window.addEventListener( 'resize', updateWidth );
+
+		return () => {
+			// remove on unmount
+			window.removeEventListener( 'resize', updateWidth );
+		};
+	}, [] );
 
 	// Convert ISO date string to Unix timestamp
 	const labels = data.map( ( entry ) => new Date( entry.date_utc ).getTime() / 1000 );
@@ -35,7 +58,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 	const options = useMemo( () => {
 		return {
 			class: 'blaze-impressions-graph',
-			width: DEFAULT_DIMENSIONS.width, // @todo: update on resize
+			width: width,
 			height: DEFAULT_DIMENSIONS.height,
 			tzDate: ( ts: number ) => new Date( ts * 1000 ),
 			axes: [
