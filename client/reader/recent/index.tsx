@@ -8,6 +8,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import AsyncLoad from 'calypso/components/async-load';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
@@ -221,7 +222,7 @@ const Recent = () => {
 			</div>
 			{ ! isEmpty && (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-					{ selectedItem && getPostFromItem( selectedItem ) && (
+					{ selectedItem && getPostFromItem( selectedItem ) ? (
 						<>
 							<AsyncLoad
 								require="calypso/blocks/reader-full-post"
@@ -232,6 +233,13 @@ const Recent = () => {
 							/>
 							<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
 						</>
+					) : (
+						<EmptyContent
+							title={ translate( 'Nothing Posted Yet' ) }
+							line={ translate( 'This feed is currently empty.' ) }
+							illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+							illustrationWidth={ 400 }
+						/>
 					) }
 				</div>
 			) }
