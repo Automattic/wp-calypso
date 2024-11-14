@@ -219,7 +219,7 @@ const DotcomSitesDataViews = ( {
 		setDataViewsState,
 		sites,
 		siteSearchLabel,
-	] ); // add actions when implemented
+	] );
 
 	return (
 		<ItemsDataViews
