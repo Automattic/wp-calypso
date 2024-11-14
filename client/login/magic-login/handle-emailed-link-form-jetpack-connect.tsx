@@ -104,7 +104,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	return (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
 			{ ! isWooFlow && ! isFromAutomatticForAgenciesPlugin && <JetpackLogo size={ 74 } full /> }
-			{ isFromAutomatticForAgenciesPlugin && <A4ALogo size={ 74 } fullA4A /> }
+			{ isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> }
 
 			<h2 className="magic-login__title empty-content__title">
 				{ translate( 'Email confirmed!' ) }
