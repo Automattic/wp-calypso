@@ -168,20 +168,20 @@ const Recent = () => {
 	}, [ selectedRecentSidebarFeedId ] );
 
 	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
-	const isEmpty = subscriptionsCount?.blogs === 0;
+	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
 
 	return (
 		<div className="recent-feed">
 			<div
-				className={ `recent-feed__list-column ${ selectedItem && ! isEmpty ? 'has-overlay' : '' } ${
-					isEmpty ? 'recent-feed-empty' : ''
-				}` }
+				className={ `recent-feed__list-column ${
+					selectedItem && hasSubscriptions ? 'has-overlay' : ''
+				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
 			>
 				<div className="recent-feed__list-column-header">
 					<FormattedHeader align="left" headerText={ translate( 'Recent' ) } />
 				</div>
 				<div className="recent-feed__list-column-content">
-					{ isEmpty ? (
+					{ ! hasSubscriptions ? (
 						<>
 							<p>
 								{ translate(
@@ -220,7 +220,7 @@ const Recent = () => {
 					) }
 				</div>
 			</div>
-			{ ! isEmpty && (
+			{ hasSubscriptions && (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 					{ data?.isRequesting && 'Loading...' }
 					{ ! data?.isRequesting && data?.items.length === 0 && (
@@ -231,21 +231,18 @@ const Recent = () => {
 							illustrationWidth={ 400 }
 						/>
 					) }
-					{ ! data?.isRequesting &&
-						data?.items.length > 0 &&
-						selectedItem &&
-						getPostFromItem( selectedItem ) && (
-							<>
-								<AsyncLoad
-									require="calypso/blocks/reader-full-post"
-									feedId={ selectedItem.feedId }
-									postId={ selectedItem.postId }
-									onClose={ () => setSelectedItem( null ) }
-									layout="recent"
-								/>
-								<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
-							</>
-						) }
+					{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+						<>
+							<AsyncLoad
+								require="calypso/blocks/reader-full-post"
+								feedId={ selectedItem.feedId }
+								postId={ selectedItem.postId }
+								onClose={ () => setSelectedItem( null ) }
+								layout="recent"
+							/>
+							<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+						</>
+					) }
 				</div>
 			) }
 		</div>
