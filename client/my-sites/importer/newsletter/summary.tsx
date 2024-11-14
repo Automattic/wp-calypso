@@ -62,14 +62,28 @@ export default function Summary( {
 	);
 	const showPauseSubstackBillingWarning = paidSubscribersCount > 0;
 
+	// Combined status of subscriber & content importer
+	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+
 	useEffect( () => {
 		if ( showConfetti ) {
 			shouldShownConfetti( false );
 		}
-	}, [ showConfetti, shouldShownConfetti ] );
 
-	// Combined status of subscriber & content importer
-	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+		// Reset importer state entirely when leaving summary state and everything is done
+		return () => {
+			if ( importerStatus === 'done' ) {
+				resetPaidNewsletter( selectedSite.ID, engine, 'content' );
+			}
+		};
+	}, [
+		engine,
+		importerStatus,
+		resetPaidNewsletter,
+		selectedSite.ID,
+		shouldShownConfetti,
+		showConfetti,
+	] );
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' || importerStatus === 'initial' ) {
