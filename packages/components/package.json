@@ -40,10 +40,10 @@
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/base-styles": "^5.8.0",
-		"@wordpress/components": "^28.8.0",
-		"@wordpress/icons": "^10.8.0",
-		"@wordpress/react-i18n": "^4.8.0",
+		"@wordpress/base-styles": "^5.11.0",
+		"@wordpress/components": "^28.11.0",
+		"@wordpress/icons": "^10.11.0",
+		"@wordpress/react-i18n": "^4.11.0",
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"colord": "2.9.3",
@@ -60,7 +60,7 @@
 		"uuid": "^9.0.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.8.0",
+		"@wordpress/data": "^10.11.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

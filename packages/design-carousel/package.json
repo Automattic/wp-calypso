@@ -50,9 +50,9 @@
 		"webpack": "^5.95.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.8.0",
-		"@wordpress/element": "^6.8.0",
-		"@wordpress/i18n": "^5.8.0",
+		"@wordpress/data": "^10.11.0",
+		"@wordpress/element": "^6.11.0",
+		"@wordpress/i18n": "^5.11.0",
 		"debug": "^4.3.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
