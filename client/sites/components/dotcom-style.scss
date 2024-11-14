@@ -594,7 +594,7 @@
 			 */
 			.dataviews-view-list__field {
 				// Hide the field except first (Site name) and last (actions menu)
-				&:not(:first-child):not(:last-child) {
+				&:not(:first-child) {
 					display: none;
 				}
 		
