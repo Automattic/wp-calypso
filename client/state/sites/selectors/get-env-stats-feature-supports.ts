@@ -48,7 +48,9 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		supportsUTMStats:
 			// UTM stats are only available for Jetpack sites for now.
 			isSiteJetpackNotAtomic && !! statsAdminVersion,
-		supportsDevicesStats: isSiteJetpackNotAtomic && !! statsAdminVersion,
+		supportsDevicesStats:
+			// UTM stats are only available for Jetpack sites for now.
+			isSiteJetpackNotAtomic && !! statsAdminVersion,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',
