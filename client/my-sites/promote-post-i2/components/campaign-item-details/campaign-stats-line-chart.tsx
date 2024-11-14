@@ -1,6 +1,6 @@
 import { hexToRgb } from '@automattic/onboarding';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import { CampaignChartSeriesData } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
@@ -20,7 +20,6 @@ type GraphProps = {
 
 const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
-	const containerRef = useRef< HTMLDivElement >( null );
 
 	const primaryColor = getComputedStyle( document.body )
 		.getPropertyValue( '--color-primary' )
@@ -70,6 +69,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
+					gap: 12,
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
@@ -91,6 +91,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
+					gap: 12,
 				},
 			],
 			cursor: {
