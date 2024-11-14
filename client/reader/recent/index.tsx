@@ -222,18 +222,8 @@ const Recent = () => {
 			</div>
 			{ ! isEmpty && (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-					{ selectedItem && getPostFromItem( selectedItem ) ? (
-						<>
-							<AsyncLoad
-								require="calypso/blocks/reader-full-post"
-								feedId={ selectedItem.feedId }
-								postId={ selectedItem.postId }
-								onClose={ () => setSelectedItem( null ) }
-								layout="recent"
-							/>
-							<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
-						</>
-					) : (
+					{ data?.isRequesting && 'Loading...' }
+					{ ! data?.isRequesting && data?.items.length === 0 && (
 						<EmptyContent
 							title={ translate( 'Nothing Posted Yet' ) }
 							line={ translate( 'This feed is currently empty.' ) }
@@ -241,6 +231,21 @@ const Recent = () => {
 							illustrationWidth={ 400 }
 						/>
 					) }
+					{ ! data?.isRequesting &&
+						data?.items.length > 0 &&
+						selectedItem &&
+						getPostFromItem( selectedItem ) && (
+							<>
+								<AsyncLoad
+									require="calypso/blocks/reader-full-post"
+									feedId={ selectedItem.feedId }
+									postId={ selectedItem.postId }
+									onClose={ () => setSelectedItem( null ) }
+									layout="recent"
+								/>
+								<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+							</>
+						) }
 				</div>
 			) }
 		</div>
