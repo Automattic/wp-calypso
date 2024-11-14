@@ -71,102 +71,134 @@ export default function Summary( {
 	// Combined status of subscriber & content importer
 	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
 
-	return (
-		<Card>
-			{ importerStatus === 'done' ? (
-				<>
-					{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
-					<h2>{ __( 'Success!' ) } 🎉</h2>
-
-					<p>
-						{ sprintf(
-							// translators: %s the site name
-							__( 'Here’s a summary of the imported data to %s:' ),
-							selectedSite.name
-						) }
-					</p>
-					<div className="summary__content">
-						{ steps.content.content && (
-							<ContentSummary
-								stepContent={ steps.content.content }
-								status={ steps.content.status }
-							/>
-						) }
-						{ steps.subscribers.content && (
-							<SubscribersSummary
-								stepContent={ steps.subscribers.content }
-								status={ steps.subscribers.status }
-							/>
-						) }
-					</div>
-					{ showPauseSubstackBillingWarning && (
-						<Notice status="warning" className="importer__notice" isDismissible={ false }>
-							<h2>{ __( 'Action required' ) }</h2>
-							{ createInterpolateElement(
-								__(
-									'To prevent any charges from Substack, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, select "Pause billing" and click "<strong>Pause indefinitely</strong>".'
-								),
-								{
-									strong: <strong />,
-									substackPaymentsSettingsLink: (
-										// @ts-expect-error Used in createInterpolateElement doesn't need children.
-										<ExternalLink
-											href={ `https://${ normalizeFromSite(
-												fromSite
-											) }/publish/settings?search=Pause%20subscription` }
-										/>
-									),
-								}
-							) }
-							<img
-								src={ pauseSubstackBillingImg }
-								alt={ __( 'Pause Substack billing' ) }
-								className="pause-billing"
-							/>
-						</Notice>
+	// Skipped both steps...
+	if ( importerStatus === 'skipped' ) {
+		return (
+			<Card>
+				<h2>{ __( "You skipped importing your site's content or subscribers." ) }</h2>
+				<p>
+					{ steps.content.content && (
+						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
 					) }
-					<hr />
-					<p>{ __( 'What would you like to do next?' ) }</p>
-					<ImporterActionButtonContainer noSpacing>
-						<ImporterActionButton
-							href={ '/settings/newsletter/' + selectedSite.slug }
-							onClick={ onButtonClick }
-							primary
-						>
-							{ __( 'Customize your newsletter' ) }
-						</ImporterActionButton>
-						<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ onButtonClick }>
-							{ __( 'View content' ) }
-						</ImporterActionButton>
-						<ImporterActionButton
-							href={ '/subscribers/' + selectedSite.slug }
-							onClick={ onButtonClick }
-						>
-							{ __( 'Check subscribers' ) }
-						</ImporterActionButton>
-					</ImporterActionButtonContainer>
-				</>
-			) : (
-				<>
-					<h2>{ __( 'Almost there…' ) }</h2>
-					<div className="summary__content">
-						<p>
-							<strong>
-								{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
-							</strong>
-							<br />
-						</p>
-					</div>
+					{ steps.subscribers.content && (
+						<SubscribersSummary
+							stepContent={ steps.subscribers.content }
+							status={ steps.subscribers.status }
+						/>
+					) }
+				</p>
+				<hr />
+				<p>{ __( 'What would you like to do next?' ) }</p>
+				<ImporterActionButtonContainer noSpacing>
+					<ImporterActionButton
+						href={ '/import/newsletter/' + selectedSite.slug }
+						onClick={ onButtonClick }
+						primary
+					>
+						{ __( 'Start over' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			</Card>
+		);
+	}
+
+	// Either content- or subscriber-import is still in progress
+	if ( importerStatus === 'importing' ) {
+		return (
+			<Card>
+				<h2>{ __( 'Almost there…' ) }</h2>
+				<div className="summary__content">
 					<p>
-						{ __(
-							"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
+						<strong>
+							{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
+						</strong>
+						<br />
+					</p>
+				</div>
+				<p>
+					{ __(
+						"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
+					) }
+				</p>
+				<p>
+					<ProgressBar className="is-larger-progress-bar" />
+				</p>
+			</Card>
+		);
+	}
+
+	// Both done!
+	if ( importerStatus === 'done' ) {
+		return (
+			<Card>
+				{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
+				<h2>{ __( 'Success!' ) } 🎉</h2>
+
+				<p>
+					{ sprintf(
+						// translators: %s the site name
+						__( 'Here’s a summary of the imported data to %s:' ),
+						selectedSite.name
+					) }
+				</p>
+				<div className="summary__content">
+					{ steps.content.content && (
+						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
+					) }
+					{ steps.subscribers.content && (
+						<SubscribersSummary
+							stepContent={ steps.subscribers.content }
+							status={ steps.subscribers.status }
+						/>
+					) }
+				</div>
+				{ showPauseSubstackBillingWarning && (
+					<Notice status="warning" className="importer__notice" isDismissible={ false }>
+						<h2>{ __( 'Action required' ) }</h2>
+						{ createInterpolateElement(
+							__(
+								'To prevent any charges from Substack, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, select "Pause billing" and click "<strong>Pause indefinitely</strong>".'
+							),
+							{
+								strong: <strong />,
+								substackPaymentsSettingsLink: (
+									// @ts-expect-error Used in createInterpolateElement doesn't need children.
+									<ExternalLink
+										href={ `https://${ normalizeFromSite(
+											fromSite
+										) }/publish/settings?search=Pause%20subscription` }
+									/>
+								),
+							}
 						) }
-					</p>
-					<p>
-						<ProgressBar className="is-larger-progress-bar" />
-					</p>
-				</>
-			) }
-		</Card>
-	);
+						<img
+							src={ pauseSubstackBillingImg }
+							alt={ __( 'Pause Substack billing' ) }
+							className="pause-billing"
+						/>
+					</Notice>
+				) }
+				<hr />
+				<p>{ __( 'What would you like to do next?' ) }</p>
+				<ImporterActionButtonContainer noSpacing>
+					<ImporterActionButton
+						href={ '/settings/newsletter/' + selectedSite.slug }
+						onClick={ onButtonClick }
+						primary
+					>
+						{ __( 'Customize your newsletter' ) }
+					</ImporterActionButton>
+					<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ onButtonClick }>
+						{ __( 'View content' ) }
+					</ImporterActionButton>
+					<ImporterActionButton
+						href={ '/subscribers/' + selectedSite.slug }
+						onClick={ onButtonClick }
+					>
+						{ __( 'Check subscribers' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			</Card>
+		);
+	}
 }
