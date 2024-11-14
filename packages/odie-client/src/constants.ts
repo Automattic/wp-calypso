@@ -66,6 +66,61 @@ export const ODIE_TRANSFER_MESSAGE = (
 	},
 } );
 
+export const ODIE_TRANSFER_MESSAGE_NEW = (
+	shouldUseHelpCenterExperience: boolean | undefined
+): Message[] => {
+	let transferMessage: Message[] = [];
+	if ( shouldUseHelpCenterExperience ) {
+		transferMessage = [
+			{
+				content: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
+				role: 'bot',
+				type: 'message',
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: false,
+						show_ai_avatar: false,
+					},
+					site_id: null,
+				},
+			},
+			{
+				content: __(
+					"Meanwhile, feel free to include any additional information like screenshots or a detailed explanation of what's going wrong.",
+					__i18n_text_domain__
+				),
+				role: 'bot',
+				type: 'message',
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+					},
+					site_id: null,
+				},
+			},
+		];
+	} else {
+		transferMessage = [
+			{
+				content: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
+				role: 'bot',
+				type: 'message',
+				context: {
+					flags: {
+						hide_disclaimer_content: true,
+						show_contact_support_msg: true,
+					},
+					site_id: null,
+				},
+			},
+		];
+	}
+
+	return transferMessage;
+};
+
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 export const ODIE_ALLOWED_BOTS = [ 'wpcom-support-chat', 'wpcom-plan-support' ];
