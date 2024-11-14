@@ -68,7 +68,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		),
 		isOldJetpack:
 			isSiteJetpackNotAtomic &&
-			statsAdminVersion &&
+			!! statsAdminVersion &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
