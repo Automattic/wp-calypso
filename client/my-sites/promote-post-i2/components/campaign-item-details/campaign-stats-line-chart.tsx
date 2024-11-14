@@ -56,7 +56,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 
 	const options = useMemo( () => {
 		return {
-			class: 'blaze-impressions-graph',
+			class: 'blaze-stats-line-chart',
 			width: width,
 			height: DEFAULT_DIMENSIONS.height,
 			tzDate: ( ts: number ) => new Date( ts * 1000 ),
