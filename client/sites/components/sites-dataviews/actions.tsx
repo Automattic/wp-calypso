@@ -1,8 +1,10 @@
 import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -13,6 +15,7 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
+	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,12 +23,38 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
 
-export function useActions(): Action< SiteExcerptData >[] {
+export function useActions( { openSitePreviewPane } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
 
 	return useMemo(
 		() => [
+			{
+				id: 'open-site-panel',
+				isPrimary: true,
+				label: __( 'Open site' ),
+				icon: chevronRight,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					console.log( {
+						sites,
+						site,
+					} );
+					const adminUrl = site.options?.admin_url ?? '';
+					const isAdmin = true;
+					if (
+						isAdmin &&
+						! isP2Site( site ) &&
+						! isNotAtomicJetpack( site ) &&
+						! isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						openSitePreviewPane && openSitePreviewPane( site );
+					} else {
+						navigate( adminUrl );
+					}
+				},
+			},
+
 			{
 				id: 'launch-site',
 				label: __( 'Launch site' ),
@@ -234,6 +263,6 @@ export function useActions(): Action< SiteExcerptData >[] {
 				},
 			},
 		],
-		[ __, dispatch ]
+		[ __, dispatch, openSitePreviewPane ]
 	);
 }

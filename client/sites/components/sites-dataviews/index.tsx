@@ -6,6 +6,7 @@ import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
@@ -76,38 +77,6 @@ const DotcomSitesDataViews = ( {
 	const onSelectionChange = () => {};
 	const getSelection = ( dataViewsState: DataViewsState ) =>
 		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
-
-	useEffect( () => {
-		// If the user clicks on a row, open the site preview pane by triggering the site button click.
-		const handleRowClick = ( event: Event ) => {
-			const target = event.target as HTMLElement;
-			const row = target.closest(
-				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
-			);
-			if ( row ) {
-				const isButtonOrLink = target.closest( 'button, a' );
-				if ( ! isButtonOrLink ) {
-					const button = row.querySelector(
-						'.sites-dataviews__preview-trigger'
-					) as HTMLButtonElement;
-					if ( button ) {
-						button.click();
-					}
-				}
-			}
-		};
-
-		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
-		if ( rowsContainer ) {
-			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
-		}
-
-		return () => {
-			if ( rowsContainer ) {
-				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
-			}
-		};
-	}, [] );
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -181,7 +150,7 @@ const DotcomSitesDataViews = ( {
 	);
 
 	const siteSearchLabel = __( 'Search sites…' );
-	const actions = useActions();
+	const actions = useActions( { openSitePreviewPane } );
 
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
