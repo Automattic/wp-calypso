@@ -41,11 +41,16 @@ class StatsTabs extends Component {
 				activeData = find( data, { [ activeKey ]: activeIndex } );
 			} else {
 				// TODO: not major but we might want to cache the data.
-				data.map( ( day ) =>
+				data.map( ( day ) => {
 					tabs.map( ( tab ) => {
-						activeData[ tab.attr ] = ( activeData?.[ tab.attr ] ?? 0 ) + ( day[ tab.attr ] ?? 0 );
-					} )
-				);
+						if ( isFinite( day[ tab.attr ] ) ) {
+							if ( ! ( tab.attr in activeData ) ) {
+								activeData[ tab.attr ] = 0;
+							}
+							activeData[ tab.attr ] = activeData[ tab.attr ] + day[ tab.attr ];
+						}
+					} );
+				} );
 			}
 
 			statsTabs = tabs.map( ( tab ) => {

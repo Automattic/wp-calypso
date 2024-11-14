@@ -7,7 +7,26 @@ import fromApi from './from-api';
 
 export const fetch = ( action ) => {
 	const { chartTab, date, period, quantity, siteId, statFields } = action;
-	const currentTabFields = chartTab === 'views' ? [ 'views' ] : [ chartTab ];
+
+	if ( period === 'hour' ) {
+		return http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/stats/visits`,
+				apiVersion: '1.1',
+				query: {
+					unit: period,
+					date,
+					quantity,
+					stat_fields: 'views',
+				},
+			},
+			action
+		);
+	}
+
+	const currentTabFields =
+		chartTab === 'views' && period !== 'hour' ? [ 'views', 'visitors' ] : [ chartTab ];
 	const otherTabFields =
 		statFields?.filter( ( field ) => ! currentTabFields.includes( field ) ) ?? [];
 
