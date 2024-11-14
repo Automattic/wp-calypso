@@ -13,7 +13,7 @@ interface Props {
 }
 
 const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
-	const [ isOpen, setOpen ] = useState( false );
+	const [ isOpen, setOpen ] = useState< boolean | null >( null );
 	const scrollY = useRef( { y: 0, mobile: false } );
 
 	const openModal = () => {
@@ -26,6 +26,11 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 
 	// Prevent scroll to top when modal is opened
 	useEffect( () => {
+		// Do not scroll on initial render
+		if ( isOpen === null ) {
+			return;
+		}
+
 		if ( isOpen && ! scrollY.current.mobile ) {
 			document.body.scrollTo( 0, scrollY.current.y );
 		} else if ( ! isOpen ) {
