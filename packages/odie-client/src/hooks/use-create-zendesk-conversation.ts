@@ -11,6 +11,7 @@ import { setHelpCenterZendeskConversationStarted } from '../utils';
 export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 	const {
 		selectedSiteId,
+		selectedSiteURL,
 		setChat,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
@@ -41,6 +42,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			messaging_initial_message: '',
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId,
+			messaging_url: selectedSiteURL || null,
 		} );
 
 		const conversation = await Smooch.createConversation( {

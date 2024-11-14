@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 interface HostingCardProps {
+	fallthrough?: boolean;
 	className?: string;
 	headingId?: string;
 	title?: string;
@@ -20,6 +21,7 @@ interface HostingCardHeadingProps {
 }
 
 interface HostingCardDescriptionProps {
+	hide?: boolean;
 	children: string | ReactNode;
 }
 
@@ -34,7 +36,17 @@ interface HostingCardGridProps {
 	children: ReactNode;
 }
 
-export function HostingCard( { className, headingId, title, inGrid, children }: HostingCardProps ) {
+export function HostingCard( {
+	fallthrough,
+	className,
+	headingId,
+	title,
+	inGrid,
+	children,
+}: HostingCardProps ) {
+	if ( fallthrough ) {
+		return children;
+	}
 	return (
 		<Card className={ clsx( 'hosting-card', className, { 'hosting-card--in-grid': inGrid } ) }>
 			{ title && (
@@ -60,7 +72,10 @@ export function HostingCardHeading( { id, title, children }: HostingCardHeadingP
 	);
 }
 
-export function HostingCardDescription( { children }: HostingCardDescriptionProps ) {
+export function HostingCardDescription( { hide, children }: HostingCardDescriptionProps ) {
+	if ( hide ) {
+		return null;
+	}
 	return <p className="hosting-card__description">{ children }</p>;
 }
 

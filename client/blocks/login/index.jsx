@@ -634,13 +634,13 @@ class Login extends Component {
 					headerText = (
 						<h3>
 							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-								? translate( 'Connect your account' )
+								? translate( 'Log in to your account' )
 								: translate( 'One last step' ) }
 						</h3>
 					);
 					if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
 						subtitle = translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. {{br}}{{/br}}For more information, please {{doc}}review our documentation{{/doc}}.',
+							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
 							{
 								components: {
 									signupLink,

@@ -1,6 +1,7 @@
 import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -482,6 +483,9 @@ const mapStateToProps = ( state, props ) => {
 				stripZeros,
 			} );
 		}
+	} else if ( HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
+		productCost = props.suggestion.cost;
+		renewCost = props.suggestion.renew_cost;
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
 		// Renew cost is the same as the product cost for non-premium domains

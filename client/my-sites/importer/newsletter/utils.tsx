@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { ReactNode } from 'react';
@@ -32,7 +33,7 @@ export function getStepsProgress(
 
 	const result: ClickHandler[] = [
 		{
-			message: 'Content',
+			message: __( 'Content' ),
 			onClick: () => {
 				navigate(
 					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
@@ -44,7 +45,7 @@ export function getStepsProgress(
 			indicator: getStepProgressIndicator( paidNewsletterData?.steps.content.status ),
 		},
 		{
-			message: 'Subscribers',
+			message: __( 'Subscribers' ),
 			onClick: () => {
 				navigate(
 					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/subscribers`, {
@@ -56,7 +57,7 @@ export function getStepsProgress(
 			indicator: getStepProgressIndicator( paidNewsletterData?.steps.subscribers.status ),
 		},
 		{
-			message: 'Summary',
+			message: __( 'Summary' ),
 			onClick: () => {
 				navigate(
 					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/summary`, {

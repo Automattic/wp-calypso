@@ -125,16 +125,16 @@ export async function createAccount( {
 	let isNewAccountCreated = true;
 	if ( service && response && 'created_account' in response && ! response?.created_account ) {
 		isNewAccountCreated = false;
+	} else {
+		const username = response?.signup_sandbox_username || response?.username;
+
+		recordNewAccountCreation( {
+			response,
+			flowName,
+			username,
+			signupType: service ? 'social' : 'default',
+		} );
 	}
-
-	const username = response?.signup_sandbox_username || response?.username;
-
-	recordNewAccountCreation( {
-		response,
-		flowName,
-		username,
-		signupType: service ? 'social' : 'default',
-	} );
 
 	return { ...response, isNewAccountCreated };
 }
