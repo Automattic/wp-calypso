@@ -13,6 +13,7 @@ import {
 	MessageDisplay,
 	ErrorSecondLine,
 } from 'calypso/performance-profiler/components/message-display';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import { LoadingScreen } from '../loading-screen';
 
@@ -50,6 +51,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	if ( isFetched && finalUrl ) {
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
+			version: profilerVersion(),
 		} );
 		testStartTime.current = Date.now();
 	}

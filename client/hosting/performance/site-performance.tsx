@@ -227,6 +227,7 @@ export const SitePerformance = () => {
 		if ( performanceReport.isBasicMetricsFetched && performanceReport.url ) {
 			recordTracksEvent( 'calypso_performance_profiler_test_started', {
 				url: performanceReport.url,
+				version: profilerVersion(),
 			} );
 		}
 	}, [ performanceReport.isBasicMetricsFetched, performanceReport.url ] );
