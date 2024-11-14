@@ -33413,17 +33413,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot-react@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "uplot-react@npm:1.1.4"
-  peerDependencies:
-    react: ">=16.8.6"
-    uplot: ^1.6.7
-  checksum: 58126a31ed9b16309a1fcd53289649d557c13406f606162d9fbfe824c48cdd9d0daf275fccd69303d3179582bcd93afa9f2d528a65720a8808b1eb86e7d11372
-  languageName: node
-  linkType: hard
-
-"uplot-react@npm:^1.2.2":
+"uplot-react@npm:^1.1.4, uplot-react@npm:^1.2.2":
   version: 1.2.2
   resolution: "uplot-react@npm:1.2.2"
   peerDependencies:
