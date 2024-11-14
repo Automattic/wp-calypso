@@ -1,4 +1,4 @@
-import page, { Context } from '@automattic/calypso-router';
+import { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
@@ -31,7 +31,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	if ( ! context.query?.url ) {
-		page.redirect( '/speed-test' );
+		window.location.href = '/speed-test/';
 		return;
 	}
 
