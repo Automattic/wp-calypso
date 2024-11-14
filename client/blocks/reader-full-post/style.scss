@@ -499,29 +499,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__header-meta {
-	width: 100%;
-	padding-top: 10px;
 	display: flex;
-	flex-wrap: wrap;
-
-	@media ( min-width: $break-wide ) {
-		display: block;
-		grid-column: 2;
-		grid-row: 2;
-		width: auto;
-		padding-top: 0;
-	}
-
-	span {
-		line-height: 1.6;
-		margin-right: 20px;
-		color: var( --color-text-subtle );
-		display: inline-block;
-	}
-
-	.reader-full-post__header-date {
-		margin-right: 0;
-	}
+	flex-direction: row;
+	font-size: $font-body;
+	max-width: 750px;
 }
 
 .reader-full-post__header-follow-count,
@@ -685,37 +666,37 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post {
 	.reader-full-post__header--recent {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto;
+		align-items: start;
 
-		@media ( min-width: $break-wide ) {
-			display: grid;
-			grid-template-columns: auto 1fr;
-			grid-template-rows: auto auto;
-			align-items: start;
+		@media ( max-width: ($break-wide - 1) ) {
+			display: flex;
+			flex-wrap: wrap;
 		}
 
 		.reader-full-post__header-site-icon {
-			flex-shrink: 0;
-			width: 40px;
-			margin-right: 15px;
+			grid-column: 1;
+			margin-right: 30px;
+			grid-row: 1 / 3;
+			align-self: center;
+			width: 80px;
 
-			@media ( min-width: $break-wide ) {
-				grid-column: 1;
-				margin-right: 30px;
-				grid-row: 1 / 3;
-				align-self: center;
-				width: 80px;
+			@media ( max-width: ($break-wide - 1) ) {
+				flex-shrink: 0;
+				width: 40px;
+				margin-right: 15px;
 			}
 
 			.reader-full-post__site-icon {
 				border-radius: 50%;
-				height: 40px;
-				width: 40px;
+				height: 80px;
+				width: 80px;
 
-				@media ( min-width: $break-wide ) {
-					height: 80px;
-					width: 80px;
+				@media ( max-width: ($break-wide - 1) ) {
+					height: 40px;
+					width: 40px;
 				}
 
 				&.is-missing-icon {
@@ -725,25 +706,23 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 
 		.reader-full-post__header-title {
-			flex: 1;
-			min-width: 0;
+			grid-column: 2;
+			grid-row: 1;
 
-			@media ( min-width: $break-wide ) {
-				grid-column: 2;
-				grid-row: 1;
+			@media ( max-width: ($break-wide - 1) ) {
+				flex: 1;
+				min-width: 0;
 			}
 		}
 
 		.reader-full-post__header-meta {
-			width: 100%;
-			padding-top: 10px;
+			display: block;
+			grid-column: 2;
+			grid-row: 2;
 
-			@media ( min-width: $break-wide ) {
-				display: block;
-				grid-column: 2;
-				grid-row: 2;
-				width: auto;
-				padding-top: 0;
+			@media ( max-width: ($break-wide - 1) ) {
+				width: 100%;
+				padding-top: 10px;
 			}
 
 			span {
