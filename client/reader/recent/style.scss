@@ -203,10 +203,10 @@
 			padding-bottom: 132px;
 		}
 
-		.reader-full-post__sidebar,
-		.reader-full-post__author-block,
 		.back-button {
-			display: none;
+			@media ( min-width: $break-wide ) {
+				display: none;
+			}
 		}
 
 		@media ( min-width: $break-wide ) {
