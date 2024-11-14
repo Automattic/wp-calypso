@@ -30,7 +30,18 @@ export type GetCartKeyForSiteSlug = ( siteSlug: string ) => Promise< CartKey >;
  * An interface for creating a `ShoppingCartManager`.
  */
 export interface ShoppingCartManagerClient {
+	/**
+	 * A function to return a `ShoppingCartManager` for a given cart key. If
+	 * provided an `undefined` cart key, a `ShoppingCartManager` will still be
+	 * returned, but its cart will always be loading and empty and its actions
+	 * will do nothing.
+	 */
 	forCartKey: GetManagerForKey;
+
+	/**
+	 * A function to query the server to transform a site slug into a cart key
+	 * for use by `forCartKey()`.
+	 */
 	getCartKeyForSiteSlug: GetCartKeyForSiteSlug;
 }
 
@@ -50,7 +61,14 @@ export interface ShoppingCartManagerState {
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
+
+	/**
+	 * The shopping cart data as returned by the server. This should be
+	 * considered read-only and immutable. To make changes, use
+	 * `ShoppingCartManager` and `ShoppingCartManagerActions`.
+	 */
 	responseCart: ResponseCart;
+
 	couponStatus: CouponStatus;
 }
 
@@ -62,11 +80,37 @@ export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
  * The mechanism that the consumers of this package can use to read and request
  * changes to a shopping cart. Generally created by
  * `ShoppingCartManagerClient.forCartKey()`.
+ *
+ * You may not need this if you use `useShoppingCart()` which returns a very
+ * similar interface with the cart data more easily available.
  */
 export interface ShoppingCartManager {
+	/**
+	 * A function to return the current state of the cart. This includes all
+	 * the state properties returned by `useShoppingCart()`.
+	 */
 	getState: ShoppingCartManagerGetState;
+
+	/**
+	 * A function to subscribe to updates to a `ShoppingCartManager` for a
+	 * given cart key. The `callback` will be called any time the
+	 * `ShoppingCartManager` changes for that key. The return value of the
+	 * function is an unsubscribe function.
+	 */
 	subscribe: ShoppingCartManagerSubscribe;
+
+	/**
+	 * An object whose properties are the various actions that can be taken on
+	 * the cart. They are the same as the actions returned by
+	 * `useShoppingCart()`.
+	 */
 	actions: ShoppingCartManagerActions;
+
+	/**
+	 * A function that should be called after the cart manager is created in
+	 * order to perform the initial fetch. If another action is called first,
+	 * this will be called automatically before that action is dispatched.
+	 */
 	fetchInitialCart: WaitForReady;
 }
 
@@ -151,14 +195,64 @@ export type ShoppingCartAction =
  * (see `ResponseCart` and `RequestCart`).
  */
 export interface ShoppingCartManagerActions {
+	/**
+	 * A function that requests adding new products to the cart. May cause the
+	 * cart to be replaced instead, depending on the `RequestCartProduct`
+	 * instances (mostly renewals and non-renewals cannot co-exist in the cart
+	 * at the same time).
+	 *
+	 * To create the product instances themselves (`RequestCartProduct`), see
+	 * `createRequestCartProduct` and `createRequestCartProducts`.
+	 */
 	addProductsToCart: AddProductsToCart;
+
+	/**
+	 * A function that requests removing a product from the cart by `uuid`.
+	 */
 	removeProductFromCart: RemoveProductFromCart;
+
+	/**
+	 * A function that requests applying a coupon to the cart (only one coupon
+	 * can be applied at a time).
+	 */
 	applyCoupon: ApplyCouponToCart;
+
+	/**
+	 * A function that requests removing a coupon from the cart.
+	 */
 	removeCoupon: RemoveCouponFromCart;
+
+	/**
+	 * A function that can be used to change the tax location of the cart. Note
+	 * that this completely replaces the current location. The
+	 * `convertTaxLocationToLocationUpdate` function can be used to convert the
+	 * current `responseCart.tax.location` value into the properties required
+	 * by this function if you need to only update one value.
+	 */
 	updateLocation: UpdateTaxLocationInCart;
+
+	/**
+	 * A function that can replace one product in the cart with another,
+	 * retaining the same `uuid`; useful for changing product variants.
+	 */
 	replaceProductInCart: ReplaceProductInCart;
+
+	/**
+	 * A function that replaces all the products in the cart with a new set of
+	 * products. Can also be used to clear the cart.
+	 */
 	replaceProductsInCart: ReplaceProductsInCart;
+
+	/**
+	 * A function to throw away the current cart cache and fetch it fresh from
+	 * the shopping cart API.
+	 */
 	reloadFromServer: ReloadCartFromServer;
+
+	/**
+	 * A function to throw away the current `responseCart.messages`. This can
+	 * be used to clear messages once they have been displayed.
+	 */
 	clearMessages: ClearCartMessages;
 }
 
