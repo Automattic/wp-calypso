@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -39,15 +39,17 @@ export default function MigrationsCommissions() {
 
 	const showEmptyState = ! migrationCommissions?.length;
 
-	let content = (
-		<>
-			<TextPlaceholder />
-			<TextPlaceholder />
-		</>
-	);
+	const content = useMemo( () => {
+		if ( ! isFetched ) {
+			return (
+				<>
+					<TextPlaceholder />
+					<TextPlaceholder />
+				</>
+			);
+		}
 
-	if ( isFetched ) {
-		content = showEmptyState ? (
+		return showEmptyState ? (
 			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
 		) : (
 			<div className="migrations-commissions__content">
@@ -55,7 +57,7 @@ export default function MigrationsCommissions() {
 				<MigrationsCommissionsList items={ migrationCommissions } />
 			</div>
 		);
-	}
+	}, [ isFetched, showEmptyState, migrationCommissions, setShowAddSitesModal ] );
 
 	return (
 		<Layout
