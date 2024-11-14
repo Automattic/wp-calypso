@@ -3,7 +3,7 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,6 +16,7 @@ import { viewStream } from 'calypso/state/reader-ui/actions';
 import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
+import RecentPostSkeleton from './recent-post-skeleton';
 import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
@@ -26,6 +27,7 @@ const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -167,6 +169,10 @@ const Recent = () => {
 		} ) );
 	}, [ selectedRecentSidebarFeedId ] );
 
+	useLayoutEffect( () => {
+		setIsLoading( data?.isRequesting );
+	}, [ data?.isRequesting ] );
+
 	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
 	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
 
@@ -215,15 +221,17 @@ const Recent = () => {
 							}
 							paginationInfo={ paginationInfo }
 							defaultLayouts={ defaultLayouts as SupportedLayouts }
-							isLoading={ data?.isRequesting }
+							isLoading={ isLoading }
 						/>
 					) }
 				</div>
 			</div>
 			{ hasSubscriptions && (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-					{ data?.isRequesting && 'Loading...' }
-					{ ! data?.isRequesting && data?.items.length === 0 && (
+					{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
+						<RecentPostSkeleton />
+					) }
+					{ ! isLoading && data?.items.length === 0 && (
 						<EmptyContent
 							title={ translate( 'Nothing Posted Yet' ) }
 							line={ translate( 'This feed is currently empty.' ) }
