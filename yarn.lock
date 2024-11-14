@@ -166,9 +166,9 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^8.1.3"
-    redux: "npm:^4.2.1"
-    redux-thunk: "npm:^2.4.2"
+    react-redux: "npm:^9.1.2"
+    redux: "npm:^5.0.1"
+    redux-thunk: "npm:^3.1.0"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
@@ -197,7 +197,7 @@ __metadata:
     "@wordpress/element": ^6.8.0
     "@wordpress/i18n": ^5.8.0
     debug: ^4.3.3
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -579,7 +579,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
@@ -613,7 +613,7 @@ __metadata:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -747,7 +747,7 @@ __metadata:
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     use-debounce: "npm:^3.1.0"
@@ -776,7 +776,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
@@ -790,7 +790,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -819,7 +819,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
@@ -831,7 +831,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -863,7 +863,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -898,7 +898,7 @@ __metadata:
     "@wordpress/element": ^6.8.0
     "@wordpress/i18n": ^5.8.0
     react: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1131,7 +1131,7 @@ __metadata:
     postcss: "*"
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1166,7 +1166,7 @@ __metadata:
     "@wordpress/element": ^6.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1273,7 +1273,7 @@ __metadata:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1288,7 +1288,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.95.0"
@@ -1321,7 +1321,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.95.0"
@@ -1333,7 +1333,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1365,7 +1365,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
@@ -1378,7 +1378,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1421,7 +1421,7 @@ __metadata:
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@emotion/react": ^11.4.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1453,9 +1453,9 @@ __metadata:
     prop-types: "npm:^15.7.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^8.1.3"
-    redux: "npm:^4.2.1"
-    redux-thunk: "npm:^2.4.2"
+    react-redux: "npm:^9.1.2"
+    redux: "npm:^5.0.1"
+    redux-thunk: "npm:^3.1.0"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
@@ -1491,7 +1491,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     webpack: "npm:^5.95.0"
   languageName: unknown
   linkType: soft
@@ -1527,7 +1527,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^9.0.1"
-    react-redux: "npm:^8.1.3"
+    react-redux: "npm:^9.1.2"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "npm:^7.0.5"
   languageName: unknown
@@ -1575,9 +1575,9 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^8.1.3"
-    redux: "npm:^4.2.1"
-    redux-thunk: "npm:^2.4.2"
+    react-redux: "npm:^9.1.2"
+    redux: "npm:^5.0.1"
+    redux-thunk: "npm:^3.1.0"
     size-limit: "npm:^8.2.6"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
@@ -1607,7 +1607,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.23.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     sass-loader: "npm:^10.1.1"
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
@@ -1646,7 +1646,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1722,7 +1722,7 @@ __metadata:
     "@wordpress/i18n": ^5.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1810,7 +1810,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.95.0"
@@ -1849,7 +1849,7 @@ __metadata:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1891,8 +1891,8 @@ __metadata:
     "@wordpress/is-shallow-equal": "npm:^5.8.0"
     "@wordpress/warning": "npm:^3.8.0"
     lodash: "npm:^4.17.21"
-    redux: "npm:^4.2.1"
-    redux-thunk: "npm:^2.4.2"
+    redux: "npm:^5.0.1"
+    redux-thunk: "npm:^3.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -1925,7 +1925,7 @@ __metadata:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1999,7 +1999,7 @@ __metadata:
     postcss: "*"
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
     stylelint: "*"
     webpack: "*"
   languageName: unknown
@@ -2105,7 +2105,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
@@ -2135,7 +2135,7 @@ __metadata:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -2203,7 +2203,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     tinymce: "npm:^5.0.0"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
@@ -2238,7 +2238,7 @@ __metadata:
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@emotion/react": ^11.4.1
-    redux: ^4.2.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -3792,7 +3792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.25.7, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.25.7
   resolution: "@babel/runtime@npm:7.25.7"
   dependencies:
@@ -8184,16 +8184,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "@types/hoist-non-react-statics@npm:3.3.1"
-  dependencies:
-    "@types/react": "npm:*"
-    hoist-non-react-statics: "npm:^3.3.0"
-  checksum: 5ed808e5fbf0979fe07acd631147420c30319383f4388a57e0fb811c6ff30abef286e937a84c7b00f4647ca7f1ab390cc42af0bfc7547a87d2e59e0e7072d92b
-  languageName: node
-  linkType: hard
-
 "@types/html-minifier-terser@npm:^6.0.0":
   version: 6.1.0
   resolution: "@types/html-minifier-terser@npm:6.1.0"
@@ -8617,14 +8607,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2":
-  version: 18.2.13
-  resolution: "@types/react@npm:18.2.13"
+"@types/react@npm:^18.2.6":
+  version: 18.3.12
+  resolution: "@types/react@npm:18.3.12"
   dependencies:
     "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 59b434ab9f2cf4874c8715a3d848d7cfd257419af8c0e486e2af5b6760c99aab62a511cb3456a3044d8250c93539016ca84fbd23eaac988e74987e268df2eef2
+  checksum: 8bae8d9a41619804561574792e29112b413044eb0d53746dde2b9720c1f9a59f71c895bbd7987cd8ce9500b00786e53bc032dced38cddf42910458e145675290
   languageName: node
   linkType: hard
 
@@ -8673,13 +8662,6 @@ __metadata:
   version: 0.12.0
   resolution: "@types/retry@npm:0.12.0"
   checksum: 7c5c9086369826f569b83a4683661557cab1361bac0897a1cefa1a915ff739acd10ca0d62b01071046fe3f5a3f7f2aec80785fe283b75602dc6726781ea3e328
-  languageName: node
-  linkType: hard
-
-"@types/scheduler@npm:*":
-  version: 0.16.1
-  resolution: "@types/scheduler@npm:0.16.1"
-  checksum: 78aa5a8b19b42b7b6dc1dc3fb64c1ef2cb87b685292a0951d06d15ac4de8926c9a219bd027f438c3cb701cf525cf1f233bc09a90af5488ae8b98af2ec84b656a
   languageName: node
   linkType: hard
 
@@ -9920,27 +9902,27 @@ __metadata:
   linkType: hard
 
 "@wordpress/data@npm:^10.8.0":
-  version: 10.8.1
-  resolution: "@wordpress/data@npm:10.8.1"
+  version: 10.11.0
+  resolution: "@wordpress/data@npm:10.11.0"
   dependencies:
-    "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/compose": "npm:^7.8.1"
-    "@wordpress/deprecated": "npm:^4.8.1"
-    "@wordpress/element": "npm:^6.8.1"
-    "@wordpress/is-shallow-equal": "npm:^5.8.1"
-    "@wordpress/priority-queue": "npm:^3.8.1"
-    "@wordpress/private-apis": "npm:^1.8.1"
-    "@wordpress/redux-routine": "npm:^5.8.1"
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/compose": "npm:*"
+    "@wordpress/deprecated": "npm:*"
+    "@wordpress/element": "npm:*"
+    "@wordpress/is-shallow-equal": "npm:*"
+    "@wordpress/priority-queue": "npm:*"
+    "@wordpress/private-apis": "npm:*"
+    "@wordpress/redux-routine": "npm:*"
     deepmerge: "npm:^4.3.0"
     equivalent-key-map: "npm:^0.2.2"
     is-plain-object: "npm:^5.0.0"
     is-promise: "npm:^4.0.0"
-    redux: "npm:^4.1.2"
+    redux: "npm:^5.0.1"
     rememo: "npm:^4.0.2"
     use-memo-one: "npm:^1.1.1"
   peerDependencies:
     react: ^18.0.0
-  checksum: 32f73120fbde77a614487afefcd892760107b7d121100c466074c005e7085f2feee9d8660b84610beb4794a306ba879b924efae09fc60c5be5a0e972b0fe4260
+  checksum: be815dbce0211afc49cda2668337c76fc1fb5dbdb861c27bbc4a1d6b2db7d9f7150f280ef53ea393f86be9fd5c67efedeef229acc0e87a6d299e53d3c62ea451
   languageName: node
   linkType: hard
 
@@ -13065,15 +13047,15 @@ __metadata:
     react-live: "npm:^4.1.1"
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.1"
-    react-redux: "npm:^8.1.3"
+    react-redux: "npm:^9.1.2"
     react-router: "npm:^6.23.1"
     react-router-dom: "npm:^6.23.1"
     react-test-renderer: "npm:^18.3.1"
     react-transition-group: "npm:^4.3.0"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     redux-dynamic-middlewares: "npm:^2.2.0"
     redux-mock-store: "npm:^1.5.4"
-    redux-thunk: "npm:^2.4.2"
+    redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
     social-logos: "npm:^2.5.9"
     source-map-support: "npm:^0.5.19"
@@ -19794,7 +19776,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -28167,35 +28149,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:^8.1.3":
-  version: 8.1.3
-  resolution: "react-redux@npm:8.1.3"
+"react-redux@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "react-redux@npm:9.1.2"
   dependencies:
-    "@babel/runtime": "npm:^7.12.1"
-    "@types/hoist-non-react-statics": "npm:^3.3.1"
     "@types/use-sync-external-store": "npm:^0.0.3"
-    hoist-non-react-statics: "npm:^3.3.2"
-    react-is: "npm:^18.0.0"
     use-sync-external-store: "npm:^1.0.0"
   peerDependencies:
-    "@types/react": ^16.8 || ^17.0 || ^18.0
-    "@types/react-dom": ^16.8 || ^17.0 || ^18.0
-    react: ^16.8 || ^17.0 || ^18.0
-    react-dom: ^16.8 || ^17.0 || ^18.0
-    react-native: ">=0.59"
-    redux: ^4 || ^5.0.0-beta.0
+    "@types/react": ^18.2.25
+    react: ^18.0
+    redux: ^5.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-    "@types/react-dom":
-      optional: true
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
     redux:
       optional: true
-  checksum: 64c8be2765568dc66a3c442a41dd0ed74fe048d5ceb7a4fe72e5bac3d3687996a7115f57b5156af7406521087065a0e60f9194318c8ca99c55e9ce48558980ce
+  checksum: 56ac98228e011b26e0202346af9c8dd408ad5ea8235d8761c8e05ea0953b8ca801cdf9d1f481fdec7b285d7f30ceef7238b46b3df7636ef77dd5c2ea8c5be5b2
   languageName: node
   linkType: hard
 
@@ -28647,21 +28616,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "redux-thunk@npm:2.4.2"
+"redux-thunk@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "redux-thunk@npm:3.1.0"
   peerDependencies:
-    redux: ^4
-  checksum: e202d6ef7dfa7df08ed24cb221aa89d6c84dbaa7d65fe90dbd8e826d0c10d801f48388f9a7598a4fd970ecbc93d335014570a61ca7bc8bf569eab5de77b31a3c
+    redux: ^5.0.0
+  checksum: 21557f6a30e1b2e3e470933247e51749be7f1d5a9620069a3125778675ce4d178d84bdee3e2a0903427a5c429e3aeec6d4df57897faf93eb83455bc1ef7b66fd
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.1":
+"redux@npm:^4.0.5":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
     "@babel/runtime": "npm:^7.9.2"
   checksum: 136d98b3d5dbed1cd6279c8c18a6a74c416db98b8a432a46836bdd668475de6279a2d4fd9d1363f63904e00f0678a8a3e7fa532c897163340baf1e71bb42c742
+  languageName: node
+  linkType: hard
+
+"redux@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "redux@npm:5.0.1"
+  checksum: b10c28357194f38e7d53b760ed5e64faa317cc63de1fb95bc5d9e127fab956392344368c357b8e7a9bedb0c35b111e7efa522210cfdc3b3c75e5074718e9069c
   languageName: node
   linkType: hard
 
@@ -34591,7 +34567,7 @@ __metadata:
     "@wordpress/blocks": "npm:^13.8.0"
     "@wordpress/commands": "npm:^1.8.0"
     "@wordpress/components": "npm:^28.8.0"
-    "@wordpress/data": "npm:^10.8.0"
+    "@wordpress/data": "npm:^10.11"
     "@wordpress/element": "npm:^6.8.0"
     "@wordpress/eslint-plugin": "npm:^21.1.2"
     "@wordpress/format-library": "npm:^5.8.0"
@@ -34672,7 +34648,7 @@ __metadata:
     react-refresh: "npm:^0.14.0"
     readline-sync: "npm:^1.4.10"
     recursive-copy: "npm:^2.0.14"
-    redux: "npm:^4.2.1"
+    redux: "npm:^5.0.1"
     replace: "npm:^1.1.5"
     request: "npm:^2.88.2"
     sass: "npm:^1.37.5"
