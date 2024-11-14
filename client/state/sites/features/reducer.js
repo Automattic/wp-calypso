@@ -37,7 +37,7 @@ function updateBulkFeatures( state, features ) {
 		newState[ siteId ] = {
 			...initialSiteState,
 			hasLoadedFromServer: true,
-			data: features,
+			data: features[ siteId ],
 		};
 	}
 	return { ...state, ...newState };
