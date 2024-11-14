@@ -533,8 +533,8 @@ export default function CampaignItemDetails( props: Props ) {
 							</div>
 						) }
 
-						<div className="campaign-item-details__main-stats-container">
-							{ shouldShowStats && (
+						{ shouldShowStats && (
+							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
 									<div className="campaign-item-details__main-stats-row ">
 										<div>
@@ -619,47 +619,47 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</div>
 								</div>
-							) }
 
-							{ ! campaignsStatsIsLoading && campaignStats && (
-								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-									<div>
-										<div className="campaign-item-page__graph">
-											<DropdownMenu
-												class="campaign-item-page__graph-selector"
-												controls={ [
-													{
-														onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-														title: 'Clicks',
-													},
-													{
-														onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-														title: 'Impressions',
-													},
-												] }
-												icon={ chevronDown }
-												text={
-													chartSource === ChartSourceOptions.Clicks
-														? __( 'Clicks' )
-														: __( 'Impressions' )
-												}
-												label={ chartSource }
-											/>
-											{ ChartSourceOptions.Clicks === chartSource &&
-												getCampaignStatsChart(
-													campaignStats?.series.clicks,
-													ChartSourceOptions.Clicks
-												) }
-											{ ChartSourceOptions.Impressions === chartSource &&
-												getCampaignStatsChart(
-													campaignStats?.series.impressions,
-													ChartSourceOptions.Impressions
-												) }
+								{ ! campaignsStatsIsLoading && campaignStats && (
+									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+										<div>
+											<div className="campaign-item-page__graph">
+												<DropdownMenu
+													class="campaign-item-page__graph-selector"
+													controls={ [
+														{
+															onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+															title: 'Clicks',
+														},
+														{
+															onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+															title: 'Impressions',
+														},
+													] }
+													icon={ chevronDown }
+													text={
+														chartSource === ChartSourceOptions.Clicks
+															? __( 'Clicks' )
+															: __( 'Impressions' )
+													}
+													label={ chartSource }
+												/>
+												{ ChartSourceOptions.Clicks === chartSource &&
+													getCampaignStatsChart(
+														campaignStats?.series.clicks,
+														ChartSourceOptions.Clicks
+													) }
+												{ ChartSourceOptions.Impressions === chartSource &&
+													getCampaignStatsChart(
+														campaignStats?.series.impressions,
+														ChartSourceOptions.Impressions
+													) }
+											</div>
 										</div>
 									</div>
-								</div>
-							) }
-						</div>
+								) }
+							</div>
+						) }
 
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
