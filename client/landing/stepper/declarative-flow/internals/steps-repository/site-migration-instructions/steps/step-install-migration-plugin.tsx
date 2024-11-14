@@ -7,10 +7,13 @@ export const StepInstallMigrationPlugin: FC = () => {
 	return (
 		<p>
 			{ translate(
-				"First you'll need to install and activate the Migrate to WordPress.com plugin on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
+				"First you'll need to install and activate the %(pluginName)s plugin on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
 				{
 					components: {
 						strong: <strong />,
+					},
+					args: {
+						pluginName: 'Migrate to WordPress.com',
 					},
 				}
 			) }

@@ -8,13 +8,14 @@ export const StepGetYourSiteReady: FC = () => {
 		<>
 			<p>
 				{ translate(
-					'Head to the Migrate to WordPress.com plugin screen on your source site, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
+					'Head to the %(pluginName)s plugin screen on your source site, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
 						},
 						args: {
 							migrateLabel: 'Continue',
+							pluginName: 'Migrate to WordPress.com',
 						},
 					}
 				) }

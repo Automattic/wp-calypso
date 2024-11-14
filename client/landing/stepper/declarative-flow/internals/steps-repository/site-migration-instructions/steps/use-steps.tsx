@@ -63,7 +63,11 @@ const useStepsData = ( {
 	return [
 		{
 			key: INSTALL_MIGRATION_PLUGIN,
-			title: translate( 'Install the Migrate to WordPress.com plugin' ),
+			title: translate( 'Install the %(pluginName)s plugin', {
+				args: {
+					pluginName: 'Migrate to WordPress.com',
+				},
+			} ),
 			content: <StepInstallMigrationPlugin />,
 			action: (
 				<StepLinkCta url={ getMigrationPluginInstallURL( fromUrl ) } linkname="install-plugin">
