@@ -41,8 +41,8 @@ type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
 	paginationInfo: { totalItems: number; totalPages: number };
-	viewState: View;
-	setViewState: ( callback: ( prevState: View ) => View ) => void;
+	dataViewsState: View;
+	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null;
 	openSitePreviewPane: ( site: SiteExcerptData ) => void;
 };
@@ -67,8 +67,8 @@ const DotcomSitesDataViews = ( {
 	sites,
 	isLoading,
 	paginationInfo,
-	viewState,
-	setViewState,
+	dataViewsState,
+	setDataViewsState,
 	selectedItem,
 	openSitePreviewPane,
 }: Props ) => {
@@ -205,8 +205,8 @@ const DotcomSitesDataViews = ( {
 			<DataViews
 				data={ sites }
 				fields={ fields }
-				onChangeView={ ( newView: View ) => setViewState( () => newView ) }
-				view={ viewState }
+				onChangeView={ ( newView: View ) => setDataViewsState( () => newView ) }
+				view={ dataViewsState }
 				search
 				searchLabel={ __( 'Search sites…' ) }
 				selection={ getSelection() }

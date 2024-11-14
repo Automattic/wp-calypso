@@ -148,7 +148,7 @@ const SitesDashboard = ( {
 	};
 
 	// Create the DataViews state based on initial values
-	const defaultViewState = {
+	const defaultDataViewsState = {
 		sort: {
 			field: '',
 			direction: 'asc',
@@ -193,26 +193,26 @@ const SitesDashboard = ( {
 			},
 		},
 	} as View;
-	const [ viewState, setViewState ] = useState< View >( defaultViewState );
+	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
 	useEffect( () => {
 		const fields = getFieldsByBreakpoint( isDesktop );
 		const fieldsForBreakpoint = [ ...fields ].sort().toString();
-		const existingFields = [ ...( viewState?.fields ?? [] ) ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
 		// Compare the content of the arrays, not its referrences that will always be different.
 		// sort() sorts the array in place, so we need to clone them first.
 		if ( existingFields !== fieldsForBreakpoint ) {
-			setViewState( ( prevState ) => ( { ...prevState, fields } ) );
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
 		}
 
 		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
 
 		if (
-			viewState.type === 'table' &&
-			viewState.layout?.styles?.site?.width !== siteNameColumnWidth
+			dataViewsState.type === 'table' &&
+			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
 		) {
 			// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
-			setViewState( ( prevState ) => ( {
+			setDataViewsState( ( prevState ) => ( {
 				...prevState,
 				layout: {
 					styles: {
@@ -228,10 +228,10 @@ const SitesDashboard = ( {
 	}, [
 		isDesktop,
 		isWide,
-		viewState.type,
-		viewState?.fields,
+		dataViewsState.type,
+		dataViewsState?.fields,
 		// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
-		viewState?.layout?.styles?.site?.width,
+		dataViewsState?.layout?.styles?.site?.width,
 	] );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
@@ -244,7 +244,7 @@ const SitesDashboard = ( {
 				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
 			const newSortDirection = sitesSorting.sortOrder;
 
-			setViewState( ( prevState ) => ( {
+			setDataViewsState( ( prevState ) => ( {
 				...prevState,
 				sort: {
 					field: newSortField,
@@ -257,18 +257,18 @@ const SitesDashboard = ( {
 	}, [
 		hasSitesSortingPreferenceLoaded,
 		sitesSorting,
-		viewState.sort,
+		dataViewsState.sort,
 		initialSortApplied,
 		siteType,
 	] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = viewState.filters?.find( ( filter ) => filter.field === 'status' );
+		const statusFilter = dataViewsState.filters?.find( ( filter ) => filter.field === 'status' );
 		const statusNumber = statusFilter?.value;
 		return siteStatusGroups.find( ( status ) => status.value === statusNumber )
 			?.slug as GroupableSiteLaunchStatuses;
-	}, [ viewState.filters, siteStatusGroups ] );
+	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
@@ -278,55 +278,55 @@ const SitesDashboard = ( {
 
 	// Perform sorting actions
 	const sortedSites = useSitesListSorting( currentStatusGroup, {
-		sortKey: siteSortingKeys.find( ( key ) => key.dataView === viewState.sort?.field )
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
-		sortOrder: viewState.sort?.direction || undefined,
+		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
-		search: viewState.search,
+		search: dataViewsState.search,
 	} );
 
 	const paginatedSites =
-		viewState.page && viewState.perPage
+		dataViewsState.page && dataViewsState.perPage
 			? filteredSites.slice(
-					( viewState.page - 1 ) * viewState.perPage,
-					viewState.page * viewState.perPage
+					( dataViewsState.page - 1 ) * dataViewsState.perPage,
+					dataViewsState.page * dataViewsState.perPage
 			  )
 			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();
 
-	useInitializeDataViewsPage( viewState, setViewState );
+	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
-			search: viewState.search?.trim(),
+			search: dataViewsState.search?.trim(),
 			status: statusSlug,
-			page: viewState.page && viewState.page > 1 ? viewState.page : undefined,
-			'per-page': viewState.perPage === DEFAULT_PER_PAGE ? undefined : viewState.perPage,
+			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
+			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
 		window.setTimeout( () => handleQueryParamChange( queryParams ) );
-	}, [ viewState.search, viewState.page, viewState.perPage, statusSlug ] );
+	}, [ dataViewsState.search, dataViewsState.page, dataViewsState.perPage, statusSlug ] );
 
 	// Update site sorting preference on change
 	useEffect( () => {
-		if ( viewState.sort?.field ) {
+		if ( dataViewsState.sort?.field ) {
 			onSitesSortingChange( {
-				sortKey: siteSortingKeys.find( ( key ) => key.dataView === viewState.sort?.field )
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 					?.sortKey as SitesSortKey,
-				sortOrder: viewState.sort.direction || 'asc',
+				sortOrder: dataViewsState.sort.direction || 'asc',
 			} );
 		}
-	}, [ viewState.sort, onSitesSortingChange ] );
+	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
 		if ( selectedSite ) {
-			// setViewState( { ...viewState, type: 'table' } );
+			// setDataViewsState( { ...dataViewsState, type: 'table' } );
 			pagejs( '/sites' );
 			//setHideListing( false );
 		}
@@ -339,12 +339,12 @@ const SitesDashboard = ( {
 				site.slug
 			) }`;
 			pagejs.show( newUrl );
-			setViewState( ( prevState ) => ( {
+			setDataViewsState( ( prevState ) => ( {
 				...prevState,
 				type: 'list',
 			} ) );
 		},
-		[ setViewState, initialSiteFeature ]
+		[ setDataViewsState, initialSiteFeature ]
 	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
@@ -394,8 +394,8 @@ const SitesDashboard = ( {
 						sites={ paginatedSites }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
-						viewState={ viewState }
-						setViewState={ setViewState }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
 						selectedItem={ selectedSite as SiteExcerptData | null }
 						openSitePreviewPane={ openSitePreviewPane }
 					/>
