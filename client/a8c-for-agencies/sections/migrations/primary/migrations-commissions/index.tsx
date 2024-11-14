@@ -11,6 +11,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';
@@ -34,15 +35,27 @@ export default function MigrationsCommissions() {
 		setShowAddSitesModal( true );
 	}, [ dispatch ] );
 
-	const { data: migrationCommissions, isFetching: isFetchingCommissions } =
-		useFetchMigrationCommissions();
-
-	if ( isFetchingCommissions ) {
-		// TODO: Add a loading state
-		return null;
-	}
+	const { data: migrationCommissions, isFetched } = useFetchMigrationCommissions();
 
 	const showEmptyState = ! migrationCommissions?.length;
+
+	let content = (
+		<>
+			<TextPlaceholder />
+			<TextPlaceholder />
+		</>
+	);
+
+	if ( isFetched ) {
+		content = showEmptyState ? (
+			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
+		) : (
+			<div className="migrations-commissions__content">
+				<MigrationsConsolidatedCommissions items={ migrationCommissions } />
+				<MigrationsCommissionsList items={ migrationCommissions } />
+			</div>
+		);
+	}
 
 	return (
 		<Layout
@@ -77,14 +90,7 @@ export default function MigrationsCommissions() {
 
 			<LayoutBody>
 				<>
-					{ showEmptyState ? (
-						<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
-					) : (
-						<div className="migrations-commissions__content">
-							<MigrationsConsolidatedCommissions items={ migrationCommissions } />
-							<MigrationsCommissionsList items={ migrationCommissions } />
-						</div>
-					) }
+					{ content }
 					{ showAddSitesModal && (
 						<MigrationsTagSitesModal onClose={ () => setShowAddSitesModal( false ) } />
 					) }
