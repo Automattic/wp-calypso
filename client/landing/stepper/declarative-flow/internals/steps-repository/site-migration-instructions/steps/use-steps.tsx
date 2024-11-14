@@ -24,7 +24,7 @@ interface StepsDataOptions {
 
 interface StepData {
 	key: string;
-	title: string;
+	title: string | React.ReactNode;
 	content: JSX.Element;
 	action?: JSX.Element;
 }
