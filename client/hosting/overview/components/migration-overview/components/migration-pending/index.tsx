@@ -1,18 +1,14 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
-import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
-import { useSiteExcerptsQueryInvalidator } from 'calypso/data/sites/use-site-excerpts-query';
+import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
-import { useDispatch } from 'calypso/state';
-import { requestSite } from 'calypso/state/sites/actions';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
+import useCancelMigration from './use-cancel-migration';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
@@ -36,7 +32,6 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const continueMigrationUrl = getContinueMigrationUrl( site );
-	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle = translate(
@@ -44,39 +39,16 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	);
 
 	const {
-		mutate: cancelMigration,
-		isSuccess: isCancellationSuccess,
-		isPending: isCancelling,
-		error: cancellationError,
-	} = useMigrationCancellation( site.ID );
-	const dispatch = useDispatch();
-	const invalidateSiteExcerptsQuery = useSiteExcerptsQueryInvalidator();
+		isModalVisible: isCancellationModalVisible,
+		isLoading: isCancelling,
+		cancelMigration,
+		openModal: openCancellationModal,
+		closeModal: closeCancellationModal,
+		showErrorNotice: showCancellationErrorNotice,
+		dismissErrorNotice: dismissCancellationErrorNotice,
+	} = useCancelMigration( site );
 
-	const reloadSite = useCallback( () => {
-		dispatch( requestSite( site.ID ) );
-		// invalidate the site excerpts query to refresh the /sites sidebar
-		invalidateSiteExcerptsQuery();
-	}, [ dispatch, invalidateSiteExcerptsQuery, site.ID ] );
-
-	useEffect( () => {
-		if ( isCancellationSuccess ) {
-			recordTracksEvent( 'calypso_pending_migration_canceled' );
-			reloadSite();
-		}
-	}, [ isCancellationSuccess, reloadSite ] );
-
-	useEffect( () => {
-		if ( cancellationError ) {
-			recordTracksEvent( 'calypso_pending_migration_cancel_error', { error: cancellationError } );
-		}
-	}, [ cancellationError ] );
-
-	const handleCancelButtonClick = useCallback( () => {
-		cancelMigration();
-		setIsConfirmModalVisible( false );
-	}, [ cancelMigration ] );
-
-	if ( isCancelling || isCancellationSuccess ) {
+	if ( isCancelling ) {
 		return (
 			<LoadingPlaceholder
 				aria-busy
@@ -89,9 +61,9 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	return (
 		<Container>
 			<ConfirmModal
-				isVisible={ isConfirmModalVisible }
-				onCancel={ () => setIsConfirmModalVisible( false ) }
-				onConfirm={ handleCancelButtonClick }
+				isVisible={ isCancellationModalVisible }
+				onCancel={ closeCancellationModal }
+				onConfirm={ cancelMigration }
 				title={ translate( 'Cancel migration' ) }
 				text={ translate(
 					"When you cancel your migration your original site will stay as is. You can always restart the migration when you're ready."
@@ -99,6 +71,15 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				confirmButtonLabel={ translate( 'Cancel migration' ) }
 				cancelButtonLabel={ translate( "Don't cancel migration" ) }
 			/>
+
+			{ showCancellationErrorNotice && (
+				<Notice status="is-warning" onDismissClick={ dismissCancellationErrorNotice }>
+					{ translate(
+						'We ran into a problem cancelling your migration. Please try again shortly.'
+					) }
+				</Notice>
+			) }
+
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
@@ -108,7 +89,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 						<Button
 							variant="link"
 							className="migration-pending__cancel-button"
-							onClick={ () => setIsConfirmModalVisible( true ) }
+							onClick={ openCancellationModal }
 						>
 							{ translate( 'Cancel migration' ) }
 						</Button>

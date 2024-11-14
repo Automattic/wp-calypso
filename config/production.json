@@ -25,7 +25,7 @@
 		"a4a-dev-sites": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
-		"automated-migration/pending-status": false,
+		"automated-migration/pending-status": true,
 		"bulk-plugin-management": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
@@ -212,7 +212,8 @@
 		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"woocommerce/core-profiler-passwordless-auth": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

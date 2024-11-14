@@ -799,10 +799,6 @@ export class JetpackAuthorize extends Component {
 			}
 			return translate( 'Connect your account' );
 		}
-		// eslint-disable-next-line no-lonely-if
-		if ( this.isWooPasswordlessJPC() ) {
-			return translate( 'Connect your account' );
-		}
 
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );

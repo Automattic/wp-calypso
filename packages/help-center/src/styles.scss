@@ -93,6 +93,20 @@
 		}
 	}
 
+	&.is-minimized {
+		.help-center__container-header {
+			cursor: pointer;
+		}
+
+		.help-center__container-content {
+			display: none;
+		}
+
+		.help-center-header__text {
+			cursor: pointer;
+		}
+	}
+
 	/**
 	 * Desktop
 	 */
@@ -109,18 +123,6 @@
 			top: unset;
 			right: 50px;
 			bottom: calc(#{$header-height} + 16px);
-
-			.help-center__container-header {
-				cursor: pointer;
-			}
-
-			.help-center__container-content {
-				display: none;
-			}
-			
-			.help-center-header__text {
-				cursor: pointer;
-			}
 		}
 	}
 

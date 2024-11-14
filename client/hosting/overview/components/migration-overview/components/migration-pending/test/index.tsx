@@ -69,4 +69,53 @@ describe( 'MigrationPending', () => {
 			expect( requestSite ).not.toHaveBeenCalled();
 		} );
 	} );
+
+	it( 'displays an error notice when the migration cancellation fails', async () => {
+		const mockedDispatch = jest.fn();
+		const invalidator = jest.fn();
+		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		jest.mocked( useSiteExcerptsQueryInvalidator ).mockReturnValue( invalidator );
+		renderWithProvider( <MigrationPending site={ site } /> );
+
+		nock( 'https://public-api.wordpress.com' )
+			.delete( '/wpcom/v2/sites/123/site-migration-status-sticker' )
+			.reply( 500, { message: 'Test error' } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
+
+		await waitFor( () => {
+			const notice = screen.getByText(
+				'We ran into a problem cancelling your migration. Please try again shortly.'
+			);
+			expect( notice ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'dismisses the error notice', async () => {
+		const mockedDispatch = jest.fn();
+		const invalidator = jest.fn();
+		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		jest.mocked( useSiteExcerptsQueryInvalidator ).mockReturnValue( invalidator );
+		renderWithProvider( <MigrationPending site={ site } /> );
+
+		nock( 'https://public-api.wordpress.com' )
+			.delete( '/wpcom/v2/sites/123/site-migration-status-sticker' )
+			.reply( 500, { message: 'Test error' } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel migration' } ) );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
+
+		await waitFor( () => {
+			expect(
+				screen.queryByText(
+					'We ran into a problem cancelling your migration. Please try again shortly.'
+				)
+			).not.toBeInTheDocument();
+		} );
+	} );
 } );

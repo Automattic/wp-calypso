@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { PanelSection } from 'calypso/sites/components/panel';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -109,14 +109,15 @@ const SiteSettingPrivacy = ( {
 		);
 	}
 	return (
-		<PanelSection
-			title={ translate( 'Privacy' ) }
-			subtitle={ translate( 'Control who can view your site. {{a}}Learn more{{/a}}', {
-				components: {
-					a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
-				},
-			} ) }
-		>
+		<PanelSection>
+			<PanelHeading>{ translate( 'Privacy' ) }</PanelHeading>
+			<PanelDescription>
+				{ translate( 'Control who can view your site. {{a}}Learn more{{/a}}', {
+					components: {
+						a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
+					},
+				} ) }
+			</PanelDescription>
 			{ renderForm() }
 			<Button
 				busy={ isSavingSettings }

@@ -1,7 +1,4 @@
 import { useSelector } from 'react-redux';
-import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
-import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
-import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -13,7 +10,6 @@ import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-lis
 import usePlugins from '../use-plugins';
 import InPageCTASection from './in-page-cta-section';
 import UpgradeNudge from './upgrade-nudge';
-import { useTrialHelpers } from './use-trial-helpers';
 import './style.scss';
 
 /**
@@ -110,28 +106,9 @@ const PluginsDiscoveryPage = ( props ) => {
 	);
 	const isWPBeginnerSpecial = sitePartnerBundle === 'wpbeginner-special';
 
-	const {
-		isTrialAcknowledgeModalOpen,
-		isTransferring,
-		hasRequestedTrial,
-		trialRequested,
-		requestUpdatedSiteData,
-		setOpenModal,
-		isEligibleForHostingTrial,
-		isAtomic,
-	} = useTrialHelpers( props );
-
 	return (
 		<>
-			{ ! isTransferring && ! hasRequestedTrial && <UpgradeNudge { ...props } paidPlugins /> }
-			{ ! isTrialAcknowledgeModalOpen && ! isAtomic && (
-				<HostingActivateStatus
-					context="plugin"
-					onTick={ requestUpdatedSiteData }
-					keepAlive={ hasRequestedTrial && ! isAtomic }
-				/>
-			) }
-
+			<UpgradeNudge { ...props } paidPlugins />
 			{ isWPBeginnerSpecial && <FeaturePartnerBundlePlugins { ...props } category="wpbeginner" /> }
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
@@ -145,11 +122,8 @@ const PluginsDiscoveryPage = ( props ) => {
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 			<CollectionListView category="ecommerce" { ...props } />
-			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
-				<TrialAcknowledgeModal setOpenModal={ setOpenModal } trialRequested={ trialRequested } />
-			) }
 		</>
 	);
 };
 
-export default WithOnclickTrialRequest( PluginsDiscoveryPage );
+export default PluginsDiscoveryPage;

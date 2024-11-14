@@ -11,14 +11,6 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import * as controller from './controller';
 
 export default function () {
-	page(
-		A4A_MIGRATIONS_LINK,
-		requireAccessContext,
-		controller.migrationsContext,
-		makeLayout,
-		clientRender
-	);
-
 	if ( isEnabled( 'a4a-tracking-site-migrations' ) ) {
 		page(
 			A4A_MIGRATIONS_OVERVIEW_LINK,
@@ -42,5 +34,13 @@ export default function () {
 			clientRender
 		);
 		page( A4A_MIGRATIONS_LINK, () => page.redirect( A4A_MIGRATIONS_OVERVIEW_LINK ) );
+	} else {
+		page(
+			A4A_MIGRATIONS_LINK,
+			requireAccessContext,
+			controller.migrationsContext,
+			makeLayout,
+			clientRender
+		);
 	}
 }

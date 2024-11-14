@@ -1,5 +1,12 @@
 .importer__notice {
 	margin-bottom: 32px;
+	p:first-of-type {
+		margin-bottom: 10px;
+	}
+}
+
+.importer__notice-stats {
+	max-width: 190px;
 }
 
 .importer__mapping-header {

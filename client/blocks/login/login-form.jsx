@@ -363,6 +363,7 @@ export class LoginForm extends Component {
 			addQueryArgs(
 				{
 					email_address: this.state.usernameOrEmail,
+					...( this.props.isFromAutomatticForAgenciesPlugin ? { a4a: '1' } : {} ),
 				},
 				'/log-in/jetpack/link'
 			)
@@ -1181,7 +1182,7 @@ export class LoginForm extends Component {
 							shouldRenderToS={ isWoo && ! isPartnerSignup && ! isWooPasswordless }
 							isWoo={ isWoo && isWooPasswordless }
 							isSocialFirst={ isSocialFirst }
-							magicLoginLink={ this.getMagicLoginPageLink() }
+							magicLoginLink={ ! isWooPasswordlessJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>
