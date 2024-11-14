@@ -65,5 +65,5 @@ export function useSelector< State = IAppState, Selected = unknown >(
 }
 
 export function useStore(): Store< IAppState, AnyAction > {
-	return reduxUseStore();
+	return reduxUseStore< IAppState >();
 }
