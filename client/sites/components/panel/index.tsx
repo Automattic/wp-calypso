@@ -5,13 +5,19 @@ import './style.scss';
 
 export function PanelSection( {
 	isBorderless,
+	className,
 	children,
 }: {
 	isBorderless?: boolean;
+	className?: string;
 	children: React.ReactNode;
 } ) {
 	return (
-		<div className={ clsx( 'panel-section', { 'panel-section--borderless': isBorderless } ) }>
+		<div
+			className={ clsx( 'panel-section', className, {
+				'panel-section--borderless': isBorderless,
+			} ) }
+		>
 			{ children }
 		</div>
 	);

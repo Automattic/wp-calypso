@@ -1,9 +1,11 @@
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
@@ -13,17 +15,15 @@ type Props = {
 	isSaving?: boolean;
 	onSaveSetting: () => void;
 	disabled: boolean;
-	title?: string;
 };
 
-export function A4AFullyManagedSiteSetting( {
+export function A4AFullyManagedSiteForm( {
 	site,
 	isFullyManagedAgencySite,
 	onChange,
 	isSaving,
 	onSaveSetting,
 	disabled,
-	title,
 }: Props ) {
 	const isDevSite = site.is_a4a_dev_site;
 	const isAtomicSite = site.is_wpcom_atomic;
@@ -57,17 +57,9 @@ export function A4AFullyManagedSiteSetting( {
 		),
 	};
 
-	return (
-		<div className="site-settings__a4a-fully-managed-container">
-			<SettingsSectionHeader
-				title={ title ?? translate( 'Agency settings' ) }
-				id="site-settings__a4a-fully-managed-header"
-				disabled={ disabled }
-				isSaving={ isSaving }
-				onButtonClick={ onSaveSetting }
-				showButton={ ! isDevSite }
-			/>
-			<CompactCard className="site-settings__a4a-fully-managed-content">
+	const renderContent = () => {
+		return (
+			<>
 				{ isDevSite ? (
 					<p className="form-setting-explanation">
 						{ translate(
@@ -104,7 +96,39 @@ export function A4AFullyManagedSiteSetting( {
 						onChange={ ( checked ) => onChange( ! checked ) }
 					/>
 				) }
-			</CompactCard>
-		</div>
+			</>
+		);
+	};
+
+	if ( ! isHostingMenuUntangled() ) {
+		return (
+			<div className="site-settings__a4a-fully-managed-container">
+				<SettingsSectionHeader
+					title={ translate( 'Agency settings' ) }
+					id="site-settings__a4a-fully-managed-header"
+					disabled={ disabled }
+					isSaving={ isSaving }
+					onButtonClick={ onSaveSetting }
+					showButton={ ! isDevSite }
+				/>
+				<CompactCard className="site-settings__a4a-fully-managed-content">
+					{ renderContent() }
+				</CompactCard>
+			</div>
+		);
+	}
+
+	return (
+		<PanelSection>
+			<PanelHeading id="site-settings__a4a-fully-managed-header">
+				{ translate( 'Agency settings' ) }
+			</PanelHeading>
+			{ renderContent() }
+			{ ! isDevSite && (
+				<Button onClick={ onSaveSetting } busy={ isSaving } disabled={ disabled }>
+					{ translate( 'Save' ) }
+				</Button>
+			) }
+		</PanelSection>
 	);
 }
