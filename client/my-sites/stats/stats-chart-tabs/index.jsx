@@ -95,9 +95,7 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => {
-		this.props.requestChartCounts( this.props.query );
-	};
+	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
 		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
@@ -153,8 +151,7 @@ const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) 
 	period,
 	quantity,
 	siteId,
-	// We only support hourly data for views.
-	statFields: period !== 'hour' ? QUERY_FIELDS : [ 'views' ],
+	statFields: QUERY_FIELDS,
 } ) );
 
 const connectComponent = connect(

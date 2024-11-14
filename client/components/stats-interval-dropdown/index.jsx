@@ -77,7 +77,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	}
 
 	function getDisplayLabel() {
-		return intervals[ period ].label;
+		return intervals[ period ]?.label;
 	}
 
 	function onSelectionHandler( interval ) {

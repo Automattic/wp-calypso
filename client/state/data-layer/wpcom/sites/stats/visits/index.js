@@ -25,8 +25,7 @@ export const fetch = ( action ) => {
 		);
 	}
 
-	const currentTabFields =
-		chartTab === 'views' && period !== 'hour' ? [ 'views', 'visitors' ] : [ chartTab ];
+	const currentTabFields = chartTab === 'views' ? [ 'views', 'visitors' ] : [ chartTab ];
 	const otherTabFields =
 		statFields?.filter( ( field ) => ! currentTabFields.includes( field ) ) ?? [];
 
