@@ -91,10 +91,13 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+				translate( 'Stats (Up to 100K site views, upgradeable)' ),
 			];
 		case 'growth':
 			// JetPack Creator features
 			return [
+				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Social' ),
 				translate( 'Display ads with WordAds' ),
 				translate( 'Pay with PayPal' ),
 				translate( 'Import unlimited subscribers' ),
@@ -104,7 +107,6 @@ function getFeatureStrings(
 				translate( 'Newsletter' ),
 				translate( 'Priority support' ),
 				translate( '2% transaction fees' ),
-				translate( 'Jetpack Stats' ),
 			];
 		case 'scan':
 			return [
@@ -220,7 +222,6 @@ export default function getJetpackProductFeatures(
 	if ( isJetpackGrowthPlan( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'growth', translate ),
-			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'support', translate ),
 		];
 	}

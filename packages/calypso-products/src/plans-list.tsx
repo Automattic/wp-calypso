@@ -2326,7 +2326,7 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_GROWTH,
 	getTitle: () => translate( 'Growth', { context: 'Jetpack product name' } ),
-	getDescription: () => translate( 'Accelerate your growth.' ),
+	getDescription: () => translate( 'Grow your audience effortlessly.' ),
 } );
 
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
