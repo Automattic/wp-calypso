@@ -510,6 +510,16 @@ export class JetpackAuthorize extends Component {
 				window.location.href = e.target.href;
 				break;
 			case this.isWooPasswordlessJPC():
+				// Logout user before redirecting to login page.
+				try {
+					await this.props.logoutUser();
+					disablePersistence();
+					await clearStore();
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// Clear wordpress_logged_in cookie to force logout.
+					document.cookie = 'wordpress_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+				}
 				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
 				window.location.href = e.target.href;
 				break;
