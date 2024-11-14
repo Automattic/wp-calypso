@@ -13,7 +13,19 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
 import ReaderSocialShareSelection from './social';
+
 import './style.scss';
+
+// Global event system used to close Reader share/reblog popovers from any component.
+const createShareMenuEvent = () => {
+	const subscribers = new Set();
+	return {
+		subscribe: ( callback ) => subscribers.add( callback ),
+		unsubscribe: ( callback ) => subscribers.delete( callback ),
+		trigger: () => subscribers.forEach( ( callback ) => callback() ),
+	};
+};
+export const READER_SHARE_MENU_CLOSE = createShareMenuEvent();
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -37,6 +49,7 @@ class ReaderShare extends Component {
 
 	componentDidMount() {
 		this.mounted = true;
+		READER_SHARE_MENU_CLOSE.subscribe( this.closeMenu );
 	}
 
 	componentWillUnmount() {
@@ -45,6 +58,7 @@ class ReaderShare extends Component {
 			this.closeHandle = null;
 		}
 		this.mounted = false;
+		READER_SHARE_MENU_CLOSE.unsubscribe( this.closeMenu );
 	}
 
 	deferMenuChange = ( showing ) => {

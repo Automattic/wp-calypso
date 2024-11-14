@@ -48,31 +48,35 @@ export default function PluginsListDataViews( {
 
 	const header = (
 		<>
-			<Button
-				isPressed={ isFilteringUpdates }
-				onClick={ () => {
-					if ( isFilteringUpdates ) {
-						setDataViewsState( {
-							...dataViewsState,
-							filters: [],
-						} );
-					} else {
-						setDataViewsState( {
-							...dataViewsState,
-							filters: [
-								{
-									field: 'status',
-									operator: 'isAny',
-									value: [ PLUGINS_STATUS.UPDATE ],
-								},
-							],
-						} );
-					}
-					setIsFilteringUpdates( ! isFilteringUpdates );
-				} }
-			>
-				{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
-			</Button>
+			{ pluginUpdateCount > 0 && (
+				<Button
+					isPressed={ isFilteringUpdates }
+					onClick={ () => {
+						if ( isFilteringUpdates ) {
+							setDataViewsState( {
+								...dataViewsState,
+								filters: [],
+								page: 1,
+							} );
+						} else {
+							setDataViewsState( {
+								...dataViewsState,
+								filters: [
+									{
+										field: 'status',
+										operator: 'isAny',
+										value: [ PLUGINS_STATUS.UPDATE ],
+									},
+								],
+								page: 1,
+							} );
+						}
+						setIsFilteringUpdates( ! isFilteringUpdates );
+					} }
+				>
+					{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
+				</Button>
+			) }
 		</>
 	);
 

@@ -96,12 +96,12 @@ const ChatEllipsisMenu = () => {
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
-	const { pathname, key } = useLocation();
+	const { pathname } = useLocation();
 
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const shouldDisplayClearChatButton =
 		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
-	const isHelpCenterHome = key === 'default';
+	const isHelpCenterHome = pathname === '/';
 
 	const headerText = useMemo( () => {
 		if ( pathname.startsWith( '/odie' ) ) {

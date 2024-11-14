@@ -461,7 +461,7 @@ $y-axis-padding: 0 20px;
 			min-width: 0;
 
 			&::before {
-				@include long-content-fade( $color: var( --color-neutral-60-rgb ) );
+				@include long-content-fade( $color: var( --color-neutral-60 ) );
 				position: relative;
 				left: -30px;
 				width: 30px;

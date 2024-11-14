@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,6 +13,10 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrationsCommissionsList from '../../commissions-list';
+import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
+import useFetchMigrationCommissions from '../../hooks/use-fetch-migration-commissions';
+import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
 
 import './style.scss';
@@ -21,14 +25,24 @@ export default function MigrationsCommissions() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
+
 	const title = translate( 'Migrations' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
-		// TODO: Implement the tagging functionality
+		setShowAddSitesModal( true );
 	}, [ dispatch ] );
 
-	const showEmptyState = true;
+	const { data: migrationCommissions, isFetching: isFetchingCommissions } =
+		useFetchMigrationCommissions();
+
+	if ( isFetchingCommissions ) {
+		// TODO: Add a loading state
+		return null;
+	}
+
+	const showEmptyState = ! migrationCommissions?.length;
 
 	return (
 		<Layout
@@ -61,7 +75,21 @@ export default function MigrationsCommissions() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ showEmptyState ? <MigrationsCommissionsEmptyState /> : null }</LayoutBody>
+			<LayoutBody>
+				<>
+					{ showEmptyState ? (
+						<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
+					) : (
+						<div className="migrations-commissions__content">
+							<MigrationsConsolidatedCommissions items={ migrationCommissions } />
+							<MigrationsCommissionsList items={ migrationCommissions } />
+						</div>
+					) }
+					{ showAddSitesModal && (
+						<MigrationsTagSitesModal onClose={ () => setShowAddSitesModal( false ) } />
+					) }
+				</>
+			</LayoutBody>
 		</Layout>
 	);
 }

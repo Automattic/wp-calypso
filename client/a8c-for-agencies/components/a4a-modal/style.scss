@@ -1,0 +1,83 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-modal {
+	max-width: 827px;
+	max-height: 100%;
+	margin: 0;
+
+	.components-modal__content {
+		padding: 0;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+			position: relative;
+		}
+	}
+
+	@include break-small {
+		margin: auto;
+	}
+}
+
+.a4a-modal__main {
+	padding: 20px;
+	gap: 8px;
+	display: flex;
+	flex-direction: column;
+	height: 660px;
+
+	@include break-large {
+		width: 800px;
+		padding: 40px;
+	}
+
+	.a4a-modal__title {
+		@include a4a-font-heading-lg;
+		margin: 0;
+		padding: 0;
+	}
+
+	.a4a-modal__subtitle {
+		@include a4a-font-body-sm;
+		margin: 0;
+		color: var(--color-accent-60);
+	}
+
+	button.components-button.a4a-modal__close-button {
+		position: absolute;
+		inset-inline-end: 1rem;
+		inset-block-start: 1rem;
+		cursor: pointer;
+		transition: scale 0.2s ease-in;
+		max-height: 24px;
+
+		&:hover {
+			scale: 1.2;
+			background-color: transparent;
+		}
+
+		&:focus-visible {
+			border-color: var(--color-primary);
+			outline: none;
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			border-radius: 4px;
+		}
+	}
+}
+
+.a4a-modal__footer {
+	padding: 24px 40px;
+	text-align: right;
+	border-radius: 4px;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background: var(--color-light-backdrop);
+	display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

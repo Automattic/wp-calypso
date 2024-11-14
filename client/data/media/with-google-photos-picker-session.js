@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelector } from 'react-redux';
+import getGooglePhotosPickerFeatureStatus from 'calypso/state/selectors/get-google-photos-picker-feature-status';
 import getGooglePhotosPickerSession from 'calypso/state/selectors/get-google-photos-picker-session';
 import {
 	useCreateGooglePhotosPickerSessionMutation,
@@ -9,7 +9,9 @@ import {
 
 export const withGooglePhotosPickerSession = createHigherOrderComponent( ( Wrapped ) => {
 	return ( props ) => {
-		const photosPickerApiEnabled = config.isEnabled( 'google-photos-picker' );
+		const photosPickerApiEnabled = useSelector( ( state ) =>
+			getGooglePhotosPickerFeatureStatus( state )
+		);
 		const photosPickerSession = useSelector( ( state ) => getGooglePhotosPickerSession( state ) );
 
 		const { mutate: createPickerSession } = useCreateGooglePhotosPickerSessionMutation();

@@ -223,17 +223,12 @@ function InfoColumn( {
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
 		[]
 	);
-	let displayCost =
+	const displayCost =
 		productPrice &&
 		currencyCode &&
 		formatCurrency( productPrice, currencyCode, {
 			stripZeros: true,
 		} );
-
-	// TODO: Replace hardcoded value by 100-eyar domain product price when we have it
-	if ( flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
-		displayCost = '$2,000';
-	}
 
 	const planTitle =
 		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
@@ -271,7 +266,9 @@ function InfoColumn( {
 							<Gridicon icon="info-outline" size={ 16 } />
 						</>
 					</LearnMore>
-					<Price className={ ! displayCost ? 'is-price-loading' : '' }>{ displayCost }</Price>
+					{ flowName !== HUNDRED_YEAR_DOMAIN_FLOW && (
+						<Price className={ ! displayCost ? 'is-price-loading' : '' }>{ displayCost }</Price>
+					) }
 				</Info>
 			</InfoColumnContainer>
 		</>

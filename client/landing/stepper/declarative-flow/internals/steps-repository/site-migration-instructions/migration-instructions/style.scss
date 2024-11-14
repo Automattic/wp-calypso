@@ -28,7 +28,7 @@
 		background-color: var(--studio-wordpress-blue-50);
 		border-color: var(--studio-wordpress-blue-50);
 
-		&:hover {
+		&:hover:not([disabled]) {
 			background-color: var(--studio-wordpress-blue-60);
 			border-color: var(--studio-wordpress-blue-60);
 		}

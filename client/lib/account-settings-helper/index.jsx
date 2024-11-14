@@ -2,12 +2,10 @@ import languages from '@automattic/languages';
 import ReactDom from 'react-dom';
 import { useInView } from 'react-intersection-observer';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import LanguagePicker from 'calypso/components/language-picker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -19,7 +17,6 @@ export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const isFetching = useSelector( isFetchingUserSettings );
-	const colorSchemePreference = useSelector( ( state ) => getPreference( state, 'colorScheme' ) );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const updateLanguage = ( event ) => {
@@ -59,8 +56,6 @@ export function AccountSettingsHelper() {
 					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }
 				/>
-				<div>Dashboard color scheme</div>
-				<ColorSchemePicker defaultSelection={ colorSchemePreference } />
 			</div>
 		</>
 	);

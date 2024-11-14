@@ -270,12 +270,11 @@ class DomainProductPrice extends Component {
 
 	/**
 	 * Used to render the price of 100-year domains, which are a one time purchase
-	 * TODO: Replace hardcoded value by 100-eyar domain product price when we have it
 	 */
 	renderOneTimePrice() {
 		return (
 			<div className="domain-product-price domain-product-single-price">
-				<span>$2,000</span>
+				<span>{ this.props.price }</span>
 			</div>
 		);
 	}

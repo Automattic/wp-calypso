@@ -42,6 +42,9 @@ export const UserMessage = ( {
 		return shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions;
 	};
 
+	const isMessageShowingDisclaimer =
+		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
+
 	const renderDisclaimers = () => (
 		<>
 			<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
@@ -61,7 +64,7 @@ export const UserMessage = ( {
 			isBot && (
 				<div className="chat-feedback-wrapper">
 					{ showExtraContactOptions && renderExtraContactOptions() }
-					{ renderDisclaimers() }
+					{ isMessageShowingDisclaimer && renderDisclaimers() }
 				</div>
 			)
 		);

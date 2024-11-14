@@ -17,8 +17,9 @@ export const OdieSendMessageButton = () => {
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const { trackEvent, chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
-	const shouldBeDisabled = chat.status === 'loading' || chat.status === 'sending';
+	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
+	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
@@ -35,7 +36,7 @@ export const OdieSendMessageButton = () => {
 
 		if (
 			message === '' ||
-			shouldBeDisabled ||
+			isChatBusy ||
 			( shouldUseHelpCenterExperience && ! isMessageLengthValid )
 		) {
 			return;
@@ -61,7 +62,7 @@ export const OdieSendMessageButton = () => {
 				error: error?.message,
 			} );
 		}
-	}, [ sendMessage, shouldBeDisabled, shouldUseHelpCenterExperience, trackEvent ] );
+	}, [ sendMessage, isChatBusy, shouldUseHelpCenterExperience, trackEvent ] );
 
 	const classes = clsx(
 		'odie-send-message-inner-button',
@@ -86,11 +87,12 @@ export const OdieSendMessageButton = () => {
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
+						setSubmitDisabled={ setSubmitDisabled }
 						keyUpHandle={ onKeyUp }
 					/>
-					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
+					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
 					{ shouldUseHelpCenterExperience && <AttachmentButton /> }
-					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
+					<button type="submit" className={ classes } disabled={ submitDisabled }>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />
 						) : (

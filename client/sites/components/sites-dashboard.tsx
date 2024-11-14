@@ -32,7 +32,9 @@ import {
 	SitesDashboardQueryParams,
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
+import { useSelector } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
@@ -49,7 +51,6 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { SiteDetails } from '@automattic/data-stores';
 import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -62,7 +63,6 @@ import './guided-tours.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
-	selectedSite?: SiteDetails | null;
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
 	sectionName?: string;
@@ -90,7 +90,6 @@ const SitesDashboard = ( {
 		status,
 		siteType = DEFAULT_SITE_TYPE,
 	},
-	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
@@ -98,6 +97,8 @@ const SitesDashboard = ( {
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const selectedSite = useSelector( getSelectedSite );
+
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
 
