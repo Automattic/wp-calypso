@@ -33413,7 +33413,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot-react@npm:1.1.4, uplot-react@npm:^1.1.4":
+"uplot-react@npm:^1.1.4":
   version: 1.1.4
   resolution: "uplot-react@npm:1.1.4"
   peerDependencies:
@@ -34660,8 +34660,6 @@ __metadata:
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    uplot: "npm:^1.6.25"
-    uplot-react: "npm:1.1.4"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^4.10.0"
