@@ -3792,6 +3792,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:7.25.7":
+  version: 7.25.7
+  resolution: "@babel/runtime@npm:7.25.7"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 86b7829d2fc9343714a9afe92757cf96c4dc799006ca61d73cda62f4b9e29bfa1ce36794955bc6cb4c188f5b10db832c949339895e1bbe81a69022d9d578ce29
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.26.0
   resolution: "@babel/runtime@npm:7.26.0"
@@ -9902,27 +9911,27 @@ __metadata:
   linkType: hard
 
 "@wordpress/data@npm:^10.8.0":
-  version: 10.8.1
-  resolution: "@wordpress/data@npm:10.8.1"
+  version: 10.11.0
+  resolution: "@wordpress/data@npm:10.11.0"
   dependencies:
-    "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/compose": "npm:^7.8.1"
-    "@wordpress/deprecated": "npm:^4.8.1"
-    "@wordpress/element": "npm:^6.8.1"
-    "@wordpress/is-shallow-equal": "npm:^5.8.1"
-    "@wordpress/priority-queue": "npm:^3.8.1"
-    "@wordpress/private-apis": "npm:^1.8.1"
-    "@wordpress/redux-routine": "npm:^5.8.1"
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/compose": "npm:*"
+    "@wordpress/deprecated": "npm:*"
+    "@wordpress/element": "npm:*"
+    "@wordpress/is-shallow-equal": "npm:*"
+    "@wordpress/priority-queue": "npm:*"
+    "@wordpress/private-apis": "npm:*"
+    "@wordpress/redux-routine": "npm:*"
     deepmerge: "npm:^4.3.0"
     equivalent-key-map: "npm:^0.2.2"
     is-plain-object: "npm:^5.0.0"
     is-promise: "npm:^4.0.0"
-    redux: "npm:^4.1.2"
+    redux: "npm:^5.0.1"
     rememo: "npm:^4.0.2"
     use-memo-one: "npm:^1.1.1"
   peerDependencies:
     react: ^18.0.0
-  checksum: 32f73120fbde77a614487afefcd892760107b7d121100c466074c005e7085f2feee9d8660b84610beb4794a306ba879b924efae09fc60c5be5a0e972b0fe4260
+  checksum: be815dbce0211afc49cda2668337c76fc1fb5dbdb861c27bbc4a1d6b2db7d9f7150f280ef53ea393f86be9fd5c67efedeef229acc0e87a6d299e53d3c62ea451
   languageName: node
   linkType: hard
 
@@ -28625,7 +28634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.5, redux@npm:^4.1.2":
+"redux@npm:^4.0.5":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -34567,7 +34576,7 @@ __metadata:
     "@wordpress/blocks": "npm:^13.8.0"
     "@wordpress/commands": "npm:^1.8.0"
     "@wordpress/components": "npm:^28.8.0"
-    "@wordpress/data": "npm:^10.8.0"
+    "@wordpress/data": "npm:^10.11"
     "@wordpress/element": "npm:^6.8.0"
     "@wordpress/eslint-plugin": "npm:^21.1.2"
     "@wordpress/format-library": "npm:^5.8.0"

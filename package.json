@@ -190,7 +190,7 @@
 		"@wordpress/blocks": "^13.8.0",
 		"@wordpress/commands": "^1.8.0",
 		"@wordpress/components": "^28.8.0",
-		"@wordpress/data": "^10.8.0",
+		"@wordpress/data": "^10.11",
 		"@wordpress/element": "^6.8.0",
 		"@wordpress/format-library": "^5.8.0",
 		"@wordpress/i18n": "^5.8.0",
