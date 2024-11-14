@@ -66,7 +66,7 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 
 export const ODIE_TRANSFER_MESSAGE_NEW: Message[] = [
 	{
-		content: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
+		content: __( "Help's on the way!", __i18n_text_domain__ ),
 		role: 'bot',
 		type: 'message',
 		context: {
@@ -80,7 +80,7 @@ export const ODIE_TRANSFER_MESSAGE_NEW: Message[] = [
 	},
 	{
 		content: __(
-			"Meanwhile, feel free to include any additional information like screenshots or a detailed explanation of what's going wrong.",
+			'Feel free to share more details while we connect you to support.',
 			__i18n_text_domain__
 		),
 		role: 'bot',
