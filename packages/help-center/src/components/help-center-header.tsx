@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
+import { useSmooch } from '@automattic/zendesk-client/src/use-smooch';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
@@ -12,6 +13,7 @@ import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { matchSupportInteractionId } from '../components/utils';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -94,22 +96,39 @@ const ChatEllipsisMenu = () => {
 	);
 };
 
-const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
+const GetHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
+	const { getConversations } = useSmooch();
+	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
 
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
-	const shouldDisplayClearChatButton =
-		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
-	const isHelpCenterHome = pathname === '/';
+
+	const foundMatchingSupportConversation = matchSupportInteractionId(
+		getConversations,
+		isChatLoaded,
+		currentSupportInteraction
+	);
 
 	const headerText = useMemo( () => {
-		if ( pathname.startsWith( '/odie' ) ) {
-			return shouldUseHelpCenterExperience
-				? __( 'Support Assistant', __i18n_text_domain__ )
-				: __( 'Wapuu', __i18n_text_domain__ );
-		}
+		const odieHeader = () => {
+			if ( shouldUseHelpCenterExperience ) {
+				return foundMatchingSupportConversation
+					? __( 'Support Team', __i18n_text_domain__ )
+					: __( 'Support Assistant', __i18n_text_domain__ );
+			}
+			return __( 'Wapuu', __i18n_text_domain__ );
+		};
+
 		switch ( pathname ) {
+			case '/odie':
+				return odieHeader();
 			case '/contact-form':
 				return shouldUseHelpCenterExperience
 					? __( 'Support Assistant', __i18n_text_domain__ )
@@ -119,7 +138,21 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, pathname ] );
+	}, [ __, foundMatchingSupportConversation, pathname, shouldUseHelpCenterExperience ] );
+
+	return headerText;
+};
+
+const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
+	const { __ } = useI18n();
+	const { pathname } = useLocation();
+
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const shouldDisplayClearChatButton =
+		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
+	const isHelpCenterHome = pathname === '/';
+
+	const headerText = GetHeaderText();
 
 	return (
 		<>
