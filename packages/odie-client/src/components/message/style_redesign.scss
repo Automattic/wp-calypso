@@ -81,6 +81,12 @@
 			list-style: initial;
 		}
 
+		&.odie-chatbox-message-no-avatar {
+			.odie-chatbox-message__content {
+				margin-left: 46px;
+			}
+		}
+
 		&.odie-chatbox-message-bot {
 			.odie-chatbox-message__content {
 				background-color: var(--studio-gray-0);
