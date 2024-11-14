@@ -4,7 +4,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { StagingSiteCard } from '..';
 import { useAddStagingSiteMutation } from '../../../hooks/use-add-staging-site';

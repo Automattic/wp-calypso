@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
