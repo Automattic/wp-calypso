@@ -671,6 +671,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		grid-template-rows: auto auto;
 		align-items: start;
 
+		@media ( max-width: $break-wide ) {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
 		.reader-full-post__header-site-icon {
 			grid-column: 1;
 			margin-right: 30px;
@@ -678,25 +683,47 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			align-self: center;
 			width: 80px;
 
+			@media ( max-width: $break-wide ) {
+				flex-shrink: 0;
+				width: 40px;
+				margin-right: 15px;
+			}
+
 			.reader-full-post__site-icon {
 				border-radius: 50%;
 				height: 80px;
 				width: 80px;
+
+				@media ( max-width: $break-wide ) {
+					height: 40px;
+					width: 40px;
+				}
 
 				&.is-missing-icon {
 					color: var( --color-neutral-70 );
 				}
 			}
 		}
+
 		.reader-full-post__header-title {
 			grid-column: 2;
 			grid-row: 1;
+
+			@media ( max-width: $break-wide ) {
+				flex: 1;
+				min-width: 0;
+			}
 		}
 
 		.reader-full-post__header-meta {
 			display: block;
 			grid-column: 2;
 			grid-row: 2;
+
+			@media ( max-width: $break-wide ) {
+				width: 100%;
+				padding-top: 10px;
+			}
 
 			span {
 				line-height: 1.6;
