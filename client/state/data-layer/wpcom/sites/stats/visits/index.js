@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { STATS_CHART_COUNTS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -9,6 +10,8 @@ export const fetch = ( action ) => {
 	const { chartTab, date, period, quantity, siteId, statFields } = action;
 
 	if ( period === 'hour' ) {
+		// Move the date to the end of the day to get the correct data for hours; otherwise, we get the data for the previous day.
+		const adjustedDate = moment( date ).endOf( 'day' ).format( 'YYYY-MM-DD HH:00' );
 		return http(
 			{
 				method: 'GET',
@@ -16,7 +19,7 @@ export const fetch = ( action ) => {
 				apiVersion: '1.1',
 				query: {
 					unit: period,
-					date,
+					date: adjustedDate,
 					quantity,
 					stat_fields: 'views',
 				},
