@@ -1,4 +1,4 @@
-import { Context } from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
@@ -30,9 +30,14 @@ export function PerformanceProfilerWrapper( {
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
-	const url = context.query?.url?.startsWith( 'http' )
+	if ( ! context.query?.url ) {
+		page.redirect( '/speed-test' );
+		return;
+	}
+
+	const url = context.query.url.startsWith( 'http' )
 		? context.query.url
-		: `https://${ context.query?.url ?? '' }`;
+		: `https://${ context.query.url }`;
 
 	context.primary = (
 		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
