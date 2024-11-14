@@ -1,13 +1,8 @@
-import {
-	FEATURE_SFTP,
-	WPCOM_FEATURES_COPY_SITE,
-	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-} from '@automattic/calypso-products';
+import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
-import SitePreviewLink from 'calypso/components/site-preview-links';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -148,26 +143,6 @@ export function useActions(): Action< SiteExcerptData >[] {
 				},
 				isEligible: ( site ) => {
 					return ! isP2Site( site );
-				},
-			},
-
-			{
-				id: 'share-site-for-preview',
-				label: __( 'Share site for preview' ),
-				RenderModal: ( { items: sites } ) => {
-					const site = sites[ 0 ];
-					return <SitePreviewLink siteUrl={ site.URL } siteId={ site.ID } source="smp-modal" />;
-				},
-				isEligible: ( site ) => {
-					const hasSitePreviewLinksFeature = site.plan?.features.active.includes(
-						WPCOM_FEATURES_SITE_PREVIEW_LINKS
-					);
-
-					if ( ! hasSitePreviewLinksFeature ) {
-						return false;
-					}
-
-					return !! site.is_coming_soon;
 				},
 			},
 
