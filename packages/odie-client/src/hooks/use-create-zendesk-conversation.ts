@@ -3,7 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { ODIE_TRANSFER_MESSAGE_NEW } from '../constants';
+import { getOdieTransferMessageConstant } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
@@ -36,7 +36,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			...prevChat,
 			messages: [
 				...prevChat.messages,
-				...ODIE_TRANSFER_MESSAGE_NEW( shouldUseHelpCenterExperience ),
+				...getOdieTransferMessageConstant( shouldUseHelpCenterExperience ),
 			],
 			status: 'transfer',
 		} ) );
