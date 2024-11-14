@@ -117,7 +117,7 @@ const GetHeaderText = () => {
 	);
 
 	const headerText = useMemo( () => {
-		const odieHeader = () => {
+		const getOdieHeader = () => {
 			if ( shouldUseHelpCenterExperience ) {
 				return foundMatchingSupportConversation
 					? __( 'Support Team', __i18n_text_domain__ )
@@ -128,7 +128,7 @@ const GetHeaderText = () => {
 
 		switch ( pathname ) {
 			case '/odie':
-				return odieHeader();
+				return getOdieHeader();
 			case '/contact-form':
 				return shouldUseHelpCenterExperience
 					? __( 'Support Assistant', __i18n_text_domain__ )
