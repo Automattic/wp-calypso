@@ -2,8 +2,6 @@ import {
 	getPlanSlugForTermVariant,
 	isWpcomEnterpriseGridPlan,
 	PERIOD_LIST,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	type PlanSlug,
 } from '@automattic/calypso-products';
@@ -30,12 +28,8 @@ const getTermVariantPlanSlugForSavings = ( {
 	planSlug: PlanSlug;
 	billingPeriod?: -1 | ( typeof PERIOD_LIST )[ number ];
 } ) => {
-	if ( 365 === billingPeriod ) {
+	if ( billingPeriod && 365 <= billingPeriod ) {
 		return getPlanSlugForTermVariant( planSlug, TERM_MONTHLY );
-	} else if ( 730 === billingPeriod ) {
-		return getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
-	} else if ( 1095 === billingPeriod ) {
-		return getPlanSlugForTermVariant( planSlug, TERM_BIENNIALLY );
 	}
 
 	return null;
@@ -161,10 +155,23 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	if ( enableTermSavingsPriceDisplay && termVariantPricing ) {
+	const termVariantPrice =
+		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
+	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
+	const savings =
+		termVariantPrice > planPrice
+			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
+			: 0;
+
+	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge">{ `Save from ${ termVariantPricing.originalPrice.monthly }` }</div>
+				<div className="plans-grid-next-header-price__badge">
+					{ translate( 'Save %(savings)d%%', {
+						args: { savings },
+						comment: 'Example: Save 35%',
+					} ) }
+				</div>
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
