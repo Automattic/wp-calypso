@@ -33413,13 +33413,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot-react@npm:^1.1.4, uplot-react@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "uplot-react@npm:1.2.2"
+"uplot-react@npm:1.1.4, uplot-react@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "uplot-react@npm:1.1.4"
   peerDependencies:
     react: ">=16.8.6"
-    uplot: ^1.6.20
-  checksum: ec052e009d462b8308064707e9a35e90712bb67f67e6db935fb91083c0fe88b54d2be8089df8568153fa089a462158bb0e4eb11738c86a35a0ffa8b4cc9fe745
+    uplot: ^1.6.7
+  checksum: 58126a31ed9b16309a1fcd53289649d557c13406f606162d9fbfe824c48cdd9d0daf275fccd69303d3179582bcd93afa9f2d528a65720a8808b1eb86e7d11372
   languageName: node
   linkType: hard
 
@@ -34661,7 +34661,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     uplot: "npm:^1.6.31"
-    uplot-react: "npm:^1.2.2"
+    uplot-react: "npm:1.1.4"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^4.10.0"
