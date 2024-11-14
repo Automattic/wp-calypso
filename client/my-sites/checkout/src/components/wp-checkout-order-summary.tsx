@@ -363,7 +363,8 @@ export function CheckoutSummaryRefundWindows( {
 			refundPolicy === RefundPolicy.DomainNameRenewal ||
 			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
 			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
-			refundPolicy === RefundPolicy.PlanBiennialRenewal
+			refundPolicy === RefundPolicy.PlanBiennialRenewal ||
+			refundPolicy === RefundPolicy.PlanTriennialRenewal
 	);
 
 	let text: TranslateResult;
