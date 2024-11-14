@@ -13,12 +13,19 @@ import { localize } from 'i18n-calypso';
 import { filter as capitalize, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
+	LayoutHeaderActions as Actions,
+} from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -366,6 +373,46 @@ export class PluginsMain extends Component {
 		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
 	}
 
+	renderPluginStatusTabs() {
+		if ( this.props.newBulkPluginManagement ) {
+			return null;
+		}
+
+		const { title, count } = this.getSelectedText();
+
+		return (
+			<SectionNav
+				applyUpdatedStyles
+				selectedText={
+					<span>
+						{ title }
+						{ count ? <Count count={ count } compact /> : null }
+					</span>
+				}
+			>
+				<NavTabs selectedText={ title } selectedCount={ count }>
+					{ this.getFilters().map( ( filterItem ) => {
+						if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+							return null;
+						}
+
+						const attr = {
+							path: filterItem.path,
+							selected: filterItem.id === this.props.filter,
+							count: this.getPluginCount( filterItem.id ),
+						};
+
+						return (
+							<NavItem key={ filterItem.id } { ...attr }>
+								{ filterItem.title }
+							</NavItem>
+						);
+					} ) }
+				</NavTabs>
+			</SectionNav>
+		);
+	}
+
 	renderPluginsContent() {
 		if ( this.props.newBulkPluginManagement ) {
 			return (
@@ -475,139 +522,104 @@ export class PluginsMain extends Component {
 		);
 	}
 
+	getPageTitle() {
+		const { isJetpackCloud, translate } = this.props;
+
+		if ( isJetpackCloud ) {
+			return translate( 'Plugins', { textOnly: true } );
+		}
+
+		return translate( 'Manage Plugins', { textOnly: true } );
+	}
+
+	getPageSubtitle() {
+		const { selectedSite, translate } = this.props;
+
+		return selectedSite
+			? translate( 'Manage all plugins installed on %(selectedSite)s', {
+					args: {
+						selectedSite: selectedSite.domain,
+					},
+			  } )
+			: translate( 'Manage plugins installed on all sites' );
+	}
+
+	renderPageContent() {
+		if ( this.props.isJetpackCloud ) {
+			return (
+				<div className="plugin-management-wrapper">
+					<div className={ clsx( 'plugins__top-container', 'plugins__top-container-jc' ) }>
+						<div className="plugins__content-wrapper">
+							<MissingPaymentNotification />
+							<div className="plugins__page-title-container">
+								<div className="plugins__header-left-content">
+									<h2 className="plugins__page-title">{ this.getPageTitle() }</h2>
+									<div className="plugins__page-subtitle">{ this.getPageSubtitle() }</div>
+								</div>
+							</div>
+							{ this.renderPluginStatusTabs() }
+						</div>
+					</div>
+					<div className="plugins__main-content plugins__main-content-jc">
+						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<Layout
+				className={ clsx( 'sites-dashboard', 'sites-dashboard__layout', 'preview-hidden' ) }
+				wide
+				title={ null }
+				disableGuidedTour
+			>
+				<LayoutColumn className="sites-overview" wide>
+					<LayoutTop withNavigation={ false }>
+						<MissingPaymentNotification />
+						<LayoutHeader>
+							<Title>{ this.getPageTitle() }</Title>
+							<Subtitle>{ this.getPageSubtitle() }</Subtitle>
+							<Actions>
+								{ this.renderAddPluginButton() }
+								{ this.renderUploadPluginButton() }
+								{ ! this.props.newBulkPluginManagement && (
+									<UpdatePlugins isWpCom plugins={ this.getCurrentPlugins() } />
+								) }
+							</Actions>
+						</LayoutHeader>
+					</LayoutTop>
+					<div
+						className="dataviews-wrapper"
+						css={ {
+							paddingInline: this.props.newBulkPluginManagement ? 0 : '48px',
+							paddingBottom: '32px',
+						} }
+					>
+						{ this.renderPluginStatusTabs() }
+						{ this.renderPluginsContent() }
+					</div>
+				</LayoutColumn>
+			</Layout>
+		);
+	}
+
 	render() {
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
-		let navItems = null;
-		let selectedTextContent = null;
-		const { title, count } = this.getSelectedText();
-
-		if ( ! this.props.newBulkPluginManagement ) {
-			navItems = this.getFilters().map( ( filterItem ) => {
-				if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-					return null;
-				}
-
-				const attr = {
-					key: filterItem.id,
-					path: filterItem.path,
-					selected: filterItem.id === this.props.filter,
-					count: this.getPluginCount( filterItem.id ),
-				};
-
-				return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
-			} );
-
-			selectedTextContent = (
-				<span>
-					{ title }
-					{ count ? <Count count={ count } compact /> : null }
-				</span>
-			);
-		}
-
-		const { isJetpackCloud, selectedSite } = this.props;
-
-		let pageTitle;
-		if ( isJetpackCloud ) {
-			pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
-		} else {
-			pageTitle = this.props.translate( 'Manage Plugins', { textOnly: true } );
-		}
-
-		const currentPlugins = this.getCurrentPlugins();
-
 		return (
 			<>
-				<DocumentHead title={ pageTitle } />
-				<QueryPlugins siteId={ selectedSite?.ID } />
+				<DocumentHead title={ this.getPageTitle() } />
+				<QueryPlugins siteId={ this.props.selectedSiteId } />
 				{ this.props.siteIds && 1 === this.props.siteIds.length ? (
 					<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				) : (
 					<QueryJetpackSitesFeatures />
 				) }
 				{ this.renderPageViewTracking() }
-				<div className="plugin-management-wrapper">
-					{ ! isJetpackCloud && (
-						<NavigationHeader
-							navigationItems={ [] }
-							title={ pageTitle }
-							subtitle={
-								this.props.selectedSite
-									? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
-											args: {
-												selectedSite: this.props.selectedSite.domain,
-											},
-									  } )
-									: this.props.translate( 'Manage plugins installed on all sites' )
-							}
-						>
-							{ ! isJetpackCloud && (
-								<>
-									{ this.renderAddPluginButton() }
-									{ this.renderUploadPluginButton() }
-									{ ! this.props.newBulkPluginManagement && (
-										<UpdatePlugins isWpCom plugins={ currentPlugins } />
-									) }
-								</>
-							) }
-						</NavigationHeader>
-					) }
-					<div
-						className={ clsx( 'plugins__top-container', {
-							'plugins__top-container-jc': isJetpackCloud,
-						} ) }
-					>
-						<div className="plugins__content-wrapper">
-							<MissingPaymentNotification />
-
-							{ isJetpackCloud && (
-								<div className="plugins__page-title-container">
-									<div className="plugins__header-left-content">
-										<h2 className="plugins__page-title">{ pageTitle }</h2>
-										<div className="plugins__page-subtitle">
-											{ this.props.selectedSite
-												? this.props.translate(
-														'Manage all plugins installed on %(selectedSite)s',
-														{
-															args: {
-																selectedSite: this.props.selectedSite.domain,
-															},
-														}
-												  )
-												: this.props.translate( 'Manage plugins installed on all sites' ) }
-										</div>
-									</div>
-								</div>
-							) }
-
-							{ ! config.isEnabled( 'bulk-plugin-management' ) && (
-								<div className="plugins__main plugins__main-updated">
-									<div className="plugins__main-header">
-										<SectionNav
-											applyUpdatedStyles
-											selectedText={ selectedTextContent }
-											className="plugins-section-nav"
-										>
-											<NavTabs selectedText={ title } selectedCount={ count }>
-												{ navItems }
-											</NavTabs>
-										</SectionNav>
-									</div>
-								</div>
-							) }
-						</div>
-					</div>
-					<div
-						className={ clsx( 'plugins__main-content', {
-							'plugins__main-content-jc': isJetpackCloud,
-						} ) }
-					>
-						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
-					</div>
-				</div>
+				{ this.renderPageContent() }
 			</>
 		);
 	}

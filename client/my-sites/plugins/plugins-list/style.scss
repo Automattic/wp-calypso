@@ -5,6 +5,12 @@ body.is-section-plugins .plugin-management-wrapper {
 	}
 }
 
+body.is-section-plugins {
+	.a4a-layout__top-wrapper {
+		padding-block-start: 24px;
+	}
+}
+
 body.is-section-plugins .plugin-management-wrapper,
 .is-section-jetpack-cloud-plugin-management {
 
@@ -29,7 +35,7 @@ body.is-section-plugins .plugin-management-wrapper,
         button {
             border: none;
             background-color: transparent;
-    
+
             &:hover {
                 background-color: var(--color-background-alt);
             }

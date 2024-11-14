@@ -28,11 +28,13 @@ export default function MissingPaymentNotification() {
 		);
 
 		return (
-			<Notice className="is-warning" showDismiss={ false } text={ warningText }>
-				<a href="/partner-portal/invoices" className="notice__link">
-					{ translate( 'View Invoice' ) }
-				</a>
-			</Notice>
+			<div style={ { boxSizing: 'border-box' } }>
+				<Notice className="is-warning" showDismiss={ false } text={ warningText }>
+					<a href="/partner-portal/invoices" className="notice__link">
+						{ translate( 'View Invoice' ) }
+					</a>
+				</Notice>
+			</div>
 		);
 	}
 
