@@ -59,8 +59,8 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS ].some( ( plan ) =>
-			isProductOwned( ownedPurchases, plan )
+		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS, ...JETPACK_GROWTH_PLANS ].some(
+			( plan ) => isProductOwned( ownedPurchases, plan )
 		)
 	);
 };

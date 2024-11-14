@@ -12,7 +12,12 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
+import {
+	hasBusinessPlan,
+	hasCompletePlan,
+	hasSecurityPlan,
+	hasGrowthPlan,
+} from '../hooks/use-stats-purchases';
 import usePurchasedProducts from './use-purchased-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -33,8 +38,9 @@ function shouldHideUpsellSection( purchases: Purchase[] ) {
 
 	const hasBusiness = hasBusinessPlan( purchases );
 	const hasComplete = hasCompletePlan( purchases );
+	const hasGrowth = hasGrowthPlan( purchases );
 
-	return hasBusiness || hasComplete;
+	return hasBusiness || hasComplete || hasGrowth;
 }
 
 function bundledProductsFromPurchases( purchases: Purchase[] ) {
