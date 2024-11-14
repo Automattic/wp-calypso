@@ -33423,7 +33423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot@npm:^1.6.25, uplot@npm:^1.6.31":
+"uplot@npm:^1.6.25":
   version: 1.6.31
   resolution: "uplot@npm:1.6.31"
   checksum: b1b03ebb23bda148c16e085006db183f93e99c63dd457863217c81fe7f9d99d680b2bf18f5ea2e39c39df67e20d7bae4e7730853c0af9c86c0eb8e8004e2f8ed
@@ -34660,7 +34660,7 @@ __metadata:
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    uplot: "npm:^1.6.31"
+    uplot: "npm:^1.6.25"
     uplot-react: "npm:1.1.4"
     webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"

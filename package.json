@@ -225,7 +225,7 @@
 		"redux": "^5.0.1",
 		"request": "^2.88.2",
 		"swiper": "^10.1.0",
-		"uplot": "^1.6.31",
+		"uplot": "^1.6.25",
 		"uplot-react": "1.1.4",
 		"workspace": "^0.0.1-preview.1",
 		"wpcom": "workspace:^"
