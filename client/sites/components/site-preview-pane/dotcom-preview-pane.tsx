@@ -170,11 +170,10 @@ const DotcomPreviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							const newUrl = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
-								':site',
-								site.slug
-							) }`;
-							page( newUrl );
+							page.show(
+								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }` +
+									window.location.search
+							);
 						}
 					},
 				},

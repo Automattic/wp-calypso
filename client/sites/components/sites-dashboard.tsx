@@ -326,25 +326,18 @@ const SitesDashboard = ( {
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
 		if ( selectedSite ) {
-			// setDataViewsState( { ...dataViewsState, type: 'table' } );
-			pagejs( '/sites' );
-			//setHideListing( false );
+			pagejs.show( '/sites' + window.location.search );
 		}
 	}, [ selectedSite ] );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
-			const newUrl = `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace(
-				':site',
-				site.slug
-			) }`;
-			pagejs.show( newUrl );
-			setDataViewsState( ( prevState ) => ( {
-				...prevState,
-				type: 'list',
-			} ) );
+			pagejs.show(
+				`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }` +
+					window.location.search
+			);
 		},
-		[ setDataViewsState, initialSiteFeature ]
+		[ initialSiteFeature ]
 	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
