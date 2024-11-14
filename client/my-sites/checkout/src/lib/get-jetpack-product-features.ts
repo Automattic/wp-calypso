@@ -9,6 +9,7 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackSocialV1Slug,
 	isJetpackStatsFreeProductSlug,
 	isJetpackStatsPaidProductSlug,
 	isJetpackVideoPressSlug,
@@ -32,6 +33,7 @@ type featureString =
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'social-v1'
 	| 'stats-free'
 	| 'stats'
 	| 'support'
@@ -126,6 +128,15 @@ function getFeatureStrings(
 			return [ translate( 'Engagement Optimizer' ) ];
 		case 'social-basic':
 			return [
+				translate( 'Automatically share your posts' ),
+				translate( 'Posting to multiple channels at once' ),
+				translate( 'Scheduled posts' ),
+				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate( 'Content recycling' ),
+			];
+		case 'social-v1':
+			return [
+				translate( 'Engagement Optimizer' ),
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
@@ -264,6 +275,10 @@ export default function getJetpackProductFeatures(
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
 		];
+	}
+
+	if ( isJetpackSocialV1Slug( product.product_slug ) ) {
+		return [ ...getFeatureStrings( 'social-v1', translate ) ];
 	}
 
 	if ( isJetpackStatsFreeProductSlug( product.product_slug ) ) {
