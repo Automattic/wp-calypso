@@ -87,6 +87,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			duration: Date.now() - testStartTime.current,
 			mobile_score: mobileReport?.overall_score,
 			desktop_score: desktopReport?.overall_score,
+			version: profilerVersion(),
 		} );
 	}
 
