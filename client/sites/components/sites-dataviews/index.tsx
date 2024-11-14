@@ -13,6 +13,7 @@ import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
 
 import './style.scss';
+import './dataview-style.scss';
 
 // todo: What ItemsDataViews (now using DataViews) provides with selectedItem DataViewsState - need to port here
 
