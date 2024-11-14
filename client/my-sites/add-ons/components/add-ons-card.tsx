@@ -44,6 +44,7 @@ const Container = styled.div`
 			display: flex;
 			flex-direction: column;
 			box-sizing: border-box;
+			padding: 8px 0;
 		}
 	}
 
@@ -83,6 +84,8 @@ const Container = styled.div`
 
 	.add-ons-card__body {
 		font-size: 0.875rem;
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 
 	.add-ons-card__footer {
