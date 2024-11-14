@@ -12,7 +12,7 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
+import editorPreviewIllustration from 'calypso/assets/images/customer-home/illustration--editor-preview.svg';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -145,7 +145,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			: translate( 'Own a domain. Build a site.' );
 
 	const updatedCopy = translate(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is the perfect site address. It's available and easy to find and follow. And .com, .net, and .org domains start at just %(domainPrice)s—Get it now and claim a corner of the web.",
+		'{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It’s available, easy to find, share, and follow. Get it now and claim a corner of the web.',
 		{
 			components: {
 				strong: <strong />,
@@ -202,7 +202,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ domainUpsellMobileIllustration }
+			illustration={ editorPreviewIllustration }
 			illustrationAlwaysShow
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
