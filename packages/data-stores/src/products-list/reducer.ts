@@ -33,13 +33,7 @@ export const isFetchingProductsList: Reducer< boolean | undefined, Action > = (
 	return state;
 };
 
-const reducer: Reducer<
-	{
-		isFetchingProductsList: boolean | undefined;
-		productsList: RawAPIProductsList | undefined;
-	},
-	Action
-> = combineReducers( {
+const reducer = combineReducers( {
 	isFetchingProductsList,
 	productsList,
 } );

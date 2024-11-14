@@ -30,13 +30,7 @@ const selectedStorageOptionForPlan: Reducer<
 	return state;
 };
 
-const reducer: Reducer<
-	{
-		showDomainUpsellDialog: boolean | undefined;
-		selectedStorageOptionForPlan: SelectedStorageOptionForPlan | undefined;
-	},
-	WpcomPlansUIAction
-> = combineReducers( {
+const reducer = combineReducers( {
 	showDomainUpsellDialog,
 	selectedStorageOptionForPlan,
 } );

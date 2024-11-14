@@ -13,12 +13,7 @@ export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( 
 	return state;
 };
 
-const reducer: Reducer<
-	{
-		currentUser: CurrentUser | null | undefined;
-	},
-	Action
-> = combineReducers( { currentUser } );
+const reducer = combineReducers( { currentUser } );
 export type State = ReturnType< typeof reducer >;
 
 export default reducer;

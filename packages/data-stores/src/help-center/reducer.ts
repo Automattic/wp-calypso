@@ -148,27 +148,7 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
-const reducer: Reducer<
-	{
-		currentSupportInteraction: SupportInteraction | undefined;
-		showHelpCenter: boolean | undefined;
-		showMessagingLauncher: boolean | undefined;
-		showMessagingWidget: boolean | undefined;
-		subject: string | undefined;
-		message: string | undefined;
-		userDeclaredSite: SiteDetails | undefined;
-		userDeclaredSiteUrl: string | undefined;
-		hasSeenWhatsNewModal: boolean | undefined;
-		isMinimized: boolean;
-		isChatLoaded: boolean;
-		zendeskClientId: string;
-		unreadCount: number;
-		navigateToRoute: string | undefined;
-		odieInitialPromptText: string | undefined;
-		odieBotNameSlug: string | undefined;
-	},
-	HelpCenterAction
-> = combineReducers( {
+const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,

@@ -70,14 +70,7 @@ const availability: Reducer< DomainAvailabilities, Action > = ( state = {}, acti
 	return state;
 };
 
-const reducer: Reducer<
-	{
-		availability: DomainAvailabilities;
-		categories: DomainCategory[];
-		domainSuggestions: DomainSuggestionState;
-	},
-	Action
-> = combineReducers( { categories, domainSuggestions, availability } );
+const reducer = combineReducers( { categories, domainSuggestions, availability } );
 
 export type State = ReturnType< typeof reducer >;
 

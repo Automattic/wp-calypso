@@ -100,12 +100,7 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 	return state;
 };
 
-const reducers: Reducer<
-	{
-		subscriber: SubscriberState;
-	},
-	Action
-> = combineReducers( { subscriber } );
+const reducers = combineReducers( { subscriber } );
 
 export type State = ReturnType< typeof reducers >;
 
