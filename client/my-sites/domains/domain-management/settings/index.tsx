@@ -539,7 +539,7 @@ const Settings = ( {
 			></ContactsPrivacyInfo>
 		);
 
-		const { privateDomain } = domain;
+		const { privateDomain, isHundredYearDomain } = domain;
 		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
 			? translate( 'Privacy protection on', { textOnly: true } )
@@ -566,7 +566,11 @@ const Settings = ( {
 		return (
 			<Accordion
 				title={ titleLabel }
-				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
+				subtitle={
+					isHundredYearDomain
+						? 'WordPress.com'
+						: `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }`
+				}
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				{ getContactsPrivacyInfo() }
