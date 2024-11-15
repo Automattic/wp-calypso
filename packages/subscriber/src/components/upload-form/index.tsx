@@ -1,14 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import {
-	Button,
-	DropZone,
-	FormFileUpload,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { DropZone, FormFileUpload, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -40,7 +34,6 @@ interface Props {
 	titleText?: string;
 	subtitleText?: string;
 	showSkipLink?: boolean;
-	isWPCOMSite?: boolean;
 	disabled?: boolean;
 	hidden?: boolean;
 	renderLearnMoreLink?: () => React.ReactNode;
@@ -64,7 +57,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		titleText,
 		subtitleText,
 		hidden,
-		isWPCOMSite = false,
 		disabled,
 		renderLearnMoreLink,
 	} = props;
@@ -240,34 +232,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	function renderImportCsvDisclaimerMsg() {
-		const importSubscribersUrl = ! isWPCOMSite
-			? 'https://jetpack.com/support/newsletter/import-subscribers/'
-			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
-
-		return (
-			isSelectedFileValid &&
-			selectedFile && (
-				<p className="add-subscriber__form--disclaimer">
-					{ createInterpolateElement(
-						__(
-							'By clicking "Add subscribers" you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
-						),
-						{
-							Button: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( importSubscribersUrl ) }
-								/>
-							),
-						}
-					) }
-				</p>
-			)
-		);
-	}
-
 	if ( hidden ) {
 		return null;
 	}
@@ -344,7 +308,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 					{ renderFileValidationMsg() }
 					{ renderImportErrorMsg() }
 					{ renderEmptyFormValidationMsg() }
-					{ ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 
 					{ ! isSelectedFileValid && selectedFile && (
 						<FormInputValidation className="is-file-validation" isError text="">
@@ -387,8 +350,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 						</VStack>
 					</div>
 
-					{ isSelectedFileValid && selectedFile && ! importSelector?.error && (
-						<p>
+					{ isSelectedFileValid && selectedFile && ! includesHandledError() && (
+						<p className="add-subscriber__form--disclaimer">
 							{ __(
 								'By clicking "Add Subscribers," you represent that you\'ve obtained the appropriate consent to email each person.'
 							) }{ ' ' }

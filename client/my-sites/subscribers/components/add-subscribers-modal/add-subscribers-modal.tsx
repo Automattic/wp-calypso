@@ -8,7 +8,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
-import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 
 type AddSubscribersModalProps = {
@@ -34,6 +35,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
+	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
 	const isSubscriberCsvUploadEnabled = isEnabled( 'subscriber-csv-upload' );
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
@@ -80,10 +82,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
 	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
-	const isWPCOMSite = ! site?.jetpack || site?.is_wpcom_atomic;
-	const supportLink = site?.jetpack
-		? localizeUrl( 'https://jetpack.com/contact-support' )
-		: localizeUrl( 'https://wordpress.com/support/help-support-options' );
 
 	const trackAndSetAddingMethod = ( method: string ) => {
 		recordTracksEvent( `calypso_subscribers_add_question`, {
@@ -99,7 +97,19 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
 	};
 
-	const renderLearnMoreLink = () => {
+	const renderLearnMoreLink = ( isJetpack: boolean | null ) => {
+		// Jetpack sites
+		if ( isJetpack ) {
+			return (
+				<ExternalLink
+					href={ localizeUrl( 'https://jetpack.com/support/newsletter/import-subscribers/' ) }
+				>
+					{ translate( 'Learn more' ) }
+				</ExternalLink>
+			);
+		}
+
+		// WP.com sites
 		return (
 			<InlineSupportLink
 				showIcon={ false }
@@ -209,7 +219,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
 								) }
 							</span>
-							<InlineSupportLink supportLink={ supportLink } />
+							{ renderLearnMoreLink( isJetpack ) }
 						</Notice>
 					) }
 					<label className="add-subscribers-modal__label">
@@ -226,7 +236,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						showCsvUpload={ false }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
-						isWPCOMSite={ isWPCOMSite }
+						isWPCOMSite={ ! isJetpack }
 						disabled={ isImportInProgress }
 					/>
 				</>
@@ -272,7 +282,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
 								) }
 							</span>
-							<InlineSupportLink supportLink={ supportLink } />
+							{ renderLearnMoreLink( isJetpack ) }
 						</Notice>
 					) }
 					<UploadSubscribersForm
@@ -285,9 +295,8 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						showSubtitle={ false }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
-						isWPCOMSite={ isWPCOMSite }
 						disabled={ isImportInProgress }
-						renderLearnMoreLink={ renderLearnMoreLink }
+						renderLearnMoreLink={ () => renderLearnMoreLink( isJetpack ) }
 					/>
 				</>
 			) }
