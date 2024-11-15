@@ -62,7 +62,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
-							status: 'loaded',
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 						} );
 					}
 				} );
