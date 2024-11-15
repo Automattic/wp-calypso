@@ -30,6 +30,10 @@
 	flex-direction: column;
 	height: 680px;
 
+	.dataviews__view-actions {
+		display: none;
+	}
+
 	@include break-large {
 		width: 800px;
 		padding: 40px;
