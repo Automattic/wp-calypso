@@ -145,7 +145,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		showPaywallNotice,
 		isNearLimit,
 		isOverLimit,
-		supportCommercialUse,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
