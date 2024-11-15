@@ -1,4 +1,5 @@
 import { Badge, Button } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -39,7 +40,18 @@ const SiteDataField = ( {
 			/>
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
-				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
+				{ ! migrationInProgress && (
+					<a
+						className="sites-dataviews__site-url"
+						href={ site.url_with_scheme }
+						title={ site.url_with_scheme }
+						target="_blank"
+						rel="noreferrer"
+						onClick={ ( e ) => e.stopPropagation() }
+					>
+						{ site.url } <Icon icon={ external } size={ 16 } />
+					</a>
+				) }
 				{ migrationInProgress && (
 					<Badge className="status-badge" type="info-blue">
 						{ translate( 'Migration in progress' ) }
