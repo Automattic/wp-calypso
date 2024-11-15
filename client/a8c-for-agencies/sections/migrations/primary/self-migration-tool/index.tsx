@@ -37,9 +37,6 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 								href: A4A_MIGRATIONS_LINK,
 							},
 							{
-								label: translate( 'Overview' ),
-							},
-							{
 								label: heading,
 							},
 						] }

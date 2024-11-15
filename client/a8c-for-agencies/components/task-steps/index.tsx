@@ -23,7 +23,7 @@ export interface TaskStepItem {
 
 interface TaskStepProps {
 	step: TaskStepItem;
-	markAsDone: ( step: TaskStepItem ) => void;
+	toggleTaskStatus: ( step: TaskStepItem ) => void;
 }
 
 interface TaskStepsProps {
@@ -33,7 +33,7 @@ interface TaskStepsProps {
 	sessionStorageKey: string;
 }
 
-export function TaskStep( { step, markAsDone }: TaskStepProps ) {
+export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 	const translate = useTranslate();
 
 	return (
@@ -64,12 +64,8 @@ export function TaskStep( { step, markAsDone }: TaskStepProps ) {
 							{ step.buttonProps.icon && <Icon icon={ step.buttonProps.icon } size={ 24 } /> }
 						</Button>
 					) }
-					<Button
-						onClick={ () => markAsDone( step ) }
-						variant="secondary"
-						disabled={ step.isCompleted }
-					>
-						{ translate( 'Mark as done' ) }
+					<Button onClick={ () => toggleTaskStatus( step ) } variant="secondary">
+						{ step.isCompleted ? translate( 'Reset task' ) : translate( 'Mark as done' ) }
 					</Button>
 				</div>
 			</>
@@ -90,13 +86,15 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 		};
 	} );
 
-	const markAsDone = ( step: TaskStepItem ) => {
-		const updatedStepIds = [ ...completedStepIds, step.stepId ];
+	const toggleTaskStatus = ( step: TaskStepItem ) => {
+		const updatedStepIds = completedStepIds.includes( step.stepId )
+			? completedStepIds.filter( ( id ) => id !== step.stepId )
+			: [ ...completedStepIds, step.stepId ];
 		setCompletedStepIds( updatedStepIds );
 		sessionStorage.setItem( sessionStorageKey, JSON.stringify( updatedStepIds ) );
 	};
 
-	const resetTasks = () => {
+	const resetAllTasks = () => {
 		setCompletedStepIds( [] );
 		sessionStorage.removeItem( sessionStorageKey );
 	};
@@ -108,13 +106,13 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 					<div className="task-steps__heading">{ preventWidows( heading ) }</div>
 					<div className="task-steps__subheading">{ preventWidows( subheading ) }</div>
 				</div>
-				<Button variant="secondary" onClick={ resetTasks }>
-					{ translate( 'Reset tasks' ) }
+				<Button variant="secondary" onClick={ resetAllTasks }>
+					{ translate( 'Reset all tasks' ) }
 				</Button>
 			</div>
 			<div className="task-steps__steps">
 				{ updatedSteps.map( ( step ) => (
-					<TaskStep key={ step.count } step={ step } markAsDone={ markAsDone } />
+					<TaskStep key={ step.count } step={ step } toggleTaskStatus={ toggleTaskStatus } />
 				) ) }
 			</div>
 		</div>
