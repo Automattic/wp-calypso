@@ -11,7 +11,7 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
@@ -81,6 +81,23 @@ const mobileFields = [ 'site', 'actions' ];
 
 const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
 	isDesktop ? desktopFields : mobileFields;
+
+export function showSitesPage( route: string ) {
+	const currentParams = new URL( window.location.href ).searchParams;
+	const newUrl = new URL( route, window.location.origin );
+
+	const supportedParams = [ 'page', 'per-page', 'search', 'status', 'siteType' ];
+	supportedParams.forEach( ( param ) => {
+		if ( currentParams.has( param ) ) {
+			const value = currentParams.get( param );
+			if ( value ) {
+				newUrl.searchParams.set( param, value );
+			}
+		}
+	} );
+
+	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+}
 
 const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -324,21 +341,17 @@ const SitesDashboard = ( {
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
 	// Manage the closing of the preview pane
-	const closeSitePreviewPane = useCallback( () => {
+	const closeSitePreviewPane = () => {
 		if ( selectedSite ) {
-			pagejs.show( '/sites' + window.location.search );
+			showSitesPage( '/sites' );
 		}
-	}, [ selectedSite ] );
+	};
 
-	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
-			pagejs.show(
-				`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }` +
-					window.location.search
-			);
-		},
-		[ initialSiteFeature ]
-	);
+	const openSitePreviewPane = ( site: SiteExcerptData ) => {
+		showSitesPage(
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+		);
+	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );

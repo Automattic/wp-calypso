@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,6 +11,7 @@ import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DOTCOM_HOSTING_CONFIG,
@@ -170,9 +170,8 @@ const DotcomPreviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							page.show(
-								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }` +
-									window.location.search
+							showSitesPage(
+								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }`
 							);
 						}
 					},
