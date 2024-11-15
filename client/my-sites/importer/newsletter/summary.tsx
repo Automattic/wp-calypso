@@ -71,6 +71,31 @@ export default function Summary( {
 	// Combined status of subscriber & content importer
 	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
 
+	// Either content- or subscriber-import is still in progress
+	if ( importerStatus === 'importing' || importerStatus === 'initial' ) {
+		return (
+			<Card>
+				<h2>{ __( 'Almost there…' ) }</h2>
+				<div className="summary__content">
+					<p>
+						<strong>
+							{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
+						</strong>
+						<br />
+					</p>
+				</div>
+				<p>
+					{ __(
+						"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
+					) }
+				</p>
+				<p>
+					<ProgressBar className="is-larger-progress-bar" />
+				</p>
+			</Card>
+		);
+	}
+
 	// Skipped both steps...
 	if ( importerStatus === 'skipped' ) {
 		return (
@@ -96,31 +121,6 @@ export default function Summary( {
 						{ __( 'Start over' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
-			</Card>
-		);
-	}
-
-	// Either content- or subscriber-import is still in progress
-	if ( importerStatus === 'importing' ) {
-		return (
-			<Card>
-				<h2>{ __( 'Almost there…' ) }</h2>
-				<div className="summary__content">
-					<p>
-						<strong>
-							{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
-						</strong>
-						<br />
-					</p>
-				</div>
-				<p>
-					{ __(
-						"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
-					) }
-				</p>
-				<p>
-					<ProgressBar className="is-larger-progress-bar" />
-				</p>
 			</Card>
 		);
 	}
