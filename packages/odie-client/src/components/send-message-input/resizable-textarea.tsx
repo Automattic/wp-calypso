@@ -51,6 +51,11 @@ export const ResizableTextarea: React.FC< {
 			if ( event.key === 'Enter' && ! event.shiftKey && inputRef.current?.value.trim() !== '' ) {
 				event.preventDefault();
 			}
+
+			// Prevent sending new line when user presses enter without any text
+			if ( event.key === 'Enter' && inputRef.current?.value.trim() === '' ) {
+				event.preventDefault();
+			}
 		},
 		[ inputRef ]
 	);
