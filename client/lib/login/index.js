@@ -266,8 +266,10 @@ export const getPluginTitle = ( pluginName, translate ) => {
 		.split( ',' )
 		.map( ( name ) => pluginNames[ name.trim() ] || pluginNames.default );
 
-	// Combine titles with a serial comma before "and"
-	if ( titles.length > 1 ) {
+	// Adjust formatting for two vs more than two plugins
+	if ( titles.length === 2 ) {
+		return `${ titles[ 0 ] } ${ translate( 'and' ) } ${ titles[ 1 ] }`;
+	} else if ( titles.length > 2 ) {
 		return `${ titles.slice( 0, -1 ).join( ', ' ) }, ${ translate( 'and' ) } ${
 			titles[ titles.length - 1 ]
 		}`;
