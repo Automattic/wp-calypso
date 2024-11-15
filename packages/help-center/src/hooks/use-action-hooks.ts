@@ -1,6 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useManageSupportInteraction } from '@automattic/odie-client/src/data/use-manage-support-interaction';
+import { useCreateZendeskConversation } from '@automattic/odie-client/src/hooks';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { v4 as uuidv4 } from 'uuid';
+import { useResetSupportInteraction } from './use-reset-support-interaction';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
@@ -8,6 +12,9 @@ import { useEffect } from '@wordpress/element';
 export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDispatch( 'automattic/help-center' );
+	const resetSupportInteraction = useResetSupportInteraction();
+	const { startNewInteraction } = useManageSupportInteraction();
+	const newConversation = useCreateZendeskConversation( true );
 	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [
@@ -46,6 +53,24 @@ export const useActionHooks = () => {
 			},
 			action() {
 				setNavigateToRoute( '/odie' );
+				setShowHelpCenter( true );
+			},
+		},
+		/**
+		 * Open to Chat with Happiness Engineer.
+		 */
+		{
+			condition() {
+				return queryParams.get( 'help-center' ) === 'happiness-engineer';
+			},
+			async action() {
+				await resetSupportInteraction();
+				await startNewInteraction( {
+					event_source: 'help-center',
+					event_external_id: uuidv4(),
+				} );
+				setNavigateToRoute( '/odie' );
+				await newConversation();
 				setShowHelpCenter( true );
 			},
 		},
