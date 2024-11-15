@@ -218,7 +218,10 @@ function makeIntroductoryOfferCostOverrideUnique(
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean
 ): ResponseCartCostOverride {
-	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
+	if (
+		! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ||
+		! product.introductory_offer_terms
+	) {
 		return costOverride;
 	}
 	const isPriceIncrease = costOverride.old_subtotal_integer < costOverride.new_subtotal_integer;
