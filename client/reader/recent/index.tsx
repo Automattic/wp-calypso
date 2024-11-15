@@ -127,14 +127,6 @@ const Recent = () => {
 				perPage: view.perPage,
 			} ) as AnyAction
 		);
-		// Fetch the next page in advance.
-		dispatch(
-			requestPaginatedStream( {
-				streamKey,
-				page: view?.page ? view.page + 1 : undefined,
-				perPage: view.perPage,
-			} ) as AnyAction
-		);
 	}, [ dispatch, view, streamKey ] );
 
 	const paginationInfo = useMemo( () => {
