@@ -5,7 +5,7 @@ import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
@@ -24,7 +24,7 @@ import type { AppState } from 'calypso/types';
 import './style.scss';
 
 const Recent = () => {
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -78,13 +78,7 @@ const Recent = () => {
 				id: 'seen',
 				label: translate( 'Seen' ),
 				render: ( { item }: { item: ReaderPost } ) => {
-					return (
-						<RecentSeenField
-							item={ item }
-							post={ getPostFromItem( item ) }
-							setSelectedItem={ () => {} }
-						/>
-					);
+					return <RecentSeenField post={ getPostFromItem( item ) } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -95,30 +89,24 @@ const Recent = () => {
 				getValue: ( { item }: { item: ReaderPost } ) =>
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
-					return (
-						<RecentPostField
-							item={ item }
-							post={ getPostFromItem( item ) }
-							setSelectedItem={ () => {} }
-						/>
-					);
+					return <RecentPostField post={ getPostFromItem( item ) } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, setSelectedItem ]
+		[ getPostFromItem ]
 	);
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( streamKey, window.location.pathname ) as AnyAction );
+		dispatch( viewStream( streamKey, window.location.pathname ) as UnknownAction );
 		dispatch(
 			requestPaginatedStream( {
 				streamKey,
 				page: view.page,
 				perPage: view.perPage,
-			} ) as AnyAction
+			} ) as UnknownAction
 		);
 	}, [ dispatch, view, streamKey ] );
 
