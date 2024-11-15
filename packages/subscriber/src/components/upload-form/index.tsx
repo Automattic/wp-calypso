@@ -296,18 +296,46 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 						),
 						{
 							BeehiivLink: (
-								<a href="https://www.beehiiv.com/" target="_blank" rel="noopener noreferrer" />
+								<a
+									href="https://www.beehiiv.com/support/article/12234988536215-how-to-export-subscribers"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
-							GhostLink: <a href="https://ghost.org/" target="_blank" rel="noopener noreferrer" />,
-							KitLink: <a href="https://kit.com/" target="_blank" rel="noopener noreferrer" />,
+							GhostLink: (
+								<a
+									href="https://ghost.org/help/exports/#members"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							KitLink: (
+								<a
+									href="https://help.kit.com/en/articles/2502489-how-to-export-subscribers-in-kit"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							MailChimpLink: (
-								<a href="https://mailchimp.com/" target="_blank" rel="noopener noreferrer" />
+								<a
+									href="https://mailchimp.com/help/view-export-contacts/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 							MediumLink: (
-								<a href="https://medium.com/" target="_blank" rel="noopener noreferrer" />
+								<a
+									href="https://help.medium.com/hc/en-us/articles/360059837393-Email-subscriptions"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 							PatreonLink: (
-								<a href="https://patreon.com/" target="_blank" rel="noopener noreferrer" />
+								<a
+									href="https://support.patreon.com/hc/en-gb/articles/360004385971-How-do-I-manage-my-members#h_01EQGYDNF2J3XR12ABBMTZPSQM"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 						}
 					) }
