@@ -36,6 +36,8 @@ import {
 	TOOLS_DATABASE,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
+	MARKETING_TRAFFIC,
+	MARKETING_SHARING,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -123,7 +125,12 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ MARKETING_TOOLS, MARKETING_CONNECTIONS ],
+				featureIds: [
+					MARKETING_TOOLS,
+					MARKETING_CONNECTIONS,
+					MARKETING_TRAFFIC,
+					MARKETING_SHARING,
+				],
 			},
 			{
 				label: __( 'Advanced Tools' ),
