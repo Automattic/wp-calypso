@@ -28,10 +28,12 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/campaign-stats-line-chart';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
+	campaignStatus,
 	canCancelCampaign,
 	canPromoteAgainCampaign,
 	formatAmount,
 	getAdvertisingDashboardPath,
+	getCampaignActiveDays,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -132,6 +134,7 @@ export default function CampaignItemDetails( props: Props ) {
 		audience_list,
 		content_config,
 		start_date,
+		end_date,
 		display_name,
 		creative_html,
 		width,
@@ -193,17 +196,6 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const weeklySpendFormatted = `$${ formatCents( weeklySpend, 2 ) }`;
 
-	const weeklySpendingPercentage =
-		total_budget_used && total_budget
-			? `${ ( ( weeklySpend / weeklyBudget ) * 100 ).toFixed( 0 ) }%`
-			: '0%';
-	const weeklySpendingPercentageFormatted = weeklySpendingPercentage
-		? /* translators: overallSpendingPercentage is the percentage of the total budget used */
-		  translate( '%(weeklySpendingPercentage)s of weekly budget', {
-				args: { weeklySpendingPercentage },
-		  } )
-		: '';
-
 	const displayBudget = is_evergreen ? weeklyBudget : total_budget;
 	const totalBudgetFormatted = `$${ formatCents( displayBudget || 0, 2 ) }`;
 
@@ -261,10 +253,14 @@ export default function CampaignItemDetails( props: Props ) {
 		? `${ ( conversion_rate * 100 ).toFixed( 2 ) }%`
 		: '-';
 
+	const activeDays = getCampaignActiveDays( start_date, end_date );
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
 			? `$${ formatCents( total_budget - total_budget_used, 2 ) }`
 			: '';
+	const overallSpendingFormatted = activeDays
+		? `$${ formatCents( total_budget_used || 0, 2 ) }`
+		: '- ';
 
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
@@ -324,7 +320,16 @@ export default function CampaignItemDetails( props: Props ) {
 			  );
 
 	const shouldShowStats =
-		!! ui_status && ! [ 'created', 'rejected', 'scheduled' ].includes( ui_status );
+		!! ui_status &&
+		! [ campaignStatus.CREATED, campaignStatus.REJECTED, campaignStatus.SCHEDULED ].includes(
+			ui_status
+		);
+
+	const campaignIsFinished =
+		!! ui_status &&
+		[ campaignStatus.CANCELED, campaignStatus.FINISHED, campaignStatus.SUSPENDED ].includes(
+			ui_status
+		);
 
 	const buttons = [
 		{
@@ -664,41 +669,61 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
-									{ is_evergreen ? (
+									{ campaignIsFinished ? (
 										<div>
-											<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? (
-													<>
-														{ weeklySpendFormatted }{ ' ' }
-														<span className="campaign-item-details__details">
-															/ { totalBudgetFormatted }
-														</span>
-													</>
-												) : (
-													<FlexibleSkeleton />
-												) }
+											<span className="campaign-item-details__label">
+												{ translate( 'Overall spending' ) }
 											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
 											</span>
 										</div>
 									) : (
-										<div>
-											<span className="campaign-item-details__label">{ __( 'Total Budget' ) }</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? (
-													`${ budgetRemainingFormatted } remaining`
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</span>
-										</div>
+										<>
+											{ is_evergreen ? (
+												<div>
+													<span className="campaign-item-details__label">
+														{ __( 'Weekly spend' ) }
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? (
+															<>
+																{ weeklySpendFormatted }{ ' ' }
+																<span className="campaign-item-details__details">
+																	/ { totalBudgetFormatted }
+																</span>
+															</>
+														) : (
+															<FlexibleSkeleton />
+														) }
+													</span>
+													<span className="campaign-item-details__details">
+														{ ! isLoading ? (
+															`${ overallSpendingFormatted } ${ __( 'total' ) }`
+														) : (
+															<FlexibleSkeleton />
+														) }
+													</span>
+												</div>
+											) : (
+												<div>
+													<span className="campaign-item-details__label">
+														{ __( 'Total Budget' ) }
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+													</span>
+													<span className="campaign-item-details__details">
+														{ ! isLoading ? (
+															`${ budgetRemainingFormatted } remaining`
+														) : (
+															<FlexibleSkeleton />
+														) }
+													</span>
+												</div>
+											) }
+										</>
 									) }
-
 									<div>
 										<span className="campaign-item-details__label">{ __( 'Cost-Per-Click' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
