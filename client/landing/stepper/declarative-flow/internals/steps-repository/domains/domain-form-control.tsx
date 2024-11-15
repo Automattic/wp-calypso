@@ -129,7 +129,7 @@ export function DomainFormControl( {
 
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
-				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
+				<ReskinSideExplainer primaryCtaClick={ handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		);
 
@@ -137,7 +137,7 @@ export function DomainFormControl( {
 			<div className="domains__domain-side-content-container">
 				<div className="domains__domain-side-content domains__free-domain">
 					<ReskinSideExplainer
-						onClick={ handleDomainExplainerClick }
+						primaryCtaClick={ handleDomainExplainerClick }
 						type="free-domain-explainer"
 						flowName={ flow }
 					/>

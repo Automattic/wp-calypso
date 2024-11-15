@@ -7,12 +7,13 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { flowName, translate, type } = this.props;
+		const { flowName, translate, type, isFreeFlow } = this.props;
 
 		let title;
 		let subtitle;
 		let subtitle2;
 		let ctaText;
+		let ctaText2;
 
 		const hideChooseDomainLater = [ 'launch-site', 'onboarding-with-email' ].includes( flowName );
 
@@ -39,6 +40,9 @@ class ReskinSideExplainer extends Component {
 				);
 				subtitle2 = translate( 'You can claim your custom domain name later when you’re ready.' );
 				ctaText = translate( 'Check paid plans »' );
+				if ( isFreeFlow ) {
+					ctaText2 = translate( 'Choose my domain later' );
+				}
 				break;
 
 			case 'free-domain-explainer-treatment-search':
@@ -73,11 +77,11 @@ class ReskinSideExplainer extends Component {
 				break;
 		}
 
-		return { title, subtitle, subtitle2, ctaText };
+		return { title, subtitle, subtitle2, ctaText, ctaText2 };
 	}
 
 	render() {
-		const { title, subtitle, subtitle2, ctaText } = this.getStrings();
+		const { title, subtitle, subtitle2, ctaText, ctaText2 } = this.getStrings();
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -91,10 +95,20 @@ class ReskinSideExplainer extends Component {
 					<div className="reskin-side-explainer__cta">
 						<button
 							className="reskin-side-explainer__cta-text"
-							onClick={ this.props.onClick }
+							onClick={ this.props.primaryCtaClick }
 							tabIndex="0"
 						>
 							{ ctaText }
+						</button>
+					</div>
+				) }
+				{ ctaText2 && (
+					<div className="reskin-side-explainer__cta">
+						<button
+							className="reskin-side-explainer__cta-text"
+							onClick={ this.props.secondaryCtaClick }
+						>
+							{ ctaText2 }
 						</button>
 					</div>
 				) }

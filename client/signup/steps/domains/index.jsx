@@ -353,14 +353,13 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
-		const navigate = this.props.page || page;
-		if ( this.props.flowName === 'free' ) {
-			navigate( '/start/plans-first' );
-			return;
-		}
-
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
+	};
+
+	navigateToPlansFirstFlow = () => {
+		const navigate = this.props.page || page;
+		navigate( '/start/plans-first' );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -925,7 +924,10 @@ export class RenderDomainsStep extends Component {
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
 				} ) }
 			>
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
+				<ReskinSideExplainer
+					primaryCtaClick={ this.handleUseYourDomainClick }
+					type="use-your-domain"
+				/>
 			</div>
 		) : null;
 
@@ -958,9 +960,13 @@ export class RenderDomainsStep extends Component {
 					hasSearchedDomains && (
 						<div className="domains__domain-side-content domains__free-domain">
 							<ReskinSideExplainer
-								onClick={ this.handleDomainExplainerClick }
+								primaryCtaClick={
+									isFreeFlow ? this.navigateToPlansFirstFlow : this.handleDomainExplainerClick
+								}
 								type={ explainerType }
 								flowName={ flowName }
+								isFreeFlow={ isFreeFlow }
+								secondaryCtaClick={ isFreeFlow && this.handleDomainExplainerClick }
 							/>
 						</div>
 					)
@@ -969,7 +975,7 @@ export class RenderDomainsStep extends Component {
 				{ this.shouldDisplayDomainOnlyExplainer() && (
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
-							onClick={ this.handleDomainExplainerClick }
+							primaryCtaClick={ this.handleDomainExplainerClick }
 							type="free-domain-only-explainer"
 						/>
 					</div>
