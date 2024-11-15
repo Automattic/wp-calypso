@@ -1,6 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .is-section-reader .recent-feed {
+	$recent-feed-spacing: 12px;
+
 	@media ( min-width: $break-wide ) {
 		display: flex;
 		background: var( --studio-gray-0 );
@@ -34,7 +36,7 @@
 		}
 
 		&-header {
-			padding: 0 12px;
+			padding: 0 $recent-feed-spacing;
 			border-bottom: 1px solid var( --studio-gray-0 );
 			margin-bottom: 16px;
 
@@ -43,17 +45,17 @@
 			}
 
 			@media ( min-width: $break-wide ) {
-				padding: 16px 12px 0;
+				padding: 16px $recent-feed-spacing 0;
 			}
 		}
 
 		.dataviews__view-actions {
 			box-sizing: border-box;
-			padding: 0 12px;
+			padding: 0 $recent-feed-spacing;
 		}
 
 		.dataviews-no-results {
-			padding: 0 12px;
+			padding: 0 $recent-feed-spacing;
 		}
 
 		ul {
@@ -74,16 +76,28 @@
 				border-top: 1px solid #3858e940;
 			}
 
+			// This is necessary because the media field wrapper in DataView is rendered even
+			// if no media is given.
+			// The presence of this element adds a gap on the left side of the element,
+			// throwing off the padding.
+			.dataviews-view-list__media-wrapper {
+				display: none;
+			}
+
 			.dataviews-view-list__item-wrapper {
 				justify-content: start;
 			}
 
 			.dataviews-view-list__fields {
 				display: flex;
-				flex-wrap: wrap;
 				align-items: center;
 				justify-content: space-between;
-				gap: 12px;
+				gap: $recent-feed-spacing;
+				padding: 0 $recent-feed-spacing;
+			}
+
+			.dataviews-view-list__field:has(.recent-post-field) {
+				overflow: hidden;
 			}
 		}
 
@@ -93,7 +107,7 @@
 		}
 
 		.recent-seen-field {
-			padding: 12px 0;
+			padding: $recent-feed-spacing 0;
 
 			img {
 				border-radius: 50%;
@@ -105,23 +119,19 @@
 			justify-content: space-between;
 			align-items: center;
 			text-align: left;
-			padding: 12px 0;
+			padding: $recent-feed-spacing 0;
 			width: 100%;
 			min-height: fit-content;
+			gap: $recent-feed-spacing;
 
 			%text-shared {
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
-				width: 200px;
+			}
 
-				@media ( min-width: $break-wide ) {
-					width: 125px;
-				}
-
-				@media ( min-width: 1540px ) {
-					width: 200px;
-				}
+			&__title {
+				min-width: 0;
 			}
 
 			&__title-text {
@@ -138,6 +148,7 @@
 			&__featured-image {
 				max-width: 38px;
 				align-self: flex-end;
+				flex-shrink: 0;
 			}
 		}
 
