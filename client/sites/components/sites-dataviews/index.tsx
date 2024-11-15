@@ -1,6 +1,7 @@
+import { usePrevious } from '@wordpress/compose';
 import { DataViews, View, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -14,29 +15,6 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 import './style.scss';
 import './dataview-style.scss';
-
-// todo: What ItemsDataViews (now using DataViews) provides with selectedItem DataViewsState - need to port here
-
-// useLayoutEffect( () => {
-// 		if (
-// 			! scrollContainerRef.current ||
-// 			previousDataViewsState?.type !== data.dataViewsState.type
-// 		) {
-// 			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
-// 		}
-
-// 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
-// 			window.setTimeout(
-// 				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
-// 				300
-// 			);
-// 			return;
-// 		}
-
-// 		if ( previousDataViewsState?.page !== data.dataViewsState.page ) {
-// 			scrollContainerRef.current?.scrollTo( 0, 0 );
-// 		}
-// 	}, [ data.dataViewsState.type, data.dataViewsState.page ] );
 
 type Props = {
 	sites: SiteExcerptData[];
@@ -75,6 +53,34 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
+
+	// Scroll to selected site in the list when in list view.
+	const scrollContainerRef = useRef< HTMLElement >();
+	const previousDataViewsState = usePrevious( dataViewsState );
+	const previousSelectedItem = usePrevious( selectedItem );
+	useLayoutEffect( () => {
+		if ( ! scrollContainerRef.current || previousDataViewsState?.type !== dataViewsState.type ) {
+			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
+		}
+
+		if ( ! previousSelectedItem && selectedItem && dataViewsState.type === 'list' ) {
+			window.setTimeout(
+				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				300
+			);
+			return;
+		}
+
+		if ( previousDataViewsState?.page !== dataViewsState.page ) {
+			scrollContainerRef.current?.scrollTo( 0, 0 );
+		}
+	}, [
+		dataViewsState.type,
+		dataViewsState.page,
+		selectedItem,
+		previousDataViewsState,
+		previousSelectedItem,
+	] );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
 	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
@@ -212,8 +218,7 @@ const DotcomSitesDataViews = ( {
 				selection={ getSelection() }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => {
-					// a4a port - ItemsDataViews
-					// @ts-expect-error -- this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
+					// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
 					item.id = item.ID.toString();
 					return item.ID.toString();
 				} }
