@@ -81,9 +81,8 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// However, when don't need to do anything in the callback, because we already maintain dataViewsState.selectedItem.
-	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
-	// (See the `getSelection()` function below.)
+	// However, when don't need to do anything in the callback, because we already maintain a selectedItem state.
+	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
 	const onSelectionChange = () => {};
 	const getSelection = useCallback(
 		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
