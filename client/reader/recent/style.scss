@@ -4,7 +4,7 @@
 	@media ( min-width: $break-wide ) {
 		display: flex;
 		background: var( --studio-gray-0 );
-		gap: 24px;
+		gap: 12px;
 	}
 
 	%column-shared {
