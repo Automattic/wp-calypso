@@ -86,9 +86,6 @@ function LineItemIntroOfferCostOverrideDetail( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
-	if ( ! product.introductory_offer_terms?.enabled ) {
-		return null;
-	}
 
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
 		return false;

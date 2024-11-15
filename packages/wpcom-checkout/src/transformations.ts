@@ -281,7 +281,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	) {
 		return false;
 	}
-	if ( ! introductoryOfferTerms?.enabled ) {
+	if ( ! introductoryOfferTerms ) {
 		return false;
 	}
 	if (
@@ -300,7 +300,7 @@ function doesIntroductoryOfferCostOverrideHavePriceIncrease(
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! product.introductory_offer_terms ) {
 		return false;
 	}
 
@@ -322,7 +322,7 @@ function doesIntroductoryOfferCostOverrideHavePriceIncrease(
 }
 
 export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! product.introductory_offer_terms ) {
 		return false;
 	}
 	const hasIntroOfferOverrideWithPriceIncrease = product.cost_overrides?.some( ( override ) =>
