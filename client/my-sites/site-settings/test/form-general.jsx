@@ -12,6 +12,10 @@ jest.mock(
 
 jest.mock( 'calypso/state/selectors/is-site-p2-hub' );
 
+jest.mock( 'calypso/data/themes/use-active-theme-query', () => ( {
+	useActiveThemeQuery: () => ( { data: [ { is_block_theme: false } ] } ),
+} ) );
+
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,

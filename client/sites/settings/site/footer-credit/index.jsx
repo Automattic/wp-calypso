@@ -30,7 +30,7 @@ export default function FooterCredit( { site, siteIsJetpack } ) {
 	const customizerUrl = useSelectedSiteSelector( getCustomizerUrl, 'identity' );
 
 	const { data: activeThemeData } = useActiveThemeQuery( site?.ID ?? -1, !! site );
-	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? true;
 
 	if ( isWPForTeamsSite || ( siteIsJetpack && ! siteIsAtomic ) || hasBlockTheme ) {
 		return null;
