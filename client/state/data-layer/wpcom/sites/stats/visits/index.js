@@ -6,7 +6,7 @@ import { receiveChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import fromApi from './from-api';
 
 export const fetch = ( action ) => {
-	const { chartTab, date, period, quantity, siteId, statFields } = action;
+	const { chartTab, date, start_date, period, quantity, siteId, statFields } = action;
 	const currentTabFields = chartTab === 'views' ? [ 'views', 'visitors' ] : [ chartTab ];
 	const otherTabFields =
 		statFields?.filter( ( field ) => ! currentTabFields.includes( field ) ) ?? [];
@@ -20,6 +20,7 @@ export const fetch = ( action ) => {
 				query: {
 					unit: period,
 					date,
+					start_date,
 					quantity,
 					stat_fields: currentTabFields.join( ',' ),
 				},
@@ -34,6 +35,7 @@ export const fetch = ( action ) => {
 				query: {
 					unit: period,
 					date,
+					start_date,
 					quantity,
 					stat_fields: otherTabFields.join( ',' ),
 				},
