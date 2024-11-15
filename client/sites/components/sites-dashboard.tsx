@@ -183,7 +183,6 @@ const SitesDashboard = ( {
 					],
 			  }
 			: {} ),
-		selectedItem: selectedSite,
 		type: selectedSite ? 'list' : 'table',
 		layout: {
 			styles: {
