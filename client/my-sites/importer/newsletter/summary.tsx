@@ -56,7 +56,7 @@ export default function Summary( {
 	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = useReducedMotion();
 
-	const onButtonClick = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
+	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 	const paidSubscribersCount = parseInt(
 		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
 	);
@@ -115,7 +115,7 @@ export default function Summary( {
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
 						href={ `/import/newsletter/substack/${ selectedSite.slug }/content?from=${ fromSite }` }
-						onClick={ onButtonClick }
+						onClick={ resetImporter }
 						primary
 					>
 						{ __( 'Start over' ) }
@@ -181,17 +181,17 @@ export default function Summary( {
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
 						href={ '/settings/newsletter/' + selectedSite.slug }
-						onClick={ onButtonClick }
+						onClick={ resetImporter }
 						primary
 					>
 						{ __( 'Customize your newsletter' ) }
 					</ImporterActionButton>
-					<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ onButtonClick }>
+					<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ resetImporter }>
 						{ __( 'View content' ) }
 					</ImporterActionButton>
 					<ImporterActionButton
 						href={ '/subscribers/' + selectedSite.slug }
-						onClick={ onButtonClick }
+						onClick={ resetImporter }
 					>
 						{ __( 'Check subscribers' ) }
 					</ImporterActionButton>
