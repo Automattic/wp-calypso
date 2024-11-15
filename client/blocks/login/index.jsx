@@ -616,7 +616,10 @@ class Login extends Component {
 		} else if ( isWooPasswordlessJPC ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
-			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
+			const pluginName = getPluginTitle(
+				new URLSearchParams( this.props.initialQuery?.redirect_to ).get( 'plugin_name' ),
+				translate
+			);
 			let subtitle = null;
 
 			switch ( true ) {
