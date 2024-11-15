@@ -44,7 +44,7 @@ type Props = {
 	paginationInfo: { totalItems: number; totalPages: number };
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
-	selectedItem: SiteExcerptData | null;
+	selectedItem: SiteExcerptData | null | undefined;
 	openSitePreviewPane: ( site: SiteExcerptData ) => void;
 };
 

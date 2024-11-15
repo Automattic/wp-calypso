@@ -45,8 +45,6 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-// todo: fix sitedetails / site excerpt casting
-// import type { SiteDetails } from '@automattic/data-stores';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -402,7 +400,7 @@ const SitesDashboard = ( {
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
-						selectedItem={ selectedSite as SiteExcerptData | null }
+						selectedItem={ selectedSite }
 						openSitePreviewPane={ openSitePreviewPane }
 					/>
 				</LayoutColumn>
@@ -416,7 +414,7 @@ const SitesDashboard = ( {
 				>
 					<LayoutColumn className="site-preview-pane" wide>
 						<DotcomPreviewPane
-							site={ selectedSite as SiteExcerptData }
+							site={ selectedSite }
 							selectedSiteFeature={ initialSiteFeature }
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 							closeSitePreviewPane={ closeSitePreviewPane }
