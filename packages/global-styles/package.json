@@ -36,12 +36,12 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^14.6.0",
-		"@wordpress/block-library": "^9.11.0",
-		"@wordpress/components": "^28.11.0",
-		"@wordpress/compose": "^7.11.0",
-		"@wordpress/keycodes": "^4.11.0",
-		"@wordpress/private-apis": "^1.11.0",
+		"@wordpress/block-editor": "^14.3.0",
+		"@wordpress/block-library": "^9.8.2",
+		"@wordpress/components": "^28.8.0",
+		"@wordpress/compose": "^7.8.0",
+		"@wordpress/keycodes": "^4.8.0",
+		"@wordpress/private-apis": "^1.8.0",
 		"clsx": "^2.1.1",
 		"deepmerge": "^4.3.0",
 		"i18n-calypso": "workspace:^",
@@ -53,9 +53,9 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.11.0",
-		"@wordpress/element": "^6.11.0",
-		"@wordpress/i18n": "^5.11.0",
+		"@wordpress/data": "^10.8.0",
+		"@wordpress/element": "^6.8.0",
+		"@wordpress/i18n": "^5.8.0",
 		"debug": "^4.3.3"
 	},
 	"devDependencies": {

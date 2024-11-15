@@ -74,13 +74,13 @@ describe( 'JetpackSignup', () => {
 	} );
 
 	test( 'should render', () => {
-		render( <JetpackSignup { ...DEFAULT_PROPS } /> );
+		const { container } = render( <JetpackSignup { ...DEFAULT_PROPS } /> );
 
-		expect( screen.getByText( 'Create an account to set up Jetpack' ) ).toBeVisible();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render with locale suggestions', () => {
-		render(
+		const { container } = render(
 			<JetpackSignup
 				{ ...DEFAULT_PROPS }
 				authorizationData={ {
@@ -92,9 +92,7 @@ describe( 'JetpackSignup', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Already have an account? Sign in' ).getAttribute( 'href' ) ).toMatch(
-			/^\/log-in\/jetpack\/es/
-		);
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render WC Payments specific sub header copy', () => {
