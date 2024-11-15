@@ -52,7 +52,7 @@ export interface Product {
 }
 
 export interface Plan {
-	active_subscriptions: boolean;
+	active_subscriptions: number;
 	is_active: boolean;
 	name: string;
 	plan_amount_decimal: number;

@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
@@ -19,7 +20,11 @@ import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
+import {
+	requestPage,
+	clearStream,
+	requestPaginatedStream,
+} from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
@@ -69,6 +74,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
+	const queryClient = useQueryClient();
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -257,8 +263,22 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 
+		// Invalidate the subscriptions count query to refresh the Recent stream.
+		queryClient.invalidateQueries( {
+			queryKey: [ 'read', 'subscriptions-count' ],
+		} );
+
+		// Refresh the Recent stream data.
+		dispatch(
+			requestPaginatedStream( {
+				streamKey: 'recent',
+				page: 1,
+				perPage: 10,
+			} ) as AnyAction
+		);
+
 		handleClose();
-	}, [ dispatch, handleClose ] );
+	}, [ dispatch, handleClose, queryClient ] );
 
 	const headerActions = (
 		<>

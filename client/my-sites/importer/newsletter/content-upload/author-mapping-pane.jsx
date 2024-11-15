@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { verse, page, file } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -8,71 +9,9 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import AuthorMapping from 'calypso/my-sites/importer/author-mapping-item';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import SummaryStat from '../summary/SummaryStat';
 
 import './author-mapping-pane.scss';
-
-function getNoticeContent( postsNumber, pagesNumber, attachmentsNumber ) {
-	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ postsNumber } posts</strong>,{ ' ' }
-				<strong>{ pagesNumber } pages</strong>
-				and <strong>{ attachmentsNumber } media</strong> to import.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && pagesNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ pagesNumber } pages</strong> to import.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong> to import.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ pagesNumber } pages</strong> and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong> to import.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ postsNumber } posts</strong> to import.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ pagesNumber } pages</strong> to import.
-			</>
-		);
-	}
-
-	if ( attachmentsNumber > 0 ) {
-		return (
-			<>
-				All set! We’ve found <strong>{ attachmentsNumber } media</strong> to import.
-			</>
-		);
-	}
-}
 
 class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
@@ -210,15 +149,37 @@ class AuthorMappingPane extends PureComponent {
 			targetTitle,
 			sourceType
 		);
+		const posts = importerStatus?.customData?.postsNumber || 0;
+		const pages = importerStatus?.customData?.pagesNumber || 0;
+		const attachments = importerStatus?.customData?.attachmentsNumber || 0;
 
 		return (
 			<div className="importer__mapping-pane">
 				<Notice status="success" className="importer__notice" isDismissible={ false }>
-					{ getNoticeContent(
-						importerStatus?.customData?.postsNumber || 0,
-						importerStatus?.customData?.pagesNumber || 0,
-						importerStatus?.customData?.attachmentsNumber || 0
-					) }
+					<p>{ this.props.translate( 'All set! We’ve found:' ) }</p>
+					<div className="importer__notice-stats">
+						{ posts > 0 && (
+							<SummaryStat
+								count={ posts }
+								label={ this.props.translate( 'Posts' ) }
+								icon={ verse }
+							/>
+						) }
+						{ pages > 0 && (
+							<SummaryStat
+								count={ pages }
+								label={ this.props.translate( 'Pages' ) }
+								icon={ page }
+							/>
+						) }
+						{ attachments > 0 && (
+							<SummaryStat
+								count={ attachments }
+								label={ this.props.translate( 'Media items' ) }
+								icon={ file }
+							/>
+						) }
+					</div>
 				</Notice>
 				<h2>{ this.props.translate( 'Author mapping' ) }</h2>
 				<div className="importer__mapping-description">{ mappingDescription }</div>

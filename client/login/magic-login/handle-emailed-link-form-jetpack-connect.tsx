@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
@@ -49,6 +50,9 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isFetching = useSelector( isFetchingMagicLoginAuth );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const isFromAutomatticForAgenciesPlugin =
+		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
+		'automattic-for-agencies-client';
 
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
@@ -99,7 +103,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	return (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
-			{ ! isWooFlow && <JetpackLogo size={ 74 } full /> }
+			{ ! isWooFlow && ! isFromAutomatticForAgenciesPlugin && <JetpackLogo size={ 74 } full /> }
+			{ isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> }
 
 			<h2 className="magic-login__title empty-content__title">
 				{ translate( 'Email confirmed!' ) }

@@ -59,6 +59,7 @@ export default function StepInitial( {
 				target="_blank"
 				rel="noreferrer noopener"
 				icon={ external }
+				iconPosition="right"
 				variant="primary"
 			>
 				{ __( 'Open Substack subscribers' ) }

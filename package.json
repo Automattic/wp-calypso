@@ -190,7 +190,7 @@
 		"@wordpress/blocks": "^13.8.0",
 		"@wordpress/commands": "^1.8.0",
 		"@wordpress/components": "^28.8.0",
-		"@wordpress/data": "^10.8.0",
+		"@wordpress/data": "^10.11",
 		"@wordpress/element": "^6.8.0",
 		"@wordpress/format-library": "^5.8.0",
 		"@wordpress/i18n": "^5.8.0",
@@ -222,7 +222,7 @@
 		"react-hook-form": "^7.52.2",
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.16.1",
-		"redux": "^4.2.1",
+		"redux": "^5.0.1",
 		"request": "^2.88.2",
 		"swiper": "^10.1.0",
 		"workspace": "^0.0.1-preview.1",
@@ -321,7 +321,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
-		"@types/react": "^18.2",
+		"@types/react": "^18.2.6",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",

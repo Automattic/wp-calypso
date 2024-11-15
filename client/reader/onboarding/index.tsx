@@ -19,7 +19,13 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
 
-const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void } ) => {
+const ReaderOnboarding = ( {
+	onRender,
+	forceShow = false,
+}: {
+	onRender?: ( shown: boolean ) => void;
+	forceShow?: boolean;
+} ) => {
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
 	const followedTags = useSelector( getReaderFollowedTags );
@@ -31,11 +37,12 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const shouldShowOnboarding =
-		preferencesLoaded &&
-		! hasCompletedOnboarding &&
-		userRegistrationDate &&
-		isEmailVerified &&
-		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+		forceShow ||
+		( preferencesLoaded &&
+			! hasCompletedOnboarding &&
+			userRegistrationDate &&
+			isEmailVerified &&
+			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
 
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {

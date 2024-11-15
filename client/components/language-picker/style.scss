@@ -87,6 +87,6 @@
 	white-space: nowrap;
 
 	&::after {
-		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		@include long-content-fade();
 	}
 }

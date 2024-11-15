@@ -39,6 +39,9 @@ import {
 	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_GROWTH_MONTHLY,
+	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_GROWTH_BI_YEARLY,
 	PLAN_JETPACK_GOLDEN_TOKEN,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
@@ -727,6 +730,9 @@ describe( 'getMonthlyPlanByYearly', () => {
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_COMPLETE ) ).toEqual(
 			PLAN_JETPACK_COMPLETE_MONTHLY
 		);
+		expect( getMonthlyPlanByYearly( PLAN_JETPACK_GROWTH_YEARLY ) ).toEqual(
+			PLAN_JETPACK_GROWTH_MONTHLY
+		);
 		expect( getYearlyPlanByMonthly( 'unknown_plan' ) ).toEqual( '' );
 	} );
 } );
@@ -750,6 +756,9 @@ describe( 'getYearlyPlanByMonthly', () => {
 		);
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_COMPLETE_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_COMPLETE
+		);
+		expect( getYearlyPlanByMonthly( PLAN_JETPACK_GROWTH_MONTHLY ) ).toEqual(
+			PLAN_JETPACK_GROWTH_YEARLY
 		);
 		expect( getYearlyPlanByMonthly( 'unknown_plan' ) ).toEqual( '' );
 	} );
@@ -1063,6 +1072,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_JETPACK_COMPLETE_BI_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+			PLAN_JETPACK_GROWTH_BI_YEARLY,
 			PLAN_WPCOM_PRO_2_YEARS,
 		] );
 		expect( findPlansKeys( { term: TERM_TRIENNIALLY } ) ).toEqual( [
@@ -1092,6 +1102,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
 			PLAN_JETPACK_STARTER_YEARLY,
+			PLAN_JETPACK_GROWTH_YEARLY,
 			PLAN_JETPACK_GOLDEN_TOKEN,
 			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
@@ -1115,6 +1126,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_JETPACK_STARTER_MONTHLY,
+			PLAN_JETPACK_GROWTH_MONTHLY,
 			PLAN_P2_PLUS,
 			PLAN_WPCOM_PRO_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -1226,6 +1238,9 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_JETPACK_STARTER_YEARLY,
 			PLAN_JETPACK_STARTER_MONTHLY,
+			PLAN_JETPACK_GROWTH_MONTHLY,
+			PLAN_JETPACK_GROWTH_YEARLY,
+			PLAN_JETPACK_GROWTH_BI_YEARLY,
 			PLAN_JETPACK_GOLDEN_TOKEN,
 		] );
 		expect( findPlansKeys( { group: GROUP_P2 } ) ).toEqual( [ PLAN_P2_PLUS, PLAN_P2_FREE ] );

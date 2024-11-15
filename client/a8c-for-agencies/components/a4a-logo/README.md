@@ -1,6 +1,6 @@
 # A4ALogo (JSX)
 
-This component is used to display a Automattic for Agencies logo
+This component is used to display an Automattic or Automattic for Agencies logo
 
 ---
 
@@ -21,5 +21,6 @@ export default function A4ALogoExample() {
 ## Props
 
 - `full` : (bool) Whether or not to show the full Automattic logo with text
+- `fullA4A` : (bool) Whether or not to show the full "Automattic for Agencies" logo
 - `className` : (string) Custom class name to be added to the SVG element
 - `size` : (number) The height of the SVG. Default is `32`

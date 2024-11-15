@@ -150,7 +150,7 @@ $image-height: 47px;
 	white-space: nowrap;
 
 	&::after {
-		@include long-content-fade($color: var(--color-neutral-0-rgb));
+		@include long-content-fade( $color: var( --color-neutral-0 ) );
 	}
 }
 

@@ -9,7 +9,7 @@ import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import RemovePlugin from '../remove-plugin';

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -11,8 +11,13 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrationsCommissionsList from '../../commissions-list';
+import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
+import useFetchMigrationCommissions from '../../hooks/use-fetch-migration-commissions';
+import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
 
 import './style.scss';
@@ -21,14 +26,38 @@ export default function MigrationsCommissions() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Migrations' );
+	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
+
+	const title = translate( 'Migrations: Commissions' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
-		// TODO: Implement the tagging functionality
+		setShowAddSitesModal( true );
 	}, [ dispatch ] );
 
-	const showEmptyState = true;
+	const { data: migrationCommissions, isFetched } = useFetchMigrationCommissions();
+
+	const showEmptyState = ! migrationCommissions?.length;
+
+	const content = useMemo( () => {
+		if ( ! isFetched ) {
+			return (
+				<>
+					<TextPlaceholder />
+					<TextPlaceholder />
+				</>
+			);
+		}
+
+		return showEmptyState ? (
+			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
+		) : (
+			<div className="migrations-commissions__content">
+				<MigrationsConsolidatedCommissions items={ migrationCommissions } />
+				<MigrationsCommissionsList items={ migrationCommissions } />
+			</div>
+		);
+	}, [ isFetched, showEmptyState, migrationCommissions, setShowAddSitesModal ] );
 
 	return (
 		<Layout
@@ -41,6 +70,7 @@ export default function MigrationsCommissions() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
+						hideOnMobile
 						items={ [
 							{
 								label: translate( 'Migrations' ),
@@ -51,9 +81,8 @@ export default function MigrationsCommissions() {
 							},
 						] }
 					/>
-					<Actions>
+					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-
 						<Button variant="primary" onClick={ onTagSitesClick }>
 							{ translate( 'Tag sites for commission' ) }
 						</Button>
@@ -61,7 +90,14 @@ export default function MigrationsCommissions() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ showEmptyState ? <MigrationsCommissionsEmptyState /> : null }</LayoutBody>
+			<LayoutBody>
+				<>
+					{ content }
+					{ showAddSitesModal && (
+						<MigrationsTagSitesModal onClose={ () => setShowAddSitesModal( false ) } />
+					) }
+				</>
+			</LayoutBody>
 		</Layout>
 	);
 }

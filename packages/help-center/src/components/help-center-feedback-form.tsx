@@ -89,7 +89,7 @@ const HelpCenterFeedbackForm = ( {
 
 	const FeedbackTextArea = () => {
 		if ( shouldUseHelpCenterExperience ) {
-			return <p>{ __( 'Great! Thanks.' ) }</p>;
+			return <p>{ __( 'Great! Thanks.', __i18n_text_domain__ ) }</p>;
 		}
 		return (
 			<>

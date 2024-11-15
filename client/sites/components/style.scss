@@ -49,12 +49,6 @@
 	@media (min-width: $break-large) {
 		background: inherit;
 
-		.dataviews-view-table thead {
-			position: sticky;
-			top: 0;
-			z-index: 2;
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
 			font-weight: 500;
@@ -122,15 +116,6 @@
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
-		}
-
-		.sites-overview__stats-trend,
-		.sites-overview__column-action-button,
-		.sites-overview__row-status,
-		.toggle-activate-monitoring__toggle-button,
-		.sites-dataviews__favorite-btn-wrapper,
-		.sites-overview__boost-score {
-			display: none;
 		}
 
 		.item-preview__content {
@@ -218,18 +203,6 @@
 		font-weight: 500;
 		line-height: 14px;
 		color: var(--color-accent-80);
-	}
-
-	tr.dataviews-view-table__row th[data-field-id="favorite"] {
-		vertical-align: top;
-	}
-
-	tr.dataviews-view-table__row {
-		&:hover {
-			.site-set-favorite__favorite-icon {
-				visibility: visible;
-			}
-		}
 	}
 
 	.sites-overview__content-wrapper {
@@ -824,26 +797,6 @@
 
 	.margin-top-16 {
 		margin-top: 16px;
-	}
-
-	.sites-dataviews__favorite-btn-wrapper {
-		display: flex;
-		align-items: center;
-
-		.site-set-favorite__favorite-icon {
-			visibility: hidden;
-			color: var(--color-primary);
-		}
-
-		button.site-set-favorite__favorite-icon {
-			position: unset;
-		}
-
-		&:hover {
-			.site-set-favorite__favorite-icon {
-				visibility: visible;
-			}
-		}
 	}
 }
 

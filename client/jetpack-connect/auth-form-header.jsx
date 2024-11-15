@@ -107,7 +107,12 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooPasswordlessJPC ) {
-			return translate( 'Connect your account' );
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate( 'Create an account' );
+				default:
+					return translate( 'Connect your account' );
+			}
 		}
 
 		if ( isWpcomMigration ) {
@@ -167,7 +172,13 @@ export class AuthFormHeader extends Component {
 
 		if ( isWooPasswordlessJPC ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
-			const reviewDocLink = <a href="https://woocommerce.com/documentation/woocommerce/" />;
+			const reviewDocLink = (
+				<a
+					href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+					target="_blank"
+					rel="noreferrer"
+				/>
+			);
 			const translateParams = {
 				components: {
 					br: <br />,
@@ -191,7 +202,7 @@ export class AuthFormHeader extends Component {
 				switch ( currentState ) {
 					case 'logged-out':
 						return translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. {{br}}{{/br}}For more information, please {{doc}}review our documentation{{/doc}}.',
+							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. For more information, please {{doc}}review our documentation{{/doc}}.',
 							{
 								...translateParams,
 								components: {

@@ -29,7 +29,6 @@ import { getCount } from 'calypso/state/persistent-counter/selectors';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
-import getSiteScanRequestRetryCount from 'calypso/state/selectors/get-site-scan-request-retry-count';
 import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
@@ -53,7 +52,6 @@ interface Props {
 	isRequestingScan?: boolean;
 	scanPageVisitCount?: number;
 	scanRequestStatus?: 'pending' | 'success' | 'failed';
-	scanRequestRetryCount?: number;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -244,19 +242,14 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanState() {
-		const { site, scanState, isRequestingScan, scanRequestStatus, scanRequestRetryCount } =
-			this.props;
+		const { site, scanState, isRequestingScan, scanRequestStatus } = this.props;
 
-		// We don't know yet which site we're looking at,
-		// so show a placeholder until data comes in
+		// Show the loading placeholder until we have a site to work with.
 		if ( ! site ) {
 			return <ScanPlaceholder />;
 		}
 
-		// If we're scanning or preparing to scan, show those statuses;
-		// importantly, *don't* show the loading placeholder,
-		// because it disrupts the fluidity of the progress bar
-
+		// Show scanning states first - provisioning or in-progress scans take priority.
 		if ( scanState?.state === 'provisioning' ) {
 			return (
 				<>
@@ -265,15 +258,12 @@ class ScanPage extends Component< Props > {
 				</>
 			);
 		}
-
 		if ( scanState?.state === 'scanning' ) {
 			return this.renderScanning();
 		}
 
-		// *Now* we can show the loading placeholder,
-		// if in fact we're requesting a Scan status update
-		// but silently retry if pooling to avoid UI flicker
-		if ( isRequestingScan && scanRequestRetryCount === 0 ) {
+		// Show the loading placeholder if we're requesting an update, and have no data to show yet.
+		if ( ! scanState && isRequestingScan ) {
 			return <ScanPlaceholder />;
 		}
 
@@ -386,7 +376,6 @@ export default connect(
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 		const scanPageVisitCount = getCount( state, SCAN_VISIT_COUNTER_NAME, false );
 		const scanRequestStatus = getSiteScanRequestStatus( state, siteId );
-		const scanRequestRetryCount = getSiteScanRequestRetryCount( state, siteId );
 
 		return {
 			site,
@@ -399,7 +388,6 @@ export default connect(
 			isRequestingScan,
 			scanPageVisitCount,
 			scanRequestStatus,
-			scanRequestRetryCount,
 		};
 	},
 	{

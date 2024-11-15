@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -476,6 +475,9 @@ class CancelPurchaseForm extends Component {
 						) }
 					</p>
 					<CheckboxControl
+						className={
+							atomicRevertCheckOne ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
+						}
 						label={
 							isPlanPurchase && ! isRemovePlan
 								? translate(
@@ -494,6 +496,9 @@ class CancelPurchaseForm extends Component {
 						onChange={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
 					/>
 					<CheckboxControl
+						className={
+							atomicRevertCheckTwo ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
+						}
 						label={
 							isPlanPurchase && ! isRemovePlan
 								? translate(
@@ -513,15 +518,17 @@ class CancelPurchaseForm extends Component {
 					/>
 					{ hasBackupsFeature && (
 						<div className="cancel-purchase-form__backups">
-							<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
-							<p>
-								{ translate(
-									"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
-								) }
-							</p>
-							<ExternalLink icon href={ `/backup/${ site.slug }` }>
+							<div>
+								<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
+								<p>
+									{ translate(
+										"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
+									) }
+								</p>
+							</div>
+							<GutenbergButton variant="primary" href={ `/backup/${ site.slug }` }>
 								{ translate( 'Go to your backups' ) }
-							</ExternalLink>
+							</GutenbergButton>
 						</div>
 					) }
 				</div>
@@ -840,7 +847,11 @@ class CancelPurchaseForm extends Component {
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
-								<div className="cancel-purchase-form__buttons">{ this.renderStepButtons() }</div>
+								<div
+									className={ `cancel-purchase-form__buttons cancel-purchase-form__${ surveyStep }-buttons` }
+								>
+									{ this.renderStepButtons() }
+								</div>
 							</div>
 						</BlankCanvas.Footer>
 					</BlankCanvas>
