@@ -2,7 +2,7 @@ import { Gridicon, WordPressLogo, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import PopoverMenuItem from 'calypso/a8c-for-agencies/components/a4a-popover/menu-item';
@@ -27,73 +27,75 @@ const MigrateSiteButton = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
 	};
 
-	const popoverContent = (
-		<div className="migrations-overview-v2__popover-content">
-			<div className="migrations-overview-v2__popover-column">
-				<div className="migrations-overview-v2__popover-column-heading">
-					{ translate( 'Pick an option to get started' ).toUpperCase() }
+	const popoverContent = useMemo( () => {
+		return (
+			<div className="migrations-overview-v2__popover-content">
+				<div className="migrations-overview-v2__popover-column">
+					<div className="migrations-overview-v2__popover-column-heading">
+						{ translate( 'Pick an option to get started' ).toUpperCase() }
+					</div>
+					<PopoverMenuItem
+						icon={ <A4ALogo /> }
+						heading={ translate( 'Concierge service' ) }
+						description={ preventWidows(
+							translate(
+								'Reach out and let our WordPress experts migrate your sites for you, free of charge.'
+							)
+						) }
+						buttonProps={ {
+							href: CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_migrations_migrate_sites_concierge_button_click' )
+								);
+								setMenuVisible( false );
+							},
+						} }
+					/>
+					<PopoverMenuItem
+						icon={ <WordPressLogo /> }
+						heading={ translate( 'Self migrate to WordPress.com' ) }
+						description={ preventWidows(
+							translate(
+								'Get started manually moving your sites to WordPress.com then tag them for commission.'
+							)
+						) }
+						buttonProps={ {
+							href: A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent(
+										'calypso_a4a_migrations_migrate_sites_self_migrate_to_wpcom_button_click'
+									)
+								);
+								setMenuVisible( false );
+							},
+						} }
+					/>
+					<PopoverMenuItem
+						icon={ <img src={ pressableIcon } alt="" /> }
+						heading={ translate( 'Self migrate to Pressable' ) }
+						description={ preventWidows(
+							translate(
+								'Get started manually moving your sites to Pressable then tag them for commission.'
+							)
+						) }
+						buttonProps={ {
+							href: A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent(
+										'calypso_a4a_migrations_migrate_sites_self_migrate_to_pressable_button_click'
+									)
+								);
+								setMenuVisible( false );
+							},
+						} }
+					/>
 				</div>
-				<PopoverMenuItem
-					icon={ <A4ALogo /> }
-					heading={ translate( 'Concierge service' ) }
-					description={ preventWidows(
-						translate(
-							'Reach out and let our WordPress experts migrate your sites for you, free of charge.'
-						)
-					) }
-					buttonProps={ {
-						href: CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT,
-						onClick: () => {
-							dispatch(
-								recordTracksEvent( 'calypso_a4a_migrations_migrate_sites_concierge_button_click' )
-							);
-							setMenuVisible( false );
-						},
-					} }
-				/>
-				<PopoverMenuItem
-					icon={ <WordPressLogo /> }
-					heading={ translate( 'Self migrate to WordPress.com' ) }
-					description={ preventWidows(
-						translate(
-							'Get started manually moving your sites to WordPress.com then tag them for commission.'
-						)
-					) }
-					buttonProps={ {
-						href: A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
-						onClick: () => {
-							dispatch(
-								recordTracksEvent(
-									'calypso_a4a_migrations_migrate_sites_self_migrate_to_wpcom_button_click'
-								)
-							);
-							setMenuVisible( false );
-						},
-					} }
-				/>
-				<PopoverMenuItem
-					icon={ <img src={ pressableIcon } alt="" /> }
-					heading={ translate( 'Self migrate to Pressable' ) }
-					description={ preventWidows(
-						translate(
-							'Get started manually moving your sites to Pressable then tag them for commission.'
-						)
-					) }
-					buttonProps={ {
-						href: A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
-						onClick: () => {
-							dispatch(
-								recordTracksEvent(
-									'calypso_a4a_migrations_migrate_sites_self_migrate_to_pressable_button_click'
-								)
-							);
-							setMenuVisible( false );
-						},
-					} }
-				/>
 			</div>
-		</div>
-	);
+		);
+	}, [ dispatch, translate ] );
 
 	return (
 		<>
