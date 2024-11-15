@@ -236,3 +236,7 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: column;
 	height: calc(100vh - 32px);
 }
+
+.referrals-layout .redesigned-a8c-table .dataviews__view-actions {
+	display: none;
+}
