@@ -75,7 +75,7 @@ export default function Summary( {
 	if ( importerStatus === 'skipped' ) {
 		return (
 			<Card>
-				<h2>{ __( "You skipped importing your site's content or subscribers." ) }</h2>
+				<h2>{ __( 'Uh oh!' ) }</h2>
 				<p>
 					{ steps.content.content && (
 						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
@@ -87,11 +87,9 @@ export default function Summary( {
 						/>
 					) }
 				</p>
-				<hr />
-				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ '/import/newsletter/substack/' + selectedSite.slug }
+						href={ `/import/${ selectedSite.slug }` }
 						onClick={ onButtonClick }
 						primary
 					>
