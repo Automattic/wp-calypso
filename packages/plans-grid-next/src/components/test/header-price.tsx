@@ -13,6 +13,15 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
 } ) );
 jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	AddOns: {
+		useStorageAddOns: jest.fn(),
+	},
+	Plans: {
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+} ) );
 
 import {
 	type PlanSlug,
@@ -20,10 +29,17 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import HeaderPrice from '../shared/header-price';
+
+const Wrapper = ( { children } ) => {
+	const queryClient = useMemo( () => new QueryClient(), [] );
+
+	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+};
 
 describe( 'HeaderPrice', () => {
 	const defaultProps = {
@@ -53,7 +69,7 @@ describe( 'HeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <HeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
@@ -78,7 +94,7 @@ describe( 'HeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <HeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
 		const rawPrice = container.querySelector( '.plan-price' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
@@ -104,7 +120,8 @@ describe( 'HeaderPrice', () => {
 		} ) );
 
 		const { container } = render(
-			<HeaderPrice { ...defaultProps } planSlug={ PLAN_ENTERPRISE_GRID_WPCOM } />
+			<HeaderPrice { ...defaultProps } planSlug={ PLAN_ENTERPRISE_GRID_WPCOM } />,
+			{ wrapper: Wrapper }
 		);
 
 		expect( container ).toBeEmptyDOMElement();
@@ -134,7 +151,7 @@ describe( 'HeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <HeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
 		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'Special Offer' );
@@ -157,7 +174,7 @@ describe( 'HeaderPrice', () => {
 			},
 		} ) );
 
-		const { container } = render( <HeaderPrice { ...defaultProps } /> );
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
 		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'One time discount' );
