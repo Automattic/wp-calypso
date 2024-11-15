@@ -1,5 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import DeleteSite from 'calypso/my-sites/site-settings/delete-site';
+import ManageConnection from 'calypso/my-sites/site-settings/manage-connection';
+import SiteOwnerTransfer from 'calypso/my-sites/site-settings/site-owner-transfer/site-owner-transfer';
+import StartOver from 'calypso/my-sites/site-settings/start-over';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import {
@@ -67,6 +71,46 @@ export function administrationSettings( context: PageJSContext, next: () => void
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<AdministrationSettings />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function administrationToolResetSite( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<StartOver />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function administrationToolTransferSite( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<SiteOwnerTransfer />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function administrationToolDeleteSite( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<DeleteSite />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function administrationToolManageConnection( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<ManageConnection />
 		</PanelWithSidebar>
 	);
 	next();

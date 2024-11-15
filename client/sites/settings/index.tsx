@@ -4,6 +4,10 @@ import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
+	SETTINGS_ADMINISTRATION_RESET_SITE,
+	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
+	SETTINGS_ADMINISTRATION_DELETE_SITE,
+	SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
 	SETTINGS_AGENCY,
 	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
@@ -15,6 +19,10 @@ import {
 	agencySettings,
 	cachingSettings,
 	webServerSettings,
+	administrationToolDeleteSite,
+	administrationToolResetSite,
+	administrationToolTransferSite,
+	administrationToolManageConnection,
 } from './controller';
 
 export default function () {
@@ -36,6 +44,42 @@ export default function () {
 		navigation,
 		administrationSettings,
 		siteDashboard( SETTINGS_ADMINISTRATION ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/settings/administration/:site/reset-site',
+		siteSelection,
+		navigation,
+		administrationToolResetSite,
+		siteDashboard( SETTINGS_ADMINISTRATION_RESET_SITE ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/settings/administration/:site/transfer-site',
+		siteSelection,
+		navigation,
+		administrationToolTransferSite,
+		siteDashboard( SETTINGS_ADMINISTRATION_TRANSFER_SITE ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/settings/administration/:site/delete-site',
+		siteSelection,
+		navigation,
+		administrationToolDeleteSite,
+		siteDashboard( SETTINGS_ADMINISTRATION_DELETE_SITE ),
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/settings/administration/:site/manage-connection',
+		siteSelection,
+		navigation,
+		administrationToolManageConnection,
+		siteDashboard( SETTINGS_ADMINISTRATION_MANAGE_CONNECTION ),
 		makeLayout,
 		clientRender
 	);
