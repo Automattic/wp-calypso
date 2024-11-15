@@ -8,6 +8,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { TaskSteps, TaskStepItem } from 'calypso/a8c-for-agencies/components/task-steps';
 import { getMigrationInfo } from './migration-info';
 
 const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
@@ -15,11 +16,14 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 
 	const stepInfo = getMigrationInfo( type, translate );
 
-	if ( ! stepInfo ) {
-		return null;
-	}
+	const { pageTitle, heading, pageHeading, pageSubheading, steps, sessionStorageKey } = stepInfo;
 
-	const { pageTitle, heading } = stepInfo;
+	const stepsWithCompletion = steps.map( ( step ) => {
+		return {
+			...step,
+			isCompleted: false,
+		};
+	} ) as TaskStepItem[];
 
 	return (
 		<Layout className="self-migration-tool" title={ pageTitle } wide>
@@ -47,7 +51,12 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 			</LayoutTop>
 
 			<LayoutBody>
-				<></>
+				<TaskSteps
+					heading={ pageHeading }
+					subheading={ pageSubheading }
+					steps={ stepsWithCompletion }
+					sessionStorageKey={ sessionStorageKey }
+				/>
 			</LayoutBody>
 		</Layout>
 	);
