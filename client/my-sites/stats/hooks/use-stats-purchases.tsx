@@ -81,10 +81,6 @@ export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
 };
 
-export const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
-	return areProductsOwned( ownedPurchases, [ ...JETPACK_GROWTH_PLANS ] );
-};
-
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
 	const sitePurchases = getSitePurchases( state, siteId );
 
