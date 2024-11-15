@@ -103,6 +103,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 					/>
 				</div>
 			) }
+			focusOnMount={ false }
 		/>
 	);
 };
