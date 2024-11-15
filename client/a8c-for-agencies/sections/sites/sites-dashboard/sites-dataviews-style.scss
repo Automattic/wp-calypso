@@ -45,7 +45,8 @@
 
 	&:focus,
 	&:hover {
-		text-decoration: underline;
+		color: var(--color-primary);
+		fill: var(--color-primary);
 	}
 
 	svg {
