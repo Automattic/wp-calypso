@@ -252,15 +252,31 @@ ul.module-tabs {
 		.stats-chart-tabs__header {
 			display: flex;
 			flex-direction: row;
-			gap: 20px; /* adds space between the divs */
+			align-items: center;
+			margin-bottom: 24px;
 		}
 
 		.chart__legend{
-			margin-left: auto; /* makes all items take equal width */
+			margin: 0 0 0 auto;
 		}
 
 		.chart__y-axis-marker {
 			border-top-color: #DCDCDE;
+		}
+
+		.stats-interval-dropdown {
+			margin-left: 48px;
+
+			& > .components-button {
+				width: auto;
+				padding: 0;
+				border: 0;
+				box-shadow: none;
+
+				& > svg {
+					margin-left: 8px;
+				}
+			}
 		}
 	}
 

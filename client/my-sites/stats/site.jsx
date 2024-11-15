@@ -468,6 +468,9 @@ class StatsSite extends Component {
 
 						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
 							<ChartTabs
+								slug={ slug }
+								period={ this.props.period }
+								queryParams={ context.query }
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
@@ -477,7 +480,6 @@ class StatsSite extends Component {
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
-								period={ this.props.period }
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
