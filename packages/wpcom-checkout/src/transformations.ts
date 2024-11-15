@@ -515,8 +515,6 @@ export function isOverrideCodeIntroductoryOffer( overrideCode: string ): boolean
 	switch ( overrideCode ) {
 		case 'introductory-offer':
 			return true;
-		case 'prorated-introductory-offer':
-			return true;
 		case 'quantity-upgrade-introductory-offer':
 			return true;
 	}
