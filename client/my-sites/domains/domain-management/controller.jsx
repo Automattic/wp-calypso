@@ -26,6 +26,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import DomainPreviewPane from './domain-overview';
 import DomainManagement from '.';
 
 export default {
@@ -44,6 +45,81 @@ export default {
 			<DomainManagement.BulkAllDomains
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
+			/>
+		);
+		next();
+	},
+
+	domainDashboard( feature ) {
+		return ( pageContext, next ) => {
+			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+			pageContext.primary = (
+				<DomainManagement.TwoColumnDomainManagement
+					searchComponent={
+						<DomainManagement.BulkAllDomains
+							analyticsPath={ domainManagementRoot() }
+							analyticsTitle="Domain Management > All Domains"
+							sidebarMode
+						/>
+					}
+					initialFeature={ feature }
+					detailsComponent={
+						<DomainPreviewPane
+							selectedDomain={ selectedDomainName }
+							selectedDomainPreview={ pageContext.primary }
+						/>
+					}
+				/>
+			);
+
+			next();
+		};
+	},
+
+	domainManagementV2( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot( ':domain' ) }
+				analyticsTitle="Domain Management"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				selectedDomainName={ selectedDomainName }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	domainManagementDashboard( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagement.TwoColumnDomainManagement
+				searchComponent={
+					<DomainManagement.BulkAllDomains
+						analyticsPath={ domainManagementRoot() }
+						analyticsTitle="Domain Management > All Domains"
+						sidebarMode
+					/>
+				}
+				detailsComponent={
+					<DomainPreviewPane
+						selectedDomain={ selectedDomainName }
+						selectedDomainPreview={
+							<DomainManagementData
+								analyticsPath={ domainManagementRoot( ':domain' ) }
+								analyticsTitle="Domain Management"
+								component={ DomainManagement.Settings }
+								context={ pageContext }
+								selectedDomainName={ selectedDomainName }
+								needsDomains
+							/>
+						}
+					/>
+				}
 			/>
 		);
 		next();

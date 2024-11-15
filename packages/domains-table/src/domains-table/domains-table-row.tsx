@@ -1,4 +1,5 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -89,7 +90,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
-		window.location.href = domainManagementLink;
+		page.show( domainManagementLink );
+		//window.location.href = domainManagementLink;
 	};
 
 	return (
@@ -98,7 +100,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 			className="domains-table__row"
 			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
-			{ canSelectAnyDomains && (
+			{ canSelectAnyDomains ? (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 				<td
 					className="domains-table-checkbox-td"
@@ -115,6 +117,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 						disabled={ ! canBulkUpdate( domain ) }
 					/>
 				</td>
+			) : (
+				<td></td>
 			) }
 
 			{ domainsTableColumns.map( ( column ) => {

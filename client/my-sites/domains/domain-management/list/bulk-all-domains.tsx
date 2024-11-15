@@ -27,6 +27,7 @@ import './style.scss';
 interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
+	sidebarMode?: boolean;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -383,6 +384,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						createBulkAction={ createBulkAction }
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
+						sidebarMode={ props.sidebarMode }
 					/>
 				) : (
 					<EmptyState />

@@ -99,7 +99,7 @@ export const DomainsTableHeader = ( {
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
-				{ canSelectAnyDomains && (
+				{ canSelectAnyDomains ? (
 					<th className="domains-table-checkbox-th">
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
@@ -113,6 +113,8 @@ export const DomainsTableHeader = ( {
 							) }
 						/>
 					</th>
+				) : (
+					<th></th>
 				) }
 
 				{ columns.map( ( column ) => {

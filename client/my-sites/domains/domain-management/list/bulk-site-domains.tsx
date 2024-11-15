@@ -3,6 +3,8 @@ import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -43,6 +45,17 @@ import './style.scss';
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
+}
+
+export function TwoColumnDomainManagement( props: any ) {
+	return (
+		<Layout title="Domain Management" wide className="domains-overview">
+			<LayoutColumn className="domains-overview__list">{ props.searchComponent }</LayoutColumn>
+			<LayoutColumn className="domains-overview__details" wide>
+				{ props.detailsComponent }
+			</LayoutColumn>
+		</Layout>
+	);
 }
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {

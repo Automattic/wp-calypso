@@ -150,6 +150,16 @@ export default function () {
 	);
 
 	page(
+		paths.domainManagementRoot() + '-overview/:domain',
+		noSite,
+		navigation,
+		domainManagementController.domainManagementV2,
+		domainManagementController.domainDashboard( 'domain-management' ),
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementList( ':site' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,
