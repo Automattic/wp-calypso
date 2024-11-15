@@ -82,7 +82,7 @@ const Recent = () => {
 						<RecentSeenField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							setSelectedItem={ setSelectedItem }
+							setSelectedItem={ () => {} }
 						/>
 					);
 				},
@@ -99,7 +99,7 @@ const Recent = () => {
 						<RecentPostField
 							item={ item }
 							post={ getPostFromItem( item ) }
-							setSelectedItem={ setSelectedItem }
+							setSelectedItem={ () => {} }
 						/>
 					);
 				},

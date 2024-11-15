@@ -86,24 +86,27 @@
 
 			.dataviews-view-list__item-wrapper {
 				justify-content: start;
+
+				[role="gridcell"] {
+					width: 100%;
+				}
+			}
+
+			.dataviews-view-list__field-wrapper {
+				width: 100%;
 			}
 
 			.dataviews-view-list__fields {
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
 				gap: $recent-feed-spacing;
 				padding: 0 $recent-feed-spacing;
 			}
 
 			.dataviews-view-list__field:has(.recent-post-field) {
 				overflow: hidden;
+				flex-grow: 1;
 			}
-		}
-
-		button:focus {
-			box-shadow: none;
-			outline: none;
 		}
 
 		.recent-seen-field {
@@ -111,6 +114,10 @@
 
 			img {
 				border-radius: 50%;
+			}
+
+			svg:hover {
+				fill: unset;
 			}
 		}
 
@@ -136,6 +143,7 @@
 
 			&__title-text {
 				font-weight: 700;
+				font-size: rem(13px);
 				@extend %text-shared;
 			}
 
