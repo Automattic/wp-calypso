@@ -57,9 +57,8 @@ export const getMigrationInfo = (
 			pageTitle: translate( 'Migrations: Migrate to Pressable' ),
 			heading: translate( 'Migrate to Pressable' ),
 			pageHeading: translate( 'Transfer your WordPress website to Pressable on your own.' ),
-			pageSubheading: translate(
-				"Move your site and tag it for potential earnings by following these steps. If you need help finishing the transfer, don't hesitate to contact us."
-			),
+			pageSubheading:
+				"Move your site and tag it for potential earnings by following these steps. If you need help finishing the transfer, don't hesitate to contact us.",
 			steps: dummySteps,
 			sessionStorageKey: 'a4a_self_migrate_to_pressable_steps',
 		},
@@ -67,9 +66,8 @@ export const getMigrationInfo = (
 			pageTitle: translate( 'Migrations: Migrate to WordPress.com' ),
 			heading: translate( 'Migrate to WordPress.com' ),
 			pageHeading: translate( 'Transfer your WordPress website to WordPress.com on your own.' ),
-			pageSubheading: translate(
-				"Move your site and tag it for potential earnings by following these steps. If you need help finishing the transfer, don't hesitate to contact us."
-			),
+			pageSubheading:
+				"Move your site and tag it for potential earnings by following these steps. If you need help finishing the transfer, don't hesitate to contact us.",
 			steps: dummySteps,
 			sessionStorageKey: 'a4a_self_migrate_to_wpcom_steps',
 		},
