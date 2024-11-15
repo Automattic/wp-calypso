@@ -256,5 +256,22 @@ export const getPluginTitle = ( pluginName, translate ) => {
 		default: translate( 'Jetpack' ),
 	};
 
-	return pluginNames[ pluginName ] || pluginNames.default;
+	if ( ! pluginName ) {
+		// Handle null, undefined, or empty strings
+		return pluginNames.default;
+	}
+
+	// Handle multiple plugin names separated by commas
+	const titles = pluginName
+		.split( ',' )
+		.map( ( name ) => pluginNames[ name.trim() ] || pluginNames.default );
+
+	// Combine titles with a serial comma before "and"
+	if ( titles.length > 1 ) {
+		return `${ titles.slice( 0, -1 ).join( ', ' ) }, ${ translate( 'and' ) } ${
+			titles[ titles.length - 1 ]
+		}`;
+	}
+
+	return titles[ 0 ];
 };
