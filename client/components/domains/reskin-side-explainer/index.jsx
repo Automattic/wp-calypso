@@ -7,7 +7,7 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { flowName, translate, type, isFreeFlow } = this.props;
+		const { flowName, translate, type, isFreePlan } = this.props;
 
 		let title;
 		let subtitle;
@@ -40,7 +40,7 @@ class ReskinSideExplainer extends Component {
 				);
 				subtitle2 = translate( 'You can claim your custom domain name later when you’re ready.' );
 				ctaText = translate( 'Check paid plans »' );
-				if ( isFreeFlow ) {
+				if ( isFreePlan ) {
 					ctaText2 = translate( 'Choose my domain later' );
 				}
 				break;

@@ -934,8 +934,11 @@ export class RenderDomainsStep extends Component {
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
 		const isFreeFlow = flowName === 'free';
+		const isPlansFirstFlow = flowName === 'plans-first';
+		const isFreePlan = isFreeFlow || ( isPlansFirstFlow && ! this.props.hasAddedPlanToCart );
+
 		const explainerType =
-			this.props.isPlanSelectionAvailableLaterInFlow || isFreeFlow
+			this.props.isPlanSelectionAvailableLaterInFlow || isFreePlan
 				? 'free-domain-explainer'
 				: 'free-domain-explainer-paid-plans';
 
@@ -961,12 +964,12 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-side-content domains__free-domain">
 							<ReskinSideExplainer
 								primaryCtaClick={
-									isFreeFlow ? this.navigateToPlansFirstFlow : this.handleDomainExplainerClick
+									isFreePlan ? this.navigateToPlansFirstFlow : this.handleDomainExplainerClick
 								}
 								type={ explainerType }
 								flowName={ flowName }
-								isFreeFlow={ isFreeFlow }
-								secondaryCtaClick={ isFreeFlow && this.handleDomainExplainerClick }
+								isFreePlan={ isFreePlan }
+								secondaryCtaClick={ isFreePlan && this.handleDomainExplainerClick }
 							/>
 						</div>
 					)
@@ -1490,7 +1493,7 @@ export const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 const RenderDomainsStepConnect = connect(
-	( state, { steps, flowName, stepName, previousStepName } ) => {
+	( state, { steps, flowName, stepName, previousStepName, progress } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
@@ -1512,6 +1515,7 @@ const RenderDomainsStepConnect = connect(
 			userLoggedIn,
 			multiDomainDefaultPlan,
 			previousStepName: previousStepName || getPreviousStepName( flowName, stepName, userLoggedIn ),
+			hasAddedPlanToCart: !! progress?.plans?.cartItems?.length,
 		};
 	},
 	{
