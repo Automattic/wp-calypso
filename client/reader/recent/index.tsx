@@ -1,7 +1,7 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ const Recent = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ view, setView ] = useState< View >( {
-		type: 'table',
+		type: 'list',
 		search: '',
 		fields: [ 'seen', 'post' ],
 		perPage: 10,
@@ -58,7 +58,7 @@ const Recent = () => {
 				postId: item.postId,
 			} );
 			if ( post ) {
-				acc[ `${ item.feedId }-${ item.postId }` ] = post;
+				acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
 			}
 			return acc;
 		}, {} );
@@ -66,7 +66,7 @@ const Recent = () => {
 
 	const getPostFromItem = useCallback(
 		( item: ReaderPost ) => {
-			const postKey = `${ item.feedId }-${ item.postId }`;
+			const postKey = `${ item?.feedId }-${ item?.postId }`;
 			return posts[ postKey ];
 		},
 		[ posts ]
@@ -110,13 +110,6 @@ const Recent = () => {
 		],
 		[ getPostFromItem, setSelectedItem ]
 	);
-
-	const defaultLayouts = [
-		{
-			label: translate( 'Table' ),
-			icon: 'table-view',
-		},
-	];
 
 	const fetchData = useCallback( () => {
 		dispatch( viewStream( streamKey, window.location.pathname ) as AnyAction );
@@ -212,8 +205,15 @@ const Recent = () => {
 								} )
 							}
 							paginationInfo={ paginationInfo }
-							defaultLayouts={ defaultLayouts as SupportedLayouts }
+							defaultLayouts={ { list: {} } }
 							isLoading={ isLoading }
+							selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+							onChangeSelection={ ( newSelection: string[] ) => {
+								const selectedPost = data?.items?.find(
+									( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+								);
+								setSelectedItem( selectedPost || null );
+							} }
 						/>
 					) }
 				</div>
