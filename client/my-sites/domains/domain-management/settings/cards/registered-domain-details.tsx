@@ -27,11 +27,12 @@ const RegisteredDomainDetails = ( {
 	);
 
 	const renderDates = () => {
-		const untilDateLabel = domain.expired
-			? // translators: this is followed by a date, e.g. Expired on December 15, 2021
-			  translate( 'Expired on' )
-			: // translators: this is followed by a date, e.g. Registered until January 21, 2023
-			  translate( 'Registered until' );
+		let untilDateLabel = translate( 'Registered until' );
+		if ( domain.expired ) {
+			untilDateLabel = translate( 'Expired on' );
+		} else if ( domain.isHundredYearDomain ) {
+			untilDateLabel = translate( 'Paid until' );
+		}
 
 		return (
 			<>
