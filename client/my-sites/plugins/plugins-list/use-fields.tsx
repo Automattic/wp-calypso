@@ -36,7 +36,7 @@ export function useFields(
 				],
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
-					isPrimary: true,
+					isPrimary: false,
 				},
 				enableHiding: false,
 				enableSorting: false,

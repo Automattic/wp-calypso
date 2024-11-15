@@ -14,6 +14,10 @@ body.is-section-plugins .plugin-management-wrapper,
                 max-width: 35px;
                 max-height: 35px;
             }
+
+            td:nth-child(2) {
+                white-space: break-spaces;
+            }
         }
     }
 }
