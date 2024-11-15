@@ -216,43 +216,46 @@ describe( 'getSignupUrl', () => {
 } );
 
 describe( 'getPluginTitle', () => {
+	const translate = ( str ) => {
+		return str;
+	};
 	it( 'should return the title for a single valid plugin name', () => {
-		const result = getPluginTitle( 'jetpack-ai' );
+		const result = getPluginTitle( 'jetpack-ai', translate );
 		expect( result ).toBe( 'Jetpack' );
 	} );
 
 	it( 'should return titles joined with "and" for two plugin names', () => {
-		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments' );
+		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments', translate );
 		expect( result ).toBe( 'Jetpack and WooPayments' );
 	} );
 
 	it( 'should return titles joined with a serial comma and "and" for three plugin names', () => {
-		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments,order-attribution' );
+		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments,order-attribution', translate );
 		expect( result ).toBe( 'Jetpack, WooPayments, and Order Attribution' );
 	} );
 
 	it( 'should return the default title for an invalid plugin name', () => {
-		const result = getPluginTitle( 'unknown-plugin' );
+		const result = getPluginTitle( 'unknown-plugin', translate );
 		expect( result ).toBe( 'Jetpack' ); // Default value
 	} );
 
 	it( 'should return the default title for null input', () => {
-		const result = getPluginTitle( null );
+		const result = getPluginTitle( null, translate );
 		expect( result ).toBe( 'Jetpack' ); // Default value
 	} );
 
 	it( 'should return the default title for an empty string', () => {
-		const result = getPluginTitle( '' );
+		const result = getPluginTitle( '', translate );
 		expect( result ).toBe( 'Jetpack' ); // Default value
 	} );
 
 	it( 'should handle a mix of valid and invalid plugin names', () => {
-		const result = getPluginTitle( 'jetpack-ai,unknown-plugin,woocommerce-payments' );
+		const result = getPluginTitle( 'jetpack-ai,unknown-plugin,woocommerce-payments', translate );
 		expect( result ).toBe( 'Jetpack, Jetpack, and WooPayments' ); // Default for invalid names
 	} );
 
 	it( 'should handle extra whitespace in plugin names', () => {
-		const result = getPluginTitle( ' jetpack-ai , woocommerce-payments ' );
+		const result = getPluginTitle( ' jetpack-ai , woocommerce-payments ', translate );
 		expect( result ).toBe( 'Jetpack and WooPayments' );
 	} );
 } );
