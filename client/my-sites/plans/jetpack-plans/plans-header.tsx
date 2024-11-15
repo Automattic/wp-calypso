@@ -39,7 +39,9 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
-				{ preventWidows( translate( 'Best-in-class products for your WordPress site' ) ) }
+				{ preventWidows(
+					translate( 'Security, performance, and marketing tools by the WordPress experts' )
+				) }
 			</h2>
 		) }
 	</>
