@@ -3,17 +3,16 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
-import { useSmooch } from '@automattic/zendesk-client/src/use-smooch';
+import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useMemo, useCallback } from '@wordpress/element';
+import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { matchSupportInteractionId } from '../components/utils';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -78,6 +77,7 @@ const ChatEllipsisMenu = () => {
 			event_source: 'help-center',
 			event_external_id: uuidv4(),
 		} );
+		clearHelpCenterZendeskConversationStarted();
 	};
 
 	return (
@@ -96,11 +96,11 @@ const ChatEllipsisMenu = () => {
 	);
 };
 
-const GetHeaderText = () => {
+const HeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
-	const { getConversations } = useSmooch();
-	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
+	const [ isConversationWithZendesk, setIsConversationWithZendesk ] = useState< boolean >( false );
+	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
@@ -110,16 +110,23 @@ const GetHeaderText = () => {
 
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 
-	const foundMatchingSupportConversation = matchSupportInteractionId(
-		getConversations,
-		isChatLoaded,
-		currentSupportInteraction
-	);
+	useEffect( () => {
+		if ( currentSupportInteraction ) {
+			const zendeskEvent = currentSupportInteraction?.events.find(
+				( event ) => event.event_source === 'zendesk'
+			);
+			if ( zendeskEvent ) {
+				setIsConversationWithZendesk( true );
+			} else {
+				setIsConversationWithZendesk( false );
+			}
+		}
+	}, [ currentSupportInteraction ] );
 
 	const headerText = useMemo( () => {
 		const getOdieHeader = () => {
 			if ( shouldUseHelpCenterExperience ) {
-				return foundMatchingSupportConversation
+				return isConversationWithZendesk
 					? __( 'Support Team', __i18n_text_domain__ )
 					: __( 'Support Assistant', __i18n_text_domain__ );
 			}
@@ -138,9 +145,13 @@ const GetHeaderText = () => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, foundMatchingSupportConversation, pathname, shouldUseHelpCenterExperience ] );
+	}, [ __, isConversationWithZendesk, pathname, shouldUseHelpCenterExperience ] );
 
-	return headerText;
+	return (
+		<span id="header-text" role="presentation" className="help-center-header__text">
+			{ headerText }
+		</span>
+	);
 };
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
@@ -152,14 +163,10 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
 
-	const headerText = GetHeaderText();
-
 	return (
 		<>
 			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
-			<span id="header-text" role="presentation" className="help-center-header__text">
-				{ headerText }
-			</span>
+			<HeaderText />
 			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
 			<Button
 				className="help-center-header__minimize"
