@@ -114,7 +114,7 @@ export default function Summary( {
 				</p>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `/import/${ selectedSite.slug }` }
+						href={ `/import/newsletter/substack/${ selectedSite.slug }/content?from=${ fromSite }` }
 						onClick={ onButtonClick }
 						primary
 					>
