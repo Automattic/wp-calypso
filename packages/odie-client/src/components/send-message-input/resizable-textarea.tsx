@@ -9,7 +9,23 @@ export const ResizableTextarea: React.FC< {
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
-} > = ( { className, sendMessageHandler, inputRef, keyUpHandle, setSubmitDisabled } ) => {
+	shouldDisableInputField: boolean;
+} > = ( {
+	className,
+	sendMessageHandler,
+	inputRef,
+	keyUpHandle,
+	setSubmitDisabled,
+	shouldDisableInputField = false,
+} ) => {
+	const textAreaPlaceholder = shouldDisableInputField
+		? __( 'Just a moment…', __i18n_text_domain__ )
+		: __( 'Type a message…', __i18n_text_domain__ );
+
+	if ( shouldDisableInputField ) {
+		setSubmitDisabled( true );
+	}
+
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
@@ -27,6 +43,21 @@ export const ResizableTextarea: React.FC< {
 			}
 		},
 		[ inputRef, sendMessageHandler, keyUpHandle, setSubmitDisabled ]
+	);
+
+	const onKeyDown = useCallback(
+		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			// Prevent line break when user sends a message
+			if ( event.key === 'Enter' && ! event.shiftKey && inputRef.current?.value.trim() !== '' ) {
+				event.preventDefault();
+			}
+
+			// Prevent sending new line when user presses enter without any text
+			if ( event.key === 'Enter' && inputRef.current?.value.trim() === '' ) {
+				event.preventDefault();
+			}
+		},
+		[ inputRef ]
 	);
 
 	useEffect( () => {
@@ -54,8 +85,10 @@ export const ResizableTextarea: React.FC< {
 			rows={ 1 }
 			className={ className }
 			onKeyUp={ onKeyUp }
-			placeholder={ __( 'Type a message…', __i18n_text_domain__ ) }
+			placeholder={ textAreaPlaceholder }
+			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }
+			disabled={ shouldDisableInputField }
 		/>
 	);
 };

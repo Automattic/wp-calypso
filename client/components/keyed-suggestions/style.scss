@@ -94,7 +94,7 @@
 		@include long-content-fade();
 
 		.is-selected & {
-			@include long-content-fade( $color: var( --color-primary-rgb ) );
+			@include long-content-fade( $color: var( --color-primary ) );
 		}
 	}
 }

@@ -165,6 +165,9 @@ import {
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_GOLDEN_TOKEN,
+	PLAN_JETPACK_GROWTH_MONTHLY,
+	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_GROWTH_BI_YEARLY,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -213,6 +216,7 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
+	TYPE_JETPACK_GROWTH,
 	TYPE_JETPACK_STARTER,
 	TYPE_FLEXIBLE,
 	TYPE_100_YEAR,
@@ -253,6 +257,9 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_BEAUTIFUL_THEMES,
@@ -2318,6 +2325,13 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
+const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_JETPACK_GROWTH,
+	getTitle: () => translate( 'Growth', { context: 'Jetpack product name' } ),
+	getDescription: () => translate( 'Grow your audience effortlessly.' ),
+} );
+
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_GOLDEN_TOKEN,
@@ -3289,6 +3303,46 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
 			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
+		],
+	},
+
+	[ PLAN_JETPACK_GROWTH_MONTHLY ]: {
+		...getPlanJetpackGrowthDetails(),
+		...getMonthlyTimeframe(),
+		getProductId: () => 2021,
+		getStoreSlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
+		getPathSlug: () => 'growth-monthly',
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+			PRODUCT_JETPACK_CREATOR_MONTHLY,
+		],
+	},
+
+	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
+		...getPlanJetpackGrowthDetails(),
+		...getAnnualTimeframe(),
+		getProductId: () => 2022,
+		getStoreSlug: () => PLAN_JETPACK_GROWTH_YEARLY,
+		getPathSlug: () => 'growth-yearly',
+		getMonthlySlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+			PRODUCT_JETPACK_CREATOR_YEARLY,
+		],
+	},
+
+	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
+		...getPlanJetpackGrowthDetails(),
+		...getBiAnnualTimeframe(),
+		getProductId: () => 2023,
+		getStoreSlug: () => PLAN_JETPACK_GROWTH_BI_YEARLY,
+		getPathSlug: () => 'growth-bi-yearly',
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
+			PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 		],
 	},
 

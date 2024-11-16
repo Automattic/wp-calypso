@@ -71,7 +71,12 @@ const ReferralPurchasesMobile = ( { purchases }: { purchases: ReferralPurchase[]
 	return (
 		<div className="referral-purchases-mobile__wrapper">
 			{ purchases.map( ( purchase ) => (
-				<PurchaseItem purchase={ purchase } data={ data } isFetching={ isFetching } />
+				<PurchaseItem
+					key={ `${ purchase.product_id }-${ purchase.referral_id }` }
+					purchase={ purchase }
+					data={ data }
+					isFetching={ isFetching }
+				/>
 			) ) }
 		</div>
 	);

@@ -10,7 +10,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { PanelSection } from 'calypso/sites/components/panel';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -219,7 +219,10 @@ const LaunchSite = () => {
 					<LaunchCard>{ renderContent() }</LaunchCard>
 				</>
 			) : (
-				<PanelSection title={ translate( 'Launch site' ) }>{ renderContent() }</PanelSection>
+				<PanelSection>
+					<PanelHeading>{ translate( 'Launch site' ) }</PanelHeading>
+					{ renderContent() }
+				</PanelSection>
 			) }
 			{ showPreviewLink &&
 				( ! isEnabled( 'untangling/hosting-menu' ) ? (

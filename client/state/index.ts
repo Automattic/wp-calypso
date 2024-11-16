@@ -6,7 +6,7 @@ import {
 } from 'react-redux';
 import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
-import thunkMiddleware from 'redux-thunk';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import { WithAddReducer } from 'calypso/state/add-reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
@@ -65,5 +65,5 @@ export function useSelector< State = IAppState, Selected = unknown >(
 }
 
 export function useStore(): Store< IAppState, AnyAction > {
-	return reduxUseStore();
+	return reduxUseStore< IAppState >();
 }

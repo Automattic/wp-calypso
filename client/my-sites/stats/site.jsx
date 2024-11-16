@@ -624,7 +624,7 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ ! supportsDevicesStats && isOldJetpack && (
+						{ supportsDevicesStats && isOldJetpack && (
 							<StatsModuleUpgradeDevicesOverlay
 								className={ halfWidthModuleClasses }
 								siteId={ siteId }

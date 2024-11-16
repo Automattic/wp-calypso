@@ -11,40 +11,42 @@ interface Benefit {
 
 const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
-		title: translate( 'Sales Training & Resources' ),
+		title: translate( 'Tools & Platforms' ),
 		description: translate(
-			'Foundational product training, marketing materials, and advanced sales training.'
+			'Intuitive agency dashboard for streamlined client billing, and client and product management.'
 		),
-		features: [
-			translate( 'Pro partners eligible to receive advanced sales training upon request.' ),
-		],
-		isComingSoon: true,
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Earning Opportunities' ),
+		description: translate(
+			"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products."
+		),
+		features: [],
+		isComingSoon: false,
 		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 	},
 	{
 		title: translate( 'Support' ),
 		description: preventWidows(
-			translate( 'Program support, priority product support*, and dedicated partner managers*.' )
-		),
-		features: [
 			translate(
-				'Pro partners receive access to assigned partner manager & priority support across Automattic products.'
-			),
-		],
-		isComingSoon: true,
+				'All program partners receive unified program and product support. Pro partners receive access to priority support across Automattic products.'
+			)
+		),
+		features: [],
+		isComingSoon: false,
 		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 	},
 	{
-		title: translate( 'Earning & Growth Opportunities' ),
+		title: translate( 'Training & Resources' ),
 		description: translate(
-			'Reseller and referral earning opportunities, access to leads generated through agency directory listing(s)*, and pre-qualified leads from Automattic sales teams*.'
+			'Foundational product training, education and best practices on growing your agency, marketing materials, and advanced sales training*.'
 		),
 		features: [
 			translate(
-				'Agency Partners eligible to receive leads generated through agency directory listings.'
-			),
-			translate(
-				'Pro Partners eligible to receive pre-qualified leads from Automattic sales teams when opportunities arise as well as leads generated through agency directory listings.'
+				'Pro partners eligible to receive advanced sales training and strategic consulting upon request.'
 			),
 		],
 		isComingSoon: true,
@@ -53,41 +55,67 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Networking & Community' ),
 		description: translate(
-			'Access to Automattic community platforms and advisory board* for strategic insights.'
+			"Access Automattic's community platforms and network with like-minded agencies."
 		),
-		features: [
-			translate( 'Pro partners eligible to receive invitation to join Automattic Advisory Board.' ),
-		],
-		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
-	},
-	{
-		title: translate( 'Tools & Platforms' ),
-		description: translate(
-			'Agency dash for streamlined client billing, program and product management, and free agency site on WordPress.com or Pressable*.'
-		),
-		features: [
-			translate( 'Agency partners receive a free WordPress.com and a Pressable site.' ),
-			translate( 'Pro partners receive a free WordPress.com and a Pressable site.' ),
-		],
-		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
-	},
-	{
-		title: translate( 'Visibility & Marketing' ),
-		description: preventWidows(
-			translate( 'Inclusion in agency directories and co-marketing opportunities*.' )
-		),
-		features: [ translate( 'Pro partners eligible for co-marketing opportunities.' ) ],
-		isComingSoon: true,
-		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
-	},
-	{
-		title: translate( 'Special Features' ),
-		description: translate( 'Early access to new Automattic Products and features.' ),
 		features: [],
 		isComingSoon: true,
 		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Directory Visibility & Badging' ),
+		description: preventWidows(
+			translate(
+				"Eligible for inclusion in Automattic's agency directories and increased exposure to potential clients."
+			)
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Early Access' ),
+		description: translate(
+			'Early access to new Automattic products and features (as available), and opportunities to contribute to the product roadmap.'
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Co-Marketing' ),
+		description: translate(
+			'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise.'
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Pre-Qualified Sales Leads' ),
+		description: translate(
+			'Pro Partners eligible to receive pre-qualified leads from Automattic sales teams when opportunities arise as well as leads generated through agency directory listings.'
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Dedicated Agency Partner Manager' ),
+		description: translate(
+			'Pro partners receive access to an assigned agency partner manager for strategic guidance.'
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'pro-agency-partner' ],
+	},
+	{
+		title: translate( 'Automattic Advisory Board' ),
+		description: translate(
+			"Pro partners are eligible to receive an invitation to the Automattic for Agencies advisory board to influence the program and Automattic's products."
+		),
+		features: [],
+		isComingSoon: false,
+		availableTiers: [ 'pro-agency-partner' ],
 	},
 ];
 

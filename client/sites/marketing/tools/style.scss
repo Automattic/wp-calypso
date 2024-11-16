@@ -88,9 +88,7 @@
 	.tools__header-image {
 		position: relative;
 		object-fit: contain;
-		@include wide-screen {
-			max-width: 330px;
-		}
+		max-width: 330px;
 	}
 }
 

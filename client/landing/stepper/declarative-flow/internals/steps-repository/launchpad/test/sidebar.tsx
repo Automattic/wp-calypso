@@ -77,7 +77,7 @@ const sidebarDomain = buildDomainResponse( {
 	isWPCOMDomain: true,
 } );
 
-const upgradeDomainBadgeText = 'Customize';
+const upgradeDomainBadgeText = 'Pick a custom domain';
 const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }?domainAndPlanPackage=true`;
 
 const props = {

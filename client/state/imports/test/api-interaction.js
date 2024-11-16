@@ -1,6 +1,6 @@
 import nock from 'nock';
 import { createStore, combineReducers, applyMiddleware } from 'redux'; // eslint-disable-line no-restricted-imports
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { fetchImporterState, lockImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import imports from 'calypso/state/imports/reducer';

@@ -139,6 +139,13 @@ html,
 		flex-grow: 1;
 	}
 
+	&.is-column-flex-align {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+		justify-content: normal;
+	}
+
 	@include break-medium {
 		width: auto;
 		> * {
@@ -213,6 +220,12 @@ html,
 
 .a4a-layout__header-breadcrumb {
 	margin-block-end: 4px;
+
+	&.is-hidden-on-mobile {
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
+	}
 }
 
 .a4a-layout__header-title {

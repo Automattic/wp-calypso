@@ -18,6 +18,15 @@
 			max-width: 100%;
 		}
 
+		.odie-send-message-input {
+			&:disabled {
+				-webkit-text-fill-color: var(--color-neutral-20);
+				background: var(--color-neutral-0);
+				border-color: var(--color-neutral-0);
+				color: var(--color-neutral-20);
+			}
+		}
+
 		.odie-send-message-input-spinner {
 			top: 28px;
 			/* stylelint-disable-next-line length-zero-no-unit */

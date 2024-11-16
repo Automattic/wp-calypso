@@ -112,7 +112,6 @@ export default function PurchaseMeta( {
 						<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
 						<span className="manage-purchase__detail">
 							<PurchaseMetaPrice purchase={ purchase } />
-							<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 						</span>
 						{ ! hideTaxString && (
 							<span>
@@ -120,6 +119,7 @@ export default function PurchaseMeta( {
 							</span>
 						) }
 						<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
+						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</li>
 				) }
 				<PurchaseMetaExpiration

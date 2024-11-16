@@ -2,7 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { getOdieTransferMessageConstant } from '../constants';
 import { emptyChat } from '../context';
 import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
@@ -12,10 +12,11 @@ import type { Chat, Message } from '../types';
  * @returns The combined chat.
  */
 export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
-	const { currentSupportInteraction } = useSelect( ( select ) => {
+	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
+			isChatLoaded: store.getIsChatLoaded(),
 		};
 	}, [] );
 
@@ -45,7 +46,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 				} );
 			}
 		} else if ( odieId && conversationId && shouldUseHelpCenterExperience ) {
-			if ( odieChat ) {
+			if ( odieChat && isChatLoaded ) {
 				getZendeskConversation( {
 					chatId: odieChat.odieId,
 					conversationId: conversationId.toString(),
@@ -57,7 +58,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 							conversationId: conversation.id,
 							messages: [
 								...odieChat.messages,
-								ODIE_TRANSFER_MESSAGE( true ),
+								...getOdieTransferMessageConstant( true ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
@@ -75,7 +76,15 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 				status: 'loaded',
 			} ) );
 		}
-	}, [ isOdieChatLoading, odieChat, conversationId, odieId, currentSupportInteraction ] );
+	}, [
+		isOdieChatLoading,
+		isChatLoaded,
+		odieChat,
+		conversationId,
+		odieId,
+		currentSupportInteraction,
+		shouldUseHelpCenterExperience,
+	] );
 
 	return { mainChatState, setMainChatState };
 };

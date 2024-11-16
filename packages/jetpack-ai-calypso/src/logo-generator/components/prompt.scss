@@ -60,12 +60,12 @@
 			color: var(--studio-gray-50, #646970);
 		}
 
-		&[placeholder]:empty::before {
-			content: attr(placeholder);
+		&[data-placeholder]:empty::before {
+			content: attr(data-placeholder);
 			color: var(--studio-gray-50, #646970);
 		}
 
-		&[placeholder]:empty:focus::before {
+		&[data-placeholder]:empty:focus::before {
 			content: "";
 		}
 	}

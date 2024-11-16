@@ -20,7 +20,8 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import SiteToolsLink from './link';
+import { isHostingMenuUntangled } from '../../utils';
+import AdministrationToolCard from './card';
 
 import './style.scss';
 
@@ -56,11 +57,25 @@ class SiteTools extends Component {
 			source,
 		} = this.props;
 
+		const isUntangled = isHostingMenuUntangled();
+
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
-		const startOverLink = `/settings/start-over/${ siteSlug }?source=${ source }`;
-		const startSiteTransferLink = `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
-		const deleteSiteLink = `/settings/delete-site/${ siteSlug }?source=${ source }`;
-		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;
+
+		const startOverLink = isUntangled
+			? `/sites/settings/administration/${ siteSlug }/reset-site`
+			: `/settings/start-over/${ siteSlug }?source=${ source }`;
+
+		const startSiteTransferLink = isUntangled
+			? `/sites/settings/administration/${ siteSlug }/transfer-site`
+			: `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
+
+		const deleteSiteLink = isUntangled
+			? `/sites/settings/administration/${ siteSlug }/delete-site`
+			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
+
+		const manageConnectionLink = isUntangled
+			? `/sites/settings/administration/${ siteSlug }/manage-connection`
+			: `/settings/manage-connection/${ siteSlug }?source=${ source }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
@@ -88,11 +103,11 @@ class SiteTools extends Component {
 		const startSiteTransferText = translate( 'Transfer your site, plan and purchases.' );
 
 		return (
-			<div className="site-tools">
+			<>
 				<QueryRewindState siteId={ siteId } />
 				{ headerTitle && <SettingsSectionHeader id="site-tools__header" title={ headerTitle } /> }
 				{ showChangeAddress && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
 						title={ changeSiteAddress }
@@ -100,7 +115,7 @@ class SiteTools extends Component {
 					/>
 				) }
 				{ shouldShowSiteCopyItem && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ copySiteUrl }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
@@ -111,17 +126,21 @@ class SiteTools extends Component {
 					/>
 				) }
 				{ showClone && (
-					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+					<AdministrationToolCard
+						href={ cloneUrl }
+						title={ cloneTitle }
+						description={ cloneText }
+					/>
 				) }
 				{ showStartSiteTransfer && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ startSiteTransferLink }
 						title={ startSiteTransferTitle }
 						description={ startSiteTransferText }
 					/>
 				) }
 				{ showDeleteContent && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
 						title={ startOver }
@@ -129,7 +148,7 @@ class SiteTools extends Component {
 					/>
 				) }
 				{ showDeleteSite && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
 						title={ deleteSite }
@@ -138,13 +157,13 @@ class SiteTools extends Component {
 					/>
 				) }
 				{ showManageConnection && (
-					<SiteToolsLink
+					<AdministrationToolCard
 						href={ manageConnectionLink }
 						title={ manageConnectionTitle }
 						description={ manageConnectionText }
 					/>
 				) }
-			</div>
+			</>
 		);
 	}
 

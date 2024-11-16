@@ -37,7 +37,7 @@
 		"clsx": "^2.1.1",
 		"fuse.js": "^6.6.2",
 		"lodash": "^4.17.21",
-		"redux": "^4.2.1",
+		"redux": "^5.0.1",
 		"tslib": "^2.3.0"
 	},
 	"peerDependencies": {

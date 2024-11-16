@@ -37,7 +37,7 @@ export default function OverviewSidebarAgencyTier() {
 			<Card className="agency-tier__card">
 				<FoldableCard
 					className="foldable-nav"
-					header={ translate( 'Agency Tiers' ) }
+					header={ translate( 'Your progress' ) }
 					expanded
 					compact
 					iconSize={ 18 }
@@ -71,7 +71,7 @@ export default function OverviewSidebarAgencyTier() {
 							}
 						>
 							<Icon icon={ arrowRight } size={ 18 } />
-							{ translate( 'Explore tiers and benefits' ) }
+							{ translate( 'Explore Tiers and benefits' ) }
 						</Button>
 					</div>
 				</FoldableCard>

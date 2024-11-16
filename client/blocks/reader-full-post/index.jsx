@@ -492,7 +492,7 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-					{ isDefaultLayout && <BackButton onClick={ this.handleBack } /> }
+					<BackButton onClick={ this.handleBack } />
 					<div className="reader-full-post__visit-site-container">
 						<ExternalLink
 							icon

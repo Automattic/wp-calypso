@@ -15,6 +15,7 @@ export type OdieAssistantContextInterface = {
 	extraContactOptions?: ReactNode;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
+	selectedSiteURL?: string | null;
 	selectedConversationId?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
@@ -36,6 +37,7 @@ export type OdieAssistantProviderProps = {
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
+	selectedSiteURL?: string | null;
 	selectedConversationId?: string | null;
 	version?: string | null;
 	children?: ReactNode;
@@ -113,6 +115,7 @@ export type Context = {
 		canned_response?: boolean;
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
+		show_ai_avatar?: boolean;
 	};
 };
 

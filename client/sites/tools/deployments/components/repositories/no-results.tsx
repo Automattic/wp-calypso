@@ -11,7 +11,7 @@ export const NoResults = ( { manageInstallationUrl }: { manageInstallationUrl: s
 					'Make sure that WordPress.com has access to the GitHub repositories you’d like to connect to.'
 				) }
 			</p>
-			<Button className="is-primary" target="_blank" href={ manageInstallationUrl }>
+			<Button variant="primary" target="_blank" href={ manageInstallationUrl }>
 				{ __( 'Check permissions' ) }
 				<Icon icon={ external } size={ 18 } />
 			</Button>

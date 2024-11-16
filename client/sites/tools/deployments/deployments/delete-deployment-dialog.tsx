@@ -1,6 +1,6 @@
-import { Dialog, BaseButton } from '@automattic/components';
-import { ExternalLink, ToggleControl } from '@wordpress/components';
-import { createInterpolateElement, useMemo, useState } from '@wordpress/element';
+import { Dialog } from '@automattic/components';
+import { Button, ExternalLink, ToggleControl } from '@wordpress/components';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { CodeDeploymentData } from './use-code-deployments-query';
@@ -26,30 +26,24 @@ export const DeleteDeploymentDialog = ( {
 		deployment.id
 	);
 
-	const dialogActions = useMemo( () => {
-		const actions: BaseButton[] = [
-			{
-				busy: isPending,
-				disabled: isPending,
-				action: 'delete',
-				label: __( 'Disconnect repository' ),
-				isPrimary: true,
-				scary: true,
-				onClick: async ( closeModal ) => {
-					await deleteDeployment( { removeFiles } );
-					closeModal();
-				},
-			},
-		];
-
-		return actions;
-	}, [ __, isPending, deleteDeployment, removeFiles ] );
-
 	return (
 		<Dialog
 			showCloseIcon={ ! isPending }
 			isVisible={ isVisible }
-			buttons={ dialogActions }
+			buttons={ [
+				<Button
+					key="delete"
+					isBusy={ isPending }
+					disabled={ isPending }
+					variant="primary"
+					onClick={ async () => {
+						await deleteDeployment( { removeFiles } );
+						onClose();
+					} }
+				>
+					{ __( 'Disconnect repository' ) }
+				</Button>,
+			] }
 			shouldCloseOnOverlayClick={ ! isPending }
 			shouldCloseOnEsc={ ! isPending }
 			onClose={ isPending ? undefined : onClose }

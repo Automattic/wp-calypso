@@ -67,7 +67,6 @@
 			padding: 16px;
 			font-size: 0.875rem;
 			font-style: normal;
-			list-style: inherit;
 
 			li {
 				margin-bottom: 6px;
@@ -75,6 +74,16 @@
 				p {
 					padding: 0;
 				}
+			}
+		}
+
+		ul {
+			list-style: initial;
+		}
+
+		&.odie-chatbox-message-no-avatar {
+			.odie-chatbox-message__content {
+				margin-left: 46px;
 			}
 		}
 
@@ -96,7 +105,7 @@
 		}
 
 		.chat-feedback-wrapper {
-			padding-top: 24px;
+			width: 100%;
 		}
 
 		.disclaimer {

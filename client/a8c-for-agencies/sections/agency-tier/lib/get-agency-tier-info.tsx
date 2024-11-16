@@ -13,11 +13,11 @@ const getAgencyTierInfo = (
 	translate: ( key: string, args?: Record< string, unknown > ) => string
 ) => {
 	let tierInfo: AgencyTierInfo = {
-		title: translate( 'Make your {{b}}first purchase{{/b}} to {{b}}activate your account{{/b}}', {
+		title: translate( '{{b}}Activate your account{{/b}} by {{b}}making your first purchase{{/b}}', {
 			components: { b: <b /> },
 		} ),
 		fullTitle: translate(
-			'{{label}}Make your first purchase to{{/label}} {{title}}Activate your Account{{/title}}',
+			'{{title}}Activate your account{{/title}} {{label}}by making your first purchase{{/label}}',
 			{
 				components: {
 					label: <div className="agency-tier-overview__current-agency-tier-label"></div>,
@@ -50,14 +50,14 @@ const getAgencyTierInfo = (
 					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
 				),
 				description: translate(
-					'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
+					'Progress towards the Agency Partner Tier and access extra benefits with additional purchases and referrals.'
 				),
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
 				celebrationModal: {
-					title: translate( 'You made your first purchase, your account is now activated!' ),
+					title: translate( "Woo-hoo! You've made your first purchase." ),
 					description: translate(
-						'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
+						"Your account is now activated, and you're on your way to reaching the next tier of benefits: Agency Partner."
 					),
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/emerging_partner_tier_celebration.mp4',
@@ -91,13 +91,12 @@ const getAgencyTierInfo = (
 				logo: AgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congratulations! You've reached the Partner tier!" ),
+					title: translate( "Congrats! You've reached the Agency Partner Tier." ),
 					description: translate(
 						"You've reached at least $1,200 in influenced revenue and have unlocked these additional benefits:"
 					),
 					benefits: [
-						translate( 'Inclusion in agency directories.' ),
-						translate( 'A free WordPress.com and Pressable site.' ),
+						translate( 'Eligibility for inclusion in our agency directories.' ),
 						translate( 'Early access to new Automattic products and features.' ),
 					],
 					video:
@@ -126,9 +125,9 @@ const getAgencyTierInfo = (
 				logo: ProAgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congratulations, you've reached the Pro Partner tier!" ),
+					title: translate( "Congratulations, you've reached the Pro Partner Tier!" ),
 					description: translate(
-						"You've influenced at least $5,000 in Automattic revenue and have unlocked these additional benefits:"
+						"You've reached top-tier status and unlocked these additional benefits:"
 					),
 					benefits: [
 						translate( 'A dedicated partner manager and priority support access.' ),
