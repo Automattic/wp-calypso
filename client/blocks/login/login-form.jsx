@@ -363,7 +363,6 @@ export class LoginForm extends Component {
 			addQueryArgs(
 				{
 					email_address: this.state.usernameOrEmail,
-					...( this.props.isFromAutomatticForAgenciesPlugin ? { a4a: '1' } : {} ),
 				},
 				'/log-in/jetpack/link'
 			)
