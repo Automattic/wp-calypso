@@ -316,8 +316,8 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
 	},
-	'tax-exempt-customers': {
-		link: 'https://wordpress.com/support/vat-gst-other-taxes/#other-tax-exempt-customers',
+	'state-based-business-use-tax': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#state-based-business-use-tax',
 		post_id: 234670,
 	},
 	team: {

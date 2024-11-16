@@ -1,6 +1,6 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic/shopping-cart';
-import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -43,7 +43,7 @@ export function IsForBusinessCheckbox() {
 	const isChecked = responseCart.tax.location.is_for_business ?? false;
 	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
 
-	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
+	if ( ! isUnitedStateWithBusinessOption ) {
 		return null;
 	}
 
@@ -59,7 +59,7 @@ export function IsForBusinessCheckbox() {
 								link: (
 									<InlineSupportLink
 										id="checkout-is-business-checkbox"
-										supportContext="tax-exempt-customers"
+										supportContext="state-based-business-use-tax"
 										showIcon={ false }
 									/>
 								),
