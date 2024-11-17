@@ -32,6 +32,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
 		"@wordpress/components": "^28.8.0",
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/icons": "^10.8.0",
