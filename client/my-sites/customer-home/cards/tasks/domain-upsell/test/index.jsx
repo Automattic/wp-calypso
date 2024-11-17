@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +10,10 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import wpcomRequest from 'wpcom-proxy-request';
 import DomainUpsell from '../';
+
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
 const initialState = {
 	sites: {
@@ -112,10 +116,14 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.post( '/rest/v1.1/me/shopping-cart/1' )
-			.reply( 200 );
+		wpcomRequest.mockReset();
+
+		wpcomRequest.mockImplementation( ( args ) => {
+			if ( args.path.startsWith( '/me/shopping-cart' ) ) {
+				return Promise.resolve( getEmptyResponseCart() );
+			}
+			return Promise.reject( `Unknown endpoint in test ${ args.path }:${ args.method }` );
+		} );
 
 		const queryClient = new QueryClient();
 		const mockStore = configureStore( [ thunk ] );
@@ -140,10 +148,14 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Yearly plans', async () => {
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.post( '/rest/v1.1/me/shopping-cart/1' )
-			.reply( 200 );
+		wpcomRequest.mockReset();
+
+		wpcomRequest.mockImplementation( ( args ) => {
+			if ( args.path.startsWith( '/me/shopping-cart' ) ) {
+				return Promise.resolve( getEmptyResponseCart() );
+			}
+			return Promise.reject( `Unknown endpoint in test ${ args.path }:${ args.method }` );
+		} );
 
 		const newInitialState = {
 			...initialState,
