@@ -86,10 +86,10 @@ A function that converts a `ResponseCart` to a `RequestCart`. Usually this shoul
 
 A function to create a `ShoppingCartManagerClient` which is the state management system used by the `shopping-cart` package. It's recommended to create this as a singleton and share it across your entire application.
 
-It requires an object to be passed in with the following properties:
+An options object can be passed in with the following optional properties:
 
-- `getCart: ( cartKey: number | 'no-site' | 'no-user' ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
-- `setCart: ( cartKey: number | 'no-site' | 'no-user', requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
+- `getCart?: ( cartKey: number | 'no-site' | 'no-user' ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
+- `setCart?: ( cartKey: number | 'no-site' | 'no-user', requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
 
 Once created, the `ShoppingCartManagerClient` has the properties:
 
