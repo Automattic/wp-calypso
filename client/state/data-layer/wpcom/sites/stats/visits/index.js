@@ -11,7 +11,7 @@ export const fetch = ( action ) => {
 
 	if ( period === 'hour' ) {
 		// Move the date to the end of the day to get the correct data for hours; otherwise, we get the data for the previous day.
-		const adjustedDate = moment( date ).endOf( 'day' ).format( 'YYYY-MM-DD HH:00' );
+		const adjustedDate = moment( date ).endOf( 'day' ).format( 'YYYY-MM-DD HH:00:00' );
 		return http(
 			{
 				method: 'GET',
