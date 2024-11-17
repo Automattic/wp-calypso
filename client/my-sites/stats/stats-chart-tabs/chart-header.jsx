@@ -1,7 +1,12 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import useIntervals from '../hooks/use-intervals';
 
 const ChartHeader = ( {
@@ -17,11 +22,21 @@ const ChartHeader = ( {
 	charts,
 } ) => {
 	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
-
 	const intervals = useIntervals( siteId );
+	const dispatch = useDispatch();
+	const isSiteJetpackNotAtomic = useSelector( ( state ) => {
+		return isJetpackSite( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} );
+	} );
+	const onGatedHandler = ( events, source, statType ) => {
+		// Stop the popup from showing for Jetpack sites.
+		if ( isSiteJetpackNotAtomic ) {
+			return;
+		}
 
-	const onGatedHandler = () => {
-		// TODO: Implement gated handler
+		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
 
 	return (
