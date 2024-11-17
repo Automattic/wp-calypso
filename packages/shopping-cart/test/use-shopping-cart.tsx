@@ -5,13 +5,28 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
+import wpcomRequest from 'wpcom-proxy-request';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
-import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
-import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
+import {
+	planOne,
+	planTwo,
+	renewalOne,
+	renewalTwo,
+	mainCartKey,
+	setCart,
+} from './utils/mock-cart-api';
+import {
+	ProductList,
+	MockProvider,
+	ProductListWithoutHook,
+	MockProviderWithDefaultGetterSetter,
+} from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
 
 const emptyResponseCart = getEmptyResponseCart();
+
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
 describe( 'useShoppingCart', () => {
 	const mockGetCart = jest.fn();
@@ -21,13 +36,14 @@ describe( 'useShoppingCart', () => {
 	beforeEach( () => {
 		mockGetCart.mockReset();
 		markUpdateComplete.mockClear();
+		( wpcomRequest as jest.Mock ).mockReset();
 		jest.restoreAllMocks();
 		testRunErrors = [];
 	} );
 
 	describe( 'addProductsToCart', () => {
-		const TestComponent = ( { products = undefined } ) => {
-			const { addProductsToCart } = useShoppingCart( undefined );
+		const TestComponent = ( { products = undefined, cartKey = undefined } ) => {
+			const { addProductsToCart } = useShoppingCart( cartKey );
 			const onClick = () => {
 				addProductsToCart( products )
 					.then( () => markUpdateComplete() )
@@ -35,7 +51,7 @@ describe( 'useShoppingCart', () => {
 			};
 			return (
 				<div>
-					<ProductList />
+					<ProductList cartKey={ cartKey } />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
@@ -64,6 +80,34 @@ describe( 'useShoppingCart', () => {
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => {
 				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+
+		it( 'adds a product to the cart if the cart is empty using the default shopping cart endpoint getter/setter', async () => {
+			( wpcomRequest as jest.Mock ).mockImplementation( ( args ) => {
+				if ( args.path.startsWith( '/me/shopping-cart' ) && args.method !== 'POST' ) {
+					return Promise.resolve( {
+						...emptyResponseCart,
+						products: [ planTwo ],
+					} );
+				}
+				if ( args.path.startsWith( '/me/shopping-cart' ) && args.method === 'POST' ) {
+					return setCart(
+						args.body.cart_key ?? parseInt( args.path.split( '/' ).slice( -1 )[ 0 ], 10 ),
+						args.body
+					);
+				}
+				return Promise.reject( `Unknown endpoint in test ${ args.path }:${ args.method }` );
+			} );
+			render(
+				<MockProviderWithDefaultGetterSetter>
+					<TestComponent products={ [ planOne ] } cartKey={ mainCartKey } />
+				</MockProviderWithDefaultGetterSetter>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
 			} );
 		} );
 
