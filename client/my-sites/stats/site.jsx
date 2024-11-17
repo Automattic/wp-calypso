@@ -500,7 +500,6 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
 							/>
 						) }
 					</>

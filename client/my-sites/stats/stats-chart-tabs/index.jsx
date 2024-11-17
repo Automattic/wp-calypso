@@ -54,7 +54,6 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		hideLegend: PropTypes.bool,
 		showChartHeader: PropTypes.bool,
 	};
 
@@ -107,7 +106,6 @@ class StatModuleChartTabs extends Component {
 			selectedPeriod,
 			isActiveTabLoading,
 			className,
-			hideLegend,
 			showChartHeader = false,
 		} = this.props;
 		const classes = [
@@ -123,7 +121,6 @@ class StatModuleChartTabs extends Component {
 			<div className={ clsx( ...classes ) }>
 				{ showChartHeader && (
 					<ChartHeader
-						showLegend={ ! hideLegend }
 						activeLegend={ this.props.activeLegend }
 						activeTab={ this.props.activeTab }
 						availableLegend={ this.props.availableLegend }
