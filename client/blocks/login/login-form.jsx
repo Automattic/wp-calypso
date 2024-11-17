@@ -727,7 +727,7 @@ export class LoginForm extends Component {
 		}
 
 		return this.props.translate(
-			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
+			'{{errorWrapper}}It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?{{/errorWrapper}}',
 			{
 				components: {
 					magicLoginLink: (
@@ -736,6 +736,7 @@ export class LoginForm extends Component {
 							onClick={ () => this.handleMagicLoginClick( 'login-form' ) }
 						/>
 					),
+					errorWrapper: <p className="login-form__validation-error-wrapper"></p>,
 				},
 			}
 		);

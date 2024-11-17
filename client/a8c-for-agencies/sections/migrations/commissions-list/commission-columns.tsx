@@ -9,7 +9,7 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 	return site;
 };
 
-export const MigratedOnColumn = ( { migratedOn }: { migratedOn: string } ) => {
+export const MigratedOnColumn = ( { migratedOn }: { migratedOn: Date } ) => {
 	return <FormattedDate date={ migratedOn } format={ DETAILS_DATE_FORMAT_SHORT } />;
 };
 

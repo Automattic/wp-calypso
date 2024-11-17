@@ -1,9 +1,11 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
+import MigrationsCommissionsListMobileView from './mobile-view';
 import type { MigrationCommissionItem } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
@@ -13,6 +15,8 @@ export default function MigrationsCommissionsList( {
 	items: MigrationCommissionItem[];
 } ) {
 	const translate = useTranslate();
+
+	const isDesktop = useDesktopBreakpoint();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -54,6 +58,10 @@ export default function MigrationsCommissionsList( {
 		],
 		[ translate ]
 	);
+
+	if ( ! isDesktop ) {
+		return <MigrationsCommissionsListMobileView commissions={ items } />;
+	}
 
 	return (
 		<div className="redesigned-a8c-table full-width">

@@ -143,7 +143,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 					className="prompt-query__input"
 					onInput={ onPromptInput }
 					onPaste={ onPromptPaste }
-					placeholder={ __(
+					data-placeholder={ __(
 						'Describe your site or simply ask for a logo specifying some details about it',
 						'jetpack'
 					) }

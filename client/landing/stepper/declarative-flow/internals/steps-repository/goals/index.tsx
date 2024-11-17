@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
@@ -26,6 +27,7 @@ type TracksGoalsSelectEventProperties = {
 	total: number;
 	ref?: string;
 	intent: string;
+	is_goals_big_sky_eligible: boolean;
 } & {
 	[ key in Onboard.SiteGoal as KebabToSnakeCase< key > ]?: number;
 };
@@ -75,15 +77,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 		intent: Onboard.SiteIntent
 	) => {
 		const commonEventProps = {
-			intent,
 			ref: refParameter ?? null,
 		};
 
 		const goalsSelectProperties: TracksGoalsSelectEventProperties = {
 			...commonEventProps,
+			intent,
 			goals: serializeGoals( goals ),
 			combo: goals.sort().join( ',' ),
 			total: goals.length,
+			is_goals_big_sky_eligible: isGoalsBigSkyEligible( goals ),
 		};
 
 		goals.forEach( ( goal, i ) => {
@@ -92,8 +95,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 			goalsSelectProperties[ snakeCaseGoal ] = i + 1;
 
 			recordTracksEvent( 'calypso_signup_goals_single_select', {
+				...commonEventProps,
 				goal,
-				ref: commonEventProps.ref,
 			} );
 		} );
 

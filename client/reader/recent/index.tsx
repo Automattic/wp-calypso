@@ -3,11 +3,12 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, SupportedLayouts, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import AsyncLoad from 'calypso/components/async-load';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
@@ -15,6 +16,7 @@ import { viewStream } from 'calypso/state/reader-ui/actions';
 import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
+import RecentPostSkeleton from './recent-post-skeleton';
 import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
@@ -25,6 +27,7 @@ const Recent = () => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, AnyAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -124,14 +127,6 @@ const Recent = () => {
 				perPage: view.perPage,
 			} ) as AnyAction
 		);
-		// Fetch the next page in advance.
-		dispatch(
-			requestPaginatedStream( {
-				streamKey,
-				page: view?.page ? view.page + 1 : undefined,
-				perPage: view.perPage,
-			} ) as AnyAction
-		);
 	}, [ dispatch, view, streamKey ] );
 
 	const paginationInfo = useMemo( () => {
@@ -166,21 +161,25 @@ const Recent = () => {
 		} ) );
 	}, [ selectedRecentSidebarFeedId ] );
 
+	useLayoutEffect( () => {
+		setIsLoading( data?.isRequesting );
+	}, [ data?.isRequesting ] );
+
 	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
-	const isEmpty = subscriptionsCount?.blogs === 0;
+	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
 
 	return (
 		<div className="recent-feed">
 			<div
-				className={ `recent-feed__list-column ${ selectedItem && ! isEmpty ? 'has-overlay' : '' } ${
-					isEmpty ? 'recent-feed-empty' : ''
-				}` }
+				className={ `recent-feed__list-column ${
+					selectedItem && hasSubscriptions ? 'has-overlay' : ''
+				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
 			>
 				<div className="recent-feed__list-column-header">
 					<FormattedHeader align="left" headerText={ translate( 'Recent' ) } />
 				</div>
 				<div className="recent-feed__list-column-content">
-					{ isEmpty ? (
+					{ ! hasSubscriptions ? (
 						<>
 							<p>
 								{ translate(
@@ -214,14 +213,25 @@ const Recent = () => {
 							}
 							paginationInfo={ paginationInfo }
 							defaultLayouts={ defaultLayouts as SupportedLayouts }
-							isLoading={ data?.isRequesting }
+							isLoading={ isLoading }
 						/>
 					) }
 				</div>
 			</div>
-			{ ! isEmpty && (
+			{ hasSubscriptions && (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-					{ selectedItem && getPostFromItem( selectedItem ) && (
+					{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
+						<RecentPostSkeleton />
+					) }
+					{ ! isLoading && data?.items.length === 0 && (
+						<EmptyContent
+							title={ translate( 'Nothing Posted Yet' ) }
+							line={ translate( 'This feed is currently empty.' ) }
+							illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+							illustrationWidth={ 400 }
+						/>
+					) }
+					{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 						<>
 							<AsyncLoad
 								require="calypso/blocks/reader-full-post"

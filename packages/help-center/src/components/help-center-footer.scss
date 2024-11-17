@@ -8,16 +8,17 @@
 	}
 
 	.button.help-center-contact-page__button {
+		align-items: center;
 		background-color: transparent;
 		border: 1px solid var(--studio-gray-10);
 		color: var(--studio-gray-100);
-		padding: 5px;
-		width: 100%;
 		display: flex;
-		align-items: center;
 		justify-content: center;
+		line-height: 1;
 		margin-bottom: 0;
-		line-height: 2.15;
+		padding: 5px;
+		text-wrap: balance;
+		width: 100%;
 
 		&:hover {
 			color: var(--studio-gray-100);
@@ -36,10 +37,6 @@
 			margin-right: 10px;
 			vertical-align: middle;
 			fill: var(--studio-gray-100);
-		}
-
-		span {
-			color: var(--studio-gray-100);
 		}
 	}
 }

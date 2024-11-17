@@ -53,7 +53,7 @@ const ReaderSidebarRecent = ( {
 	const dispatch = useDispatch();
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
-	const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
+	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 	const selectedSite = sites.find( ( site ) => site.feed_ID === selectedSiteFeedId );
 	if ( selectedSite && ! sitesToShow.includes( selectedSite ) ) {
@@ -102,8 +102,8 @@ const ReaderSidebarRecent = ( {
 					) }
 					onClick={ () => selectSite( null ) }
 				>
-					<span className="reader-sidebar-recent__site-name">{ translate( 'All' ) }</span>{ ' ' }
-					<span className="reader-sidebar-recent__site-count">{ totalUnseenCount }</span>
+					<span className="reader-sidebar-recent__site-name">{ translate( 'All' ) }</span>
+					{ /* <span className="reader-sidebar-recent__site-count">{ totalUnseenCount }</span> */ }
 				</button>
 			</li>
 			{ sitesToShow.map( ( site ) => (
@@ -118,7 +118,7 @@ const ReaderSidebarRecent = ( {
 						<span title={ site.name } className="reader-sidebar-recent__site-name">
 							{ site.name }
 						</span>
-						<span className="reader-sidebar-recent__site-count">{ site.unseen_count }</span>
+						{ /* <span className="reader-sidebar-recent__site-count">{ site.unseen_count }</span> */ }
 					</button>
 				</li>
 			) ) }

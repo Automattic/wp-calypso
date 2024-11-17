@@ -22,7 +22,7 @@ export default function StepImporting( { nextStepUrl }: SubscribersStepProps ) {
 			<p>
 				<ProgressBar className="is-larger-progress-bar" />
 			</p>
-			<ImporterActionButton href={ nextStepUrl }>{ __( 'View Summary' ) }</ImporterActionButton>
+			<ImporterActionButton href={ nextStepUrl }>{ __( 'View summary' ) }</ImporterActionButton>
 		</Card>
 	);
 }

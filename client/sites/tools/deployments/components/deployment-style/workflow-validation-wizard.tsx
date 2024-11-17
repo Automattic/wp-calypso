@@ -1,5 +1,5 @@
-import { Button, FormLabel } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
+import { FormLabel } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -42,7 +42,7 @@ export const WorkflowValidationWizard = ( {
 		} else {
 			dispatch( recordTracksEvent( 'calypso_hosting_github_workflow_valid' ) );
 		}
-	}, [ workflowCheckResult?.conclusion ] );
+	}, [ workflowCheckResult, dispatch ] );
 
 	const getWorkflowCheckDescription = () => {
 		if ( ! workflowCheckResult ) {
@@ -87,19 +87,20 @@ export const WorkflowValidationWizard = ( {
 					</WorkflowValidation>
 				);
 			} ) }
-			<Button
-				css={ { marginTop: '8px' } }
-				type="button"
-				className="button form-button"
-				onClick={ () => {
-					dispatch( recordTracksEvent( 'calypso_hosting_github_validate_workflow_click' ) );
-					onWorkflowVerify();
-				} }
-				disabled={ isCheckingWorkflow }
-				busy={ isCheckingWorkflow }
-			>
-				{ __( 'Verify workflow' ) }
-			</Button>
+			<div css={ { marginTop: '8px' } }>
+				<Button
+					variant="secondary"
+					type="button"
+					isBusy={ isCheckingWorkflow }
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_hosting_github_validate_workflow_click' ) );
+						onWorkflowVerify();
+					} }
+					disabled={ isCheckingWorkflow }
+				>
+					{ __( 'Verify workflow' ) }
+				</Button>
+			</div>
 		</div>
 	);
 };

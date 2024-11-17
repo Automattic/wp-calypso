@@ -41,14 +41,17 @@
 
 	&__repository {
 		&-input {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 7px 7px 7px 14px;
-			font-size: $font-body;
+			padding: 7px 14px;
+			font-size: $font-body-small;
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 2px;
 			background-color: #fff;
+			flex: 1;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-break: break-all;
 
 			&--has-error {
 				border-color: var(--color-error);
@@ -76,10 +79,6 @@
 		align-items: center;
 		gap: 8px;
 		margin-top: 16px;
-
-		.button {
-			overflow: visible;
-		}
 
 		.form-setting-explanation {
 			margin: 0;

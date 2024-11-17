@@ -27,6 +27,10 @@ import {
 	MARKETING_CONNECTIONS,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
+	SETTINGS_ADMINISTRATION_RESET_SITE,
+	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
+	SETTINGS_ADMINISTRATION_DELETE_SITE,
+	SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
 	SETTINGS_AGENCY,
 	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
@@ -38,6 +42,8 @@ import {
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
 	FEATURE_TO_ROUTE_MAP,
+	MARKETING_TRAFFIC,
+	MARKETING_SHARING,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -123,7 +129,12 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ MARKETING_TOOLS, MARKETING_CONNECTIONS ],
+				featureIds: [
+					MARKETING_TOOLS,
+					MARKETING_CONNECTIONS,
+					MARKETING_TRAFFIC,
+					MARKETING_SHARING,
+				],
 			},
 			{
 				label: __( 'Advanced Tools' ),
@@ -145,6 +156,10 @@ const DotcomPreviewPane = ( {
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION,
+					SETTINGS_ADMINISTRATION_RESET_SITE,
+					SETTINGS_ADMINISTRATION_TRANSFER_SITE,
+					SETTINGS_ADMINISTRATION_DELETE_SITE,
+					SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
 					SETTINGS_AGENCY,
 					SETTINGS_CACHING,
 					SETTINGS_WEB_SERVER,

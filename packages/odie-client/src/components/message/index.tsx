@@ -108,7 +108,12 @@ const MessageAvatarHeader = ( {
 	);
 };
 
-const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
+const ChatMessage = ( {
+	message,
+	currentUser,
+	displayChatWithSupportLabel,
+	isNextMessageFromSameSender,
+}: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
@@ -164,6 +169,8 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 				message={ message }
 				messageHeader={ messageHeader }
 				isDisliked={ isDisliked }
+				displayChatWithSupportLabel={ displayChatWithSupportLabel }
+				isNextMessageFromSameSender={ isNextMessageFromSameSender }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>

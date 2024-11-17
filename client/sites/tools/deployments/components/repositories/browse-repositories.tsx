@@ -1,11 +1,11 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { Button, SearchControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps, useState } from 'react';
 import { GitHubInstallationsDropdown } from '../installations-dropdown';
 import { useLiveInstallations } from '../installations-dropdown/use-live-installations';
 import { GitHubLoadingPlaceholder } from '../loading-placeholder';
 import { GitHubBrowseRepositoriesList } from './repository-list';
-import { SearchRepos } from './search-repos';
 
 import './style.scss';
 
@@ -71,7 +71,7 @@ export const GitHubBrowseRepositories = ( {
 							'To access your repositories, install the WordPress.com app on your GitHub account and grant it the necessary permissions.'
 						) }
 					</span>
-					<Button primary onClick={ onNewInstallationRequest }>
+					<Button variant="primary" onClick={ onNewInstallationRequest }>
 						{ __( 'Install the WordPress.com app' ) }
 						<Gridicon css={ { marginLeft: '4px' } } icon="external" size={ 18 } />
 					</Button>
@@ -89,8 +89,10 @@ export const GitHubBrowseRepositories = ( {
 					value={ installation }
 					onChange={ setInstallation }
 				/>
-				<SearchRepos
-					disabled={ ! installations.length }
+				<SearchControl
+					css={ { flex: 1 } }
+					__nextHasNoMarginBottom
+					placeholder={ __( 'Search repositories' ) }
 					value={ query }
 					onChange={ handleQueryChange }
 				/>

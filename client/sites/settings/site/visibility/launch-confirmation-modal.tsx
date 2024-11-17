@@ -1,6 +1,5 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 
 const ActionButtons = styled.div( {
@@ -23,22 +22,19 @@ export function LaunchConfirmationModal( {
 	const modalTitle = translate( "You're about to launch this website" );
 
 	return (
-		<Modal
-			className="site-settings__launch-confirmation-modal"
-			title={ modalTitle }
-			onRequestClose={ closeModal }
-		>
+		<Modal title={ modalTitle } onRequestClose={ closeModal } size="medium">
 			{ message && <p>{ message }</p> }
 			<p>{ translate( 'Ready to launch?' ) }</p>
 			<ActionButtons>
 				<Button
+					variant="secondary"
 					onClick={ () => {
 						closeModal();
 					} }
 				>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button primary onClick={ onConfirmation }>
+				<Button variant="primary" onClick={ onConfirmation }>
 					{ translate( 'Launch site' ) }
 				</Button>
 			</ActionButtons>

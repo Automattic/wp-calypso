@@ -21,6 +21,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
+import { useExperiment } from 'calypso/lib/explat';
 import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -84,6 +85,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSevenDayRefundPeriod?: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	currentPlanTerm: string;
+	shouldBypassUpsell: boolean;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps &
@@ -112,7 +114,14 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	}
 
 	render() {
-		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
+		const {
+			selectedSiteId,
+			hasProductsList,
+			hasSitePlans,
+			upsellType,
+			upgradeItem,
+			shouldBypassUpsell,
+		} = this.props;
 		const styleClass =
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design'
@@ -123,6 +132,12 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			upsellType === PROFESSIONAL_EMAIL_UPSELL
 				? upgradeItem
 				: parseInt( String( selectedSiteId ), 10 );
+
+		if ( shouldBypassUpsell ) {
+			this.redirectToThankYouPageUrl();
+			return null;
+		}
+
 		return (
 			<Main
 				className={ clsx( styleClass, {
@@ -270,7 +285,10 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
+		this.redirectToThankYouPageUrl( shouldHideUpsellNudges );
+	};
 
+	redirectToThankYouPageUrl = ( shouldHideUpsellNudges = true ) => {
 		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -509,6 +527,14 @@ const WrappedUpsellNudge = (
 		withProratedDiscounts: true,
 	} );
 
+	const [ isLoadingExperiment, assignment ] = useExperiment( 'calypso_checkout_premium_upsell', {
+		isEligible: upsellType === BUSINESS_PLAN_UPGRADE_UPSELL,
+	} );
+
+	if ( isLoadingExperiment ) {
+		return null;
+	}
+
 	return (
 		<UpsellNudge
 			{ ...props }
@@ -525,6 +551,7 @@ const WrappedUpsellNudge = (
 			siteSlug={ siteSlug }
 			selectedSiteId={ selectedSiteId }
 			translate={ translate }
+			shouldBypassUpsell={ assignment?.variationName === 'treatment' }
 		/>
 	);
 };
