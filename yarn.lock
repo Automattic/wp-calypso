@@ -1829,6 +1829,7 @@ __metadata:
     "@testing-library/react": "npm:^15.0.7"
     debug: "npm:^4.3.3"
     typescript: "npm:^5.3.3"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
