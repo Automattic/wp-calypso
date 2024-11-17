@@ -8,6 +8,7 @@ import {
 	noopManager,
 } from './managers';
 import { createActions } from './shopping-cart-actions';
+import { getCart, setCart } from './shopping-cart-endpoint-interface';
 import {
 	getInitialShoppingCartState,
 	isStatePendingUpdateOrQueuedAction,
@@ -28,6 +29,7 @@ import type {
 	ActionPromises,
 	ShoppingCartState,
 	CartKey,
+	ShoppingCartManagerClientOptions,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
@@ -176,13 +178,9 @@ function createShoppingCartManager(
 	};
 }
 
-export function createShoppingCartManagerClient( {
-	getCart,
-	setCart,
-}: {
-	getCart: GetCart;
-	setCart: SetCart;
-} ): ShoppingCartManagerClient {
+export function createShoppingCartManagerClient(
+	options?: ShoppingCartManagerClientOptions
+): ShoppingCartManagerClient {
 	const managersByCartKey = new Map< CartKey, ShoppingCartManager >();
 
 	function forCartKey( cartKey: CartKey | undefined ): ShoppingCartManager {
@@ -193,7 +191,9 @@ export function createShoppingCartManagerClient( {
 		let manager = managersByCartKey.get( cartKey );
 		if ( typeof manager === 'undefined' ) {
 			debug( `creating cart manager for "${ cartKey }"` );
-			manager = createShoppingCartManager( cartKey, getCart, setCart );
+			const getCartFromServer = options?.getCart ?? getCart;
+			const setCartOnServer = options?.setCart ?? setCart;
+			manager = createShoppingCartManager( cartKey, getCartFromServer, setCartOnServer );
 			managersByCartKey.set( cartKey, manager );
 		}
 		return manager;

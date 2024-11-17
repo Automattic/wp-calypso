@@ -18,6 +18,11 @@ export type CartKey = number | 'no-user' | 'no-site';
 export type GetCart = ( cartKey: CartKey ) => Promise< ResponseCart >;
 export type SetCart = ( cartKey: CartKey, requestCart: RequestCart ) => Promise< ResponseCart >;
 
+export interface ShoppingCartManagerClientOptions {
+	getCart?: GetCart;
+	setCart?: SetCart;
+}
+
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
 	defaultCartKey?: CartKey;
