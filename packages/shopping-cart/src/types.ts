@@ -19,7 +19,22 @@ export type GetCart = ( cartKey: CartKey ) => Promise< ResponseCart >;
 export type SetCart = ( cartKey: CartKey, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerClientOptions {
+	/**
+	 * This is an async function that will fetch the cart from the server.
+	 *
+	 * This should rarely be needed unless you have an unusual situation where
+	 * regular HTTP calls (via the `wpcom-proxy-request` package) will not
+	 * work.
+	 */
 	getCart?: GetCart;
+
+	/**
+	 * This is an async function that will send an updated cart to the server.
+	 *
+	 * This should rarely be needed unless you have an unusual situation where
+	 * regular HTTP calls (via the `wpcom-proxy-request` package) will not
+	 * work.
+	 */
 	setCart?: SetCart;
 }
 

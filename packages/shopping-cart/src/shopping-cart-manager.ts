@@ -178,6 +178,20 @@ function createShoppingCartManager(
 	};
 }
 
+/**
+ * A function to create a `ShoppingCartManagerClient` which is the state
+ * management system used by the `shopping-cart` package. It's recommended to
+ * create this as a singleton and share it across your entire application.
+ *
+ * Once created, a `ShoppingCartManagerClient` can use its `forCartKey()`
+ * method to return a `ShoppingCartManager` which is used to fetch and update a
+ * shopping cart.
+ *
+ * An optional options object can be provided if you want to override the
+ * default behavior of fetching or updating the shopping cart, but this should
+ * rarely be needed unless you have an unusual situation where regular HTTP
+ * calls (via the `wpcom-proxy-request` package) will not work.
+ */
 export function createShoppingCartManagerClient(
 	options?: ShoppingCartManagerClientOptions
 ): ShoppingCartManagerClient {
