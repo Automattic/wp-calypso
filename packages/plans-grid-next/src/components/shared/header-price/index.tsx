@@ -7,12 +7,13 @@ import {
 } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import { AddOns, Plans } from '@automattic/data-stores';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
 
@@ -45,7 +46,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex, enableTermSavingsPriceDisplay, siteId, coupon, helpers } =
 		usePlansGridContext();
-	const [ isAnyVisibleGridPlanDiscounted, setIsAnyVisibleGridPlanDiscounted ] = useState( false );
+	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
@@ -86,21 +87,20 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			: 0;
 
 	useEffect( () => {
-		const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some( ( { pricing } ) =>
-			Number.isFinite( pricing.discountedPrice.monthly )
-		);
-		const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
-			( { pricing } ) => pricing.introOffer && ! pricing.introOffer.isOfferComplete
-		);
-
 		if (
-			isAnyVisibleGridPlanOneTimeDiscounted ||
-			isAnyVisibleGridPlanOnIntroOffer ||
-			enableTermSavingsPriceDisplay
+			isGridPlanOneTimeDiscounted ||
+			isGridPlanOnIntroOffer ||
+			( enableTermSavingsPriceDisplay && savings )
 		) {
-			setIsAnyVisibleGridPlanDiscounted( true );
+			setIsAnyPlanPriceDiscounted( true );
 		}
-	}, [ enableTermSavingsPriceDisplay, visibleGridPlans ] );
+	}, [
+		enableTermSavingsPriceDisplay,
+		isGridPlanOnIntroOffer,
+		isGridPlanOneTimeDiscounted,
+		savings,
+		setIsAnyPlanPriceDiscounted,
+	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
@@ -217,7 +217,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	if ( isAnyVisibleGridPlanDiscounted ) {
+	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge is-hidden">' '</div>

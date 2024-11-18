@@ -36,6 +36,7 @@ import PopularBadge from '../popular-badge';
 import ActionButton from '../shared/action-button';
 import BillingTimeframe from '../shared/billing-timeframe';
 import HeaderPrice from '../shared/header-price';
+import HeaderPriceContextProvider from '../shared/header-price/header-price-context';
 import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
 import type {
@@ -53,7 +54,6 @@ import type {
 	PlanSlug,
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
-
 import './style.scss';
 
 const featureGroupRowTitleCellMaxWidth = 450;
@@ -500,24 +500,26 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
-				{ visibleGridPlans.map( ( { planSlug }, index ) => (
-					<ComparisonGridHeaderCell
-						planSlug={ planSlug }
-						key={ planSlug }
-						isLastInRow={ index === visibleGridPlans.length - 1 }
-						isFooter={ isFooter }
-						allVisible={ allVisible }
-						isInSignup={ isInSignup }
-						visibleGridPlans={ visibleGridPlans }
-						onPlanChange={ onPlanChange }
-						displayedGridPlans={ displayedGridPlans }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						planActionOverrides={ planActionOverrides }
-						selectedPlan={ selectedPlan }
-						showRefundPeriod={ showRefundPeriod }
-						isStuck={ isStuck }
-					/>
-				) ) }
+				<HeaderPriceContextProvider>
+					{ visibleGridPlans.map( ( { planSlug }, index ) => (
+						<ComparisonGridHeaderCell
+							planSlug={ planSlug }
+							key={ planSlug }
+							isLastInRow={ index === visibleGridPlans.length - 1 }
+							isFooter={ isFooter }
+							allVisible={ allVisible }
+							isInSignup={ isInSignup }
+							visibleGridPlans={ visibleGridPlans }
+							onPlanChange={ onPlanChange }
+							displayedGridPlans={ displayedGridPlans }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							planActionOverrides={ planActionOverrides }
+							selectedPlan={ selectedPlan }
+							showRefundPeriod={ showRefundPeriod }
+							isStuck={ isStuck }
+						/>
+					) ) }
+				</HeaderPriceContextProvider>
 			</PlanRow>
 		);
 	}
