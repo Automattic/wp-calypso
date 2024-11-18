@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -28,6 +28,7 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
+import LocationChart from 'calypso/my-sites/promote-post-i2/components/location-charts';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -628,44 +629,59 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 
 								{ ! campaignsStatsIsLoading && campaignStats && (
-									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-										<div>
-											<div className="campaign-item-page__graph">
-												<DropdownMenu
-													class="campaign-item-page__graph-selector"
-													controls={ [
-														{
-															onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-															title: __( 'Clicks' ),
-															isDisabled: chartSource === ChartSourceOptions.Clicks,
-														},
-														{
-															onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-															title: __( 'Impressions' ),
-															isDisabled: chartSource === ChartSourceOptions.Impressions,
-														},
-													] }
-													icon={ chevronDown }
-													text={
-														chartSource === ChartSourceOptions.Clicks
-															? __( 'Clicks' )
-															: __( 'Impressions' )
-													}
-													label={ chartSource }
-												/>
-												{ ChartSourceOptions.Clicks === chartSource &&
-													getCampaignStatsChart(
-														campaignStats?.series.clicks,
-														ChartSourceOptions.Clicks
+									<>
+										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+											<div>
+												<div className="campaign-item-page__graph">
+													<DropdownMenu
+														class="campaign-item-page__graph-selector"
+														controls={ [
+															{
+																onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																title: __( 'Clicks' ),
+																isDisabled: chartSource === ChartSourceOptions.Clicks,
+															},
+															{
+																onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																title: __( 'Impressions' ),
+																isDisabled: chartSource === ChartSourceOptions.Impressions,
+															},
+														] }
+														icon={ chevronDown }
+														text={
+															chartSource === ChartSourceOptions.Clicks
+																? __( 'Clicks' )
+																: __( 'Impressions' )
+														}
+														label={ chartSource }
+													/>
+													{ getCampaignStatsChart(
+														campaignStats?.series[ chartSource ],
+														chartSource
 													) }
-												{ ChartSourceOptions.Impressions === chartSource &&
-													getCampaignStatsChart(
-														campaignStats?.series.impressions,
-														ChartSourceOptions.Impressions
-													) }
+												</div>
 											</div>
 										</div>
-									</div>
+
+										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+											<div>
+												<div className="campaign-item-page__locaton-charts">
+													<span className="campaign-item-details__label">
+														{ chartSource === ChartSourceOptions.Clicks
+															? __( 'Clicks by location' )
+															: __( 'Impressions by location' ) }
+													</span>
+													<div>
+														<LocationChart
+															stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+															total={ campaignStats.total_stats.total[ chartSource ] }
+															source={ chartSource }
+														/>
+													</div>
+												</div>
+											</div>
+										</div>
+									</>
 								) }
 							</div>
 						) }
