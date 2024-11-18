@@ -249,7 +249,7 @@ export const getLoginLinkPageUrl = ( {
 };
 
 export const getPluginTitle = ( pluginName, translate ) => {
-	const pluginNames = {
+	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
 		'order-attribution': translate( 'Order Attribution' ),
@@ -258,13 +258,13 @@ export const getPluginTitle = ( pluginName, translate ) => {
 
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
-		return pluginNames.default;
+		return allowedPluginNames.default;
 	}
 
 	// Handle multiple plugin names separated by commas
 	const titles = pluginName
 		.split( ',' )
-		.map( ( name ) => pluginNames[ name.trim() ] || pluginNames.default );
+		.map( ( name ) => allowedPluginNames[ name.trim() ] || allowedPluginNames.default );
 
 	const uniqueTitles = Array.from( new Set( titles ) );
 
