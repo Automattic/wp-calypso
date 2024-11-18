@@ -152,13 +152,15 @@ const ChatMessage = ( {
 	);
 
 	const fullscreenContent = (
-		<div className="odie-fullscreen" onClick={ handleBackdropClick }>
-			<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
-				<MessageContent
-					message={ message }
-					messageHeader={ messageHeader }
-					isDisliked={ isDisliked }
-				/>
+		<div className="help-center-experience-disabled">
+			<div className="odie-fullscreen" onClick={ handleBackdropClick }>
+				<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
+					<MessageContent
+						message={ message }
+						messageHeader={ messageHeader }
+						isDisliked={ isDisliked }
+					/>
+				</div>
 			</div>
 		</div>
 	);
