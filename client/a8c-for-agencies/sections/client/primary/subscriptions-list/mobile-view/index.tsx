@@ -26,6 +26,7 @@ const SubscriptionItem = ( {
 	const translate = useTranslate();
 
 	const product = products?.find( ( product ) => product.product_id === subscription.product_id );
+	const isPressable = product?.slug.startsWith( 'pressable' );
 
 	return (
 		<div className="subscriptions-mobile">
@@ -34,7 +35,11 @@ const SubscriptionItem = ( {
 					<h3>{ translate( 'PURCHASE' ).toUpperCase() }</h3>
 				</div>
 				<p className="subscriptions-mobile__product-name">
-					<SubscriptionPurchase isFetching={ isFetching } name={ product?.name } />
+					<SubscriptionPurchase
+						isFetching={ isFetching }
+						name={ product?.name }
+						isPressable={ isPressable }
+					/>
 				</p>
 			</div>
 			<div className="subscriptions-mobile__content">
