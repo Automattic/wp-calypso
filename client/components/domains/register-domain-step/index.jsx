@@ -221,11 +221,14 @@ class RegisterDomainStep extends Component {
 	}
 
 	isSubdomainResultsVisible() {
+		if ( ! this.props.shouldQuerySubdomains ) {
+			return false;
+		}
+
 		return (
-			this.props.shouldQuerySubdomains &&
-			( this.props.includeWordPressDotCom ||
-				this.props.includeDotBlogSubdomain ||
-				this.props.otherManagedSubdomains?.length > 0 )
+			this.props.includeWordPressDotCom ||
+			this.props.includeDotBlogSubdomain ||
+			this.props.otherManagedSubdomains?.length > 0
 		);
 	}
 
