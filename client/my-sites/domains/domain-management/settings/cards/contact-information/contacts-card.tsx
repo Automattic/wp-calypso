@@ -192,7 +192,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					{ props.registeredViaTrustee && renderTrusteeNotice() }
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
-						{ !! isHundredYearDomain && (
+						{ ! isHundredYearDomain && (
 							<Button
 								disabled={ disableEdit || readOnly || pendingContactUpdate }
 								href={
