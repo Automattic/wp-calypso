@@ -23,17 +23,11 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
-	hasSubscriberLimit?: boolean;
 	flowName?: string;
-	showFormManualListLabel?: boolean;
-	allowEmptyFormSubmit?: boolean;
-	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
-	onSkipBtnClick?: () => void;
 	onImportStarted?: ( hasFile: boolean ) => void;
 	onImportFinished?: () => void;
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
-	showSkipLink?: boolean;
 	disabled?: boolean;
 	hidden?: boolean;
 }
