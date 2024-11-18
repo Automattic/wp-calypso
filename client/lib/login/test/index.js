@@ -255,7 +255,7 @@ describe( 'getPluginTitle', () => {
 	} );
 
 	it( 'should handle extra whitespace in plugin names', () => {
-		const result = getPluginTitle( ' jetpack-ai , woocommerce-payments ', translate );
+		const result = getPluginTitle( ' jetpack-ai ,, woocommerce-payments ', translate );
 		expect( result ).toBe( 'Jetpack and WooPayments' );
 	} );
 } );
