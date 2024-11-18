@@ -258,4 +258,13 @@ describe( 'getPluginTitle', () => {
 		const result = getPluginTitle( ' jetpack-ai ,, woocommerce-payments ', translate );
 		expect( result ).toBe( 'Jetpack and WooPayments' );
 	} );
+
+	it( 'should handle French formatting for three plugin names', () => {
+		const result = getPluginTitle(
+			'jetpack-ai,woocommerce-payments,order-attribution',
+			translate,
+			'fr'
+		);
+		expect( result ).toBe( 'Jetpack, WooPayments et Order Attribution' );
+	} );
 } );

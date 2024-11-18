@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -618,7 +618,8 @@ class Login extends Component {
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
 			const pluginName = getPluginTitle(
 				new URLSearchParams( this.props.initialQuery?.redirect_to ).get( 'plugin_name' ),
-				translate
+				translate,
+				getLocaleSlug()
 			);
 			let subtitle = null;
 

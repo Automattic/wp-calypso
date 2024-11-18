@@ -248,7 +248,7 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate ) => {
+export const getPluginTitle = ( pluginName, translate, langSlug = 'en' ) => {
 	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
@@ -268,14 +268,8 @@ export const getPluginTitle = ( pluginName, translate ) => {
 
 	const uniqueTitles = Array.from( new Set( titles ) );
 
-	// Adjust formatting for two vs more than two plugins
-	if ( uniqueTitles.length === 2 ) {
-		return `${ uniqueTitles[ 0 ] } ${ translate( 'and' ) } ${ uniqueTitles[ 1 ] }`;
-	} else if ( uniqueTitles.length > 2 ) {
-		return `${ uniqueTitles.slice( 0, -1 ).join( ', ' ) }, ${ translate( 'and' ) } ${
-			uniqueTitles[ uniqueTitles.length - 1 ]
-		}`;
-	}
+	// Use Intl.ListFormat for proper localized list formatting
+	const formatter = new Intl.ListFormat( langSlug, { style: 'long', type: 'conjunction' } );
 
-	return titles[ 0 ];
+	return formatter.format( uniqueTitles );
 };
