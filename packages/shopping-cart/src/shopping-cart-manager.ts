@@ -8,7 +8,6 @@ import {
 	noopManager,
 } from './managers';
 import { createActions } from './shopping-cart-actions';
-import { getCart, setCart } from './shopping-cart-endpoint-interface';
 import {
 	getInitialShoppingCartState,
 	isStatePendingUpdateOrQueuedAction,
@@ -29,7 +28,6 @@ import type {
 	ActionPromises,
 	ShoppingCartState,
 	CartKey,
-	ShoppingCartManagerClientOptions,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
@@ -178,23 +176,13 @@ function createShoppingCartManager(
 	};
 }
 
-/**
- * A function to create a `ShoppingCartManagerClient` which is the state
- * management system used by the `shopping-cart` package. It's recommended to
- * create this as a singleton and share it across your entire application.
- *
- * Once created, a `ShoppingCartManagerClient` can use its `forCartKey()`
- * method to return a `ShoppingCartManager` which is used to fetch and update a
- * shopping cart.
- *
- * An optional options object can be provided if you want to override the
- * default behavior of fetching or updating the shopping cart, but this should
- * rarely be needed unless you have an unusual situation where regular HTTP
- * calls (via the `wpcom-proxy-request` package) will not work.
- */
-export function createShoppingCartManagerClient(
-	options?: ShoppingCartManagerClientOptions
-): ShoppingCartManagerClient {
+export function createShoppingCartManagerClient( {
+	getCart,
+	setCart,
+}: {
+	getCart: GetCart;
+	setCart: SetCart;
+} ): ShoppingCartManagerClient {
 	const managersByCartKey = new Map< CartKey, ShoppingCartManager >();
 
 	function forCartKey( cartKey: CartKey | undefined ): ShoppingCartManager {
@@ -205,9 +193,7 @@ export function createShoppingCartManagerClient(
 		let manager = managersByCartKey.get( cartKey );
 		if ( typeof manager === 'undefined' ) {
 			debug( `creating cart manager for "${ cartKey }"` );
-			const getCartFromServer = options?.getCart ?? getCart;
-			const setCartOnServer = options?.setCart ?? setCart;
-			manager = createShoppingCartManager( cartKey, getCartFromServer, setCartOnServer );
+			manager = createShoppingCartManager( cartKey, getCart, setCart );
 			managersByCartKey.set( cartKey, manager );
 		}
 		return manager;

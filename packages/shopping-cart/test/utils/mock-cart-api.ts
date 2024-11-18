@@ -84,7 +84,7 @@ export async function getCart( cartKey: CartKey ): Promise< ResponseCart > {
 			cart_key: cartKey,
 		};
 	}
-	throw new Error( `Unknown cart key: ${ cartKey }` );
+	throw new Error( 'Unknown cart key' );
 }
 
 function createProduct( productProps: RequestCartProduct ): ResponseCartProduct {
@@ -112,5 +112,5 @@ export async function setCart( cartKey: CartKey, newCart: RequestCart ): Promise
 			},
 		};
 	}
-	throw new Error( `Unknown cart key: ${ cartKey }` );
+	throw new Error( 'Unknown cart key' );
 }

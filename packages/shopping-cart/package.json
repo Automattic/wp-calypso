@@ -35,8 +35,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/shopping-cart#readme",
 	"dependencies": {
-		"debug": "^4.3.3",
-		"wpcom-proxy-request": "workspace:^"
+		"debug": "^4.3.3"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",
