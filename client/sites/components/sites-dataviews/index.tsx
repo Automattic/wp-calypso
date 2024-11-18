@@ -207,7 +207,7 @@ const DotcomSitesDataViews = ( {
 	);
 
 	return (
-		<div className="sites-overview__content">
+		<div className="sites-dataviews">
 			<DataViews
 				data={ sites }
 				fields={ fields }
