@@ -74,7 +74,7 @@ export function DomainFormControl( {
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
-	let shouldQuerySubdomains: boolean | undefined = undefined;
+	let shouldQuerySubdomains: boolean = true;
 
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
