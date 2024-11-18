@@ -22,6 +22,7 @@ import {
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
+import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { tip } from './icon';
 
 import './style.scss';
@@ -360,37 +361,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	function renderImportCsvDisclaimerMsg() {
-		const importSubscribersUrl = ! isWPCOMSite
-			? 'https://jetpack.com/support/newsletter/import-subscribers/'
-			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
-
-		return (
-			( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) && (
-				<p className="add-subscriber__form--disclaimer">
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: the first string variable shows CTA button name */
-							translate(
-								'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
-							),
-							submitBtnName
-						),
-						{
-							Button: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( importSubscribersUrl ) }
-								/>
-							),
-						}
-					) }
-				</p>
-			)
-		);
-	}
-
 	function renderImportCsvLabel() {
 		const ariaLabelMsg = hasSubscriberLimit
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
@@ -523,7 +493,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ renderEmptyFormValidationMsg() }
 
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
+					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 
 					<NextButton
 						type="submit"

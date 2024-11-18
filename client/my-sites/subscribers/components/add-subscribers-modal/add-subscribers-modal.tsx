@@ -291,7 +291,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
-						renderLearnMoreLink={ () => renderLearnMoreLink( isJetpack ) }
 					/>
 				</>
 			) }

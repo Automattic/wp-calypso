@@ -1,8 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { DropZone, FormFileUpload, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	DropZone,
+	FormFileUpload,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -12,6 +16,7 @@ import { useCallback, FormEvent, FunctionComponent, useState, useEffect, useRef 
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
+import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { tip } from './icon';
 
 import './style.scss';
@@ -31,7 +36,6 @@ interface Props {
 	showSkipLink?: boolean;
 	disabled?: boolean;
 	hidden?: boolean;
-	renderLearnMoreLink?: () => React.ReactNode;
 }
 
 export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
@@ -49,7 +53,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		onChangeIsImportValid,
 		hidden,
 		disabled,
-		renderLearnMoreLink,
 	} = props;
 
 	const { importCsvSubscribersUpdate, getSubscribersImports } = useDispatch( Subscriber.store );
@@ -326,24 +329,16 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 							</FormFileUpload>
 						</VStack>
 					</div>
-
-					{ isSelectedFileValid && selectedFile && ! includesHandledError() && (
-						<p className="add-subscriber__form--disclaimer">
-							{ __(
-								'By clicking "Add Subscribers," you represent that you\'ve obtained the appropriate consent to email each person.'
-							) }{ ' ' }
-							{ renderLearnMoreLink && renderLearnMoreLink() }
-						</p>
-					) }
-
-					<NextButton
+					<AddSubscribersDisclaimer buttonLabel={ __( 'Add subscribers' ) } />
+					<Button
 						type="submit"
+						variant="primary"
 						className="add-subscriber__form-submit-btn"
 						isBusy={ inProgress && ! disabled }
-						disabled={ ! selectedFile || disabled }
+						disabled={ ! selectedFile || disabled || includesHandledError() }
 					>
 						{ __( 'Add subscribers' ) }
-					</NextButton>
+					</Button>
 				</form>
 			</div>
 		</div>
