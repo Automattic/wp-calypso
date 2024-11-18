@@ -51,7 +51,7 @@
 		"external-media/openverse": true,
 		"cookie-banner": true,
 		"google-my-business": true,
-		"global-styles/on-personal-plan": false,
+		"global-styles/on-personal-plan": true,
 		"help": true,
 		"help/gpt-response": true,
 		"help-center-experience": false,
