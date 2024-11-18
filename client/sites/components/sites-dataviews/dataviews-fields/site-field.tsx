@@ -43,6 +43,13 @@ const SiteListTile = styled( ListTile )`
 		gap: 12px;
 		max-width: 500px;
 		width: 100%;
+		/*  
+		 * Ensures the row fits within the device width on mobile in most cases, 
+		 * as it's not apparent to users that they can scroll horizontally.
+		*/
+		@media ( max-width: 480px ) {
+			width: 250px;
+		}
 	}
 `;
 
