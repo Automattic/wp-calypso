@@ -51,8 +51,12 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
 	} = gridPlansIndex[ planSlug ];
+	const { setIsAnyVisibleGridPlanDiscounted } = useDispatch( WpcomPlansUI.store );
+	const isAnyVisibleGridPlanDiscounted = useSelect(
+		( select ) => select( WpcomPlansUI.store ).getIsAnyVisibileGridPlanDiscounted(),
+		[]
+	);
 	const isPricedPlan = null !== originalPrice.monthly;
-
 	/**
 	 * If this discount is related to a `Plan upgrade credit`
 	 * then we do not show any discount messaging as per Automattic/martech#1927
@@ -60,14 +64,12 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	 */
 	const isGridPlanOneTimeDiscounted = Number.isFinite( discountedPrice.monthly );
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
-
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
 	const isLargeCurrency = useIsLargeCurrency( {
 		prices,
 		currencyCode: currencyCode || 'USD',
 		ignoreWhitespace: true,
 	} );
-
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -107,6 +109,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
+		setIsAnyVisibleGridPlanDiscounted( true );
+
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
@@ -147,6 +151,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOneTimeDiscounted ) {
+		setIsAnyVisibleGridPlanDiscounted( true );
+
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge">
@@ -181,6 +187,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
+		setIsAnyVisibleGridPlanDiscounted( true );
+
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge">
