@@ -59,14 +59,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	 * We currently only support the `One time discount` in some currencies
 	 */
 	const isGridPlanOneTimeDiscounted = Number.isFinite( discountedPrice.monthly );
-	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some( ( { pricing } ) =>
-		Number.isFinite( pricing.discountedPrice.monthly )
-	);
-
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
-	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
-		( { pricing } ) => pricing.introOffer && ! pricing.introOffer.isOfferComplete
-	);
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
 	const isLargeCurrency = useIsLargeCurrency( {
