@@ -3,11 +3,13 @@ import {
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
 	isJetpackCompleteSlug,
+	isJetpackGrowthPlan,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackSocialV1Slug,
 	isJetpackStatsFreeProductSlug,
 	isJetpackStatsPaidProductSlug,
 	isJetpackVideoPressSlug,
@@ -26,10 +28,12 @@ type featureString =
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
+	| 'growth'
 	| 'scan'
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'social-v1'
 	| 'stats-free'
 	| 'stats'
 	| 'support'
@@ -89,6 +93,22 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+			];
+		case 'growth':
+			// JetPack Creator features
+			return [
+				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Social' ),
+				translate( 'Display ads with WordAds' ),
+				translate( 'Pay with PayPal' ),
+				translate( 'Import unlimited subscribers' ),
+				translate( '40+ Jetpack blocks' ),
+				translate( 'Paid content gating' ),
+				translate( 'Paywall access' ),
+				translate( 'Newsletter' ),
+				translate( 'Priority support' ),
+				translate( '2% transaction fees' ),
 			];
 		case 'scan':
 			return [
@@ -108,6 +128,15 @@ function getFeatureStrings(
 			return [ translate( 'Engagement Optimizer' ) ];
 		case 'social-basic':
 			return [
+				translate( 'Automatically share your posts' ),
+				translate( 'Posting to multiple channels at once' ),
+				translate( 'Scheduled posts' ),
+				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate( 'Content recycling' ),
+			];
+		case 'social-v1':
+			return [
+				translate( 'Engagement Optimizer' ),
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
@@ -201,6 +230,13 @@ export default function getJetpackProductFeatures(
 		];
 	}
 
+	if ( isJetpackGrowthPlan( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'growth', translate ),
+			...getFeatureStrings( 'support', translate ),
+		];
+	}
+
 	if ( isJetpackScanSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'scan', translate ),
@@ -239,6 +275,10 @@ export default function getJetpackProductFeatures(
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
 		];
+	}
+
+	if ( isJetpackSocialV1Slug( product.product_slug ) ) {
+		return [ ...getFeatureStrings( 'social-v1', translate ) ];
 	}
 
 	if ( isJetpackStatsFreeProductSlug( product.product_slug ) ) {

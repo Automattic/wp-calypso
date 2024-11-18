@@ -7,6 +7,7 @@ type Props = {
 	showStickyContent?: boolean;
 	children: ReactNode;
 	className?: string;
+	useColumnAlignment?: boolean;
 };
 
 export function LayoutHeaderTitle( { children }: Props ) {
@@ -17,14 +18,26 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 	return <h2 className="a4a-layout__header-subtitle">{ children }</h2>;
 }
 
-export function LayoutHeaderActions( { children, className }: Props ) {
-	const wrapperClass = clsx( className, 'a4a-layout__header-actions' );
+export function LayoutHeaderActions( { children, className, useColumnAlignment }: Props ) {
+	const wrapperClass = clsx( className, 'a4a-layout__header-actions', {
+		'is-column-flex-align': useColumnAlignment,
+	} );
 	return <div className={ wrapperClass }>{ children }</div>;
 }
 
-export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } ) {
+export function LayoutHeaderBreadcrumb( {
+	items,
+	hideOnMobile,
+}: {
+	items: BreadcrumbItem[];
+	hideOnMobile?: boolean;
+} ) {
 	return (
-		<div className="a4a-layout__header-breadcrumb">
+		<div
+			className={ clsx( 'a4a-layout__header-breadcrumb', {
+				'is-hidden-on-mobile': hideOnMobile,
+			} ) }
+		>
 			<Breadcrumb items={ items } />
 		</div>
 	);

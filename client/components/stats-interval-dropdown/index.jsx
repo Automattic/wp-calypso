@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown, lock } from '@wordpress/icons';
 import clsx from 'clsx';
+import { capitalize } from 'lodash';
 import qs from 'qs';
 import './style.scss';
 
@@ -77,7 +78,9 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	}
 
 	function getDisplayLabel() {
-		return intervals[ period ].label;
+		// If the period is not in the intervals list, capitalize it and show in the label - however user wouldn't be able to select it.
+		// TODO: this is a temporary solution, we should remove this once we have all the intervals in the list.
+		return intervals[ period ]?.label ?? capitalize( period );
 	}
 
 	function onSelectionHandler( interval ) {

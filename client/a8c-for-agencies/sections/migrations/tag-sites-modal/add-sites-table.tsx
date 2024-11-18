@@ -6,6 +6,8 @@ import { useCallback, useMemo, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFetchAllManagedSites } from '../hooks/use-fetch-all-managed-sites';
 
 export type SiteItem = {
@@ -23,16 +25,21 @@ export default function MigrationsAddSitesTable( {
 } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
+	const dispatch = useDispatch();
 
 	const { items, isLoading } = useFetchAllManagedSites();
 
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
 	const onSelectAllSites = useCallback( () => {
-		setSelectedSites(
-			selectedSites.length === items.length ? [] : items.map( ( item ) => item.id )
+		const isAllSitesSelected = selectedSites.length === items.length;
+		setSelectedSites( isAllSitesSelected ? [] : items.map( ( item ) => item.id ) );
+		dispatch(
+			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
+				type: isAllSitesSelected ? 'deselect' : 'select',
+			} )
 		);
-	}, [ items, selectedSites.length, setSelectedSites ] );
+	}, [ dispatch, items, selectedSites.length, setSelectedSites ] );
 
 	const onSelectSite = useCallback(
 		( checked: boolean, item: SiteItem ) => {
@@ -41,8 +48,13 @@ export default function MigrationsAddSitesTable( {
 			} else {
 				setSelectedSites( selectedSites.filter( ( id ) => id !== item.id ) );
 			}
+			dispatch(
+				recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
+					type: checked ? 'select' : 'deselect',
+				} )
+			);
 		},
-		[ selectedSites, setSelectedSites ]
+		[ dispatch, selectedSites, setSelectedSites ]
 	);
 
 	const fields = useMemo( () => {

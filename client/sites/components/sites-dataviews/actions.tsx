@@ -91,16 +91,7 @@ export function useActions( { openSitePreviewPane } ): Action< SiteExcerptData >
 
 			{
 				id: 'settings',
-				label: () => {
-					/**
-					 * This event is triggered when the action menu opens.
-					 * Currently, Core does not support a dedicated prop to trigger an event upon action menu opening.
-					 * To achieve this, we trigger the event here on an always-visible item.
-					 */
-					recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_config_view' );
-
-					return __( 'Site settings' );
-				},
+				label: __( 'Site settings' ),
 				callback: ( sites ) => {
 					page( getSettingsUrl( sites[ 0 ].slug ) );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
@@ -132,7 +123,9 @@ export function useActions( { openSitePreviewPane } ): Action< SiteExcerptData >
 					const site = sites[ 0 ];
 					const hasHosting =
 						site.plan?.features.active.includes( FEATURE_SFTP ) && ! site?.plan?.expired;
-					page( hasHosting ? `hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }` );
+					page(
+						hasHosting ? `/hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }`
+					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
 				},
 				isEligible: ( site ) => {

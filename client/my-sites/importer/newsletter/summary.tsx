@@ -7,11 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
-import {
-	Steps,
-	SubscribersStepContent,
-	ContentStepContent,
-} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
@@ -29,19 +25,19 @@ interface SummaryProps {
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
 
-function getSummaryDescription(
-	contentStepContent: ContentStepContent | undefined,
-	subscribersStepContent: SubscribersStepContent | undefined
-) {
-	if ( contentStepContent && subscribersStepContent ) {
+function getSummaryDescription( contentStepStatus: StepStatus, subscribersStepStatus: StepStatus ) {
+	const skippedContent = contentStepStatus === 'skipped';
+	const skippedSubscribers = subscribersStepStatus === 'skipped';
+
+	if ( ! skippedContent && ! skippedSubscribers ) {
 		return __( 'We’re importing your content and subscribers' );
 	}
 
-	if ( contentStepContent ) {
+	if ( ! skippedContent ) {
 		return __( 'We’re importing your content' );
 	}
 
-	if ( subscribersStepContent ) {
+	if ( ! skippedSubscribers ) {
 		return __( 'We’re importing your subscribers' );
 	}
 
@@ -156,7 +152,7 @@ export default function Summary( {
 					<div className="summary__content">
 						<p>
 							<strong>
-								{ getSummaryDescription( steps.content.content, steps.subscribers.content ) }
+								{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
 							</strong>
 							<br />
 						</p>

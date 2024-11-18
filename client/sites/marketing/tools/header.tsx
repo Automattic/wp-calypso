@@ -35,7 +35,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 			<div className="tools__header-image-wrapper">
 				<img
 					className="tools__header-image"
-					src="/calypso/images/marketing-tools/premium-plugins-blocks.png"
+					src="/calypso/images/marketing-tools/plugin-cards.png"
 					alt={ String( translate( 'Marketing Tools' ) ) }
 				/>
 			</div>

@@ -3,6 +3,7 @@ import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automatti
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
+import { MemoExoticComponent } from 'react';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
@@ -1193,7 +1194,7 @@ const FEATURES_LIST: FeatureList = {
 	// in the near future.
 	[ FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SCAN_DAILY_V2,
-		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
+		getIcon: () => ( { icon: 'security', component: MaterialIcon as MemoExoticComponent< any > } ),
 		getTitle: () => i18n.translate( 'Scan (daily, automated)' ),
 		getDescription: () =>
 			i18n.translate(
@@ -1212,7 +1213,7 @@ const FEATURES_LIST: FeatureList = {
 	// in the near future.
 	[ FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
+		getIcon: () => ( { icon: 'security', component: MaterialIcon as MemoExoticComponent< any > } ),
 		getTitle: () => i18n.translate( 'Scan (real-time, automated)' ),
 		getDescription: () =>
 			i18n.translate(

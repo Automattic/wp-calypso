@@ -38,7 +38,7 @@
 		"i18n-calypso": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

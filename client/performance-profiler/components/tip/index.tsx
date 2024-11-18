@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 
 export type TipProps = {
 	title: string;
@@ -15,6 +16,7 @@ export const Tip = ( { title, content, link, linkText }: TipProps ) => {
 	const handleLearnMoreClick = () => {
 		recordTracksEvent( 'calypso_performance_profiler_tip_learn_more_clicked', {
 			link: link,
+			version: profilerVersion(),
 		} );
 	};
 

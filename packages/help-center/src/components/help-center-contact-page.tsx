@@ -265,7 +265,7 @@ export const HelpCenterContactButton: FC = () => {
 				buttonTextEventProp="Still need help?"
 				redirectTo="/odie"
 			>
-				<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
+				{ __( 'Still need help?', __i18n_text_domain__ ) }
 			</HelpCenterFooterButton>
 			<HelpCenterFooterButton
 				icon={ backup }
@@ -281,7 +281,7 @@ export const HelpCenterContactButton: FC = () => {
 			buttonTextEventProp="Still need help?"
 			redirectTo="/odie"
 		>
-			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
+			{ __( 'Still need help?', __i18n_text_domain__ ) }
 		</HelpCenterFooterButton>
 	);
 };

@@ -43,7 +43,9 @@ export default function ReferralsBankDetails( {
 		: translate( 'Referrals: Add bank details' );
 
 	if ( isMigrations ) {
-		title = translate( 'Migrations: Payment Settings' );
+		title = isDesktop
+			? translate( 'Migrations: Set up secure payments' )
+			: translate( 'Migrations: Payment Settings' );
 	}
 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
@@ -82,15 +84,16 @@ export default function ReferralsBankDetails( {
 	return (
 		<Layout
 			className={ clsx( 'bank-details__layout', {
-				'bank-details__layout--automated': isAutomatedReferral,
+				'bank-details__layout--automated': isAutomatedReferral && ! isMigrations,
 			} ) }
 			title={ title }
 			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isMigrations ? <MobileSidebarNavigation /> : undefined }
 		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
+						hideOnMobile={ isMigrations }
 						items={ [
 							mainPageBreadCrumb,
 							{
@@ -101,7 +104,8 @@ export default function ReferralsBankDetails( {
 						] }
 					/>
 					{ accountStatus && (
-						<Actions>
+						<Actions useColumnAlignment={ isMigrations }>
+							{ isMigrations && <MobileSidebarNavigation /> }
 							<div className="bank-details__status">
 								{ translate( 'Payment status: {{badge}}%(status)s{{/badge}}', {
 									args: {

@@ -49,12 +49,6 @@
 	@media (min-width: $break-large) {
 		background: inherit;
 
-		.dataviews-view-table thead {
-			position: sticky;
-			top: 0;
-			z-index: 2;
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
 			font-weight: 500;
@@ -842,14 +836,5 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-	}
-}
-
-.dataviews-pagination {
-	box-sizing: border-box;
-	width: 100%;
-
-	.components-input-control__container > div.components-input-control__backdrop {
-		border-color: var(--color-border-subtle);
 	}
 }

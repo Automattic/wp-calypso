@@ -104,6 +104,7 @@ class Login extends Component {
 		emailRequested: PropTypes.bool,
 		isSendingEmail: PropTypes.bool,
 		isWooPasswordlessJPC: PropTypes.bool,
+		from: PropTypes.string,
 	};
 
 	state = {
@@ -1139,6 +1140,7 @@ export default connect(
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		rebootAfterLogin,
@@ -1151,16 +1153,20 @@ export default connect(
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
-		sendEmailLogin: ( options = {} ) =>
-			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+		sendEmailLogin: ( options = {} ) => {
+			return dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
+				source: stateProps.isWooPasswordlessJPC
+					? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' )
+					: '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||
 					null,
 				...options,
-			} ),
+			} );
+		},
 	} )
 )( localize( Login ) );

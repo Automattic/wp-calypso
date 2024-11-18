@@ -90,13 +90,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
 
-	const wpcomSiteHasPaidStatsFeature = useSelector(
-		( state ) => isWpcom && siteHasFeature( state, siteId, FEATURE_STATS_PAID )
+	const siteHasPaidStatsFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_STATS_PAID )
 	);
 
 	const hasPaidStats =
 		useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) ) ||
-		wpcomSiteHasPaidStatsFeature;
+		siteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
 	const { isRequestingSitePurchases, isCommercialOwned, supportCommercialUse } =

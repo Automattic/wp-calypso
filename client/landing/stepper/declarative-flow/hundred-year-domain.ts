@@ -58,6 +58,7 @@ const HundredYearDomainFlow: Flow = {
 				productSlug: productSlug as string,
 				domain: domainName as string,
 				extra: { is_hundred_year_domain: true },
+				volume: 100,
 			} );
 
 			switch ( _currentStep ) {

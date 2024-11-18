@@ -251,7 +251,7 @@ const Sidebar = ( {
 						{ showDomainUpgradeBadge() && (
 							<a href={ getDomainUpgradeBadgeUrl() }>
 								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-									{ translate( 'Customize' ) }
+									{ translate( 'Pick a custom domain' ) }
 								</Badge>
 							</a>
 						) }

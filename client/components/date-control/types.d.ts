@@ -1,15 +1,15 @@
-interface StatsDateControlProps {
-	slug: string;
-	queryParams: string;
-	period: 'day' | 'week' | 'month' | 'year';
-	dateRange: any;
+interface DateControlProps {
+	onApplyButtonClick: ( startDate: Moment, endDate: Moment ) => void;
+	onDateControlClick?: () => void;
+	dateRange: {
+		chartStart: string;
+		chartEnd: string;
+		daysInRange: number;
+	};
 	shortcutList: DateControlPickerShortcut[];
+	onShortcutClick: ( shortcutId: string ) => void;
+	tooltip?: string;
 	overlay?: JSX.Element;
-	onGatedHandler: (
-		events: { name: string; params?: object }[],
-		event_from: string,
-		stat_type: string
-	) => void;
 }
 
 interface DateControlPickerProps {
@@ -54,7 +54,7 @@ interface DateControlPickerDateProps {
 }
 
 export {
-	StatsDateControlProps,
+	DateControlProps,
 	DateControlPickerProps,
 	DateControlPickerShortcut,
 	DateControlPickerShortcutsProps,

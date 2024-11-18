@@ -2,6 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	font-size: $font-body-small;
 
 	&__search-bar {
 		display: flex;
@@ -9,16 +10,6 @@
 		margin-bottom: 16px;
 	}
 
-	&__search {
-		flex-grow: 1;
-		height: 40px;
-		.gridicons-search {
-			top: 8px !important;
-		}
-		input {
-			width: 100%;
-		}
-	}
 	.components-spinner {
 		margin-left: auto;
 		margin-right: auto;
@@ -33,13 +24,8 @@
 		margin: 64px auto;
 		text-align: center;
 		p:first-child {
-			line-height: 24px;
-			font-size: $font-body;
 			font-weight: 500;
 			margin-bottom: 8px;
-		}
-		p:last-of-type {
-			line-height: 20px;
 		}
 		a.is-primary {
 			svg {
@@ -92,7 +78,7 @@
 
 	tr th {
 		font-weight: 500;
-		color: var(--studio-gray-60, #50575e);
+		color: var(--studio-gray-60);
 	}
 
 	tr td:last-child {

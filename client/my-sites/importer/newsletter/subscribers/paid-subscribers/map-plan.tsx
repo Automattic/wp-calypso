@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, KeyboardEvent } from 'react';
@@ -66,12 +66,7 @@ export function MapPlan( {
 	tierToAdd,
 	selectedProductId,
 }: MapPlanProps ) {
-	const { __ } = useI18n();
-	let active_subscriptions = '';
-	if ( plan.active_subscriptions ) {
-		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
-	}
-
+	const { __, _n } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const selectedProduct = products.find(
@@ -91,7 +86,14 @@ export function MapPlan( {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ) }
-					/{ plan.plan_interval } { active_subscriptions }
+					/{ plan.plan_interval }
+					{ plan.active_subscriptions &&
+						' • ' +
+							sprintf(
+								// Translators: %d is number of subscribers
+								_n( '%d active subscriber', '%d active subscribers', plan.active_subscriptions ),
+								plan.active_subscriptions
+							) }
 				</p>
 			</div>
 			<div className="map-plan__arrow">

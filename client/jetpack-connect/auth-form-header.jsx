@@ -107,7 +107,12 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooPasswordlessJPC ) {
-			return translate( 'Create an account' );
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate( 'Create an account' );
+				default:
+					return translate( 'Connect your account' );
+			}
 		}
 
 		if ( isWpcomMigration ) {

@@ -18,6 +18,9 @@ export function formatDate( date, period ) {
 	// NOTE: Consider localizing the dates, especially for the 'week' case.
 	const momentizedDate = moment( date );
 	switch ( period ) {
+		case 'hour':
+			// TODO: align the time format with email stats.
+			return momentizedDate.format( 'MMM D HH:00' );
 		case 'day':
 			return momentizedDate.format( 'LL' );
 		case 'week':
