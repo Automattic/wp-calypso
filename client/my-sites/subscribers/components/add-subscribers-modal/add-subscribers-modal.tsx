@@ -152,7 +152,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						<FlowQuestion
 							icon={ copy }
 							title={ translate( 'Add subscribers manually' ) }
-							text={ translate( 'Paste their email or username to add them to your site.' ) }
+							text={ translate( 'Paste their emails to add them to your site.' ) }
 							onClick={ () => {
 								trackAndSetAddingMethod( 'manually' );
 							} }
@@ -222,9 +222,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							{ renderLearnMoreLink( isJetpack ) }
 						</Notice>
 					) }
-					<label className="add-subscribers-modal__label">
-						{ translate( 'Email or username' ) }
-					</label>
+					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
 						hasSubscriberLimit={ hasSubscriberLimit }
