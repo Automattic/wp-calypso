@@ -67,17 +67,19 @@ const AgencyTierCelebrationModalContent = ( {
 
 	const { title, description, extraDescription, benefits, video, image, cta } = celebrationModal;
 
+	const showImage = isNarrowView || ! video;
+
 	return (
 		<A4AThemedModal
 			className={ clsx( 'agency-tier-celebration-modal', currentAgencyTier, {
 				'is-narrow-view': isNarrowView,
 			} ) }
 			modalVideo={
-				! isNarrowView ? (
+				! showImage ? (
 					<video src={ video } preload="auto" width={ 470 } loop muted autoPlay />
 				) : undefined
 			}
-			modalImage={ isNarrowView ? image : undefined }
+			modalImage={ showImage ? image : undefined }
 			onClose={ handleOnClose }
 			dismissable
 		>

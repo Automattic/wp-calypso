@@ -1,9 +1,7 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
 $video-pink: #f5baff;
 $video-blue: #002d3e;
 $video-green: #0e5837;
+$announcement-blue: #032836;
 
 .agency-tier-celebration-modal {
 	&.a4a-themed-modal .components-modal__content.hide-header {
@@ -27,6 +25,16 @@ $video-green: #0e5837;
 	&.pro-agency-partner {
 		&.a4a-themed-modal .components-modal__content.hide-header {
 			background: $video-green;
+		}
+	}
+
+	&.announcement-modal {
+		&.a4a-themed-modal .components-modal__content.hide-header {
+			background: $announcement-blue;
+		}
+
+		.a4a-themed-modal__sidebar-image {
+			width: auto;
 		}
 	}
 
@@ -71,7 +79,7 @@ $video-green: #0e5837;
 			}
 		}
 
-		&.agency-partner, &.pro-agency-partner {
+		&.agency-partner, &.pro-agency-partner, &.announcement-modal {
 			.a4a-themed-modal__dismiss-button {
 				fill: var(--color-text-white);
 			}
