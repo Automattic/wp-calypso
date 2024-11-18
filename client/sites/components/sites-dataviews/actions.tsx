@@ -94,7 +94,9 @@ export function useActions(): Action< SiteExcerptData >[] {
 					const site = sites[ 0 ];
 					const hasHosting =
 						site.plan?.features.active.includes( FEATURE_SFTP ) && ! site?.plan?.expired;
-					page( hasHosting ? `hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }` );
+					page(
+						hasHosting ? `/hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }`
+					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
 				},
 				isEligible: ( site ) => {
