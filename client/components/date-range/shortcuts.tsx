@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
+import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 
 const DATERANGE_PERIOD = {
 	DAY: 'day',
@@ -29,6 +30,7 @@ const DateRangePickerShortcuts = ( {
 	endDate?: MomentOrNull;
 } ) => {
 	const translate = useTranslate();
+	const siteToday = useMomentSiteZone();
 
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
@@ -87,7 +89,7 @@ const DateRangePickerShortcuts = ( {
 		}
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
-		const today = moment().startOf( 'day' );
+		const today = siteToday.clone().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
 			if ( endDate.isSame( today ) && daysInRange === element.range ) {
@@ -99,8 +101,9 @@ const DateRangePickerShortcuts = ( {
 	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		const newToDate = moment().startOf( 'day' ).subtract( offset, 'days' );
-		const newFromDate = moment()
+		const newToDate = siteToday.clone().startOf( 'day' ).subtract( offset, 'days' );
+		const newFromDate = siteToday
+			.clone()
 			.startOf( 'day' )
 			.subtract( offset + range, 'days' );
 		onClick( newFromDate, newToDate, id || '' );

@@ -27,6 +27,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -823,6 +824,7 @@ export default connect(
 			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			momentSiteZone: getMomentSiteZone( state, siteId ),
 		};
 	},
 	{
