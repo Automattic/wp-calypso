@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/constants';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -87,15 +88,25 @@ export default function AgencyTierCelebrationModal( {
 		}
 	}, [ agencyTierInfo, celebrationModalShowForCurrentType, currentAgencyTier, dispatch ] );
 
+	const isAgencyFirstPurchase = sessionStorage.getItem( AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY );
+
 	if (
 		! agencyTierInfo?.celebrationModal ||
-		celebrationModalShowForCurrentType === currentAgencyTier
+		celebrationModalShowForCurrentType === currentAgencyTier ||
+		// Don't show the modal if the user is already on the emerging-partner tier and it's not their first purchase
+		( currentAgencyTier === 'emerging-partner' && ! isAgencyFirstPurchase )
 	) {
 		return null;
 	}
 
-	const handleOnClose = () => {
+	const handleSavePreference = () => {
+		// Save the preference to prevent the modal from showing again
 		dispatch( savePreference( PREFERENCE_NAME, currentAgencyTier ?? '' ) );
+		sessionStorage.removeItem( AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY );
+	};
+
+	const handleOnClose = () => {
+		handleSavePreference();
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_dismiss', {
 				agency_tier: currentAgencyTier,
@@ -104,8 +115,7 @@ export default function AgencyTierCelebrationModal( {
 	};
 
 	const handleClickExploreBenefits = () => {
-		// Save the preference to prevent the modal from showing again
-		dispatch( savePreference( PREFERENCE_NAME, currentAgencyTier ?? '' ) );
+		handleSavePreference();
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_explore_benefits_click', {
 				agency_tier: currentAgencyTier,

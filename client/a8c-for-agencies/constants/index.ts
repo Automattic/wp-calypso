@@ -6,3 +6,5 @@ export const JETPACK_CONNECT_A4A_LINK =
 	'https://wordpress.com/jetpack/connect?source=a8c-for-agencies';
 
 export const REFERRAL_EMAIL_QUERY_PARAM_KEY = 'referral_email';
+
+export const AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY = 'a4a-first-purchase';
