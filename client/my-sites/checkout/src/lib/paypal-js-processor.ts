@@ -1,5 +1,6 @@
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { addUrlToPendingPageRedirect } from '../lib/pending-page';
@@ -25,6 +26,16 @@ function isValidPayPalJsSubmitData( data: unknown ): data is PayPalSubmitData {
 		return true;
 	}
 	return false;
+}
+
+// TODO: The return type here is incorrect.
+async function payPalJsApproval( bdOrderId: string, payPalOrderId: string ): Promise< void > {
+	const body = {
+		bd_order_id: bdOrderId,
+		paypal_order_id: payPalOrderId,
+	};
+	const path = '/me/paypal-ppcp-confirm-payment';
+	return wp.req.post( { path, body } );
 }
 
 export async function payPalJsProcessor(
@@ -95,8 +106,13 @@ export async function payPalJsProcessor(
 	debug( 'sending paypal transaction', formattedTransactionData );
 	try {
 		const response = await submitWpcomTransaction( formattedTransactionData, transactionOptions );
+
 		if ( ! ( 'paypal_order_id' in response ) || ! response.paypal_order_id ) {
-			return makeErrorResponse( 'PayPal response did not include order ID' );
+			return makeErrorResponse( 'WPcom transaction response did not include PayPal order ID' );
+		}
+
+		if ( ! ( 'order_id' in response ) || ! response.order_id ) {
+			return makeErrorResponse( 'WPcom transaction response did not include BD order ID' );
 		}
 
 		// Resolve the Promise which will trigger the PayPal button to display the confirmation dialog.
@@ -104,6 +120,10 @@ export async function payPalJsProcessor(
 
 		// Wait for the PayPal dialog to complete before continuing.
 		await submitData.payPalApprovalPromise;
+
+		// Capture PayPal order information after dialog approval.
+		// TODO: Need to handle a failure state from this endpoint.
+		await payPalJsApproval( response.order_id.toString(), response.paypal_order_id );
 
 		return makeSuccessResponse( response );
 	} catch ( error ) {
