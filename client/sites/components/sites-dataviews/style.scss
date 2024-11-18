@@ -2,7 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .sites-dataviews {
+	flex-grow: 1;
 	margin-top: 0;
+	overflow: hidden;
+	padding-bottom: 0 !important;
 }
 
 .dataviews-view-table__row td:last-of-type {

@@ -471,27 +471,6 @@
 			}
 		}
 
-		.sites-overview__content {
-			flex-grow: 1;
-			margin-top: 0;
-			overflow: hidden;
-			padding-bottom: 0 !important;
-		}
-
-		.dataviews-wrapper {
-			.dataviews-view-list {
-				// DataView overrides: Ideally instead of reusing the site name full field
-				// We should be setting a media field and a primary field.
-				// Or update Core to hide them when not specified.
-				.dataviews-view-list__media-wrapper {
-					display: none;
-				}
-				.dataviews-view-list__primary-field {
-					display: none;
-				}
-			}
-		}
-
 		.sites-banner-container {
 			display: none;
 		}

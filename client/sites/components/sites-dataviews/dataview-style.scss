@@ -8,6 +8,18 @@
 		width: 100%;
 	}
 
+	.dataviews-view-list {
+		// DataView overrides: Ideally instead of reusing the site name full field
+		// We should be setting a media field and a primary field.
+		// Or update Core to hide them when not specified.
+		.dataviews-view-list__media-wrapper {
+			display: none;
+		}
+		.dataviews-view-list__primary-field {
+			display: none;
+		}
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
 
