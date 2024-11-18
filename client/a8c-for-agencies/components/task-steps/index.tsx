@@ -55,20 +55,18 @@ export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 			clickableHeader
 			summary={ false }
 		>
-			<>
-				<div className="task-step__description">{ step.description }</div>
-				<div className="task-step__button-container">
-					{ step.buttonProps && (
-						<Button variant={ step.buttonProps.variant } href={ step.buttonProps.href }>
-							{ step.buttonProps.label }
-							{ step.buttonProps.icon && <Icon icon={ step.buttonProps.icon } size={ 24 } /> }
-						</Button>
-					) }
-					<Button onClick={ () => toggleTaskStatus( step ) } variant="secondary">
-						{ step.isCompleted ? translate( 'Reset task' ) : translate( 'Mark as done' ) }
+			<div className="task-step__description">{ step.description }</div>
+			<div className="task-step__button-container">
+				{ step.buttonProps && (
+					<Button variant={ step.buttonProps.variant } href={ step.buttonProps.href }>
+						{ step.buttonProps.label }
+						{ step.buttonProps.icon && <Icon icon={ step.buttonProps.icon } size={ 24 } /> }
 					</Button>
-				</div>
-			</>
+				) }
+				<Button onClick={ () => toggleTaskStatus( step ) } variant="secondary">
+					{ step.isCompleted ? translate( 'Reset task' ) : translate( 'Mark as done' ) }
+				</Button>
+			</div>
 		</FoldableCard>
 	);
 }
