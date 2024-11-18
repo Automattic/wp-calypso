@@ -20,10 +20,7 @@ interface Props {
 	siteId: number;
 	hasSubscriberLimit?: boolean;
 	flowName?: string;
-	showTitle?: boolean;
-	showSubtitle?: boolean;
 	showFormManualListLabel?: boolean;
-	submitBtnAlwaysEnable?: boolean;
 	allowEmptyFormSubmit?: boolean;
 	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
@@ -31,8 +28,6 @@ interface Props {
 	onImportStarted?: ( hasFile: boolean ) => void;
 	onImportFinished?: () => void;
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
-	titleText?: string;
-	subtitleText?: string;
 	showSkipLink?: boolean;
 	disabled?: boolean;
 	hidden?: boolean;
@@ -48,14 +43,10 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	const {
 		siteId,
 		flowName,
-		showTitle = true,
-		showSubtitle,
 		recordTracksEvent,
 		onImportStarted,
 		onImportFinished,
 		onChangeIsImportValid,
-		titleText,
-		subtitleText,
 		hidden,
 		disabled,
 		renderLearnMoreLink,
@@ -238,20 +229,6 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className="add-subscriber">
-			{ ( showTitle || showSubtitle ) && (
-				<div className="add-subscriber__title-container">
-					{ showTitle && <Title>{ titleText ?? __( 'Let’s add your first subscribers' ) }</Title> }
-					{ showSubtitle && (
-						<SubTitle>
-							{ subtitleText ??
-								__(
-									'Your subscribers will receive an email notification whenever you publish a new post.'
-								) }
-						</SubTitle>
-					) }
-				</div>
-			) }
-
 			<div className="add-subscriber__form--container">
 				<p>
 					{ createInterpolateElement(

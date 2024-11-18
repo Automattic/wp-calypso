@@ -286,11 +286,8 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					<UploadSubscribersForm
 						siteId={ site.ID }
 						hasSubscriberLimit={ hasSubscriberLimit }
-						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
-						showTitle={ false }
-						showSubtitle={ false }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
