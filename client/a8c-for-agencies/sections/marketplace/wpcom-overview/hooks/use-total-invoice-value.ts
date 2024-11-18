@@ -44,6 +44,16 @@ export const useGetProductPricingInfo = () => {
 			};
 		}
 
+		// If we don't have userProducts, we just pull the price from the product and not calculate the discount
+		if ( ! Object.keys( userProducts ).length ) {
+			const actualCost = Number( product?.price_per_unit_display?.replace( /,/g, '' ) ) ?? 0;
+			return {
+				actualCost,
+				discountedCost: actualCost,
+				discountPercentage: 0,
+			};
+		}
+
 		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
 		const bundleAmount = bundle && bundle.amount ? bundle.amount.replace( ',', '' ) : '';
 
