@@ -204,9 +204,8 @@
 				width: 100%;
 			}
 
-			/* This styling is a bit of a hack: To make the site name clickable area larger, will need
-				* to hide the other fields when in preview mode.
-				*/
+			// This styling is a bit of a hack: To make the site name clickable area larger, will need
+			// to hide the other fields when in preview mode.
 			.dataviews-view-list__field {
 				// Hide the field except first (Site name) and last (actions menu)
 				&:not(:first-child):not(:last-child) {
