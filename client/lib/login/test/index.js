@@ -251,7 +251,7 @@ describe( 'getPluginTitle', () => {
 
 	it( 'should handle a mix of valid and invalid plugin names', () => {
 		const result = getPluginTitle( 'jetpack-ai,unknown-plugin,woocommerce-payments', translate );
-		expect( result ).toBe( 'Jetpack, Jetpack, and WooPayments' ); // Default for invalid names
+		expect( result ).toBe( 'Jetpack and WooPayments' ); // Default for invalid names
 	} );
 
 	it( 'should handle extra whitespace in plugin names', () => {
