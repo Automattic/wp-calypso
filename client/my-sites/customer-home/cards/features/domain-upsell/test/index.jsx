@@ -111,6 +111,10 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
 		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/1' )
+			.reply( 200 );
 		wpcomRequest.mockReset();
 
 		const mockStore = configureStore( [ thunk ] );
@@ -140,6 +144,10 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Yearly plans', async () => {
 		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/1' )
+			.reply( 200 );
 		wpcomRequest.mockReset();
 
 		wpcomRequest.mockImplementation( ( args ) => {
