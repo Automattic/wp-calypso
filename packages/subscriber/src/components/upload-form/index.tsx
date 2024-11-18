@@ -23,6 +23,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	recordTracksEvent?: RecordTrackEvents;
 	onImportStarted?: ( hasFile: boolean ) => void;
