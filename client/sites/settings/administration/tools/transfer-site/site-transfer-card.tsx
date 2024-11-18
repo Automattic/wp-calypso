@@ -1,22 +1,12 @@
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import ActionPanel from 'calypso/components/action-panel';
-import HeaderCake from 'calypso/components/header-cake';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { Panel, PanelSection } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
 
-const ActionPanelStyled = styled( ActionPanel )( {
-	fontSize: '14px',
-	fontWeight: 400,
-	'.action-panel__body': {
-		color: 'var(--studio-gray-70)',
-	},
-	'&.action-panel': {
-		paddingBottom: '0px',
-	},
-} );
+import './style.scss';
 
 export function SiteTransferCard( {
 	children,
@@ -26,11 +16,13 @@ export function SiteTransferCard( {
 	onClick: () => void;
 } ) {
 	const translate = useTranslate();
+	const title = isHostingMenuUntangled()
+		? translate( 'Transfer site' )
+		: translate( 'Site Transfer' );
 	return (
-		<Main>
+		<Panel className="settings-administration__transfer-site">
 			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Site Transfer' ) }
+				title={ title }
 				subtitle={ translate(
 					'Transfer this site to a new or existing site member with just a few clicks. {{a}}Learn more.{{/a}}',
 					{
@@ -45,10 +37,8 @@ export function SiteTransferCard( {
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"
 			/>
-			<HeaderCake onClick={ onClick } isCompact>
-				<h1>{ translate( 'Site Transfer' ) }</h1>
-			</HeaderCake>
-			<ActionPanelStyled>{ children }</ActionPanelStyled>
-		</Main>
+			<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
+			<PanelSection>{ children }</PanelSection>
+		</Panel>
 	);
 }

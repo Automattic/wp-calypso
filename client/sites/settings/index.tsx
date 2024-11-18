@@ -12,6 +12,7 @@ import {
 	SETTINGS_WEB_SERVER,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
+import { redirectIfCantStartSiteOwnerTransfer } from './administration/controller';
 import {
 	siteSettings,
 	administrationSettings,
@@ -57,6 +58,7 @@ export default function () {
 	page(
 		'/sites/settings/administration/:site/transfer-site',
 		siteSelection,
+		redirectIfCantStartSiteOwnerTransfer,
 		navigation,
 		administrationToolTransferSite,
 		siteDashboard( SETTINGS_ADMINISTRATION_TRANSFER_SITE ),

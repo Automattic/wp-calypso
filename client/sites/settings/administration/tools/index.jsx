@@ -99,7 +99,9 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		const startSiteTransferTitle = translate( 'Transfer your site' );
+		const startSiteTransferTitle = isUntangled
+			? translate( 'Transfer site' )
+			: translate( 'Transfer your site' );
 		const startSiteTransferText = translate( 'Transfer your site, plan and purchases.' );
 
 		return (

@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { PanelHeading } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from '../../../utils';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -13,9 +13,11 @@ const Strong = styled( 'strong' )( {
 
 const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 	const translate = useTranslate();
+	const isUntangled = isHostingMenuUntangled();
 	return (
 		<>
-			<ActionPanelBody>
+			<>
+				{ isUntangled && <PanelHeading>{ translate( 'Pending domain transfers' ) }</PanelHeading> }
 				<p>
 					{ createInterpolateElement(
 						sprintf(
@@ -28,12 +30,12 @@ const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 						{ strong: <Strong /> }
 					) }
 				</p>
-			</ActionPanelBody>
-			<ActionPanelFooter>
+			</>
+			<>
 				<Button primary href={ `/domains/manage/${ domain.name }` }>
 					{ translate( 'Manage domain transfers' ) }
 				</Button>
-			</ActionPanelFooter>
+			</>
 		</>
 	);
 };

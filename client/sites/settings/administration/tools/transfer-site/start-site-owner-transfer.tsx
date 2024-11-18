@@ -6,14 +6,15 @@ import { sprintf } from '@wordpress/i18n';
 import { localize, useTranslate } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import { connect, useSelector } from 'react-redux';
-import ActionPanelBody from 'calypso/components/action-panel/body';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { PanelHeading } from 'calypso/sites/components/panel';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isHostingMenuUntangled } from '../../../utils';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -32,20 +33,12 @@ const FormToggleControl = styled( ToggleControl )( {
 	fontSize: '14px',
 } );
 
-const FormWrapper = styled.div( {
-	marginBottom: '1.5em',
-} );
-
 const ButtonContainer = styled.div( {
 	marginTop: '1.5em',
 } );
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
-} );
-
-const SiteOwnerTransferActionPanelBody = styled( ActionPanelBody )( {
-	overflow: 'visible !important',
 } );
 
 const Title = styled.h2( {
@@ -295,7 +288,7 @@ const StartSiteOwnerTransfer = ( {
 	};
 
 	const startSiteTransferForm = (
-		<FormWrapper>
+		<>
 			<p>
 				<Strong>
 					{ translate( 'To transfer your site, review and accept the following statements:' ) }
@@ -346,12 +339,15 @@ const StartSiteOwnerTransfer = ( {
 					</Button>
 				</ButtonContainer>
 			</form>
-		</FormWrapper>
+		</>
 	);
+
+	const isUntangled = isHostingMenuUntangled();
 
 	return (
 		<>
-			<SiteOwnerTransferActionPanelBody>
+			<>
+				{ isUntangled && <PanelHeading>{ translate( 'Confirm site transfer' ) }</PanelHeading> }
 				<Notice status="is-info" showDismiss={ false }>
 					{ translate(
 						'Please read the following actions that will take place when you transfer this site'
@@ -373,7 +369,7 @@ const StartSiteOwnerTransfer = ( {
 					siteSlug={ selectedSiteSlug }
 				/>
 				{ ! startSiteTransferSuccess && startSiteTransferForm }
-			</SiteOwnerTransferActionPanelBody>
+			</>
 		</>
 	);
 };
