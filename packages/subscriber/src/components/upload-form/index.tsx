@@ -55,7 +55,9 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		disabled,
 	} = props;
 
-	const { importCsvSubscribersUpdate, getSubscribersImports } = useDispatch( Subscriber.store );
+	const { importCsvSubscribers, importCsvSubscribersUpdate, getSubscribersImports } = useDispatch(
+		Subscriber.store
+	);
 
 	/**
 	 * ↓ Fields
@@ -110,21 +112,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		e.preventDefault();
 		setSubmitAttemptCount( submitAttemptCount + 1 );
 		onImportStarted?.( !! selectedFile );
-
-		/*
-		if ( manualListEmailInviting ) {
-			// add subscribers with invite email
-			validEmails.length && addSubscribers( siteId, validEmails );
-			// import subscribers providing only CSV list of emails
-			selectedFile && importCsvSubscribers( siteId, selectedFile );
-		} else {
-			// import subscribers proving CSV and manual list of emails
-			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails );
-		}
-
-		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
-		*/
+		selectedFile && importCsvSubscribers( siteId, selectedFile );
+		! selectedFile && onImportFinished?.();
 	}
 
 	function isValidExtension( fileName: string ) {
