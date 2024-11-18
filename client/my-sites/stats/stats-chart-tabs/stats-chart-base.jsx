@@ -6,6 +6,9 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 
+const Header = ( { children } ) => children;
+const Content = ( { children } ) => children;
+
 const StatsChartBase = ( {
 	className,
 	isLoading,
@@ -18,7 +21,6 @@ const StatsChartBase = ( {
 	queryDate,
 	children,
 } ) => {
-	// Improved slot handling
 	const slots = {
 		header: null,
 		content: null,
@@ -29,10 +31,9 @@ const StatsChartBase = ( {
 			return;
 		}
 
-		// Check for static components and extract their children
-		if ( child.type === StatsChartBase.Header ) {
+		if ( child.type === Header ) {
 			slots.header = child.props.children;
-		} else if ( child.type === StatsChartBase.Content ) {
+		} else if ( child.type === Content ) {
 			slots.content = child.props.children;
 		}
 	} );
@@ -68,12 +69,8 @@ const StatsChartBase = ( {
 	);
 };
 
-// Define slot components with proper PropTypes
-StatsChartBase.Header = ( { children } ) => children;
-StatsChartBase.Content = ( { children } ) => children;
-
-StatsChartBase.Header.displayName = 'StatsChartBase.Header';
-StatsChartBase.Content.displayName = 'StatsChartBase.Content';
+StatsChartBase.Header = Header;
+StatsChartBase.Content = Content;
 
 StatsChartBase.propTypes = {
 	className: PropTypes.string,
