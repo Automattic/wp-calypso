@@ -172,7 +172,7 @@
 			span {
 				background-color: transparent;
 				a {
-					color: #fff;
+					color: var(--studio-white);
 					&:hover {
 						color: var(--studio-blue-40);
 					}
