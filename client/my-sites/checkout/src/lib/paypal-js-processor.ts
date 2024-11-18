@@ -20,6 +20,15 @@ type PayPalSubmitData = {
 	payPalApprovalPromise: Promise< void >;
 };
 
+type PayPalConfirmFailResponse = {
+	error: string;
+	message: string;
+};
+type PayPalConfirmSuccessResponse = {
+	success: true;
+};
+type PayPalConfirmResponse = PayPalConfirmFailResponse | PayPalConfirmSuccessResponse;
+
 function isValidPayPalJsSubmitData( data: unknown ): data is PayPalSubmitData {
 	const payPalData = data as PayPalSubmitData;
 	if ( 'resolvePayPalOrderPromise' in payPalData ) {
@@ -28,8 +37,10 @@ function isValidPayPalJsSubmitData( data: unknown ): data is PayPalSubmitData {
 	return false;
 }
 
-// TODO: The return type here is incorrect.
-async function payPalJsApproval( bdOrderId: string, payPalOrderId: string ): Promise< void > {
+async function payPalJsApproval(
+	bdOrderId: string,
+	payPalOrderId: string
+): Promise< PayPalConfirmResponse > {
 	const body = {
 		bd_order_id: bdOrderId,
 		paypal_order_id: payPalOrderId,
@@ -108,11 +119,11 @@ export async function payPalJsProcessor(
 		const response = await submitWpcomTransaction( formattedTransactionData, transactionOptions );
 
 		if ( ! ( 'paypal_order_id' in response ) || ! response.paypal_order_id ) {
-			return makeErrorResponse( 'WPcom transaction response did not include PayPal order ID' );
+			return makeErrorResponse( 'Transaction response did not include PayPal order ID' );
 		}
 
 		if ( ! ( 'order_id' in response ) || ! response.order_id ) {
-			return makeErrorResponse( 'WPcom transaction response did not include BD order ID' );
+			return makeErrorResponse( 'Transaction response did not include WordPress.com order ID' );
 		}
 
 		// Resolve the Promise which will trigger the PayPal button to display the confirmation dialog.
@@ -122,12 +133,29 @@ export async function payPalJsProcessor(
 		await submitData.payPalApprovalPromise;
 
 		// Capture PayPal order information after dialog approval.
-		// TODO: Need to handle a failure state from this endpoint.
-		await payPalJsApproval( response.order_id.toString(), response.paypal_order_id );
+		const confirmResponse = await payPalJsApproval(
+			response.order_id.toString(),
+			response.paypal_order_id
+		);
+		if ( 'error' in confirmResponse ) {
+			if (
+				confirmResponse.error === 'paypal_ppcp_payment_confirm_no_order' &&
+				confirmResponse.message
+			) {
+				return makeErrorResponse( confirmResponse.message );
+			}
+			if (
+				confirmResponse.error === 'paypal_ppcp_payment_confirm_status_wrong' &&
+				confirmResponse.message
+			) {
+				return makeErrorResponse( confirmResponse.message );
+			}
+			return makeErrorResponse( 'Transaction could not be completed' );
+		}
 
 		return makeSuccessResponse( response );
 	} catch ( error ) {
 		const errorError = error as Error;
-		return makeErrorResponse( errorError.message ?? 'PayPal transaction had an uknown error' );
+		return makeErrorResponse( errorError.message ?? 'PayPal transaction had an unknown error' );
 	}
 }
