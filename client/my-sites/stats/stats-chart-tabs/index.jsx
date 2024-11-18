@@ -45,6 +45,7 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -105,6 +106,7 @@ class StatModuleChartTabs extends Component {
 			children,
 			chartTab,
 			queryDate,
+			isNewDateFilteringEnabled,
 		} = this.props;
 
 		return (
@@ -118,7 +120,9 @@ class StatModuleChartTabs extends Component {
 				switchTab={ this.props.switchTab }
 				chartTab={ chartTab }
 				queryDate={ queryDate }
+				aggregate={ isNewDateFilteringEnabled }
 			>
+				<StatsChartBase.Header />
 				{ children }
 			</StatsChartBase>
 		);

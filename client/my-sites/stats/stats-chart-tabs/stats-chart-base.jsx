@@ -20,6 +20,7 @@ const StatsChartBase = ( {
 	chartTab,
 	queryDate,
 	children,
+	aggregate = false,
 } ) => {
 	const slots = {
 		header: null,
@@ -64,6 +65,7 @@ const StatsChartBase = ( {
 				selectedTab={ chartTab }
 				activeIndex={ queryDate }
 				activeKey="period"
+				aggregate={ aggregate }
 			/>
 		</div>
 	);
@@ -83,6 +85,7 @@ StatsChartBase.propTypes = {
 	chartTab: PropTypes.string,
 	queryDate: PropTypes.string,
 	children: PropTypes.node,
+	aggregate: PropTypes.bool,
 };
 
 export default StatsChartBase;

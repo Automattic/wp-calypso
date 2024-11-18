@@ -480,6 +480,7 @@ class StatsSite extends Component {
 						chartTab={ this.props.chartTab }
 						customQuantity={ customChartQuantity }
 						customRange={ customChartRange }
+						isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 					>
 						{ isNewDateFilteringEnabled && (
 							<ChartTabs.Header>
