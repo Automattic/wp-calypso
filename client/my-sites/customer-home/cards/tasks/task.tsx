@@ -3,7 +3,7 @@ import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { isValidElement, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -303,7 +303,7 @@ const Task = ( {
 			{ ( illustrationAlwaysShow || isDesktop() ) && illustration && (
 				<div className="task__illustration">
 					{ illustrationHeader && <> { illustrationHeader } </> }
-					<img src={ illustration } alt="" />
+					{ isValidElement( illustration ) ? illustration : <img src={ illustration } alt="" /> }
 				</div>
 			) }
 		</div>

@@ -9,10 +9,13 @@ import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useHasEnTranslation, useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
+import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import editorPreviewIllustration from 'calypso/assets/images/customer-home/illustration--editor-preview.svg';
+import backgroundDotsIllustration from 'calypso/assets/images/customer-home/illustration--background-dots.svg';
+import editorPreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-editor.svg';
+import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -202,9 +205,42 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ editorPreviewIllustration }
+			illustration={ <UpsellIllustration domain={ domainSuggestionName } /> }
 			illustrationAlwaysShow
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
+	);
+}
+
+function UpsellIllustration( { domain } ) {
+	const domainParts = domain.split( '.' );
+
+	return (
+		<div className="task__domain-upsell-illustration">
+			<img
+				className="task__domain-upsell-illustration--background"
+				src={ backgroundDotsIllustration }
+				alt=""
+			/>
+			<img
+				className="task__domain-upsell-illustration--editor"
+				src={ editorPreviewIllustration }
+				alt=""
+			/>
+			<div className="task__domain-upsell-illustration--mask"></div>
+			<img
+				className="task__domain-upsell-illustration--site"
+				src={ sitePreviewIllustration }
+				alt=""
+			/>
+			<div className="task__domain-upsell-illustration--domain">
+				<Icon icon={ lock } size="16" />
+				<div>
+					{ domainParts.map( ( part, index ) => (
+						<span key={ index }>{ index === 0 ? part : `.${ part }` }</span>
+					) ) }
+				</div>
+			</div>
+		</div>
 	);
 }
