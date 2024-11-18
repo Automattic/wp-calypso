@@ -8,6 +8,11 @@ export type ShoppingCartReducer = (
 	action: ShoppingCartAction
 ) => ShoppingCartState;
 
+/**
+ * The identifier for a shopping cart (`ResponseCart`). Typically it is the ID
+ * of the site to which the shopping cart belongs but there are also other
+ * options.
+ */
 export type CartKey = number | 'no-user' | 'no-site';
 
 export type GetCart = ( cartKey: CartKey ) => Promise< ResponseCart >;
@@ -21,8 +26,22 @@ export interface ShoppingCartManagerOptions {
 export type GetManagerForKey = ( cartKey: CartKey | undefined ) => ShoppingCartManager;
 export type GetCartKeyForSiteSlug = ( siteSlug: string ) => Promise< CartKey >;
 
+/**
+ * An interface for creating a `ShoppingCartManager`.
+ */
 export interface ShoppingCartManagerClient {
+	/**
+	 * A function to return a `ShoppingCartManager` for a given cart key. If
+	 * provided an `undefined` cart key, a `ShoppingCartManager` will still be
+	 * returned, but its cart will always be loading and empty and its actions
+	 * will do nothing.
+	 */
 	forCartKey: GetManagerForKey;
+
+	/**
+	 * A function to query the server to transform a site slug into a cart key
+	 * for use by `forCartKey()`.
+	 */
 	getCartKeyForSiteSlug: GetCartKeyForSiteSlug;
 }
 
@@ -42,7 +61,14 @@ export interface ShoppingCartManagerState {
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
+
+	/**
+	 * The shopping cart data as returned by the server. This should be
+	 * considered read-only and immutable. To make changes, use
+	 * `ShoppingCartManager` and `ShoppingCartManagerActions`.
+	 */
 	responseCart: ResponseCart;
+
 	couponStatus: CouponStatus;
 }
 
@@ -50,10 +76,41 @@ type WaitForReady = () => Promise< ResponseCart >;
 
 export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
 
+/**
+ * The mechanism that the consumers of this package can use to read and request
+ * changes to a shopping cart. Generally created by
+ * `ShoppingCartManagerClient.forCartKey()`.
+ *
+ * You may not need this if you use `useShoppingCart()` which returns a very
+ * similar interface with the cart data more easily available.
+ */
 export interface ShoppingCartManager {
+	/**
+	 * A function to return the current state of the cart. This includes all
+	 * the state properties returned by `useShoppingCart()`.
+	 */
 	getState: ShoppingCartManagerGetState;
+
+	/**
+	 * A function to subscribe to updates to a `ShoppingCartManager` for a
+	 * given cart key. The `callback` will be called any time the
+	 * `ShoppingCartManager` changes for that key. The return value of the
+	 * function is an unsubscribe function.
+	 */
 	subscribe: ShoppingCartManagerSubscribe;
+
+	/**
+	 * An object whose properties are the various actions that can be taken on
+	 * the cart. They are the same as the actions returned by
+	 * `useShoppingCart()`.
+	 */
 	actions: ShoppingCartManagerActions;
+
+	/**
+	 * A function that should be called after the cart manager is created in
+	 * order to perform the initial fetch. If another action is called first,
+	 * this will be called automatically before that action is dispatched.
+	 */
 	fetchInitialCart: WaitForReady;
 }
 
@@ -133,15 +190,69 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };
 
+/**
+ * Functions that a consumer of this package can use to alter a shopping cart
+ * (see `ResponseCart` and `RequestCart`).
+ */
 export interface ShoppingCartManagerActions {
+	/**
+	 * A function that requests adding new products to the cart. May cause the
+	 * cart to be replaced instead, depending on the `RequestCartProduct`
+	 * instances (mostly renewals and non-renewals cannot co-exist in the cart
+	 * at the same time).
+	 *
+	 * To create the product instances themselves (`RequestCartProduct`), see
+	 * `createRequestCartProduct` and `createRequestCartProducts`.
+	 */
 	addProductsToCart: AddProductsToCart;
+
+	/**
+	 * A function that requests removing a product from the cart by `uuid`.
+	 */
 	removeProductFromCart: RemoveProductFromCart;
+
+	/**
+	 * A function that requests applying a coupon to the cart (only one coupon
+	 * can be applied at a time).
+	 */
 	applyCoupon: ApplyCouponToCart;
+
+	/**
+	 * A function that requests removing a coupon from the cart.
+	 */
 	removeCoupon: RemoveCouponFromCart;
+
+	/**
+	 * A function that can be used to change the tax location of the cart. Note
+	 * that this completely replaces the current location. The
+	 * `convertTaxLocationToLocationUpdate` function can be used to convert the
+	 * current `responseCart.tax.location` value into the properties required
+	 * by this function if you need to only update one value.
+	 */
 	updateLocation: UpdateTaxLocationInCart;
+
+	/**
+	 * A function that can replace one product in the cart with another,
+	 * retaining the same `uuid`; useful for changing product variants.
+	 */
 	replaceProductInCart: ReplaceProductInCart;
+
+	/**
+	 * A function that replaces all the products in the cart with a new set of
+	 * products. Can also be used to clear the cart.
+	 */
 	replaceProductsInCart: ReplaceProductsInCart;
+
+	/**
+	 * A function to throw away the current cart cache and fetch it fresh from
+	 * the shopping cart API.
+	 */
 	reloadFromServer: ReloadCartFromServer;
+
+	/**
+	 * A function to throw away the current `responseCart.messages`. This can
+	 * be used to clear messages once they have been displayed.
+	 */
 	clearMessages: ClearCartMessages;
 }
 
@@ -193,6 +304,18 @@ export interface CartSyncManager {
 	fetchInitialCartFromServer: ( dispatch: Dispatch< ShoppingCartAction > ) => void;
 }
 
+/**
+ * A minimal shopping cart which is created by calypso and then sent to
+ * the shopping cart endpoint to be turned into a complete shopping cart
+ * (`ResponseCart`).
+ *
+ * The properties here are a request only and what comes back may differ or not
+ * exist at all (although there will likely be a message if the item failed to
+ * be added).
+ *
+ * Normally you do not create a `RequestCart` manually. It will be created by
+ * using the `ShoppingCartManager` and `ShoppingCartManagerActions`.
+ */
 export interface RequestCart {
 	blog_id: number;
 	cart_key?: CartKey;
@@ -215,6 +338,21 @@ export type RequestCartTaxData = null | {
 	};
 };
 
+/**
+ * A minimal shopping cart item which is created by calypso and then sent to
+ * the shopping cart endpoint to be turned into a complete shopping cart item
+ * (`ResponseCartProduct`).
+ *
+ * The properties here are a request only and what comes back may differ or not
+ * exist at all (although there will likely be a message if the item failed to
+ * be added).
+ *
+ * See `createRequestCartProduct()` and `createRequestCartProducts()` in this
+ * package for a convenient way to create a `RequestCartProduct`.
+ *
+ * These are normally added to the cart using `ShoppingCartManagerActions` like
+ * `addProductsToCart()`.
+ */
 export interface RequestCartProduct {
 	product_slug: string;
 	product_id?: number;
@@ -224,9 +362,38 @@ export interface RequestCartProduct {
 	extra: RequestCartProductExtra;
 }
 
+/**
+ * A `RequestCartProduct` (a shopping cart item before it has been added to the
+ * cart on the server) that has only the absolutely required fields required
+ * and all other fields as optional.
+ *
+ * See `createRequestCartProduct()` and `createRequestCartProducts()` in this
+ * package for a convenient way to create a `RequestCartProduct`.
+ */
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 	Pick< RequestCartProduct, 'product_slug' >;
 
+/**
+ * The shopping cart as returned by the shopping cart endpoint.
+ *
+ * A shopping cart belongs to the currently logged-in user and is identified by
+ * its `cart_key` property. Typically there is one shopping cart per site, so
+ * the `cart_key` is usually the same as the `blog_id` but there are also
+ * siteless carts (see `CartKey`).
+ *
+ * This is the main thing meant when most people say "the shopping cart". It
+ * contains a list of cart items in the `products` array which are instances of
+ * `ResponseCartProduct`.
+ *
+ * This object should be treated as immutable. Changing it will probably break
+ * things or may have no effect at all. Instead, changes must be requested by
+ * using the methods in this package (the `ShoppingCartManager` and
+ * `ShoppingCartManagerActions` specifically). Those changes will create a
+ * `RequestCart` (and its `RequestCartProduct` instances). This package will
+ * then submit those requests to the shopping cart endpoint which will
+ * determine if they are valid, fill in the appropriate details, and return
+ * them as a new `ResponseCart`.
+ */
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number;
 	cart_key: CartKey;
@@ -306,13 +473,28 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_auto_renew_coupon_been_automatically_applied: boolean;
 	locale: string;
 	is_signup: boolean;
+
+	/**
+	 * Data returned from the shopping cart endpoint which should be displayed
+	 * to the user. Typicaly this includes error messages if a `RequestCart`
+	 * did not succeed adding something to the cart or notifications about cart
+	 * changes.
+	 */
 	messages?: ResponseCartMessages;
+
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
 	next_domain_condition: '' | 'blog';
 	bundled_domain?: string;
+
+	/**
+	 * Special data returned from the shopping cart endpoint that represent the
+	 * promotional period dates of a product in the cart. This data should be
+	 * formatted and displayed to the user at checkout.
+	 */
 	terms_of_service?: TermsOfServiceRecord[];
+
 	has_pending_payment?: boolean;
 }
 
@@ -359,7 +541,16 @@ export interface ResponseCartMessage {
 }
 
 export interface ResponseCartProduct {
+	/**
+	 * A unique ID for this cart item that can be used to refer to it in
+	 * certain cart actions.
+	 *
+	 * IMPORTANT: this does not persist between different fetches of the
+	 * shopping cart! It is only valid for the current instance of the
+	 * `ResponseCart`.
+	 */
 	uuid: string;
+
 	product_name: string;
 	product_slug: string;
 	product_id: number;
@@ -513,6 +704,11 @@ export interface ResponseCartProduct {
 	 */
 	stored_details_id?: string;
 
+	/**
+	 * Data representing other versions of the shopping cart item that the user
+	 * might want to switch to. Typically this is different billing term
+	 * lengths, like a two-year or three-year version of a product.
+	 */
 	product_variants: ResponseCartProductVariant[];
 }
 
@@ -530,6 +726,13 @@ export interface ResponseCartProductVariant {
 	volume?: number;
 }
 
+/**
+ * A cost override is a change to the price of a product. The new price and the
+ * old (original) price are both provided.
+ *
+ * The override_code is a string that identifies the reason for the override.
+ * When displaying the reason to the customer, use the human_readable_reason.
+ */
 export interface ResponseCartCostOverride {
 	human_readable_reason: string;
 	new_subtotal_integer: number;
@@ -622,6 +825,9 @@ export type DomainLegalAgreementUrl = string;
 export type DomainLegalAgreementTitle = string;
 export type DomainLegalAgreements = Record< DomainLegalAgreementUrl, DomainLegalAgreementTitle >;
 
+/**
+ * Miscellaneous data attached to the shopping cart item.
+ */
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
@@ -680,13 +886,33 @@ export interface ResponseCartGiftDetails {
 	receiver_blog_url?: string;
 }
 
+/**
+ * Miscellaneous data requested to be added to the shopping cart item in a
+ * `RequestCart` (in `RequestCartProduct`).
+ */
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
+	/**
+	 * If this is a renewal of an existing subscription, purchaseId should be
+	 * set to the ID of the subscription.
+	 *
+	 * If not set, the shopping cart will attempt to find the subscription on
+	 * its own, but it's much safer to provide it because the user could own
+	 * several of the same product on the same site (eg: Akismet subscriptions)
+	 * and we might find the wrong one.
+	 */
 	purchaseId?: string;
+
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
 	intentId?: number;
+
+	/**
+	 * True if this is a gift cart; the cart item is being purchased for a site
+	 * that the current user does not own.
+	 */
 	isGiftPurchase?: boolean;
+
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
@@ -699,6 +925,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
+
 	/**
 	 * A way to signal intent to the back end when included as an extra with
 	 * certain products.

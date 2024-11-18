@@ -254,7 +254,8 @@ export function parseChartData( payload, nullAttributes = [] ) {
 		if ( dataRecord.period ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
 			const localeSlug = getLocaleSlug();
-			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			// The period could be a full time format.
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD HH:mm:ss' ).locale( localeSlug );
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;

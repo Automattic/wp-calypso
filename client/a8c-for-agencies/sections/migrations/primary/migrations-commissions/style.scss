@@ -6,6 +6,19 @@
 		max-width: 900px;
 	}
 
+	.a4a-text-placeholder {
+		height: 100px;
+		margin: 16px;
+
+		&:nth-child(2) {
+			height: 200px;
+		}
+
+		@include break-large {
+			margin: 16px 64px 48px;
+		}
+	}
+
 	.step-section-item__content {
 		max-width: none;
 

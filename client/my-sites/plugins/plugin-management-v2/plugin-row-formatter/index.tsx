@@ -78,7 +78,6 @@ export default function PluginRowFormatter( {
 		};
 
 	const moment = useLocalizedMoment();
-	const state = useSelector( ( state ) => state );
 
 	const ago = ( date: MomentInput ) => {
 		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -92,8 +91,11 @@ export default function PluginRowFormatter( {
 			selectedSite && isPluginActionInProgress( state, selectedSite.ID, pluginId, INSTALL_PLUGIN )
 	);
 
+	const { activation, autoupdate } = useSelector( ( state ) =>
+		getAllowedPluginActions( item, state, selectedSite )
+	);
+
 	if ( selectedSite ) {
-		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
 		canActivate = activation;
 		canUpdate = autoupdate;
 	}
@@ -104,7 +106,8 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
-	const allStatuses = getPluginActionStatuses( state );
+	const isFromMarketplace = useSelector( ( state ) => isMarketplaceProduct( state, item?.slug ) );
+	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
 
 	let currentSiteStatuses = allStatuses.filter(
 		( status ) => status.pluginId === pluginId && status.action !== UPDATE_PLUGIN
@@ -224,7 +227,7 @@ export default function PluginRowFormatter( {
 						plugin={ pluginOnSite }
 						site={ selectedSite }
 						wporg={ !! item.wporg }
-						isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
+						isMarketplaceProduct={ isFromMarketplace }
 						disabled={ !! item?.isSelectable }
 					/>
 				</div>

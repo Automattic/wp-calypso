@@ -302,13 +302,14 @@ class StatsSite extends Component {
 		// Move end point (most recent) to the end of period to account for partial periods
 		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
 		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf(
-			period === 'week' ? 'isoWeek' : period
-		);
-		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf(
-			period === 'week' ? 'isoWeek' : period
-		);
+		let momentPeriod = period;
+		if ( momentPeriod === 'week' ) {
+			momentPeriod = 'isoWeek';
+		} else if ( momentPeriod === 'hour' ) {
+			momentPeriod = 'day';
+		}
+		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf( momentPeriod );
+		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf( momentPeriod );
 
 		let customChartQuantity = Math.ceil(
 			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )

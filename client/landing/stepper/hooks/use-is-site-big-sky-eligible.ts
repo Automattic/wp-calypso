@@ -31,12 +31,17 @@ export function useIsBigSkyEligible() {
 		[ site ]
 	);
 
-	const hasInvalidGoal = goals.some( ( value ) => invalidGoals.includes( value ) );
+	const isEligibleGoals = isGoalsBigSkyEligible( goals );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 
 	const eligibilityResult =
-		( featureFlagEnabled && isOwner && isEligiblePlan && ! hasInvalidGoal && onSupportedDevice ) ||
+		( featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice ) ||
 		false;
 
 	return { isLoading: false, isEligible: eligibilityResult };
+}
+
+export function isGoalsBigSkyEligible( goals: Onboard.SiteGoal[] ) {
+	const hasInvalidGoal = goals.some( ( value ) => invalidGoals.includes( value ) );
+	return ! hasInvalidGoal;
 }

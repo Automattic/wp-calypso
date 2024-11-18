@@ -1,4 +1,5 @@
 export const STATS_PERIOD = {
+	HOUR: 'hour',
 	DAY: 'day',
 	WEEK: 'week',
 	MONTH: 'month',
@@ -53,6 +54,7 @@ export const STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS = 'StatsDateControl/last_30
 export const STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS = 'StatsDateControl/last_3_months';
 export const STATS_FEATURE_DATE_CONTROL_LAST_YEAR = 'StatsDateControl/last_year';
 export const STATS_FEATURE_INTERVAL_DROPDOWN = 'StatsIntervalDropdown';
+export const STATS_FEATURE_INTERVAL_DROPDOWN_HOUR = `StatsIntervalDropdown/${ STATS_PERIOD.HOUR }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_DAY = `StatsIntervalDropdown/${ STATS_PERIOD.DAY }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_WEEK = `StatsIntervalDropdown/${ STATS_PERIOD.WEEK }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_MONTH = `StatsIntervalDropdown/${ STATS_PERIOD.MONTH }`;

@@ -1,12 +1,15 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { verse, page, post, file } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import {
+	ContentStepContent,
+	StepStatus,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import SummaryStat from './SummaryStat';
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
-	status: string;
+	status: StepStatus;
 }
 
 export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {

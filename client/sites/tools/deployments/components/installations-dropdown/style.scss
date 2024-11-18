@@ -1,33 +1,8 @@
 .github-deployments-installations-select {
+	.select-dropdown,
 	.select-dropdown__header {
 		height: 40px !important;
 
-	}
-
-
-	&.is-disabled .select-dropdown__header {
-		color: var(--studio-gray-10);
-		background: var(--color-surface);
-		border-color: var(--studio-gray-10);
-
-		.gridicons-chevron-down {
-			fill: var(--studio-gray-10);
-		}
-	}
-
-	.select-dropdown__header-text {
-		font-size: $font-body;
-		font-weight: normal;
-	}
-
-	.select-dropdown__item-text {
-		font-weight: normal;
-	}
-
-	&__add-installation {
-		display: inline-flex !important;
-		align-items: center;
-		gap: 16px;
 	}
 }
 

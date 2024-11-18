@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { trackStatsAnalyticsEvent } from '../utils';
 import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
@@ -13,8 +13,32 @@ interface Props {
 }
 
 const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
-	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
+	const [ isOpen, setOpen ] = useState< boolean | null >( null );
+	const scrollY = useRef( { y: 0, mobile: false } );
+
+	const openModal = () => {
+		const isMobile = document.body.scrollTop > 0;
+		scrollY.current.mobile = isMobile;
+		scrollY.current.y = isMobile ? document.body.scrollTop : window.scrollY;
+
+		setOpen( true );
+	};
+
+	// Prevent scroll to top when modal is opened
+	useEffect( () => {
+		// Do not scroll on initial render
+		if ( isOpen === null ) {
+			return;
+		}
+
+		if ( isOpen && ! scrollY.current.mobile ) {
+			document.body.scrollTo( 0, scrollY.current.y );
+		} else if ( ! isOpen ) {
+			const element = scrollY.current.mobile ? document.body : window;
+			element.scrollTo( 0, scrollY.current.y );
+		}
+	}, [ isOpen ] );
+
 	const closeModal = () => setOpen( false );
 	const translate = useTranslate();
 
@@ -46,6 +70,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
+					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
 						<div className="stats-utm-builder__fields">

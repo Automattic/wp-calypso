@@ -4,22 +4,35 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsAddSitesTable from './add-sites-table';
 
 import './style.scss';
 
 export default function MigrationsTagSitesModal( { onClose }: { onClose: () => void } ) {
 	const translate = useTranslate();
-
-	const handleAddSites = () => {
-		// TODO: Implement this
-	};
+	const dispatch = useDispatch();
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] | [] >( [] );
 
+	const handleAddSites = () => {
+		// TODO: Implement this
+		dispatch(
+			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
+				count: selectedSites.length,
+			} )
+		);
+	};
+
+	const handleOnClose = () => {
+		onClose();
+		dispatch( recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' ) );
+	};
+
 	return (
 		<A4AModal
-			onClose={ onClose }
+			onClose={ handleOnClose }
 			extraActions={
 				<Button variant="primary" onClick={ handleAddSites }>
 					{ selectedSites.length > 0

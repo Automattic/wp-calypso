@@ -55,7 +55,7 @@ const validModules = [
 	'devices',
 ].join( '|' );
 
-const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+const validPeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 
 const routes = {
 	[ `/stats/:period(${ validPeriods })` ]: [

@@ -169,7 +169,6 @@ const connectComponent = connect(
 		const quantity = customQuantity ? customQuantity : defaultQuantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 
-		// The end date of the chart depends on the customRange.
 		// If not provided we compute the value. (maintains previous behaviour)
 		const date = customRange
 			? customRange.chartEnd

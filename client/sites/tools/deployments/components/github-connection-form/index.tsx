@@ -1,5 +1,5 @@
-import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
+import { FormInputValidation, FormLabel, Spinner } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
@@ -151,25 +151,23 @@ export const GitHubConnectionForm = ( {
 					</HostingCardDescription>
 					<FormFieldset className="github-deployments-connect-repository__repository">
 						<FormLabel>{ __( 'Repository' ) }</FormLabel>
-						<div
-							className={ clsx( 'github-deployments-connect-repository__repository-input', {
-								'github-deployments-connect-repository__repository-input--has-error':
-									displayMissingRepositoryError,
-							} ) }
-						>
-							{ repository ? (
-								<ExternalLink
-									href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+						<div css={ { display: 'flex', gap: '8px', flexWrap: 'wrap' } }>
+							{ repository && (
+								<div
+									className={ clsx( 'github-deployments-connect-repository__repository-input', {
+										'github-deployments-connect-repository__repository-input--has-error':
+											displayMissingRepositoryError,
+									} ) }
 								>
-									{ repository.owner }/{ repository.name }
-								</ExternalLink>
-							) : (
-								<FormSettingExplanation css={ { margin: '0 !important' } }>
-									{ __( 'No repository selected' ) }
-								</FormSettingExplanation>
+									<ExternalLink
+										href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+									>
+										{ repository.owner }/{ repository.name }
+									</ExternalLink>
+								</div>
 							) }
 							{ changeRepository && (
-								<Button compact onClick={ changeRepository }>
+								<Button variant="secondary" onClick={ changeRepository }>
 									{ __( 'Select repository' ) }
 								</Button>
 							) }
@@ -218,7 +216,12 @@ export const GitHubConnectionForm = ( {
 				/>
 			</div>
 			<div className="github-deployments-connect-repository__submit">
-				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
+				<Button
+					type="submit"
+					variant="primary"
+					isBusy={ isPending }
+					disabled={ isPending || submitDisabled }
+				>
 					{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
 				</Button>
 

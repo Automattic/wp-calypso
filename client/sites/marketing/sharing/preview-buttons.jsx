@@ -7,7 +7,7 @@ import { Component, createRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import ButtonsPreviewButton from './preview-button';
 import previewWidget from './preview-widget';
 
 class SharingButtonsPreviewButtons extends Component {

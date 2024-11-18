@@ -2,7 +2,9 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
+import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
+import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -12,9 +14,7 @@ import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SharingButtons from './buttons/buttons';
 import Sharing from './main';
-import Traffic from './traffic/';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';

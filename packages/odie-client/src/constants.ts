@@ -49,22 +49,60 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 	__i18n_text_domain__
 );
 
-export const ODIE_TRANSFER_MESSAGE = (
-	shouldUseHelpCenterExperience: boolean | undefined
-): Message => ( {
-	content: shouldUseHelpCenterExperience
-		? __( "Help's on the way!", __i18n_text_domain__ )
-		: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
-	role: 'bot',
-	type: 'message',
-	context: {
-		flags: {
-			hide_disclaimer_content: true,
-			show_contact_support_msg: true,
+export const ODIE_TRANSFER_MESSAGE: Message[] = [
+	{
+		content: __( "We're connecting you to our support team.", __i18n_text_domain__ ),
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: true,
+			},
+			site_id: null,
 		},
-		site_id: null,
 	},
-} );
+];
+
+export const ODIE_TRANSFER_MESSAGE_NEW: Message[] = [
+	{
+		content: __( "Help's on the way!", __i18n_text_domain__ ),
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: false,
+				show_ai_avatar: false,
+			},
+			site_id: null,
+		},
+	},
+	{
+		content: __(
+			'Feel free to share more details while we connect you to support.',
+			__i18n_text_domain__
+		),
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: true,
+			},
+			site_id: null,
+		},
+	},
+];
+
+export const getOdieTransferMessageConstant = (
+	shouldUseHelpCenterExperience: boolean | undefined
+) => {
+	if ( shouldUseHelpCenterExperience ) {
+		return ODIE_TRANSFER_MESSAGE_NEW;
+	}
+	return ODIE_TRANSFER_MESSAGE;
+};
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
