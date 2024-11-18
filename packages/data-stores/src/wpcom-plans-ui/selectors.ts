@@ -18,6 +18,3 @@ export const getSelectedStorageOptions = ( state: State, siteId?: number | null 
 	// expect siteId to be null or undefined here before site creation ( Ex. during onboarding ).
 	return state.selectedStorageOptionForPlan?.[ siteId ];
 };
-
-export const getIsAnyVisibileGridPlanDiscounted = ( state: State ) =>
-	state.isAnyVisibileGridPlanDiscounted;
