@@ -210,6 +210,7 @@ export function site( context, next ) {
 				chartTab={ chartTab }
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
+				momentSiteZone={ momentSiteZone }
 			/>
 		</StatsPageLoader>
 	);
