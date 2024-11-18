@@ -1,6 +1,6 @@
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { DIFMUpsell } from '../components/difm-upsell-banner';
 import { A4AFullyManagedSiteForm } from './agency';
-import { DIFMUpsell } from './difm-upsell-banner';
 import EnhancedOwnershipForm from './enhanced-ownership';
 import FooterCredit from './footer-credit';
 import PrivacyForm from './privacy';

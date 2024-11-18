@@ -9,24 +9,25 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import HeaderCake from 'calypso/components/header-cake';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { DIFMUpsell } from 'calypso/sites/settings/site/difm-upsell-banner';
+import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { Panel, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSettingsSource } from './site-tools/utils';
+import { DIFMUpsell } from '../../../components/difm-upsell-banner';
+import { isHostingMenuUntangled } from '../../../utils';
+
+import './style.scss';
 
 function SiteResetCard( {
 	translate,
@@ -45,7 +46,10 @@ function SiteResetCard( {
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
 
-	const source = getSettingsSource();
+	const isUntangled = isHostingMenuUntangled();
+
+	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
+	const source = isUntangled ? '/sites/settings/administration' : getSettingsSource();
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
@@ -210,27 +214,28 @@ function SiteResetCard( {
 				}
 			);
 			return (
-				<ActionPanel style={ { margin: 0 } }>
-					<ActionPanelBody>
-						<p>{ message }</p>
-					</ActionPanelBody>
-				</ActionPanel>
+				<PanelSection>
+					{ isUntangled && <PanelHeading>{ translate( 'Site reset successful' ) }</PanelHeading> }
+					<p>{ message }</p>
+				</PanelSection>
 			);
 		} else if ( isResetInProgress ) {
 			return (
-				<ActionPanel style={ { margin: 0 } }>
-					<ActionPanelBody>
+				<PanelSection>
+					<>
+						{ isUntangled && <PanelHeading>{ translate( 'Resetting site' ) }</PanelHeading> }
 						<LoadingBar progress={ status?.progress } />
 						<p className="reset-site__in-progress-message">
 							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
 						</p>
-					</ActionPanelBody>
-				</ActionPanel>
+					</>
+				</PanelSection>
 			);
 		}
 		return (
-			<ActionPanel style={ { margin: 0 } }>
-				<ActionPanelBody>
+			<>
+				<PanelSection>
+					{ isUntangled && <PanelHeading>{ translate( 'Confirm site reset' ) }</PanelHeading> }
 					<p>{ instructions }</p>
 					{ content.length > 0 && (
 						<>
@@ -249,8 +254,7 @@ function SiteResetCard( {
 							</ul>
 						</>
 					) }
-				</ActionPanelBody>
-				<ActionPanelFooter>
+					<hr />
 					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
 						{ createInterpolateElement(
 							sprintf(
@@ -285,18 +289,17 @@ function SiteResetCard( {
 							{ ctaText }
 						</Button>
 					</div>
-					{ backupHint && <p className="site-settings__reset-site-backup-hint">{ backupHint }</p> }
-				</ActionPanelFooter>
-			</ActionPanel>
+					{ backupHint && <FormSettingExplanation>{ backupHint }</FormSettingExplanation> }
+				</PanelSection>
+			</>
 		);
 	};
 
 	return (
-		<Main className="site-settings__reset-site">
+		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
 			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Site Reset' ) }
+				title={ title }
 				subtitle={ translate(
 					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
@@ -307,16 +310,14 @@ function SiteResetCard( {
 				) }
 			/>
 			<PageViewTracker path="/settings/start-reset/:site" title="Settings > Site Reset" />
-			<HeaderCake backHref={ `${ source }/${ selectedSiteSlug }` }>
-				<h1>{ translate( 'Site Reset' ) }</h1>
-			</HeaderCake>
+			<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
 			{ renderBody() }
 			<DIFMUpsell
 				site={ site }
 				isUnlaunchedSite={ isUnlaunchedSiteProp }
 				urlRef="unlaunched-site-reset"
 			/>
-		</Main>
+		</Panel>
 	);
 }
 

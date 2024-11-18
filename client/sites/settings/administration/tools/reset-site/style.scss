@@ -1,0 +1,22 @@
+.settings-administration__reset-site {
+	.panel-with-sidebar & {
+		margin-left: 0;
+
+		.panel-section {
+			width: 100%;
+			max-width: 576px !important;
+
+			p:last-of-type {
+				margin-bottom: 0;
+			}
+
+			button {
+				margin-top: 12px;
+			}
+
+			.loading-bar {
+				margin-bottom: 8px;
+			}
+		}
+	}
+}

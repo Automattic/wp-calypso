@@ -1,4 +1,18 @@
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	font-size: 0.875rem;
+	align-items: flex-start;
+
+	.header-cake__back {
+		padding: 0;
+	}
+}
+
 .panel-section {
+	background-color: #fff;
+
 	&.panel-section--borderless{
 		margin-top: 24px;
 	}
