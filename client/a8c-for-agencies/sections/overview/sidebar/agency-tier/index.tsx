@@ -28,12 +28,10 @@ export default function OverviewSidebarAgencyTier() {
 
 	return (
 		<>
-			{ currentAgencyTier && (
-				<AgencyTierCelebrationModal
-					agencyTierInfo={ currentAgencyTierInfo }
-					currentAgencyTier={ currentAgencyTier }
-				/>
-			) }
+			<AgencyTierCelebrationModal
+				agencyTierInfo={ currentAgencyTierInfo }
+				currentAgencyTier={ currentAgencyTier }
+			/>
 			<Card className="agency-tier__card">
 				<FoldableCard
 					className="foldable-nav"

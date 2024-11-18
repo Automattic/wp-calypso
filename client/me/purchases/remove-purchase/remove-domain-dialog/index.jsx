@@ -14,7 +14,7 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit, domainManagementTransferOut } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -38,10 +38,7 @@ class RemoveDomainDialog extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.',
-						{
-							args: { domain: productName },
-						}
+						'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.'
 					) }
 				</p>
 				{ isGravatarDomain && (
@@ -249,6 +246,10 @@ class RemoveDomainDialog extends Component {
 			},
 		];
 
+		if ( ! purchase ) {
+			return;
+		}
+
 		if ( chatButton ) {
 			buttons.unshift( chatButton );
 		}
@@ -277,6 +278,6 @@ export default connect( ( state, ownProps ) => {
 		isGravatarDomain: selectedDomain?.isGravatarDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
-		slug: getSelectedSiteSlug( state ),
+		slug: getSiteSlug( state, ownProps.purchase.siteId ),
 	};
 } )( localize( RemoveDomainDialog ) );

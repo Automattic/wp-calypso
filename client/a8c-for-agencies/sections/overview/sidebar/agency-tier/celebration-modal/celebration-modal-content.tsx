@@ -4,15 +4,8 @@ import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/constants';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import type { AgencyTierInfo } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
-
-// Style is imported from the parent component
+import type { AgencyTierCelebrationModal } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 // Make sure to update the CSS values if you change the block padding or image height
 const BLOCK_PADDING = 98; // 48px * 2
@@ -20,24 +13,22 @@ const IMAGE_HEIGHT = 260;
 const MARGIN_BLOCK_END = 20;
 const DEFAULT_MAX_HEIGHT = 300;
 
-const PREFERENCE_NAME = 'a4a-agency-tier-celebration-modal-dismissed-type';
-
-export default function AgencyTierCelebrationModal( {
-	agencyTierInfo,
+const AgencyTierCelebrationModalContent = ( {
+	celebrationModal,
 	currentAgencyTier,
+	handleOnClose,
+	handleClickExploreBenefits,
 }: {
-	agencyTierInfo?: AgencyTierInfo | null;
+	celebrationModal: AgencyTierCelebrationModal;
 	currentAgencyTier?: string | null;
-} ) {
-	const dispatch = useDispatch();
+	handleOnClose: () => void;
+	handleClickExploreBenefits: () => void;
+} ) => {
 	const isNarrowView = useBreakpoint( '<660px' );
 
-	const celebrationModalShowForCurrentType = useSelector( ( state ) =>
-		getPreference( state, PREFERENCE_NAME )
-	);
+	const [ isOverflowing, setIsOverflowing ] = useState( false );
 
 	const benefitslistRef = useRef< HTMLDivElement >( null );
-	const [ isOverflowing, setIsOverflowing ] = useState( false );
 
 	useEffect( () => {
 		const currentRef = benefitslistRef?.current;
@@ -74,57 +65,9 @@ export default function AgencyTierCelebrationModal( {
 		};
 	}, [ isNarrowView ] );
 
-	// Record the event when the modal is shown
-	useEffect( () => {
-		if (
-			agencyTierInfo?.celebrationModal &&
-			celebrationModalShowForCurrentType !== currentAgencyTier
-		) {
-			dispatch(
-				recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_shown', {
-					agency_tier: currentAgencyTier,
-				} )
-			);
-		}
-	}, [ agencyTierInfo, celebrationModalShowForCurrentType, currentAgencyTier, dispatch ] );
+	const { title, description, extraDescription, benefits, video, image, cta } = celebrationModal;
 
-	const isAgencyFirstPurchase = sessionStorage.getItem( AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY );
-
-	if (
-		! agencyTierInfo?.celebrationModal ||
-		celebrationModalShowForCurrentType === currentAgencyTier ||
-		// Don't show the modal if the user is already on the emerging-partner tier and it's not their first purchase
-		( currentAgencyTier === 'emerging-partner' && ! isAgencyFirstPurchase )
-	) {
-		return null;
-	}
-
-	const handleSavePreference = () => {
-		// Save the preference to prevent the modal from showing again
-		dispatch( savePreference( PREFERENCE_NAME, currentAgencyTier ?? '' ) );
-		sessionStorage.removeItem( AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY );
-	};
-
-	const handleOnClose = () => {
-		handleSavePreference();
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_dismiss', {
-				agency_tier: currentAgencyTier,
-			} )
-		);
-	};
-
-	const handleClickExploreBenefits = () => {
-		handleSavePreference();
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_explore_benefits_click', {
-				agency_tier: currentAgencyTier,
-			} )
-		);
-	};
-
-	const { title, description, extraDescription, benefits, video, image, cta } =
-		agencyTierInfo.celebrationModal;
+	const showImage = isNarrowView || ! video;
 
 	return (
 		<A4AThemedModal
@@ -132,11 +75,11 @@ export default function AgencyTierCelebrationModal( {
 				'is-narrow-view': isNarrowView,
 			} ) }
 			modalVideo={
-				! isNarrowView ? (
+				! showImage ? (
 					<video src={ video } preload="auto" width={ 470 } loop muted autoPlay />
 				) : undefined
 			}
-			modalImage={ isNarrowView ? image : undefined }
+			modalImage={ showImage ? image : undefined }
 			onClose={ handleOnClose }
 			dismissable
 		>
@@ -176,4 +119,6 @@ export default function AgencyTierCelebrationModal( {
 			</div>
 		</A4AThemedModal>
 	);
-}
+};
+
+export default AgencyTierCelebrationModalContent;

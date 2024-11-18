@@ -140,11 +140,16 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
-						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),
+						...( isEnabled( 'performance-profiler/llm' )
+							? { description: llmAnswer?.messages }
+							: {} ),
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
 					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
+					hash={ hash }
+					url={ props.url }
+					chatId={ llmAnswer?.chatId }
 				/>
 			</Content>
 		</Card>
