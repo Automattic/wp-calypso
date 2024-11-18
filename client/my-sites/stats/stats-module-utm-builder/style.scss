@@ -157,3 +157,15 @@ $modal-content-padding: 32px;
 		border-radius: 4px;
 	}
 }
+
+// Hide the URL help section visually, but keep it accessible for screen readers
+#stats-utm-builder-help-section-url {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
