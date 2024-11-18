@@ -31,7 +31,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
+	openSitePreviewPane?: ( site: SiteExcerptData, source: 'primary_action' | 'site_title' ) => void;
 };
 
 const SiteListTile = styled( ListTile )`
@@ -86,7 +86,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			! isNotAtomicJetpack( site ) &&
 			! isDisconnectedJetpackAndNotAtomic( site )
 		) {
-			openSitePreviewPane && openSitePreviewPane( site );
+			openSitePreviewPane && openSitePreviewPane( site, 'site_title' );
 		} else {
 			navigate( adminUrl );
 		}

@@ -5,6 +5,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
@@ -55,7 +56,11 @@ const DotcomSitesDataViews = ( {
 	const userId = useSelector( getCurrentUserId );
 
 	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
+		( site: SiteExcerptData, source: 'primary_action' | 'site_title' ) => {
+			recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+				site_id: site.ID,
+				source,
+			} );
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
 				selectedItem: site,

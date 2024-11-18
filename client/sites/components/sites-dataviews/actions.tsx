@@ -26,7 +26,7 @@ import type { Action } from '@wordpress/dataviews';
 export function useActions( {
 	openSitePreviewPane,
 }: {
-	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
+	openSitePreviewPane?: ( site: SiteExcerptData, source: 'primary_action' | 'site_title' ) => void;
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
@@ -57,7 +57,7 @@ export function useActions( {
 						! isNotAtomicJetpack( site ) &&
 						! isDisconnectedJetpackAndNotAtomic( site )
 					) {
-						openSitePreviewPane && openSitePreviewPane( site );
+						openSitePreviewPane && openSitePreviewPane( site, 'primary_action' );
 					} else {
 						navigate( adminUrl );
 					}
