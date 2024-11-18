@@ -939,8 +939,7 @@ export class LoginForm extends Component {
 			isGravatarFlowWithEmail;
 
 		const shouldRenderForgotPasswordLink =
-			( ! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless ) ||
-			! isPasswordHidden;
+			! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless;
 
 		return (
 			<form
