@@ -122,7 +122,9 @@ const UtmBuilder: React.FC = () => {
 	const { showConfirmation, fadeOut, triggerConfirmation } = useConfirmationMessage();
 
 	useEffect( () => {
-		initialFieldReference.current!.focus();
+		setTimeout( () => {
+			initialFieldReference.current!.focus();
+		}, 100 );
 	}, [] );
 
 	const fromLabels: formLabelsType = {
