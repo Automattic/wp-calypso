@@ -106,30 +106,6 @@
 			}
 		}
 
-		.components-checkbox-control__input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
-			outline: 2px solid transparent;
-			outline-offset: 2px;
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:checked,
-		.components-checkbox-control__input[type="checkbox"]:indeterminate {
-			background: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-			border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-		}
-
-		.components-search-control input[type="search"].components-search-control__input {
-			background: var(--studio-white);
-			border: 1px solid var(--color-neutral-5);
-		}
-
-		.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
-		.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
-			box-shadow: none;
-			background-color: transparent;
-			color: var(--studio-jetpack-green-50);
-		}
-
 		thead .dataviews-view-table__row th {
 			span,
 			button {
