@@ -7,12 +7,6 @@ export const setShowDomainUpsellDialog = ( show: boolean ) =>
 		show,
 	} ) as const;
 
-export const setIsAnyVisibleGridPlanDiscounted = ( isAnyVisibleGridPlanDiscounted: boolean ) =>
-	( {
-		type: 'WPCOM_PLANS_UI_SET_IS_ANY_VISIBLE_GRID_PLAN_DISCOUNTED' as const,
-		isAnyVisibleGridPlanDiscounted,
-	} ) as const;
-
 export const resetStore = () =>
 	( {
 		type: 'WPCOM_PLANS_UI_RESET_STORE',
@@ -35,8 +29,5 @@ export const setSelectedStorageOptionForPlan = ( {
 	} ) as const;
 
 export type WpcomPlansUIAction = ReturnType<
-	| typeof setShowDomainUpsellDialog
-	| typeof resetStore
-	| typeof setSelectedStorageOptionForPlan
-	| typeof setIsAnyVisibleGridPlanDiscounted
+	typeof setShowDomainUpsellDialog | typeof resetStore | typeof setSelectedStorageOptionForPlan
 >;

@@ -15,18 +15,6 @@ const showDomainUpsellDialog: Reducer< boolean | undefined, WpcomPlansUIAction >
 	return state;
 };
 
-const isAnyVisibileGridPlanDiscounted: Reducer< boolean | undefined, WpcomPlansUIAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'WPCOM_PLANS_UI_RESET_STORE' ) {
-		return undefined;
-	} else if ( action.type === 'WPCOM_PLANS_UI_SET_IS_ANY_VISIBLE_GRID_PLAN_DISCOUNTED' ) {
-		return action.isAnyVisibleGridPlanDiscounted;
-	}
-	return state;
-};
-
 const selectedStorageOptionForPlan: Reducer<
 	SelectedStorageOptionForPlan | undefined,
 	WpcomPlansUIAction
@@ -45,7 +33,6 @@ const selectedStorageOptionForPlan: Reducer<
 const reducer = combineReducers( {
 	showDomainUpsellDialog,
 	selectedStorageOptionForPlan,
-	isAnyVisibileGridPlanDiscounted,
 } );
 
 export type State = ReturnType< typeof reducer >;
