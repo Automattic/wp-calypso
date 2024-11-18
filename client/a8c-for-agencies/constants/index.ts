@@ -7,4 +7,4 @@ export const JETPACK_CONNECT_A4A_LINK =
 
 export const REFERRAL_EMAIL_QUERY_PARAM_KEY = 'referral_email';
 
-export const AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY = 'a4a-first-purchase';
+export const AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY = 'a4a_first_purchase';
