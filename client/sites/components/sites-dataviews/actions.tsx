@@ -17,15 +17,28 @@ import {
 	isSimpleSite,
 	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
 
-export function useActions( { openSitePreviewPane } ): Action< SiteExcerptData >[] {
+export function useActions( {
+	openSitePreviewPane,
+}: {
+	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
+} ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
+
+	const capabilities = useSelector<
+		{
+			currentUser: {
+				capabilities: Record< string, Record< string, boolean > >;
+			};
+		},
+		Record< string, Record< string, boolean > >
+	>( ( state ) => state.currentUser.capabilities );
 
 	return useMemo(
 		() => [
@@ -36,12 +49,8 @@ export function useActions( { openSitePreviewPane } ): Action< SiteExcerptData >
 				icon: chevronRight,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					console.log( {
-						sites,
-						site,
-					} );
 					const adminUrl = site.options?.admin_url ?? '';
-					const isAdmin = true;
+					const isAdmin = capabilities[ site.ID ]?.manage_options;
 					if (
 						isAdmin &&
 						! isP2Site( site ) &&

@@ -6,7 +6,6 @@ import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
