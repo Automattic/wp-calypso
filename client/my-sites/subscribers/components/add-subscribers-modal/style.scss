@@ -120,10 +120,17 @@
 		}
 		.components-form-file-upload {
 			position: absolute;
+			height: 100%;
 			top: 50%;
+			left: 0;
+			right: 0;
 			transform: translateY(-50%);
 			button {
-				height: auto;
+				height: 100%;
+				width: 100%;
+				border: 0;
+				justify-content: center;
+				border-radius: 0;
 			}
 			svg {
 				width: 48px;
