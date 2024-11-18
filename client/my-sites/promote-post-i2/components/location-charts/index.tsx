@@ -1,9 +1,9 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
 import './style.scss';
 import { CampaignChartCountryData } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
-import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import { formatNumber } from 'calypso/my-sites/promote-post-i2/utils';
 
@@ -19,6 +19,10 @@ const LocationChart = ( { stats, total, source }: Props ) => {
 	const unknownStat = stats.find( ( stat ) => stat.country.toLowerCase() === 'unknown' );
 	const [ showAll, setShowAll ] = useState( false );
 
+	// Translation of countries
+	const locale = useLocale();
+	const regionNames = new Intl.DisplayNames( [ locale ], { type: 'region' } );
+
 	// We only show the top 5 countries by default, but allow the user to show more to see the rest
 	const displayedStats = showAll ? filteredStats : filteredStats.slice( 0, 5 );
 
@@ -26,18 +30,13 @@ const LocationChart = ( { stats, total, source }: Props ) => {
 	// The other bars will be displayed relative to (this rather than 100%)
 	const maxPercentage = Math.max( ...filteredStats.map( ( stat ) => stat.percentage ) );
 
-	const countryList = useCountryList();
-
 	return (
 		<div className="location-chart__country-stats-container">
 			{ displayedStats.map( ( stat, index ) => {
 				// Calculate the filled bar width, relative to the most popular country
 				const normalisedPercentage = ( stat.percentage / maxPercentage ) * 100;
 
-				// Convert the ISO country code to a country name
-				const country = countryList.find( ( country ) => country.code === stat.country );
-
-				// Used to show the user abreakdown of the data by country
+				// Used to show the user a breakdown of the data by country
 				const tooltipText = `${ formatNumber( stat.total ) } of ${ formatNumber(
 					total
 				) } ${ source }`;
@@ -45,7 +44,7 @@ const LocationChart = ( { stats, total, source }: Props ) => {
 					<Tooltip text={ tooltipText } key={ index }>
 						<div className="location-chart__country-stat">
 							<div className="location-chart__country-info">
-								<span>{ country?.name || stat.country }</span>
+								<span>{ regionNames.of( stat.country ) }</span>
 								<span className="location-chart__percentage">{ stat.percentage }%</span>
 							</div>
 							<div className="location-chart__progress-bar">
