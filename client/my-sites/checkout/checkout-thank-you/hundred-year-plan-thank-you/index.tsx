@@ -129,7 +129,7 @@ function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
 	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
 }
 
-export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
+export default function HundredYearThankYou( { siteSlug, receiptId }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
