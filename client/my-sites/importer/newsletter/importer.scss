@@ -54,6 +54,9 @@ $newsletter_importer_line-height: 20px;
 		.summary__content-stats-label {
 			color: var(--studio-gray-50);
 		}
+		svg {
+			fill: var( --studio-gray-50 );
+		}
 	}
 
 	/**
