@@ -1,11 +1,19 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.task-steps {
+	a {
+		text-decoration: underline;
+		color: unset;
+	}
+}
 
 .task-steps__steps {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+
+
 }
 
 .task-steps__header {
@@ -32,6 +40,7 @@
 
 .task-steps__subheading {
 	@include a4a-font-body-lg;
+	color: var(--color-accent-60);
 }
 
 .task-step {

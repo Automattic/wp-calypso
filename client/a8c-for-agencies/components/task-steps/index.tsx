@@ -4,6 +4,8 @@ import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -12,29 +14,41 @@ export interface TaskStepItem {
 	count: number;
 	title: string;
 	description: string;
-	isCompleted: boolean;
-	buttonProps: {
+	buttonProps?: {
 		label: string;
 		href: string;
 		variant: 'primary' | 'secondary';
 		icon?: JSX.Element;
+		isExternal?: boolean;
+		eventName?: string;
 	};
 }
 
+export interface TaskStepItemWithCompletion extends TaskStepItem {
+	isCompleted: boolean;
+}
+
 interface TaskStepProps {
-	step: TaskStepItem;
+	step: TaskStepItemWithCompletion;
 	toggleTaskStatus: ( step: TaskStepItem ) => void;
 }
 
 interface TaskStepsProps {
 	heading: string;
 	subheading: string;
-	steps: TaskStepItem[];
+	steps: TaskStepItemWithCompletion[];
 	sessionStorageKey: string;
 }
 
 export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const handleOnClick = () => {
+		if ( step.buttonProps?.eventName ) {
+			dispatch( recordTracksEvent( step.buttonProps?.eventName ) );
+		}
+	};
 
 	return (
 		<FoldableCard
@@ -51,14 +65,19 @@ export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 					<div className="task-step__title">{ step.title }</div>
 				</div>
 			}
-			expanded
+			expanded={ ! step.isCompleted }
 			clickableHeader
 			summary={ false }
 		>
 			<div className="task-step__description">{ step.description }</div>
 			<div className="task-step__button-container">
 				{ step.buttonProps && (
-					<Button variant={ step.buttonProps.variant } href={ step.buttonProps.href }>
+					<Button
+						target={ step.buttonProps?.isExternal ? '_blank' : '_self' }
+						variant={ step.buttonProps.variant }
+						href={ step.buttonProps.href }
+						onClick={ handleOnClick }
+					>
 						{ step.buttonProps.label }
 						{ step.buttonProps.icon && <Icon icon={ step.buttonProps.icon } size={ 24 } /> }
 					</Button>
@@ -110,7 +129,7 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 			</div>
 			<div className="task-steps__steps">
 				{ updatedSteps.map( ( step ) => (
-					<TaskStep key={ step.count } step={ step } toggleTaskStatus={ toggleTaskStatus } />
+					<TaskStep key={ step.stepId } step={ step } toggleTaskStatus={ toggleTaskStatus } />
 				) ) }
 			</div>
 		</div>
