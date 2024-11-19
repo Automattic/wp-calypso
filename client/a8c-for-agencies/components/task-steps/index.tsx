@@ -73,7 +73,7 @@ export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 			<div className="task-step__button-container">
 				{ step.buttonProps && (
 					<Button
-						target={ step.buttonProps?.isExternal ? '_blank' : '_self' }
+						target={ step.buttonProps?.isExternal ? '_blank' : undefined }
 						variant={ step.buttonProps.variant }
 						href={ step.buttonProps.href }
 						onClick={ handleOnClick }
@@ -92,6 +92,7 @@ export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 
 export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: TaskStepsProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const updatedStepIds = JSON.parse( sessionStorage.getItem( sessionStorageKey ) || '[]' );
 	const [ completedStepIds, setCompletedStepIds ] = useState< string[] >( updatedStepIds );
@@ -104,16 +105,28 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 	} );
 
 	const toggleTaskStatus = ( step: TaskStepItem ) => {
-		const updatedStepIds = completedStepIds.includes( step.stepId )
+		const checkIfTaskIsCompleted = completedStepIds.includes( step.stepId );
+		const updatedStepIds = checkIfTaskIsCompleted
 			? completedStepIds.filter( ( id ) => id !== step.stepId )
 			: [ ...completedStepIds, step.stepId ];
 		setCompletedStepIds( updatedStepIds );
 		sessionStorage.setItem( sessionStorageKey, JSON.stringify( updatedStepIds ) );
+		dispatch(
+			recordTracksEvent(
+				checkIfTaskIsCompleted
+					? 'calypso_a8c_for_agencies_reset_task'
+					: 'calypso_a8c_for_agencies_mark_task_as_done',
+				{
+					task_id: step.stepId,
+				}
+			)
+		);
 	};
 
 	const resetAllTasks = () => {
 		setCompletedStepIds( [] );
 		sessionStorage.removeItem( sessionStorageKey );
+		dispatch( recordTracksEvent( 'calypso_a8c_for_agencies_reset_all_tasks' ) );
 	};
 
 	return (
