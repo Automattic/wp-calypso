@@ -21,13 +21,18 @@ interface HeaderPriceProps {
 	visibleGridPlans: GridPlan[];
 }
 
-const getTermVariantPlanSlugForSavings = ( {
+/**
+ * Returns the term variant plan slug for savings calculation.
+ * This currently resolves to the monthly plan slug for annual/biennial/triennial plans.
+ */
+const useTermVariantPlanSlugForSavings = ( {
 	planSlug,
 	billingPeriod,
 }: {
 	planSlug: PlanSlug;
 	billingPeriod?: -1 | ( typeof PERIOD_LIST )[ number ];
 } ) => {
+	// If the billing period is yearly or above, we return the monthly variant's plan slug
 	if ( billingPeriod && 365 <= billingPeriod ) {
 		return getPlanSlugForTermVariant( planSlug, TERM_MONTHLY );
 	}
@@ -68,7 +73,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	} );
 
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const termVariantPlanSlug = getTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
+	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: termVariantPlanSlug ? [ termVariantPlanSlug ] : [],
 		storageAddOns,
