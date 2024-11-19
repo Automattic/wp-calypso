@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import { CampaignChartSeriesData } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
-import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/index';
+import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import 'uplot/dist/uPlot.min.css';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
 

@@ -27,7 +27,7 @@ import {
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
-import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/campaign-stats-line-chart';
+import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -637,10 +637,12 @@ export default function CampaignItemDetails( props: Props ) {
 														{
 															onClick: () => setChartSource( ChartSourceOptions.Clicks ),
 															title: 'Clicks',
+															isDisabled: chartSource === ChartSourceOptions.Clicks,
 														},
 														{
 															onClick: () => setChartSource( ChartSourceOptions.Impressions ),
 															title: 'Impressions',
+															isDisabled: chartSource === ChartSourceOptions.Impressions,
 														},
 													] }
 													icon={ chevronDown }
