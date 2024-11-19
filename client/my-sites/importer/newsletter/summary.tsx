@@ -100,8 +100,8 @@ export default function Summary( {
 	if ( importerStatus === 'skipped' ) {
 		return (
 			<Card>
-				<h2>{ __( 'Uh oh!' ) }</h2>
-				<p>
+				<h2>{ __( 'Summary' ) }</h2>
+				<div className="summary__content summary__content-skipped">
 					{ steps.content.content && (
 						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
 					) }
@@ -111,7 +111,7 @@ export default function Summary( {
 							status={ steps.subscribers.status }
 						/>
 					) }
-				</p>
+				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
 						href={ `/import/newsletter/substack/${ selectedSite.slug }/content?from=${ fromSite }` }
