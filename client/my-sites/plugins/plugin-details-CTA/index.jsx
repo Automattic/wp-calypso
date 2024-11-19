@@ -493,12 +493,7 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTri
 	);
 }
 
-export function ManageSitesButton( {
-	className = 'plugin-details-cta__manage-button',
-	plugin,
-	installedOnSitesQuantity = 0,
-	children,
-} ) {
+function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
 	const translate = useTranslate();
 	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
 	const isRequestingPlugins = useSelector( ( state ) => isRequestingForAllSites( state ) );
@@ -531,11 +526,11 @@ export function ManageSitesButton( {
 				</div>
 			) }
 			<Button
-				className={ className }
+				className="plugin-details-cta__manage-button"
 				onClick={ toggleDisplayManageSitePluginsModal }
 				busy={ isRequestingPlugins }
 			>
-				{ children ?? translate( 'Manage sites' ) }
+				{ translate( 'Manage sites' ) }
 			</Button>
 		</>
 	);

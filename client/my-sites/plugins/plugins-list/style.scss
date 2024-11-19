@@ -55,9 +55,22 @@ body.is-section-plugins .plugin-management-wrapper,
     }
 }
 
-.sites-manage-plugin-button {
-    border: none;
+.sites-manage-plugin-status-button {
     padding: 0;
+    display: contents;
+    &:focus:not(:disabled) {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+.sites-manage-plugin-button {
+    margin-left: -12px;
     font-size: inherit;
     color: inherit;
+    cursor: pointer;
+    &:focus:not(:disabled) {
+     outline: none;
+     box-shadow: none;
+    }
 }

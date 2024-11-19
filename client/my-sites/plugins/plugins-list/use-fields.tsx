@@ -6,11 +6,11 @@ import { useMemo } from 'react';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
-import { ManageSitesButton } from '../plugin-details-CTA';
 import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
-	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
+	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
+	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
 ) {
 	const fields = useMemo(
 		() => [
@@ -52,12 +52,15 @@ export function useFields(
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
-							<ManageSitesButton className="sites-manage-plugin-button" plugin={ item }>
+							<Button
+								className="sites-manage-plugin-status-button"
+								onClick={ () => toggleDialogForPlugin( item ) }
+							>
 								<PluginActionStatus
 									currentSiteStatuses={ item.allStatuses }
 									selectedSite={ undefined }
 								/>
-							</ManageSitesButton>
+							</Button>
 						);
 					}
 
@@ -83,9 +86,12 @@ export function useFields(
 				render: ( { item }: { item: Plugin } ) => {
 					const numberOfSites = item.sites && Object.keys( item.sites ).length;
 					return (
-						<ManageSitesButton className="sites-manage-plugin-button" plugin={ item }>
+						<Button
+							className="sites-manage-plugin-button"
+							onClick={ () => toggleDialogForPlugin( item ) }
+						>
 							{ numberOfSites }
-						</ManageSitesButton>
+						</Button>
 					);
 				},
 			},
@@ -117,7 +123,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog ]
+		[ bulkActionDialog, toggleDialogForPlugin ]
 	);
 
 	return fields;
