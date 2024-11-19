@@ -263,11 +263,12 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 	}
 
 	// Handle multiple plugin names separated by commas
-	const titles = pluginName
-		.split( ',' )
-		.map( ( name ) => allowedPluginNames[ name.trim() ] || allowedPluginNames.default );
+	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
 
-	const uniqueTitles = Array.from( new Set( titles ) );
+	if ( uniqueTitles.length === 0 ) {
+		return allowedPluginNames.default;
+	}
 
 	// Use Intl.ListFormat for proper localized list formatting
 	const formatter = new Intl.ListFormat( langSlug, { style: 'long', type: 'conjunction' } );

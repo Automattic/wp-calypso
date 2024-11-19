@@ -236,17 +236,17 @@ describe( 'getPluginTitle', () => {
 
 	it( 'should return the default title for an invalid plugin name', () => {
 		const result = getPluginTitle( 'unknown-plugin', translate );
-		expect( result ).toBe( 'Jetpack' ); // Default value
+		expect( result ).toBe( 'WooCommerce' ); // Default value
 	} );
 
 	it( 'should return the default title for null input', () => {
 		const result = getPluginTitle( null, translate );
-		expect( result ).toBe( 'Jetpack' ); // Default value
+		expect( result ).toBe( 'WooCommerce' ); // Default value
 	} );
 
 	it( 'should return the default title for an empty string', () => {
 		const result = getPluginTitle( '', translate );
-		expect( result ).toBe( 'Jetpack' ); // Default value
+		expect( result ).toBe( 'WooCommerce' ); // Default value
 	} );
 
 	it( 'should handle a mix of valid and invalid plugin names', () => {
