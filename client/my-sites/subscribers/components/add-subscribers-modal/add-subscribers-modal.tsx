@@ -69,6 +69,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
 	const onImportFinished = () => {
 		setIsUploading( false );
+		setAddingMethod( '' );
 		addSubscribersCallback();
 	};
 
