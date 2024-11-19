@@ -158,10 +158,10 @@ const NO_SITE_STATE = {
 };
 
 const memoizedQuery = memoizeLast(
-	( chartTab, date, period, quantity, siteId, startdate = '' ) => ( {
+	( chartTab, date, period, quantity, siteId, chartStart = '' ) => ( {
 		chartTab,
 		date,
-		start_date: startdate,
+		chartStart,
 		period,
 		quantity,
 		siteId,
@@ -188,10 +188,10 @@ const connectComponent = connect(
 		const date = customRange
 			? customRange.chartEnd
 			: getQueryDate( queryDate, timezoneOffset, period, quantity );
-		const startDate = isNewDateFilteringEnabled ? customRange?.chartStart || '' : '';
+		const chartStart = isNewDateFilteringEnabled ? customRange?.chartStart || '' : '';
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
-		const query = memoizedQuery( chartTab, date, period, quantity, siteId, startDate );
+		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );

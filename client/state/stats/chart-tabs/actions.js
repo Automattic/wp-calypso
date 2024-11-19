@@ -17,7 +17,7 @@ import 'calypso/state/stats/init';
 export function requestChartCounts( {
 	chartTab,
 	date,
-	start_date,
+	chartStart,
 	period,
 	quantity,
 	siteId,
@@ -29,7 +29,7 @@ export function requestChartCounts( {
 		type: STATS_CHART_COUNTS_REQUEST,
 		chartTab,
 		date,
-		start_date,
+		chartStart,
 		period,
 		quantity,
 		siteId,

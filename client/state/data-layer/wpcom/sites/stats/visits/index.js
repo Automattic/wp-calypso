@@ -7,7 +7,7 @@ import { receiveChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import fromApi from './from-api';
 
 export const fetch = ( action ) => {
-	const { chartTab, date, start_date, period, quantity, siteId, statFields } = action;
+	const { chartTab, date, chartStart, period, quantity, siteId, statFields } = action;
 
 	if ( period === 'hour' ) {
 		// Move the date to the end of the day to get the correct data for hours; otherwise, we get the data for the previous day.
@@ -41,7 +41,7 @@ export const fetch = ( action ) => {
 				query: {
 					unit: period,
 					date,
-					start_date,
+					start_date: chartStart,
 					quantity,
 					stat_fields: currentTabFields.join( ',' ),
 				},
@@ -56,7 +56,7 @@ export const fetch = ( action ) => {
 				query: {
 					unit: period,
 					date,
-					start_date,
+					start_date: chartStart,
 					quantity,
 					stat_fields: otherTabFields.join( ',' ),
 				},
