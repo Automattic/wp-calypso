@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
@@ -12,6 +11,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -106,7 +106,7 @@ const HeaderText = () => {
 		};
 	}, [] );
 
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 
 	useEffect( () => {
 		if ( currentSupportInteraction ) {
@@ -156,7 +156,8 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
+
 	const shouldDisplayClearChatButton =
 		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
@@ -190,6 +191,7 @@ const ContentMinimized = ( {
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
+	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 	return (
 		<>
 			<p
@@ -212,7 +214,7 @@ const ContentMinimized = ( {
 					<Route
 						path="/odie"
 						element={
-							config.isEnabled( 'help-center-experience' )
+							shouldUseHelpCenterExperience
 								? __( 'Support Assistant', __i18n_text_domain__ )
 								: __( 'Wapuu', __i18n_text_domain__ )
 						}

@@ -54,7 +54,8 @@ const HelpCenterSmooch: React.FC = () => {
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isHelpCenterShown && isEligibleForChat,
-		isEligibleForChat
+		isEligibleForChat,
+		true
 	);
 	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =
 		useDataStoreDispatch( HELP_CENTER_STORE );

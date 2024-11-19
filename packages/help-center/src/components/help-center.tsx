@@ -6,6 +6,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { useExperiment } from 'calypso/lib/explat';
 /**
  * Internal Dependencies
  */
@@ -27,9 +28,9 @@ const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
+	shouldUseHelpCenterExperience,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -82,9 +83,17 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
+	// Just testing with the Stepper experiment
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_stepper_flow_2'
+	);
+	const shouldUseHelpCenterExperience =
+		config.isEnabled( 'help-center-experience' ) ||
+		( ! isLoadingExperiment && experimentAssignment?.variationName === 'stepper' );
+
 	return (
-		<HelpCenterRequiredContextProvider value={ props }>
-			<HelpCenter { ...props } />
+		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
+			<HelpCenter { ...props } shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience } />
 		</HelpCenterRequiredContextProvider>
 	);
 }
