@@ -42,6 +42,22 @@ const DateRangePickerShortcuts = ( {
 
 	const shortcutList = [
 		{
+			id: 'today',
+			label: translate( 'Today' ),
+			offset: 0,
+			range: 0,
+			period: DATERANGE_PERIOD.DAY,
+			shortcutId: 'today',
+		},
+		{
+			id: 'yesterday',
+			label: translate( 'Yesterday' ),
+			offset: 1,
+			range: 0,
+			period: DATERANGE_PERIOD.DAY,
+			shortcutId: 'yesterday',
+		},
+		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
 			offset: 0,
@@ -92,7 +108,10 @@ const DateRangePickerShortcuts = ( {
 		const today = siteToday.clone().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
-			if ( endDate.isSame( today ) && daysInRange === element.range ) {
+			if (
+				( endDate.isSame( today, 'day' ) || element.offset === 1 ) &&
+				daysInRange === element.range
+			) {
 				return element;
 			}
 			return null;

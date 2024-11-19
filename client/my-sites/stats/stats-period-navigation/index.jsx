@@ -319,6 +319,20 @@ const connectComponent = connect(
 		} );
 		const shortcutList = [
 			{
+				id: 'today',
+				label: translate( 'Today' ),
+				offset: 0,
+				range: 0,
+				period: STATS_PERIOD.DAY,
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				offset: 1,
+				range: 0,
+				period: STATS_PERIOD.DAY,
+			},
+			{
 				id: 'last_7_days',
 				label: translate( 'Last 7 Days' ),
 				offset: 0,
