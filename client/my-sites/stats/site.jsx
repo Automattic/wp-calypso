@@ -25,6 +25,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
@@ -469,36 +470,38 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StatsPeriodHeader>
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/stats/${ period }/${ slug }` }
-							queryParams={ context.query }
-							pathTemplate={ pathTemplate }
-							charts={ CHARTS }
-							availableLegend={ this.getAvailableLegend() }
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							onChangeLegend={ this.onChangeLegend }
-							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
-							isWithNewDateControl
-							showArrows
-							slug={ slug }
-							dateRange={ customChartRange }
-						>
-							{ ' ' }
-							<DatePicker
-								period={ period }
+					<StickyPanel>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
 								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
-								isShort
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+								isWithNewDateControl
+								showArrows
+								slug={ slug }
 								dateRange={ customChartRange }
-							/>
-						</StatsPeriodNavigation>
-					</StatsPeriodHeader>
+							>
+								{ ' ' }
+								<DatePicker
+									period={ period }
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+								dateRange={ customChartRange }
+								/>
+							</StatsPeriodNavigation>
+						</StatsPeriodHeader>
+					</StickyPanel>
 				) }
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
