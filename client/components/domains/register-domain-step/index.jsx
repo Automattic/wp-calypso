@@ -1138,7 +1138,7 @@ class RegisterDomainStep extends Component {
 							'hundred_year_domain_premium_name_restriction',
 							{}
 						);
-						return resolve( null );
+						resolve( null );
 					}
 
 					this.setState( {
