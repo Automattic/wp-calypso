@@ -285,7 +285,7 @@ export const requestDSP = async < T >(
 	apiUri: string,
 	method: SupportedDSPMethods = 'GET',
 	body: Record< string, unknown > | undefined = undefined,
-	apiVersion = 1
+	apiVersion = '1'
 ): Promise< T > => {
 	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v${ apiVersion }`;
 
@@ -330,7 +330,7 @@ export const requestDSPHandleErrors = async < T >(
 	apiUri: string,
 	method: SupportedDSPMethods = 'GET',
 	body: Record< string, unknown > | undefined = undefined,
-	apiVersion = 1
+	apiVersion = '1'
 ): Promise< T > => {
 	try {
 		return await requestDSP( siteId, apiUri, method, body, apiVersion );

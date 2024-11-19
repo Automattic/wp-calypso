@@ -14,13 +14,15 @@ import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import {
+	CampaignChartSeriesData,
+	CampaignChartStatsResponse,
+	useCampaignChartStatsQuery,
+} from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import {
 	CampaignResponse,
-	CampaignChartStatsResponse,
 	Order,
-	useCampaignChartStatsQuery,
-	CampaignChartSeriesData,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';

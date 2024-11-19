@@ -67,44 +67,6 @@ export type CampaignResponse = {
 	};
 };
 
-export type CampaignChartSeriesData = {
-	date_utc: string; // ISO date string
-	total: number;
-};
-
-export type CampaignChartCountryData = {
-	country: string;
-	total: number;
-	percentage: number;
-};
-
-export type CampaignChartStatsResponse = {
-	filters: {
-		campaign_id: string;
-		period: {
-			start: string; // ISO date string
-			end: string; // ISO date string
-		};
-	};
-	series: {
-		impressions: CampaignChartSeriesData[];
-		clicks: CampaignChartSeriesData[];
-		spend: CampaignChartSeriesData[];
-	};
-	total_stats: {
-		total: {
-			impressions: number;
-			clicks: number;
-			spend: number;
-		};
-		countryStats: {
-			clicks: CampaignChartCountryData[];
-			impressions: CampaignChartCountryData[];
-			spend: CampaignChartCountryData[];
-		};
-	};
-};
-
 export type Order = {
 	id: number;
 	orderKey: string;
@@ -149,41 +111,13 @@ export const useCampaignsQuery = ( siteId: number, campaignId: number, queryOpti
 	return useQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
-			const campaign = await requestDSPHandleErrors< CampaignResponse >(
+			return await requestDSPHandleErrors< CampaignResponse >(
 				siteId,
 				`/sites/${ siteId }/campaigns/${ campaignId }`
 			);
-			return campaign;
 		},
 		...queryOptions,
 		enabled: !! campaignId && !! siteId,
-		retryDelay: 3000,
-		meta: {
-			persist: false,
-		},
-	} );
-};
-
-export const useCampaignChartStatsQuery = (
-	siteId: number,
-	campaignId: number,
-	startDate: string
-) => {
-	return useQuery( {
-		queryKey: [ 'promote-post-campaign-stats', siteId, campaignId, startDate ],
-		queryFn: async () => {
-			return await requestDSPHandleErrors< CampaignChartStatsResponse >(
-				siteId,
-				`/stats/${ campaignId }`,
-				'GET',
-				{
-					tz: 'UTC',
-					start_date: startDate,
-				},
-				1.1
-			);
-		},
-		enabled: !! siteId && !! campaignId && !! startDate,
 		retryDelay: 3000,
 		meta: {
 			persist: false,
