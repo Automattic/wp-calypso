@@ -185,11 +185,34 @@ export default function HundredYearThankYou( {
 			</StyledLightButton>
 		) : (
 			<StyledLightButton
-				onClick={ () => page( ` /domains/manage/all/${ registeredDomain.name }` ) }
+				onClick={ () =>
+					page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
+				}
 			>
 				{ translate( 'Manage your domain' ) }
 			</StyledLightButton>
 		);
+
+	const description =
+		productSlug === PLAN_100_YEARS
+			? translate(
+					'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
+					{
+						args: {
+							domain: registeredDomain?.domain || siteSlug,
+							planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+						},
+					}
+			  )
+			: translate(
+					'Your 100-Year Domain %(domain)s has been registered. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
+					{
+						args: {
+							domain: registeredDomain?.domain || siteSlug,
+						},
+					}
+			  );
+
 	return (
 		<>
 			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
@@ -218,17 +241,7 @@ export default function HundredYearThankYou( {
 							<Header className="wp-brand-font" isMobile={ isMobile }>
 								{ translate( 'Your century-long legacy begins now' ) }
 							</Header>
-							<Highlight isMobile={ isMobile }>
-								{ translate(
-									'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-									{
-										args: {
-											domain: registeredDomain?.domain || siteSlug,
-											planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-										},
-									}
-								) }
-							</Highlight>
+							<Highlight isMobile={ isMobile }>{ description }</Highlight>
 							{ siteCreatedTimeStamp && (
 								<ButtonBar isMobile={ isMobile }>
 									{ isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
