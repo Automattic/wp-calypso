@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import HundredYearThankYou from 'calypso/my-sites/checkout/checkout-thank-you/hundred-year-plan-thank-you';
@@ -34,10 +35,10 @@ export default function DomainOnlyThankYou( {
 		const purchasedDomain = domainPurchases[ 0 ];
 		const domain = siteDomains.find( ( siteDomain ) => siteDomain.name === purchasedDomain.meta );
 
-		if ( domain.isHundredYearDomain ) {
+		if ( domain && domain.isHundredYearDomain ) {
 			return (
 				<HundredYearThankYou
-					siteSlug={ String( purchasedDomain.blogId ) }
+					siteSlug={ String( domain.blogId ) }
 					receiptId={ Number( receipt.receiptId ) }
 					productSlug="domain_reg"
 				/>
@@ -60,6 +61,7 @@ export default function DomainOnlyThankYou( {
 	return (
 		<>
 			<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
+			<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
 
 			<ThankYouV2
 				title={ translate( 'Your own corner of the web' ) }
