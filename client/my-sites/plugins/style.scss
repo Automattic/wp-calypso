@@ -599,6 +599,16 @@ body.is-section-plugins #primary {
 	}
 }
 
+.plugin-management-wrapper.is-bulk-plugin-management {
+  .plugins__top-container-jc {
+      padding: 4px 0 0;
+
+      @include break-large() {
+          padding: 6px 0 0;
+      }
+  }
+}
+
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
@@ -608,7 +618,8 @@ body.is-section-plugins #primary {
 }
 .plugins__main-content {
 	margin: 0;
-	padding: 0 16px;
+	padding: 0;
+	// padding: 0 16px;
 	flex: 1 1 100%;
 	@media (min-width: $break-small) {
 		padding: 16px 0;

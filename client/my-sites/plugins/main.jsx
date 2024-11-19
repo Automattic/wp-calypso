@@ -529,7 +529,12 @@ export class PluginsMain extends Component {
 					<QueryJetpackSitesFeatures />
 				) }
 				{ this.renderPageViewTracking() }
-				<div className="plugin-management-wrapper">
+				<div
+					className={ clsx(
+						'plugin-management-wrapper',
+						this.props.newBulkPluginManagement && 'is-bulk-plugin-management'
+					) }
+				>
 					{ ! isJetpackCloud && (
 						<NavigationHeader
 							navigationItems={ [] }
