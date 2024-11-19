@@ -47,7 +47,7 @@ $stats-card-min-width: 390px;
 	}
 }
 
-.stats__sticky-navigation.is-sticky .sticky-panel__content {
+.stats__sticky-navigation.is-sticky .sticky-panel__content, .sticky-panel.is-sticky .sticky-panel__content {
 	background: var(--studio-white);
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
 
@@ -59,6 +59,7 @@ $stats-card-min-width: 390px;
 		display: none;
 	}
 }
+
 
 .stats-card {
 	@media (max-width: $break-medium) {
@@ -226,6 +227,8 @@ $stats-card-min-width: 390px;
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
+
+
 }
 
 .list-emails {
