@@ -185,7 +185,7 @@ $breakpoint-mobile: 660px;
 
 		.progress-bar__progress {
 			border-radius: 0;
-			background-color: var(--wp-admin-theme-color);
+			background-color: var(--color-primary);
 		}
 	}
 
@@ -964,7 +964,7 @@ $breakpoint-mobile: 660px;
 			height: 48px;
 			padding: 10px 16px;
 			font-weight: 500;
-			background-color: var(--wp-admin-theme-color);
+			background-color: var(--color-primary);
 		}
 
 		.two-factor-authentication__actions.card button.button {
@@ -1927,11 +1927,11 @@ $breakpoint-mobile: 660px;
 		}
 
 		button.button.is-primary {
-			background-color: var(--wp-admin-theme-color);
+			background-color: var(--color-primary);
 			font-family: inherit;
 			border-radius: 2px;
 			&:hover:not(:disabled) {
-				background-color: var(--wp-admin-theme-color);
+				background-color: var(--color-primary);
 			}
 		}
 
