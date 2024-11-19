@@ -1,7 +1,11 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
-import { isHundredYearDomainFlow } from '@automattic/onboarding';
+import {
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	isHundredYearDomainFlow,
+} from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -1122,6 +1126,19 @@ class RegisterDomainStep extends Component {
 						status !== MAPPED_SAME_SITE_REGISTRABLE
 					) {
 						availabilityStatus = mappable;
+					}
+
+					if (
+						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) &&
+						isAvailablePremiumDomain
+					) {
+						this.removeUnavailablePremiumDomain( domain );
+						this.showSuggestionErrorMessage(
+							domain,
+							'hundred_year_domain_premium_name_restriction',
+							{}
+						);
+						return resolve( null );
 					}
 
 					this.setState( {

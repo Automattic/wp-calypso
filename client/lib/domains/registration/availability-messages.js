@@ -652,6 +652,19 @@ function getAvailabilityNotice(
 			severity = 'info';
 			break;
 
+		case 'hundred_year_domain_premium_name_restriction':
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is premium and is still not supported for the 100-year domain registration.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			severity = 'info';
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
