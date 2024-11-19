@@ -38,6 +38,7 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 interface Props {
 	siteSlug: string;
 	receiptId: number;
+	productSlug?: string;
 }
 
 const MasterBar = styled.div`
@@ -129,7 +130,11 @@ function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
 	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
 }
 
-export default function HundredYearThankYou( { siteSlug, receiptId }: Props ) {
+export default function HundredYearThankYou( {
+	siteSlug,
+	receiptId,
+	productSlug = PLAN_100_YEARS,
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
