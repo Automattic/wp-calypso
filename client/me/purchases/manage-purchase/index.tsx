@@ -71,6 +71,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
+import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -634,6 +635,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+		if ( domainDetails?.isHundredYearDomain ) {
+			return null;
+		}
+
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = ( getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath )(
 				siteSlug,
@@ -922,6 +930,17 @@ class ManagePurchase extends Component<
 			);
 		}
 
+		const domain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+		if ( domain?.isHundredYearDomain ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<HundredYearPlanLogo width={ 50 } />
+				</div>
+			);
+		}
+
 		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -976,6 +995,16 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
+			const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+				( domain ) => domain.domain === purchase.meta
+			);
+
+			if ( domainDetails?.isHundredYearDomain ) {
+				return translate(
+					'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
+				);
+			}
+
 			return translate(
 				"When used with a paid plan, your custom domain can replace your site's free address, {{strong}}%(wpcom_url)s{{/strong}}, " +
 					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
@@ -1092,6 +1121,11 @@ class ManagePurchase extends Component<
 		const domainTransferDuration = translate(
 			'Domain transfers can take anywhere from five to seven days to complete.'
 		);
+
+		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
@@ -1155,6 +1189,7 @@ class ManagePurchase extends Component<
 						getChangePaymentMethodUrlFor={
 							getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 						}
+						domainDetails={ null }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -1238,6 +1273,10 @@ class ManagePurchase extends Component<
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
 
+		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
@@ -1247,7 +1286,9 @@ class ManagePurchase extends Component<
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
 						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
-						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
+						<div className="manage-purchase__description">
+							{ purchaseType( purchase, domainDetails ) }
+						</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
 								<div className="manage-purchase__contact-partner">
@@ -1282,6 +1323,7 @@ class ManagePurchase extends Component<
 							getChangePaymentMethodUrlFor={
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
+							domainDetails={ domainDetails }
 						/>
 					) }
 					{ isProductOwner && ! purchase.isLocked && (

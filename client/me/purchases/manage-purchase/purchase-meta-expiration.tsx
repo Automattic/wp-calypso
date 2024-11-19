@@ -21,6 +21,7 @@ import {
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -58,6 +59,11 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
+
+	const allDomains = useSelector( getAllDomains );
+	const selectedDomain = allDomains?.[ purchase.siteId ]?.find(
+		( domain ) => domain.domain === purchase.meta
+	);
 
 	if (
 		! purchase ||
@@ -203,7 +209,7 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
+				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails: selectedDomain, translate } ) }
 			</em>
 			<span className="manage-purchase__detail">
 				{ renderRenewsOrExpiresOn( {

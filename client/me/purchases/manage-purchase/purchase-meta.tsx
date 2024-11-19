@@ -15,6 +15,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	getName,
 	isExpired,
@@ -49,6 +50,7 @@ export interface PurchaseMetaProps {
 	siteSlug: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	domainDetails: ResponseDomain | null | undefined;
 }
 
 export default function PurchaseMeta( {
@@ -57,6 +59,7 @@ export default function PurchaseMeta( {
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
+	domainDetails,
 }: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
@@ -78,7 +81,10 @@ export default function PurchaseMeta( {
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
-	const renewalPriceHeader = translate( 'Renewal Price' );
+	// 100-year domains will only show a "Price" label since their renewal date is a long time in the future
+	const renewalPriceHeader = domainDetails?.isHundredYearDomain
+		? translate( 'Price' )
+		: translate( 'Renewal Price' );
 
 	const hideRenewalPriceSection = isOneTimePurchase( purchase );
 	const hideTaxString = isIncludedWithPlan( purchase );
@@ -148,9 +154,11 @@ export default function PurchaseMeta( {
 
 function renderRenewsOrExpiresOnLabel( {
 	purchase,
+	domainDetails,
 	translate,
 }: {
 	purchase: Purchase;
+	domainDetails: ResponseDomain | null | undefined;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
 	if ( isExpiring( purchase ) ) {
@@ -186,6 +194,9 @@ function renderRenewsOrExpiresOnLabel( {
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
+		if ( domainDetails?.isHundredYearDomain ) {
+			return translate( 'Paid until' );
+		}
 		return translate( 'Domain renews on' );
 	}
 
