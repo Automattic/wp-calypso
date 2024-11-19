@@ -309,6 +309,7 @@ export default async function multiPartnerCardProcessor(
 				cardNumberElement: submitData.cardNumberElement,
 				reduxDispatch: dataForProcessor.reduxDispatch,
 				eventSource: '/checkout',
+				cartKey: dataForProcessor.responseCart.cart_key,
 			},
 			submitDataWithContactInfo
 		);
