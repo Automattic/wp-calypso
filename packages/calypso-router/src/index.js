@@ -1051,7 +1051,7 @@ function Context( path, state, pageInstance ) {
 	const hashbang = this.page._hashbang;
 
 	// merge multiple leading slashes into one, to avoid misinterpreting the path as scheme-relative URL
-	path = path.replace( /^\/+/, '/' );
+	path = path.replace( /^[/\\]+/, '/' );
 
 	const pageBase = this.page._getBase();
 	if ( '/' === path[ 0 ] && 0 !== path.indexOf( pageBase ) ) {
