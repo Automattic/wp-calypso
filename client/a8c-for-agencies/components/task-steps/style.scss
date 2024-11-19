@@ -12,8 +12,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-
-
 }
 
 .task-steps__header {
@@ -54,6 +52,10 @@
 		gap: 16px;
 	}
 
+	.foldable-card__secondary {
+		flex: unset;
+	}
+
 	&.card.foldable-card.is-expanded  {
 		margin: 0 0 16px 0;
 
@@ -62,7 +64,7 @@
 			border-top: none;
 
 			@include break-large {
-				padding: 20px 56px 16px 56px;
+				padding: 20px 72px 16px;
 			}
 		}
 	}
@@ -71,15 +73,10 @@
 .task-step__button-container {
 	display: flex;
 	gap: 10px;
-	flex-direction: row;
-	flex-wrap: wrap;
+	flex-direction: column;
 
-	.components-button {
-		flex: 1 1 auto;
-
-		@include break-large {
-			flex: unset;
-		}
+	@include break-large {
+		flex-direction: row;
 	}
 
 	svg {
@@ -94,7 +91,11 @@
 }
 
 .task-step__title {
-	@include a4a-font-heading-lg
+	@include a4a-font-heading-md($font-size: 19px);
+
+	@include break-large {
+		font-size: rem(20px)
+	}
 }
 
 .task-step__description {

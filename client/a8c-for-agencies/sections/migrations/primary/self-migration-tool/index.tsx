@@ -11,6 +11,8 @@ import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar
 import { TaskSteps } from 'calypso/a8c-for-agencies/components/task-steps';
 import { getMigrationInfo } from './migration-info';
 
+import './style.scss';
+
 const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 	const translate = useTranslate();
 
