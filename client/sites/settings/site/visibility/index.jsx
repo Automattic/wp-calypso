@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -29,6 +28,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { isHostingMenuUntangled } from '../../utils';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
@@ -210,10 +210,11 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
+	const isUntangled = isHostingMenuUntangled();
 	return (
 		<>
 			{ renderConfirmationModal() }
-			{ ! isEnabled( 'untangling/hosting-menu' ) ? (
+			{ ! isUntangled ? (
 				<>
 					<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 					<LaunchCard>{ renderContent() }</LaunchCard>
@@ -225,10 +226,13 @@ const LaunchSite = () => {
 				</PanelSection>
 			) }
 			{ showPreviewLink &&
-				( ! isEnabled( 'untangling/hosting-menu' ) ? (
+				( ! isUntangled ? (
 					<Card>{ renderPreviewLinks() }</Card>
 				) : (
-					renderPreviewLinks()
+					<PanelSection>
+						<PanelHeading>{ translate( 'Coming soon' ) }</PanelHeading>
+						{ renderPreviewLinks() }
+					</PanelSection>
 				) ) }
 			{ querySiteDomainsComponent }
 		</>

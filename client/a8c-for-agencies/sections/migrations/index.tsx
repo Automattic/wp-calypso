@@ -3,6 +3,8 @@ import page from '@automattic/calypso-router';
 import {
 	A4A_MIGRATIONS_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
 	A4A_MIGRATIONS_COMMISSIONS_LINK,
 	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -16,6 +18,20 @@ export default function () {
 			A4A_MIGRATIONS_OVERVIEW_LINK,
 			requireAccessContext,
 			controller.migrationsOverviewContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+			requireAccessContext,
+			controller.migrateToPressableContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
+			requireAccessContext,
+			controller.migrateToWpcomContext,
 			makeLayout,
 			clientRender
 		);

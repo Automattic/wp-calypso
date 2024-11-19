@@ -27,6 +27,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -248,6 +249,7 @@ class StatsSite extends Component {
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
+			momentSiteZone,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -276,7 +278,7 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
 		}
 
 		// Find the quantity of bars for the chart.
@@ -291,7 +293,8 @@ class StatsSite extends Component {
 		} else {
 			// if start date is missing let the frequency of data take over to avoid showing one bar
 			// (e.g. months defaulting to 30 days and showing one point)
-			customChartRange.chartStart = moment()
+			customChartRange.chartStart = momentSiteZone
+				.clone()
 				.subtract( daysInRange - 1, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
@@ -302,13 +305,14 @@ class StatsSite extends Component {
 		// Move end point (most recent) to the end of period to account for partial periods
 		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
 		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf(
-			period === 'week' ? 'isoWeek' : period
-		);
-		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf(
-			period === 'week' ? 'isoWeek' : period
-		);
+		let momentPeriod = period;
+		if ( momentPeriod === 'week' ) {
+			momentPeriod = 'isoWeek';
+		} else if ( momentPeriod === 'hour' ) {
+			momentPeriod = 'day';
+		}
+		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf( momentPeriod );
+		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf( momentPeriod );
 
 		let customChartQuantity = Math.ceil(
 			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
@@ -321,8 +325,11 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = moment().format( 'YYYY-MM-DD' );
-			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = momentSiteZone
+				.clone()
+				.subtract( 7, 'days' )
+				.format( 'YYYY-MM-DD' );
 		}
 
 		const query = isNewDateFilteringEnabled
@@ -468,6 +475,9 @@ class StatsSite extends Component {
 
 						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
 							<ChartTabs
+								slug={ slug }
+								period={ this.props.period }
+								queryParams={ context.query }
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
@@ -477,7 +487,6 @@ class StatsSite extends Component {
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
-								period={ this.props.period }
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
@@ -498,7 +507,6 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
 							/>
 						) }
 					</>
@@ -818,6 +826,7 @@ export default connect(
 			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			momentSiteZone: getMomentSiteZone( state, siteId ),
 		};
 	},
 	{

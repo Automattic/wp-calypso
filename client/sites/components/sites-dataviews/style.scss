@@ -1,75 +1,116 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.dataviews-view-table__row td:last-of-type {
-	pointer-events: none;
-
-	button,
-	a {
-		pointer-events: auto;
-	}
-}
-
-.sites-dataviews__site {
-	display: flex;
-	flex-direction: row;
-	padding-bottom: 8px;
-	padding-top: 8px;
+.sites-dataviews {
+	flex-grow: 1;
+	margin-top: 0;
 	overflow: hidden;
+	padding-bottom: 0;
 
-	.list-tile {
-		margin-right: 0;
+
+	.dataviews-view-table__row td:last-of-type {
+		pointer-events: none;
+
+		button,
+		a {
+			pointer-events: auto;
+		}
 	}
 
-	.button {
-		margin: 0;
-		padding: 0;
-	}
-}
+	.sites-dataviews__site {
+		display: flex;
+		flex-direction: row;
+		padding-bottom: 8px;
+		padding-top: 8px;
+		overflow: hidden;
 
-.sites-dataviews__site-name {
-	align-self: flex-start;
-	display: inline-block;
-	text-align: left;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	padding: 0 8px;
-	white-space: nowrap;
-	font-weight: 500;
-	font-size: rem(14px);
-}
+		.list-tile {
+			margin-right: 0;
+		}
 
-.sites-dataviews__site-urls {
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
-.dataviews-view-list .sites-dataviews__site-url,
-.dataviews-view-list .sites-dataviews__site-wp-admin-url,
-.dataviews-view-table .sites-dataviews__site-url,
-.dataviews-view-table .sites-dataviews__site-wp-admin-url {
-	color: var(--color-neutral-70);
-	font-size: rem(14px);
-	font-weight: 400;
-
-	&:focus {
-		border-radius: 2px;
-		box-shadow: 0 0 0 2px var(--color-primary-light);
+		.button {
+			margin: 0;
+			padding: 0;
+		}
 	}
 
-	&:visited {
+	.sites-dataviews__site-name {
+		align-self: flex-start;
+		display: inline-block;
+		text-align: left;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding: 0 8px;
+		white-space: nowrap;
+		font-weight: 500;
+		font-size: rem(14px);
+	}
+
+	.sites-dataviews__site-urls {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.dataviews-view-list .sites-dataviews__site-url,
+	.dataviews-view-list .sites-dataviews__site-wp-admin-url,
+	.dataviews-view-table .sites-dataviews__site-url,
+	.dataviews-view-table .sites-dataviews__site-wp-admin-url {
 		color: var(--color-neutral-70);
+		font-size: rem(14px);
+		font-weight: 400;
+
+		&:focus {
+			border-radius: 2px;
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+
+		&:visited {
+			color: var(--color-neutral-70);
+		}
+
+		&:hover,
+		&:hover:visited {
+			color: var(--color-link);
+		}
+
+		svg {
+			vertical-align: sub;
+		}
 	}
 
-	&:hover,
-	&:hover:visited {
-		color: var(--color-link);
+	.site-sort__clickable {
+		cursor: pointer;
+		// Inline block to ensure focus outline is rectangular.
+		display: inline-block;
+		// 5px right padding so focus border doesnt overlap icon.
+		padding-right: 5px;
+		border-radius: 2px;
+		.accessible-focus &:focus {
+			outline-style: solid;
+			outline-color: var(--color-primary-light);
+			outline-width: 2px;
+			outline-offset: 2px;
+		}
 	}
 
-	svg {
-		vertical-align: sub;
+	// Style the Stats label that includes the Jetpack logo
+	.sites-dataviews__stats-label {
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
+
+	.sites-dataviews__migration-pending-status {
+		display: inline-block;
+		padding: 0 10px;
+		font-size: rem(12px);
+		border-radius: 4px;
+		background-color: var(--color-warning-20);
+		line-height: 20px;
+		color: var(--color-warning-80);
+	}
+
 }
 
 .is-section-a8c-for-agencies-sites {
@@ -113,36 +154,4 @@
 	.dataviews-view-table {
 		margin: 0;
 	}
-}
-
-.site-sort__clickable {
-	cursor: pointer;
-	// Inline block to ensure focus outline is rectangular.
-	display: inline-block;
-	// 5px right padding so focus border doesnt overlap icon.
-	padding-right: 5px;
-	border-radius: 2px;
-	.accessible-focus &:focus {
-		outline-style: solid;
-		outline-color: var(--color-primary-light);
-		outline-width: 2px;
-		outline-offset: 2px;
-	}
-}
-
-// Style the Stats label that includes the Jetpack logo
-.sites-dataviews__stats-label {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.sites-dataviews__migration-pending-status {
-	display: inline-block;
-	padding: 0 10px;
-	font-size: rem(12px);
-	border-radius: 4px;
-	background-color: var(--color-warning-20);
-	line-height: 20px;
-	color: var(--color-warning-80);
 }

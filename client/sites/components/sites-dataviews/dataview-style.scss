@@ -1,0 +1,230 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
+
+.sites-dataviews {
+	.dataviews-wrapper {
+		// Maybe move upstream to the gutenberg repository
+		width: 100%;
+	}
+
+	.dataviews-view-list {
+		// DataView overrides: Ideally instead of reusing the site name full field
+		// We should be setting a media field and a primary field.
+		// Or update Core to hide them when not specified.
+		.dataviews-view-list__media-wrapper {
+			display: none;
+		}
+		.dataviews-view-list__primary-field {
+			display: none;
+		}
+	}
+
+	table.dataviews-view-table thead .dataviews-view-table__row th {
+		border-bottom-color: var(--color-border-secondary);
+
+		span,
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
+
+	table.dataviews-view-table .dataviews-view-table__row td {
+		border-bottom-color: var(--color-border-secondary);
+	}
+
+	thead tr.dataviews-view-table__row:hover {
+		background: var(--studio-white);
+	}
+
+	tbody tr.dataviews-view-table__row {
+		cursor: pointer;
+	}
+
+	tr.dataviews-view-table__row {
+		background: var(--studio-white);
+
+		.components-checkbox-control__input {
+			opacity: 0;
+		}
+		.components-checkbox-control__input:checked,
+		.components-checkbox-control__input:indeterminate {
+			opacity: 1;
+		}
+
+		.dataviews-view-table-selection-checkbox {
+			padding-left: 12px;
+			&.is-selected {
+				.components-checkbox-control__input {
+					opacity: 1;
+				}
+			}
+		}
+
+		&:hover {
+			background-color: #f7faff;
+			.site-set-favorite__favorite-icon,
+			.components-checkbox-control__input {
+				opacity: 1;
+			}
+		}
+
+		th {
+			border-bottom: 1px solid var(--color-neutral-5);
+			font-size: rem(13px);
+			font-weight: 400;
+			vertical-align: middle;
+		}
+
+		td {
+			border-bottom: 1px solid var(--color-neutral-5);
+			vertical-align: middle;
+
+			&:has(.sites-dataviews__site) {
+				width: 20%;
+			}
+		}
+
+		.dataviews-view-table__cell-content-wrapper {
+			font-size: rem(13px);
+		}
+
+		.dataviews-view-table__checkbox-column,
+		.components-checkbox-control__input {
+			label.components-checkbox-control__label {
+				display: none;
+			}
+			&[type="checkbox"] {
+				border-color: var(--color-neutral-5);
+			}
+		}
+
+		.site-sort__clickable {
+			cursor: pointer;
+		}
+	}
+
+	ul.dataviews-view-list {
+		li:hover {
+			background: var(--color-neutral-0);
+		}
+		.is-selected {
+			background-color: var(--color-neutral-0);
+		}
+
+		// Needs to be moved upstream to the gutenberg repository.
+		.dataviews-view-list__item {
+			box-sizing: border-box;
+		}
+	}
+
+	thead .dataviews-view-table__row th {
+		span,
+		button {
+			font-size: rem(11px);
+			font-weight: 500;
+			line-height: 20px;
+			color: var(--color-accent-80);
+			text-transform: uppercase;
+		}
+
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
+
+	.sites-dataviews__actions {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: end;
+		flex-wrap: nowrap;
+
+		@media (min-width: 1080px) {
+			.site-actions__actions-large-screen {
+				float: none;
+				margin-inline-end: 20px;
+			}
+		}
+
+		> *:not(:last-child) {
+			margin-inline-end: 10px;
+		}
+
+		.components-dropdown-menu__toggle,
+		.site-preview__open {
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
+
+		&.sites-dataviews__actions-error {
+			svg {
+				color: var(--color-accent-5);
+			}
+		}
+	}
+
+	.dataviews-pagination {
+		flex-shrink: 0;
+		background: #fff;
+		border-top: 1px solid #f1f1f1;
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+		bottom: 0;
+		color: var(--Gray-Gray-40, #787c82);
+		@include a4a-font-body-sm;
+		justify-content: space-between !important;
+		padding: 12px 16px 12px 16px;
+		margin-top: auto;
+		z-index: 1;
+
+		.components-input-control__backdrop {
+			border-color: var(--Gray-Gray-5, #dcdcde);
+		}
+
+		.components-input-control__container {
+			padding: 0 5px;
+		}
+
+		@include breakpoint-deprecated( ">1400px" ) {
+			bottom: 0;
+		}
+	}
+
+	// DataView overrides:
+	// Using the List view for the fly-out panel requires hiding certain elements
+	// to properly fit the site list when the panel is open.
+	@media (min-width: $break-large) {
+		ul.dataviews-view-list {
+			// This override could potentially be removed if we’re able to pass the Actions column via data.actions
+			.components-h-stack,
+			.dataviews-view-list__item {
+				width: 100%;
+			}
+
+			// This styling is a bit of a hack: To make the site name clickable area larger, will need
+			// to hide the other fields when in preview mode.
+			.dataviews-view-list__field {
+				// Hide the field except first (Site name) and last (actions menu)
+				&:not(:first-child):not(:last-child) {
+					display: none;
+				}
+
+				// Force the site name to take up the full width
+				&:first-child {
+					flex-grow: 1;
+
+					.sites-dataviews__site {
+						width: 100%;
+						justify-content: flex-start;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+

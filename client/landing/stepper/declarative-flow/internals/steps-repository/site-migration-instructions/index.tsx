@@ -14,12 +14,12 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
-import { Provisioning } from './provisioning';
+import { ProvisionStatus } from './provision-status';
 import { Questions } from './questions';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
-import type { Status } from './provisioning';
+import type { Status } from './provision-status';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -180,7 +180,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 			<div className="site-migration-instructions__steps">
 				<Steps steps={ steps } />
 			</div>
-			<Provisioning status={ detailedStatus } />
+			<ProvisionStatus status={ detailedStatus } />
 		</MigrationInstructions>
 	);
 

@@ -105,39 +105,6 @@
 	.a4a-layout__header {
 		flex-wrap: nowrap;
 	}
-
-	.dataviews-wrapper {
-		thead tr.dataviews-view-table__row:hover {
-			background: var(--studio-white);
-		}
-
-		tr.dataviews-view-table__row {
-			&:hover {
-				background-color: #f7faff;
-			}
-		}
-
-		tbody tr.dataviews-view-table__row {
-			cursor: pointer;
-		}
-	}
-
-	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-secondary);
-
-		span,
-		.dataviews-view-table-header-button {
-			color: inherit;
-		}
-	}
-
-	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-secondary);
-	}
-
-	.sites-overview__content {
-		margin-top: 0;
-	}
 }
 
 // Style the sortable table headers.
@@ -504,27 +471,6 @@
 			}
 		}
 
-		.sites-overview__content {
-			flex-grow: 1;
-			margin-top: 0;
-			overflow: hidden;
-			padding-bottom: 0 !important;
-		}
-
-		.dataviews-wrapper {
-			.dataviews-view-list {
-				// DataView overrides: Ideally instead of reusing the site name full field
-				// We should be setting a media field and a primary field.
-				// Or update Core to hide them when not specified.
-				.dataviews-view-list__media-wrapper {
-					display: none;
-				}
-				.dataviews-view-list__primary-field {
-					display: none;
-				}
-			}
-		}
-
 		.sites-banner-container {
 			display: none;
 		}
@@ -562,54 +508,6 @@
 	.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
 		.item-preview__header {
 			padding: 0;
-		}
-	}
-}
-
-// DataView overrides:
-// Using the List view for the fly-out panel requires hiding certain elements 
-// to properly fit the site list when the panel is open.
-.main.a4a-layout.sites-dashboard {
-	@media (min-width: $break-large) {
-		ul.dataviews-view-list {
-			// This override could potentially be removed if we’re able to pass the Actions column via data.actions
-			.components-h-stack,
-			.dataviews-view-list__item {
-				width: 100%;
-			}
-		
-			/* This styling is a bit of a hack: To make the site name clickable area larger, will need
-			 * to hide the other fields when in preview mode.
-			 */
-			.dataviews-view-list__field {
-				// Hide the field except first (Site name) and last (actions menu)
-				&:not(:first-child):not(:last-child) {
-					display: none;
-				}
-		
-				// Force the site name to take up the full width
-				&:first-child {
-					flex-grow: 1;
-		
-					.sites-dataviews__site {
-						width: 100%;
-						justify-content: flex-start;
-					}
-				}
-			}
-		
-			.sites-overview__stats-trend,
-			.sites-overview__column-action-button,
-			.sites-overview__row-status,
-			.toggle-activate-monitoring__toggle-button,
-			.sites-dataviews__favorite-btn-wrapper,
-			.sites-overview__boost-score {
-				display: none;
-			}
-		
-			.site-actions__actions-large-screen {
-				display: block;
-			}
 		}
 	}
 }

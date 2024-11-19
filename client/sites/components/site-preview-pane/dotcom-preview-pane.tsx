@@ -11,6 +11,7 @@ import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DOTCOM_HOSTING_CONFIG,
@@ -30,7 +31,6 @@ import {
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 	SETTINGS_ADMINISTRATION_DELETE_SITE,
 	SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
-	SETTINGS_AGENCY,
 	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
 	TOOLS_SFTP_SSH,
@@ -40,6 +40,7 @@ import {
 	TOOLS_DATABASE,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
+	FEATURE_TO_ROUTE_MAP,
 	MARKETING_TRAFFIC,
 	MARKETING_SHARING,
 } from './constants';
@@ -53,7 +54,6 @@ import type {
 interface Props {
 	site: SiteExcerptData;
 	selectedSiteFeature: string;
-	setSelectedSiteFeature: ( feature: string ) => void;
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
@@ -68,7 +68,6 @@ const OVERLAY_MODAL_SELECTORS = [
 const DotcomPreviewPane = ( {
 	site,
 	selectedSiteFeature,
-	setSelectedSiteFeature,
 	selectedSiteFeaturePreview,
 	closeSitePreviewPane,
 	changeSitePreviewPane,
@@ -160,7 +159,6 @@ const DotcomPreviewPane = ( {
 					SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 					SETTINGS_ADMINISTRATION_DELETE_SITE,
 					SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
-					SETTINGS_AGENCY,
 					SETTINGS_CACHING,
 					SETTINGS_WEB_SERVER,
 				],
@@ -185,7 +183,9 @@ const DotcomPreviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							setSelectedSiteFeature( defaultFeatureId );
+							showSitesPage(
+								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }`
+							);
 						}
 					},
 				},
@@ -195,8 +195,9 @@ const DotcomPreviewPane = ( {
 		} );
 	}, [
 		__,
+		site,
+		hasEnTranslation,
 		selectedSiteFeature,
-		setSelectedSiteFeature,
 		selectedSiteFeaturePreview,
 		isSimpleSite,
 		isPlanExpired,

@@ -1,6 +1,7 @@
+import { usePrevious } from '@wordpress/compose';
+import { DataViews, View, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -11,21 +12,18 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
-import type { Field } from '@wordpress/dataviews';
-import type {
-	DataViewsPaginationInfo,
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 import './style.scss';
+import './dataview-style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
-	paginationInfo: DataViewsPaginationInfo;
-	dataViewsState: DataViewsState;
-	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	paginationInfo: { totalItems: number; totalPages: number };
+	dataViewsState: View;
+	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
+	selectedItem: SiteExcerptData | null | undefined;
+	openSitePreviewPane: ( site: SiteExcerptData ) => void;
 };
 
 export function useSiteStatusGroups() {
@@ -50,32 +48,52 @@ const DotcomSitesDataViews = ( {
 	paginationInfo,
 	dataViewsState,
 	setDataViewsState,
+	selectedItem,
+	openSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
-	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: 'list',
-			} ) );
-		},
-		[ setDataViewsState ]
-	);
+	// Scroll to selected site in the list when in list view.
+	const scrollContainerRef = useRef< HTMLElement >();
+	const previousDataViewsState = usePrevious( dataViewsState );
+	const previousSelectedItem = usePrevious( selectedItem );
+	useLayoutEffect( () => {
+		if ( ! scrollContainerRef.current || previousDataViewsState?.type !== dataViewsState.type ) {
+			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
+		}
+
+		if ( ! previousSelectedItem && selectedItem && dataViewsState.type === 'list' ) {
+			window.setTimeout(
+				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				300
+			);
+			return;
+		}
+
+		if ( previousDataViewsState?.page !== dataViewsState.page ) {
+			scrollContainerRef.current?.scrollTo( 0, 0 );
+		}
+	}, [
+		dataViewsState.type,
+		dataViewsState.page,
+		selectedItem,
+		previousDataViewsState,
+		previousSelectedItem,
+	] );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
 	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// However, when don't need to do anything in the callback, because we already maintain dataViewsState.selectedItem.
-	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
-	// (See the `getSelection()` function below.)
+	// However, when don't need to do anything in the callback, because we already maintain a selectedItem state.
+	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
 	const onSelectionChange = () => {};
-	const getSelection = ( dataViewsState: DataViewsState ) =>
-		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
+	const getSelection = useCallback(
+		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
+		[ selectedItem ]
+	);
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
@@ -185,47 +203,30 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
+		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
-	const siteSearchLabel = __( 'Search sites…' );
-
-	// Create the itemData packet state
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
-		items: sites,
-		itemFieldId: 'ID',
-		searchLabel: siteSearchLabel,
-		fields,
-		actions: [],
-		setDataViewsState: setDataViewsState,
-		dataViewsState: dataViewsState,
-		onSelectionChange,
-		pagination: paginationInfo,
-		defaultLayouts: { table: {} },
-	} );
-
-	// Update the itemData packet
-	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteExcerptData > ) => ( {
-			...prevState,
-			items: sites,
-			fields,
-			// actions: actions,
-			setDataViewsState,
-			dataViewsState,
-			searchLabel: siteSearchLabel,
-			selectedItem: dataViewsState.selectedItem,
-			selection: getSelection( dataViewsState ),
-			pagination: paginationInfo,
-		} ) );
-	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
-
 	return (
-		<ItemsDataViews
-			data={ itemsData }
-			isLoading={ isLoading }
-			className="sites-overview__content"
-		/>
+		<div className="sites-dataviews">
+			<DataViews
+				data={ sites }
+				fields={ fields }
+				onChangeView={ ( newView: View ) => setDataViewsState( () => newView ) }
+				view={ dataViewsState }
+				search
+				searchLabel={ __( 'Search sites…' ) }
+				selection={ getSelection() }
+				paginationInfo={ paginationInfo }
+				getItemId={ ( item ) => {
+					// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
+					item.id = item.ID.toString();
+					return item.ID.toString();
+				} }
+				isLoading={ isLoading }
+				defaultLayouts={ { table: {} } }
+				onChangeSelection={ onSelectionChange }
+			/>
+		</div>
 	);
 };
 

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import DeleteSite from 'calypso/my-sites/site-settings/delete-site';
 import ManageConnection from 'calypso/my-sites/site-settings/manage-connection';
 import SiteOwnerTransfer from 'calypso/my-sites/site-settings/site-owner-transfer/site-owner-transfer';
-import StartOver from 'calypso/my-sites/site-settings/start-over';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import {
@@ -12,8 +11,7 @@ import {
 } from '../features';
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
-import AgencySettings from './agency';
-import useIsAgencySettingSupported from './agency/hooks/use-is-agency-setting-supported';
+import ResetSite from './administration/tools/reset-site';
 import CachingSettings from './caching';
 import SiteSettings from './site';
 import WebServerSettings from './web-server';
@@ -23,7 +21,6 @@ export function SettingsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
 
 	const shouldShowAdministration = useIsAdministrationSettingSupported();
-	const shouldShowAgency = useIsAgencySettingSupported();
 
 	const shouldShowHostingFeatures = useAreHostingFeaturesSupported();
 	const shouldShowAdvancedHostingFeatures = useAreAdvancedHostingFeaturesSupported();
@@ -36,9 +33,6 @@ export function SettingsSidebar() {
 				href={ `/sites/settings/administration/${ slug }` }
 			>
 				{ __( 'Administration' ) }
-			</SidebarItem>
-			<SidebarItem enabled={ shouldShowAgency } href={ `/sites/settings/agency/${ slug }` }>
-				{ __( 'Agency' ) }
 			</SidebarItem>
 			<SidebarItem
 				enabled={ shouldShowHostingFeatures }
@@ -80,7 +74,7 @@ export function administrationToolResetSite( context: PageJSContext, next: () =>
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar />
-			<StartOver />
+			<ResetSite />
 		</PanelWithSidebar>
 	);
 	next();
@@ -111,16 +105,6 @@ export function administrationToolManageConnection( context: PageJSContext, next
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<ManageConnection />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function agencySettings( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<SettingsSidebar />
-			<AgencySettings />
 		</PanelWithSidebar>
 	);
 	next();

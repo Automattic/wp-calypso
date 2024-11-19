@@ -853,6 +853,8 @@ const sections = [
 		paths: [
 			'/migrations',
 			'/migrations/overview',
+			'/migrations/overview/migrate-to-pressable',
+			'/migrations/overview/migrate-to-wpcom',
 			'/migrations/commissions',
 			'/migrations/payment-settings',
 		],

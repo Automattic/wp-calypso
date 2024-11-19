@@ -34,6 +34,7 @@ function getPurchaseStatus(
 const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props ) => {
 	const translate = useTranslate();
 	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
+	const isPressable = product?.slug.startsWith( 'pressable' );
 	const isWPCOMLicense = product?.family_slug === 'wpcom-hosting';
 	const redirectUrl =
 		purchase.license &&
@@ -54,15 +55,26 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 			: translate( 'When your client pays, you can assign this product to a site.' );
 	}
 
-	return purchase.site_assigned ? (
-		<Button
-			className="referrals-purchases__assign-button"
-			borderless
-			href={ `/sites/overview/${ urlToSlug( purchase.site_assigned ) }` }
-		>
-			{ urlToSlug( purchase.site_assigned ) }
-		</Button>
-	) : (
+	if ( purchase.site_assigned ) {
+		return isPressable ? (
+			<StatusBadge
+				statusProps={ {
+					children: translate( 'Pressable' ),
+					type: 'success',
+				} }
+			/>
+		) : (
+			<Button
+				className="referrals-purchases__assign-button"
+				borderless
+				href={ `/sites/overview/${ urlToSlug( purchase.site_assigned ) }` }
+			>
+				{ urlToSlug( purchase.site_assigned ) }
+			</Button>
+		);
+	}
+
+	return (
 		<>
 			<StatusBadge
 				statusProps={ {

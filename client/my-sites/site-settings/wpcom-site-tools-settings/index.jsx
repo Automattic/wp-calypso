@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import SiteTools from 'calypso/sites/settings/administration/tools';
 import SiteSettingPrivacy from 'calypso/sites/settings/site/privacy';
-import LaunchSite from 'calypso/sites/settings/site/visibility/launch-site';
+import LaunchSite from 'calypso/sites/settings/site/visibility';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';

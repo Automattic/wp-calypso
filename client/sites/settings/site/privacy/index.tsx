@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -14,6 +13,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isHostingMenuUntangled } from '../../utils';
 import SiteSettingPrivacyForm from './form';
 import type { AppState } from 'calypso/types';
 import './style.scss';
@@ -25,7 +25,7 @@ export interface Fields {
 	wpcom_data_sharing_opt_out: boolean;
 }
 
-interface SiteSettingPrivacyProps {
+interface PrivacyFormProps {
 	fields: Fields;
 	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	updateFields: ( fields: Fields ) => void;
@@ -33,13 +33,13 @@ interface SiteSettingPrivacyProps {
 	isSavingSettings: boolean;
 }
 
-const SiteSettingPrivacy = ( {
+const PrivacyForm = ( {
 	fields,
 	handleSubmitForm,
 	updateFields,
 	isRequestingSettings,
 	isSavingSettings,
-}: SiteSettingPrivacyProps ) => {
+}: PrivacyFormProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -100,7 +100,7 @@ const SiteSettingPrivacy = ( {
 		);
 	};
 
-	if ( ! isEnabled( 'untangling/hosting-menu' ) ) {
+	if ( ! isHostingMenuUntangled() ) {
 		return (
 			<>
 				{ renderSectionHeader() }
@@ -109,7 +109,7 @@ const SiteSettingPrivacy = ( {
 		);
 	}
 	return (
-		<PanelSection>
+		<PanelSection className="settings-site__privacy">
 			<PanelHeading>{ translate( 'Privacy' ) }</PanelHeading>
 			<PanelDescription>
 				{ translate( 'Control who can view your site. {{a}}Learn more{{/a}}', {
@@ -124,10 +124,10 @@ const SiteSettingPrivacy = ( {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onClick={ handleSubmitForm as () => void }
 			>
-				{ translate( 'Save settings' ) }
+				{ translate( 'Save' ) }
 			</Button>
 		</PanelSection>
 	);
 };
 
-export default SiteSettingPrivacy;
+export default PrivacyForm;

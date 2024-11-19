@@ -1,0 +1,120 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.task-steps__steps {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.task-steps__header {
+	display: flex;
+	justify-content: space-between;
+	padding-block-end: 24px;
+	flex-direction: column;
+	gap: 24px;
+
+	.task-steps__heading-container {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	@include break-large {
+		flex-direction: row;
+	}
+}
+
+.task-steps__heading {
+	@include a4a-font-heading-xl;
+}
+
+.task-steps__subheading {
+	@include a4a-font-body-lg;
+}
+
+.task-step {
+	width: 100%;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	.foldable-card__main {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	&.card.foldable-card.is-expanded  {
+		margin: 0 0 16px 0;
+
+		.foldable-card__content {
+			padding-block-start: 16px;
+			border-top: none;
+
+			@include break-large {
+				padding: 20px 56px 16px 56px;
+			}
+		}
+	}
+}
+
+.task-step__button-container {
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	.components-button {
+		flex: 1 1 auto;
+
+		@include break-large {
+			flex: unset;
+		}
+	}
+
+	svg {
+		margin-inline-start: 4px;
+	}
+}
+
+.task-step__header{
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.task-step__title {
+	@include a4a-font-heading-lg
+}
+
+.task-step__description {
+	@include a4a-font-body-lg;
+	padding-block-end: 20px;
+}
+
+.task-step__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 30px;
+	border-radius: 50%;
+	min-width: 30px;
+	max-width: 30px;
+	font-size: rem(16px);
+	font-weight: 600;
+	text-align: center;
+}
+
+.task-step__count {
+	@extend .task-step__icon;
+	border: 1px solid var(--color-accent-5);
+}
+
+.task-step__completed {
+	@extend .task-step__icon;
+	background-color: var(--color-primary);
+	border: 1px solid var(--color-primary);
+	fill: var(--color-text-white);
+}
+

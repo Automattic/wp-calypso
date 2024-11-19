@@ -357,7 +357,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
-				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
+				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.gif',
 				short_description: __( 'Optimize your site for search engines' ),
 			},
 			{
@@ -402,7 +402,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
-				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
+				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.gif',
 				short_description: __( 'Optimize your site for search engines' ),
 			},
 			{

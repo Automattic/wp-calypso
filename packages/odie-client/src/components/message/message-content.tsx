@@ -27,7 +27,10 @@ export const MessageContent = ( {
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
-		`odie-chatbox-message-${ message.type ?? 'message' }`
+		`odie-chatbox-message-${ message.type ?? 'message' }`,
+		shouldUseHelpCenterExperience &&
+			message?.context?.flags?.show_ai_avatar === false &&
+			`odie-chatbox-message-no-avatar`
 	);
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
@@ -42,7 +45,7 @@ export const MessageContent = ( {
 		<>
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
-					{ messageHeader }
+					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
 					{ ( [ 'message', 'image', 'file', 'text' ].includes( message.type ) ||
 						! message.type ) && (

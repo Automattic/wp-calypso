@@ -39,7 +39,7 @@
 		"external-media/openverse": true,
 		"cookie-banner": true,
 		"google-my-business": false,
-		"global-styles/on-personal-plan": false,
+		"global-styles/on-personal-plan": true,
 		"help": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,

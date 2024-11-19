@@ -22,10 +22,6 @@ export const ResizableTextarea: React.FC< {
 		? __( 'Just a moment…', __i18n_text_domain__ )
 		: __( 'Type a message…', __i18n_text_domain__ );
 
-	if ( shouldDisableInputField ) {
-		setSubmitDisabled( true );
-	}
-
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
@@ -49,6 +45,11 @@ export const ResizableTextarea: React.FC< {
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			// Prevent line break when user sends a message
 			if ( event.key === 'Enter' && ! event.shiftKey && inputRef.current?.value.trim() !== '' ) {
+				event.preventDefault();
+			}
+
+			// Prevent sending new line when user presses enter without any text
+			if ( event.key === 'Enter' && inputRef.current?.value.trim() === '' ) {
 				event.preventDefault();
 			}
 		},

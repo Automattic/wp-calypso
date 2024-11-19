@@ -13,4 +13,5 @@ export interface PostItem {
 	author: {
 		avatar_URL: string;
 	};
+	site_name: string;
 }

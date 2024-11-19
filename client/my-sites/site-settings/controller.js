@@ -3,6 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
+import StartOver from 'calypso/sites/settings/administration/tools/reset-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
@@ -20,7 +21,6 @@ import ManageConnection from './manage-connection';
 import { AcceptSiteTransfer } from './site-owner-transfer/accept-site-transfer';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
 import SiteTransferred from './site-owner-transfer/site-transferred';
-import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );

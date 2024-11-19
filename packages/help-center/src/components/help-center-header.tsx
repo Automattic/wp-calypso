@@ -3,9 +3,10 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
+import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useMemo, useCallback } from '@wordpress/element';
+import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -76,6 +77,7 @@ const ChatEllipsisMenu = () => {
 			event_source: 'help-center',
 			event_external_id: uuidv4(),
 		} );
+		clearHelpCenterZendeskConversationStarted();
 	};
 
 	return (
@@ -94,22 +96,46 @@ const ChatEllipsisMenu = () => {
 	);
 };
 
-const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
+const HeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
+	const [ isConversationWithZendesk, setIsConversationWithZendesk ] = useState< boolean >( false );
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+		};
+	}, [] );
 
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
-	const shouldDisplayClearChatButton =
-		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
-	const isHelpCenterHome = pathname === '/';
+
+	useEffect( () => {
+		if ( currentSupportInteraction ) {
+			const zendeskEvent = currentSupportInteraction?.events.find(
+				( event ) => event.event_source === 'zendesk'
+			);
+			if ( zendeskEvent ) {
+				setIsConversationWithZendesk( true );
+			} else {
+				setIsConversationWithZendesk( false );
+			}
+		}
+	}, [ currentSupportInteraction ] );
 
 	const headerText = useMemo( () => {
-		if ( pathname.startsWith( '/odie' ) ) {
-			return shouldUseHelpCenterExperience
-				? __( 'Support Assistant', __i18n_text_domain__ )
-				: __( 'Wapuu', __i18n_text_domain__ );
-		}
+		const getOdieHeader = () => {
+			if ( shouldUseHelpCenterExperience ) {
+				return isConversationWithZendesk
+					? __( 'Support Team', __i18n_text_domain__ )
+					: __( 'Support Assistant', __i18n_text_domain__ );
+			}
+			return __( 'Wapuu', __i18n_text_domain__ );
+		};
+
 		switch ( pathname ) {
+			case '/odie':
+				return getOdieHeader();
 			case '/contact-form':
 				return shouldUseHelpCenterExperience
 					? __( 'Support Assistant', __i18n_text_domain__ )
@@ -119,14 +145,28 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, pathname ] );
+	}, [ __, isConversationWithZendesk, pathname, shouldUseHelpCenterExperience ] );
+
+	return (
+		<span id="header-text" role="presentation" className="help-center-header__text">
+			{ headerText }
+		</span>
+	);
+};
+
+const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
+	const { __ } = useI18n();
+	const { pathname } = useLocation();
+
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const shouldDisplayClearChatButton =
+		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
+	const isHelpCenterHome = pathname === '/';
 
 	return (
 		<>
 			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
-			<span id="header-text" role="presentation" className="help-center-header__text">
-				{ headerText }
-			</span>
+			<HeaderText />
 			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
 			<Button
 				className="help-center-header__minimize"

@@ -21,6 +21,7 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
+const ALLOWED_EVENT_SOURCES = [ 'calypso', 'jetpack', 'remotedatablocks', 'wpcom_dsp_widget' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
 	'a8c_cookie_banner_view',
@@ -212,16 +213,10 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	}
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
-		if (
-			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
-			! /^jetpack(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
-			! /^wpcom_dsp_widget(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
-			! EVENT_NAME_EXCEPTIONS.includes( eventName )
-		) {
+		if ( ! isValidEventName( eventName ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
 			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match ' +
-					'/^calypso(?:_[a-z0-9]+){2,}$/ nor /^jetpack(?:_[a-z0-9]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match with the naming convention and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
@@ -261,15 +256,8 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	debug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
-	if (
-		! eventName.startsWith( 'calypso_' ) &&
-		! eventName.startsWith( 'jetpack_' ) &&
-		! eventName.startsWith( 'wpcom_dsp_widget_' ) &&
-		! EVENT_NAME_EXCEPTIONS.includes( eventName )
-	) {
-		debug(
-			'- Event name must be prefixed by "calypso_", "jetpack_", or added to `EVENT_NAME_EXCEPTIONS`'
-		);
+	if ( ! isValidEventSource( eventName ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
+		debug( '- Event name must be prefixed by a known source or added to `EVENT_NAME_EXCEPTIONS`' );
 		return;
 	}
 
@@ -288,6 +276,24 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
 	analyticsEvents.emit( 'record-event', eventName, eventProperties );
+}
+
+/**
+ * Checks if the event name follows the Tracks naming convention.
+ */
+function isValidEventName( eventName: string ): boolean {
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+		new RegExp( `^${ eventSource }(?:_[a-z0-9]+){2,}$` ).test( eventName )
+	);
+}
+
+/**
+ * Checks if the event name has a valid source prefix.
+ */
+function isValidEventSource( eventName: string ): boolean {
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+		eventName.startsWith( `${ eventSource }_` )
+	);
 }
 
 export function recordTracksPageView( urlPath: string, params: any ) {

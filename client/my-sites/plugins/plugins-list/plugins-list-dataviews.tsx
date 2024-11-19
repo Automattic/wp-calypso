@@ -42,6 +42,23 @@ export default function PluginsListDataViews( {
 		perPage: 15,
 		search: initialSearch,
 		fields: [ 'plugins', 'sites', 'update' ],
+		layout: {
+			styles: {
+				plugins: {
+					width: '60%',
+					minWidth: '300px',
+				},
+				sites: {
+					width: '70px',
+				},
+				update: {
+					minWidth: '200px',
+				},
+				actions: {
+					width: '50px',
+				},
+			},
+		},
 	} ) );
 
 	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
@@ -80,7 +97,6 @@ export default function PluginsListDataViews( {
 		</>
 	);
 
-	// When search changes, notify the parent component
 	useEffect( () => {
 		if ( dataViewsState.search !== initialSearch ) {
 			onSearch && onSearch( dataViewsState.search || '' );
@@ -91,7 +107,7 @@ export default function PluginsListDataViews( {
 		if (
 			dataViewsState.filters?.length === 1 &&
 			dataViewsState.filters[ 0 ].field === 'status' &&
-			dataViewsState.filters[ 0 ].value.includes( PLUGINS_STATUS.UPDATE )
+			dataViewsState.filters[ 0 ].value?.includes( PLUGINS_STATUS.UPDATE )
 		) {
 			setIsFilteringUpdates( true );
 		} else {
