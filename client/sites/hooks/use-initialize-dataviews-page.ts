@@ -1,17 +1,17 @@
 import { usePrevious } from '@wordpress/compose';
 import { useEffect, useRef } from 'react';
-import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import type { View } from '@wordpress/dataviews';
 
 // DataViews' pagination always resets when the search component is mounted, even though the search term has not changed.
 // This is a bug which has a fix in https://github.com/WordPress/gutenberg/pull/61307.
 // This is a workaround until the above fix is released.
 // Here, we restore the page to the previous page if it is unintentionally changed by the above bug.
-export function useInitializeDataViewsPage(
-	dataViewsState: DataViewsState,
-	setDataViewsState: ( state: DataViewsState ) => void
+export function useInitializeDataViewsPage< V extends View >(
+	dataViewsState: V,
+	setDataViewsState: ( state: V ) => void
 ) {
-	const prevPage = usePrevious( dataViewsState.page ) as number;
-	const prevSearch = usePrevious( dataViewsState.search ) as string;
+	const prevPage = usePrevious( dataViewsState.page );
+	const prevSearch = usePrevious( dataViewsState.search );
 
 	const done = useRef( false );
 
@@ -30,5 +30,5 @@ export function useInitializeDataViewsPage(
 			} );
 			done.current = true;
 		}
-	}, [ dataViewsState.page, dataViewsState.search ] );
+	}, [ dataViewsState, prevPage, prevSearch, setDataViewsState ] );
 }
