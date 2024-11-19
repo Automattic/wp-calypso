@@ -4,6 +4,7 @@ import { Moment } from 'moment';
 import { RefObject } from 'react';
 import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { DateControlProps } from './types';
 import './style.scss';
 
@@ -19,12 +20,13 @@ const DateControl = ( {
 	overlay,
 }: DateControlProps ) => {
 	const moment = useLocalizedMoment();
+	const siteToday = useMomentSiteZone();
 
 	const getShortcutForRange = () => {
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
-		const today = moment().format( 'YYYY-MM-DD' );
-		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
+		const today = siteToday.format( 'YYYY-MM-DD' );
+		const yesterday = siteToday.clone().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 		const shortcut = shortcutList.find( ( element ) => {
 			if (
 				yesterday === dateRange.chartEnd &&
@@ -50,6 +52,12 @@ const DateControl = ( {
 		// Generate a full date range for the label.
 		const startDate = moment( dateRange.chartStart ).format( 'LL' );
 		const endDate = moment( dateRange.chartEnd ).format( 'LL' );
+
+		// If start and end are the same, then just show one date.
+		if ( startDate === endDate ) {
+			return startDate;
+		}
+
 		return `${ startDate } - ${ endDate }`;
 	};
 
@@ -58,7 +66,7 @@ const DateControl = ( {
 			<DateRange
 				selectedStartDate={ moment( dateRange.chartStart ) }
 				selectedEndDate={ moment( dateRange.chartEnd ) }
-				lastSelectableDate={ moment() }
+				lastSelectableDate={ siteToday }
 				firstSelectableDate={ moment( '2010-01-01' ) }
 				onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
 					startDate && endDate && onApplyButtonClick( startDate, endDate )

@@ -49,7 +49,14 @@ export default function SubscriptionsList() {
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
-					return <SubscriptionPurchase isFetching={ isFetchingProducts } name={ product?.name } />;
+					const isPressable = product?.slug.startsWith( 'pressable' );
+					return (
+						<SubscriptionPurchase
+							isFetching={ isFetchingProducts }
+							name={ product?.name }
+							isPressable={ isPressable }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,

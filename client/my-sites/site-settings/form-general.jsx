@@ -1,71 +1,38 @@
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS,
-	WPCOM_FEATURES_NO_WPCOM_BRANDING,
-	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	getPlan,
-} from '@automattic/calypso-products';
-import {
-	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
-	WPCOM_FEATURES_LOCKED_MODE,
-	WPCOM_FEATURES_LEGACY_CONTACT,
-} from '@automattic/calypso-products/src';
-import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/components';
+import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
-import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
-import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
-import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SiteSettingPrivacy from 'calypso/sites/settings/site/privacy';
-import LaunchSite from 'calypso/sites/settings/site/visibility/launch-site';
+import SiteSettingsForm from 'calypso/sites/settings/site/form';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import {
-	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
-	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
-} from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
-	isCurrentPlanPaid,
-	getCustomizerUrl,
-	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { A4AFullyManagedSiteSetting } from './a4a-fully-managed-site-setting';
-import { DIFMUpsell } from './difm-upsell-banner';
-import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
@@ -169,24 +136,6 @@ export class SiteSettingsFormGeneral extends Component {
 							</Button>
 						</div>
 					</div>
-				) }
-			</>
-		);
-	}
-
-	toolbarOption() {
-		const { isRequestingSettings, isSavingSettings, siteIsJetpack, siteIsAtomic } = this.props;
-
-		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
-
-		return (
-			<>
-				{ isNonAtomicJetpackSite && (
-					// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-					<Masterbar
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-					/>
 				) }
 			</>
 		);
@@ -416,162 +365,6 @@ export class SiteSettingsFormGeneral extends Component {
 		recordTracksEvent( eventName );
 	};
 
-	privacySettings() {
-		const { fields, handleSubmitForm, updateFields, isRequestingSettings, isSavingSettings } =
-			this.props;
-		return (
-			<SiteSettingPrivacy
-				fields={ fields }
-				handleSubmitForm={ handleSubmitForm }
-				updateFields={ updateFields }
-				isRequestingSettings={ isRequestingSettings }
-				isSavingSettings={ isSavingSettings }
-			/>
-		);
-	}
-
-	// Add settings for enhanced ownership: ability to enable locked mode and add the name of a person who will inherit the site.
-	enhancedOwnershipSettings() {
-		const {
-			translate,
-			fields,
-			isRequestingSettings,
-			isSavingSettings,
-			handleSubmitForm,
-			onChangeField,
-			eventTracker,
-			uniqueEventTracker,
-			hasLockedMode,
-			hasLegacyContact,
-		} = this.props;
-
-		// if has neither locked mode nor legacy contact, return
-		if ( ! hasLockedMode && ! hasLegacyContact ) {
-			return;
-		}
-
-		return (
-			<div className="site-settings__enhanced-ownership-container">
-				<SettingsSectionHeader
-					title={ translate( 'Control your legacy' ) }
-					id="site-settings__enhanced-ownership-header"
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-				/>
-				<Card>
-					<form>
-						{ hasLegacyContact && (
-							<FormFieldset className="site-settings__enhanced-ownership-content">
-								<FormFieldset>
-									<FormLabel htmlFor="legacycontact">{ translate( 'Legacy contact' ) }</FormLabel>
-									<FormInput
-										name="legacycontact"
-										id="legacycontact"
-										data-tip-target="legacy-contact-input"
-										value={ fields.wpcom_legacy_contact || '' }
-										onChange={ onChangeField( 'wpcom_legacy_contact' ) }
-										disabled={ isRequestingSettings }
-										onClick={ eventTracker( 'Clicked Legacy Contact Field' ) }
-										onKeyPress={ uniqueEventTracker( 'Typed in Legacy Contact Field' ) }
-									/>
-								</FormFieldset>
-								<FormSettingExplanation>
-									{ translate( 'Choose someone to look after your site when you pass away.' ) }
-								</FormSettingExplanation>
-								<FormSettingExplanation>
-									{ translate(
-										'To take ownership of the site, we ask that the person you designate contacts us at {{a}}wordpress.com/help{{/a}} with a copy of the death certificate.',
-										{
-											components: {
-												a: (
-													<a
-														href="https://wordpress.com/help"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-											},
-										}
-									) }
-								</FormSettingExplanation>
-							</FormFieldset>
-						) }
-						{ hasLockedMode && (
-							<FormFieldset className="site-settings__enhanced-ownership-content">
-								<FormLabel>{ translate( 'Locked Mode' ) }</FormLabel>
-								<ToggleControl
-									disabled={ isRequestingSettings || isSavingSettings }
-									className="site-settings__locked-mode-toggle"
-									label={ translate( 'Enable Locked Mode' ) }
-									checked={ fields.wpcom_locked_mode }
-									onChange={ this.props.handleToggle( 'wpcom_locked_mode' ) }
-								/>
-								<FormSettingExplanation>
-									{ translate(
-										'Prevents new posts and pages from being created as well as existing posts and pages from being edited, and closes comments site wide.'
-									) }
-								</FormSettingExplanation>
-							</FormFieldset>
-						) }
-					</form>
-				</Card>
-			</div>
-		);
-	}
-
-	giftOptions() {
-		const {
-			translate,
-			fields,
-			isRequestingSettings,
-			isSavingSettings,
-			handleSubmitForm,
-			hasSubscriptionGifting,
-		} = this.props;
-
-		if ( ! isEnabled( 'subscription-gifting' ) ) {
-			return;
-		}
-
-		if ( hasSubscriptionGifting ) {
-			return (
-				<>
-					<div className="site-settings__gifting-container">
-						<SettingsSectionHeader
-							title={ translate( 'Accept a gift subscription' ) }
-							id="site-settings__gifting-header"
-							disabled={ isRequestingSettings || isSavingSettings }
-							isSaving={ isSavingSettings }
-							onButtonClick={ handleSubmitForm }
-							showButton
-						/>
-						<CompactCard className="site-settings__gifting-content">
-							<ToggleControl
-								disabled={ isRequestingSettings || isSavingSettings }
-								className="site-settings__gifting-toggle"
-								label={ translate(
-									'Allow site visitors to gift your plan and domain renewal costs'
-								) }
-								checked={ fields.wpcom_gifting_subscription }
-								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
-							/>
-							<FormSettingExplanation>
-								{ translate(
-									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
-								) }
-								<InlineSupportLink supportContext="gift-a-subscription" showIcon={ false }>
-									{ translate( 'Learn more.' ) }
-								</InlineSupportLink>
-							</FormSettingExplanation>
-						</CompactCard>
-					</div>
-				</>
-			);
-		}
-	}
-
 	renderAdminInterface() {
 		const { site, siteSlug } = this.props;
 		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
@@ -579,22 +372,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 	render() {
 		const {
-			customizerUrl,
-			fields,
 			handleSubmitForm,
-			hasNoWpcomBranding,
 			isRequestingSettings,
 			isSavingSettings,
-			isWPForTeamsSite,
 			site,
 			siteIsJetpack,
-			siteIsAtomic,
 			translate,
-			isAtomicAndEditingToolkitDeactivated,
-			isWpcomStagingSite,
-			isUnlaunchedSite: propsisUnlaunchedSite,
 			adminInterfaceIsWPAdmin,
-			hasBlockTheme,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -632,76 +416,8 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-
-				{ this.props.isUnlaunchedSite &&
-				! isAtomicAndEditingToolkitDeactivated &&
-				! isWpcomStagingSite ? (
-					<LaunchSite />
-				) : (
-					this.privacySettings()
-				) }
-				<A4AFullyManagedSiteSetting
-					site={ site }
-					isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
-					onChange={ this.props.handleToggle( 'is_fully_managed_agency_site' ) }
-					isSaving={ isSavingSettings }
-					onSaveSetting={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
-				/>
-				{ this.enhancedOwnershipSettings() }
-				<DIFMUpsell
-					site={ site }
-					isUnlaunchedSite={ propsisUnlaunchedSite }
-					urlRef="unlaunched-settings"
-				/>
+				<SiteSettingsForm { ...this.props } />
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
-				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
-					<>
-						{ ! hasBlockTheme && (
-							<div className="site-settings__footer-credit-container">
-								<SettingsSectionHeader
-									title={ translate( 'Footer credit' ) }
-									id="site-settings__footer-credit-header"
-								/>
-								<CompactCard className="site-settings__footer-credit-explanation">
-									<p>
-										{ preventWidows(
-											translate(
-												'You can customize your website by changing the footer credit in customizer.'
-											),
-											2
-										) }
-									</p>
-									<div>
-										<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
-											{ translate( 'Change footer credit' ) }
-										</Button>
-									</div>
-								</CompactCard>
-								{ ! hasNoWpcomBranding && (
-									<UpsellNudge
-										feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-										plan={ PLAN_BUSINESS }
-										title={ translate(
-											'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
-
-											{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-										) }
-										description={ translate(
-											'Upgrade to remove the footer credit, use advanced SEO tools and more'
-										) }
-										showIcon
-										event="settings_remove_footer"
-										tracksImpressionName="calypso_upgrade_nudge_impression"
-										tracksClickName="calypso_upgrade_nudge_cta_click"
-									/>
-								) }
-							</div>
-						) }
-					</>
-				) }
-				{ this.toolbarOption() }
 			</div>
 		);
 	}
@@ -710,31 +426,16 @@ export class SiteSettingsFormGeneral extends Component {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
-		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
-		isComingSoon: isSiteComingSoon( state, siteId ),
-		isP2HubSite: isSiteP2Hub( state, siteId ),
-		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		selectedSite: getSelectedSite( state ),
-		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
-		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
-		hasLockedMode: siteHasFeature( state, siteId, WPCOM_FEATURES_LOCKED_MODE ),
-		hasLegacyContact: siteHasFeature( state, siteId, WPCOM_FEATURES_LEGACY_CONTACT ),
-		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
-		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
-		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
-		isLaunchable:
-			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
-		isSimple: isSimpleSite( state, siteId ),
 		timezonesLabels: getTimezonesLabels( state ),
 	};
 } );
@@ -788,23 +489,7 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
-const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
-		props.site?.ID
-	);
-	const { data: activeThemeData } = useActiveThemeQuery( props.site?.ID ?? -1, !! props.site );
-	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-
-	return (
-		<SiteSettingsFormGeneral
-			{ ...props }
-			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
-			hasBlockTheme={ hasBlockTheme }
-		/>
-	);
-};
-
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormGeneralWithGlobalStylesNotice );
+)( SiteSettingsFormGeneral );

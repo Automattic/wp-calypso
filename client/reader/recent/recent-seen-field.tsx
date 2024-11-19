@@ -1,18 +1,15 @@
-import { Button } from '@wordpress/components';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import type { PostItem, ReaderPost } from './types';
+import type { PostItem } from './types';
 
 interface RecentSeenFieldProps {
-	item: ReaderPost;
 	post: PostItem;
-	setSelectedItem: ( post: ReaderPost | null ) => void;
 }
 
-const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { item, post, setSelectedItem } ) => {
+const RecentSeenField: React.FC< RecentSeenFieldProps > = ( { post } ) => {
 	return (
-		<Button className="recent-seen-field" onClick={ () => setSelectedItem( item ) }>
+		<div className="recent-seen-field">
 			<ReaderAvatar siteIcon={ post?.site_icon?.img || post?.author?.avatar_URL } iconSize={ 24 } />
-		</Button>
+		</div>
 	);
 };
 

@@ -22,7 +22,7 @@ export const jetpackPricingContext: Callback = ( context, next ) => {
 		return (
 			<Header
 				urlQueryArgs={ urlQueryArgs }
-				title={ translate( 'Best-in-class products for your WordPress site' ) }
+				title={ translate( 'Security, performance, and marketing tools by the WordPress experts' ) }
 			/>
 		);
 	};

@@ -1,6 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
-import { Icon, closeSmall } from '@wordpress/icons';
+import { Icon, closeSmall, check } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
@@ -8,7 +8,7 @@ import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 
-interface ProvisioningProps {
+interface ProvisionStatusProps {
 	status: {
 		siteTransfer: Status;
 		migrationKey: Status;
@@ -16,12 +16,36 @@ interface ProvisioningProps {
 	};
 }
 
-export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
+export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
 		migrationKey: migrationKeyStatus,
 		pluginInstallation: pluginInstallationStatus,
 	} = status;
+
+	const preparationCompleted =
+		siteTransferStatus === 'success' && pluginInstallationStatus === 'success';
+
+	if ( preparationCompleted ) {
+		const text =
+			migrationKeyStatus === 'error'
+				? translate(
+						'Your new site is ready! Retrieve your migration key and enter it into your old site to start your migration.'
+				  )
+				: translate(
+						'Your new site is ready! Enter your migration key into your old site to start your migration.'
+				  );
+		return (
+			<div className="migration-instructions-provisioning">
+				<div className="migration-instructions-provisioning__success">
+					<div className="migration-instructions-provisioning__success-icon">
+						<Icon icon={ check } />
+					</div>
+					<p>{ text }</p>
+				</div>
+			</div>
+		);
+	}
 
 	const actions = [
 		{ status: siteTransferStatus, text: translate( 'Provisioning your new site' ) },

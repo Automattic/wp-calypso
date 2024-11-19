@@ -20,12 +20,12 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { DIFMUpsell } from 'calypso/sites/settings/site/difm-upsell-banner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { DIFMUpsell } from './difm-upsell-banner';
 import { getSettingsSource } from './site-tools/utils';
 
 function SiteResetCard( {

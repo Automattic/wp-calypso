@@ -1,22 +1,19 @@
-import { Button } from '@wordpress/components';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import type { ReaderPost, PostItem } from './types';
+import type { PostItem } from './types';
 interface RecentPostFieldProps {
-	item: ReaderPost;
 	post: PostItem;
-	setSelectedItem: ( post: ReaderPost | null ) => void;
 }
 
-const RecentPostField: React.FC< RecentPostFieldProps > = ( { item, post, setSelectedItem } ) => {
+const RecentPostField: React.FC< RecentPostFieldProps > = ( { post } ) => {
 	if ( ! post ) {
 		return null;
 	}
 
 	return (
-		<Button className="recent-post-field" onClick={ () => setSelectedItem( item ) }>
+		<div className="recent-post-field">
 			<div className="recent-post-field__title">
 				<div className="recent-post-field__title-text">{ post?.title }</div>
-				<div className="recent-post-field__site-name">{ item.site_name }</div>
+				<div className="recent-post-field__site-name">{ post?.site_name }</div>
 			</div>
 			<div className="recent-post-field__featured-image">
 				<ReaderFeaturedImage
@@ -26,7 +23,7 @@ const RecentPostField: React.FC< RecentPostFieldProps > = ( { item, post, setSel
 					isCompactPost
 				/>
 			</div>
-		</Button>
+		</div>
 	);
 };
 

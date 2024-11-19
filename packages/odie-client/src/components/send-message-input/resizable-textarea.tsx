@@ -22,10 +22,6 @@ export const ResizableTextarea: React.FC< {
 		? __( 'Just a moment…', __i18n_text_domain__ )
 		: __( 'Type a message…', __i18n_text_domain__ );
 
-	if ( shouldDisableInputField ) {
-		setSubmitDisabled( true );
-	}
-
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {

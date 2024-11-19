@@ -38,7 +38,11 @@ export const useManageSupportInteraction = () => {
 	/**
 	 * Add an event to a support interaction.
 	 */
-	const addEventToInteraction = useMutation( {
+	const addEventToInteraction = useMutation<
+		SupportInteraction,
+		Error,
+		{ interactionId: string; eventData: SupportInteractionEvent }
+	>( {
 		mutationKey: [ 'support-interaction', 'add-event' ],
 		mutationFn: ( {
 			interactionId,
@@ -46,7 +50,24 @@ export const useManageSupportInteraction = () => {
 		}: {
 			interactionId: string;
 			eventData: SupportInteractionEvent;
-		} ) => handleSupportInteractionsFetch( 'POST', `/${ interactionId }/events`, eventData ),
+		} ) =>
+			handleSupportInteractionsFetch(
+				'POST',
+				`/${ interactionId }/events`,
+				eventData
+			) as unknown as Promise< SupportInteraction >,
+		onSuccess: (
+			newSupportInteraction: SupportInteraction,
+			variables: { interactionId: string; eventData: SupportInteractionEvent }
+		) => {
+			const hasExpectedEvent = newSupportInteraction?.events?.some(
+				( event ) => event.event_external_id === variables.eventData.event_external_id
+			);
+
+			if ( hasExpectedEvent ) {
+				setCurrentSupportInteraction( newSupportInteraction );
+			}
+		},
 	} ).mutate;
 
 	/**
