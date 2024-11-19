@@ -184,7 +184,9 @@ export default function HundredYearThankYou( {
 				{ translate( 'Manage your site' ) }
 			</StyledLightButton>
 		) : (
-			<StyledLightButton onClick={ () => page( ` /manage/all/${ registeredDomain.name }` ) }>
+			<StyledLightButton
+				onClick={ () => page( ` /domains/manage/all/${ registeredDomain.name }` ) }
+			>
 				{ translate( 'Manage your domain' ) }
 			</StyledLightButton>
 		);
