@@ -364,7 +364,7 @@ class Media extends Component {
 		if ( filter === 'audio' ) {
 			message = translate( 'Audio upload has been enabled.' );
 		} else if ( filter === 'videos' ) {
-			translate( 'Video upload has been enabled.' );
+			message = translate( 'Video upload has been enabled.' );
 		}
 
 		if ( status === 'success' && message ) {
