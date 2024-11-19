@@ -48,7 +48,7 @@
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
-		"importers/newsletter": false,
+		"importers/newsletter": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,
 		"jetpack/ai-assistant-request-limit": true,
