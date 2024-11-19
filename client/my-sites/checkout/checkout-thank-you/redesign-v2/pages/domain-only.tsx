@@ -32,15 +32,6 @@ export default function DomainOnlyThankYou( {
 		getDomainsBySiteId( state, domainPurchases[ 0 ]?.blogId )
 	);
 
-	if ( ! siteDomains.length ) {
-		return (
-			<>
-				<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
-				<PlaceholderThankYou />
-			</>
-		);
-	}
-
 	if ( domainPurchases.length === 1 ) {
 		const purchasedDomain = domainPurchases[ 0 ];
 		const domain = siteDomains.find( ( siteDomain ) => siteDomain.name === purchasedDomain.meta );
