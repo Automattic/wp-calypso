@@ -212,23 +212,24 @@ class StatsPostDetail extends Component {
 					{ ! isLoading && countViews > 0 && (
 						<>
 							<PostSummary siteId={ siteId } postId={ postId } />
+
+							<StatsGlobalValuesContext.Consumer>
+								{ ( isInternal ) =>
+									( supportsUTMStats || isInternal ) && (
+										<div className="stats-module-utm__post-detail">
+											<StatsModuleUTM
+												siteId={ siteId }
+												postId={ postId }
+												query={ { num: -1, max: 0 } }
+											/>
+										</div>
+									)
+								}
+							</StatsGlobalValuesContext.Consumer>
+
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
-
-					<StatsGlobalValuesContext.Consumer>
-						{ ( isInternal ) =>
-							( supportsUTMStats || isInternal ) && (
-								<div className="stats-module-utm__post-detail">
-									<StatsModuleUTM
-										siteId={ siteId }
-										postId={ postId }
-										query={ { num: -1, max: 0 } }
-									/>
-								</div>
-							)
-						}
-					</StatsGlobalValuesContext.Consumer>
 
 					<JetpackColophon />
 				</div>
