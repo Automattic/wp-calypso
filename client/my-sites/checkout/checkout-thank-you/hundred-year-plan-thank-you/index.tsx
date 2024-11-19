@@ -176,6 +176,16 @@ export default function HundredYearThankYou( {
 
 	const isMobile = useMobileBreakpoint();
 	const isPageLoading = isReceiptLoading || isLoadingDomains;
+	const cta =
+		productSlug === PLAN_100_YEARS ? (
+			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+				{ translate( 'Manage your site' ) }
+			</StyledLightButton>
+		) : (
+			<StyledLightButton onClick={ () => page( ` /manage/all/${ registeredDomain.name }` ) }>
+				{ translate( 'Manage your domain' ) }
+			</StyledLightButton>
+		);
 	return (
 		<>
 			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
@@ -224,9 +234,7 @@ export default function HundredYearThankYou( {
 											{ translate( 'Start building' ) }
 										</StyledLightButton>
 									) : (
-										<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
-											{ translate( 'Manage your site' ) }
-										</StyledLightButton>
+										cta
 									) }
 								</ButtonBar>
 							) }
