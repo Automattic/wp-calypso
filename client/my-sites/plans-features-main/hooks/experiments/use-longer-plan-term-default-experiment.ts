@@ -29,9 +29,6 @@ const useLongerPlanTermDefaultExperiment = (): {
 	// TODO: Consider removing this and always return concrete term values (where undefined/null would mean no term savings)
 	isEligibleForTermSavings: boolean;
 } => {
-	// TODO: Figure out how to define explicit types for the experiment assignment
-	// variation names 'default_to_three_year_plans', 'default_to_two_year_plans'
-	// and 'emphasize_savings_only'.
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_plans_page_emphasize_longer_plan_savings'
 	);
