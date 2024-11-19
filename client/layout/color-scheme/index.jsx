@@ -16,6 +16,12 @@ export function getColorScheme( { state, isGlobalSidebarVisible, sectionName } )
 	return siteColorScheme ?? calypsoColorScheme;
 }
 
+export function getColorSchemeFromCurrentQuery( currentQuery ) {
+	return currentQuery?.color_scheme
+		? currentQuery?.color_scheme
+		: new URLSearchParams( currentQuery?.redirect_to ).get( 'color_scheme' );
+}
+
 export function refreshColorScheme( prevColorScheme, nextColorScheme ) {
 	if ( typeof document === 'undefined' ) {
 		return;

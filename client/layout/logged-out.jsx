@@ -49,7 +49,7 @@ import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-import { refreshColorScheme } from './color-scheme';
+import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 
 import './style.scss';
 
@@ -372,7 +372,10 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 			const twoFactorEnabled = isTwoFactorEnabled( state );
-			const colorScheme = currentQuery?.color_scheme;
+
+			const colorScheme = isWooPasswordlessJPC
+				? getColorSchemeFromCurrentQuery( currentQuery )
+				: null;
 
 			return {
 				isJetpackLogin,

@@ -61,7 +61,7 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-import { getColorScheme, refreshColorScheme } from './color-scheme';
+import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
@@ -504,11 +504,21 @@ export default withCurrentRoute(
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
-		const colorScheme = getColorScheme( {
-			state,
-			sectionName,
-			isGlobalSidebarVisible,
-		} );
+		let colorScheme = null;
+
+		// Try to get the color scheme from `color_scheme` query param if we're in the WooCommerce Passwordless JPC flow.
+		if ( isWooPasswordlessJPC ) {
+			colorScheme = getColorSchemeFromCurrentQuery( currentQuery );
+		}
+
+		// if the value is still null, get the color scheme from the state.
+		if ( ! colorScheme ) {
+			colorScheme = getColorScheme( {
+				state,
+				isGlobalSidebarVisible,
+				sectionName,
+			} );
+		}
 
 		return {
 			masterbarIsHidden,
