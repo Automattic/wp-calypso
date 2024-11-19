@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -171,11 +171,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooPasswordlessJPC ) {
-			const pluginName = getPluginTitle(
-				this.props.authQuery?.plugin_name,
-				translate,
-				getLocaleSlug()
-			);
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const reviewDocLink = (
 				<a
 					href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
+import { getLocaleSlug } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
@@ -248,12 +249,12 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate, langSlug = 'en' ) => {
+export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
 	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
 		'order-attribution': translate( 'Order Attribution' ),
-		default: translate( 'Jetpack' ),
+		default: translate( 'WooCommerce' ),
 	};
 
 	if ( ! pluginName ) {
