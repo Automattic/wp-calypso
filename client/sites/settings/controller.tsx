@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import DeleteSite from 'calypso/my-sites/site-settings/delete-site';
 import ManageConnection from 'calypso/my-sites/site-settings/manage-connection';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
@@ -10,6 +9,7 @@ import {
 } from '../features';
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
+import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
 import CachingSettings from './caching';
