@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -149,6 +150,50 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			</div>
 			{ hasTranslationsForAllItems && (
 				<HostingDetails items={ Object.values( hostingDetailItems ) } />
+			) }
+			{ isEnabled( 'automated-migration/application-password' ) && (
+				<>
+					<p>{ translate( 'Current WordPress site address' ) }</p>
+					<p>{ translate( 'WordPress site address' ) }</p>
+					<p>
+						{ translate(
+							'Help us get started by providing some basic details about your current website.'
+						) }
+					</p>
+					<p>{ translate( 'Verifying your site' ) }</p>
+					<p>{ translate( 'Get ready for blazing fast speeds' ) }</p>
+					<p>{ translate( 'Authorize access' ) }</p>
+					<p>{ translate( 'Share credentials instead' ) }</p>
+					<p>{ translate( 'Here’s what else you’re getting' ) }</p>
+					<p>
+						{ translate( 'Uninterrupted service throughout the entire migration experience.' ) }
+					</p>
+					<p>{ translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ) }</p>
+					<p>{ translate( 'Round-the-clock security monitoring and DDoS protection.' ) }</p>
+					<p>{ translate( 'Securely share your credentials' ) }</p>
+					<p>
+						{ translate(
+							'Enter your login details for a WordPress Admin so we can temporarily access {{b}}%(siteURL){{/b}} and start migrating it to WordPress.com.',
+							{ components: { b: <strong /> }, args: { siteURL: 'areallylongdomainname.com' } }
+						) }
+					</p>
+					<p>
+						{ translate(
+							'We’re ready to migrate {{b}}%(siteURL){{/b}} to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.',
+							{ components: { b: <strong /> }, args: { siteURL: 'areallylongdomainname.com' } }
+						) }
+					</p>
+					<p>
+						{ translate(
+							'We can’t start your migration without your authorization. Please authorize WordPress.com in your WP Admin or share your credentials.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Upload your full site backup as a zip file containing the database backup and wp-content folder, or use a backup created by a plugin.'
+						) }
+					</p>
+				</>
 			) }
 		</div>
 	);
