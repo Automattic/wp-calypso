@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -35,10 +35,15 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 		min-height: ${ ( { isMobile } ) => ( isMobile ? '100%' : 'unset' ) };
 	}
 `;
+const hundredYearProducts = [
+	PLAN_100_YEARS,
+	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
+] as const;
+
 interface Props {
 	siteSlug: string;
 	receiptId: number;
-	productSlug?: string;
+	productSlug: ( typeof hundredYearProducts )[ number ];
 }
 
 const MasterBar = styled.div`
