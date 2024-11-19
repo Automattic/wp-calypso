@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
-import { ZendeskMessage, Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
@@ -10,6 +9,7 @@ import ErrorMessage from './error-message';
 import Sources from './sources';
 import { uriTransformer } from './uri-transformer';
 import { UserMessage } from './user-message';
+import type { ZendeskMessage, Message } from '../../types';
 
 export const MessageContent = ( {
 	isDisliked = false,
@@ -52,9 +52,13 @@ export const MessageContent = ( {
 		return zendeskMessageConverter( zendeskMessage );
 	};
 
+	const shouldParseMessage = () => {
+		return message.type === 'message' && message.role !== 'bot';
+	};
+
 	// message type === message are messages being sent from users to zendesk.
 	// They need to be parsed to markdown to appear nicely.
-	const markdownMessageContent = message.type !== 'message' ? message : parseTextMessage( message );
+	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
 
 	return (
 		<>
