@@ -1,0 +1,9 @@
+// Override for the 100-year domain flow - it comes from a different route,
+// so another styles are also applied, thus this override is needed.
+main.checkout-thank-you {
+	&.is-redesign-v2 {
+		&.main {
+			max-width: unset;
+		}
+	}
+}
