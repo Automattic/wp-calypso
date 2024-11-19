@@ -141,7 +141,7 @@ export default function PluginsListDataViews( {
 				defaultLayouts={ defaultLayouts }
 				header={ header }
 			/>
-			{ sitesDialog && sitesDialog }
+			{ sitesDialog }
 		</>
 	);
 }
