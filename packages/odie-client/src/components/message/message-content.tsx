@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
-import { Message } from '../../types';
+import { ZendeskMessage, Message } from '../../types';
+import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
@@ -41,6 +42,20 @@ export const MessageContent = ( {
 		message.context?.flags?.hide_disclaimer_content ||
 		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
 
+	// This will parse text messages sent from users to Zendesk.
+	const parseTextMessage = ( message: Message ): Message => {
+		const zendeskMessage = {
+			type: 'text',
+			text: message.content,
+			role: message.role,
+		} as ZendeskMessage;
+		return zendeskMessageConverter( zendeskMessage );
+	};
+
+	// message type === message are messages being sent from users to zendesk.
+	// They need to be parsed to markdown to appear nicely.
+	const markdownMessageContent = message.type !== 'message' ? message : parseTextMessage( message );
+
 	return (
 		<>
 			<div className={ containerClasses } data-is-message="true">
@@ -50,7 +65,7 @@ export const MessageContent = ( {
 					{ ( [ 'message', 'image', 'file', 'text' ].includes( message.type ) ||
 						! message.type ) && (
 						<UserMessage
-							message={ message }
+							message={ markdownMessageContent }
 							isDisliked={ isDisliked }
 							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
 						/>
