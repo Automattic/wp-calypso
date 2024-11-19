@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
+import { ManageSitesButton } from '../plugin-details-CTA';
 import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
@@ -51,10 +52,12 @@ export function useFields(
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
-							<PluginActionStatus
-								currentSiteStatuses={ item.allStatuses }
-								selectedSite={ undefined }
-							/>
+							<ManageSitesButton className="sites-manage-plugin-button" plugin={ item }>
+								<PluginActionStatus
+									currentSiteStatuses={ item.allStatuses }
+									selectedSite={ undefined }
+								/>
+							</ManageSitesButton>
 						);
 					}
 
@@ -78,7 +81,12 @@ export function useFields(
 					return item.sites && Object.keys( item.sites ).length;
 				},
 				render: ( { item }: { item: Plugin } ) => {
-					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
+					const numberOfSites = item.sites && Object.keys( item.sites ).length;
+					return (
+						<ManageSitesButton className="sites-manage-plugin-button" plugin={ item }>
+							{ numberOfSites }
+						</ManageSitesButton>
+					);
 				},
 			},
 			{
