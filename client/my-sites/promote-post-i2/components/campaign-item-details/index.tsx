@@ -19,7 +19,7 @@ import {
 	CampaignResponse,
 	CampaignChartStatsResponse,
 	Order,
-	useCampaignsStatsQuery,
+	useCampaignChartStatsQuery,
 	CampaignChartSeriesData,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
@@ -126,7 +126,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
-	const campaignStatsQuery = useCampaignsStatsQuery( siteId, campaignId, campaign.start_date );
+	const campaignStatsQuery = useCampaignChartStatsQuery( siteId, campaignId, campaign.start_date );
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
 

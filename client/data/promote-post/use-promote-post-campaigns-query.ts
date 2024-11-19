@@ -164,7 +164,11 @@ export const useCampaignsQuery = ( siteId: number, campaignId: number, queryOpti
 	} );
 };
 
-export const useCampaignsStatsQuery = ( siteId: number, campaignId: number, startDate: string ) => {
+export const useCampaignChartStatsQuery = (
+	siteId: number,
+	campaignId: number,
+	startDate: string
+) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-campaign-stats', siteId, campaignId, startDate ],
 		queryFn: async () => {
