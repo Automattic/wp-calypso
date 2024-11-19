@@ -636,12 +636,12 @@ export default function CampaignItemDetails( props: Props ) {
 													controls={ [
 														{
 															onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-															title: 'Clicks',
+															title: __( 'Clicks' ),
 															isDisabled: chartSource === ChartSourceOptions.Clicks,
 														},
 														{
 															onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-															title: 'Impressions',
+															title: __( 'Impressions' ),
 															isDisabled: chartSource === ChartSourceOptions.Impressions,
 														},
 													] }
