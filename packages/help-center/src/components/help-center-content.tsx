@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { CardBody, Disabled } from '@wordpress/components';
@@ -56,7 +57,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { data } = useSupportStatus();
 	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center' );
+		useGetSupportInteractions(
+			'help-center',
+			undefined,
+			undefined,
+			undefined,
+			config.isEnabled( 'help-center-experience' )
+		);
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
 
 	useEffect( () => {
