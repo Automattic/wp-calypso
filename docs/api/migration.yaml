@@ -23,16 +23,16 @@ paths:
             type: integer
             enum: [1]
       responses:
-        '200': 
+        '200':
           description: |
             Return the list of migrations by site
           content:
-            application/json:    
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Migration'
-        '400':  
+        '400':
           description: "Missing or invalid required params"
           content:
             application/json:
@@ -42,7 +42,7 @@ paths:
                   error:
                     type: string
                     example: "Missing or invalid parameters"
-        
+
         '404':
           description: No migration found
           content:
@@ -58,8 +58,18 @@ paths:
         Create an entity "migration"
       description: |
         It automatically sets a migration as "pending" as "in-progress" if all required information were provided. For example DIY migration doesn't require  credentials or file, so there is no depedency to start without more information.
-        If there are missing information, the status will be "pending"
-        It also can return "cancelled" if the source site is not using wordpress or is already wpcom.
+        This endpoint holds the responsibility of:
+        - Validating the input data
+        - Creating the migration entity
+        - Return the migration status based on the input data provided
+        - Returning the available options to start the migration
+        - Returning the hosting details
+        - Cancelling the migration if the source site is not using wordpress or is already wpcom
+        - Returning the cancel details
+        - Schedule the migration async job to run the migration as soon as all the required information is provided
+        - Set as pending if there is missing information to start a migration (E.g. credentials for "DIFM" migration)
+        - Returning the migration entity with its status
+        - Doesn't create new migration if the latest migration is still in pending or in-progress
       parameters:
         - in: path
           name: siteSlug
@@ -101,9 +111,15 @@ paths:
                     type: string
                     example: "Internal server error"
     patch:
-      summary: Update the lastest migration entity from a site
+      summary: Update the latest migration entity from a site
       description: |
-        It automatically starts a migration if all required fields are provided
+        This endpoint holds the responsibility of:
+        - Validating the input data
+        - Updating the migration entity
+        - Returning the migration entity with its status
+        - Move from pending to in-progress if all required information was provided
+        - Returning the migration entity with its status
+        - Store the migration notes, credentials, backup_file_url, etc.
       parameters:
         - in: path
           name: siteSlug
@@ -173,7 +189,7 @@ components:
   schemas:
     MigrationStatus:
       type: string
-      enum: 
+      enum:
         - "pending"
         - "in-progress"
         - "completed"
@@ -187,26 +203,26 @@ components:
 
     MigrationType:
       type: string
-      enum: 
+      enum:
         - "DIY"
         - "DIFM"
-  
+
     MigrationStrategy:
       type: string
       description: |
         * credentials: Requires user and password
         * backup_file: Requires the backup_file_url
-      enum: 
+      enum:
         - "credentials"
         - "backup_file"
-    
+
     AvailableStrategies:
       type: array
       description: "Possible migration options for the site."
       example: ['credentials', 'backup_file', 'application_password']
       items:
         type: string
-        enum: 
+        enum:
           - "credentials"
           - "backup_file"
           - "application_password"
@@ -214,7 +230,7 @@ components:
     Migration:
       type: object
       properties:
-        status: 
+        status:
           $ref: "#/components/schemas/MigrationStatus"
         pending_details:
           type: string
@@ -222,7 +238,7 @@ components:
           description: "Describe what is missing to start a migration"
         progress_details:
           type: object
-          properties: 
+          properties:
             step:
               type: integer
               example: 1
@@ -255,7 +271,7 @@ components:
               type: string
             application_password:
               type: string
-              example: "https://test-vanilla-wp.godaddy.test-wpcom-migrations.net/wp-admin/authorize-application.php" 
+              example: "https://test-vanilla-wp.godaddy.test-wpcom-migrations.net/wp-admin/authorize-application.php"
               nullable: true
         available_options:
           $ref: "#/components/schemas/AvailableStrategies"
@@ -263,7 +279,7 @@ components:
     MigrationUpdate:
       type: object
       properties:
-        status: 
+        status:
           $ref: "#/components/schemas/MigrationStatus"
         source_site:
           $ref: "#/components/schemas/Migration/properties/status"
@@ -296,7 +312,7 @@ components:
           properties:
             strategy:
               enum: ["backup_file"]
-    
+
     MigrationInput:
       type: object
       properties:
@@ -330,12 +346,11 @@ components:
         - required: [backup_file_url]
           properties:
             strategy:
-              enum: ["backup_file"]         
-              
-              
-              
-              
-              
-              
-              
-              
+              enum: ["backup_file"]
+
+
+
+
+
+
+
