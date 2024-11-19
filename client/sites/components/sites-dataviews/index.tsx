@@ -1,5 +1,5 @@
 import { usePrevious } from '@wordpress/compose';
-import { DataViews, View, Field } from '@wordpress/dataviews';
+import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -12,6 +12,7 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 import './dataview-style.scss';
@@ -211,7 +212,7 @@ const DotcomSitesDataViews = ( {
 			<DataViews
 				data={ sites }
 				fields={ fields }
-				onChangeView={ ( newView: View ) => setDataViewsState( () => newView ) }
+				onChangeView={ ( newView ) => setDataViewsState( () => newView ) }
 				view={ dataViewsState }
 				search
 				searchLabel={ __( 'Search sites…' ) }
