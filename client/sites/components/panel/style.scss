@@ -11,6 +11,7 @@
 }
 
 .panel-section {
+	box-sizing: border-box;
 	background-color: #fff;
 
 	&.panel-section--borderless{
