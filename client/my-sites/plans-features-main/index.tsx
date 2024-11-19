@@ -242,6 +242,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const enableTermSavingsPriceDisplay = isEnabled( 'plans/term-savings-price-display' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
@@ -425,6 +426,7 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		enableTermSavingsPriceDisplay,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -447,6 +449,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		term,
+		enableTermSavingsPriceDisplay,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.

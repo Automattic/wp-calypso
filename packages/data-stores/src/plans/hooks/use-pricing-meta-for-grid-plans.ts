@@ -56,6 +56,12 @@ interface Props {
 	 * If true, the pricing includes discounts from upgrade credits.
 	 */
 	withProratedDiscounts?: boolean;
+
+	/**
+	 * TODO: Add more detailed comments because we've decided to make a tempoarary decision around storage-addons
+	 * while the calypso_plans_page_emphasize_longer_plan_savings experiment is running.
+	 */
+	enableTermSavingsPriceDisplay?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -79,6 +85,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
 	withProratedDiscounts,
+	enableTermSavingsPriceDisplay,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
@@ -131,11 +138,12 @@ const usePricingMetaForGridPlans = ( {
 				const plan = plans.data?.[ planSlug ];
 				const sitePlan = sitePlans.data?.[ planSlug ];
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = selectedStorageOption
-					? storageAddOns?.find( ( addOn ) => {
-							return addOn?.addOnSlug === selectedStorageOption;
-					  } )
-					: null;
+				const selectedStorageAddOn =
+					selectedStorageOption && ! enableTermSavingsPriceDisplay
+						? storageAddOns?.find( ( addOn ) => {
+								return addOn?.addOnSlug === selectedStorageOption;
+						  } )
+						: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 
