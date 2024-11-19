@@ -6,14 +6,6 @@
 	.components-modal__frame {
 		width: 560px;
 
-		.components-modal__header {
-			padding: 0 24px;
-		}
-
-		.components-modal__content {
-			padding: 0 24px 24px;
-		}
-
 		@media (max-width: $break-small) {
 			width: auto;
 		}
