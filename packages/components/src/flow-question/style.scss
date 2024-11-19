@@ -12,15 +12,15 @@ button.flow-question {
 
 	&:hover,
 	&:focus {
-		box-shadow: 0 0 0 1px var(--studio-blue-50);
+		box-shadow: 0 0 0 1px var(--studio-wordpress-blue-50);
 
-		svg path {
-			fill: var(--studio-blue-50);
+		svg {
+			fill: var(--studio-wordpress-blue-50);
 		}
 
 		.flow-question__description,
 		.flow-question__heading {
-			color: var(--studio-blue-50);
+			color: var(--studio-wordpress-blue-50);
 		}
 	}
 
