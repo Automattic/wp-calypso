@@ -34,11 +34,12 @@ button.flow-question {
 		font-size: $font-body-large;
 		display: flex;
 		align-items: center;
-		gap: 0.5em;
+		margin-bottom: 5px;
 	}
 
 	.flow-question__description {
 		color: var(--studio-gray-60);
+		font-size: $font-body-small;
 		padding-right: 10px;
 		margin: 0;
 	}
