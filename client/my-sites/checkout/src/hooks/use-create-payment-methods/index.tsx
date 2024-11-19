@@ -58,11 +58,9 @@ export function useCreatePayPalExpress( {
 	shouldShowTaxFields?: boolean;
 } ): PaymentMethod | null {
 	const store = useMemo( () => createPayPalStore(), [] );
-	const shouldUsePayPalPPCP = isEnabled( 'checkout/paypal-ppcp' );
 	const paypalMethod = useMemo(
-		() =>
-			shouldUsePayPalPPCP ? null : createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
-		[ labelText, shouldShowTaxFields, store, shouldUsePayPalPPCP ]
+		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields, store ]
 	);
 	return paypalMethod;
 }
@@ -388,6 +386,19 @@ function useCreateRazorpay( {
 	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
 }
 
+/**
+ * Create all possible payment methods.
+ *
+ * Note that this does not check the available/allowed payment methods list
+ * (with one exception for Ebanx since it shares a payment method with Stripe
+ * credit cards and we need to know which one to create).
+ *
+ * That check is done using `filterAppropriatePaymentMethods()` elsewhere since
+ * it may change while checkout is already loaded and many payment methods
+ * cannot easily be created more than once. The only reason this function
+ * should not create a payment method is if it's not possible (eg: if a
+ * dependent JS library is not loaded or if Apple Pay is not available).
+ */
 export default function useCreatePaymentMethods( {
 	contactDetailsType,
 	isStripeLoading,
