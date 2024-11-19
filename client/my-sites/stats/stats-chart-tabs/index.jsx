@@ -54,7 +54,7 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		showChartHeader: PropTypes.bool,
+		chartHeader: PropTypes.node,
 	};
 
 	intervalId = null;
@@ -106,7 +106,7 @@ class StatModuleChartTabs extends Component {
 			selectedPeriod,
 			isActiveTabLoading,
 			className,
-			showChartHeader = false,
+			chartHeader,
 		} = this.props;
 		const classes = [
 			'is-chart-tabs',
@@ -119,19 +119,8 @@ class StatModuleChartTabs extends Component {
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
-				{ showChartHeader && (
-					<ChartHeader
-						activeLegend={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						availableLegend={ this.props.availableLegend }
-						onLegendClick={ this.onLegendClick }
-						charts={ this.props.charts }
-						siteId={ siteId }
-						slug={ slug }
-						period={ selectedPeriod }
-						queryParams={ queryParams }
-					></ChartHeader>
-				) }
+				{ /** The header slot!! */ }
+				{ chartHeader }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>

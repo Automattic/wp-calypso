@@ -441,9 +441,36 @@ class StatsSite extends Component {
 					</StatsPeriodHeader>
 				) }
 				<div id="my-stats-content" className={ wrapperClass }>
-					<>
-						{ ! isNewDateFilteringEnabled && (
-							<StatsPeriodHeader>
+					<ChartTabs
+						slug={ slug }
+						period={ this.props.period }
+						queryParams={ context.query }
+						activeTab={ getActiveTab( this.props.chartTab ) }
+						activeLegend={ this.state.activeLegend }
+						availableLegend={ this.getAvailableLegend() }
+						onChangeLegend={ this.onChangeLegend }
+						barClick={ this.barClick }
+						className={ isNewDateFilteringEnabled && 'is-date-filtering-enabled' }
+						switchTab={ this.switchChart }
+						charts={ CHARTS }
+						queryDate={ queryDate }
+						chartTab={ this.props.chartTab }
+						customQuantity={ customChartQuantity }
+						customRange={ customChartRange }
+						chartHeader={
+							isNewDateFilteringEnabled ? (
+								<ChartHeader
+									activeLegend={ this.props.activeLegend }
+									activeTab={ this.props.activeTab }
+									availableLegend={ this.props.availableLegend }
+									onLegendClick={ this.onLegendClick }
+									charts={ this.props.charts }
+									siteId={ siteId }
+									slug={ slug }
+									period={ selectedPeriod }
+									queryParams={ queryParams }
+								></ChartHeader>
+							) : (
 								<StatsPeriodNavigation
 									date={ date }
 									period={ period }
@@ -460,7 +487,6 @@ class StatsSite extends Component {
 									slug={ slug }
 									dateRange={ customChartRange }
 								>
-									{ ' ' }
 									<DatePicker
 										period={ period }
 										date={ date }
@@ -470,46 +496,9 @@ class StatsSite extends Component {
 										isShort
 									/>
 								</StatsPeriodNavigation>
-							</StatsPeriodHeader>
-						) }
-
-						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
-							<ChartTabs
-								slug={ slug }
-								period={ this.props.period }
-								queryParams={ context.query }
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								className="is-date-filtering-enabled"
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
-							/>
-						) }
-						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-							/>
-						) }
-					</>
+							)
+						}
+					/>
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
