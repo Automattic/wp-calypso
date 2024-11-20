@@ -1,5 +1,5 @@
-// Override for the 100-year domain flow - it comes from a different route,
-// so another styles are also applied, thus this override is needed.
+// Overrides for the 100-year domain flow - it comes from a different route,
+// so another styles are also applied, thus those overrides are needed.
 main.checkout-thank-you {
 	&.is-redesign-v2 {
 		&.main {
