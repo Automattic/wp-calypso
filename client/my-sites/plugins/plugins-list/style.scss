@@ -54,3 +54,15 @@ body.is-section-plugins .plugin-management-wrapper,
         padding-left: 80px;
     }
 }
+
+.sites-manage-plugin-status-button {
+    padding: 0;
+    display: contents;
+}
+
+.sites-manage-plugin-button {
+    margin-left: -12px;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+}
