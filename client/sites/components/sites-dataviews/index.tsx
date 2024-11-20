@@ -15,7 +15,6 @@ import type { SiteExcerptData } from '@automattic/sites';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
-import './dataview-style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
