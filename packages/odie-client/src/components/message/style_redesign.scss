@@ -169,6 +169,15 @@
 		p {
 			color: var(--studio-white);
 			padding: 0;
+			span {
+				background-color: transparent;
+				a {
+					color: var(--studio-white);
+					&:hover {
+						color: var(--studio-blue-40);
+					}
+				}
+			}
 		}
 	}
 

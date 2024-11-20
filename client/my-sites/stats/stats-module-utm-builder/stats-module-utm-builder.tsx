@@ -1,4 +1,4 @@
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, VisuallyHidden } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -75,7 +75,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
 						<div className="stats-utm-builder__fields">
 							<div className="stats-utm-builder__description">
-								{ translate( 'Generate URLs to share and track UTM prameters.' ) }
+								{ translate( 'Generate URLs to share and track UTM parameters.' ) }
 							</div>
 							<StatsUtmBuilderForm />
 						</div>
@@ -84,7 +84,16 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 							<div className="stats-utm-builder__description">
 								{ translate( 'Parameter descriptions and examples.' ) }
 							</div>
-							<section>
+							<VisuallyHidden>
+								<section id="stats-utm-builder-help-section-url">
+									<div className="stats-utm-builder__label">{ translate( 'URL' ) }</div>
+									<div>{ translate( 'The full URL of the site or post you want to track.' ) }</div>
+									<div className="stats-utm-builder__help-section-parameter-example">
+										{ translate( 'Example: https://www.my-site.com/2024/11/18/my-post' ) }
+									</div>
+								</section>
+							</VisuallyHidden>
+							<section id="stats-utm-builder-help-section-campaign-source">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_source</div>
 								<div>
@@ -96,7 +105,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 									{ translate( 'Example: newsletter, X, Google' ) }
 								</div>
 							</section>
-							<section>
+							<section id="stats-utm-builder-help-section-campaign-medium">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_medium</div>
 								<div>
@@ -108,7 +117,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 									{ translate( 'Example: cpc, banner, email' ) }
 								</div>
 							</section>
-							<section>
+							<section id="stats-utm-builder-help-section-campaign-name">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_campaign</div>
 								<div>

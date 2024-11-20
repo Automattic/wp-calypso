@@ -246,21 +246,36 @@ ul.module-tabs {
 		border: 1px solid var(--studio-gray-5);
 		border-radius: 4px;
 		padding: 24px;
-		margin: 32px 0;
 
 		/* styling for chart header with new date filtering design */
 		.stats-chart-tabs__header {
 			display: flex;
 			flex-direction: row;
-			gap: 20px; /* adds space between the divs */
+			align-items: center;
+			margin-bottom: 24px;
 		}
 
 		.chart__legend{
-			margin-left: auto; /* makes all items take equal width */
+			margin: 0 0 0 auto;
 		}
 
 		.chart__y-axis-marker {
 			border-top-color: #DCDCDE;
+		}
+
+		.stats-interval-dropdown {
+			margin-left: 48px;
+
+			& > .components-button {
+				width: auto;
+				padding: 0;
+				border: 0;
+				box-shadow: none;
+
+				& > svg {
+					margin-left: 8px;
+				}
+			}
 		}
 	}
 

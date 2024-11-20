@@ -65,11 +65,11 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 				/>
 			) }
 
-			<PricingBanner />
-
 			<StoreItemInfoContext.Provider value={ storeItemInfo }>
 				<ItemsList duration={ duration } siteId={ siteId } />
 			</StoreItemInfoContext.Provider>
+
+			<PricingBanner />
 
 			<NeedMoreInfo />
 

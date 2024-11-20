@@ -7,6 +7,7 @@ import ReferralsBankDetails from '../referrals/primary/bank-details';
 import MigrationsCommissions from './primary/migrations-commissions';
 import MigrationsOverview from './primary/migrations-overview';
 import MigrationsOverviewV2 from './primary/migrations-overview-v2';
+import SelfMigrationTool from './primary/self-migration-tool';
 
 export const migrationsContext: Callback = ( context, next ) => {
 	context.primary = (
@@ -23,7 +24,29 @@ export const migrationsOverviewContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Overview" path={ context.path } />
-			<MigrationsOverviewV2 />
+			<MigrationsOverviewV2 isSiteMigrationsEnabled />
+		</>
+	);
+	context.secondary = <MigrationsSidebar path={ context.path } />;
+	next();
+};
+
+export const migrateToPressableContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Migrations > Migrate to Pressable" path={ context.path } />
+			<SelfMigrationTool type="pressable" />
+		</>
+	);
+	context.secondary = <MigrationsSidebar path={ context.path } />;
+	next();
+};
+
+export const migrateToWpcomContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Migrations > Migrate to WordPress.com" path={ context.path } />
+			<SelfMigrationTool type="wpcom" />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;

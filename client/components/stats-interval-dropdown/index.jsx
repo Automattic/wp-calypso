@@ -24,7 +24,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGat
 				},
 				{
 					name: 'jetpack_stats_upsell_clicked',
-					params: { statType: intervals[ interval ].statType, source: event_from },
+					params: { stat_type: intervals[ interval ].statType, source: event_from },
 				},
 			];
 			return onGatedHandler( events, event_from, intervals[ interval ].statType );
@@ -106,6 +106,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 					/>
 				</div>
 			) }
+			focusOnMount={ false }
 		/>
 	);
 };

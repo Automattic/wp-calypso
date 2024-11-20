@@ -53,6 +53,8 @@ export const OdieSendMessageButton = () => {
 				type: 'message',
 			} as Message;
 
+			setSubmitDisabled( true );
+
 			await sendMessage( message );
 
 			trackEvent( 'chat_message_action_receive' );
@@ -61,6 +63,8 @@ export const OdieSendMessageButton = () => {
 			trackEvent( 'chat_message_error', {
 				error: error?.message,
 			} );
+		} finally {
+			setSubmitDisabled( false );
 		}
 	}, [ sendMessage, isChatBusy, shouldUseHelpCenterExperience, trackEvent ] );
 

@@ -1,3 +1,4 @@
+import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -10,13 +11,8 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import {
-	DATAVIEWS_LIST,
-	DATAVIEWS_TABLE,
-	initialDataViewsState,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -38,8 +34,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
-import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
-import { useSyncSelectedSiteFeature } from '../hooks/use-sync-selected-site-feature';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -51,7 +45,7 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -78,6 +72,30 @@ const siteSortingKeys = [
 
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
+
+// Limit fields on breakpoints smaller than 960px wide.
+const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields = [ 'site' ];
+
+const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+	isDesktop ? desktopFields : mobileFields;
+
+export function showSitesPage( route: string ) {
+	const currentParams = new URL( window.location.href ).searchParams;
+	const newUrl = new URL( route, window.location.origin );
+
+	const supportedParams = [ 'page', 'per-page', 'search', 'status', 'siteType' ];
+	supportedParams.forEach( ( param ) => {
+		if ( currentParams.has( param ) ) {
+			const value = currentParams.get( param );
+			if ( value ) {
+				newUrl.searchParams.set( param, value );
+			}
+		}
+	} );
+
+	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+}
 
 const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -144,16 +162,12 @@ const SitesDashboard = ( {
 		return '70%';
 	};
 
-	// Limit fields on breakpoints smaller than 960px wide.
-	const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-	const mobileFields = [ 'site' ];
-
-	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
-		isDesktop ? desktopFields : mobileFields;
-
 	// Create the DataViews state based on initial values
-	const defaultDataViewsState = {
-		...initialDataViewsState,
+	const defaultDataViewsState: View = {
+		sort: {
+			field: '',
+			direction: 'asc',
+		},
 		page,
 		perPage,
 		search: search ?? '',
@@ -169,29 +183,32 @@ const SitesDashboard = ( {
 					],
 			  }
 			: {} ),
-		selectedItem: selectedSite,
-		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
-		layout: {
-			styles: {
-				site: {
-					width: getSiteNameColWidth( isDesktop, isWide ),
-				},
-				plan: {
-					width: '126px',
-				},
-				status: {
-					width: '142px',
-				},
-				'last-publish': {
-					width: '146px',
-				},
-				stats: {
-					width: '106px',
-				},
-			},
-		},
-	} as DataViewsState;
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+		...( selectedSite
+			? { type: 'list', layout: {} }
+			: {
+					type: 'table',
+					layout: {
+						styles: {
+							site: {
+								width: getSiteNameColWidth( isDesktop, isWide ),
+							},
+							plan: {
+								width: '126px',
+							},
+							status: {
+								width: '142px',
+							},
+							'last-publish': {
+								width: '146px',
+							},
+							stats: {
+								width: '106px',
+							},
+						},
+					},
+			  } ),
+	};
+	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
 	useEffect( () => {
 		const fields = getFieldsByBreakpoint( isDesktop );
@@ -204,30 +221,24 @@ const SitesDashboard = ( {
 		}
 
 		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
-		if ( dataViewsState.layout.styles.site.width !== siteNameColumnWidth ) {
-			setDataViewsState( ( prevState ) => ( {
-				...prevState,
+
+		if (
+			dataViewsState.type === 'table' &&
+			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
+		) {
+			setDataViewsState( {
+				...dataViewsState,
 				layout: {
 					styles: {
-						...prevState.layout.styles,
+						...dataViewsState.layout?.styles,
 						site: {
 							width: siteNameColumnWidth,
 						},
 					},
 				},
-			} ) );
+			} );
 		}
-	}, [ isDesktop, isWide, dataViewsState?.fields, dataViewsState?.layout?.styles?.site?.width ] );
-
-	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
-
-	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
-		selectedSite,
-		initialSiteFeature,
-		dataViewsState,
-		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'siteType' ],
-	} );
+	}, [ isDesktop, isWide, dataViewsState ] );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -319,23 +330,21 @@ const SitesDashboard = ( {
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
 	// Manage the closing of the preview pane
-	const closeSitePreviewPane = useCallback( () => {
-		if ( dataViewsState.selectedItem ) {
-			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			//setHideListing( false );
+	const closeSitePreviewPane = () => {
+		if ( selectedSite ) {
+			showSitesPage( '/sites' );
 		}
-	}, [ dataViewsState, setDataViewsState ] );
+	};
 
-	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: 'list',
-			} ) );
-		},
-		[ setDataViewsState ]
-	);
+	const openSitePreviewPane = ( site: SiteExcerptData ) => {
+		// recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+		// 	site_id: site.ID,
+		// 	source,
+		// } );
+		showSitesPage(
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+		);
+	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
@@ -355,10 +364,10 @@ const SitesDashboard = ( {
 			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! dataViewsState.selectedItem && 'preview-hidden'
+				! selectedSite && 'preview-hidden'
 			) }
 			wide
-			title={ dataViewsState.selectedItem ? null : dashboardTitle }
+			title={ selectedSite ? null : dashboardTitle }
 			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
@@ -369,7 +378,7 @@ const SitesDashboard = ( {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
-								<SitesDashboardHeader isPreviewPaneOpen={ !! dataViewsState.selectedItem } />
+								<SitesDashboardHeader isPreviewPaneOpen={ !! selectedSite } />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
@@ -386,11 +395,13 @@ const SitesDashboard = ( {
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
+						selectedItem={ selectedSite }
+						openSitePreviewPane={ openSitePreviewPane }
 					/>
 				</LayoutColumn>
 			) }
 
-			{ dataViewsState.selectedItem && (
+			{ selectedSite && (
 				<GuidedTourContextProvider
 					guidedTours={ onboardingTours }
 					preferenceNames={ CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME }
@@ -398,10 +409,9 @@ const SitesDashboard = ( {
 				>
 					<LayoutColumn className="site-preview-pane" wide>
 						<DotcomPreviewPane
-							site={ dataViewsState.selectedItem }
-							selectedSiteFeature={ selectedSiteFeature }
+							site={ selectedSite }
+							selectedSiteFeature={ initialSiteFeature }
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
-							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
 						/>

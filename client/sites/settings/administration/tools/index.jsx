@@ -79,7 +79,7 @@ class SiteTools extends Component {
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
-		const startOver = translate( 'Reset your site' );
+		const startOver = isUntangled ? translate( 'Reset site' ) : translate( 'Reset your site' );
 		const startOverText = translate(
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);

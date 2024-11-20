@@ -85,21 +85,17 @@
 
 	.task__actions {
 		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
 		padding-top: 0;
 		margin-top: auto;
 		font-size: $font-body-small;
 
 		.is-link {
-			padding: 0 8px;
-
 			&:focus-visible {
 				box-shadow: 0 0 0 2px var(--color-primary);
 			}
 		}
-	}
-
-	.task__action {
-		margin-right: 16px;
 	}
 
 	.spinner {

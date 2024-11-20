@@ -22,7 +22,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
-
 export function useActions( {
 	openSitePreviewPane,
 }: {
@@ -265,6 +264,6 @@ export function useActions( {
 				},
 			},
 		],
-		[ __, dispatch, openSitePreviewPane ]
+		[ __, capabilities, dispatch, openSitePreviewPane ]
 	);
 }

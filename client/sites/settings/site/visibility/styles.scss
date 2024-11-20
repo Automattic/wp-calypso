@@ -21,3 +21,24 @@
 	white-space: nowrap;
 }
 
+.settings-site {
+	.site-settings__general-settings-launch-site {
+		flex-wrap: wrap;
+		justify-content: unset;
+	}
+
+	.site-settings__general-settings-launch-site-text {
+		flex-wrap: wrap;
+		flex-basis: 100%;
+	}
+
+	.site-settings__general-settings-launch-site-button {
+		margin: 0;
+		align-self: flex-end;
+	}
+
+	.site-settings__general-settings-refer-to-client-button {
+		margin-top: 15px;
+		margin-left: 10px;
+	}
+}

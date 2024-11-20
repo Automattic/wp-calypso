@@ -102,7 +102,7 @@ export const leaveCheckout = ( {
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 			// Only allow redirecting to relative paths.
-			if ( cancelPath.match( /^\/(?!\/)/ ) ) {
+			if ( isRelativeUrl( cancelPath ) ) {
 				navigate( cancelPath );
 				return;
 			}
@@ -115,3 +115,11 @@ export const leaveCheckout = ( {
 
 	navigate( closeUrl );
 };
+
+export function isRelativeUrl( url: string ) {
+	try {
+		return new URL( url, window.location.href ).origin === window.location.origin;
+	} catch {
+		return false;
+	}
+}

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +8,7 @@ import {
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
@@ -132,9 +134,13 @@ function useIssueAndAssignLicenses(
 			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
 			options.onSuccess?.();
 
-			// Refresh the list of agencies if we don't have the tier to get the updated tier
-			if ( ! agency?.tier ) {
-				dispatch( fetchAgencies() );
+			if ( isEnabled( 'a8c-for-agencies-agency-tier' ) ) {
+				// Refresh the list of agencies if we don't have the tier to get the updated tier
+				if ( ! agency?.tier ) {
+					// We need to show the agency tier celebration modal after the first purchase
+					sessionStorage.setItem( AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY, 'true' );
+					dispatch( fetchAgencies() );
+				}
 			}
 
 			const issuedKeys = issuedLicenses

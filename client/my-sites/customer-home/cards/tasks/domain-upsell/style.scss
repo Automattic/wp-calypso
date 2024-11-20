@@ -1,120 +1,78 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+$illustration-top: 32px;
+$illustration-layer-offset: 16px;
+$illustration-height: 139px;
+$illustration-width: 214px;
 
 .task {
 	&.task__domain-upsell {
-		margin-bottom: 0 !important;
-
-		@media (min-width: ($break-large + 1)) {
-			margin-right: 0 !important;
-			margin-top: 0 !important;
-			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
-			background-size: 350px auto;
-		}
-
-		@media (min-width: ($break-large + 1)) and (max-width: $break-wide) {
-			background-position-x: calc(100% + 120px);
-		}
-
-		@media (max-width: $break-large) {
-			flex-direction: column;
-		}
-
-		.task__text {
-			margin-bottom: 32px;
-			min-width: 360px;
-
-			@media (min-width: ($break-wide + 1)) {
-				max-width: calc(100% - 200px);
-
-				.task__description {
-					padding-right: 16px;
-					min-height: 140px;
-				}
-
-				.task__description,
-				.task__title {
-					max-width: 68%;
-				}
-			}
-
-			@media (max-width: $break-wide) {
-				max-width: calc(115% - 200px);
-			}
-
-			@media (max-width: $break-wide) {
-				gap: 16px !important;
-				margin-bottom: 16px;
-				margin-top: 16px;
-
-				.task__actions {
-					margin-top: 0;
-					display: grid;
-					grid-template-columns: 50% 50%;
-					width: 100%;
-					gap: 0 16px;
-
-					& > * {
-						margin: 5px 0;
-					}
-
-					.task__skip {
-						display: inline-flex;
-					}
-				}
-			}
-			@media (max-width: $break-large) {
-				min-width: auto;
-				margin-top: 0;
-				padding: 0;
-				max-width: none;
-				gap: 16px !important;
-				.task__actions {
-					flex-direction: column;
-					width: 100%;
-
-					& > * {
-						margin: 5px 0;
-					}
-				}
-			}
-
-		}
-
-		.task__actions {
-			button {
-				width: auto;
-			}
-			.is-link {
-				padding-left: 0;
-
-				@media (min-width: ($break-wide + 1)) {
-					padding-left: 8px;
-					margin-left: 8px;
-				}
-			}
-		}
-
 		.task__illustration {
-			position: relative;
-			width: 100%;
-			padding: 0;
+			display: flex;
+			width: calc(45% + 32px);
+			margin-bottom: -32px !important;
+			margin-right: -32px !important;
+		}
+	}
+	.task__domain-upsell-illustration {
+		position: relative;
+		width: 100%;
+		height: auto;
 
-			@media (min-width: ($break-large + 1)) {
-				display: none;
+		> *:not(.task__domain-upsell-illustration--background) {
+			position: absolute;
+			left: 0;
+			top: $illustration-top;
+			width: 70%;
+			aspect-ratio: calc($illustration-width / $illustration-height);
+		}
+
+		> .task__domain-upsell-illustration--mask {
+			top: #{$illustration-top + $illustration-layer-offset};
+			left: 16px;
+			background-color: var(--studio-gray-10);
+		}
+		> .task__domain-upsell-illustration--site {
+			top: #{$illustration-top + 2 * $illustration-layer-offset};
+			left: 32px;
+		}
+		> .task__domain-upsell-illustration--domain {
+			top: calc(
+				#{$illustration-top} +
+				#{$illustration-layer-offset} * 2 +
+				#{$illustration-height} / 2 -
+				18px
+			);
+			left: initial;
+			right: 32px;
+			height: 28px;
+			width: auto;
+			max-width: calc(70% - #{$illustration-layer-offset} / 2);
+			background-color: var(--studio-white);
+
+			display: flex;
+  			align-items: center;
+			border: 1px solid var(--color-primary);
+			border-radius: 2px;
+			padding-left: 4px;
+			padding-right: 6px;
+			font-size: rem(13px);
+
+			> svg {
+				flex-shrink: 0;
+				fill: var(--color-primary);
 			}
 
-			img {
-				width: 100%;
+			> div {
+				padding-right: 2px;
+				border-right: 1px solid var(--studio-black);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+
+				> span:first-of-type {
+					background-color: var(--studio-gray-5);
+				}
 			}
 
-			svg {
-				position: absolute;
-				top: 40%;
-				left: 35%;
-				height: 7%;
-				width: 70%;
-			}
 		}
 	}
 }

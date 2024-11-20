@@ -34,6 +34,8 @@ const ChartTabShape = PropTypes.shape( {
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
+		slug: PropTypes.string,
+		queryParams: PropTypes.object,
 		activeLegend: PropTypes.arrayOf( PropTypes.string ),
 		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
@@ -52,7 +54,6 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		hideLegend: PropTypes.bool,
 		showChartHeader: PropTypes.bool,
 	};
 
@@ -98,7 +99,15 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading, className, hideLegend, showChartHeader = false } = this.props;
+		const {
+			siteId,
+			slug,
+			queryParams,
+			selectedPeriod,
+			isActiveTabLoading,
+			className,
+			showChartHeader = false,
+		} = this.props;
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -112,12 +121,15 @@ class StatModuleChartTabs extends Component {
 			<div className={ clsx( ...classes ) }>
 				{ showChartHeader && (
 					<ChartHeader
-						showLegend={ ! hideLegend }
 						activeLegend={ this.props.activeLegend }
 						activeTab={ this.props.activeTab }
 						availableLegend={ this.props.availableLegend }
 						onLegendClick={ this.onLegendClick }
 						charts={ this.props.charts }
+						siteId={ siteId }
+						slug={ slug }
+						period={ selectedPeriod }
+						queryParams={ queryParams }
 					></ChartHeader>
 				) }
 
@@ -145,14 +157,17 @@ const NO_SITE_STATE = {
 	chartData: [],
 };
 
-const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) => ( {
-	chartTab,
-	date,
-	period,
-	quantity,
-	siteId,
-	statFields: QUERY_FIELDS,
-} ) );
+const memoizedQuery = memoizeLast(
+	( chartTab, date, period, quantity, siteId, chartStart = '' ) => ( {
+		chartTab,
+		date,
+		chartStart,
+		period,
+		quantity,
+		siteId,
+		statFields: QUERY_FIELDS,
+	} )
+);
 
 const connectComponent = connect(
 	(
@@ -173,9 +188,10 @@ const connectComponent = connect(
 		const date = customRange
 			? customRange.chartEnd
 			: getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const chartStart = isNewDateFilteringEnabled ? customRange?.chartStart || '' : '';
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
-		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
+		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
@@ -189,6 +205,7 @@ const connectComponent = connect(
 			query,
 			queryKey,
 			siteId,
+			selectedPeriod: period,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }

@@ -94,7 +94,9 @@ export default function LicenseDetails( {
 						<h4 className="license-details__label">
 							{ translate( 'Manage your Pressable licenses' ) }
 						</h4>
-						{ pressablePlan && <PressableUsageDetails existingPlan={ pressablePlan } /> }
+						{ ! referral && pressablePlan && (
+							<PressableUsageDetails existingPlan={ pressablePlan } />
+						) }
 					</div>
 				) }
 
