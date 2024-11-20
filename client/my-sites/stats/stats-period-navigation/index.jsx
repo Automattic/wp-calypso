@@ -306,7 +306,7 @@ class StatsPeriodNavigation extends PureComponent {
 }
 
 const connectComponent = connect(
-	( state, { period } ) => {
+	( state, { period, isWithNewDateFiltering } ) => {
 		const siteId = getSelectedSiteId( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
 		const gatePeriodInterval = shouldGateStats(
@@ -318,20 +318,6 @@ const connectComponent = connect(
 			treatAtomicAsJetpackSite: false,
 		} );
 		const shortcutList = [
-			{
-				id: 'today',
-				label: translate( 'Today' ),
-				offset: 0,
-				range: 0,
-				period: STATS_PERIOD.DAY,
-			},
-			{
-				id: 'yesterday',
-				label: translate( 'Yesterday' ),
-				offset: 1,
-				range: 0,
-				period: STATS_PERIOD.DAY,
-			},
 			{
 				id: 'last_7_days',
 				label: translate( 'Last 7 Days' ),
@@ -369,6 +355,24 @@ const connectComponent = connect(
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 			},
 		];
+		if ( isWithNewDateFiltering ) {
+			shortcutList.unshift(
+				{
+					id: 'today',
+					label: translate( 'Today' ),
+					offset: 0,
+					range: 0,
+					period: STATS_PERIOD.DAY,
+				},
+				{
+					id: 'yesterday',
+					label: translate( 'Yesterday' ),
+					offset: 1,
+					range: 0,
+					period: STATS_PERIOD.DAY,
+				}
+			);
+		}
 		const intervals = {
 			[ STATS_PERIOD.DAY ]: {
 				id: STATS_PERIOD.DAY,

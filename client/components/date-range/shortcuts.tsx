@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -40,23 +41,8 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
+	// TODO: Receive this list from the parent component.
 	const shortcutList = [
-		{
-			id: 'today',
-			label: translate( 'Today' ),
-			offset: 0,
-			range: 0,
-			period: DATERANGE_PERIOD.DAY,
-			shortcutId: 'today',
-		},
-		{
-			id: 'yesterday',
-			label: translate( 'Yesterday' ),
-			offset: 1,
-			range: 0,
-			period: DATERANGE_PERIOD.DAY,
-			shortcutId: 'yesterday',
-		},
 		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
@@ -98,6 +84,27 @@ const DateRangePickerShortcuts = ( {
 			shortcutId: 'custom_date_range',
 		},
 	];
+
+	if ( config.isEnabled( 'stats/new-date-filtering' ) ) {
+		shortcutList.unshift(
+			{
+				id: 'today',
+				label: translate( 'Today' ),
+				offset: 0,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'today',
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				offset: 1,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'yesterday',
+			}
+		);
+	}
 
 	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
 		if ( ! startDate || ! endDate ) {
