@@ -26,6 +26,7 @@ import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/c
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
+	canGetCampaignStats,
 	canPromoteAgainCampaign,
 	formatAmount,
 	getAdvertisingDashboardPath,
@@ -476,7 +477,7 @@ export default function CampaignItemDetails( props: Props ) {
 				{ ! isLoading && status && (
 					<div className="campaign-item-details__support-buttons-container">
 						<div className="campaign-item-details__support-buttons">
-							{ status && canPromoteAgainCampaign( status ) && (
+							{ status && canGetCampaignStats( status ) && (
 								<CampaignDownloadStats
 									siteId={ siteId }
 									campaign={ campaign }
