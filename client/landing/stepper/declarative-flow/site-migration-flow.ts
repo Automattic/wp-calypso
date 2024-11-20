@@ -21,7 +21,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { STEPS } from './internals/steps';
-import { getSiteIdParam } from './internals/steps-repository/import/util';
+import { getSiteIdParam, redirect } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import { goToImporter } from './migration/helpers';
@@ -79,24 +79,8 @@ const siteMigration: Flow = {
 			}
 		}, [ isAdmin ] );
 
-		useEffect( () => {
-			// We don't need to do anything if the user isn't logged in.
-			if ( ! userIsLoggedIn ) {
-				return;
-			}
-
-			if ( siteSlug || siteId ) {
-				return;
-			}
-
-			if ( isHostedSiteMigrationFlow( flowPath ) ) {
-				return;
-			}
-
-			window.location.assign( '/start' );
-		}, [ flowPath, siteId, siteSlug, userIsLoggedIn, isAdmin ] );
-
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+			redirect( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration does not have the site slug or site id.',
