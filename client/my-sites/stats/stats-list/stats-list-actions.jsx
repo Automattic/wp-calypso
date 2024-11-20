@@ -4,11 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import titlecase from 'to-title-case';
+import UTMBuilder from '../stats-module-utm-builder/stats-module-utm-builder';
 import Follow from './action-follow';
 import OpenLink from './action-link';
 import Page from './action-page';
 import Promote from './action-promote';
 import Spam from './action-spam';
+import OpenUTMBuilder from './action-utm-builder';
 
 function useActionItems( { data, moduleName } ) {
 	return useMemo( () => {
@@ -51,6 +53,15 @@ function useActionItems( { data, moduleName } ) {
 					case 'link':
 						actionItem = (
 							<OpenLink href={ action.data } key={ action.type } moduleName={ moduleNameTitle } />
+						);
+						break;
+					case 'url-builder':
+						actionItem = (
+							<UTMBuilder
+								initialData={ action.data }
+								trigger={ <OpenUTMBuilder /> }
+								key={ action.type }
+							/>
 						);
 						break;
 				}
