@@ -254,12 +254,18 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
 		'order-attribution': translate( 'Order Attribution' ),
-		default: translate( 'WooCommerce' ),
 	};
+
+	const listFormatter = new Intl.ListFormat( langSlug, {
+		style: 'long',
+		type: 'conjunction',
+	} );
+
+	const defaultTitle = listFormatter.format( Object.values( allowedPluginNames ) );
 
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
-		return allowedPluginNames.default;
+		return defaultTitle;
 	}
 
 	// Handle multiple plugin names separated by commas
@@ -267,11 +273,8 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
 
 	if ( uniqueTitles.length === 0 ) {
-		return allowedPluginNames.default;
+		return defaultTitle;
 	}
 
-	// Use Intl.ListFormat for proper localized list formatting
-	const formatter = new Intl.ListFormat( langSlug, { style: 'long', type: 'conjunction' } );
-
-	return formatter.format( uniqueTitles );
+	return listFormatter.format( uniqueTitles );
 };
