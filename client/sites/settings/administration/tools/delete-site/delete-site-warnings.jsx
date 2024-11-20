@@ -1,12 +1,13 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelBody from 'calypso/components/action-panel/body';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from '../../../utils';
 
 function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
+	const isUntangled = isHostingMenuUntangled();
 
 	const getButtons = () => {
 		if ( isAtomicRemovalInProgress ) {
@@ -66,12 +67,13 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 	};
 
 	return (
-		<ActionPanel>
-			<ActionPanelBody>
+		<PanelSection>
+			<>
+				{ isUntangled && <PanelHeading>{ translate( 'Unable to delete site' ) }</PanelHeading> }
 				<p>{ renderWarningContent() }</p>
 				{ getButtons() }
-			</ActionPanelBody>
-		</ActionPanel>
+			</>
+		</PanelSection>
 	);
 }
 

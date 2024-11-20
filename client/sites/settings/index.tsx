@@ -12,7 +12,10 @@ import {
 	SETTINGS_WEB_SERVER,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
-import { redirectIfCantStartSiteOwnerTransfer } from './administration/controller';
+import {
+	redirectIfCantDeleteSite,
+	redirectIfCantStartSiteOwnerTransfer,
+} from './administration/controller';
 import {
 	siteSettings,
 	administrationSettings,
@@ -49,6 +52,7 @@ export default function () {
 	page(
 		'/sites/settings/administration/:site/reset-site',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		administrationToolResetSite,
 		siteDashboard( SETTINGS_ADMINISTRATION_RESET_SITE ),
@@ -68,6 +72,7 @@ export default function () {
 	page(
 		'/sites/settings/administration/:site/delete-site',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		administrationToolDeleteSite,
 		siteDashboard( SETTINGS_ADMINISTRATION_DELETE_SITE ),
