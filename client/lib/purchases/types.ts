@@ -58,6 +58,6 @@ export type RenderRenewsOrExpiresOn = ( args: {
 
 export type RenderRenewsOrExpiresOnLabel = ( args: {
 	purchase: Purchase;
-	domainDetails: ResponseDomain | null | undefined;
+	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ) => string | null;

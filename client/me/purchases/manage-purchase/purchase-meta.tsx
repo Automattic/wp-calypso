@@ -28,6 +28,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
@@ -48,9 +49,9 @@ export interface PurchaseMetaProps {
 	purchaseId: number | false;
 	hasLoadedPurchasesFromServer: boolean;
 	siteSlug: string;
+	domainDetails?: ResponseDomain | null;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
-	domainDetails: ResponseDomain | null | undefined;
 }
 
 export default function PurchaseMeta( {
@@ -59,7 +60,6 @@ export default function PurchaseMeta( {
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
-	domainDetails,
 }: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
@@ -74,12 +74,18 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
+	const allDomains = useSelector( getAllDomains );
+
 	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
+
+	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+		( domain: ResponseDomain ) => domain.domain === purchase.meta
+	);
 
 	// 100-year domains will only show a "Price" label since their renewal date is a long time in the future
 	const renewalPriceHeader = domainDetails?.isHundredYearDomain
@@ -158,7 +164,7 @@ function renderRenewsOrExpiresOnLabel( {
 	translate,
 }: {
 	purchase: Purchase;
-	domainDetails: ResponseDomain | null | undefined;
+	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
 	if ( isExpiring( purchase ) ) {

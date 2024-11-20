@@ -1180,7 +1180,6 @@ class ManagePurchase extends Component<
 						getChangePaymentMethodUrlFor={
 							getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 						}
-						domainDetails={ null }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -1313,7 +1312,6 @@ class ManagePurchase extends Component<
 							getChangePaymentMethodUrlFor={
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
-							domainDetails={ domainDetails }
 						/>
 					) }
 					{ isProductOwner && ! purchase.isLocked && (

@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	hasPaymentMethod,
 	isRechargeable,
@@ -61,8 +62,8 @@ function PurchaseMetaExpiration( {
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
 
 	const allDomains = useSelector( getAllDomains );
-	const selectedDomain = allDomains?.[ purchase.siteId ]?.find(
-		( domain ) => domain.domain === purchase.meta
+	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
 
 	if (
@@ -209,7 +210,7 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails: selectedDomain, translate } ) }
+				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails, translate } ) }
 			</em>
 			<span className="manage-purchase__detail">
 				{ renderRenewsOrExpiresOn( {
