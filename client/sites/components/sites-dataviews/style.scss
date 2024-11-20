@@ -23,6 +23,17 @@
 		padding-bottom: 8px;
 		padding-top: 8px;
 		overflow: hidden;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			.sites-dataviews__site-title {
+				color: var(--color-accent);
+			}
+			.sites-dataviews__site-url {
+				color: var(--color-accent);
+			}
+		}
 
 		.list-tile {
 			margin-right: 0;
@@ -52,31 +63,10 @@
 		white-space: nowrap;
 	}
 
-	.dataviews-view-list .sites-dataviews__site-url,
-	.dataviews-view-list .sites-dataviews__site-wp-admin-url,
-	.dataviews-view-table .sites-dataviews__site-url,
-	.dataviews-view-table .sites-dataviews__site-wp-admin-url {
+	.sites-dataviews__site-url {
 		color: var(--color-neutral-70);
 		font-size: rem(14px);
 		font-weight: 400;
-
-		&:focus {
-			border-radius: 2px;
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-
-		&:visited {
-			color: var(--color-neutral-70);
-		}
-
-		&:hover,
-		&:hover:visited {
-			color: var(--color-link);
-		}
-
-		svg {
-			vertical-align: sub;
-		}
 	}
 
 	.site-sort__clickable {

@@ -1,6 +1,6 @@
 import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { chevronRight } from '@wordpress/icons';
+import { drawerLeft, wordpress, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -42,10 +42,10 @@ export function useActions( {
 	return useMemo(
 		() => [
 			{
-				id: 'open-site-panel',
+				id: 'site-overview',
 				isPrimary: true,
-				label: __( 'Open site' ),
-				icon: chevronRight,
+				label: __( 'Overview' ),
+				icon: drawerLeft,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					const adminUrl = site.options?.admin_url ?? '';
@@ -60,6 +60,24 @@ export function useActions( {
 					} else {
 						navigate( adminUrl );
 					}
+				},
+			},
+			{
+				id: 'open-site',
+				isPrimary: true,
+				label: __( 'Open site' ),
+				icon: external,
+				callback: () => {
+					alert( 'Open site' );
+				},
+			},
+			{
+				id: 'open-wp-admin',
+				isPrimary: true,
+				label: __( 'Open WP Admin' ),
+				icon: wordpress,
+				callback: () => {
+					alert( 'Open WP Admin' );
 				},
 			},
 
