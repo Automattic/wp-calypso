@@ -22,6 +22,7 @@ import {
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
+import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
@@ -105,6 +106,8 @@ export default function CampaignItemDetails( props: Props ) {
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
+
+	const [ showReportErrorDialog, setShowReportErrorDialog ] = useState( false );
 
 	const {
 		audience_list,
@@ -368,6 +371,23 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 	];
 
+	const errorReportDialogButtons = [
+		{
+			action: 'remove',
+			label: __( 'Contact support' ),
+			onClick: async () => {
+				setShowReportErrorDialog( false );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
+			},
+		},
+		{
+			action: 'cancel',
+			isPrimary: true,
+			label: __( 'Ok' ),
+		},
+	];
+
 	return (
 		<div className="campaign-item__container">
 			<Dialog
@@ -385,6 +405,15 @@ export default function CampaignItemDetails( props: Props ) {
 				onClose={ () => setShowErrorDialog( false ) }
 			>
 				<h1>{ __( "Something's gone wrong" ) }</h1>
+				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
+			</Dialog>
+
+			<Dialog
+				isVisible={ showReportErrorDialog }
+				buttons={ errorReportDialogButtons }
+				onClose={ () => setShowReportErrorDialog( false ) }
+			>
+				<h1>{ __( "Something's gone wrong trying to download your report" ) }</h1>
 				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
@@ -447,6 +476,14 @@ export default function CampaignItemDetails( props: Props ) {
 				{ ! isLoading && status && (
 					<div className="campaign-item-details__support-buttons-container">
 						<div className="campaign-item-details__support-buttons">
+							{ status && canPromoteAgainCampaign( status ) && (
+								<CampaignDownloadStats
+									siteId={ siteId }
+									campaign={ campaign }
+									isLoading={ isLoading }
+									setStatsError={ () => setShowReportErrorDialog( true ) }
+								/>
+							) }
 							{ ! isLoading && status ? (
 								<>
 									{ canPromoteAgainCampaign( status ) && (
