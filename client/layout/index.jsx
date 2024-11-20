@@ -504,21 +504,13 @@ export default withCurrentRoute(
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
-		let colorScheme = null;
-
-		// Try to get the color scheme from `color_scheme` query param if we're in the WooCommerce Passwordless JPC flow.
-		if ( isWooPasswordlessJPC ) {
-			colorScheme = getColorSchemeFromCurrentQuery( currentQuery );
-		}
-
-		// if the value is still null, get the color scheme from the state.
-		if ( ! colorScheme ) {
-			colorScheme = getColorScheme( {
-				state,
-				isGlobalSidebarVisible,
-				sectionName,
-			} );
-		}
+		const colorScheme = isWooPasswordlessJPC
+			? getColorSchemeFromCurrentQuery( currentQuery )
+			: getColorScheme( {
+					state,
+					isGlobalSidebarVisible,
+					sectionName,
+			  } );
 
 		return {
 			masterbarIsHidden,
