@@ -28,6 +28,9 @@ import type { LocalizeProps } from 'i18n-calypso';
  *
  * NOTE: if countryCode is not provided, geolocation will be used to determine
  * which Stripe account to use to create the Payment Method.
+ * The cartKey is optional and is only used in the Checkout flow to create
+ * the SetupIntent using information from the cart - for special cases like
+ * Indian Payments Methods with e-mandates.
  */
 async function createStripeSetupIntent(
 	countryCode?: string,
