@@ -8,6 +8,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
+import { PanelHeading } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from '../../../utils';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from '@automattic/data-stores';
 
@@ -17,10 +19,6 @@ const Strong = styled( 'strong' )( {
 
 const FormText = styled( 'p' )( {
 	fontSize: '14px',
-} );
-
-const ButtonStyled = styled( Button )( {
-	marginBottom: '1.5em',
 } );
 
 const Error = styled.div( {
@@ -100,7 +98,7 @@ const SiteOwnerTransferEligibility = ( {
 	}
 	const recipientError = false;
 
-	return (
+	const form = (
 		<form onSubmit={ handleFormSubmit }>
 			<FormText>
 				{ translate(
@@ -150,15 +148,24 @@ const SiteOwnerTransferEligibility = ( {
 				/>
 			) }
 
-			<ButtonStyled
+			<Button
 				busy={ isCheckingSiteTransferEligibility }
 				primary
 				disabled={ ! tempSiteOwner || isCheckingSiteTransferEligibility }
 				type="submit"
 			>
 				{ translate( 'Continue' ) }
-			</ButtonStyled>
+			</Button>
 		</form>
+	);
+
+	const isUntangled = isHostingMenuUntangled();
+
+	return (
+		<>
+			{ isUntangled && <PanelHeading>{ translate( 'Confirm new owner' ) }</PanelHeading> }
+			{ form }
+		</>
 	);
 };
 

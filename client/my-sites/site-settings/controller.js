@@ -4,9 +4,11 @@ import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import StartOver from 'calypso/sites/settings/administration/tools/reset-site';
+import SiteOwnerTransfer from 'calypso/sites/settings/administration/tools/transfer-site';
+import { AcceptSiteTransfer } from 'calypso/sites/settings/administration/tools/transfer-site/accept-site-transfer';
+import SiteTransferred from 'calypso/sites/settings/administration/tools/transfer-site/site-transferred';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -18,9 +20,6 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
-import { AcceptSiteTransfer } from './site-owner-transfer/accept-site-transfer';
-import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
-import SiteTransferred from './site-owner-transfer/site-transferred';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -54,14 +53,6 @@ export function redirectIfCantDeleteSite( context, next ) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 
-	next();
-}
-
-export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
-	const state = context.store.getState();
-	if ( ! canCurrentUserStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
-		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
-	}
 	next();
 }
 

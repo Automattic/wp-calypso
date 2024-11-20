@@ -1,0 +1,15 @@
+.settings-administration__transfer-site {
+	.panel-with-sidebar & {
+		margin-left: 0;
+
+		.panel-section {
+			width: 100%;
+			max-width: 800px !important;
+
+			p:last-child,
+			.notice:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
