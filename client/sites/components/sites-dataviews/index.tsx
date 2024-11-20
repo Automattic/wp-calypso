@@ -1,17 +1,65 @@
-import { usePrevious } from '@wordpress/compose';
-import { DataViews, Field } from '@wordpress/dataviews';
-import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import TimeSince from 'calypso/components/time-since';
-import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { View } from '@wordpress/dataviews';
+import pagejs from '@automattic/calypso-router';
+import {
+	type SiteExcerptData,
+	SitesSortKey,
+	useSitesListFiltering,
+	useSitesListGrouping,
+	useSitesListSorting,
+} from '@automattic/sites';
+import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { usePrevious } from '@wordpress/compose';
+import { DataViews, Field } from '@wordpress/dataviews';
+import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
+import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderTitle as Title,
+} from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import DocumentHead from 'calypso/components/data/document-head';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import TimeSince from 'calypso/components/time-since';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { isP2Theme } from 'calypso/lib/site/utils';
+import {
+	SitesDashboardQueryParams,
+	handleQueryParamChange,
+} from 'calypso/sites-dashboard/components/sites-content-controls';
+import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
+import { useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
+import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
+import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import {
+	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
+	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
+	useOnboardingTours,
+} from '../onboarding-tours';
+import { useActions } from './actions';
+import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
+import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
+import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
+import SitesDashboardHeader from './sites-dashboard-header';
+import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
+import { getSitesPagination } from './sites-dataviews/utils';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -54,6 +102,190 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
+
+	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const selectedSite = useSelector( getSelectedSite );
+
+	const siteStatusGroups = useSiteStatusGroups();
+	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
+		if ( isWide ) {
+			return '40%';
+		}
+		if ( isDesktop ) {
+			return '50%';
+		}
+		return '70%';
+	};
+
+	// Create the DataViews state based on initial values
+	const defaultDataViewsState: View = {
+		sort: {
+			field: '',
+			direction: 'asc',
+		},
+		page,
+		perPage,
+		search: search ?? '',
+		fields: getFieldsByBreakpoint( isDesktop ),
+		...( status
+			? {
+					filters: [
+						{
+							field: 'status',
+							operator: 'is',
+							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
+						},
+					],
+			  }
+			: {} ),
+		...( selectedSite
+			? { type: 'list', layout: {} }
+			: {
+					type: 'table',
+					layout: {
+						styles: {
+							site: {
+								width: getSiteNameColWidth( isDesktop, isWide ),
+							},
+							plan: {
+								width: '126px',
+							},
+							status: {
+								width: '142px',
+							},
+							'last-publish': {
+								width: '146px',
+							},
+							stats: {
+								width: '106px',
+							},
+						},
+					},
+			  } ),
+	};
+	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
+
+	useEffect( () => {
+		const fields = getFieldsByBreakpoint( isDesktop );
+		const fieldsForBreakpoint = [ ...fields ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
+		// Compare the content of the arrays, not its referrences that will always be different.
+		// sort() sorts the array in place, so we need to clone them first.
+		if ( existingFields !== fieldsForBreakpoint ) {
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
+		}
+
+		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
+
+		if (
+			dataViewsState.type === 'table' &&
+			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
+		) {
+			setDataViewsState( {
+				...dataViewsState,
+				layout: {
+					styles: {
+						...dataViewsState.layout?.styles,
+						site: {
+							width: siteNameColumnWidth,
+						},
+					},
+				},
+			} );
+		}
+	}, [ isDesktop, isWide, dataViewsState ] );
+
+	// Ensure site sort preference is applied when it loads in. This isn't always available on
+	// initial mount.
+	useEffect( () => {
+		// Ensure we set and check initialSortApplied to prevent infinite loops when changing sort
+		// values after initial sort.
+		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied ) {
+			const newSortField =
+				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
+			const newSortDirection = sitesSorting.sortOrder;
+
+			setDataViewsState( ( prevState ) => ( {
+				...prevState,
+				sort: {
+					field: newSortField,
+					direction: newSortDirection,
+				},
+			} ) );
+
+			setInitialSortApplied( true );
+		}
+	}, [
+		hasSitesSortingPreferenceLoaded,
+		sitesSorting,
+		dataViewsState.sort,
+		initialSortApplied,
+		siteType,
+	] );
+
+	// Get the status group slug.
+	const statusSlug = useMemo( () => {
+		const statusFilter = dataViewsState.filters?.find( ( filter ) => filter.field === 'status' );
+		const statusNumber = statusFilter?.value;
+		return siteStatusGroups.find( ( status ) => status.value === statusNumber )
+			?.slug as GroupableSiteLaunchStatuses;
+	}, [ dataViewsState.filters, siteStatusGroups ] );
+
+	// Filter sites list by status group.
+	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
+		status: statusSlug || 'all',
+		showHidden: true,
+	} );
+
+	// Perform sorting actions
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
+			?.sortKey as SitesSortKey,
+		sortOrder: dataViewsState.sort?.direction || undefined,
+	} );
+
+	// Filter sites list by search query.
+	const filteredSites = useSitesListFiltering( sortedSites, {
+		search: dataViewsState.search,
+	} );
+
+	const paginatedSites =
+		dataViewsState.page && dataViewsState.perPage
+			? filteredSites.slice(
+					( dataViewsState.page - 1 ) * dataViewsState.perPage,
+					dataViewsState.page * dataViewsState.perPage
+			  )
+			: filteredSites;
+
+	const onboardingTours = useOnboardingTours();
+
+	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
+
+	// Update URL with view control params on change.
+	useEffect( () => {
+		const queryParams = {
+			search: dataViewsState.search?.trim(),
+			status: statusSlug,
+			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
+			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
+		};
+
+		window.setTimeout( () => handleQueryParamChange( queryParams ) );
+	}, [ dataViewsState.search, dataViewsState.page, dataViewsState.perPage, statusSlug ] );
+
+	// Update site sorting preference on change
+	useEffect( () => {
+		if ( dataViewsState.sort?.field ) {
+			onSitesSortingChange( {
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
+					?.sortKey as SitesSortKey,
+				sortOrder: dataViewsState.sort.direction || 'asc',
+			} );
+		}
+	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
 	// Scroll to selected site in the list when in list view.
 	const scrollContainerRef = useRef< HTMLElement >();
