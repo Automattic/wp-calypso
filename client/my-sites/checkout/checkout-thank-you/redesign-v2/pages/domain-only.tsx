@@ -3,6 +3,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import HundredYearThankYou from 'calypso/my-sites/checkout/checkout-thank-you/hundred-year-plan-thank-you';
+import { PlaceholderThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/pages/placeholder';
 import { useSelector } from 'calypso/state';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -31,14 +32,23 @@ export default function DomainOnlyThankYou( {
 		getDomainsBySiteId( state, domainPurchases[ 0 ]?.blogId )
 	);
 
+	if ( ! siteDomains.length ) {
+		return (
+			<>
+				<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
+				<PlaceholderThankYou />
+			</>
+		);
+	}
+
 	if ( domainPurchases.length === 1 ) {
 		const purchasedDomain = domainPurchases[ 0 ];
 		const domain = siteDomains.find( ( siteDomain ) => siteDomain.name === purchasedDomain.meta );
 
-		if ( domain && domain.isHundredYearDomain ) {
+		if ( domain.isHundredYearDomain ) {
 			return (
 				<HundredYearThankYou
-					siteSlug={ String( domain.blogId ) }
+					siteSlug={ String( purchasedDomain.blogId ) }
 					receiptId={ Number( receipt.receiptId ) }
 					productSlug="domain_reg"
 				/>
@@ -61,7 +71,6 @@ export default function DomainOnlyThankYou( {
 	return (
 		<>
 			<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
-			<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
 
 			<ThankYouV2
 				title={ translate( 'Your own corner of the web' ) }
