@@ -22,6 +22,7 @@ import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
@@ -57,6 +58,12 @@ class Media extends Component {
 		this.setState( {
 			containerWidth: this.containerRef.current.clientWidth,
 		} );
+
+		const params = new URLSearchParams( window.location.search );
+		const upgradeStatus = params.get( 'upgrade' );
+		if ( upgradeStatus ) {
+			this.showUpgradeStatusNotice( upgradeStatus );
+		}
 	}
 
 	onFilterChange = ( filter ) => {
@@ -351,6 +358,20 @@ class Media extends Component {
 		);
 	};
 
+	showUpgradeStatusNotice = ( status ) => {
+		const { translate, filter, successNotice: showSuccessNotice } = this.props;
+		let message = '';
+		if ( filter === 'audio' ) {
+			message = translate( 'Audio upload has been enabled.' );
+		} else if ( filter === 'videos' ) {
+			message = translate( 'Video upload has been enabled.' );
+		}
+
+		if ( status === 'success' && message ) {
+			showSuccessNotice( message );
+		}
+	};
+
 	render() {
 		const {
 			selectedSite: site,
@@ -472,6 +493,9 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
-	localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) )
-);
+export default connect( mapStateToProps, {
+	selectMediaItems,
+	changeMediaSource,
+	clearSite,
+	successNotice,
+} )( localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) ) );
