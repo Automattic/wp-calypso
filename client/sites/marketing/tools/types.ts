@@ -5,7 +5,6 @@ export interface MarketingToolsFeatureData {
 	imageAlt?: string;
 	buttonText: string;
 	buttonHref?: string;
-	buttonTarget?: '_blank' | '_self';
+	buttonTarget?: '_blank';
 	onClick?: () => void;
-	showOnlyInEnglish?: boolean;
 }

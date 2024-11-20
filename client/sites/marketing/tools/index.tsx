@@ -31,7 +31,8 @@ export default function MarketingTools() {
 		selectedSiteSlug,
 		recordTracksEvent,
 		translate,
-		localizeUrl
+		localizeUrl,
+		{ isEnglish }
 	);
 
 	const handleBusinessToolsClick = () => {
@@ -49,10 +50,6 @@ export default function MarketingTools() {
 
 			<div className="tools__feature-list">
 				{ marketingFeatures.map( ( feature, index ) => {
-					if ( feature.showOnlyInEnglish && ! isEnglish ) {
-						return null;
-					}
-
 					return (
 						<MarketingToolsFeature
 							key={ index }
