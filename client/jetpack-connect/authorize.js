@@ -14,7 +14,6 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import SetupImage from 'calypso/assets/images/woocommerce/setup.svg';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -142,15 +141,6 @@ export class JetpackAuthorize extends Component {
 		isRedirecting: false,
 	};
 
-	componentDidMount() {
-		// If we have a logged-in user
-		// Preload the setup image that will be used when the user clicks on the connect botton.
-		// This is needed to avoid text jumping when the image is loaded.
-		if ( this.props.user ) {
-			const img = new Image();
-			img.src = SetupImage;
-		}
-	}
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
