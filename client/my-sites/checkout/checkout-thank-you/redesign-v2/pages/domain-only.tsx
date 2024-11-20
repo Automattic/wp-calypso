@@ -35,6 +35,7 @@ export default function DomainOnlyThankYou( {
 	if ( ! siteDomains.length ) {
 		return (
 			<>
+				<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
 				<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
 				<PlaceholderThankYou />
 			</>
