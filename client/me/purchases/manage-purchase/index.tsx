@@ -617,10 +617,15 @@ class ManagePurchase extends Component<
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
 
-	getDomainDetailsFromPurchase = ( purchase: Purchase ) => {
+	getDomainDetailsFromPurchase = ( purchase: Purchase ): ResponseDomain | undefined => {
 		return this.props.domainsDetails?.[ purchase.siteId ]?.find(
 			( domain ) => domain.domain === purchase.meta
 		);
+	};
+
+	isHundredYearDomain = ( purchase: Purchase ): boolean | undefined => {
+		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
+		return domainDetails?.isHundredYearDomain;
 	};
 
 	renderEditPaymentMethodNavItem() {
@@ -641,8 +646,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
-		if ( domainDetails?.isHundredYearDomain ) {
+		if ( this.isHundredYearDomain( purchase ) ) {
 			return null;
 		}
 
@@ -885,11 +889,8 @@ class ManagePurchase extends Component<
 		}
 
 		// If it's a 100-year domain, don't show the cancel button
-		if ( isDomainRegistration( purchase ) ) {
-			const domainDetails = this.getDomainDetailsFromPurchase( purchase );
-			if ( domainDetails?.isHundredYearDomain ) {
-				return null;
-			}
+		if ( this.isHundredYearDomain( purchase ) ) {
+			return null;
 		}
 
 		const onClick = ( event: { preventDefault: () => void } ) => {
@@ -932,8 +933,7 @@ class ManagePurchase extends Component<
 			);
 		}
 
-		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
-		if ( domainDetails?.isHundredYearDomain ) {
+		if ( this.isHundredYearDomain( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<HundredYearPlanLogo width={ 50 } />
@@ -995,8 +995,7 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
-			const domainDetails = this.getDomainDetailsFromPurchase( purchase );
-			if ( domainDetails?.isHundredYearDomain ) {
+			if ( this.isHundredYearDomain( purchase ) ) {
 				return translate(
 					'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
 				);
@@ -1262,7 +1261,7 @@ class ManagePurchase extends Component<
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
-		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
+		const isHundredYearDomain = this.isHundredYearDomain( purchase );
 
 		return (
 			<Fragment>
@@ -1274,7 +1273,7 @@ class ManagePurchase extends Component<
 						{ this.renderPurchaseIcon() }
 						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 						<div className="manage-purchase__description">
-							{ domainDetails?.isHundredYearDomain
+							{ isHundredYearDomain
 								? translate( '100-Year Domain Registration' )
 								: purchaseType( purchase ) }
 						</div>
