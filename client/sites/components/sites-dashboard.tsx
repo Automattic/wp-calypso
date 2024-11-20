@@ -62,23 +62,8 @@ interface SitesDashboardProps {
 	sectionName?: string;
 }
 
-const siteSortingKeys = [
-	{ dataView: 'site', sortKey: 'alphabetically' },
-	{ dataView: 'last-publish', sortKey: 'updatedAt' },
-	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
-	{ dataView: 'plan', sortKey: 'plan' },
-	{ dataView: 'status', sortKey: 'status' },
-];
-
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
-
-// Limit fields on breakpoints smaller than 960px wide.
-const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'site' ];
-
-const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
-	isDesktop ? desktopFields : mobileFields;
 
 export function showSitesPage( route: string ) {
 	const currentParams = new URL( window.location.href ).searchParams;

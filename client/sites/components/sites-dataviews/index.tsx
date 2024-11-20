@@ -32,6 +32,21 @@ import type { View } from '@wordpress/dataviews';
 import './style.scss';
 import './dataview-style.scss';
 
+const siteSortingKeys = [
+	{ dataView: 'site', sortKey: 'alphabetically' },
+	{ dataView: 'last-publish', sortKey: 'updatedAt' },
+	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
+	{ dataView: 'plan', sortKey: 'plan' },
+	{ dataView: 'status', sortKey: 'status' },
+];
+
+// Limit fields on breakpoints smaller than 960px wide.
+const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields = [ 'site' ];
+
+const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+	isDesktop ? desktopFields : mobileFields;
+
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
