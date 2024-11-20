@@ -15,7 +15,8 @@ interface PricedAPISitePlansIndex {
 
 interface Props {
 	/**
-	 * `coupon` required on purpose to mitigate risk with not passing something through when we should
+	 * To match the use-plans hook, `coupon` is required on purpose to mitigate risk of not passing
+	 * something through when we should
 	 */
 	coupon: string | undefined;
 	siteId: string | number | null | undefined;
