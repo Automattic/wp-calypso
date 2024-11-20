@@ -1281,7 +1281,9 @@ class ManagePurchase extends Component<
 						{ this.renderPurchaseIcon() }
 						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 						<div className="manage-purchase__description">
-							{ purchaseType( purchase, domainDetails ) }
+							{ domainDetails?.isHundredYearDomain
+								? translate( '100-Year Domain Registration' )
+								: purchaseType( purchase ) }
 						</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (

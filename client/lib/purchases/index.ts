@@ -38,7 +38,6 @@ import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isMarketplaceTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { ResponseDomain } from '../domains/types';
 import type { Purchase } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -878,10 +877,7 @@ export function isAgencyPartnerType( partnerType: string ) {
 	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
-export function purchaseType(
-	purchase: Purchase,
-	domainDetails: ResponseDomain | null | undefined
-) {
+export function purchaseType( purchase: Purchase ) {
 	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
 	}
@@ -903,10 +899,6 @@ export function purchaseType(
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
-		if ( domainDetails?.isHundredYearDomain ) {
-			return i18n.translate( '100-Year Domain Registration' );
-		}
-
 		return purchase.productName;
 	}
 
