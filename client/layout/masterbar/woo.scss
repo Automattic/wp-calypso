@@ -2120,19 +2120,3 @@ $breakpoint-mobile: 660px;
 		}
 	}
 }
-
-// Color scheme 'blue' fix
-// The 'blue' theme color from wp-calypso does not match the 'blue' color from the local WordPress admin color scheme.
-// Fix the color scheme 'blue' to match the local WordPress admin color scheme on the new JPC page.
-body.is-blue {
-	.is-woocommerce-core-profiler-flow.is-woo-passwordless {
-		button.button.is-primary {
-			background: #52accc;
-		}
-		.masterbar__progress-bar {
-			.progress-bar__progress {
-				background-color: #52accc;
-			}
-		}
-	}
-}
