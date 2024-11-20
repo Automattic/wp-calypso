@@ -47,16 +47,6 @@ const mobileFields = [ 'site' ];
 const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
 	isDesktop ? desktopFields : mobileFields;
 
-type Props = {
-	sites: SiteExcerptData[];
-	isLoading: boolean;
-	paginationInfo: { totalItems: number; totalPages: number };
-	dataViewsState: View;
-	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
-	selectedItem: SiteExcerptData | null | undefined;
-	openSitePreviewPane: ( site: SiteExcerptData ) => void;
-};
-
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
 
@@ -77,11 +67,15 @@ const DotcomSitesDataViews = ( {
 	sites,
 	isLoading,
 	paginationInfo,
-	dataViewsState,
-	setDataViewsState,
 	selectedItem,
 	openSitePreviewPane,
-}: Props ) => {
+}: {
+	sites: SiteExcerptData[];
+	isLoading: boolean;
+	paginationInfo: { totalItems: number; totalPages: number };
+	selectedItem: SiteExcerptData | null | undefined;
+	openSitePreviewPane: ( site: SiteExcerptData ) => void;
+} ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
