@@ -62,7 +62,7 @@ const utmLearnMoreLink = ( isOdysseyStats: boolean ) => {
 			rel="noopenner noreferrer"
 		/>
 	) : (
-		<InlineSupportLink supportContext="stats" showIcon={ false } />
+		<InlineSupportLink supportContext="utm-upsell-overlay" showIcon={ false } />
 	);
 };
 
