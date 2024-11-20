@@ -11,7 +11,10 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
+export const useGetCombinedChat = (
+	shouldUseHelpCenterExperience: boolean | undefined,
+	version: string | null
+) => {
 	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -32,7 +35,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
 			?.event_external_id ?? null;
 
-	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ), version );
 
 	useEffect( () => {
 		if ( odieId && ( ! conversationId || ! shouldUseHelpCenterExperience ) ) {
