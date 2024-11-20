@@ -3,7 +3,7 @@ import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
 import './style.scss';
-import { CampaignChartCountryData } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { CampaignChartCountryData } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import { formatNumber } from 'calypso/my-sites/promote-post-i2/utils';
 
@@ -45,13 +45,17 @@ const LocationChart = ( { stats, total, source }: Props ) => {
 						<div className="location-chart__country-stat">
 							<div className="location-chart__country-info">
 								<span>{ regionNames.of( stat.country ) }</span>
-								<span className="location-chart__percentage">{ stat.percentage }%</span>
+								<span className="location-chart__percentage">
+									{ stat.percentage > 0 ? stat.percentage : `~0` }%
+								</span>
 							</div>
 							<div className="location-chart__progress-bar">
-								<div
-									className="location-chart__progress-bar-filled"
-									style={ { width: `${ normalisedPercentage }%` } }
-								></div>
+								{ stat.percentage > 0 && (
+									<div
+										className="location-chart__progress-bar-filled"
+										style={ { width: `${ normalisedPercentage }%` } }
+									></div>
+								) }
 								{ /* not needed ont the first item (since it is full width already) */ }
 								{ index > 0 && <div className="location-chart__progress-bar-unfilled"></div> }
 							</div>

@@ -15,7 +15,7 @@
 		&__country-info {
 			display: flex;
 			justify-content: space-between;
-			margin-bottom: 8px;
+			margin-bottom: 10px;
 			font-size: .875rem;
 			color: var( --studio-gray-60 );
 		}
@@ -29,6 +29,7 @@
 			height: 3px;
 			overflow: hidden;
 			display: flex;
+			gap: 10px;
 		}
 
 		&__progress-bar-filled {
@@ -39,7 +40,6 @@
 
 		&__progress-bar-unfilled {
 			height: 100%;
-			margin-left: 10px;
 			background-color: var(--studio-gray-5);
 			border-radius: 4px;
 			flex-grow: 1;

@@ -759,6 +759,17 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 								</div>
 
+								<div className="campaign-item-details__secondary-stats-interests-mobile">
+									<>
+										<span className="campaign-item-details__label">
+											{ translate( 'Interests' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</>
+								</div>
+
 								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 									<div>
 										<div className="campaign-item-page__graph">
@@ -771,18 +782,11 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
 
-								<div className="campaign-item-details__secondary-stats-interests-mobile">
-									<>
-										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</>
-								</div>
-
+						<div className="campaign-item-details__main-stats-container">
+							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
 									{ objective && objectiveFormatted && (
 										<div>
@@ -853,6 +857,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
+
 						{ canDisplayPaymentSection ? (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
