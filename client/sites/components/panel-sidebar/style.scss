@@ -17,7 +17,8 @@
 		font-size: 0.875rem;
 	}
 
-	> div:not(:first-child) {
+	> div:not(:first-child),
+	> main:not(:first-child) {
 		width: 100%;
 	}
 

@@ -2,9 +2,10 @@ import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
+import NavigationHeader from 'calypso/components/navigation-header';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
+import { Panel } from 'calypso/sites/components/panel';
 import DataSynchronization from './data-synchronization';
 import DisconnectSiteLink from './disconnect-site-link';
 import SiteOwnership from './site-ownership';
@@ -16,15 +17,21 @@ class ManageConnection extends Component {
 		const { redirect, translate } = this.props;
 
 		return (
-			<Main className="manage-connection site-settings">
+			<Panel className="settings-administration__manage-connection">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 
-				<HeaderCake onClick={ redirect }>{ translate( 'Manage Connection' ) }</HeaderCake>
+				<NavigationHeader
+					title={ translate( 'Manage connection' ) }
+					subtitle={ translate(
+						'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
+					) }
+				/>
+				<HeaderCakeBack onClick={ redirect } />
 
 				<SiteOwnership />
 				<DataSynchronization />
 				<DisconnectSiteLink />
-			</Main>
+			</Panel>
 		);
 	}
 }
