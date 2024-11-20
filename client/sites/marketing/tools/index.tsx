@@ -1,9 +1,12 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import Search, { useTermsSuggestions } from '@automattic/search';
+import { isDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useState, useMemo } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -20,6 +23,7 @@ import './style.scss';
 export default function MarketingTools() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
@@ -31,11 +35,23 @@ export default function MarketingTools() {
 		localizeUrl
 	);
 
+	const marketingFeaturesFiltered = useMemo(
+		() =>
+			marketingFeatures.filter( ( feature ) =>
+				feature.title.toLowerCase().includes( searchTerm.toLowerCase() )
+			),
+		[ marketingFeatures, searchTerm ]
+	);
+
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
 
 		page( pluginsPath( selectedSiteSlug ) );
 	};
+
+	const searchTerms = [ 'seo', 'monetize', 'design' ];
+
+	const searchTermSuggestion = useTermsSuggestions( searchTerms );
 
 	return (
 		<Fragment>
@@ -43,9 +59,26 @@ export default function MarketingTools() {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-
+			<Search
+				className={ clsx( 'search-categories__searchbox', {
+					'search-categories__searchbox--mobile': ! isDesktop(),
+				} ) }
+				onSearch={ setSearchTerm }
+				defaultValue={ searchTerm }
+				searchMode="when-typing"
+				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
+					args: { searchTermSuggestion },
+					textOnly: true,
+				} ) }
+				delaySearch={ false }
+				// recordEvent={ recordSearchEvent }
+				// searching={ isSearching }
+				submitOnOpenIconClick
+				openIconSide="right"
+				displayOpenAndCloseIcons
+			/>
 			<div className="tools__feature-list">
-				{ marketingFeatures.map( ( feature, index ) => {
+				{ marketingFeaturesFiltered.map( ( feature, index ) => {
 					return (
 						<MarketingToolsFeature
 							key={ index }
