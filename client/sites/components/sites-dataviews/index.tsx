@@ -325,8 +325,6 @@ const DotcomSitesDataViews = ( {
 		};
 	}, [] );
 
-	const siteStatusGroups = useSiteStatusGroups();
-
 	// Generate DataViews table field-columns
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
