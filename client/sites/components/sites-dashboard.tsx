@@ -163,7 +163,7 @@ const SitesDashboard = ( {
 	};
 
 	// Create the DataViews state based on initial values
-	const defaultDataViewsState = {
+	const defaultDataViewsState: View = {
 		sort: {
 			field: '',
 			direction: 'asc',
@@ -183,27 +183,31 @@ const SitesDashboard = ( {
 					],
 			  }
 			: {} ),
-		type: selectedSite ? 'list' : 'table',
-		layout: {
-			styles: {
-				site: {
-					width: getSiteNameColWidth( isDesktop, isWide ),
-				},
-				plan: {
-					width: '126px',
-				},
-				status: {
-					width: '142px',
-				},
-				'last-publish': {
-					width: '146px',
-				},
-				stats: {
-					width: '106px',
-				},
-			},
-		},
-	} as View;
+		...( selectedSite
+			? { type: 'list', layout: {} }
+			: {
+					type: 'table',
+					layout: {
+						styles: {
+							site: {
+								width: getSiteNameColWidth( isDesktop, isWide ),
+							},
+							plan: {
+								width: '126px',
+							},
+							status: {
+								width: '142px',
+							},
+							'last-publish': {
+								width: '146px',
+							},
+							stats: {
+								width: '106px',
+							},
+						},
+					},
+			  } ),
+	};
 	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
 	useEffect( () => {
@@ -222,28 +226,19 @@ const SitesDashboard = ( {
 			dataViewsState.type === 'table' &&
 			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
 		) {
-			// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
-			setDataViewsState( ( prevState ) => ( {
-				...prevState,
+			setDataViewsState( {
+				...dataViewsState,
 				layout: {
 					styles: {
-						// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
-						...prevState.layout?.styles,
+						...dataViewsState.layout?.styles,
 						site: {
 							width: siteNameColumnWidth,
 						},
 					},
 				},
-			} ) );
+			} );
 		}
-	}, [
-		isDesktop,
-		isWide,
-		dataViewsState.type,
-		dataViewsState?.fields,
-		// @ts-expect-error -- Need to fix the layout type upstream in @wordpress/dataviews to support styles.
-		dataViewsState?.layout?.styles?.site?.width,
-	] );
+	}, [ isDesktop, isWide, dataViewsState ] );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.

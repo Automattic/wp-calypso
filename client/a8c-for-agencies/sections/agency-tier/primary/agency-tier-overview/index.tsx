@@ -38,9 +38,15 @@ export default function AgencyTierOverview() {
 
 	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
+	// todo: Restore this. We have to hide temporary the 'Download your badges' button until the WooCommerce ones are ready
+	// A4A GH issue: 1500
+	const temporaryHideDownloadBadges = true;
+
 	// Show download badges button for Agency Partner and Pro Agency Partner tiers
 	const showDownloadBadges =
-		currentAgencyTier && [ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
+		! temporaryHideDownloadBadges &&
+		currentAgencyTier &&
+		[ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>

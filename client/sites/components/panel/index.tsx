@@ -1,7 +1,18 @@
 import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
+import Main from 'calypso/components/main';
 
 import './style.scss';
+
+export function Panel( {
+	className,
+	children,
+}: {
+	className?: string;
+	children: React.ReactNode;
+} ) {
+	return <Main className={ clsx( 'panel', className ) }>{ children }</Main>;
+}
 
 export function PanelSection( {
 	isBorderless,

@@ -92,7 +92,7 @@ const DateRangePickerShortcuts = ( {
 		const today = siteToday.clone().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
-			if ( endDate.isSame( today ) && daysInRange === element.range ) {
+			if ( endDate.isSame( today, 'day' ) && daysInRange === element.range ) {
 				return element;
 			}
 			return null;

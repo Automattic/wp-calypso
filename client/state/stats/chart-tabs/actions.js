@@ -14,13 +14,22 @@ import 'calypso/state/stats/init';
  * @returns {Object} Action object
  */
 
-export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
+export function requestChartCounts( {
+	chartTab,
+	date,
+	chartStart,
+	period,
+	quantity,
+	siteId,
+	statFields,
+} ) {
 	const requestKey = `${ date }-${ period }-${ quantity }`;
 
 	return {
 		type: STATS_CHART_COUNTS_REQUEST,
 		chartTab,
 		date,
+		chartStart,
 		period,
 		quantity,
 		siteId,

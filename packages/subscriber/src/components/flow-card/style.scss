@@ -1,0 +1,56 @@
+@import "@automattic/typography/styles/variables";
+
+$blueberry-color: #3858e9;
+
+.flow-question {
+	margin: 0 10px 18px;
+	// !important needed here to override component styles
+	border-radius: 4px !important;
+
+	cursor: pointer;
+	max-width: 433px;
+	text-align: left;
+
+	.components-card__body {
+		padding: 22px 22px 24px;
+	}
+
+	&:hover,
+	&:focus {
+		box-shadow: 0 0 0 1px $blueberry-color;
+
+		svg path {
+			fill: $blueberry-color;
+		}
+
+		.flow-question__description,
+		.flow-question__heading {
+			color: $blueberry-color;
+		}
+	}
+
+	.flow-question__icon {
+		align-self: flex-start;
+		padding: 2px 1px 0 0;
+	}
+
+	.flow-question__heading {
+		font-weight: 500;
+		font-size: $font-body-large;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		// !important needed here to override unrelated styles from "steps-repository/importer-migrate-message/style.scss"
+		// that are affecting this component in some instances
+		margin-bottom: 0 !important;
+
+		.badge--info-blue {
+			background-color: $blueberry-color;
+		}
+	}
+
+	.flow-question__description {
+		color: var(--studio-gray-60);
+		padding-right: 10px;
+	}
+}
