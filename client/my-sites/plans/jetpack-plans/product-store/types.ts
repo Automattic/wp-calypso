@@ -56,7 +56,7 @@ export type ItemToDisplayProps = {
 
 export type MostPopularProps = {
 	className?: string;
-	heading: string;
+	heading?: string;
 	items: Array< SelectorProduct >;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	siteId: number | null;

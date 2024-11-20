@@ -40,7 +40,9 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 	return (
 		<div className={ wrapperClassName }>
-			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			{ heading ? (
+				<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			) : null }
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );

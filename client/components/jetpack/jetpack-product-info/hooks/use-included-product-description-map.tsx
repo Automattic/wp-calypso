@@ -13,6 +13,7 @@ import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_STATS_PRODUCTS,
 	JETPACK_CREATOR_PRODUCTS,
+	JETPACK_GROWTH_PLANS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -128,7 +129,11 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				productSlug
 			);
 
-			if ( isJetpackCompletePlan ) {
+			const isJetpackGrowthPlan = ( JETPACK_GROWTH_PLANS as ReadonlyArray< string > ).includes(
+				productSlug
+			);
+
+			if ( isJetpackCompletePlan || isJetpackGrowthPlan ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
 			}
 

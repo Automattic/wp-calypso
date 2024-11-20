@@ -436,8 +436,11 @@ import {
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
+	JETPACK_TAG_FOR_VIDEOGRAPHERS,
+	JETPACK_TAG_FOR_BLOGGERS,
+	JETPACK_TAG_FOR_EDUCATORS,
 } from './constants';
-import { FEATURE_CONNECT_ANALYTICS } from './constants/features';
+import { FEATURE_CONNECT_ANALYTICS, FEATURE_JETPACK_SOCIAL_V1_MONTHLY } from './constants/features';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -2326,10 +2329,60 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_GROWTH,
 	getTitle: () => translate( 'Growth', { context: 'Jetpack product name' } ),
 	getDescription: () => translate( 'Grow your audience effortlessly.' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_EDUCATORS, label: translate( 'Educators' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGGERS, label: translate( 'Bloggers' ) },
+		{ tag: JETPACK_TAG_FOR_VIDEOGRAPHERS, label: translate( 'Videographers' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+	],
+	getFeaturedDescription: () =>
+		translate(
+			'This bundle includes:{{ul}}{{li}}Stats (100k monthly requests, upgradeable){{/li}}{{li}}Social{{/li}}{{/ul}}',
+			{
+				components: {
+					ul: <ul />,
+					li: <li />,
+				},
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
+			}
+		),
+	getTagline: () =>
+		translate(
+			'Jetpack’s growth tools help you find a new audience, turn leads into customers, and customers into advocates.'
+		),
+	getLightboxDescription: () =>
+		translate(
+			'Jetpack’s growth tools help you find a new audience, turn leads into customers, and customers into advocates.'
+		),
+	getPlanCardFeatures: () => [ FEATURE_JETPACK_SOCIAL_V1_MONTHLY, FEATURE_STATS_PAID ],
+	getIncludedFeatures: () => [
+		FEATURE_EARN_AD,
+		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_SIMPLE_PAYMENTS,
+	],
+	getWhatIsIncluded: () => [
+		translate( '40+ Jetpack blocks' ),
+		translate( 'Display ads with WordAds' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Paid content gating' ),
+		translate( 'Paywall access' ),
+		translate( 'Newsletter' ),
+		translate( 'Priority support' ),
+	],
+	getBenefits: () => [
+		translate( 'Quickly create content that stands out' ),
+		translate( 'Grow your subscribers with simple subscribe forms' ),
+		translate( 'Create content for paid subscribers' ),
+		translate( 'Sell access to premium content' ),
+		translate( 'Easily accept tips and donations' ),
+	],
 } );
 
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
