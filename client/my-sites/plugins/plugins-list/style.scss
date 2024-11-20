@@ -1,4 +1,8 @@
 body.is-section-plugins .plugin-management-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
 	.navigation-header {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
@@ -24,6 +28,14 @@ body.is-section-plugins .plugin-management-wrapper,
 
 .is-section-jetpack-cloud-plugin-management {
     --wp-admin-theme-color: var(--studio-jetpack-green-50);
+    height: 100%;
+    overflow: hidden;
+
+    .plugin-management-wrapper {
+        height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+    }
 
     .select-partner-key {
         padding: 0 40px;
@@ -46,8 +58,14 @@ body.is-section-plugins .plugin-management-wrapper,
         }
     }
 
+    .layout__primary,
+    .plugins-overview__container {
+        height: 100%;
+    }
+
     .layout__content {
-        padding: 79px 0 32px calc(var(--sidebar-width-max));
+        height: 100%;
+        padding: 79px 0 0 calc(var(--sidebar-width-max));
     }
 
     .plugins__top-container-jc {

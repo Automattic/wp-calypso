@@ -228,11 +228,7 @@
 // Follow-up issue: https://github.com/Automattic/dotcom-forge/issues/9554
 body.is-section-plugins .plugin-management-wrapper {
     --wp-components-color-accent: var(--color-accent);
-	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
 }
-
 body.is-section-plugins .plugin-management-wrapper,
 .is-section-jetpack-cloud-plugin-management {
 
