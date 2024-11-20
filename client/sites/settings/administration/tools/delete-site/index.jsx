@@ -5,18 +5,17 @@ import i18n, { getLocaleSlug, localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelBody from 'calypso/components/action-panel/body';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import HeaderCake from 'calypso/components/header-cake';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import DeleteSiteWarnings from 'calypso/my-sites/site-settings/delete-site-warnings';
+import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { Panel, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -26,7 +25,8 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSettingsSource } from '../site-tools/utils';
+import { isHostingMenuUntangled } from '../../../utils';
+import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
 
@@ -127,7 +127,7 @@ class DeleteSite extends Component {
 		return (
 			<>
 				<p>{ deletionText }</p>
-				<p className="delete-site__deletion-block">
+				<>
 					<FormTextInput
 						autoCapitalize="off"
 						className="delete-site__confirm-input"
@@ -149,7 +149,7 @@ class DeleteSite extends Component {
 					>
 						{ translate( 'Delete site' ) }
 					</Button>
-				</p>
+				</>
 			</>
 		);
 	}
@@ -198,6 +198,7 @@ class DeleteSite extends Component {
 		try {
 			this.setState( { isDeletingSite: true } );
 			await this.props.deleteSite( this.props.siteId );
+			page.redirect( '/sites' );
 		} finally {
 			this.setState( { isDeletingSite: false } );
 		}
@@ -205,7 +206,9 @@ class DeleteSite extends Component {
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
-		const source = getSettingsSource();
+		const source = isHostingMenuUntangled()
+			? '/sites/settings/administration'
+			: getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};
@@ -247,14 +250,15 @@ class DeleteSite extends Component {
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
+		const isUntangled = isHostingMenuUntangled();
 
 		return (
-			<div className="delete-site main main-column" role="main">
+			<Panel className="settings-administration__delete-site">
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
 					mobileItem={ null }
-					title={ translate( 'Delete Site' ) }
+					title={ strings.deleteSite }
 					subtitle={ translate(
 						'Permanently delete your site and all of its content. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
@@ -267,17 +271,18 @@ class DeleteSite extends Component {
 					) }
 				></NavigationHeader>
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<HeaderCake onClick={ this._goBack } className="delete-site__header-cake">
-					<h1>{ strings.deleteSite }</h1>
-				</HeaderCake>
+				<HeaderCakeBack onClick={ this._goBack } />
 				{ canDeleteSite ? (
-					<ActionPanel>
-						<ActionPanelBody>
+					<PanelSection>
+						<>
+							{ isUntangled && (
+								<PanelHeading>{ translate( 'Confirm site deletion' ) }</PanelHeading>
+							) }
 							{ this.renderNotice() }
 							{ this.renderBody() }
-						</ActionPanelBody>
+						</>
 						{ this.renderDeleteSiteCTA() }
-					</ActionPanel>
+					</PanelSection>
 				) : (
 					<DeleteSiteWarnings
 						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
@@ -285,7 +290,7 @@ class DeleteSite extends Component {
 						isTrialSite={ this.props.isTrialSite }
 					/>
 				) }
-			</div>
+			</Panel>
 		);
 	}
 }

@@ -1,5 +1,5 @@
 import { usePrevious } from '@wordpress/compose';
-import { DataViews, View, Field } from '@wordpress/dataviews';
+import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -7,11 +7,12 @@ import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import ActionsField from './dataviews-fields/actions-field';
+import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 import './dataview-style.scss';
@@ -187,14 +188,6 @@ const DotcomSitesDataViews = ( {
 				enableSorting: false,
 			},
 			{
-				id: 'actions',
-				label: __( 'Actions' ),
-				header: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
 				id: 'last-interacted',
 				label: __( 'Last Interacted' ),
 				render: () => null,
@@ -206,13 +199,16 @@ const DotcomSitesDataViews = ( {
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
+	const actions = useActions();
+
 	return (
 		<div className="sites-dataviews">
 			<DataViews
 				data={ sites }
 				fields={ fields }
-				onChangeView={ ( newView: View ) => setDataViewsState( () => newView ) }
+				onChangeView={ ( newView ) => setDataViewsState( () => newView ) }
 				view={ dataViewsState }
+				actions={ actions }
 				search
 				searchLabel={ __( 'Search sites…' ) }
 				selection={ getSelection() }

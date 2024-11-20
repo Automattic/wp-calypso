@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PanelHeading } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from '../../../utils';
 import { useConfirmTransfer } from './use-confirm-transfer';
 
 type SiteTransferResponse = {
@@ -49,8 +51,10 @@ export function ConfirmationTransfer( {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
 
+	const isUntangled = isHostingMenuUntangled();
+
 	if ( isEmailSent ) {
-		return (
+		const notice = (
 			<Notice status="is-success" showDismiss={ false }>
 				<p>
 					{ translate(
@@ -58,6 +62,12 @@ export function ConfirmationTransfer( {
 					) }
 				</p>
 			</Notice>
+		);
+		return (
+			<>
+				{ isUntangled && <PanelHeading>{ translate( 'Invitation email sent' ) }</PanelHeading> }
+				{ notice }
+			</>
 		);
 	}
 
@@ -82,6 +92,7 @@ export function ConfirmationTransfer( {
 
 	return (
 		<>
+			{ isUntangled && <PanelHeading>{ translate( 'Transferring site' ) }</PanelHeading> }
 			<p>
 				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
 			</p>

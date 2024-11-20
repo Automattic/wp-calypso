@@ -208,7 +208,7 @@
 			// to hide the other fields when in preview mode.
 			.dataviews-view-list__field {
 				// Hide the field except first (Site name) and last (actions menu)
-				&:not(:first-child):not(:last-child) {
+				&:not(:first-child) {
 					display: none;
 				}
 
@@ -226,5 +226,30 @@
 	}
 }
 
-
-
+// Selected and hover states on the site list.
+// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
+.wpcom-site .is-global-sidebar-visible.is-group-sites-dashboard,
+.wpcom-site .is-global-sidebar-visible.is-group-sites {
+	.sites-dashboard:not(.preview-hidden) {
+		ul.dataviews-view-list {
+			li.is-selected,
+			li.is-selected:hover {
+				// Override this element to ensure it doesn’t blend with the Core's alpha-based color.
+				.dataviews-view-list__item-wrapper {
+					background-color: #ebf2fc;
+				}
+				.dataviews-view-list__item-actions {
+					background-color: #ebf2fc;
+					box-shadow: -12px 0 8px 0 #ebf2fc;
+				}
+			}
+			li:hover {
+				--color-neutral-0: #f7faff;
+				.dataviews-view-list__item-actions {
+					background-color: #f7faff;
+					box-shadow: -12px 0 8px 0 #f7faff;
+				}
+			}
+		}
+	}
+}

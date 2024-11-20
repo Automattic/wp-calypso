@@ -203,9 +203,14 @@ class StatsSite extends Component {
 
 	// Return a default amount of days to subtracts from the present day depending on the period selected.
 	// Used in case no starting date is present in the URL.
-	getDefaultDaysForPeriod( period ) {
+	getDefaultDaysForPeriod( period, defaultSevenDaysForPeriodDay = false ) {
 		switch ( period ) {
 			case 'day':
+				// TODO: Temporary fix for the new date filtering feature.
+				if ( defaultSevenDaysForPeriodDay ) {
+					return 7;
+				}
+
 				return 30;
 			case 'week':
 				return 12 * 7; // ~last 3 months
@@ -282,7 +287,7 @@ class StatsSite extends Component {
 		}
 
 		// Find the quantity of bars for the chart.
-		let daysInRange = this.getDefaultDaysForPeriod( period );
+		let daysInRange = this.getDefaultDaysForPeriod( period, isNewDateFilteringEnabled );
 		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 

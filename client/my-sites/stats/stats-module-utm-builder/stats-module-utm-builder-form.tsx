@@ -16,7 +16,8 @@ type InputFieldProps = {
 	placeholder: string;
 	value: string;
 	onChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
-	inputReference?: React.RefObject< HTMLInputElement >;
+	labelReference?: React.RefObject< HTMLLabelElement >;
+	ariaDescribedBy?: string;
 };
 
 const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
@@ -24,7 +25,10 @@ const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_conten
 type UtmKeyType = ( typeof utmKeys )[ number ];
 
 type inputValuesType = Record< UtmKeyType, string >;
-type formLabelsType = Record< UtmKeyType, { label: string; placeholder: string } >;
+type formLabelsType = Record<
+	UtmKeyType,
+	{ label: string; placeholder: string; describedBy?: string }
+>;
 
 const useConfirmationMessage = ( visibleDuration = 2000, fadeOutDuration = 500 ) => {
 	const [ showConfirmation, setShowConfirmation ] = useState( false );
@@ -83,11 +87,14 @@ const InputField: React.FC< InputFieldProps > = ( {
 	placeholder,
 	value,
 	onChange,
-	inputReference,
+	labelReference,
+	ariaDescribedBy,
 } ) => {
 	return (
 		<div className="stats-utm-builder__form-field">
-			<FormLabel htmlFor={ id }>{ label }</FormLabel>
+			<FormLabel htmlFor={ id } id={ `${ id }-label` } ref={ labelReference }>
+				{ label }
+			</FormLabel>
 			<FormTextInput
 				type="text"
 				id={ id }
@@ -95,7 +102,8 @@ const InputField: React.FC< InputFieldProps > = ( {
 				value={ value }
 				onChange={ onChange }
 				placeholder={ placeholder }
-				inputRef={ inputReference }
+				aria-describedby={ ariaDescribedBy }
+				aria-labelledby={ `${ id }-label` }
 			/>
 		</div>
 	);
@@ -110,26 +118,35 @@ const UtmBuilder: React.FC = () => {
 		utm_campaign: '',
 	} );
 	// Focus the initial input field when rendered.
-	const initialInputReference = useRef< HTMLInputElement >( null );
+	const initialFieldReference = useRef< HTMLLabelElement >( null );
 	const { showConfirmation, fadeOut, triggerConfirmation } = useConfirmationMessage();
 
 	useEffect( () => {
-		initialInputReference.current!.focus();
+		setTimeout( () => {
+			initialFieldReference.current!.focus();
+		}, 100 );
 	}, [] );
 
 	const fromLabels: formLabelsType = {
 		url: {
 			label: translate( 'Site or post URL' ),
 			placeholder: '',
+			describedBy: 'stats-utm-builder-help-section-url',
 		},
-		utm_source: { label: translate( 'UTM source' ), placeholder: translate( 'e.g. newsletter' ) },
+		utm_source: {
+			label: translate( 'UTM source' ),
+			placeholder: translate( 'e.g. newsletter' ),
+			describedBy: 'stats-utm-builder-help-section-campaign-source',
+		},
 		utm_medium: {
 			label: translate( 'UTM medium' ),
 			placeholder: translate( 'e.g. email, social' ),
+			describedBy: 'stats-utm-builder-help-section-campaign-medium',
 		},
 		utm_campaign: {
 			label: translate( 'UTM campaign' ),
 			placeholder: translate( 'e.g. promotion' ),
+			describedBy: 'stats-utm-builder-help-section-campaign-name',
 		},
 	};
 
@@ -175,7 +192,8 @@ const UtmBuilder: React.FC = () => {
 						placeholder={ fromLabels.url.placeholder }
 						value={ url }
 						onChange={ ( e ) => setUrl( e.target.value ) }
-						inputReference={ initialInputReference }
+						ariaDescribedBy={ fromLabels.url.describedBy }
+						labelReference={ initialFieldReference }
 					/>
 					{ Object.keys( inputValues ).map( ( key ) => (
 						<InputField
@@ -186,6 +204,7 @@ const UtmBuilder: React.FC = () => {
 							placeholder={ fromLabels[ key ].placeholder }
 							value={ inputValues[ key ] }
 							onChange={ handleInputChange }
+							ariaDescribedBy={ fromLabels[ key ].describedBy }
 						/>
 					) ) }
 				</FormFieldset>

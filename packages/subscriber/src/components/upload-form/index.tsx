@@ -220,7 +220,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 				<p>
 					{ createInterpolateElement(
 						__(
-							'Upload a CSV file with your existing subscribers list from platforms like <BeehiivLink>Beehiiv</BeehiivLink>, <GhostLink>Ghost</GhostLink>, <KitLink>Kit</KitLink>, <MailChimpLink>MailChimp</MailChimpLink>, <MediumLink>Medium</MediumLink>, <PatreonLink>Patreon</PatreonLink>, and many others.'
+							'Upload a CSV file with your existing subscribers list from platforms like <BeehiivLink>Beehiiv</BeehiivLink>, <GhostLink>Ghost</GhostLink>, <KitLink>Kit</KitLink>, <MailChimpLink>Mailchimp</MailChimpLink>, <MediumLink>Medium</MediumLink>, <PatreonLink>Patreon</PatreonLink>, and many others.'
 						),
 						{
 							BeehiivLink: (

@@ -38,7 +38,7 @@ export const useSendChatMessage = () => {
 					const elapsedTime = getHelpCenterZendeskConversationStartedElapsedTime();
 					if ( elapsedTime ) {
 						trackEvent( 'first_answer_to_human_support', {
-							elapsed_time: elapsedTime,
+							elapsed_time_less_than_900s: elapsedTime < 900 * 1000,
 							role: message.role,
 							user_id: chat?.wpcomUserId,
 						} );

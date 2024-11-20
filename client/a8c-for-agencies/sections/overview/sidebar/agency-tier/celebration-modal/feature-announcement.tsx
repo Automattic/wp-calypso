@@ -42,6 +42,8 @@ const AgencyTierFeatureAnnouncement = () => {
 				description: translate(
 					"We're granting you early access to our new Agency Tier experience! While the official launch of our tiers is set for January 2025, you can explore and progress on your tier today."
 				),
+				video:
+					'https://automattic.com/wp-content/uploads/2024/11/agency_tiers_feature_announcement.mp4',
 				image: EmergingPartnerBackground,
 				cta: translate( 'Learn more' ),
 			} }

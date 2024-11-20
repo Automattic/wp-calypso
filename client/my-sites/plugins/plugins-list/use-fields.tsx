@@ -9,7 +9,8 @@ import { PluginActions } from '../hooks/types';
 import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
-	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
+	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
+	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
 ) {
 	const fields = useMemo(
 		() => [
@@ -51,10 +52,15 @@ export function useFields(
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
-							<PluginActionStatus
-								currentSiteStatuses={ item.allStatuses }
-								selectedSite={ undefined }
-							/>
+							<Button
+								className="sites-manage-plugin-status-button"
+								onClick={ () => toggleDialogForPlugin( item ) }
+							>
+								<PluginActionStatus
+									currentSiteStatuses={ item.allStatuses }
+									selectedSite={ undefined }
+								/>
+							</Button>
 						);
 					}
 
@@ -78,7 +84,15 @@ export function useFields(
 					return item.sites && Object.keys( item.sites ).length;
 				},
 				render: ( { item }: { item: Plugin } ) => {
-					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
+					const numberOfSites = item.sites && Object.keys( item.sites ).length;
+					return (
+						<Button
+							className="sites-manage-plugin-button"
+							onClick={ () => toggleDialogForPlugin( item ) }
+						>
+							{ numberOfSites }
+						</Button>
+					);
 				},
 			},
 			{
@@ -109,7 +123,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog ]
+		[ bulkActionDialog, toggleDialogForPlugin ]
 	);
 
 	return fields;
