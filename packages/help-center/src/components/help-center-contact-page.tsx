@@ -248,9 +248,17 @@ export const HelpCenterContactButton: FC = () => {
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
 		100,
-		'resolved'
+		'resolved',
+		undefined,
+		shouldUseHelpCenterExperience
 	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { data: supportInteractionsOpen } = useGetSupportInteractions(
+		'zendesk',
+		10,
+		'open',
+		undefined,
+		shouldUseHelpCenterExperience
+	);
 
 	const supportInteractions = [
 		...( supportInteractionsResolved || [] ),
