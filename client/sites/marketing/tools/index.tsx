@@ -2,8 +2,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -19,13 +20,19 @@ import { getMarketingFeaturesData } from './marketing-features-data';
 import './style.scss';
 
 export default function MarketingTools() {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 
-	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, recordTracksEvent );
+	const marketingFeatures = getMarketingFeaturesData(
+		selectedSiteSlug,
+		recordTracksEvent,
+		translate,
+		localizeUrl
+	);
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );

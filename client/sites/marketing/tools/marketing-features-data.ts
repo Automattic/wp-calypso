@@ -1,6 +1,4 @@
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -11,7 +9,9 @@ import { MarketingToolsFeatureData } from './types';
 
 export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
-	recordTracksEvent: ( event: string ) => void
+	recordTracksEvent: ( event: string ) => void,
+	translate: ( text: string ) => string,
+	localizeUrl: ( url: string ) => string
 ): MarketingToolsFeatureData[] => [
 	{
 		title: translate( 'Let our WordPress.com experts build your site!' ),
