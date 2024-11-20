@@ -35,6 +35,7 @@ export type ContactsCardPassedProps = {
 	readOnly: boolean | undefined;
 	registeredViaTrustee: boolean;
 	registeredViaTrusteeUrl: string;
+	isHundredYearDomain: boolean;
 };
 
 export type ContactsCardConnectedProps = {

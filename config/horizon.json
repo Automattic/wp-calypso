@@ -13,6 +13,7 @@
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
+		"automated-migration/application-password": false,
 		"automated-migration/collect-credentials": true,
 		"automated-migration/pending-status": true,
 		"calypso/ai-blogging-prompts": false,
