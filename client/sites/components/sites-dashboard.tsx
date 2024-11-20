@@ -122,7 +122,7 @@ const SitesDashboard = ( {
 		);
 	};
 
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: sites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		sitesFilterCallback,
 		'all',
@@ -130,7 +130,7 @@ const SitesDashboard = ( {
 		[ 'theme_slug' ]
 	);
 
-	useShowSiteCreationNotice( allSites, newSiteID );
+	useShowSiteCreationNotice( sites, newSiteID );
 	useShowSiteTransferredNotice();
 
 	// Manage the closing of the preview pane
@@ -147,7 +147,7 @@ const SitesDashboard = ( {
 	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
-		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+		const targetSite = sites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
 			openSitePreviewPane( targetSite );
 		}
@@ -190,7 +190,7 @@ const SitesDashboard = ( {
 					/>
 
 					<DotcomSitesDataViews
-						sites={ paginatedSites }
+						sites={ sites }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }

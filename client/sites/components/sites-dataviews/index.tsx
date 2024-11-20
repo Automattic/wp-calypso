@@ -209,7 +209,7 @@ const DotcomSitesDataViews = ( {
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
-	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
+	const { currentStatusGroup, statuses } = useSitesListGrouping( sites, {
 		status: statusSlug || 'all',
 		showHidden: true,
 	} );
@@ -406,7 +406,7 @@ const DotcomSitesDataViews = ( {
 	return (
 		<div className="sites-dataviews">
 			<DataViews
-				data={ sites }
+				data={ paginatedSites }
 				fields={ fields }
 				onChangeView={ ( newView ) => setDataViewsState( () => newView ) }
 				view={ dataViewsState }
