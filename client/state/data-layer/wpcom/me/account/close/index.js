@@ -30,9 +30,9 @@ export function fromApi( response ) {
 	return response;
 }
 
-export function receiveAccountCloseSuccess() {
+export function receiveAccountCloseSuccess( action, response ) {
 	recordTracksEvent( 'calypso_account_closed' );
-	return closeAccountSuccess();
+	return closeAccountSuccess( response );
 }
 
 export function receiveAccountCloseError( action, error ) {
