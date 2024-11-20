@@ -49,9 +49,9 @@ export default function () {
 		clientRender
 	);
 
-	page( '/sites/marketing/sharing', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/marketing/sharing-buttons', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sites/marketing/sharing/:site',
+		'/sites/marketing/sharing-buttons/:site',
 		siteSelection,
 		navigation,
 		marketingSharing,

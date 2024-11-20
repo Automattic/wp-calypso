@@ -47,7 +47,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
 	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
 	[ MARKETING_TRAFFIC ]: 'sites/marketing/traffic/:site',
-	[ MARKETING_SHARING ]: 'sites/marketing/sharing/:site',
+	[ MARKETING_SHARING ]: 'sites/marketing/sharing-buttons/:site',
 	[ TOOLS_STAGING_SITE ]: 'sites/tools/staging-site/:site',
 	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
 	[ TOOLS_MONITORING ]: 'sites/tools/monitoring/:site',
