@@ -112,6 +112,7 @@ const SitesDashboard = ( {
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
+	const onboardingTours = useOnboardingTours();
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};

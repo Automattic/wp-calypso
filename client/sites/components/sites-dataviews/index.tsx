@@ -1,8 +1,3 @@
-import SiteField from './dataviews-fields/site-field';
-import { SiteStats } from './sites-site-stats';
-import { SiteStatus } from './sites-site-status';
-import type { SiteExcerptData } from '@automattic/sites';
-import type { View } from '@wordpress/dataviews';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -10,6 +5,7 @@ import {
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
+	SiteExcerptData,
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
@@ -19,8 +15,7 @@ import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useLayoutEffect, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
@@ -41,7 +36,6 @@ import {
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
-import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -54,12 +48,15 @@ import {
 	useOnboardingTours,
 } from '../onboarding-tours';
 import { useActions } from './actions';
+import SiteField from './dataviews-fields/site-field';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
+import { SiteStats } from './sites-site-stats';
+import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -259,8 +256,6 @@ const DotcomSitesDataViews = ( {
 					dataViewsState.page * dataViewsState.perPage
 			  )
 			: filteredSites;
-
-	const onboardingTours = useOnboardingTours();
 
 	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
 
