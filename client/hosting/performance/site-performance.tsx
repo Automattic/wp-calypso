@@ -142,11 +142,7 @@ export const SitePerformance = () => {
 	const siteId = site?.ID;
 	const { getSiteSetting } = useSiteSettings( site?.slug );
 	const blog_public = getSiteSetting( 'blog_public' );
-	const isSitePublic =
-		site &&
-		! site.is_coming_soon &&
-		! site.is_private &&
-		( site.launch_status === 'launched' || ( site.launch_status === '' && blog_public === 1 ) );
+	const isSitePublic = site && blog_public === 1;
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
