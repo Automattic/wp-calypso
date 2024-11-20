@@ -67,13 +67,11 @@ const DotcomSitesDataViews = ( {
 	sites,
 	isLoading,
 	paginationInfo,
-	selectedItem,
 	openSitePreviewPane,
 }: {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
 	paginationInfo: { totalItems: number; totalPages: number };
-	selectedItem: SiteExcerptData | null | undefined;
 	openSitePreviewPane: ( site: SiteExcerptData ) => void;
 } ) => {
 	const { __ } = useI18n();
@@ -264,13 +262,13 @@ const DotcomSitesDataViews = ( {
 	// Scroll to selected site in the list when in list view.
 	const scrollContainerRef = useRef< HTMLElement >();
 	const previousDataViewsState = usePrevious( dataViewsState );
-	const previousSelectedItem = usePrevious( selectedItem );
+	const previousSelectedItem = usePrevious( selectedSite );
 	useLayoutEffect( () => {
 		if ( ! scrollContainerRef.current || previousDataViewsState?.type !== dataViewsState.type ) {
 			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
 		}
 
-		if ( ! previousSelectedItem && selectedItem && dataViewsState.type === 'list' ) {
+		if ( ! previousSelectedItem && selectedSite && dataViewsState.type === 'list' ) {
 			window.setTimeout(
 				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
 				300
@@ -284,7 +282,7 @@ const DotcomSitesDataViews = ( {
 	}, [
 		dataViewsState.type,
 		dataViewsState.page,
-		selectedItem,
+		selectedSite,
 		previousDataViewsState,
 		previousSelectedItem,
 	] );
@@ -294,12 +292,12 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// However, when don't need to do anything in the callback, because we already maintain a selectedItem state.
-	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
+	// However, when don't need to do anything in the callback, because we already maintain a selectedSite state.
+	// The current selection is a derived value which is [selectedSite.ID] (see getSelection()).
 	const onSelectionChange = () => {};
 	const getSelection = useCallback(
-		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
-		[ selectedItem ]
+		() => ( selectedSite ? [ selectedSite.ID.toString() ] : undefined ),
+		[ selectedSite ]
 	);
 
 	useEffect( () => {
