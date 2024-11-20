@@ -284,6 +284,21 @@ export const canPromoteAgainCampaign = ( status: string ) => {
 	].includes( status );
 };
 
+export const canGetCampaignStats = ( status: string ) => {
+	if (
+		status === campaignStatus.REJECTED ||
+		status === campaignStatus.SCHEDULED ||
+		status === campaignStatus.CREATED ||
+		status === campaignStatus.PROCESSING
+	) {
+		return false;
+	}
+
+	return [ campaignStatus.ACTIVE, campaignStatus.FINISHED, campaignStatus.CANCELED ].includes(
+		status
+	);
+};
+
 type PagedDataMode = 'campaigns' | 'posts';
 
 type BlazeDataPaged = {
