@@ -17,6 +17,7 @@ const incompatiblePlugins = new Set( [
 	'better-wp-security',
 	'cf7-pipedrive-integration',
 	'database-browser',
+	'duplicator',
 	'extended-wp-reset',
 	'file-manager-advanced',
 	'file-manager',
