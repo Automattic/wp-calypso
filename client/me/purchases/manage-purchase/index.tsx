@@ -617,6 +617,12 @@ class ManagePurchase extends Component<
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
 
+	getDomainDetailsFromPurchase = ( purchase: Purchase ) => {
+		return this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+	};
+
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 		if ( ! purchase ) {
@@ -635,9 +641,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-			( domain ) => domain.domain === purchase.meta
-		);
+		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
 		if ( domainDetails?.isHundredYearDomain ) {
 			return null;
 		}
@@ -995,10 +999,7 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
-			const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-				( domain ) => domain.domain === purchase.meta
-			);
-
+			const domainDetails = this.getDomainDetailsFromPurchase( purchase );
 			if ( domainDetails?.isHundredYearDomain ) {
 				return translate(
 					'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
@@ -1120,10 +1121,6 @@ class ManagePurchase extends Component<
 
 		const domainTransferDuration = translate(
 			'Domain transfers can take anywhere from five to seven days to complete.'
-		);
-
-		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-			( domain ) => domain.domain === purchase.meta
 		);
 
 		return (
@@ -1272,10 +1269,7 @@ class ManagePurchase extends Component<
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
-
-		const domainDetails = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-			( domain ) => domain.domain === purchase.meta
-		);
+		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
 
 		return (
 			<Fragment>
