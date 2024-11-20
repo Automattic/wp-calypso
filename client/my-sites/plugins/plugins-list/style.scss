@@ -24,6 +24,10 @@ body.is-section-plugins .plugin-management-wrapper,
             }
         }
     }
+
+    .dataviews-pagination {
+        padding: 12px 16px 12px 16px;
+    }
 }
 
 .is-section-jetpack-cloud-plugin-management {
@@ -32,7 +36,7 @@ body.is-section-plugins .plugin-management-wrapper,
     overflow: hidden;
 
     .plugin-management-wrapper {
-        height: calc(100vh - 100px);
+        height: calc(100vh - 50px);
         display: flex;
         flex-direction: column;
     }
