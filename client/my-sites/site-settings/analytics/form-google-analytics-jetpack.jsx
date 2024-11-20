@@ -3,9 +3,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import {
-	CompactCard,
 	FormInputValidation as FormTextValidation,
 	FormLabel,
+	Button,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -22,7 +22,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteSettings } from 'calypso/state/site-settings/actions';
@@ -133,29 +133,17 @@ const GoogleAnalyticsJetpackForm = ( {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
-				<SettingsSectionHeader
-					disabled={ isSubmitButtonDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitFormCustom }
-					showButton
-					title={ translate( 'Google' ) }
-				/>
-
-				<CompactCard>
+				<>
+					<PanelHeading>{ translate( 'Google Analytics' ) }</PanelHeading>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
 							<img src={ googleIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
-							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Google Analytics' ) }
-							</p>
 							<p>
 								{ translate(
 									'A free analytics tool that offers additional insights into your site.'
-								) }
-							</p>
-							<p>
+								) }{ ' ' }
 								<a
 									onClick={ recordSupportLinkClick }
 									href={ analyticsSupportUrl }
@@ -246,7 +234,7 @@ const GoogleAnalyticsJetpackForm = ( {
 							</p>
 						</div>
 					) }
-				</CompactCard>
+				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					<UpsellNudge
 						description={ translate(
@@ -260,7 +248,7 @@ const GoogleAnalyticsJetpackForm = ( {
 						title={ nudgeTitle }
 					/>
 				) : (
-					<CompactCard>
+					<>
 						<div className="analytics site-settings__analytics">
 							<FormFieldset>
 								<SupportInfo
@@ -284,9 +272,17 @@ const GoogleAnalyticsJetpackForm = ( {
 								) }
 							</FormFieldset>
 						</div>
-					</CompactCard>
+
+						<Button
+							className="is-primary"
+							disabled={ isSubmitButtonDisabled }
+							busy={ isSavingSettings }
+							onClick={ handleSubmitFormCustom }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</>
 				) }
-				<div className="analytics site-settings__analytics-spacer" />
 			</form>
 		);
 	};
@@ -296,6 +292,6 @@ const GoogleAnalyticsJetpackForm = ( {
 	if ( ! site ) {
 		return null;
 	}
-	return renderForm();
+	return <PanelSection>{ renderForm() }</PanelSection>;
 };
 export default GoogleAnalyticsJetpackForm;

@@ -7,9 +7,9 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import {
-	CompactCard,
 	FormInputValidation as FormTextValidation,
 	FormLabel,
+	Button,
 } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
@@ -19,7 +19,7 @@ import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudfla
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -144,29 +144,17 @@ export function CloudflareAnalyticsSettings( {
 		);
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
-				<SettingsSectionHeader
-					disabled={ isSubmitButtonDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Cloudflare' ) }
-				/>
-
-				<CompactCard>
+				<>
+					<PanelHeading>{ translate( 'Cloudflare Web Analytics' ) }</PanelHeading>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
 							<img src={ cloudflareIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
-							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Cloudflare Web Analytics' ) }
-							</p>
 							<p>
 								{ translate(
 									"Privacy-first metrics with unmatched accuracy that won't track your visitors."
-								) }
-							</p>
-							<p>
+								) }{ ' ' }
 								<a
 									onClick={ recordSupportLinkClick }
 									href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=traffic"
@@ -207,11 +195,11 @@ export function CloudflareAnalyticsSettings( {
 							) }
 						</FormFieldset>
 					) }
-				</CompactCard>
+				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<CompactCard>
+					<>
 						<div className="analytics site-settings__analytics">
 							<ToggleControl
 								checked={ isCloudflareEnabled }
@@ -220,9 +208,16 @@ export function CloudflareAnalyticsSettings( {
 								label={ translate( 'Add Cloudflare' ) }
 							/>
 						</div>
-					</CompactCard>
+						<Button
+							className="is-primary"
+							disabled={ isSubmitButtonDisabled }
+							busy={ isSavingSettings }
+							onClick={ handleSubmitForm }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</>
 				) }
-				<div className="analytics site-settings__analytics-spacer" />
 			</form>
 		);
 	};
@@ -232,7 +227,7 @@ export function CloudflareAnalyticsSettings( {
 	if ( ! site ) {
 		return null;
 	}
-	return renderForm();
+	return <PanelSection>{ renderForm() }</PanelSection>;
 }
 
 const mapStateToProps = ( state ) => {
