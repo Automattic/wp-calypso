@@ -157,7 +157,7 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	useEffect( () => {
-		refreshColorScheme( 'default', colorScheme );
+		this.props.isWooPasswordlessJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
 	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
