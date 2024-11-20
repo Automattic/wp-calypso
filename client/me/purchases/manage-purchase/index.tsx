@@ -886,10 +886,8 @@ class ManagePurchase extends Component<
 
 		// If it's a 100-year domain, don't show the cancel button
 		if ( isDomainRegistration( purchase ) ) {
-			const domain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-				( domain ) => domain.domain === purchase.meta
-			);
-			if ( domain?.isHundredYearDomain ) {
+			const domainDetails = this.getDomainDetailsFromPurchase( purchase );
+			if ( domainDetails?.isHundredYearDomain ) {
 				return null;
 			}
 		}
@@ -934,10 +932,8 @@ class ManagePurchase extends Component<
 			);
 		}
 
-		const domain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-			( domain ) => domain.domain === purchase.meta
-		);
-		if ( domain?.isHundredYearDomain ) {
+		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
+		if ( domainDetails?.isHundredYearDomain ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<HundredYearPlanLogo width={ 50 } />
@@ -1024,9 +1020,7 @@ class ManagePurchase extends Component<
 		if ( isDomainTransfer( purchase ) ) {
 			const { currentRoute, site, translate, dispatch } = this.props;
 
-			const transferDomain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-				( domain ) => domain.domain === purchase.meta
-			);
+			const transferDomain = this.getDomainDetailsFromPurchase( purchase );
 
 			if ( transferDomain ) {
 				const { noticeText } = resolveDomainStatus( transferDomain, null, translate, dispatch, {
