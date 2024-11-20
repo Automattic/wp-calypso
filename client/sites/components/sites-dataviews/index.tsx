@@ -1,6 +1,4 @@
-import pagejs from '@automattic/calypso-router';
 import {
-	type SiteExcerptData,
 	SitesSortKey,
 	useSitesListFiltering,
 	useSitesListGrouping,
@@ -13,50 +11,22 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useMemo, useRef, useLayoutEffect, useState } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import DocumentHead from 'calypso/components/data/document-head';
+import { useCallback, useEffect, useMemo, useRef, useLayoutEffect, useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { isP2Theme } from 'calypso/lib/site/utils';
-import {
-	SitesDashboardQueryParams,
-	handleQueryParamChange,
-} from 'calypso/sites-dashboard/components/sites-content-controls';
+import { handleQueryParamChange } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
-import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
-import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
-import {
-	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
-	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
-	useOnboardingTours,
-} from '../onboarding-tours';
+import { useInitializeDataViewsPage } from '../../hooks/use-initialize-dataviews-page';
+import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
-import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
-import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
-import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
-import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
-import { getSitesPagination } from './sites-dataviews/utils';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
+import { getSitesPagination } from './utils';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
