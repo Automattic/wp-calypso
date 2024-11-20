@@ -49,7 +49,6 @@ export interface PurchaseMetaProps {
 	purchaseId: number | false;
 	hasLoadedPurchasesFromServer: boolean;
 	siteSlug: string;
-	domainDetails?: ResponseDomain | null;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 }
