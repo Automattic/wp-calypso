@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { getLocaleSlug } from 'i18n-calypso';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -11,9 +13,9 @@ export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
 	recordTracksEvent: ( event: string ) => void,
 	translate: ( text: string ) => string,
-	localizeUrl: ( url: string ) => string,
-	meta: { isEnglish: boolean }
+	localizeUrl: ( url: string ) => string
 ): MarketingToolsFeatureData[] => {
+	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 	const result: MarketingToolsFeatureData[] = [
 		{
 			title: translate( 'Let our WordPress.com experts build your site!' ),
@@ -85,7 +87,7 @@ export const getMarketingFeaturesData = (
 			},
 		},
 	];
-	if ( meta.isEnglish ) {
+	if ( isEnglish ) {
 		result.push( {
 			title: translate( 'Increase traffic to your WordPress.com site' ),
 			description: translate(
