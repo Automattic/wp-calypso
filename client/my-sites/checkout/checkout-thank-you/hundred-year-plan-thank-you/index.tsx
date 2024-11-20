@@ -178,20 +178,26 @@ export default function HundredYearThankYou( {
 
 	const isMobile = useMobileBreakpoint();
 	const isPageLoading = isReceiptLoading || isLoadingDomains;
-	const cta =
-		productSlug === PLAN_100_YEARS ? (
+	const hundredYearPlanCta =
+		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
+			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
+				{ translate( 'Start building' ) }
+			</StyledLightButton>
+		) : (
 			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
 				{ translate( 'Manage your site' ) }
 			</StyledLightButton>
-		) : (
-			<StyledLightButton
-				onClick={ () =>
-					page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
-				}
-			>
-				{ translate( 'Manage your domain' ) }
-			</StyledLightButton>
 		);
+	const hundredYearDomainCta = (
+		<StyledLightButton
+			onClick={ () =>
+				page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
+			}
+		>
+			{ translate( 'Manage your domain' ) }
+		</StyledLightButton>
+	);
+	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
 
 	const description =
 		productSlug === PLAN_100_YEARS
@@ -242,19 +248,7 @@ export default function HundredYearThankYou( {
 								{ translate( 'Your century-long legacy begins now' ) }
 							</Header>
 							<Highlight isMobile={ isMobile }>{ description }</Highlight>
-							{ siteCreatedTimeStamp && (
-								<ButtonBar isMobile={ isMobile }>
-									{ isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
-										<StyledLightButton
-											onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }
-										>
-											{ translate( 'Start building' ) }
-										</StyledLightButton>
-									) : (
-										cta
-									) }
-								</ButtonBar>
-							) }
+							{ siteCreatedTimeStamp && <ButtonBar isMobile={ isMobile }>{ cta }</ButtonBar> }
 						</div>
 						<VideoContainer isMobile={ isMobile }>
 							<video
