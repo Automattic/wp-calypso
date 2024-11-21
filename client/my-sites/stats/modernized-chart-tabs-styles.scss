@@ -1,6 +1,7 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables";
+@import "@automattic/components/src/styles/typography";
 
 $custom-stats-tab-mobile-break: $break-small;
 
@@ -44,6 +45,7 @@ $custom-stats-tab-mobile-break: $break-small;
 
 		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
+			font-family: $font-sf-pro-text;
 			flex: 1;
 			width: auto;
 			border: 0;
@@ -182,6 +184,36 @@ $custom-stats-tab-mobile-break: $break-small;
 							color: var(--studio-black);
 						}
 					}
+				}
+			}
+
+			// Apply highlight card styles to stats-tabs.
+			&.is-highlighted {
+				text-align: left;
+
+				& > a {
+					padding: 16px 24px;
+				}
+
+				.stats-tabs__highlight {
+					display: flex;
+					align-items: end;
+					margin-top: 16px;
+				}
+
+				.stats-tabs__highlight-value {
+					font-weight: 500;
+					font-size: $font-title-large;
+					line-height: 40px;
+				}
+
+				// TODO: The relevant class names could be refactored to be more comprehensive.
+				.highlight-card-difference {
+					font-size: $font-body-small;
+					font-weight: 600;
+					line-height: 25px;
+					letter-spacing: -0.24px;
+					margin-left: 8px;
 				}
 			}
 		}
