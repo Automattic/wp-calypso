@@ -21,3 +21,47 @@
 		}
 	}
 }
+
+.migrations-overview-v2__button {
+	.gridicon {
+		margin-left: 6px;
+		top: 2px;
+		transition: transform 100ms ease-in-out;
+
+		&.reverse {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.popover.migrations-overview-v2__popover {
+	animation: fadeIn 0.2s ease-out;
+	margin-inline-start: 62px;
+
+	.popover__inner {
+		width: 280px;
+		text-align: unset;
+
+		@include break-large {
+			width: 400px;
+		}
+	}
+}
+
+.migrations-overview-v2__popover-content {
+	display: flex;
+	flex-direction: column;
+	padding: 28px 32px;
+	gap: 32px;
+
+	@include break-large {
+		flex-direction: row;
+	}
+}
+
+.migrations-overview-v2__popover-column-heading {
+	color: var(--color-accent-40);
+	font-size: rem(12px);
+	font-weight: 500;
+	margin-block-end: 8px;
+}

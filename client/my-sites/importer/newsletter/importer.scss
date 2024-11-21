@@ -47,6 +47,17 @@ $newsletter_importer_line-height: 20px;
 		clear: both;
 		margin-bottom: 12px;
 	}
+	.summary__content-skipped {
+		p {
+			margin-bottom: 6px;
+		}
+		.summary__content-stats-label {
+			color: var(--studio-gray-50);
+		}
+		svg {
+			fill: var( --studio-gray-50 );
+		}
+	}
 
 	/**
 	 * Summary table of numbers of posts/pages/subscribers imported

@@ -5,7 +5,6 @@ import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-util
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -48,6 +47,7 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	getRedirectToSanitized,
+	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
 import {
 	infoNotice,
@@ -1294,9 +1294,13 @@ class MagicLogin extends Component {
 
 		return (
 			<Main className="magic-login magic-login__request-link is-white-login">
-				{ this.props.isJetpackLogin && ! this.props.isA4A && <JetpackHeader /> }
+				{ this.props.isJetpackLogin && ! this.props.isFromAutomatticForAgenciesPlugin && (
+					<JetpackHeader />
+				) }
 				{ this.renderGutenboardingLogo() }
-				{ this.props.isA4A && <A4ALogo fullA4A size={ 58 } className="magic-login__a4a-logo" /> }
+				{ this.props.isFromAutomatticForAgenciesPlugin && (
+					<A4ALogo fullA4A size={ 58 } className="magic-login__a4a-logo" />
+				) }
 
 				{ this.renderLocaleSuggestions() }
 
@@ -1330,7 +1334,9 @@ const mapState = ( state ) => ( {
 	twoFactorEnabled: isTwoFactorEnabled( state ),
 	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	redirectToSanitized: getRedirectToSanitized( state ),
-	isA4A: '1' === get( getCurrentQueryArguments( state ), 'a4a' ),
+	isFromAutomatticForAgenciesPlugin:
+		'automattic-for-agencies-client' ===
+		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 } );
 
 const mapDispatch = {

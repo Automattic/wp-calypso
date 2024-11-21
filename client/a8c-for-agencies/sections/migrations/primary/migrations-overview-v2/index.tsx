@@ -12,6 +12,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrateSiteButton from './migrate-site-button';
 import MigrationsBanner from './sections/migrations-banner';
 import MigrationsClientRelationship from './sections/migrations-client-relationship';
 import MigrationsCTA from './sections/migrations-cta';
@@ -23,7 +24,11 @@ import MigrationsTestimonials from './sections/migrations-testimonials';
 
 import './style.scss';
 
-export default function MigrationsOverviewV2() {
+export default function MigrationsOverviewV2( {
+	isSiteMigrationsEnabled = false,
+}: {
+	isSiteMigrationsEnabled?: boolean;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -41,13 +46,17 @@ export default function MigrationsOverviewV2() {
 					<Actions>
 						<MobileSidebarNavigation />
 
-						<Button
-							variant="primary"
-							onClick={ onMigrateSitesClick }
-							href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
-						>
-							{ translate( 'Migrate your sites' ) }
-						</Button>
+						{ isSiteMigrationsEnabled ? (
+							<MigrateSiteButton />
+						) : (
+							<Button
+								variant="primary"
+								onClick={ onMigrateSitesClick }
+								href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
+							>
+								{ translate( 'Migrate your sites' ) }
+							</Button>
+						) }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>

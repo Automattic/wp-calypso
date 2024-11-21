@@ -26,7 +26,9 @@ const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+			className={ clsx( 'social-buttons__button button magic-login-link', {
+				disabled: isDisabled,
+			} ) }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"

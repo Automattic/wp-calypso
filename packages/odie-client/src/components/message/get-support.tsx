@@ -1,39 +1,61 @@
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
-
 import './get-support.scss';
 
-export const GetSupport = ( {
-	onClickAdditionalEvent,
-}: {
+interface GetSupportProps {
 	onClickAdditionalEvent?: () => void;
-} ) => {
+}
+
+interface ButtonConfig {
+	text: string;
+	action: () => Promise< void >;
+}
+
+export const GetSupport: React.FC< GetSupportProps > = ( { onClickAdditionalEvent } ) => {
+	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
-	const { shouldUseHelpCenterExperience, chat } = useOdieAssistantContext();
+	const { shouldUseHelpCenterExperience, chat, isUserEligibleForPaidSupport } =
+		useOdieAssistantContext();
 
-	const handleOnClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
-		event.preventDefault();
-
-		onClickAdditionalEvent?.();
-
-		await newConversation();
-	};
-
-	const getButtonText = () => {
-		return shouldUseHelpCenterExperience
-			? __( 'Get instant support', __i18n_text_domain__ )
-			: __( 'Get support', __i18n_text_domain__ );
-	};
-
-	// We don't want the user to see this button if they are already talking to a human.
+	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
 		return null;
 	}
 
+	const getButtonConfig = (): ButtonConfig => {
+		if ( isUserEligibleForPaidSupport ) {
+			return {
+				text: shouldUseHelpCenterExperience
+					? __( 'Get instant support', __i18n_text_domain__ )
+					: __( 'Get support', __i18n_text_domain__ ),
+				action: async () => {
+					onClickAdditionalEvent?.();
+					await newConversation();
+				},
+			};
+		}
+
+		return {
+			text: __( 'Ask in our forums', __i18n_text_domain__ ),
+			action: async () => {
+				onClickAdditionalEvent?.();
+				navigate( '/contact-form?mode=FORUM' );
+			},
+		};
+	};
+
+	const buttonConfig = getButtonConfig();
+
+	const handleClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.preventDefault();
+		await buttonConfig.action();
+	};
+
 	return (
-		<div className="odie__transfer-to-human">
-			<button onClick={ handleOnClick }>{ getButtonText() }</button>
+		<div className="odie__transfer-chat">
+			<button onClick={ handleClick }>{ buttonConfig.text }</button>
 		</div>
 	);
 };

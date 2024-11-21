@@ -13,7 +13,12 @@
 		margin-bottom: 16px;
 	}
 
-	> div:not(:first-child) {
+	.header-cake__back {
+		font-size: 0.875rem;
+	}
+
+	> div:not(:first-child),
+	> main:not(:first-child) {
 		width: 100%;
 	}
 
@@ -35,7 +40,7 @@
 	margin: -23px -24px -19px;
 	list-style: none;
 	background: #fff;
-	z-index: 2;
+	z-index: 99;
 
 	@include break-small {
 		top: 0;

@@ -642,13 +642,26 @@ function getAvailabilityNotice(
 
 		case 'gravatar_tld_restriction':
 			message = translate(
-				'Gravatar is currently offering .link domains. Additional domain extensions may become available for a fee in the future.'
+				'The domain extension you are looking for is currently not supported. Additional domain extensions may become available for a fee in the future.'
 			);
 			severity = 'info';
 			break;
 
 		case 'hundred_year_domain_tld_restriction':
 			message = translate( 'Only .com, .net and .org domains can be registered for 100 years.' );
+			severity = 'info';
+			break;
+
+		case 'hundred_year_domain_premium_name_restriction':
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is premium and is still not supported for the 100-year domain registration.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
 			severity = 'info';
 			break;
 

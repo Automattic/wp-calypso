@@ -2,7 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { getOdieTransferMessageConstant } from '../constants';
 import { emptyChat } from '../context';
 import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
@@ -58,7 +58,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 							conversationId: conversation.id,
 							messages: [
 								...odieChat.messages,
-								ODIE_TRANSFER_MESSAGE( true ),
+								...getOdieTransferMessageConstant( true ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
@@ -83,6 +83,7 @@ export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | und
 		conversationId,
 		odieId,
 		currentSupportInteraction,
+		shouldUseHelpCenterExperience,
 	] );
 
 	return { mainChatState, setMainChatState };

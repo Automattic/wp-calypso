@@ -6,7 +6,37 @@ import { useOdieAssistantContext } from '../../context';
 import { GetSupport } from './get-support';
 
 export const DislikeFeedbackMessage = () => {
-	const { shouldUseHelpCenterExperience, extraContactOptions, botName } = useOdieAssistantContext();
+	const {
+		shouldUseHelpCenterExperience,
+		extraContactOptions,
+		botName,
+		isUserEligibleForPaidSupport,
+	} = useOdieAssistantContext();
+
+	const renderEligibleUserMessage = () => {
+		return (
+			<Markdown>
+				{ __(
+					'Let’s get the information you need. Would you like to contact our support team?',
+					__i18n_text_domain__
+				) }
+			</Markdown>
+		);
+	};
+
+	const renderNotEligibleUserMessage = () => {
+		return (
+			<>
+				<Markdown>{ __( "Sorry I couldn't be of help!", __i18n_text_domain__ ) }</Markdown>
+				<Markdown>
+					{ __(
+						'A great way to get assistance is by bringing your questions to our public forums—just be sure to avoid sharing any personal or financial details.',
+						__i18n_text_domain__
+					) }
+				</Markdown>
+			</>
+		);
+	};
 
 	const renderRedesignedComponent = () => {
 		return (
@@ -16,13 +46,11 @@ export const DislikeFeedbackMessage = () => {
 					<strong className="message-header-name"></strong>
 				</div>
 				<div className="odie-chatbox-dislike-feedback-message">
-					<Markdown>
-						{ __(
-							'Let’s get the information you need. Would you like to contact our support team?',
-							__i18n_text_domain__
-						) }
-					</Markdown>
+					{ isUserEligibleForPaidSupport
+						? renderEligibleUserMessage()
+						: renderNotEligibleUserMessage() }
 				</div>
+
 				<GetSupport />
 			</>
 		);

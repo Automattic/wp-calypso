@@ -79,7 +79,7 @@ class SiteTools extends Component {
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
-		const startOver = translate( 'Reset your site' );
+		const startOver = isUntangled ? translate( 'Reset site' ) : translate( 'Reset your site' );
 		const startOverText = translate(
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
@@ -99,7 +99,9 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		const startSiteTransferTitle = translate( 'Transfer your site' );
+		const startSiteTransferTitle = isUntangled
+			? translate( 'Transfer site' )
+			: translate( 'Transfer your site' );
 		const startSiteTransferText = translate( 'Transfer your site, plan and purchases.' );
 
 		return (

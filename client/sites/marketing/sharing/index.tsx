@@ -1,17 +1,24 @@
 import { useTranslate } from 'i18n-calypso';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import { Panel } from 'calypso/sites/components/panel';
+import { useSelector } from 'calypso/state';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SharingButtons from './buttons';
+
+import './style.scss';
 
 export default function MarketingSharing() {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelectedSiteSelector( isJetpackSite );
 	const adminInterfaceIsWPAdmin = useSelectedSiteSelector( isAdminInterfaceWPAdmin );
 	const siteAdminUrl = useSelectedSiteSelector( getSiteAdminUrl );
@@ -29,7 +36,8 @@ export default function MarketingSharing() {
 	};
 
 	return (
-		<div className="marketing-sharing">
+		<Panel className="marketing-sharing">
+			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<NavigationHeader
 				title={ translate( 'Sharing' ) }
 				subtitle={ translate(
@@ -44,6 +52,6 @@ export default function MarketingSharing() {
 				) }
 			/>
 			{ isJetpack && adminInterfaceIsWPAdmin ? renderNotice() : <SharingButtons /> }
-		</div>
+		</Panel>
 	);
 }

@@ -46,6 +46,10 @@ export function isCustomDomain( siteSlug: string | null | undefined ): boolean {
 	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
 }
 
+export function getSiteAdminUrl( site: SiteExcerptNetworkData ) {
+	return site.options?.admin_url ?? '';
+}
+
 export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
 };
@@ -128,12 +132,12 @@ export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return isBusinessTrialSite( site ) || isECommerceTrialSite( site );
 };
 
-export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
+export const getAdminInterface = ( site: SiteExcerptNetworkData ) => {
 	return site?.options?.wpcom_admin_interface;
 };
 
 export const siteUsesWpAdminInterface = ( site: SiteExcerptNetworkData ) => {
-	return ( site.jetpack && ! site.is_wpcom_atomic ) || siteDefaultInterface( site ) === 'wp-admin';
+	return ( site.jetpack && ! site.is_wpcom_atomic ) || getAdminInterface( site ) === 'wp-admin';
 };
 
 export interface InterfaceURLFragment {

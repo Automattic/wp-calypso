@@ -1,0 +1,22 @@
+.skeleton {
+	box-sizing: border-box;
+	background-color: var( --studio-gray-5 );
+	animation: pulse 1.5s infinite;
+	border-radius: 4px;
+
+	&--circle {
+		border-radius: 50%;
+	}
+
+	@keyframes pulse {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.5;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+}

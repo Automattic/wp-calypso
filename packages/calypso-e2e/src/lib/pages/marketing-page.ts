@@ -66,7 +66,7 @@ export class MarketingPage {
 	 *
 	 */
 	async saveSettings() {
-		await this.page.getByRole( 'button', { name: 'Save settings' } ).first().click();
+		await this.page.getByRole( 'button', { name: 'Save' } ).first().click();
 
 		await this.page.waitForResponse( /settings/ );
 	}

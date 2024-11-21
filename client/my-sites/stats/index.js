@@ -27,7 +27,7 @@ const statsPage = ( url, controller ) => {
 };
 
 export default function () {
-	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validPeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [

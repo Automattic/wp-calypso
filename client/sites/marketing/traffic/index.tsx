@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import { Panel } from 'calypso/sites/components/panel';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import {
 	getSiteAdminUrl,
@@ -29,7 +30,7 @@ export default function MarketingTraffic() {
 	};
 
 	return (
-		<div className="marketing-traffic">
+		<Panel className="marketing-traffic">
 			<NavigationHeader
 				title={ translate( 'Traffic' ) }
 				subtitle={ translate(
@@ -44,6 +45,6 @@ export default function MarketingTraffic() {
 				) }
 			/>
 			{ isJetpack && adminInterfaceIsWPAdmin ? renderNotice() : <Traffic /> }
-		</div>
+		</Panel>
 	);
 }

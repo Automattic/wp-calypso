@@ -6,7 +6,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useProductAndPlans from '../../../hooks/use-product-and-plans';
-import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
 import PlanSelectionDetails from './../details';
 import PlanSelectionFilter from './../filter';
 
@@ -53,32 +52,25 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 		}
 	}, [ dispatch, onAddToCart, selectedPlan ] );
 
-	const pressableOwnership = usePressableOwnershipType();
-
 	return (
 		<div
 			className={ clsx( 'pressable-overview-plan-selection', {
 				'is-new-hosting-page': isNewHostingPage,
-				'is-slider-hidden': pressableOwnership === 'regular',
 			} ) }
 		>
-			{ pressableOwnership !== 'regular' && (
-				<>
-					<div className="pressable-overview-plan-selection__upgrade-title narrow">
-						{ translate( 'Choose plan to refer' ) }
-					</div>
-					<PlanSelectionFilter
-						selectedPlan={ selectedPlan }
-						plans={ pressablePlans }
-						onSelectPlan={ onSelectPlan }
-					/>
-				</>
-			) }
+			<div className="pressable-overview-plan-selection__upgrade-title narrow">
+				{ translate( 'Choose plan to refer' ) }
+			</div>
+			<PlanSelectionFilter
+				selectedPlan={ selectedPlan }
+				plans={ pressablePlans }
+				onSelectPlan={ onSelectPlan }
+			/>
 
 			<PlanSelectionDetails
 				selectedPlan={ selectedPlan }
 				onSelectPlan={ onPlanAddToCart }
-				pressableOwnership={ pressableOwnership }
+				pressableOwnership="agency"
 			/>
 		</div>
 	);

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
@@ -17,7 +18,11 @@ const DisconnectSite = ( { backHref, reason, site, type } ) => {
 	} else {
 		// If a reason wasn't given then navigating back should go to what was given as a prop,
 		// or to /settings/manage-connection/:site by default.
-		backHref = backHref ?? '/settings/manage-connection/' + site.slug;
+		backHref =
+			backHref ??
+			( isEnabled( 'untangling/hosting-menu' )
+				? '/sites/settings/administration/' + site.slug + '/manage-connection'
+				: '/settings/manage-connection/' + site.slug );
 	}
 
 	if ( type === 'down' ) {

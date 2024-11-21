@@ -27,6 +27,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -166,9 +167,47 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
+	navigationFromChartBar = ( periodStartDate, period ) => {
+		let chartStart = periodStartDate;
+		let chartEnd = moment( chartStart )
+			.endOf( period === 'week' ? 'isoWeek' : period )
+			.format( 'YYYY-MM-DD' );
+
+		// Limit navigation within the currently selected range.
+		const currentChartStart = this.props.context.query?.chartStart;
+		const currentChartEnd = this.props.context.query?.chartEnd;
+		if ( currentChartStart && moment( chartStart ).isBefore( currentChartStart ) ) {
+			chartStart = currentChartStart;
+		}
+		if ( currentChartEnd && moment( chartEnd ).isAfter( currentChartEnd ) ) {
+			chartEnd = currentChartEnd;
+		}
+
+		// Determine the target period for the navigation.
+		const targetPeriod = period === 'day' ? 'hour' : 'day';
+
+		const path = `/stats/${ targetPeriod }/${ this.props.slug }`;
+		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
+
+		return url;
+	};
+
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
+
+		if ( ! config.isEnabled( 'stats/new-date-filtering' ) ) {
+			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
+			return;
+		}
+
+		const { period: barPeriod } = this.props.period;
+		// Stop navigation if the bar period is hour.
+		if ( barPeriod === 'hour' ) {
+			return;
+		}
+
+		// Navigate from the chart bar with period and period start date.
+		page( this.navigationFromChartBar( bar.data.period, barPeriod ) );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -202,9 +241,14 @@ class StatsSite extends Component {
 
 	// Return a default amount of days to subtracts from the present day depending on the period selected.
 	// Used in case no starting date is present in the URL.
-	getDefaultDaysForPeriod( period ) {
+	getDefaultDaysForPeriod( period, defaultSevenDaysForPeriodDay = false ) {
 		switch ( period ) {
 			case 'day':
+				// TODO: Temporary fix for the new date filtering feature.
+				if ( defaultSevenDaysForPeriodDay ) {
+					return 7;
+				}
+
 				return 30;
 			case 'week':
 				return 12 * 7; // ~last 3 months
@@ -248,6 +292,7 @@ class StatsSite extends Component {
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
+			momentSiteZone,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -276,11 +321,11 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
 		}
 
 		// Find the quantity of bars for the chart.
-		let daysInRange = this.getDefaultDaysForPeriod( period );
+		let daysInRange = this.getDefaultDaysForPeriod( period, isNewDateFilteringEnabled );
 		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
 		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 
@@ -291,9 +336,17 @@ class StatsSite extends Component {
 		} else {
 			// if start date is missing let the frequency of data take over to avoid showing one bar
 			// (e.g. months defaulting to 30 days and showing one point)
-			customChartRange.chartStart = moment()
+			customChartRange.chartStart = momentSiteZone
+				.clone()
 				.subtract( daysInRange - 1, 'days' )
 				.format( 'YYYY-MM-DD' );
+		}
+
+		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
+		// If it's single day period, redirect to hourly stats.
+		if ( period === 'day' && daysInRange === 1 ) {
+			page( '/stats/hour/' + slug + window.location.search );
+			return;
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -302,13 +355,14 @@ class StatsSite extends Component {
 		// Move end point (most recent) to the end of period to account for partial periods
 		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
 		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf(
-			period === 'week' ? 'isoWeek' : period
-		);
-		// TODO: We need to align the start day of week from the backend.
-		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf(
-			period === 'week' ? 'isoWeek' : period
-		);
+		let momentPeriod = period;
+		if ( momentPeriod === 'week' ) {
+			momentPeriod = 'isoWeek';
+		} else if ( momentPeriod === 'hour' ) {
+			momentPeriod = 'day';
+		}
+		const adjustedChartStartDate = moment( customChartRange.chartStart ).startOf( momentPeriod );
+		const adjustedChartEndDate = moment( customChartRange.chartEnd ).endOf( momentPeriod );
 
 		let customChartQuantity = Math.ceil(
 			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
@@ -321,8 +375,11 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = moment().format( 'YYYY-MM-DD' );
-			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = momentSiteZone
+				.clone()
+				.subtract( 7, 'days' )
+				.format( 'YYYY-MM-DD' );
 		}
 
 		const query = isNewDateFilteringEnabled
@@ -468,6 +525,9 @@ class StatsSite extends Component {
 
 						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
 							<ChartTabs
+								slug={ slug }
+								period={ this.props.period }
+								queryParams={ context.query }
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
@@ -477,7 +537,6 @@ class StatsSite extends Component {
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
-								period={ this.props.period }
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
@@ -498,7 +557,6 @@ class StatsSite extends Component {
 								chartTab={ this.props.chartTab }
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
-								hideLegend // in the legacy chart the legend is displayed up in the header insdead of in the chart, so we hide it here
 							/>
 						) }
 					</>
@@ -818,6 +876,7 @@ export default connect(
 			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			momentSiteZone: getMomentSiteZone( state, siteId ),
 		};
 	},
 	{

@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { verse, page, post, file } from '@wordpress/icons';
+import { verse, page, file, postFeaturedImage } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	ContentStepContent,
@@ -18,7 +18,7 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 		return (
 			<p>
 				<SummaryStat
-					icon={ post }
+					icon={ postFeaturedImage }
 					label={ createInterpolateElement(
 						__( 'You <strong>skipped</strong> content importing.' ),
 						{
