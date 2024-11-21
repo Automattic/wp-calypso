@@ -21,7 +21,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { STEPS } from './internals/steps';
-import { getSiteIdParam, redirect } from './internals/steps-repository/import/util';
+import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import { goToImporter } from './migration/helpers';
@@ -80,7 +80,7 @@ const siteMigration: Flow = {
 		}, [ isAdmin ] );
 
 		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
-			redirect( '/' );
+			window.location.assign( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration does not have the site slug or site id.',

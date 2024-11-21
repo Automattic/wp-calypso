@@ -38,14 +38,6 @@ describe( 'Site Migration Flow', () => {
 
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
-
-		delete global.window.location;
-		global.window.location = {
-			href: 'http://wwww.example.com',
-			origin: 'http://www.example.com',
-			assign: jest.fn(),
-		};
-
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
@@ -72,7 +64,7 @@ describe( 'Site Migration Flow', () => {
 				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
 			} );
 
-			expect( global.window.location.href ).toBe( '/' );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/' );
 		} );
 
 		it( 'redirects the user to the start page when the user is not the site admin', () => {
