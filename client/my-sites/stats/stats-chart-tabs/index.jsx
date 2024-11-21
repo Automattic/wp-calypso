@@ -98,7 +98,12 @@ class StatModuleChartTabs extends Component {
 
 	makeQuery = () => {
 		this.props.requestChartCounts( this.props.query );
-		if ( this.props.query.chartStart === this.props.query.date ) {
+
+		// query format needs to align with `memoizedQuery`.
+		if (
+			this.props.query.chartStart === this.props.query.date &&
+			this.props.query.period === 'hour'
+		) {
 			this.props.requestChartCounts( this.props.queryDay );
 		}
 	};
