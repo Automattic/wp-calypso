@@ -2,6 +2,11 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
 	.navigation-header {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
+
+        .navigation-header__main {
+            max-width: 1400px;
+            margin: auto;
+        }
 	}
 }
 
