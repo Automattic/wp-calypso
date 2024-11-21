@@ -30,7 +30,10 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	openSitePreviewPane?: ( site: SiteExcerptData, source: 'primary_action' | 'site_title' ) => void;
+	openSitePreviewPane?: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
 };
 
 const SiteListTile = styled( ListTile )`
