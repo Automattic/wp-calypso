@@ -10,7 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import accept from 'calypso/lib/accept';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { changeOwner } from 'calypso/state/jetpack/connection/actions';
@@ -131,7 +131,6 @@ class SiteOwnership extends Component {
 		if ( ! currentUser ) {
 			return;
 		}
-
 		return (
 			<div className="manage-connection__user-dropdown">
 				<AuthorSelector
@@ -223,7 +222,7 @@ class SiteOwnership extends Component {
 		const { isPaidPlan, translate } = this.props;
 
 		return (
-			<Card>
+			<>
 				<FormFieldset className="manage-connection__formfieldset">
 					<FormLabel>{ translate( 'Site owner' ) }</FormLabel>
 					{ this.renderConnectionDetails() }
@@ -239,7 +238,7 @@ class SiteOwnership extends Component {
 						<OwnershipInformation />
 					</Fragment>
 				) }
-			</Card>
+			</>
 		);
 	}
 
@@ -255,14 +254,14 @@ class SiteOwnership extends Component {
 		}
 
 		return (
-			<Fragment>
+			<PanelSection>
 				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
 				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
 
-				<SettingsSectionHeader title={ translate( 'Site ownership' ) } />
+				<PanelHeading>{ translate( 'Site ownership' ) }</PanelHeading>
 
 				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
-			</Fragment>
+			</PanelSection>
 		);
 	}
 }

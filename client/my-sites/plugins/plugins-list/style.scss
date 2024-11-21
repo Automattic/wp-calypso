@@ -1,4 +1,4 @@
-body.is-section-plugins .plugin-management-wrapper {
+body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -6,21 +6,30 @@ body.is-section-plugins .plugin-management-wrapper {
 	.navigation-header {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
+
+        .navigation-header__main {
+            max-width: 1400px;
+            margin: auto;
+        }
 	}
 }
 
-body.is-section-plugins .plugin-management-wrapper,
-.is-section-jetpack-cloud-plugin-management {
+body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
+.is-section-jetpack-cloud-plugin-management .plugin-management-wrapper.is-bulk-plugin-management {
+    .dataviews-wrapper {
+        max-width: 1500px;
+        margin: auto;
 
-    .dataviews-wrapper .dataviews-view-table {
-        .dataviews-view-table__row {
-            .plugin-icon {
-                max-width: 35px;
-                max-height: 35px;
-            }
+        .dataviews-view-table {
+            .dataviews-view-table__row {
+                .plugin-icon {
+                    max-width: 35px;
+                    max-height: 35px;
+                }
 
-            td:nth-child(2) {
-                white-space: break-spaces;
+                td:nth-child(2) {
+                    white-space: break-spaces;
+                }
             }
         }
     }
@@ -37,9 +46,10 @@ body.is-section-plugins .plugin-management-wrapper,
 
     .plugin-management-wrapper {
         height: calc(100vh - 50px);
-        display: flex;
-        flex-direction: column;
-    }
+		display: flex;
+		flex-direction: column;
+		min-height: calc(100vh - 64px);
+	}
 
     .select-partner-key {
         padding: 0 40px;
@@ -49,7 +59,7 @@ body.is-section-plugins .plugin-management-wrapper,
         button {
             border: none;
             background-color: transparent;
-    
+
             &:hover {
                 background-color: var(--color-background-alt);
             }
@@ -69,12 +79,18 @@ body.is-section-plugins .plugin-management-wrapper,
 
     .layout__content {
         height: 100%;
-        padding: 79px 0 0 calc(var(--sidebar-width-max));
     }
 
-    .plugins__top-container-jc {
-        padding-left: 80px;
-    }
+	.plugins__top-container-jc,
+	.plugins__main-content-jc {
+		margin-inline: -32px;
+	}
+
+	.plugin-management-wrapper.is-bulk-plugin-management {
+		.plugins__page-title-container {
+			padding-inline: 48px;
+		}
+	}
 }
 
 .sites-manage-plugin-status-button {

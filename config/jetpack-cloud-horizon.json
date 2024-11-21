@@ -31,6 +31,7 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
+		"checkout/paypal-ppcp": false,
 		"checkout/checkout-version": false,
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,

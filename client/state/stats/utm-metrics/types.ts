@@ -18,5 +18,5 @@ export interface UTMMetricItemTopPost {
 	value: number;
 	href: string;
 	page: string | null;
-	actions: Array< { data: string; type: string } >;
+	actions: Array< { data: string | { [ key: string ]: string }; type: string } >;
 }

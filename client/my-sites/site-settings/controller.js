@@ -4,6 +4,7 @@ import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import DeleteSite from 'calypso/sites/settings/administration/tools/delete-site';
+import ManageConnection from 'calypso/sites/settings/administration/tools/manage-connection';
 import StartOver from 'calypso/sites/settings/administration/tools/reset-site';
 import SiteOwnerTransfer from 'calypso/sites/settings/administration/tools/transfer-site';
 import { AcceptSiteTransfer } from 'calypso/sites/settings/administration/tools/transfer-site/accept-site-transfer';
@@ -14,7 +15,6 @@ import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-s
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
-import ManageConnection from './manage-connection';
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;

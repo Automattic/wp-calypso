@@ -1,4 +1,4 @@
-import { CompactCard, ProgressBar } from '@automattic/components';
+import { ProgressBar } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -162,7 +162,7 @@ class JetpackSyncPanel extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<CompactCard className="jetpack-sync-panel">
+			<div className="jetpack-sync-panel">
 				<div className="jetpack-sync-panel__action" id="jetpackSyncPanelAction">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
@@ -188,7 +188,7 @@ class JetpackSyncPanel extends Component {
 				{ this.shouldDisableSync() && (
 					<Interval onTick={ this.fetchSyncStatus } period={ EVERY_TEN_SECONDS } />
 				) }
-			</CompactCard>
+			</div>
 		);
 	}
 }

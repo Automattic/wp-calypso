@@ -27,15 +27,10 @@ export const DislikeFeedbackMessage = () => {
 	const renderNotEligibleUserMessage = () => {
 		return (
 			<>
+				<Markdown>{ __( "Sorry I couldn't be of help!", __i18n_text_domain__ ) }</Markdown>
 				<Markdown>
 					{ __(
-						'Sorry about that! Here is another way to get in-depth help.',
-						__i18n_text_domain__
-					) }
-				</Markdown>
-				<Markdown>
-					{ __(
-						'Share your questions in our forums. Since posts are public, avoid sharing personal or financial details.',
+						'A great way to get assistance is by bringing your questions to our public forums—just be sure to avoid sharing any personal or financial details.',
 						__i18n_text_domain__
 					) }
 				</Markdown>

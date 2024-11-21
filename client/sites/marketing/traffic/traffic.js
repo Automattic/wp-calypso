@@ -7,7 +7,6 @@ import blazeIllustration from 'calypso/assets/images/customer-home/illustration-
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
-import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
@@ -52,7 +51,7 @@ const SiteSettingsTraffic = ( {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<Main className="settings-traffic site-settings" wideLayout>
+		<div className="settings-traffic site-settings">
 			<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 			{ ! isAdmin && (
 				<EmptyContent
@@ -115,7 +114,7 @@ const SiteSettingsTraffic = ( {
 				/>
 			) }
 			{ isAdmin && <SiteVerification /> }
-		</Main>
+		</div>
 	);
 };
 
