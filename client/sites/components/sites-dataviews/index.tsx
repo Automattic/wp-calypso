@@ -93,12 +93,15 @@ const DotcomSitesDataViews = ( {
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
 	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
 	const onSelectionChange = useCallback(
-		( siteId: string ) => {
+		( selectedSiteIds: string[] ) => {
 			// In table view, when a row is clicked, the item is selected for a bulk action, so the panel should not open.
 			if ( dataViewsState.type !== 'list' ) {
 				return;
 			}
-			const site = sites.find( ( s ) => s.ID === Number( siteId ) );
+			if ( selectedSiteIds.length === 0 ) {
+				return;
+			}
+			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site ) {
 				openSitePreviewPane( site, 'list_row_click' );
 			}
@@ -196,13 +199,10 @@ const DotcomSitesDataViews = ( {
 				selection={ getSelection() }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => {
-					// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
-					item.id = item.ID.toString();
 					return item.ID.toString();
 				} }
 				isLoading={ isLoading }
 				defaultLayouts={ { table: {} } }
-				// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
 				onChangeSelection={ onSelectionChange }
 			/>
 		</div>
