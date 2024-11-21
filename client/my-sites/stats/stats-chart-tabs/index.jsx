@@ -19,6 +19,7 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
+import NewStatsTabs from './new-tabs';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -96,7 +97,17 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		this.props.requestChartCounts( this.props.query );
+
+		// query format needs to align with `memoizedQuery`.
+		if (
+			this.props.query.chartStart === this.props.query.date &&
+			this.props.query.period === 'hour'
+		) {
+			this.props.requestChartCounts( this.props.queryDay );
+		}
+	};
 
 	render() {
 		const {
@@ -137,15 +148,29 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
-				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
-					activeKey="period"
-					aggregate={ isNewDateFilteringEnabled }
-				/>
+				{ isNewDateFilteringEnabled ? (
+					<NewStatsTabs
+						data={ this.props.counts }
+						previousData={ { views: 1, visitors: 1, likes: 1, comments: 1 } }
+						tabs={ this.props.charts }
+						switchTab={ this.props.switchTab }
+						selectedTab={ this.props.chartTab }
+						activeIndex={ this.props.queryDate }
+						activeKey="period"
+						aggregate={ isNewDateFilteringEnabled }
+						tabCountsAlt={ this.props.tabCountsAlt }
+					/>
+				) : (
+					<StatTabs
+						data={ this.props.counts }
+						tabs={ this.props.charts }
+						switchTab={ this.props.switchTab }
+						selectedTab={ this.props.chartTab }
+						activeIndex={ this.props.queryDate }
+						activeKey="period"
+						aggregate={ isNewDateFilteringEnabled }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -192,9 +217,22 @@ const connectComponent = connect(
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
+		const queryDay = {
+			...query,
+			period: 'day',
+			quantity: 1,
+			statFields: [ 'visitors', 'likes', 'comments' ],
+		};
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const tabCountsAlt = getCountRecords(
+			state,
+			siteId,
+			queryDay.date,
+			queryDay.period,
+			queryDay.quantity
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
@@ -206,6 +244,8 @@ const connectComponent = connect(
 			queryKey,
 			siteId,
 			selectedPeriod: period,
+			queryDay,
+			tabCountsAlt: tabCountsAlt?.[ 0 ],
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }
