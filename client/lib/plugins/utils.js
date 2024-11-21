@@ -381,6 +381,12 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
  * @returns The URL to use for managing a connection.
  */
 export const getManageConnectionHref = ( siteSlug ) => {
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		return isJetpackCloud() || isA8CForAgencies()
+			? `https://wordpress.com/sites/settings/administration/${ siteSlug }/manage-connection`
+			: `/sites/settings/administration/${ siteSlug }/manage-connection`;
+	}
+
 	return isJetpackCloud() || isA8CForAgencies()
 		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
 		: `/settings/manage-connection/${ siteSlug }`;
