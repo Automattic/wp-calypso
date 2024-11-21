@@ -1,3 +1,4 @@
+import { css, Global } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -48,11 +49,36 @@ export default function DomainOnlyThankYou( {
 
 		if ( domain.isHundredYearDomain ) {
 			return (
-				<HundredYearThankYou
-					siteSlug={ String( purchasedDomain.blogId ) }
-					receiptId={ Number( receipt.receiptId ) }
-					productSlug="domain_reg"
-				/>
+				<>
+					<Global
+						styles={ css`
+							main.checkout-thank-you {
+								&.is-redesign-v2 {
+									&.main {
+										max-width: unset;
+									}
+								}
+							}
+
+							body.is-section-checkout,
+							body.is-section-checkout .layout__content,
+							body.is-section-checkout-thank-you,
+							body.is-section-checkout-thank-you .layout__content {
+								background: linear-gradient(
+									233deg,
+									#06101c 2.17%,
+									#050c16 41.26%,
+									#02080f 88.44%
+								);
+							}
+						` }
+					/>
+					<HundredYearThankYou
+						siteSlug={ String( purchasedDomain.blogId ) }
+						receiptId={ Number( receipt.receiptId ) }
+						productSlug="domain_reg"
+					/>
+				</>
 			);
 		}
 	}

@@ -17,8 +17,6 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 
-import './style.scss';
-
 const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
