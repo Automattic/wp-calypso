@@ -831,21 +831,37 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	);
 }
 
+function getApproximateDifferenceInMonths( dateFrom: Date, dateTo: Date ): number {
+	return Math.abs(
+		dateTo.getMonth() - dateFrom.getMonth() + 12 * ( dateTo.getFullYear() - dateFrom.getFullYear() )
+	);
+}
+
 function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
+
+	// We only currently show the expiry date for renewals when the current
+	// subscription is more than 9 months away from expiration (to help
+	// prevent accidental renewals), although it should be accurate for
+	// other cart items as well.
+	if ( ! product.is_renewal ) {
+		return null;
+	}
+	if ( ! product.subscription_current_expiry_date ) {
+		return null;
+	}
+	const expiryTimestamp = new Date( product.subscription_current_expiry_date );
+	const minNumberOfMonths = 10;
+	if ( getApproximateDifferenceInMonths( expiryTimestamp, new Date() ) < minNumberOfMonths ) {
+		return null;
+	}
+
 	const expiryDate = product.subscription_current_expiry_date
 		? formatDate( product.subscription_current_expiry_date )
 		: undefined;
 	const postRenewExpiry = product.subscription_post_purchase_expiry_date
 		? formatDate( product.subscription_post_purchase_expiry_date )
 		: undefined;
-
-	// We only currently show the expiry date for renewals, although it is
-	// accurate for new products as well.
-	if ( ! product.is_renewal ) {
-		return null;
-	}
-
 	return (
 		<>
 			{ expiryDate && (
