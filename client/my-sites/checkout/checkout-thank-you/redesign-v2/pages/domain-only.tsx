@@ -1,3 +1,4 @@
+import { domainProductSlugs } from '@automattic/calypso-products';
 import { css, Global } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -76,7 +77,7 @@ export default function DomainOnlyThankYou( {
 					<HundredYearThankYou
 						siteSlug={ String( purchasedDomain.blogId ) }
 						receiptId={ Number( receipt.receiptId ) }
-						productSlug="domain_reg"
+						productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
 					/>
 				</>
 			);
