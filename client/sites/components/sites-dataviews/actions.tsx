@@ -19,8 +19,13 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
+import type { mutateFunction } from 'calypso/sites/hooks/use-restore-site-mutation';
 
-export function useActions( { restoreSite }: { restoreSite: any } ): Action< SiteExcerptData >[] {
+export function useActions( {
+	restoreSite,
+}: {
+	restoreSite: mutateFunction;
+} ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
 
@@ -286,7 +291,7 @@ export function useActions( { restoreSite }: { restoreSite: any } ): Action< Sit
 					const site = sites[ 0 ];
 					restoreSite( site.ID );
 				},
-				isEligible: ( site ) => site?.is_deleted,
+				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
 		[ __, dispatch, restoreSite ]

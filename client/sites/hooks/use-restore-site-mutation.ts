@@ -1,4 +1,9 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import {
+	UseMutateFunction,
+	useMutation,
+	UseMutationOptions,
+	UseMutationResult,
+} from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 
@@ -12,6 +17,8 @@ interface APIError {
 interface APIResponse {
 	success: true;
 }
+
+export type mutateFunction = UseMutateFunction< APIResponse, APIError, number, unknown >;
 
 function restoreSite( siteId: number ) {
 	return wpcom.req.post( {
