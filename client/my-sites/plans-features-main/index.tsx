@@ -442,7 +442,6 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		siteId,
 		storageAddOns,
-		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
@@ -468,7 +467,7 @@ const PlansFeaturesMain = ( {
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
-	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
+	const offeringFreePlan = gridPlansForFeaturesGridRaw[ term ]?.some(
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
@@ -753,6 +752,27 @@ const PlansFeaturesMain = ( {
 			</Button>
 		</div>
 	);
+
+	const enableTermSavingsPriceDisplay = useMemo( () => {
+		const isAnyGridPlanDiscounted = Object.values( gridPlansForFeaturesGridRaw ).reduce(
+			( isDiscounted, gridPlans ) => {
+				const hasDiscount = gridPlans?.some( ( { pricing: { discountedPrice, introOffer } } ) => {
+					return discountedPrice.monthly || ( introOffer && ! introOffer.isOfferComplete );
+				} );
+				return isDiscounted || !! hasDiscount;
+			},
+			false
+		);
+
+		if ( isAnyGridPlanDiscounted ) {
+			return false;
+		}
+
+		return (
+			isEnabled( 'plans/term-savings-price-display' ) ||
+			longerPlanTermDefaultExperiment.isEligibleForTermSavings
+		);
+	}, [ gridPlansForFeaturesGridRaw, longerPlanTermDefaultExperiment.isEligibleForTermSavings ] );
 
 	return (
 		<>

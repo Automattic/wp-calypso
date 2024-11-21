@@ -1,0 +1,13 @@
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
+} from '@automattic/calypso-products';
+
+export const EFFECTIVE_TERMS_LIST = < const >[
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
+];
