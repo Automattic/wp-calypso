@@ -36,9 +36,9 @@ export function plans( context, next ) {
 	// from the Calypso admin plans page. The `/start` onboarding flow
 	// plans page, however, relies on the `coupon` query param for the
 	// same purpose. We handle both coupon and discount here for the time
-	// being to avoid confusion. We'll probably consolidate to just `coupon`
-	// in the future.
-	const withDiscount = context.query.coupon || context.query.discount;
+	// being to avoid confusion and to continue support for legacy
+	// coupons. We'll consolidate to just `coupon` in the future.
+	const coupon = context.query.coupon || context.query.discount;
 
 	context.primary = (
 		<Plans
@@ -47,7 +47,7 @@ export function plans( context, next ) {
 			customerType={ context.query.customerType }
 			selectedFeature={ context.query.feature }
 			selectedPlan={ context.query.plan }
-			withDiscount={ withDiscount }
+			coupon={ coupon }
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
 			redirectToAddDomainFlow={
