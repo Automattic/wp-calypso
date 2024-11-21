@@ -43,6 +43,7 @@ import {
 	FEATURE_TO_ROUTE_MAP,
 	MARKETING_TRAFFIC,
 	MARKETING_SHARING,
+	ADVANCED_TOOLS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -136,10 +137,16 @@ const DotcomPreviewPane = ( {
 				],
 			},
 			{
-				label: __( 'Advanced Tools' ),
+				label: (
+					<span>
+						{ __( 'Advanced Tools' ) }
+						<HostingFeaturesIcon />
+					</span>
+				),
 				enabled:
 					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [
+					ADVANCED_TOOLS,
 					TOOLS_STAGING_SITE,
 					TOOLS_DEPLOYMENTS,
 					TOOLS_MONITORING,

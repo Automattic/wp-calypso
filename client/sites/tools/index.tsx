@@ -9,6 +9,7 @@ import {
 	TOOLS_STAGING_SITE,
 	TOOLS_SFTP_SSH,
 	TOOLS_DATABASE,
+	ADVANCED_TOOLS,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
@@ -22,9 +23,22 @@ import {
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
+	advancedTools,
 } from './controller';
 
 export default function () {
+	page( '/sites/tools', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/tools/:site',
+		siteSelection,
+		redirectToHostingFeaturesIfNotAtomic,
+		navigation,
+		advancedTools,
+		siteDashboard( ADVANCED_TOOLS ),
+		makeLayout,
+		clientRender
+	);
+
 	page( '/sites/tools/staging-site', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sites/tools/staging-site/:site',
