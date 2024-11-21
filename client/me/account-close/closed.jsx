@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Spinner } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -36,7 +35,7 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 	}, [ storedToken, urlToken ] );
 
 	const onClick = () => {
-		window.location = '/';
+		window.location.href = '/';
 	};
 
 	const onClickRestore = () => {
@@ -45,12 +44,16 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 
 	if ( ( ! isUserAccountClosed && ! config.isEnabled( 'me/account-restore' ) ) || ! restoreToken ) {
 		return (
-			<div className="account-close__spinner">
-				<Spinner size={ 32 } />
-				<p className="account-close__spinner-text">
-					{ translate( 'Your account is being deleted' ) }
-				</p>
-			</div>
+			<BlankCanvas className="account-deleted">
+				<BlankCanvas.Header />
+				<BlankCanvas.Content>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Your account is being deleted' ) }
+						subHeaderText={ <Spinner style={ { width: '32px', height: '32px' } } /> }
+					/>
+				</BlankCanvas.Content>
+			</BlankCanvas>
 		);
 	}
 
