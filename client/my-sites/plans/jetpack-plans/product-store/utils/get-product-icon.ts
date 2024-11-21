@@ -114,6 +114,7 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 		regular: JetpackProductIconSecurity,
 		light: '',
 	} ),
+	// TODO: Add Growth icon.
 	...setProductsIcon( JETPACK_CREATOR_PRODUCTS, {
 		regular: JetpackProductIconCreator,
 		light: '',

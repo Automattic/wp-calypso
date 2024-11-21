@@ -436,9 +436,7 @@ import {
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
-	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_BLOGGERS,
-	JETPACK_TAG_FOR_EDUCATORS,
 } from './constants';
 import { FEATURE_CONNECT_ANALYTICS, FEATURE_JETPACK_SOCIAL_V1_MONTHLY } from './constants/features';
 import {
@@ -2336,16 +2334,16 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 	getDescription: () => translate( 'Grow your audience effortlessly.' ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getRecommendedFor: () => [
-		{ tag: JETPACK_TAG_FOR_EDUCATORS, label: translate( 'Educators' ) },
-		{ tag: JETPACK_TAG_FOR_BLOGGERS, label: translate( 'Bloggers' ) },
-		{ tag: JETPACK_TAG_FOR_VIDEOGRAPHERS, label: translate( 'Videographers' ) },
+		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce Stores' ) },
 		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGGERS, label: translate( 'Bloggers' ) },
 	],
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}Stats (100k monthly requests, upgradeable){{/li}}{{li}}Social{{/li}}{{/ul}}',
+			'Grow your audience effortlessly.{{br}}{{/br}}{{br}}{{/br}}This bundle includes:{{ul}}{{li}}Stats (100k site views - upgradeable){{/li}}{{li}}Social{{/li}}{{li}}Newsletter and monetization tools{{/li}}{{/ul}}',
 			{
 				components: {
+					br: <br />,
 					ul: <ul />,
 					li: <li />,
 				},
@@ -2355,11 +2353,11 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getTagline: () =>
 		translate(
-			'Jetpack’s growth tools help you find a new audience, turn leads into customers, and customers into advocates.'
+			'Essential tools to help you grow your audience, track visitor engagement, and turn leads into loyal customers and advocates.'
 		),
 	getLightboxDescription: () =>
 		translate(
-			'Jetpack’s growth tools help you find a new audience, turn leads into customers, and customers into advocates.'
+			'Essential tools to help you grow your audience, track visitor engagement, and turn leads into loyal customers and advocates.'
 		),
 	getPlanCardFeatures: () => [ FEATURE_JETPACK_SOCIAL_V1_MONTHLY, FEATURE_STATS_PAID ],
 	getIncludedFeatures: () => [
