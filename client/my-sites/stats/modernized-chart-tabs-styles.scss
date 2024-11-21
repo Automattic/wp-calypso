@@ -29,6 +29,9 @@ $custom-stats-tab-mobile-break: $break-small;
 
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+		flex-flow: row wrap;
+		gap: 24px;
 
 		@media (max-width: $custom-mobile-breakpoint) {
 			padding: 24px math.div($vertical-margin, 2) 16px;
@@ -46,13 +49,10 @@ $custom-stats-tab-mobile-break: $break-small;
 		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
 			font-family: $font-sf-pro-text;
-			flex: 1;
-			width: auto;
+			display: block;
+			flex: 1 1 252px;
+			max-width: 252px;
 			border: 0;
-
-			&:not(:first-child) {
-				margin-left: 16px;
-			}
 
 			// Keep the original mobile stats-tabs styles
 			@media (max-width: $custom-stats-tab-mobile-break) {
@@ -189,6 +189,7 @@ $custom-stats-tab-mobile-break: $break-small;
 
 			// Apply highlight card styles to stats-tabs.
 			&.is-highlighted {
+				width: 250px;
 				text-align: left;
 
 				& > a {
