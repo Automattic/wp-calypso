@@ -616,10 +616,10 @@ body.is-section-plugins #primary {
 		padding: 0;
 	}
 }
+
 .plugins__main-content {
 	margin: 0;
 	padding: 0;
-	// padding: 0 16px;
 	flex: 1 1 100%;
 	@media (min-width: $break-small) {
 		padding: 16px 0;

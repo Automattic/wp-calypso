@@ -605,13 +605,17 @@ export class PluginsMain extends Component {
 							) }
 						</div>
 					</div>
-					<div
-						className={ clsx( 'plugins__main-content', {
-							'plugins__main-content-jc': isJetpackCloud,
-						} ) }
-					>
-						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
-					</div>
+					{ this.props.newBulkPluginManagement ? (
+						this.renderPluginsContent()
+					) : (
+						<div
+							className={ clsx( 'plugins__main-content', {
+								'plugins__main-content-jc': isJetpackCloud,
+							} ) }
+						>
+							<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
+						</div>
+					) }
 				</div>
 			</>
 		);
