@@ -9,7 +9,6 @@ import {
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { noop } from 'lodash';
 import { useState, useRef, useCallback } from 'react';
 import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
@@ -233,36 +232,6 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
-export function HighlightCards( {
-	counts,
-	previousCounts,
-	showValueTooltip = true,
-	onClickComments = noop,
-	onClickLikes = noop,
-	onClickViews = noop,
-	onClickVisitors = noop,
-}: Partial< WeeklyHighlightCardsProps > ) {
-	return (
-		<ComponentSwapper
-			breakpoint="<660px"
-			breakpointActiveComponent={
-				<WeeklyHighlighCardsMobile counts={ counts } previousCounts={ previousCounts } />
-			}
-			breakpointInactiveComponent={
-				<WeeklyHighlighCardsStandard
-					counts={ counts }
-					previousCounts={ previousCounts }
-					showValueTooltip={ showValueTooltip }
-					onClickComments={ onClickComments }
-					onClickLikes={ onClickLikes }
-					onClickViews={ onClickViews }
-					onClickVisitors={ onClickVisitors }
-				/>
-			}
-		/>
-	);
-}
-
 export default function WeeklyHighlightCards( {
 	className,
 	counts,
@@ -354,6 +323,7 @@ export default function WeeklyHighlightCards( {
 					/>
 				) }
 			</HighlightCardsHeading>
+
 			<ComponentSwapper
 				breakpoint="<660px"
 				breakpointActiveComponent={
