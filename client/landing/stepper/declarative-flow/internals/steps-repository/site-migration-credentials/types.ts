@@ -43,3 +43,7 @@ export interface MigrationError {
 		};
 	};
 }
+
+export interface ApplicationPasswordInfo {
+	isAvailable: boolean;
+}

@@ -247,6 +247,12 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
 	},
 
+	SITE_MIGRATION_APPLICATION_PASSWORD_APPROVAL: {
+		slug: 'application-password-approval',
+		asyncComponent: () =>
+			import( './steps-repository/site-migration-application-password-approval' ),
+	},
+
 	SITE_MIGRATION_IDENTIFY: {
 		slug: 'site-migration-identify',
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
