@@ -8,7 +8,7 @@ import './woo-loader.scss';
 
 export type Stage = {
 	title: string;
-	image?: React.ComponentType
+	image?: React.ComponentType;
 	label: string;
 	text: string;
 	duration?: number;
