@@ -167,9 +167,47 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
+	navigationFromChartBar = ( periodStartDate, period ) => {
+		let chartStart = periodStartDate;
+		let chartEnd = moment( chartStart )
+			.endOf( period === 'week' ? 'isoWeek' : period )
+			.format( 'YYYY-MM-DD' );
+
+		// Limit navigation within the currently selected range.
+		const currentChartStart = this.props.context.query?.chartStart;
+		const currentChartEnd = this.props.context.query?.chartEnd;
+		if ( currentChartStart && moment( chartStart ).isBefore( currentChartStart ) ) {
+			chartStart = currentChartStart;
+		}
+		if ( currentChartEnd && moment( chartEnd ).isAfter( currentChartEnd ) ) {
+			chartEnd = currentChartEnd;
+		}
+
+		// Determine the target period for the navigation.
+		const targetPeriod = period === 'day' ? 'hour' : 'day';
+
+		const path = `/stats/${ targetPeriod }/${ this.props.slug }`;
+		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
+
+		return url;
+	};
+
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
+
+		if ( ! config.isEnabled( 'stats/new-date-filtering' ) ) {
+			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
+			return;
+		}
+
+		const { period: barPeriod } = this.props.period;
+		// Stop navigation if the bar period is hour.
+		if ( barPeriod === 'hour' ) {
+			return;
+		}
+
+		// Navigate from the chart bar with period and period start date.
+		page( this.navigationFromChartBar( bar.data.period, barPeriod ) );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
