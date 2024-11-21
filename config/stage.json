@@ -36,6 +36,7 @@
 		"catch-js-errors": true,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
+		"checkout/paypal-ppcp": false,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": false,

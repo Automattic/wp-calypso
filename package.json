@@ -167,6 +167,7 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
+		"@paypal/react-paypal-js": "^8.7.0",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
