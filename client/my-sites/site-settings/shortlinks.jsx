@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -6,7 +5,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
@@ -36,18 +35,18 @@ class Shortlinks extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
-				<SettingsSectionHeader title={ translate( 'WP.me Shortlinks' ) } />
-
-				<Card className="shortlinks__card site-settings site-settings__traffic-settings">
-					<FormFieldset>
+			<PanelSection>
+				<>
+					<PanelHeading>
+						{ translate( 'WP.me Shortlinks' ) }
 						<SupportInfo
 							text={ translate(
 								'Generates shorter links so you can have more space to write on social media sites.'
 							) }
 							link="https://jetpack.com/support/wp-me-shortlinks/"
 						/>
-
+					</PanelHeading>
+					<FormFieldset>
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
 							moduleSlug="shortlinks"
@@ -55,8 +54,8 @@ class Shortlinks extends Component {
 							disabled={ formPending }
 						/>
 					</FormFieldset>
-				</Card>
-			</div>
+				</>
+			</PanelSection>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

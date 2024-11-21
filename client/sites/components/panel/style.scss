@@ -5,6 +5,10 @@
 	font-size: 0.875rem;
 	align-items: flex-start;
 
+	&.main {
+		margin: 0;
+	}
+
 	.header-cake__back {
 		padding: 0;
 	}
@@ -13,6 +17,7 @@
 .panel-section {
 	box-sizing: border-box;
 	background-color: #fff;
+	width: 100%;
 
 	&.panel-section--borderless{
 		margin-top: 24px;
@@ -39,5 +44,9 @@
 	.form-text-input,
 	.form-select {
 		font-size: rem(14px) !important;
+	}
+
+	.upsell-nudge {
+		margin: 0 -22px -22px -22px !important;
 	}
 }

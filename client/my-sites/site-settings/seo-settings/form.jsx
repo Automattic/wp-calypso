@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
@@ -6,7 +7,7 @@ import {
 	findFirstSimilarPlanKey,
 	getPlan,
 } from '@automattic/calypso-products';
-import { Card, Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
@@ -27,7 +28,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { protectForm } from 'calypso/lib/protect-form';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
@@ -60,7 +61,9 @@ import './style.scss';
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
 function getGeneralTabUrl( slug ) {
-	return `/settings/general/${ slug }`;
+	return isEnabled( 'untangling/hosting-menu' )
+		? `/sites/settings/site/${ slug }`
+		: `/settings/general/${ slug }`;
 }
 
 export class SiteSettingsFormSEO extends Component {
@@ -271,7 +274,7 @@ export class SiteSettingsFormSEO extends Component {
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
 
 		return (
-			<div ref={ this._mounted }>
+			<div ref={ this._mounted } style={ { width: '100%' } }>
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -315,6 +318,7 @@ export class SiteSettingsFormSEO extends Component {
 				) }
 				{ ! showAdvancedSeo && selectedSite.plan && (
 					<UpsellNudge
+						className="seo-settings__seo-upsell"
 						feature={ FEATURE_ADVANCED_SEO }
 						forceDisplay={ siteIsJetpack }
 						{ ...upsellProps }
@@ -331,15 +335,21 @@ export class SiteSettingsFormSEO extends Component {
 					aria-label="SEO Site Settings"
 				>
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
-						<div>
-							<SettingsSectionHeader
-								disabled={ isSaveDisabled || isSeoDisabled }
-								isSaving={ isSavingSettings }
-								onButtonClick={ this.submitSeoForm }
-								showButton
-								title={ translate( 'Page Title Structure' ) }
-							/>
-							<Card compact className="seo-settings__page-title-header">
+						<PanelSection>
+							<PanelHeading>
+								{ translate( 'Page Title Structure' ) }
+								{ siteIsJetpack && (
+									<SupportInfo
+										text={ translate(
+											'To help improve your search page ranking, you can customize how the content titles' +
+												' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
+												' and also add custom separators between the items.'
+										) }
+										link=" https://wordpress.com/support/seo-tools/#page-title-structure"
+									/>
+								) }
+							</PanelHeading>
+							<div compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
 									src={ pageTitleImage }
@@ -352,38 +362,30 @@ export class SiteSettingsFormSEO extends Component {
 											'social media sites, and browser tabs.'
 									) }
 								</p>
-								{ siteIsJetpack && (
-									<SupportInfo
-										text={ translate(
-											'To help improve your search page ranking, you can customize how the content titles' +
-												' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
-												' and also add custom separators between the items.'
-										) }
-										link=" https://wordpress.com/support/seo-tools/#page-title-structure"
-									/>
-								) }
-							</Card>
-							<Card>
+							</div>
+							<div>
 								<MetaTitleEditor
 									disabled={ isFetchingSite || isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
-							</Card>
-						</div>
+							</div>
+							<Button
+								className="is-primary"
+								disabled={ isSaveDisabled || isSeoDisabled }
+								busy={ isSavingSettings }
+								onClick={ this.submitSeoForm }
+							>
+								{ translate( 'Save' ) }
+							</Button>
+						</PanelSection>
 					) }
 
 					{ ! conflictedSeoPlugin &&
 						( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
-							<div>
-								<SettingsSectionHeader
-									disabled={ isSaveDisabled || isSeoDisabled }
-									isSaving={ isSavingSettings }
-									onButtonClick={ this.submitSeoForm }
-									showButton
-									title={ translate( 'Website Meta' ) }
-								/>
-								<Card>
+							<PanelSection>
+								<PanelHeading>{ translate( 'Website Meta' ) }</PanelHeading>
+								<div>
 									<p>
 										{ translate(
 											'Craft a description of your Website up to 160 characters that will be used in ' +
@@ -418,8 +420,17 @@ export class SiteSettingsFormSEO extends Component {
 											{ translate( 'See how this will look on Google, Facebook, and X.' ) }
 										</span>
 									</FormSettingExplanation>
-								</Card>
-							</div>
+								</div>
+								<div style={ { clear: 'both', marginBottom: '12px' } } />
+								<Button
+									className="is-primary"
+									disabled={ isSaveDisabled || isSeoDisabled }
+									busy={ isSavingSettings }
+									onClick={ this.submitSeoForm }
+								>
+									{ translate( 'Save' ) }
+								</Button>
+							</PanelSection>
 						) }
 				</form>
 				<WebPreview
