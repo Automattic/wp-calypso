@@ -133,39 +133,6 @@
 		}
 	}
 
-	.sites-dataviews__actions {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: end;
-		flex-wrap: nowrap;
-
-		@media (min-width: 1080px) {
-			.site-actions__actions-large-screen {
-				float: none;
-				margin-inline-end: 20px;
-			}
-		}
-
-		> *:not(:last-child) {
-			margin-inline-end: 10px;
-		}
-
-		.components-dropdown-menu__toggle,
-		.site-preview__open {
-			.gridicon {
-				width: 18px;
-				height: 18px;
-			}
-		}
-
-		&.sites-dataviews__actions-error {
-			svg {
-				color: var(--color-accent-5);
-			}
-		}
-	}
-
 	.dataviews-pagination {
 		flex-shrink: 0;
 		background: #fff;
@@ -190,38 +157,6 @@
 
 		@include breakpoint-deprecated( ">1400px" ) {
 			bottom: 0;
-		}
-	}
-
-	// DataView overrides:
-	// Using the List view for the fly-out panel requires hiding certain elements
-	// to properly fit the site list when the panel is open.
-	@media (min-width: $break-large) {
-		ul.dataviews-view-list {
-			// This override could potentially be removed if we’re able to pass the Actions column via data.actions
-			.components-h-stack,
-			.dataviews-view-list__item {
-				width: 100%;
-			}
-
-			// This styling is a bit of a hack: To make the site name clickable area larger, will need
-			// to hide the other fields when in preview mode.
-			.dataviews-view-list__field {
-				// Hide the field except first (Site name) and last (actions menu)
-				&:not(:first-child) {
-					display: none;
-				}
-
-				// Force the site name to take up the full width
-				&:first-child {
-					flex-grow: 1;
-
-					.sites-dataviews__site {
-						width: 100%;
-						justify-content: flex-start;
-					}
-				}
-			}
 		}
 	}
 }

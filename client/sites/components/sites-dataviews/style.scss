@@ -7,16 +7,6 @@
 	overflow: hidden;
 	padding-bottom: 0;
 
-
-	.dataviews-view-table__row td:last-of-type {
-		pointer-events: none;
-
-		button,
-		a {
-			pointer-events: auto;
-		}
-	}
-
 	.sites-dataviews__site {
 		display: flex;
 		flex-direction: row;
