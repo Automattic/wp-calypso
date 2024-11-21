@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -139,9 +140,9 @@ export const SitePerformance = () => {
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
-
-	const isSitePublic =
-		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+	const { getSiteSetting } = useSiteSettings( site?.slug );
+	const blog_public = getSiteSetting( 'blog_public' );
+	const isSitePublic = site && blog_public === 1;
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
