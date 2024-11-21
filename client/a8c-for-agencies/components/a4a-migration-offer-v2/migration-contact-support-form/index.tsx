@@ -124,6 +124,7 @@ export default function MigrationContactSupportForm( { show, onClose }: Props ) 
 			name,
 			email,
 			product,
+			agency_id: agency?.id,
 			no_of_sites: site,
 			...( pressableContactType && { contact_type: pressableContactType } ),
 			...( pressable_id && { pressable_id } ),
