@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import useRemoveMemberMutation from 'calypso/a8c-for-agencies/data/team/use-remove-member';
 import useResendMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-resend-member-invite';
+import useTransferOwnershipMutation from 'calypso/a8c-for-agencies/data/team/use-transfer-ownership';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TeamMember } from '../types';
@@ -21,6 +22,8 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
 	const { mutate: removeMember } = useRemoveMemberMutation();
+
+	const { mutate: transferOwnership } = useTransferOwnershipMutation();
 
 	const currentUser = useSelector( getCurrentUser );
 
@@ -114,6 +117,34 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					}
 				);
 			}
+
+			if ( action === 'transfer-ownership' ) {
+				transferOwnership(
+					{ id: item.id },
+					{
+						onSuccess: () => {
+							dispatch(
+								successNotice( translate( 'Ownership has been successfully transferred.' ), {
+									id: 'transfer-ownership-success',
+									duration: 5000,
+								} )
+							);
+							onRefetchList?.();
+							callback?.();
+						},
+
+						onError: ( error ) => {
+							dispatch(
+								errorNotice( error.message, {
+									id: 'transfer-ownership-error',
+									duration: 5000,
+								} )
+							);
+							callback?.();
+						},
+					}
+				);
+			}
 		},
 		[
 			cancelMemberInvite,
@@ -123,6 +154,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 			removeMember,
 			resendMemberInvite,
 			translate,
+			transferOwnership,
 		]
 	);
 }
