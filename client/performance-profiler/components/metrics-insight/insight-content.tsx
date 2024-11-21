@@ -34,7 +34,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 		recordTracksEvent( 'calypso_performance_profiler_llm_survey_click', {
 			hash,
 			url,
-			chatId,
+			chat_id: chatId,
 			rating,
 			description,
 			...( userFeedback && { user_feedback: userFeedback } ),
