@@ -1065,11 +1065,15 @@ class RegisterDomainStep extends Component {
 					suggestionError: null,
 					suggestionErrorData: null,
 					suggestionErrorDomain: null,
-					showAvailabilityNotice: false,
-					availabilityError: null,
-					availabilityErrorData: null,
 				} );
 			}
+
+			// We won't do availability checks in the Gravatar flow, so we can hide availability error notices
+			this.setState( {
+				showAvailabilityNotice: false,
+				availabilityError: null,
+				availabilityErrorData: null,
+			} );
 			return;
 		}
 
