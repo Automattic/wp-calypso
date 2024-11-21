@@ -75,7 +75,7 @@ export const WooLoader = ( { className, stages }: Props ) => {
 	return (
 		<div className={ clsx( 'jetpack-connect-woocommerce-loader', className ) }>
 			<div className="jetpack-connect-loader-wrapper">
-				<stage.image />
+				{ stage.image && <stage.image /> }
 
 				<h1 className="jetpack-connect-loader__title">{ stage.title }</h1>
 				<ProgressBar
