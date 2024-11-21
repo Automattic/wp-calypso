@@ -1,4 +1,4 @@
-const SetupImage = ( props ) => (
+const SetupImage = ( props: React.SVGProps< SVGSVGElement > ) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width={ 224 } height={ 144 } fill="none" { ...props }>
 		<path fill="#fff" d="M.94 0h222.12v144H.94z" />
 		<path
