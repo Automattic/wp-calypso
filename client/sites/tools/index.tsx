@@ -9,7 +9,7 @@ import {
 	TOOLS_STAGING_SITE,
 	TOOLS_SFTP_SSH,
 	TOOLS_DATABASE,
-	ADVANCED_TOOLS,
+	TOOLS,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
@@ -33,7 +33,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		advancedTools,
-		siteDashboard( ADVANCED_TOOLS ),
+		siteDashboard( TOOLS ),
 		makeLayout,
 		clientRender
 	);

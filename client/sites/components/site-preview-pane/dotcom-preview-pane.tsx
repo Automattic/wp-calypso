@@ -4,7 +4,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
+import HostingFeaturesIcon from 'calypso/sites/tools/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
@@ -43,7 +43,7 @@ import {
 	FEATURE_TO_ROUTE_MAP,
 	MARKETING_TRAFFIC,
 	MARKETING_SHARING,
-	ADVANCED_TOOLS,
+	TOOLS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -146,7 +146,7 @@ const DotcomPreviewPane = ( {
 				enabled:
 					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [
-					ADVANCED_TOOLS,
+					TOOLS,
 					TOOLS_STAGING_SITE,
 					TOOLS_DEPLOYMENTS,
 					TOOLS_MONITORING,
