@@ -1065,6 +1065,9 @@ class RegisterDomainStep extends Component {
 					suggestionError: null,
 					suggestionErrorData: null,
 					suggestionErrorDomain: null,
+					showAvailabilityNotice: false,
+					availabilityError: null,
+					availabilityErrorData: null,
 				} );
 			}
 			return;
