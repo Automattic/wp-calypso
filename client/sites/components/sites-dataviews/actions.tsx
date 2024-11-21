@@ -67,17 +67,24 @@ export function useActions( {
 				isPrimary: true,
 				label: __( 'Open site' ),
 				icon: external,
-				callback: () => {
-					alert( 'Open site' );
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const siteUrl = window.open( site.URL, '_blank' );
+					if ( siteUrl ) {
+						siteUrl.opener = null;
+						siteUrl.focus();
+					}
 				},
 			},
 			{
-				id: 'open-wp-admin',
+				id: 'admin',
 				isPrimary: true,
-				label: __( 'Open WP Admin' ),
+				label: __( 'WP Admin' ),
 				icon: wordpress,
-				callback: () => {
-					alert( 'Open WP Admin' );
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					window.location.href = site.options?.admin_url ?? '';
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
 				},
 			},
 
@@ -269,16 +276,6 @@ export function useActions( {
 					const hasCustomDomain = isCustomDomain( site.slug );
 					const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
 					return hasCustomDomain && ! isSiteJetpackNotAtomic;
-				},
-			},
-
-			{
-				id: 'admin',
-				label: __( 'WP Admin' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					window.location.href = site.options?.admin_url ?? '';
-					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
 				},
 			},
 		],
