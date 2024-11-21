@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import type { MigrationCommissionItem } from '../types';
+import type { TaggedSite } from '../types';
 
 import './style.scss';
 
@@ -9,21 +9,17 @@ const getQuarter = ( date = new Date() ) => {
 	return Math.ceil( ( currentMonth + 1 ) / 3 );
 };
 
-export default function MigrationsConsolidatedCommissions( {
-	items,
-}: {
-	items: MigrationCommissionItem[];
-} ) {
+export default function MigrationsConsolidatedCommissions( { items }: { items: TaggedSite[] } ) {
 	const translate = useTranslate();
 
 	const migrationCommissions =
 		items.filter(
 			( item ) =>
 				// Consider only confirmed migrations for the current quarter
-				item.reviewStatus === 'confirmed' && getQuarter( item.migratedOn ) === getQuarter()
-		).length * 100; // FIXME: Consider the maximum commission value
+				item.state === 'confirmed' && getQuarter( new Date( item.created_at ) ) === getQuarter()
+		).length * 100; // FIXME: Consider the maximum commission value when the MC tool is implemented
 
-	const sitesPendingReview = items.filter( ( item ) => item.reviewStatus === 'pending' ).length;
+	const sitesPendingReview = items.filter( ( item ) => item.state !== 'confirmed' ).length;
 
 	const currentQuarter = getQuarter();
 
