@@ -83,6 +83,14 @@
 	}
 }
 
+.featured-item-card--only-body {
+	.featured-item-card--body {
+		@include break-mobile {
+			width: 100%;
+		}
+	}
+}
+
 .featured-item-card--title {
 	color: var(--gray-100);
 	font-size: $font-title-medium;

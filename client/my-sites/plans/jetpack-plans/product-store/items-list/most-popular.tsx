@@ -2,7 +2,7 @@ import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
-import { HeroImage } from '../hero-image';
+// import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
@@ -110,7 +110,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								ctaLabel={ ctaLabel }
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
-								hero={ <HeroImage item={ item } /> }
+								// hero={ <HeroImage item={ item } /> }
 								moreInfoLink={ moreInfoLink }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }

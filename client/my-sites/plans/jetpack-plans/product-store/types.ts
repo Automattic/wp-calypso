@@ -97,7 +97,7 @@ export type FeaturedItemCardProps = {
 	ctaLabel?: React.ReactNode;
 	ctaAriaLabel?: string;
 	description: React.ReactNode;
-	hero: React.ReactNode;
+	hero?: React.ReactNode;
 	moreInfoLink?: React.ReactNode;
 	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
