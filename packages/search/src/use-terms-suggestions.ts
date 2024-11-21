@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 const INTERVAL_BETWEEN_TERMS = 5000;
 const INTERVAL_ANIMATION = 50;
 
-function applyTermAnimation( term, characterIndex, callback ) {
+function applyTermAnimation(
+	term: string,
+	characterIndex: number,
+	callback: Dispatch< SetStateAction< string > >
+) {
 	callback( term.substring( 0, characterIndex + 1 ) );
 	setTimeout( () => {
 		if ( characterIndex < term.length ) {
@@ -17,21 +22,28 @@ function applyTermAnimation( term, characterIndex, callback ) {
 // The interval will be cleared when the user scrolls down the page, and then re-added when
 // the user scrolls back up
 let previousIndex = 0;
-export function useTermsSuggestions( termSuggestions = [], interval = INTERVAL_BETWEEN_TERMS ) {
-	const [ termSuggestion, setTermSuggestion ] = useState( termSuggestions[ 0 ] );
+export function useTermsSuggestions(
+	termSuggestions: string[],
+	interval = INTERVAL_BETWEEN_TERMS
+): string {
+	if ( ! termSuggestions?.length ) {
+		throw new Error( 'termSuggestions must be a non-empty array of strings' );
+	}
+
+	const [ termSuggestion, setTermSuggestion ] = useState< string >( termSuggestions[ 0 ] );
 
 	useEffect( () => {
 		function addInterval() {
 			return setInterval( () => {
-				const currentIndex = previousIndex % termSuggestions.length;
 				previousIndex++;
+				const currentIndex = previousIndex % termSuggestions.length;
 				applyTermAnimation( termSuggestions[ currentIndex ], 0, setTermSuggestion );
 			}, interval );
 		}
-		let intervalId = addInterval();
 
-		window.addEventListener( 'scroll', onScroll );
+		let intervalId = addInterval();
 		let intervalActive = true;
+
 		function onScroll() {
 			if ( intervalActive ) {
 				clearInterval( intervalId );
@@ -43,6 +55,9 @@ export function useTermsSuggestions( termSuggestions = [], interval = INTERVAL_B
 				intervalActive = true;
 			}
 		}
+
+		window.addEventListener( 'scroll', onScroll );
+
 		return () => {
 			clearInterval( intervalId );
 			window.removeEventListener( 'scroll', onScroll );
