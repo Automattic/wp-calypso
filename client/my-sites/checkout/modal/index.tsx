@@ -9,6 +9,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
+import { isRelativeUrl } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { useSelector, useDispatch } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -60,7 +61,11 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 
 	const handleRequestClose = () => {
 		onClose?.();
-		navigate( cancelTo );
+		if ( isRelativeUrl( cancelTo ) ) {
+			navigate( cancelTo );
+		} else {
+			navigate( previousRouteWithArgs );
+		}
 	};
 
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
@@ -71,7 +76,11 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		onClose?.();
 
 		// Reload the page to get latest data
-		window.location.href = redirectTo;
+		if ( isRelativeUrl( redirectTo ) ) {
+			navigate( redirectTo );
+		} else {
+			navigate( previousRouteWithArgs );
+		}
 	};
 
 	useEffect( () => {
