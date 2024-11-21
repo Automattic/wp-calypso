@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSelectedSiteIdByOrigin,
+	redirectLoggedOut,
+} from 'calypso/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -7,6 +12,7 @@ import './style.scss';
 export default function () {
 	page(
 		'/me',
+		redirectLoggedOut,
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,
@@ -22,5 +28,14 @@ export default function () {
 	page( '/me/trophies', controller.profileRedirect, makeLayout, clientRender );
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
-	page( '/me/get-apps', controller.sidebar, controller.apps, makeLayout, clientRender );
+	page(
+		'/me/get-apps',
+		redirectLoggedOut,
+		controller.sidebar,
+		controller.apps,
+		makeLayout,
+		clientRender
+	);
+
+	page( '/me/*', redirectLoggedOut );
 }

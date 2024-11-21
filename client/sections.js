@@ -36,10 +36,21 @@ const sections = [
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
 		group: 'me',
+		// /me/account/closed is enabled to logged out users for self-serve account restoration
+		// enableLoggedOut is needed as /me/account/closed is nested within /me/account
+		// redirectLoggedOut is now handled in client/me/account/index.js
+		enableLoggedOut: true,
+	},
+	{
+		name: 'account-closed',
+		paths: [ '/me/account/closed' ],
+		module: 'calypso/me/account-close',
+		group: 'me',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'account-close',
-		paths: [ '/me/account/close', '/me/account/closed' ],
+		paths: [ '/me/account/close' ],
 		module: 'calypso/me/account-close',
 		group: 'me',
 	},
@@ -96,6 +107,12 @@ const sections = [
 		module: 'calypso/me/site-blocks',
 		group: 'me',
 	},
+	{
+		name: 'help',
+		paths: [ '/me/chat' ],
+		module: 'calypso/me/help',
+		group: 'me',
+	},
 	// This should be the last section for `/me` paths as it would otherwise have precedence over
 	// the other sub `/me/*` sections when resolving the requested path
 	{
@@ -103,6 +120,10 @@ const sections = [
 		paths: [ '/me' ],
 		module: 'calypso/me',
 		group: 'me',
+		// /me/account/closed is enabled to logged out users for self-serve account restoration
+		// enableLoggedOut is needed as /me/account/closed is nested within /me
+		// redirectLoggedOut is handled in client/me/index.js
+		enableLoggedOut: true,
 	},
 	{
 		name: 'activity',
@@ -492,12 +513,6 @@ const sections = [
 		paths: [ '/help' ],
 		module: 'calypso/me/help',
 		enableLoggedOut: true,
-		group: 'me',
-	},
-	{
-		name: 'help',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/help',
 		group: 'me',
 	},
 	{
