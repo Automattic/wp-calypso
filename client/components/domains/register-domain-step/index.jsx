@@ -1059,6 +1059,13 @@ class RegisterDomainStep extends Component {
 			// Since only a limited number of tlds is enabled for now, we show the message for all other TLDs.
 			if ( ! this.state.availableTlds.includes( getTld( domain ) ) ) {
 				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
+			} else {
+				this.setState( {
+					showSuggestionNotice: false,
+					suggestionError: null,
+					suggestionErrorData: null,
+					suggestionErrorDomain: null,
+				} );
 			}
 			return;
 		}
