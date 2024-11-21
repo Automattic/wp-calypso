@@ -88,9 +88,20 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// However, when don't need to do anything in the callback, because we already maintain a selectedItem state.
 	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
-	const onSelectionChange = () => {};
+	const onSelectionChange = useCallback(
+		( siteId: string ) => {
+			// In table view, when a row is clicked, the item is selected for a bulk action, so the panel should not open.
+			if ( dataViewsState.type !== 'list' ) {
+				return;
+			}
+			const site = sites.find( ( s ) => s.ID === Number( siteId ) );
+			if ( site ) {
+				openSitePreviewPane( site );
+			}
+		},
+		[ dataViewsState.type, openSitePreviewPane, sites ]
+	);
 	const getSelection = useCallback(
 		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
 		[ selectedItem ]
@@ -188,6 +199,7 @@ const DotcomSitesDataViews = ( {
 				} }
 				isLoading={ isLoading }
 				defaultLayouts={ { table: {} } }
+				// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
 				onChangeSelection={ onSelectionChange }
 			/>
 		</div>
