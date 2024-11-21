@@ -119,9 +119,9 @@ export const useCredentialsForm = (
 		setSiteInfo( siteInfoResult );
 
 		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' ) {
-			submitWithApplicationPassword( siteInfoResult );
+			await submitWithApplicationPassword( siteInfoResult );
 		} else {
-			requestAutomatedMigrationAndSubmit( data, siteInfoResult );
+			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );
 		}
 	} );
 
