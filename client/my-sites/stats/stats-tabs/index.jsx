@@ -1,3 +1,5 @@
+import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -11,11 +13,14 @@ class StatsTabs extends Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {
-		activeKey: PropTypes.string,
+		children: PropTypes.node,
+		data: PropTypes.array,
+		previousData: PropTypes.object,
 		activeIndex: PropTypes.string,
-		selectedTab: PropTypes.string,
-		switchTab: PropTypes.func,
+		activeKey: PropTypes.string,
 		tabs: PropTypes.array,
+		switchTab: PropTypes.func,
+		selectedTab: PropTypes.string,
 		borderless: PropTypes.bool,
 		aggregate: PropTypes.bool,
 	};
@@ -24,6 +29,7 @@ class StatsTabs extends Component {
 		const {
 			children,
 			data,
+			previousData,
 			activeIndex,
 			activeKey,
 			tabs,
@@ -57,19 +63,31 @@ class StatsTabs extends Component {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 
+				const value = hasData ? activeData[ tab.attr ] : null;
+				const previousValue = previousData && previousData[ tab.attr ];
+
 				const tabOptions = {
 					attr: tab.attr,
 					icon: tab.icon,
-					className: tab.className,
+					className: clsx( tab.className, { 'is-highlighted': !! previousData } ),
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
 					tabClick: switchTab,
-					value: hasData ? activeData[ tab.attr ] : null,
+					value,
 					format: tab.format,
 				};
 
-				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
+				return (
+					<StatTab key={ tabOptions.attr } { ...tabOptions }>
+						{ !! previousData && (
+							<div className="stats-tabs__highlight">
+								<span className="stats-tabs__highlight-value">{ formatNumber( value ) }</span>
+								<TrendComparison count={ value } previousCount={ previousValue } />
+							</div>
+						) }
+					</StatTab>
+				);
 			} );
 		}
 

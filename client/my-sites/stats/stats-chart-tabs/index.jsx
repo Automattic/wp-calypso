@@ -19,7 +19,6 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
-import NewStatsTabs from './new-tabs';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -138,28 +137,18 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
-				{ isNewDateFilteringEnabled ? (
-					<NewStatsTabs
-						data={ this.props.counts }
-						previousData={ { views: 1, visitors: 1, likes: 1, comments: 1 } }
-						tabs={ this.props.charts }
-						switchTab={ this.props.switchTab }
-						selectedTab={ this.props.chartTab }
-						activeIndex={ this.props.queryDate }
-						activeKey="period"
-						aggregate={ isNewDateFilteringEnabled }
-					/>
-				) : (
-					<StatTabs
-						data={ this.props.counts }
-						tabs={ this.props.charts }
-						switchTab={ this.props.switchTab }
-						selectedTab={ this.props.chartTab }
-						activeIndex={ this.props.queryDate }
-						activeKey="period"
-						aggregate={ isNewDateFilteringEnabled }
-					/>
-				) }
+				<StatTabs
+					data={ this.props.counts }
+					previousData={
+						isNewDateFilteringEnabled ? { views: 1, visitors: 1, likes: 1, comments: 1 } : null
+					}
+					tabs={ this.props.charts }
+					switchTab={ this.props.switchTab }
+					selectedTab={ this.props.chartTab }
+					activeIndex={ this.props.queryDate }
+					activeKey="period"
+					aggregate={ isNewDateFilteringEnabled }
+				/>
 			</div>
 		);
 	}
