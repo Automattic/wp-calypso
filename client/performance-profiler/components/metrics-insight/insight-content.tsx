@@ -36,7 +36,6 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 			url,
 			chat_id: chatId,
 			rating,
-			description,
 			...( userFeedback && { user_feedback: userFeedback } ),
 			version: profilerVersion(),
 		} );
