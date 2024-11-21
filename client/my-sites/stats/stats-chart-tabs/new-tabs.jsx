@@ -1,13 +1,6 @@
 import { HighlightCards } from '@automattic/components/src/highlight-cards/weekly-highlight-cards';
 
-export default function NewStatsTabs( {
-	data,
-	tabs,
-	switchTab,
-	selectedTab,
-	tabCountsAlt,
-	previousData,
-} ) {
+export default function NewStatsTabs( { data, tabs, switchTab, selectedTab, previousData } ) {
 	const activeData = {};
 	data.map( ( day ) =>
 		tabs.map( ( tab ) => {
@@ -22,7 +15,7 @@ export default function NewStatsTabs( {
 
 	return (
 		<HighlightCards
-			counts={ { ...tabCountsAlt, ...activeData } }
+			counts={ { activeData } }
 			previousCounts={ previousData }
 			onClickViews={ () => switchTab( 'views' ) }
 			onClickVisitors={ () => switchTab( 'visits' ) }
