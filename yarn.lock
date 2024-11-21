@@ -522,7 +522,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     debug: "npm:^4.3.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -2224,7 +2224,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     "@testing-library/jest-dom": "npm:^6.4.5"
     "@testing-library/react": "npm:^15.0.7"
     "@wordpress/data": "npm:^10.8.0"
@@ -7389,7 +7389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.53.0":
+"@stripe/stripe-js@npm:^1.54.2":
   version: 1.54.2
   resolution: "@stripe/stripe-js@npm:1.54.2"
   checksum: cf6ea20039fde28a0edc5562f08120ea820b1f8b8f2cf8b769aa92c0a4799a85e614f4112d8d790238960d0a3e1a194c76f6d2d941aa91acc8fbbc8920e63f02
@@ -12959,7 +12959,7 @@ __metadata:
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@storybook/addon-actions": "npm:^7.6.19"
     "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     "@tanstack/query-sync-storage-persister": "npm:^5.15.5"
     "@tanstack/react-query": "npm:^5.15.5"
     "@tanstack/react-query-devtools": "npm:^5.15.5"
