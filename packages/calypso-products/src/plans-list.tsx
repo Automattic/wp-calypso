@@ -3366,7 +3366,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
-			PRODUCT_JETPACK_CREATOR_MONTHLY,
+			// PRODUCT_JETPACK_CREATOR_MONTHLY,
 		],
 	},
 
@@ -3380,7 +3380,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
-			PRODUCT_JETPACK_CREATOR_YEARLY,
+			// PRODUCT_JETPACK_CREATOR_YEARLY,
 		],
 	},
 
@@ -3393,7 +3393,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
-			PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+			// PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 		],
 	},
 
