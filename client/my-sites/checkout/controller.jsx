@@ -37,7 +37,7 @@ import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
 import { FailedPurchasePage } from './checkout-thank-you/failed-purchase-page';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
-import HundredYearThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
+import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
