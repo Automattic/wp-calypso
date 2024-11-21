@@ -19,12 +19,13 @@ const useGridPlansForFeaturesGrid = ( {
 	showLegacyStorageFeature,
 	siteId,
 	storageAddOns,
+	term,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	highlightLabelOverrides,
 	isDomainOnlySite,
 }: UseGridPlansParams ): GridPlan[] | null => {
-	const useGridPlansParams = {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -38,63 +39,41 @@ const useGridPlansForFeaturesGrid = ( {
 		showLegacyStorageFeature,
 		siteId,
 		storageAddOns,
+		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
 		isDomainOnlySite,
-	};
+	} );
 
-	const monthlyGridPlans = useGridPlans( { ...useGridPlansParams, term: 'TERM_MONTHLY' } );
-	const yearlyGridPlans = useGridPlans( { ...useGridPlansParams, term: 'TERM_ANNUALLY' } );
-
-	const gridPlans = useMemo( () => {
-		return {
-			monthly: monthlyGridPlans,
-			yearly: yearlyGridPlans,
-		};
-	}, [ monthlyGridPlans, yearlyGridPlans ] );
-
-	const usePlanFeaturesForGridPlansParams = {
+	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
+		gridPlans: gridPlans || [],
 		hasRedeemedDomainCredit,
 		intent,
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-	};
-
-	const _planFeaturesForFeaturesGrid = {
-		monthly: usePlanFeaturesForGridPlans( {
-			...usePlanFeaturesForGridPlansParams,
-			gridPlans: gridPlans.monthly || [],
-		} ),
-		yearly: usePlanFeaturesForGridPlans( {
-			...usePlanFeaturesForGridPlansParams,
-			gridPlans: gridPlans.yearly || [],
-		} ),
-	};
+	} );
 
 	return useMemo( () => {
-		return Object.fromEntries(
-			Object.entries( gridPlans ).map( ( [ term, gridPlans ] ) => {
+		if ( ! gridPlans ) {
+			return null;
+		}
+
+		return gridPlans.reduce( ( acc, gridPlan ) => {
+			if ( gridPlan.isVisible ) {
 				return [
-					term,
-					gridPlans?.reduce( ( acc, gridPlan ) => {
-						if ( gridPlan.isVisible ) {
-							return [
-								...acc,
-								{
-									...gridPlan,
-									features: _planFeaturesForFeaturesGrid[ term ][ gridPlan.planSlug ],
-								},
-							];
-						}
-						return acc;
-					}, [] as GridPlan[] ),
+					...acc,
+					{
+						...gridPlan,
+						features: planFeaturesForFeaturesGrid[ gridPlan.planSlug ],
+					},
 				];
-			} )
-		);
-	}, [ gridPlans, _planFeaturesForFeaturesGrid ] );
+			}
+			return acc;
+		}, [] as GridPlan[] );
+	}, [ gridPlans, planFeaturesForFeaturesGrid ] );
 };
 
 export default useGridPlansForFeaturesGrid;

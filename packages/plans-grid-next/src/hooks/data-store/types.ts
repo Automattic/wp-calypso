@@ -20,7 +20,6 @@ export interface UseGridPlansParams {
 	siteId?: number | null;
 	storageAddOns: ( AddOnMeta | null )[];
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
-	terms?: ( typeof TERMS_LIST )[];
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs?: UseFreeTrialPlanSlugs;
 	/**
