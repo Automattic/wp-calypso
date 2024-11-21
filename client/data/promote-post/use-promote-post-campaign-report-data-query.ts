@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { CampaignReportDataResult } from 'calypso/data/promote-post/types';
 import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
 
 const useCampaignReportDataQuery = (
@@ -11,7 +12,7 @@ const useCampaignReportDataQuery = (
 	return useQuery( {
 		queryKey: [ 'promote-post-campaign-report-data', siteId, campaignId, reportId ],
 		queryFn: async () => {
-			const response = await requestDSPHandleErrors(
+			const response = await requestDSPHandleErrors< CampaignReportDataResult >(
 				siteId,
 				`/stats/${ campaignId }/report/${ reportId }`,
 				'GET',

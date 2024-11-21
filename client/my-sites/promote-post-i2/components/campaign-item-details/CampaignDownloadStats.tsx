@@ -7,6 +7,7 @@ import useCampaignReportDataQuery from 'calypso/data/promote-post/use-promote-po
 import useCampaignReportStatusQuery from 'calypso/data/promote-post/use-promote-post-campaign-report-status-query';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useRequestCampaignReportMutation from 'calypso/data/promote-post/use-promote-post-request-campaign-report-mutation';
+import { cvsStatsDownload } from 'calypso/my-sites/promote-post-i2/utils';
 
 interface Props {
 	siteId?: number;
@@ -124,6 +125,9 @@ export default function CampaignDownloadStats( props: Props ) {
 		if ( reportData ) {
 			setIsStatsDownloading( false );
 			setShouldFetchReportData( false );
+			if ( reportData.fileName && reportData.content ) {
+				cvsStatsDownload( reportData.content, reportData.fileName );
+			}
 		}
 	}, [ reportData, setIsStatsDownloading, setShouldFetchReportData ] );
 

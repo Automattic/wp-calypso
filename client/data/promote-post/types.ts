@@ -120,3 +120,10 @@ export type CampaignReportRequestBody = {
 export type CampaignReportResult = {
 	report_id: string;
 };
+
+export type CampaignReportDataResult = {
+	content: string;
+	fileName: string;
+	report_id: string;
+	retry: boolean;
+};
