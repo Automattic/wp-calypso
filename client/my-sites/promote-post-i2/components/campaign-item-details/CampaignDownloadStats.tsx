@@ -10,8 +10,8 @@ import useRequestCampaignReportMutation from 'calypso/data/promote-post/use-prom
 import { cvsStatsDownload } from 'calypso/my-sites/promote-post-i2/utils';
 
 interface Props {
-	siteId?: number;
-	campaign?: CampaignResponse;
+	siteId: number;
+	campaign: CampaignResponse;
 	isLoading?: boolean;
 	setStatsError: () => void;
 }
