@@ -98,7 +98,7 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled: isSimpleSite || isPlanExpired,
+				enabled: areHostingFeaturesSupported( site ),
 				featureIds: [ DOTCOM_HOSTING_FEATURES ],
 			},
 			{
@@ -144,7 +144,7 @@ const DotcomPreviewPane = ( {
 					</span>
 				),
 				enabled:
-					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
+					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [
 					ADVANCED_TOOLS,
 					TOOLS_STAGING_SITE,

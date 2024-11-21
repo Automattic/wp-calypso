@@ -31,7 +31,6 @@ export default function () {
 	page(
 		'/sites/tools/:site',
 		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		advancedTools,
 		siteDashboard( ADVANCED_TOOLS ),
