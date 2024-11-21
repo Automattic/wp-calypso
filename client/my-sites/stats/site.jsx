@@ -304,6 +304,13 @@ class StatsSite extends Component {
 				.format( 'YYYY-MM-DD' );
 		}
 
+		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
+		// If it's single day period, redirect to hourly stats.
+		if ( period === 'day' && daysInRange === 1 ) {
+			page( '/stats/hour/' + slug + window.location.search );
+			return;
+		}
+
 		customChartRange.daysInRange = daysInRange;
 
 		// Calculate diff between requested start and end in `priod` units.
