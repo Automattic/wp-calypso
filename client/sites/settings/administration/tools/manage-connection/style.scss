@@ -1,3 +1,21 @@
+.settings-administration__manage-connection {
+	.panel-with-sidebar & {
+		margin-left: 0;
+
+		.panel-section {
+			max-width: 800px !important;
+		}
+	}
+
+	.site-tools__link {
+		width: 100%;
+	}
+}
+
+.manage-connection__formfieldset.form-fieldset {
+	margin: 0;
+}
+
 .manage-connection__user {
 	padding: 5px 10px 0;
 	display: inline-block;
@@ -14,6 +32,10 @@
 
 .manage-connection__disconnect-link {
 	margin-top: 16px;
+}
+
+.manage-connection__user-dropdown {
+	margin-top: 5px;
 }
 
 .manage-connection__user-dropdown .author-selector__author-toggle {

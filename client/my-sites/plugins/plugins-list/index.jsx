@@ -408,7 +408,17 @@ export class PluginsList extends Component {
 				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
 				{
 					components: {
-						link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
+						link: (
+							<a
+								href={
+									config.isEnabled( 'untangling/hosting-menu' )
+										? '/sites/settings/administration/' +
+										  this.props.selectedSiteSlug +
+										  '/manage-connection'
+										: '/settings/manage-connection/' + this.props.selectedSiteSlug
+								}
+							/>
+						),
 					},
 				}
 			)
