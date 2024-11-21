@@ -85,7 +85,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			! isNotAtomicJetpack( site ) &&
 			! isDisconnectedJetpackAndNotAtomic( site )
 		) {
-			openSitePreviewPane && openSitePreviewPane( site, 'site_title' );
+			openSitePreviewPane && openSitePreviewPane( site, 'site_field' );
 		} else {
 			navigate( adminUrl );
 		}

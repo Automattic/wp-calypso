@@ -24,7 +24,10 @@ type Props = {
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null | undefined;
-	openSitePreviewPane: ( site: SiteExcerptData ) => void;
+	openSitePreviewPane: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
 };
 
 export function useSiteStatusGroups() {
@@ -97,7 +100,7 @@ const DotcomSitesDataViews = ( {
 			}
 			const site = sites.find( ( s ) => s.ID === Number( siteId ) );
 			if ( site ) {
-				openSitePreviewPane( site );
+				openSitePreviewPane( site, 'list_row_click' );
 			}
 		},
 		[ dataViewsState.type, openSitePreviewPane, sites ]
