@@ -39,6 +39,13 @@ export default function CampaignDownloadStats( props: Props ) {
 	const [ shouldFetchReportStatus, setShouldFetchReportStatus ] = useState( false );
 	const [ shouldFetchReportData, setShouldFetchReportData ] = useState( false );
 
+	// 1 RequestCampaignReport
+	const { requestCampaignReport } = useRequestCampaignReportMutation( () => {
+		setStatsError();
+		setIsStatsDownloading( false );
+	} );
+
+	// 2 GetCampaignReportStatus
 	const { data: reportStatus } = useCampaignReportStatusQuery(
 		siteId,
 		campaignId,
@@ -49,6 +56,7 @@ export default function CampaignDownloadStats( props: Props ) {
 		}
 	);
 
+	// 3 GetCampaignReport
 	const { data: reportData } = useCampaignReportDataQuery(
 		siteId,
 		campaignId,
@@ -58,35 +66,6 @@ export default function CampaignDownloadStats( props: Props ) {
 			enabled: shouldFetchReportData,
 		}
 	);
-
-	const { requestCampaignReport } = useRequestCampaignReportMutation( () => {
-		setStatsError();
-		setIsStatsDownloading( false );
-	} );
-
-	const downloadStatsInit = async () => {
-		if ( ! siteId || ! campaignId ) {
-			setStatsError();
-			return;
-		}
-		setIsStatsDownloading( true );
-		try {
-			const result = await requestCampaignReport( siteId, campaignId, downloadOptions );
-			if ( ! result?.report_id ) {
-				setStatsError();
-			}
-			if ( result.report_id ) {
-				setReportId( result.report_id );
-				setShouldFetchReportStatus( true );
-				return;
-			}
-			setStatsError();
-			setIsStatsDownloading( false );
-		} catch {
-			setStatsError();
-			setIsStatsDownloading( false );
-		}
-	};
 
 	useEffect( () => {
 		if ( ! campaign?.start_date || ! campaign?.end_date ) {
@@ -106,22 +85,50 @@ export default function CampaignDownloadStats( props: Props ) {
 		} ) );
 	}, [ campaign ] );
 
+	const downloadStatsInit = async () => {
+		// gets triggered when the download data button is clicked
+		if ( ! siteId || ! campaignId ) {
+			setStatsError();
+			return;
+		}
+		setIsStatsDownloading( true );
+		try {
+			// call to DSP RequestCampaignReport
+			const result = await requestCampaignReport( siteId, campaignId, downloadOptions );
+			if ( result?.report_id ) {
+				setReportId( result.report_id ); // Save the report ID for fetching status
+				setShouldFetchReportStatus( true );
+			} else {
+				setStatsError();
+				setIsStatsDownloading( false );
+			}
+		} catch {
+			setStatsError();
+			setIsStatsDownloading( false );
+		}
+	};
+
 	useEffect( () => {
+		// Effect triggered when `reportStatus` updates
 		let timer: number | NodeJS.Timeout;
 		if ( reportStatus ) {
 			setShouldFetchReportStatus( false );
 			if ( reportStatus.status === 'completed' ) {
+				// Trigger fetching the report data object when completed
 				setShouldFetchReportData( true );
 			} else if ( reportStatus.status === 'failed' ) {
 				setStatsError();
+				setIsStatsDownloading( false );
 			} else if ( [ 'active', 'waiting', 'delayed' ].includes( reportStatus.status ) ) {
+				// will retrigger the status fetch after 1.2 sec
 				timer = setTimeout( () => setShouldFetchReportStatus( true ), 1200 );
 			}
 		}
 		return () => clearTimeout( timer ); // Cleanup timer on unmount
-	}, [ reportStatus, shouldFetchReportStatus, setStatsError, setShouldFetchReportData ] );
+	}, [ reportStatus ] );
 
 	useEffect( () => {
+		// Effect triggered when `reportData` updates
 		if ( reportData ) {
 			setIsStatsDownloading( false );
 			setShouldFetchReportData( false );
@@ -129,7 +136,16 @@ export default function CampaignDownloadStats( props: Props ) {
 				cvsStatsDownload( reportData.content, reportData.fileName );
 			}
 		}
-	}, [ reportData, setIsStatsDownloading, setShouldFetchReportData ] );
+	}, [ reportData ] );
+
+	useEffect( () => {
+		// Reset state when the user clicks the button again
+		if ( ! isStatsDownloading && reportId ) {
+			setReportId( '' );
+			setShouldFetchReportStatus( false );
+			setShouldFetchReportData( false );
+		}
+	}, [ isStatsDownloading ] );
 
 	return (
 		<>
