@@ -77,8 +77,13 @@ export type Source = {
 		ui_position: number;
 		ui_algo: string;
 		fetch_algo: string;
+		fetch_lang: string;
 		fetch_position: number;
+		fetch_query: number;
 		railcar: string;
+		rec_blog_id: string;
+		rec_post_id: string;
+		rec_url: string;
 	};
 };
 
