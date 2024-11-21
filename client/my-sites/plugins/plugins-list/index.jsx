@@ -279,7 +279,7 @@ export class PluginsList extends Component {
 			//filter out sites that don't have an update available
 			selectedPlugins = selectedPlugins.map( ( plugin ) => {
 				const filteredSites = Object.fromEntries(
-					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update !== undefined )
+					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
 				);
 				return { ...plugin, sites: filteredSites };
 			} );
