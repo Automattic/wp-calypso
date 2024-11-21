@@ -52,7 +52,7 @@ export function ToolsSidebar() {
 }
 
 export function advancedTools( context: PageJSContext, next: () => void ) {
-	context.primary = <HostingFeatures />;
+	context.primary = <HostingFeatures showAsTools />;
 	next();
 }
 
