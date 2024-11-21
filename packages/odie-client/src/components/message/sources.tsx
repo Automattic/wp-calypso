@@ -18,9 +18,15 @@ export const Sources = ( { message }: { message: Message } ) => {
 					trackEvent( 'sources_traintracks_render', {
 						fetch_algo: source?.railcar?.fetch_algo,
 						ui_algo: 'default',
+						message_id: message?.message_id,
 						railcar: source?.railcar?.railcar,
 						fetch_position: source?.railcar?.fetch_position,
+						fetch_query: source?.railcar?.fetch_query,
+						fetch_lang: source?.railcar?.fetch_lang,
 						ui_position: index,
+						rec_query: source?.railcar?.rec_query,
+						rec_blog_id: source?.railcar?.rec_blog_id,
+						rec_post_id: source?.railcar?.rec_post_id,
 					} );
 				}
 			} );
