@@ -34,7 +34,7 @@ const DeletedStatus = styled.div`
 
 interface SiteStatusProps {
 	site: SiteExcerptData;
-	isRestoring: boolean;
+	isRestoring?: boolean;
 }
 
 export const SiteStatus = ( { site, isRestoring }: SiteStatusProps ) => {
