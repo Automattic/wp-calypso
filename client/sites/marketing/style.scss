@@ -119,6 +119,10 @@
 
 .sharing-services-group__services {
 	margin: 24px -22px -23px -22px;
+
+	.notice {
+		margin-bottom: 0;
+	}
 }
 
 .sharing-services-group__services .notice.sharing-service__unsupported {
