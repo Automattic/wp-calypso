@@ -32,6 +32,7 @@ export const SECTION_BLOGGING_PROMPT = 'home-section-blogging-prompt';
 export const SECTION_BLOGANUARY_BLOGGING_PROMPT = 'home-section-bloganuary-blogging-prompt';
 export const SECTION_MANAGE_SITE = 'home-section-manage-site';
 export const TASK_AFFILIATES = 'home-task-affiliates';
+export const TASK_BLACK_FRIDAY_2024 = 'home-task-black-friday-2024';
 export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_EARN_FEATURES = 'home-task-earn-features';
 export const TASK_GO_MOBILE_ANDROID = 'home-task-go-mobile-android';
