@@ -20,6 +20,7 @@ import {
 import {
 	getPluginsOnSites,
 	getPluginStatusesByType,
+	isRequestingForAllSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -547,6 +548,7 @@ export default connect(
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
 			siteIsAtomic: isSiteAutomatedTransfer( state, selectedSite?.ID ),
 			siteIsJetpack: isJetpackSite( state, selectedSite?.ID ),
+			isLoading: isRequestingForAllSites( state ),
 		};
 	},
 	{
