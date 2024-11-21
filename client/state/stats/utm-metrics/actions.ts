@@ -47,12 +47,13 @@ export function requestMetricsFail( siteId: number ) {
  * @param {Object} data   API response
  * @returns {Object}  Action object
  */
-export function receiveMetrics( siteId: number, data: object, siteSlug: string ) {
+export function receiveMetrics( siteId: number, data: object, siteSlug: string, utmParam: string ) {
 	return {
 		type: STATS_UTM_METRICS_RECEIVE,
 		siteId,
 		data,
 		siteSlug,
+		utmParam,
 	};
 }
 
