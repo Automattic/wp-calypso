@@ -1,7 +1,7 @@
 import guessTimezone from '@automattic/i18n-utils/src/guess-timezone';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { useEffect, useState } from 'react';
 import { CampaignReportRequestBody } from 'calypso/data/promote-post/types';
 import useCampaignReportDataQuery from 'calypso/data/promote-post/use-promote-post-campaign-report-data-query';
