@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import blackFriday2024Illustration from 'calypso/assets/images/customer-home/illustration--black-friday-2024.png';
+import blackFriday2024Illustration from 'calypso/assets/images/customer-home/illustration--black-friday-2024.jpg';
 import { TASK_BLACK_FRIDAY_2024 } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 

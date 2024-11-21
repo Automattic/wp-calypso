@@ -26,13 +26,22 @@
 		}
 		.task__illustration {
 			display: flex;
-			width: calc(60% + 32px);
+			width: calc(75% + 32px);
 			position: absolute;
 			bottom: 0;
 			right: 0;
 			border-bottom-right-radius: 3px;
 			overflow: hidden;
 			z-index: -1;
+
+			img {
+				transform: translateX(14%);
+
+				[dir="rtl"] & {
+					transform: translateX(20%);
+				}
+
+			}
 		}
 	}
 }
