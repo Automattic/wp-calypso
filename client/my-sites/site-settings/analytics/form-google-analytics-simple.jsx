@@ -6,9 +6,9 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import {
-	CompactCard,
 	FormInputValidation as FormTextValidation,
 	FormLabel,
+	Button,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -18,7 +18,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 
 import './style.scss';
 
@@ -89,29 +89,17 @@ const GoogleAnalyticsSimpleForm = ( {
 				id="analytics"
 				onSubmit={ handleSubmitForm }
 			>
-				<SettingsSectionHeader
-					disabled={ isSubmitButtonDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Google' ) }
-				/>
-
-				<CompactCard>
+				<>
+					<PanelHeading>{ translate( 'Google Analytics' ) }</PanelHeading>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
 							<img src={ googleIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
-							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Google Analytics' ) }
-							</p>
 							<p>
 								{ translate(
 									'A free analytics tool that offers additional insights into your site.'
-								) }
-							</p>
-							<p>
+								) }{ ' ' }
 								<a
 									onClick={ recordSupportLinkClick }
 									href={ analyticsSupportUrl }
@@ -177,11 +165,11 @@ const GoogleAnalyticsSimpleForm = ( {
 							</p>
 						</div>
 					) }
-				</CompactCard>
+				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<CompactCard>
+					<>
 						<div className="analytics site-settings__analytics">
 							<ToggleControl
 								checked={ displayForm }
@@ -190,9 +178,16 @@ const GoogleAnalyticsSimpleForm = ( {
 								label={ translate( 'Add Google' ) }
 							/>
 						</div>
-					</CompactCard>
+						<Button
+							className="is-primary"
+							disabled={ isSubmitButtonDisabled }
+							busy={ isSavingSettings }
+							onClick={ handleSubmitForm }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</>
 				) }
-				<div className="analytics site-settings__analytics-spacer" />
 			</form>
 		);
 	};
@@ -202,7 +197,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	if ( ! site ) {
 		return null;
 	}
-	return renderForm();
+	return <PanelSection>{ renderForm() }</PanelSection>;
 };
 
 export default GoogleAnalyticsSimpleForm;

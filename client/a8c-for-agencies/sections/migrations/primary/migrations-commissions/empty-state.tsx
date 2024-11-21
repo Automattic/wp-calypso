@@ -68,7 +68,7 @@ export default function MigrationsCommissionsEmptyState( {
 									}
 								) }
 							</li>
-							<li>{ translate( 'Tag the connected sites using the button below..' ) }</li>
+							<li>{ translate( 'Tag the connected sites using the button below.' ) }</li>
 						</ul>
 
 						<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>

@@ -10,8 +10,6 @@ import {
 	general,
 	legacyRedirects,
 	manageConnection,
-	redirectIfCantDeleteSite,
-	redirectIfCantStartSiteOwnerTransfer,
 	redirectToGeneral,
 	redirectToTraffic,
 	startOver,
@@ -20,6 +18,10 @@ import {
 	wpcomSiteTools,
 } from 'calypso/my-sites/site-settings/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import {
+	redirectIfCantDeleteSite,
+	redirectIfCantStartSiteOwnerTransfer,
+} from 'calypso/sites/settings/administration/controller';
 
 export default function () {
 	page( '/settings', '/settings/general' );

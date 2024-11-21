@@ -1,8 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import DeleteSite from 'calypso/my-sites/site-settings/delete-site';
-import ManageConnection from 'calypso/my-sites/site-settings/manage-connection';
-import SiteOwnerTransfer from 'calypso/my-sites/site-settings/site-owner-transfer/site-owner-transfer';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import {
@@ -11,7 +8,10 @@ import {
 } from '../features';
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
+import DeleteSite from './administration/tools/delete-site';
+import ManageConnection from './administration/tools/manage-connection';
 import ResetSite from './administration/tools/reset-site';
+import TransferSite from './administration/tools/transfer-site';
 import CachingSettings from './caching';
 import SiteSettings from './site';
 import WebServerSettings from './web-server';
@@ -84,7 +84,7 @@ export function administrationToolTransferSite( context: PageJSContext, next: ()
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar />
-			<SiteOwnerTransfer />
+			<TransferSite />
 		</PanelWithSidebar>
 	);
 	next();

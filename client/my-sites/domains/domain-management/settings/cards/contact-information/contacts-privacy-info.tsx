@@ -26,6 +26,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 			registeredViaTrustee,
 			registeredViaTrusteeUrl,
 			supportsGdprConsentManagement,
+			isHundredYearDomain,
 		} = domain;
 
 		return (
@@ -42,6 +43,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 				readOnly={ readonly }
 				registeredViaTrustee={ registeredViaTrustee }
 				registeredViaTrusteeUrl={ registeredViaTrusteeUrl }
+				isHundredYearDomain={ isHundredYearDomain }
 			/>
 		);
 	};

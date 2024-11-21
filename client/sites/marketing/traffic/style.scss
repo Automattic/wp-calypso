@@ -285,12 +285,20 @@
 }
 
 .settings-traffic {
+	.promo-card-block {
+		margin-top: 0;
+	}
+
 	.promo-card-block .button {
 		float: none;
 	}
 
 	.promo-card-block img {
 		max-width: 170px;
+	}
+
+	.panel-section {
+		margin-bottom: 16px;
 	}
 
 	#analytics {

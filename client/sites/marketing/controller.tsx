@@ -24,7 +24,9 @@ export function MarketingSidebar() {
 				{ __( 'Connections' ) }
 			</SidebarItem>
 			<SidebarItem href={ `/sites/marketing/traffic/${ slug }` }>{ __( 'Traffic' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/marketing/sharing/${ slug }` }>{ __( 'Sharing' ) }</SidebarItem>
+			<SidebarItem href={ `/sites/marketing/sharing-buttons/${ slug }` }>
+				{ __( 'Sharing' ) }
+			</SidebarItem>
 		</Sidebar>
 	);
 }

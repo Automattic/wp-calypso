@@ -38,7 +38,7 @@ export function DIFMUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 	);
 	return (
 		<Banner
-			className="site-settings__built-by-upsell settings-site__built-by-upsell"
+			className="site-settings__built-by-upsell settings__built-by-upsell"
 			title={ __( 'We’ll build your site for you' ) }
 			description={ __(
 				'Leave the heavy lifting to us and let our professional builders craft your compelling website.'

@@ -22,6 +22,7 @@
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"akismet/checkout-quantity-dropdown": true,
+		"automated-migration/application-password": false,
 		"automated-migration/collect-credentials": true,
 		"automated-migration/pending-status": true,
 		"bulk-plugin-management": true,
