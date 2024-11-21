@@ -201,6 +201,11 @@ class StatsSite extends Component {
 		}
 
 		const { period: barPeriod } = this.props.period;
+		// Stop navigation if the bar period is hour.
+		if ( barPeriod === 'hour' ) {
+			return;
+		}
+
 		// Navigate from the chart bar with period and period start date.
 		page( this.navigationFromChartBar( bar.data.period, barPeriod ) );
 	};
