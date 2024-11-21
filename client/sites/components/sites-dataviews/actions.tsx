@@ -20,7 +20,7 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
 
-export function useActions(): Action< SiteExcerptData >[] {
+export function useActions( { restoreSite }: { restoreSite: any } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
 
@@ -34,6 +34,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_launch_click' ) );
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const isLaunched = site.launch_status !== 'unlaunched';
 					const isA4ADevSite = site.is_a4a_dev_site;
 					const isWpcomStagingSite = site.is_wpcom_staging_site;
@@ -52,6 +56,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					);
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const isLaunched = site.launch_status !== 'unlaunched';
 					const isA4ADevSite = site.is_a4a_dev_site;
 					const isWpcomStagingSite = site.is_wpcom_staging_site;
@@ -67,12 +75,22 @@ export function useActions(): Action< SiteExcerptData >[] {
 					page( getSettingsUrl( sites[ 0 ].slug ) );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
 				},
+				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+					return true;
+				},
 			},
 
 			{
 				id: 'general-settings',
 				label: __( 'General settings' ),
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
 					return isWpAdminInterface;
@@ -100,6 +118,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
 					return ! isSiteJetpackNotAtomic && ! isP2Site( site );
 				},
@@ -115,6 +137,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					);
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					return !! site.is_wpcom_atomic;
 				},
 			},
@@ -135,6 +161,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_plugins_click' ) );
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					return ! isP2Site( site );
 				},
 			},
@@ -152,6 +182,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const isWpcomStagingSite = site.is_wpcom_staging_site;
 					const shouldShowSiteCopyItem =
 						!! site.plan?.features.active.includes( WPCOM_FEATURES_COPY_SITE );
@@ -177,6 +211,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					);
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
 					const isClassicSimple = isWpAdminInterface && isSimpleSite( site );
@@ -195,6 +233,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					);
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const isLaunched = site.launch_status !== 'unlaunched';
 					return isLaunched;
 				},
@@ -211,6 +253,10 @@ export function useActions(): Action< SiteExcerptData >[] {
 					);
 				},
 				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+
 					const hasCustomDomain = isCustomDomain( site.slug );
 					const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
 					return hasCustomDomain && ! isSiteJetpackNotAtomic;
@@ -225,8 +271,24 @@ export function useActions(): Action< SiteExcerptData >[] {
 					window.location.href = site.options?.admin_url ?? '';
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
 				},
+				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+					return true;
+				},
+			},
+
+			{
+				id: 'restore',
+				label: __( 'Restore' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					restoreSite( site.ID );
+				},
+				isEligible: ( site ) => site?.is_deleted,
 			},
 		],
-		[ __, dispatch ]
+		[ __, dispatch, restoreSite ]
 	);
 }
