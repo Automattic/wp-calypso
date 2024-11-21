@@ -15,7 +15,7 @@ export default function NewStatsTabs( { data, tabs, switchTab, selectedTab, prev
 
 	return (
 		<HighlightCards
-			counts={ { activeData } }
+			counts={ activeData }
 			previousCounts={ previousData }
 			onClickViews={ () => switchTab( 'views' ) }
 			onClickVisitors={ () => switchTab( 'visits' ) }
