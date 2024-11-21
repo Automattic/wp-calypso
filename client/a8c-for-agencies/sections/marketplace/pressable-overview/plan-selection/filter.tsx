@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -12,10 +12,15 @@ import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
 
 type Props = {
+	// Plan details for the plan that's currently selected in the UI
 	selectedPlan: APIProductFamilyProduct | null;
+	// All available Pressable plans
 	plans: APIProductFamilyProduct[];
+	// The users existing Pressable plan
 	pressablePlan?: PressablePlan | null;
+	// Plan selection handler
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
+	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
 };
 
@@ -30,6 +35,7 @@ export default function PlanSelectionFilter( {
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
+	const [ selectedTab, setSelectedTab ] = useState( 'standard' );
 
 	const options = useMemo(
 		() => [
@@ -40,10 +46,19 @@ export default function PlanSelectionFilter( {
 			{
 				label: translate( 'More' ),
 				value: null,
+				category: null,
 			},
 		],
 		[ filterType, plans, translate ]
 	);
+
+	// Split options based on category then remove the category property
+	const standardOptions = options
+		.filter( ( option ) => option.category === 'standard' )
+		.map( ( { category, ...rest } ) => rest );
+	const enterpriseOptions = options
+		.filter( ( option ) => option.category === 'enterprise' )
+		.map( ( { category, ...rest } ) => rest );
 
 	const onSelectOption = useCallback(
 		( option: Option ) => {
@@ -58,9 +73,13 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedOption = options.findIndex(
-		( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
-	);
+	const selectedCategory =
+		options.find( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) )
+			?.category || null;
+
+	const selectedOptionIndex = (
+		'standard' === selectedCategory ? standardOptions : enterpriseOptions
+	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
 
 	const onSelectInstallFilterType = useCallback( () => {
 		setFilterType( FILTER_TYPE_INSTALL );
@@ -109,39 +128,84 @@ export default function PlanSelectionFilter( {
 		);
 	}
 
+	const FilterByPicker = () => (
+		<div className="pressable-overview-plan-selection__filter-type">
+			<p className="pressable-overview-plan-selection__filter-label">
+				{ translate( 'Filter by:' ) }
+			</p>
+			<div className="pressable-overview-plan-selection__filter-buttons">
+				<Button
+					className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+						'is-dark': filterType === FILTER_TYPE_INSTALL,
+					} ) }
+					onClick={ onSelectInstallFilterType }
+				>
+					{ translate( 'WordPress installs' ) }
+				</Button>
+
+				<Button
+					className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+						'is-dark': filterType === FILTER_TYPE_VISITS,
+					} ) }
+					onClick={ onSelectVisitFilterType }
+				>
+					{ translate( 'Number of visits' ) }
+				</Button>
+			</div>
+		</div>
+	);
+
 	return (
 		<section className={ wrapperClass }>
-			<div className="pressable-overview-plan-selection__filter-type">
-				<p className="pressable-overview-plan-selection__filter-label">
-					{ translate( 'Filter by:' ) }
-				</p>
-				<div className="pressable-overview-plan-selection__filter-buttons">
-					<Button
-						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-dark': filterType === FILTER_TYPE_INSTALL,
-						} ) }
-						onClick={ onSelectInstallFilterType }
-					>
-						{ translate( 'WordPress installs' ) }
-					</Button>
-
-					<Button
-						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-dark': filterType === FILTER_TYPE_VISITS,
-						} ) }
-						onClick={ onSelectVisitFilterType }
-					>
-						{ translate( 'Number of visits' ) }
-					</Button>
-				</div>
-			</div>
-
-			<A4ASlider
-				value={ selectedOption }
-				onChange={ onSelectOption }
-				options={ options }
-				minimum={ minimum }
-			/>
+			<TabPanel
+				className="pressable-overview-plan-selection__plan-category-panel"
+				activeClass="active-tab"
+				tabs={ [
+					{
+						name: 'standard',
+						title: translate( 'Shared Resource Plans' ),
+					},
+					{
+						name: 'enterprise',
+						title: translate( 'Signature Shared Resource Plans' ),
+					},
+				] }
+				onSelect={ setSelectedTab }
+				initialTabName={ selectedTab }
+			>
+				{ ( tab ) => {
+					switch ( tab.name ) {
+						case 'standard':
+							return (
+								<>
+									<FilterByPicker />
+									<A4ASlider
+										value={ 'standard' === selectedCategory ? selectedOptionIndex : 0 }
+										onChange={ onSelectOption }
+										options={ standardOptions }
+										minimum={
+											'standard' === pressablePlan?.category ? minimum : standardOptions.length - 1
+										}
+									/>
+								</>
+							);
+						case 'enterprise':
+							return (
+								<>
+									<FilterByPicker />
+									<A4ASlider
+										value={ 'enterprise' === selectedCategory ? selectedOptionIndex : 0 }
+										onChange={ onSelectOption }
+										options={ enterpriseOptions }
+										minimum={ 'enterprise' === pressablePlan?.category ? minimum : 0 }
+									/>
+								</>
+							);
+						default:
+							return null;
+					}
+				} }
+			</TabPanel>
 		</section>
 	);
 }

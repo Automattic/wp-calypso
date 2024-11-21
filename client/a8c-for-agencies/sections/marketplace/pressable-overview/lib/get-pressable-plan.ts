@@ -3,6 +3,7 @@ export type PressablePlan = {
 	install: number;
 	visits: number;
 	storage: number;
+	category?: string;
 };
 
 const PLAN_DATA: Record< string, PressablePlan > = {
@@ -110,12 +111,65 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 3000000,
 		storage: 450,
 	},
+
+	// Pressable Enterprise plans
+	'pressable-enterprise-4': {
+		slug: 'pressable-enterprise-4',
+		install: 200,
+		visits: 4000000,
+		storage: 500,
+	},
+	'pressable-enterprise-5': {
+		slug: 'pressable-enterprise-5',
+		install: 250,
+		visits: 5000000,
+		storage: 550,
+	},
+	'pressable-enterprise-6': {
+		slug: 'pressable-enterprise-6',
+		install: 300,
+		visits: 6000000,
+		storage: 600,
+	},
+	'pressable-enterprise-7': {
+		slug: 'pressable-enterprise-7',
+		install: 350,
+		visits: 7000000,
+		storage: 700,
+	},
+	'pressable-enterprise-8': {
+		slug: 'pressable-enterprise-8',
+		install: 400,
+		visits: 8000000,
+		storage: 800,
+	},
+	'pressable-enterprise-9': {
+		slug: 'pressable-enterprise-9',
+		install: 450,
+		visits: 9000000,
+		storage: 900,
+	},
+	'pressable-enterprise-10': {
+		slug: 'pressable-enterprise-10',
+		install: 500,
+		visits: 10000000,
+		storage: 1000,
+	},
 };
 
 export default function getPressablePlan( slug: string ) {
-	return PLAN_DATA[ slug ];
+	return addCategoryToPlan( PLAN_DATA[ slug ] );
 }
 
 export function getAllPressablePlans() {
 	return Object.keys( PLAN_DATA );
+}
+
+function addCategoryToPlan( plan: PressablePlan ) {
+	if ( plan.slug.startsWith( 'pressable-enterprise' ) ) {
+		plan.category = 'enterprise';
+	} else {
+		plan.category = 'standard';
+	}
+	return plan;
 }

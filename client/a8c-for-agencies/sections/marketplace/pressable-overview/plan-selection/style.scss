@@ -303,3 +303,29 @@
 .pressable-overview-plan-selection__tooltip {
 	max-width: 400px;
 }
+
+.pressable-overview-plan-selection__plan-category-panel {
+	.components-tab-panel__tabs {
+		justify-content: center;
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		padding: 7px 0;
+		margin-bottom: 32px;
+
+		button {
+			flex: 1;
+			margin: 0 7px;
+			&:hover {
+				background-color: initial;
+				color: inherit;
+			}
+
+			&.active-tab {
+				background-color: var(--color-primary-50);
+				border-color: var(--color-primary-50);
+				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+}

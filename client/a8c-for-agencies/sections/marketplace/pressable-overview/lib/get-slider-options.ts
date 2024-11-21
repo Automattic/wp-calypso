@@ -11,6 +11,7 @@ export default function getSliderOptions( type: FilterType, plans: PressablePlan
 			return {
 				label: `${ type === FILTER_TYPE_INSTALL ? plan.install : formatNumber( plan.visits ) }`,
 				value: plan.slug,
+				category: plan.category,
 			};
 		} );
 }
