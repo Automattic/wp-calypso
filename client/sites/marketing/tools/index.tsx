@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { ResponsiveToolbarGroup, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import Search, { useTermsSuggestions, useFuzzySearch } from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
@@ -22,6 +22,12 @@ import './style.scss';
 
 const MARKETING_FEATURES_SEARCH_KEYS = [ 'title', 'description' ];
 
+const items = [
+	{ key: '', text: 'All' },
+	{ key: 'seo', text: 'New tools' },
+	{ key: 'share', text: 'User favorites' },
+];
+
 export default function MarketingTools() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -43,6 +49,10 @@ export default function MarketingTools() {
 		query: searchTerm ?? '',
 	} );
 
+	function handleSelect( key: string ): void {
+		setSearchTerm( key );
+	}
+
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
 
@@ -58,23 +68,36 @@ export default function MarketingTools() {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<Search
-				className={ clsx( 'search-categories__searchbox', {
-					'search-categories__searchbox--mobile': ! isDesktop(),
-				} ) }
-				onSearch={ setSearchTerm }
-				defaultValue={ searchTerm }
-				searchMode="when-typing"
-				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
-					args: { searchTermSuggestion: searchTermSuggestion ?? 'seo' },
-					textOnly: true,
-				} ) }
-				delaySearch={ false }
-				// recordEvent={ recordSearchEvent }
-				submitOnOpenIconClick
-				openIconSide="right"
-				displayOpenAndCloseIcons
-			/>
+			<div className="search-categories__container">
+				<Search
+					className={ clsx( 'search-categories__searchbox', {
+						'search-categories__searchbox--mobile': ! isDesktop(),
+					} ) }
+					onSearch={ setSearchTerm }
+					defaultValue={ searchTerm }
+					searchMode="when-typing"
+					placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
+						args: { searchTermSuggestion: searchTermSuggestion ?? 'seo' },
+						textOnly: true,
+					} ) }
+					delaySearch={ false }
+					// recordEvent={ recordSearchEvent }
+					submitOnOpenIconClick
+					openIconSide="right"
+					displayOpenAndCloseIcons
+				/>
+				<ResponsiveToolbarGroup
+					className="search-categories__toolbar"
+					initialActiveIndex={ 0 }
+					forceSwipe={ 'undefined' === typeof window }
+					onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
+					swipeEnabled={ false }
+				>
+					{ items.map( ( item ) => (
+						<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
+					) ) }
+				</ResponsiveToolbarGroup>
+			</div>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {
 					return (

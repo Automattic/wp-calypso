@@ -20,6 +20,17 @@
 	background-color: #fff;
 }
 
+.search-categories__container{
+	display: flex;
+	align-items: center;
+}
+
+.responsive-toolbar-group.search-categories__toolbar {
+	margin-left: 20px;
+	width: 280px;
+	padding: 0;
+}
+
 .search-component.search-categories__searchbox {
 	max-width: 250px;
 	width: 100%;
