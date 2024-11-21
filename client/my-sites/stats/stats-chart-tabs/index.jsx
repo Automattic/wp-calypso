@@ -96,7 +96,12 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		this.props.requestChartCounts( this.props.query );
+		if ( this.props.query.chartStart === this.props.query.date ) {
+			this.props.requestChartCounts( this.props.queryDay );
+		}
+	};
 
 	render() {
 		const {
@@ -145,6 +150,7 @@ class StatModuleChartTabs extends Component {
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
 					aggregate={ isNewDateFilteringEnabled }
+					tabCountsAlt={ this.props.tabCountsAlt }
 				/>
 			</div>
 		);
@@ -192,9 +198,22 @@ const connectComponent = connect(
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
+		const queryDay = {
+			...query,
+			period: 'day',
+			quantity: 1,
+			statFields: [ 'visitors', 'likes', 'comments' ],
+		};
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const tabCountsAlt = getCountRecords(
+			state,
+			siteId,
+			queryDay.date,
+			queryDay.period,
+			queryDay.quantity
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
@@ -206,6 +225,8 @@ const connectComponent = connect(
 			queryKey,
 			siteId,
 			selectedPeriod: period,
+			queryDay,
+			tabCountsAlt: tabCountsAlt?.[ 0 ],
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }
