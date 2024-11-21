@@ -16,15 +16,20 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
 
 body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
 .is-section-jetpack-cloud-plugin-management .plugin-management-wrapper.is-bulk-plugin-management {
-    .dataviews-wrapper .dataviews-view-table {
-        .dataviews-view-table__row {
-            .plugin-icon {
-                max-width: 35px;
-                max-height: 35px;
-            }
+    .dataviews-wrapper {
+        max-width: 1500px;
+        margin: auto;
 
-            td:nth-child(2) {
-                white-space: break-spaces;
+        .dataviews-view-table {
+            .dataviews-view-table__row {
+                .plugin-icon {
+                    max-width: 35px;
+                    max-height: 35px;
+                }
+
+                td:nth-child(2) {
+                    white-space: break-spaces;
+                }
             }
         }
     }
