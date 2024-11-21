@@ -21,7 +21,10 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
-const defaultLayouts = { table: {} };
+const defaultLayouts = {
+	table: {},
+	grid: { layout: { mediaField: 'plugins', primaryField: 'title' } },
+};
 
 export default function PluginsListDataViews( {
 	currentPlugins,
