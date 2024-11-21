@@ -1,4 +1,4 @@
-const OpeningImage = ( props ) => (
+const OpeningImage = ( props: React.SVGProps< SVGSVGElement > ) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width={ 216 } height={ 140 } fill="none" { ...props }>
 		<path fill="#fff" d="M0 0h216v140H0z" />
 		<path fill="#BEA0F2" d="M148.084 4.2H83.319v21h64.765v-21Z" />
