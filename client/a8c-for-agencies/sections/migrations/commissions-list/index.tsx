@@ -35,7 +35,9 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 			},
 			{
 				id: 'migratedOn',
-				label: translate( 'Migrated on' ).toUpperCase(),
+				// FIXME: This should be "Migrated on" instead of "Date Added"
+				// We will change this when the MC tool is implemented and we have the migration date
+				label: translate( 'Date Added' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
