@@ -1057,11 +1057,7 @@ class RegisterDomainStep extends Component {
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
 			// Also, we want to error messages for unavailable TLDs in Gravatar.
 			// Since only a limited number of tlds is enabled for now, we show the message for all other TLDs.
-			if (
-				Array.isArray( this.state.availableTlds ) &&
-				this.state.availableTlds.length > 0 &&
-				! this.state.availableTlds.includes( getTld( domain ) )
-			) {
+			if ( ! this.state.availableTlds.includes( getTld( domain ) ) ) {
 				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
 			}
 			return;
@@ -1410,9 +1406,6 @@ class RegisterDomainStep extends Component {
 	onSearch = async ( searchQuery ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 
-		// Trigger a clean state for a new search
-		this.onSearchChange( searchQuery );
-
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 
 		this.setState(
@@ -1445,20 +1438,19 @@ class RegisterDomainStep extends Component {
 			() => {
 				const timestamp = Date.now();
 
-				this.getAvailableTlds( domain, this.props.vendor ).then( () => {
-					const domainSuggestions = Promise.all( [
-						this.checkDomainAvailability( domain, timestamp ),
-						this.getDomainsSuggestions( domain, timestamp ),
-					] );
+				this.getAvailableTlds( domain, this.props.vendor );
+				const domainSuggestions = Promise.all( [
+					this.checkDomainAvailability( domain, timestamp ),
+					this.getDomainsSuggestions( domain, timestamp ),
+				] );
 
-					domainSuggestions
-						.catch( () => [] ) // handle the error and return an empty list
-						.then( this.handleDomainSuggestions( domain ) );
+				domainSuggestions
+					.catch( () => [] ) // handle the error and return an empty list
+					.then( this.handleDomainSuggestions( domain ) );
 
-					if ( this.isSubdomainResultsVisible() ) {
-						this.getSubdomainSuggestions( domain, timestamp );
-					}
-				} );
+				if ( this.isSubdomainResultsVisible() ) {
+					this.getSubdomainSuggestions( domain, timestamp );
+				}
 			}
 		);
 	};
