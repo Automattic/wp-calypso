@@ -25,7 +25,7 @@
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"akismet/checkout-quantity-dropdown": true,
-		"automated-migration/application-password": false,
+		"automated-migration/application-password": true,
 		"automated-migration/collect-credentials": true,
 		"automated-migration/pending-status": true,
 		"calypsoify/plugins": true,

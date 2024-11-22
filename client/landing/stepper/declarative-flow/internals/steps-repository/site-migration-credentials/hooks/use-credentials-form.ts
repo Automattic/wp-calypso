@@ -97,17 +97,15 @@ export const useCredentialsForm = (
 	);
 
 	const submitWithApplicationPassword = useCallback(
-		( siteInfoResult?: UrlData ) => {
+		( siteInfoResult: UrlData ) => {
 			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
 				onSubmit( siteInfoResult );
-
-				return;
+			} else {
+				const applicationPasswordInfo = {
+					isAvailable: true,
+				};
+				onSubmit( siteInfoResult, applicationPasswordInfo );
 			}
-
-			const applicationPasswordInfo = {
-				isAvailable: true,
-			};
-			onSubmit( siteInfoResult, applicationPasswordInfo );
 		},
 		[ onSubmit ]
 	);
@@ -118,7 +116,7 @@ export const useCredentialsForm = (
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
 
-		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' ) {
+		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' && siteInfoResult ) {
 			await submitWithApplicationPassword( siteInfoResult );
 		} else {
 			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );
