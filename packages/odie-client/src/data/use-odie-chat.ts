@@ -7,8 +7,8 @@ import type { OdieChat, ReturnedChat } from '../types';
 /**
  * Get the ODIE chat and manage the cache to save on API calls.
  */
-export const useOdieChat = ( chatId: number | null, version: string | null ) => {
-	const { botNameSlug } = useOdieAssistantContext();
+export const useOdieChat = ( chatId: number | null ) => {
+	const { botNameSlug, version } = useOdieAssistantContext();
 
 	return useQuery< OdieChat, Error >( {
 		queryKey: [ 'odie-chat', botNameSlug, chatId, version ],

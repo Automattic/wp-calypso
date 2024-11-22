@@ -17,7 +17,7 @@ export const useSendOdieFeedback = () => {
 				method: 'POST',
 				path: `/odie/chat/${ botNameSlug }/${ chat.odieId }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
-				body: { rating_value: ratingValue, version },
+				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
 		},
 		onSuccess: ( data, { messageId, ratingValue } ) => {

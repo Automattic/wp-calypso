@@ -88,8 +88,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		config.isEnabled( 'help-center-experience' ),
-		version
+		config.isEnabled( 'help-center-experience' )
 	);
 
 	/**
