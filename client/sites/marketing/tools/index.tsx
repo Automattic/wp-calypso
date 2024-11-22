@@ -1,12 +1,12 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import Search, { useTermsSuggestions, useFuzzySearch } from '@automattic/search';
+import Search, { useTermsSuggestions } from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -19,8 +19,6 @@ import MarketingToolsHeader from './header';
 import { getMarketingFeaturesData } from './marketing-features-data';
 
 import './style.scss';
-
-const MARKETING_FEATURES_SEARCH_KEYS = [ 'title', 'description' ];
 
 export default function MarketingTools() {
 	const translate = useTranslate();
@@ -37,11 +35,13 @@ export default function MarketingTools() {
 		localizeUrl
 	);
 
-	const marketingFeaturesFiltered = useFuzzySearch( {
-		data: marketingFeatures,
-		keys: MARKETING_FEATURES_SEARCH_KEYS,
-		query: searchTerm ?? '',
-	} );
+	const marketingFeaturesFiltered = useMemo( () => {
+		return marketingFeatures.filter(
+			( feature ) =>
+				feature.title.toLowerCase().includes( searchTerm.toLowerCase() ) ||
+				feature.description.toLowerCase().includes( searchTerm.toLowerCase() )
+		);
+	}, [ searchTerm, marketingFeatures ] );
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
