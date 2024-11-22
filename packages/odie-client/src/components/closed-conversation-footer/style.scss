@@ -30,5 +30,27 @@
 		border-radius: 4px;
 		border: 1px solid var(--studio-gray-10, #C3C4C7);
 		background: var(--studio-white, #FFF);
+		color: var(--studio-gray-100, #101517);
+
+		svg {
+			color: var(--studio-gray-40);
+		}
+
+		&:hover {
+			border-color: var(--color-neutral-20)  !important;
+		}
+
+		&:focus {
+			outline: var(--studio-blue-50, #0675c4) solid 2px !important;
+		}
+
+		&:focus,
+		&:hover {
+			color: var(--studio-gray-100, #101517) !important;
+
+			svg {
+				color: var(--studio-gray-40);
+			}
+		}
 	}
 }
