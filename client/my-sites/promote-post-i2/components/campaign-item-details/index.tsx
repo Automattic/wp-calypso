@@ -57,7 +57,6 @@ interface Props {
 	isLoading?: boolean;
 	siteId: number;
 	campaign: CampaignResponse;
-	campaignChartStats?: CampaignChartStatsResponse;
 }
 
 const FlexibleSkeleton = () => {
@@ -129,10 +128,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
-	const campaignStatsQuery = useCampaignChartStatsQuery( siteId, campaignId, campaign.start_date );
-	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
-	const { data: campaignStats } = campaignStatsQuery;
-
 	const {
 		audience_list,
 		content_config,
@@ -168,6 +163,15 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_rate,
 		conversion_last_currency_found,
 	} = campaign_stats || {};
+
+	const campaignStatsQuery = useCampaignChartStatsQuery(
+		siteId,
+		campaignId,
+		campaign.start_date,
+		!! impressions_total
+	);
+	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
+	const { data: campaignStats } = campaignStatsQuery;
 
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
