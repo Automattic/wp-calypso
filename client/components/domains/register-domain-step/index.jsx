@@ -344,9 +344,8 @@ class RegisterDomainStep extends Component {
 			// Delete the stored query once it is consumed.
 			globalThis?.sessionStorage?.removeItem( SESSION_STORAGE_QUERY_KEY );
 		} else {
-			this.getAvailableTlds( undefined, undefined, () => {
-				this.save();
-			} );
+			this.getAvailableTlds();
+			this.save();
 		}
 		this._isMounted = true;
 		this.props.recordSearchFormView( this.props.analyticsSection );
@@ -978,7 +977,7 @@ class RegisterDomainStep extends Component {
 		);
 	};
 
-	getAvailableTlds = ( domain = undefined, vendor = undefined, callback = noop ) => {
+	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
 		const { promoTlds } = this.props;
 		return getAvailableTlds( { vendor, search: domain } )
 			.then( ( availableTlds ) => {
@@ -986,12 +985,9 @@ class RegisterDomainStep extends Component {
 				if ( promoTlds ) {
 					filteredAvailableTlds = availableTlds.filter( ( tld ) => promoTlds.includes( tld ) );
 				}
-				this.setState(
-					{
-						availableTlds: filteredAvailableTlds,
-					},
-					callback
-				);
+				this.setState( {
+					availableTlds: filteredAvailableTlds,
+				} );
 			} )
 			.catch( noop );
 	};
@@ -1059,13 +1055,9 @@ class RegisterDomainStep extends Component {
 		// Skips availability check for the Gravatar flow - so TLDs that are
 		// available but not eligible for Gravatar won't be displayed
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
-			this.clearSuggestionErrorMessage();
 			// Also, we want to error messages for unavailable TLDs in Gravatar.
 			// Since only a limited number of tlds is enabled for now, we show the message for all other TLDs.
-			if (
-				this.state.availableTlds.length > 0 &&
-				! this.state.availableTlds.includes( getTld( domain ) )
-			) {
+			if ( ! this.state.availableTlds.includes( getTld( domain ) ) ) {
 				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
 			}
 			return;
@@ -1446,20 +1438,19 @@ class RegisterDomainStep extends Component {
 			() => {
 				const timestamp = Date.now();
 
-				this.getAvailableTlds( domain, this.props.vendor, () => {
-					const domainSuggestions = Promise.all( [
-						this.checkDomainAvailability( domain, timestamp ),
-						this.getDomainsSuggestions( domain, timestamp ),
-					] );
+				this.getAvailableTlds( domain, this.props.vendor );
+				const domainSuggestions = Promise.all( [
+					this.checkDomainAvailability( domain, timestamp ),
+					this.getDomainsSuggestions( domain, timestamp ),
+				] );
 
-					domainSuggestions
-						.catch( () => [] ) // handle the error and return an empty list
-						.then( this.handleDomainSuggestions( domain ) );
+				domainSuggestions
+					.catch( () => [] ) // handle the error and return an empty list
+					.then( this.handleDomainSuggestions( domain ) );
 
-					if ( this.isSubdomainResultsVisible() ) {
-						this.getSubdomainSuggestions( domain, timestamp );
-					}
-				} );
+				if ( this.isSubdomainResultsVisible() ) {
+					this.getSubdomainSuggestions( domain, timestamp );
+				}
 			}
 		);
 	};
@@ -1796,15 +1787,6 @@ class RegisterDomainStep extends Component {
 			availabilityError: error,
 			availabilityErrorData: errorData,
 			availabilityErrorDomain: domain,
-		} );
-	}
-
-	clearSuggestionErrorMessage() {
-		this.setState( {
-			showSuggestionNotice: false,
-			suggestionError: null,
-			suggestionErrorData: null,
-			suggestionErrorDomain: null,
 		} );
 	}
 
