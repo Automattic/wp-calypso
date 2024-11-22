@@ -21,47 +21,10 @@
 }
 
 .search-component.marketing-tools__searchbox {
-	border-radius: 4px;
-
-
 	box-shadow: 0 0 0 1px var(--studio-gray-10);
 
-	.search-component__icon-navigation:focus {
-		box-shadow: none;
-	}
-	.search-component__open-icon,
-	.search-component__close-icon {
-		color: var(--studio-gray-30);
-
-		&:hover {
-			color: var(--studio-gray-60);
-		}
-	}
-
-	.search-component__icon-navigation {
-		margin-right: 4px;
-	}
-
-	.search-component__icon-navigation-separator {
-		user-select: none;
-		color: var(--studio-gray-5);
-		margin-bottom: 3px;
-	}
-
-	.search-component__input-fade {
-		font-size: $font-body-small !important;
-		padding-left: 14px !important;
-	}
-
-	.search-component__open-icon {
-		height: 24px;
-		margin-right: -9px;
-	}
-
-	.search-component__close-icon {
-		height: 20px;
-		margin-left: -9px;
-		margin-right: -10px;
+	.search-component__input {
+		padding-left: 16px;
 	}
 }
 
