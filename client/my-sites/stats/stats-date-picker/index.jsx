@@ -33,6 +33,11 @@ class StatsDatePicker extends Component {
 
 	dateForSummarize() {
 		const { query, moment, translate } = this.props;
+
+		if ( query.start_date ) {
+			return this.dateForCustomRange();
+		}
+
 		const localizedDate = moment();
 
 		switch ( query.num ) {
@@ -49,6 +54,21 @@ class StatsDatePicker extends Component {
 					},
 				} );
 		}
+	}
+
+	dateForCustomRange() {
+		const { query, moment, translate } = this.props;
+
+		const localizedStartDate = moment( query.start_date );
+		const localizedEndDate = moment( query.date );
+
+		return translate( '%(startDate)s ~ %(endDate)s', {
+			context: 'Date range for which stats are being displayed',
+			args: {
+				startDate: localizedStartDate.format( 'll' ),
+				endDate: localizedEndDate.format( 'll' ),
+			},
+		} );
 	}
 
 	dateForDisplay() {

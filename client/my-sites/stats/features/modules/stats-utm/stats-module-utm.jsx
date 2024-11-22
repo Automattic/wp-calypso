@@ -113,6 +113,9 @@ const StatsModuleUTM = ( {
 	const showLoader = isLoading || isFetchingUTM;
 
 	const getHref = () => {
+		if ( ! hideSummaryLink && summaryUrl ) {
+			return summaryUrl;
+		}
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
 			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
