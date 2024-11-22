@@ -1,7 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
-import { A4A_REFERRALS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MIGRATIONS_PAYMENT_SETTINGS,
+	A4A_REFERRALS_PAYMENT_SETTINGS,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -126,7 +130,11 @@ export default function MigrationsFAQs() {
 						),
 						PaymentSettingLink: (
 							<a
-								href={ A4A_REFERRALS_PAYMENT_SETTINGS }
+								href={
+									config.isEnabled( 'a4a-tracking-site-migrations' )
+										? A4A_MIGRATIONS_PAYMENT_SETTINGS
+										: A4A_REFERRALS_PAYMENT_SETTINGS
+								}
 								onClick={ () =>
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_migrations_payment_setting_link_click' )
