@@ -39,6 +39,10 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
             }
         }
 
+        .dataviews-view-grid__primary-field a {
+            color: var(--color-link);
+        }
+
         .dataviews-view-grid {
             @media (max-width: $break-mobile) {
                 padding-inline: 24px;

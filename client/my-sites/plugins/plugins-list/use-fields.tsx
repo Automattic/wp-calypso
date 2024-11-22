@@ -24,11 +24,30 @@ export function useFields(
 							enableHiding: false,
 							enableSorting: false,
 							enableGlobalSearch: true,
-							render: ( { item }: { item: Plugin } ) => (
-								<a href={ '/plugins/' + item.slug }>
-									<span>{ item.name }</span>
-								</a>
-							),
+							render: ( { item }: { item: Plugin } ) => {
+								let pluginActionStatus = null;
+
+								if ( item.allStatuses?.length ) {
+									pluginActionStatus = (
+										<Button
+											className="sites-manage-plugin-status-button"
+											onClick={ () => toggleDialogForPlugin( item ) }
+										>
+											<PluginActionStatus
+												currentSiteStatuses={ item.allStatuses }
+												selectedSite={ undefined }
+											/>
+										</Button>
+									);
+								}
+
+								return (
+									<>
+										<a href={ '/plugins/' + item.slug }>{ item.name }</a>
+										{ pluginActionStatus }
+									</>
+								);
+							},
 						},
 				  ]
 				: [] ),
@@ -68,7 +87,7 @@ export function useFields(
 				render: ( { item }: { item: Plugin } ) => {
 					let pluginActionStatus = null;
 
-					if ( item.allStatuses?.length ) {
+					if ( item.allStatuses?.length && layout === 'table' ) {
 						pluginActionStatus = (
 							<Button
 								className="sites-manage-plugin-status-button"
