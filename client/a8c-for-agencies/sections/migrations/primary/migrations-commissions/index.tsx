@@ -16,7 +16,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';
 import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
-import useFetchMigrationCommissions from '../../hooks/use-fetch-migration-commissions';
+import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
 
@@ -35,12 +35,16 @@ export default function MigrationsCommissions() {
 		setShowAddSitesModal( true );
 	}, [ dispatch ] );
 
-	const { data: migrationCommissions, isFetched } = useFetchMigrationCommissions();
+	const {
+		data: taggedSites,
+		isLoading,
+		refetch: fetchMigratedSites,
+	} = useFetchTaggedSitesForMigration();
 
-	const showEmptyState = ! migrationCommissions?.length;
+	const showEmptyState = ! taggedSites?.length;
 
 	const content = useMemo( () => {
-		if ( ! isFetched ) {
+		if ( isLoading ) {
 			return (
 				<>
 					<TextPlaceholder />
@@ -53,11 +57,11 @@ export default function MigrationsCommissions() {
 			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
 		) : (
 			<div className="migrations-commissions__content">
-				<MigrationsConsolidatedCommissions items={ migrationCommissions } />
-				<MigrationsCommissionsList items={ migrationCommissions } />
+				<MigrationsConsolidatedCommissions items={ taggedSites } />
+				<MigrationsCommissionsList items={ taggedSites } />
 			</div>
 		);
-	}, [ isFetched, showEmptyState, migrationCommissions, setShowAddSitesModal ] );
+	}, [ isLoading, showEmptyState, taggedSites, setShowAddSitesModal ] );
 
 	return (
 		<Layout
@@ -94,7 +98,11 @@ export default function MigrationsCommissions() {
 				<>
 					{ content }
 					{ showAddSitesModal && (
-						<MigrationsTagSitesModal onClose={ () => setShowAddSitesModal( false ) } />
+						<MigrationsTagSitesModal
+							onClose={ () => setShowAddSitesModal( false ) }
+							taggedSites={ taggedSites }
+							fetchMigratedSites={ fetchMigratedSites }
+						/>
 					) }
 				</>
 			</LayoutBody>

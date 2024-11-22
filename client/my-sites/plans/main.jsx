@@ -151,6 +151,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 class PlansComponent extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
+		coupon: PropTypes.string,
 		redirectToAddDomainFlow: PropTypes.bool,
 		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
@@ -246,10 +247,12 @@ class PlansComponent extends Component {
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
 				<P2PlansMain
+					// None of these props appear to be used by the P2PlansMain component.
+					// We should consider removing them.
 					selectedPlan={ this.props.selectedPlan }
 					redirectTo={ this.props.redirectTo }
 					site={ selectedSite }
-					withDiscount={ this.props.withDiscount }
+					coupon={ this.props.coupon }
 					discountEndDate={ this.props.discountEndDate }
 				/>
 			);
@@ -273,7 +276,7 @@ class PlansComponent extends Component {
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
-				withDiscount={ this.props.withDiscount }
+				coupon={ this.props.coupon }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }

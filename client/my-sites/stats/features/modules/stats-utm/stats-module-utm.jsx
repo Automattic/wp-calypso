@@ -135,6 +135,8 @@ const StatsModuleUTM = ( {
 					components: {
 						link: (
 							<a
+								target="_blank"
+								rel="noreferrer"
 								href={ localizeUrl(
 									`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
 								) }
@@ -176,6 +178,8 @@ const StatsModuleUTM = ( {
 												components: {
 													link: (
 														<a
+															target="_blank"
+															rel="noreferrer"
 															href={ localizeUrl(
 																`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
 															) }

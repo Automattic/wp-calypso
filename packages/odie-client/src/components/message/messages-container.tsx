@@ -44,7 +44,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 	useEffect( () => {
-		chat?.status === 'loaded' && setChatLoaded( true );
+		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatLoaded( true );
 	}, [ chat ] );
 
 	const shouldLoadChat: boolean =
