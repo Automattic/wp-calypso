@@ -124,6 +124,12 @@ const Home = ( {
 		}
 	}, [ emailDnsDiagnostics ] );
 
+	useEffect( () => {
+		const studioSiteId = getQueryArgs()[ 'studio-site-id' ];
+		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
+		window.location.href = studioSiteUrl;
+	}, [ siteId ] );
+
 	const isFirstSecondaryCardInPrimaryLocation =
 		Array.isArray( layout?.primary ) &&
 		layout.primary.length === 0 &&
@@ -253,6 +259,31 @@ const Home = ( {
 		);
 	};
 
+	const renderStudioSyncNotice = () => {
+		const studioSiteId = getQueryArgs()[ 'studio-site-id' ];
+		if ( ! studioSiteId ) {
+			return null;
+		}
+		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
+
+		return (
+			<Notice
+				text={ translate( 'Connect to your Studio site to start syncing.' ) }
+				icon="sync"
+				showDismiss={ false }
+				status="is-info"
+			>
+				<NoticeAction
+					onClick={ () => {
+						window.location.href = studioSiteUrl;
+					} }
+				>
+					{ translate( 'Connect Studio' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	};
+
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
@@ -271,6 +302,7 @@ const Home = ( {
 				/>
 			) : null }
 
+			{ renderStudioSyncNotice() }
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
 
