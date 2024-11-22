@@ -3364,11 +3364,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2021,
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
 		getPathSlug: () => 'growth-monthly',
-		getProductsIncluded: () => [
-			PRODUCT_JETPACK_STATS_MONTHLY,
-			PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
-			// PRODUCT_JETPACK_CREATOR_MONTHLY,
-		],
+		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_MONTHLY, PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ],
 	},
 
 	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
@@ -3378,11 +3374,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_YEARLY,
 		getPathSlug: () => 'growth-yearly',
 		getMonthlySlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
-		getProductsIncluded: () => [
-			PRODUCT_JETPACK_STATS_YEARLY,
-			PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
-			// PRODUCT_JETPACK_CREATOR_YEARLY,
-		],
+		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_YEARLY, PRODUCT_JETPACK_SOCIAL_V1_YEARLY ],
 	},
 
 	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
@@ -3394,7 +3386,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
-			// PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 		],
 	},
 
