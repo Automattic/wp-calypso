@@ -1,3 +1,5 @@
+$break-mobile: 430px;
+
 body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
     display: flex;
     flex-direction: column;
@@ -11,6 +13,10 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
             max-width: 1400px;
             margin: auto;
         }
+
+        @media (max-width: $break-mobile) {
+			padding-inline: 24px;
+		}
 	}
 }
 
