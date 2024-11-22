@@ -89,10 +89,11 @@ export default function PlanSelectionFilter( {
 
 		const allAvailablePlans = plans
 			.map( ( plan ) => getPressablePlan( plan.slug ) )
-			.sort( ( a, b ) => a.install - b.install );
+			.filter( ( plan ) => plan !== undefined )
+			.sort( ( a, b ) => a?.install - b?.install );
 
 		for ( let i = 0; i < allAvailablePlans.length; i++ ) {
-			if ( pressablePlan.install < allAvailablePlans[ i ].install ) {
+			if ( pressablePlan?.install < allAvailablePlans[ i ]?.install ) {
 				return i;
 			}
 		}

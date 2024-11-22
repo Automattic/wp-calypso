@@ -1,7 +1,6 @@
 import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
-import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -31,7 +30,10 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
+	openSitePreviewPane?: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
 };
 
 const SiteListTile = styled( ListTile )`
@@ -43,6 +45,13 @@ const SiteListTile = styled( ListTile )`
 		gap: 12px;
 		max-width: 500px;
 		width: 100%;
+		/*  
+		 * Ensures the row fits within the device width on mobile in most cases, 
+		 * as it's not apparent to users that they can scroll horizontally.
+		*/
+		@media ( max-width: 480px ) {
+			width: 250px;
+		}
 	}
 `;
 
@@ -64,7 +73,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	}
 
 	const title = __( 'View Site Details' );
-	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
+	const { adminUrl } = useSiteAdminInterfaceData( site.ID );
 
 	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
 	const isWpcomStagingSite = isStagingSite( site );
@@ -79,7 +88,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			! isNotAtomicJetpack( site ) &&
 			! isDisconnectedJetpackAndNotAtomic( site )
 		) {
-			openSitePreviewPane && openSitePreviewPane( site );
+			openSitePreviewPane && openSitePreviewPane( site, 'site_field' );
 		} else {
 			navigate( adminUrl );
 		}
@@ -90,7 +99,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
-		<div className="sites-dataviews__site">
+		<button className="sites-dataviews__site" onClick={ onSiteClick }>
 			<SiteListTile
 				contentClassName={ clsx(
 					'sites-dataviews__site-name',
@@ -118,7 +127,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				}
 				title={
 					<ListTileTitle>
-						<SiteName as="div" title={ title }>
+						<SiteName className="sites-dataviews__site-title" as="div" title={ title }>
 							<Truncated>{ siteTitle }</Truncated>
 						</SiteName>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
@@ -136,27 +145,15 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					) : (
 						<>
 							<div className="sites-dataviews__site-urls">
-								<a
-									className="sites-dataviews__site-url"
-									href={ siteUrl }
-									title={ siteUrl }
-									target="_blank"
-									rel="noreferrer"
-								>
-									<Truncated>
-										{ displaySiteUrl( siteUrl ) }
-										<Icon icon={ external } size={ 16 } />
-									</Truncated>
-								</a>
+								<Truncated className="sites-dataviews__site-url">
+									{ displaySiteUrl( siteUrl ) }
+								</Truncated>
 							</div>
-							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
-								<Truncated>{ adminLabel }</Truncated>
-							</a>
 						</>
 					)
 				}
 			/>
-		</div>
+		</button>
 	);
 };
 

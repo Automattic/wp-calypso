@@ -32,7 +32,6 @@
 		"a8c-for-agencies/import-site-from-wpcom": true,
 		"cookie-banner": false,
 		"oauth": true,
-		"a4a/site-details-pane": true,
 		"a4a/site-migration": false,
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,

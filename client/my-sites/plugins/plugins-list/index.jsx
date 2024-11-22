@@ -444,15 +444,13 @@ export class PluginsList extends Component {
 	render() {
 		if ( this.props.newBulkPluginManagement ) {
 			return (
-				<div className="plugins-list">
-					<PluginsListDataViews
-						currentPlugins={ this.props.plugins }
-						initialSearch={ this.props.searchTerm }
-						isLoading={ this.props.isLoading }
-						onSearch={ this.props.onSearch }
-						bulkActionDialog={ this.bulkActionDialog }
-					/>
-				</div>
+				<PluginsListDataViews
+					currentPlugins={ this.props.plugins }
+					initialSearch={ this.props.searchTerm }
+					isLoading={ this.props.isLoading }
+					onSearch={ this.props.onSearch }
+					bulkActionDialog={ this.bulkActionDialog }
+				/>
 			);
 		}
 
