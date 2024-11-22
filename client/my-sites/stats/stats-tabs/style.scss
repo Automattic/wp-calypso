@@ -97,7 +97,6 @@ $stats-tab-outer-padding: 10px;
 
 			@include breakpoint-deprecated( ">480px" ) {
 				@include mobile-link-element;
-				@include clear-fix;
 				padding-bottom: $stats-tab-outer-padding;
 				-webkit-touch-callout: none;
 			}

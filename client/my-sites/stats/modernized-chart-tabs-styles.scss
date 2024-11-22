@@ -50,7 +50,6 @@ $custom-stats-tab-mobile-break: $break-medium;
 		.stats-tab {
 			font-family: $font-sf-pro-text;
 			flex: 1 1 250px;
-			max-width: 250px;
 			border: 0;
 
 			// Keep the original mobile stats-tabs styles
@@ -70,6 +69,17 @@ $custom-stats-tab-mobile-break: $break-medium;
 				}
 			}
 
+			// Keep the original mobile stats-tabs styles
+			@media (min-width: $custom-stats-tab-mobile-break) {
+				flex: 1 1 45%;
+				width: 45%;
+			}
+
+			@media (min-width: $break-wide) {
+				flex: 1 1 250px;
+				max-width: 250px;
+			}
+
 			.gridicon {
 				@media (max-width: $custom-stats-tab-mobile-break) {
 					float: left;
@@ -87,8 +97,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 				padding: 10px 6px;
 
 				@media (max-width: $custom-stats-tab-mobile-break) {
-					display: flex;
-					flex-direction: row;
+					display: grid;
+					grid-template-columns: 2fr 2fr 3fr;
 					align-items: center;
 					justify-content: space-between;
 				}
@@ -192,23 +202,10 @@ $custom-stats-tab-mobile-break: $break-medium;
 			&.is-highlighted {
 				text-align: left;
 
-				& > a {
-					padding: 16px 24px;
-				}
-
 				.stats-tabs__highlight {
 					display: flex;
-					align-items: end;
-					margin-top: 16px;
+					justify-content: end;
 				}
-				@media (min-width: $custom-stats-tab-mobile-break) {
-					.stats-tabs__highlight-value {
-						font-weight: 500;
-						font-size: $font-title-large;
-						line-height: 40px;
-					}
-				}
-
 				// TODO: The relevant class names could be refactored to be more comprehensive.
 				.highlight-card-difference {
 					font-size: $font-body-small;
@@ -216,6 +213,16 @@ $custom-stats-tab-mobile-break: $break-medium;
 					line-height: 25px;
 					letter-spacing: -0.24px;
 					margin-left: 8px;
+				}
+				@media (min-width: $custom-stats-tab-mobile-break) {
+					& > a {
+						padding: 16px 24px;
+					}
+					.stats-tabs__highlight-value {
+						font-weight: 500;
+						font-size: $font-title-large;
+						line-height: 40px;
+					}
 				}
 			}
 		}
