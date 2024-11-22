@@ -46,8 +46,17 @@ class StatsTabs extends Component {
 	};
 
 	render() {
-		const { children, data, previousData, tabs, switchTab, selectedTab, borderless, aggregate } =
-			this.props;
+		const {
+			children,
+			data,
+			previousData,
+			tabs,
+			switchTab,
+			selectedTab,
+			borderless,
+			aggregate,
+			tabCountsAlt,
+		} = this.props;
 
 		let statsTabs;
 
@@ -56,8 +65,10 @@ class StatsTabs extends Component {
 			const activePreviousData = this.formatData( previousData );
 
 			statsTabs = tabs.map( ( tab ) => {
+				const hasTrend = activeData?.[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 				const hasData =
-					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
+					( activeData?.[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null ) ||
+					( tabCountsAlt?.[ tab.attr ] >= 0 && tabCountsAlt[ tab.attr ] !== null );
 
 				const value = hasData ? activeData[ tab.attr ] : null;
 				const previousValue = activePreviousData && activePreviousData[ tab.attr ];
@@ -69,8 +80,8 @@ class StatsTabs extends Component {
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
-					tabClick: switchTab,
-					value,
+					tabClick: hasTrend ? switchTab : undefined,
+					value: hasData ? activeData?.[ tab.attr ] ?? tabCountsAlt?.[ tab.attr ] : null,
 					format: tab.format,
 				};
 
