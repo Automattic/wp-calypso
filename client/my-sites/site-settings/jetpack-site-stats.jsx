@@ -1,4 +1,4 @@
-import { CompactCard, FoldableCard } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -13,7 +13,7 @@ import SupportInfo from 'calypso/components/support-info';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -121,10 +121,10 @@ class JetpackSiteStats extends Component {
 		);
 
 		return (
-			<div className="site-settings__traffic-settings">
+			<PanelSection className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Jetpack Stats' ) } />
+				<PanelHeading>{ translate( 'Jetpack Stats' ) }</PanelHeading>
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
@@ -176,10 +176,10 @@ class JetpackSiteStats extends Component {
 					</FormFieldset>
 				</FoldableCard>
 
-				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
+				<Button href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
-				</CompactCard>
-			</div>
+				</Button>
+			</PanelSection>
 		);
 	}
 }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -40,6 +41,7 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
+	// TODO: Receive this list from the parent component.
 	const shortcutList = [
 		{
 			id: 'last_7_days',
@@ -83,6 +85,27 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
+	if ( config.isEnabled( 'stats/new-date-filtering' ) ) {
+		shortcutList.unshift(
+			{
+				id: 'today',
+				label: translate( 'Today' ),
+				offset: 0,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'today',
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				offset: 1,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'yesterday',
+			}
+		);
+	}
+
 	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
 		if ( ! startDate || ! endDate ) {
 			return null;
@@ -92,7 +115,10 @@ const DateRangePickerShortcuts = ( {
 		const today = siteToday.clone().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
-			if ( endDate.isSame( today, 'day' ) && daysInRange === element.range ) {
+			if (
+				( endDate.isSame( today, 'day' ) || element.offset === 1 ) &&
+				daysInRange === element.range
+			) {
 				return element;
 			}
 			return null;

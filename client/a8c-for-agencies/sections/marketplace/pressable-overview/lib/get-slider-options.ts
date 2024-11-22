@@ -5,6 +5,7 @@ import { PressablePlan } from './get-pressable-plan';
 
 export default function getSliderOptions( type: FilterType, plans: PressablePlan[] ) {
 	return plans
+		.filter( ( plan ) => plan !== undefined )
 		.sort( ( planA, planB ) => planA.install - planB.install ) // Ensure our options are sorted by install count
 		.map( ( plan ) => {
 			return {

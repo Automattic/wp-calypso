@@ -84,6 +84,12 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	}
 
 	function onSelectionHandler( interval ) {
+		// Temporary fix to prevent selecting intervals when the applied interval is not in the list. E.g., Hour.
+		// TODO: Remove the selection if the current applied interval is not in the list.
+		if ( ! intervals[ period ] ) {
+			return;
+		}
+
 		page( generateNewLink( interval ) );
 	}
 

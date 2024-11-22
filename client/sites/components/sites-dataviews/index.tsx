@@ -1,7 +1,7 @@
 import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import { useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -24,7 +24,10 @@ type Props = {
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null | undefined;
-	openSitePreviewPane: ( site: SiteExcerptData ) => void;
+	openSitePreviewPane: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
 };
 
 export function useSiteStatusGroups() {
@@ -88,45 +91,27 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// However, when don't need to do anything in the callback, because we already maintain a selectedItem state.
 	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
-	const onSelectionChange = () => {};
+	const onSelectionChange = useCallback(
+		( selectedSiteIds: string[] ) => {
+			// In table view, when a row is clicked, the item is selected for a bulk action, so the panel should not open.
+			if ( dataViewsState.type !== 'list' ) {
+				return;
+			}
+			if ( selectedSiteIds.length === 0 ) {
+				return;
+			}
+			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
+			if ( site ) {
+				openSitePreviewPane( site, 'list_row_click' );
+			}
+		},
+		[ dataViewsState.type, openSitePreviewPane, sites ]
+	);
 	const getSelection = useCallback(
 		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
 		[ selectedItem ]
 	);
-
-	useEffect( () => {
-		// If the user clicks on a row, open the site preview pane by triggering the site button click.
-		const handleRowClick = ( event: Event ) => {
-			const target = event.target as HTMLElement;
-			const row = target.closest(
-				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
-			);
-			if ( row ) {
-				const isButtonOrLink = target.closest( 'button, a' );
-				if ( ! isButtonOrLink ) {
-					const button = row.querySelector(
-						'.sites-dataviews__preview-trigger'
-					) as HTMLButtonElement;
-					if ( button ) {
-						button.click();
-					}
-				}
-			}
-		};
-
-		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
-		if ( rowsContainer ) {
-			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
-		}
-
-		return () => {
-			if ( rowsContainer ) {
-				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
-			}
-		};
-	}, [] );
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -199,7 +184,7 @@ const DotcomSitesDataViews = ( {
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
-	const actions = useActions();
+	const actions = useActions( { openSitePreviewPane, selectedItem } );
 
 	return (
 		<div className="sites-dataviews">
@@ -214,8 +199,6 @@ const DotcomSitesDataViews = ( {
 				selection={ getSelection() }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => {
-					// @ts-expect-error -- From ItemsDataViews, this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
-					item.id = item.ID.toString();
 					return item.ID.toString();
 				} }
 				isLoading={ isLoading }

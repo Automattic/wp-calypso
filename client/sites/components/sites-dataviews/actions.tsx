@@ -1,8 +1,10 @@
 import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { drawerLeft, wordpress, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -13,19 +15,90 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
+	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
-
-export function useActions(): Action< SiteExcerptData >[] {
+export function useActions( {
+	openSitePreviewPane,
+	selectedItem,
+}: {
+	openSitePreviewPane?: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
+	selectedItem?: SiteExcerptData | null;
+} ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
 
+	const capabilities = useSelector<
+		{
+			currentUser: {
+				capabilities: Record< string, Record< string, boolean > >;
+			};
+		},
+		Record< string, Record< string, boolean > >
+	>( ( state ) => state.currentUser.capabilities );
+
 	return useMemo(
 		() => [
+			{
+				id: 'site-overview',
+				isPrimary: true,
+				label: __( 'Overview' ),
+				icon: drawerLeft,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const adminUrl = site.options?.admin_url ?? '';
+					const isAdmin = capabilities[ site.ID ]?.manage_options;
+					if (
+						isAdmin &&
+						! isP2Site( site ) &&
+						! isNotAtomicJetpack( site ) &&
+						! isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						openSitePreviewPane && openSitePreviewPane( site, 'action' );
+					} else {
+						navigate( adminUrl );
+					}
+				},
+				isEligible: ( site ) => {
+					if ( site.ID === selectedItem?.ID ) {
+						return false;
+					}
+					return true;
+				},
+			},
+			{
+				id: 'open-site',
+				isPrimary: true,
+				label: __( 'Open site' ),
+				icon: external,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const siteUrl = window.open( site.URL, '_blank' );
+					if ( siteUrl ) {
+						siteUrl.opener = null;
+						siteUrl.focus();
+					}
+				},
+			},
+			{
+				id: 'admin',
+				isPrimary: true,
+				label: __( 'WP Admin' ),
+				icon: wordpress,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					window.location.href = site.options?.admin_url ?? '';
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
+				},
+			},
+
 			{
 				id: 'launch-site',
 				label: __( 'Launch site' ),
@@ -216,17 +289,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 					return hasCustomDomain && ! isSiteJetpackNotAtomic;
 				},
 			},
-
-			{
-				id: 'admin',
-				label: __( 'WP Admin' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					window.location.href = site.options?.admin_url ?? '';
-					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
-				},
-			},
 		],
-		[ __, dispatch ]
+		[ __, capabilities, dispatch, openSitePreviewPane, selectedItem?.ID ]
 	);
 }

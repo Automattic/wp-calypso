@@ -49,7 +49,7 @@ import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
-import ServiceExamples from './service-examples';
+import ServiceExamples, { SERVICES_WITH_EXAMPLES } from './service-examples';
 import ServiceTip from './service-tip';
 
 /**
@@ -490,6 +490,14 @@ export class SharingService extends Component {
 		);
 	}
 
+	shouldBeExpandable( status ) {
+		return (
+			this.shouldBeExpanded( status ) ||
+			SERVICES_WITH_EXAMPLES.includes( this.props.service.ID ) ||
+			this.getConnections().length > 0
+		);
+	}
+
 	shouldBeExpanded( status ) {
 		if ( this.isMailchimpService() && this.state.justConnected ) {
 			return true;
@@ -546,9 +554,9 @@ export class SharingService extends Component {
 				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
-					<h2>
+					<h3>
 						{ this.props.service.label } { this.renderBadges() }
-					</h2>
+					</h3>
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
@@ -643,6 +651,7 @@ export class SharingService extends Component {
 					header={ header }
 					clickableHeader
 					//For Mailchimp we want to open settings, because in other services we have the popup.
+					expandable={ this.shouldBeExpandable( connectionStatus ) }
 					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }

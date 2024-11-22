@@ -4,6 +4,7 @@ import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
+import { PayPalScriptProvider, ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -45,6 +46,7 @@ import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
@@ -522,7 +524,9 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
-			paypal: () => payPalProcessor( dataForProcessor ),
+			'paypal-express': () => payPalProcessor( dataForProcessor ),
+			'paypal-js': ( transactionData: unknown ) =>
+				payPalJsProcessor( transactionData, dataForProcessor ),
 			razorpay: ( transactionData: unknown ) =>
 				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
@@ -749,6 +753,18 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	// PayPalScriptProvider must be in this file and not in CheckoutMainWrapper
+	// because it needs access to the shopping cart, which is provided by that
+	// wrapper.
+	const payPalScriptOptions: ReactPayPalScriptOptions = {
+		clientId: 'AVmW-gfCD37zbDNtj7yQCeLXhnSoZ8hzmBKSMdo0MKHeM9wv9hBRqnIQteAEx4OSnYYs70uljYSMST4W',
+		components: 'buttons',
+		currency: responseCart.currency,
+		commit: true,
+		intent: 'capture',
+		vault: true,
+	};
+
 	return (
 		<Fragment>
 			<PageViewTracker
@@ -760,50 +776,54 @@ export default function CheckoutMain( {
 					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
-			<CheckoutProvider
-				onPaymentComplete={ handlePaymentComplete }
-				onPaymentError={ handlePaymentError }
-				onPaymentRedirect={ handlePaymentRedirect }
-				onPageLoadError={ onPageLoadError }
-				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				isLoading={ isCheckoutPageLoading }
-				isValidating={ isCartPendingUpdate }
-				theme={ theme }
-				selectFirstAvailablePaymentMethod
-				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-			>
-				<CheckoutMainContent
-					loadingHeader={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					onStepChanged={ handleStepChanged }
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changeSelection={ changeSelection }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
-					isLoggedOutCart={ !! isLoggedOutCart }
+			<PayPalScriptProvider options={ payPalScriptOptions }>
+				<CheckoutProvider
+					onPaymentComplete={ handlePaymentComplete }
+					onPaymentError={ handlePaymentError }
+					onPaymentRedirect={ handlePaymentRedirect }
 					onPageLoadError={ onPageLoadError }
+					onPaymentMethodChanged={ handlePaymentMethodChanged }
 					paymentMethods={ paymentMethods }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
+					paymentProcessors={ paymentProcessors }
+					isLoading={ isCheckoutPageLoading }
+					isValidating={ isCartPendingUpdate }
+					theme={ theme }
+					selectFirstAvailablePaymentMethod
+					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+				>
+					<CheckoutMainContent
+						loadingHeader={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						onStepChanged={ handleStepChanged }
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changeSelection={ changeSelection }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={
+							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+						}
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						paymentMethods={ paymentMethods }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
 					/>
-				}
-			</CheckoutProvider>
+					{
+						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					}
+				</CheckoutProvider>
+			</PayPalScriptProvider>
 		</Fragment>
 	);
 }
