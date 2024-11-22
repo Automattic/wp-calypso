@@ -48,7 +48,7 @@
 	}
 
 	.sites-dataviews__site-name {
-		align-self: flex-start;
+		align-self: center;
 		display: inline-block;
 		text-align: left;
 		text-overflow: ellipsis;
@@ -130,8 +130,13 @@
 		flex-shrink: 0;
 	}
 
+	.sites-dataviews__site {
+		padding: 2px 0 2px 2px;
+	}
+
 	.sites-dataviews__site-name {
 		padding: 0;
+		align-self: flex-start;
 	}
 
 	.dataviews-pagination {
