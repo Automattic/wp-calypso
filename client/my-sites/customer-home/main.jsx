@@ -125,7 +125,7 @@ const Home = ( {
 	}, [ emailDnsDiagnostics ] );
 
 	useEffect( () => {
-		const studioSiteId = getQueryArgs()[ 'studio-site-id' ];
+		const studioSiteId = getQueryArgs().studioSiteId;
 		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 		window.location.href = studioSiteUrl;
 	}, [ siteId ] );
@@ -260,7 +260,7 @@ const Home = ( {
 	};
 
 	const renderStudioSyncNotice = () => {
-		const studioSiteId = getQueryArgs()[ 'studio-site-id' ];
+		const studioSiteId = getQueryArgs().studioSiteId;
 		if ( ! studioSiteId ) {
 			return null;
 		}

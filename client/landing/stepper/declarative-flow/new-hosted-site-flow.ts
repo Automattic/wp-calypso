@@ -130,14 +130,14 @@ const hosting: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					const hasStudioSyncSiteId = queryParams[ 'studio-site-id' ];
+					const hasStudioSyncSiteId = queryParams.studioSiteId;
 					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 					const destinationParams: Record< string, string > = {
 						siteId,
 					};
 					if ( hasStudioSyncSiteId ) {
 						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-							'studio-site-id': queryParams[ 'studio-site-id' ],
+							studioSiteId: queryParams.studioSiteId,
 						} );
 					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
