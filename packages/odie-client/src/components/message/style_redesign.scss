@@ -4,8 +4,6 @@
 .help-center-experience-enabled {
 
 	$blueberry-color: #3858e9;
-	$light-blue: #04a4cc;
-	$color-light-blue: #399ce3;
 
 	.chatbox-message__dislike-thumb {
 		display: flex;
@@ -465,7 +463,7 @@
 			font-size: $font-body;
 			line-height: 1;
 			appearance: none;
-			background-color: $light-blue;
+			background-color: $blueberry-color;
 			color: var(--studio-white);
 			border: 1px none;
 			display: flex;
@@ -480,9 +478,12 @@
 				border-width: 1px;
 			}
 		}
-		.odie-send-message-input-container textarea {
+	}
+
+	.odie-send-message-input-container {
+		textarea.odie-send-message-input {
 			&:focus {
-				box-shadow: 0 0 0 2px $color-light-blue;
+				box-shadow: 0 0 0 2px $blueberry-color;
 				outline: none;
 			}
 		}
@@ -646,6 +647,6 @@
 	}
 	
 	.odie-send-message-input-spinner {
-		color: $color-light-blue !important;
+		color: $blueberry-color !important;
 	}
 }
