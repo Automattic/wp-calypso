@@ -22,11 +22,6 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
-const defaultLayouts = {
-	table: {},
-	grid: { layout: { mediaField: 'plugins', primaryField: 'title' } },
-};
-
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,
@@ -68,6 +63,18 @@ export default function PluginsListDataViews( {
 
 	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
 	const isMobile = useMobileBreakpoint();
+
+	const defaultLayouts = {
+		table: {},
+		...( isMobile && {
+			grid: {
+				layout: {
+					mediaField: 'plugins',
+					primaryField: 'title',
+				},
+			},
+		} ),
+	};
 
 	const header = (
 		<>

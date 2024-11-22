@@ -38,6 +38,17 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
                 }
             }
         }
+
+        .dataviews-view-grid {
+            @media (max-width: $break-mobile) {
+                padding-inline: 24px;
+            }
+
+            .dataviews-view-grid__media img {
+                border-radius: 4px;
+                margin-bottom: 12px;
+            }
+        }
     }
 
     .dataviews-pagination {
