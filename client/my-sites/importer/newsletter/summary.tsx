@@ -72,7 +72,7 @@ export default function Summary( {
 
 		// Reset importer state entirely when leaving summary state and everything is done
 		return () => {
-			if ( importerStatus === 'done' ) {
+			if ( importerStatus === 'done' || importerStatus === 'skipped' ) {
 				resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 			}
 		};
