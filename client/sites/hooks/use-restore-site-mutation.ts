@@ -12,7 +12,6 @@ interface APIError {
 interface APIResponse {
 	success: true;
 }
-
 function restoreSite( siteId: number ) {
 	return wpcom.req.post( {
 		method: 'put',

@@ -16,6 +16,22 @@ export function getColorScheme( { state, isGlobalSidebarVisible, sectionName } )
 	return siteColorScheme ?? calypsoColorScheme;
 }
 
+export function getColorSchemeFromCurrentQuery( currentQuery, defaultColorScheme = 'default' ) {
+	if ( currentQuery?.color_scheme ) {
+		return currentQuery.color_scheme;
+	}
+
+	if ( currentQuery?.redirect_to ) {
+		try {
+			return new URLSearchParams( currentQuery.redirect_to ).get( 'color_scheme' );
+		} catch ( error ) {
+			return defaultColorScheme;
+		}
+	}
+
+	return defaultColorScheme;
+}
+
 export function refreshColorScheme( prevColorScheme, nextColorScheme ) {
 	if ( typeof document === 'undefined' ) {
 		return;

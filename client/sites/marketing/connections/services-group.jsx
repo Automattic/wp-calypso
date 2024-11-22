@@ -5,7 +5,7 @@ import { Fragment, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SectionHeader from 'calypso/components/section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -91,8 +91,8 @@ const SharingServicesGroup = ( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="sharing-services-group">
-			<SectionHeader label={ title } />
+		<PanelSection className="sharing-services-group">
+			<PanelHeading>{ title }</PanelHeading>
 			<ul className="sharing-services-group__services">
 				{ showPlaceholder &&
 					times( numberOfPlaceholders, ( index ) => (
@@ -144,7 +144,7 @@ const SharingServicesGroup = ( {
 						return <Component key={ service.ID } service={ service } />;
 					} ) }
 			</ul>
-		</div>
+		</PanelSection>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };

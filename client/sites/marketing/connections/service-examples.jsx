@@ -27,26 +27,7 @@ import './service-examples.scss';
  * a method with the example's content.
  * @type {string[]}
  */
-const SERVICES_WITH_EXAMPLES = [
-	'bandpage',
-	'facebook',
-	'instagram-business',
-	'google_plus',
-	'google_my_business',
-	'instagram-basic-display',
-	'linkedin',
-	'tumblr',
-	'nextdoor',
-	'twitter',
-	'threads',
-	'google_photos',
-	'google-drive',
-	'mailchimp',
-	'p2_slack',
-	'p2_github',
-	'mastodon',
-	'bluesky',
-];
+export const SERVICES_WITH_EXAMPLES = [ 'google_plus', 'mastodon', 'bluesky' ];
 
 class SharingServiceExamples extends Component {
 	static propTypes = {
