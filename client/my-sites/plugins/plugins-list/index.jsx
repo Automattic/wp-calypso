@@ -408,7 +408,17 @@ export class PluginsList extends Component {
 				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
 				{
 					components: {
-						link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
+						link: (
+							<a
+								href={
+									config.isEnabled( 'untangling/hosting-menu' )
+										? '/sites/settings/administration/' +
+										  this.props.selectedSiteSlug +
+										  '/manage-connection'
+										: '/settings/manage-connection/' + this.props.selectedSiteSlug
+								}
+							/>
+						),
 					},
 				}
 			)
@@ -434,15 +444,13 @@ export class PluginsList extends Component {
 	render() {
 		if ( this.props.newBulkPluginManagement ) {
 			return (
-				<div className="plugins-list">
-					<PluginsListDataViews
-						currentPlugins={ this.props.plugins }
-						initialSearch={ this.props.searchTerm }
-						isLoading={ this.props.isLoading }
-						onSearch={ this.props.onSearch }
-						bulkActionDialog={ this.bulkActionDialog }
-					/>
-				</div>
+				<PluginsListDataViews
+					currentPlugins={ this.props.plugins }
+					initialSearch={ this.props.searchTerm }
+					isLoading={ this.props.isLoading }
+					onSearch={ this.props.onSearch }
+					bulkActionDialog={ this.bulkActionDialog }
+				/>
 			);
 		}
 

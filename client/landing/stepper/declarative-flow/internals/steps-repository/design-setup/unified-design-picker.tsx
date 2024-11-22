@@ -756,6 +756,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 	function getPrimaryActionButtonAction(): () => void {
+		if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
+			if ( isLockedTheme ) {
+				return upgradePlan;
+			}
+
+			if ( shouldUnlockGlobalStyles ) {
+				return unlockPremiumGlobalStyles;
+			}
+
+			return () => pickDesign();
+		}
+
 		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
 			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.

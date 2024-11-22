@@ -23,7 +23,9 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter = 'video', site } 
 
 	const handleClick = () => {
 		const planSlug = 'audio' === filter ? PLAN_PERSONAL : PLAN_PREMIUM;
-		const checkoutUrl = addQueryArgs( `/checkout/${ site.slug }/${ planSlug }` );
+		const checkoutUrl = addQueryArgs( `/checkout/${ site.slug }/${ planSlug }`, {
+			redirect_to: `/media/${ filter }/${ site.slug }?upgrade=success`,
+		} );
 
 		recordTracksEvent( 'calypso_upgrade_nudge_cta_click', commonEventProps );
 		page.redirect( checkoutUrl );

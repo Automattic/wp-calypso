@@ -8,8 +8,10 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { TaskSteps, TaskStepItem } from 'calypso/a8c-for-agencies/components/task-steps';
+import { TaskSteps } from 'calypso/a8c-for-agencies/components/task-steps';
 import { getMigrationInfo } from './migration-info';
+
+import './style.scss';
 
 const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 	const translate = useTranslate();
@@ -23,7 +25,7 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 			...step,
 			isCompleted: false,
 		};
-	} ) as TaskStepItem[];
+	} );
 
 	return (
 		<Layout className="self-migration-tool" title={ pageTitle } wide>

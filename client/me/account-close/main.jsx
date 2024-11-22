@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -81,7 +81,7 @@ class AccountSettingsClose extends Component {
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Account Settings' ) } />
 
 				<HeaderCake onClick={ this.goBack }>
-					<h1>{ translate( 'Close account' ) }</h1>
+					<h1>{ translate( 'Delete account' ) }</h1>
 				</HeaderCake>
 				<ActionPanel>
 					<ActionPanelBody>
@@ -175,11 +175,9 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
-									{ this.props.sitesToBeDeleted.length > 0
-										? translate(
-												'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-										  )
-										: translate( 'Account closure cannot be undone.' ) }
+									{ translate(
+										'Deleting your account will also delete all your sites and their content.'
+									) }
 								</p>
 								{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 									<Fragment>
@@ -204,39 +202,20 @@ class AccountSettingsClose extends Component {
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com and Gravatar.com. Once your WordPress.com account is closed, these services will also be closed and you will lose access to any orders or support history you may have.'
+										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com, and Gravatar.com. Once your WordPress.com account is deleted, these services will also be deleted and you will lose access to any orders or support history you may have.'
 									) }
 								</p>
 								<p className="account-close__body-copy">
-									{ getLocaleSlug().startsWith( 'en' ) ||
-									i18n.hasTranslation(
-										'If you have any questions at all about what happens when you close an account, ' +
+									{ translate(
+										'If you have any questions at all about what happens when you delete an account, ' +
 											'please {{a}}contact someone from our support team{{/a}} first. ' +
-											"They'll explain the ramifications and help you explore alternatives. "
-									)
-										? translate(
-												'If you have any questions at all about what happens when you close an account, ' +
-													'please {{a}}contact someone from our support team{{/a}} first. ' +
-													"They'll explain the ramifications and help you explore alternatives. ",
-												{
-													components: {
-														a: <ActionPanelLink href="/help/contact" />,
-													},
-												}
-										  )
-										: translate(
-												'If you have any questions at all about what happens when you close an account, ' +
-													'please {{a}}chat with someone from our support team{{/a}} first. ' +
-													"They'll explain the ramifications and help you explore alternatives. ",
-												{
-													components: {
-														a: <ActionPanelLink href="/help/contact" />,
-													},
-												}
-										  ) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate( 'When you\'re ready to proceed, use the "Close account" button.' ) }
+											"They'll explain the ramifications and help you explore alternatives. ",
+										{
+											components: {
+												a: <ActionPanelLink href="/help/contact" />,
+											},
+										}
+									) }
 								</p>
 							</Fragment>
 						) }
@@ -245,7 +224,7 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick } data-testid="close-account-button">
 								<Gridicon icon="trash" />
-								{ translate( 'Close account', { context: 'button label' } ) }
+								{ translate( 'Delete account', { context: 'button label' } ) }
 							</Button>
 						) }
 						{ hasAtomicSites && ! hasCancelablePurchases && (

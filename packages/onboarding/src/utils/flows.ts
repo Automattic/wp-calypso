@@ -43,7 +43,6 @@ export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
-export const EMAIL_SUBSCRIPTION_FLOW = 'email-subscription';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(

@@ -252,17 +252,6 @@
 		.list-tile__leading {
 			margin-right: 12px;
 		}
-
-		// DataView overrides: Selected and hover states on the site list.
-		ul.dataviews-view-list {
-			li.is-selected,
-			li.is-selected:hover {
-				background-color: #ebf2fc;
-			}
-			li:hover {
-				background-color: #f7faff;
-			}
-		}
 	}
 }
 

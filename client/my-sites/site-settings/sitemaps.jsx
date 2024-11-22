@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -42,7 +42,12 @@ class Sitemaps extends Component {
 	renderSitemapLink( sitemapUrl ) {
 		return (
 			<div key={ sitemapUrl }>
-				<ExternalLink href={ sitemapUrl } icon target="_blank">
+				<ExternalLink
+					href={ sitemapUrl }
+					icon
+					target="_blank"
+					style={ { overflowWrap: 'anywhere' } }
+				>
 					{ sitemapUrl }
 				</ExternalLink>
 			</div>
@@ -85,7 +90,15 @@ class Sitemaps extends Component {
 						'You must set your {{a}}privacy settings{{/a}} to "public".',
 					{
 						components: {
-							a: <a href={ '/settings/general/' + siteSlug } />,
+							a: (
+								<a
+									href={
+										isEnabled( 'untangling/hosting-menu' )
+											? '/sites/settings/site/' + siteSlug
+											: '/settings/general/' + siteSlug
+									}
+								/>
+							),
 						},
 					}
 				) }
@@ -99,8 +112,6 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( localizeUrl( 'https://wordpress.com/support/sitemaps/' ), false ) }
-
 				{ this.isSitePublic() ? (
 					<div>
 						{ this.renderSitemapExplanation() }
@@ -161,8 +172,6 @@ class Sitemaps extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://jetpack.com/support/sitemaps/' ) }
-
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="sitemaps"
@@ -179,15 +188,21 @@ class Sitemaps extends Component {
 		const { siteId, siteIsJetpack, translate } = this.props;
 
 		return (
-			<div>
+			<PanelSection>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
-				<SettingsSectionHeader title={ translate( 'Sitemaps' ) } />
+				<PanelHeading>
+					{ translate( 'Sitemaps' ) }
+					{ siteIsJetpack
+						? this.renderInfoLink( 'https://jetpack.com/support/sitemaps/' )
+						: this.renderInfoLink(
+								localizeUrl( 'https://wordpress.com/support/sitemaps/' ),
+								false
+						  ) }
+				</PanelHeading>
 
-				<Card className="sitemaps__card site-settings__traffic-settings">
-					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
-				</Card>
-			</div>
+				{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
+			</PanelSection>
 		);
 	}
 }

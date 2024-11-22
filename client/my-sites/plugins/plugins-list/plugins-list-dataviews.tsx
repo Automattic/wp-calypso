@@ -10,7 +10,7 @@ import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
-
+import { useSitesDialog } from './use-sites-dialog';
 import './style.scss';
 
 interface Props {
@@ -34,7 +34,8 @@ export default function PluginsListDataViews( {
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
-	const fields = useFields( bulkActionDialog );
+	const { sitesDialog, toggleDialogForPlugin } = useSitesDialog();
+	const fields = useFields( bulkActionDialog, toggleDialogForPlugin );
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
@@ -140,6 +141,7 @@ export default function PluginsListDataViews( {
 				defaultLayouts={ defaultLayouts }
 				header={ header }
 			/>
+			{ sitesDialog }
 		</>
 	);
 }

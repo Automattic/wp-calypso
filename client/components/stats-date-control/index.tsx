@@ -23,6 +23,8 @@ interface StatsDateControlProps {
 
 // Define the event name keys for tracking events
 type EventNameKey =
+	| 'today'
+	| 'yesterday'
 	| 'last_7_days'
 	| 'last_30_days'
 	| 'last_3_months'
@@ -40,6 +42,8 @@ interface EventNames {
 // Define the tracking event names object. Hardcoding event names ensures consistency, searchability, and prevents errors per Tracks naming conventions.
 const eventNames: EventNames = {
 	jetpack_odyssey: {
+		today: 'jetpack_odyssey_stats_date_picker_shortcut_today_clicked',
+		yesterday: 'jetpack_odyssey_stats_date_picker_shortcut_yesterday_clicked',
 		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_clicked',
 		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_clicked',
 		last_3_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_months_clicked',
@@ -49,6 +53,8 @@ const eventNames: EventNames = {
 		trigger_button: 'jetpack_odyssey_stats_date_picker_opened',
 	},
 	calypso: {
+		today: 'calypso_stats_date_picker_shortcut_today_clicked',
+		yesterday: 'calypso_stats_date_picker_shortcut_yesterday_clicked',
 		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_clicked',
 		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_clicked',
 		last_3_months: 'calypso_stats_date_picker_shortcut_last_3_months_clicked',
