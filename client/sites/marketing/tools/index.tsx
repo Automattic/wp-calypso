@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import Search from '@automattic/search';
-import { isDesktop } from '@automattic/viewport';
+import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -68,11 +68,13 @@ export default function MarketingTools() {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<div className="marketing-tools__searchbox-container">
+			<div
+				className={ clsx( 'marketing-tools__searchbox-container', {
+					'marketing-tools__searchbox-container--mobile': isMobile(),
+				} ) }
+			>
 				<Search
-					className={ clsx( 'marketing-tools__searchbox', {
-						'marketing-tools__searchbox--mobile': ! isDesktop(),
-					} ) }
+					className="marketing-tools__searchbox"
 					onSearch={ setSearchTerm }
 					defaultValue={ searchTerm }
 					searchMode="when-typing"

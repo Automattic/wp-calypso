@@ -23,9 +23,6 @@
 .search-component.marketing-tools__searchbox {
 	border-radius: 4px;
 
-	&.marketing-tools__searchbox--mobile {
-		max-width: none;
-	}
 
 	box-shadow: 0 0 0 1px var(--studio-gray-10);
 
@@ -74,6 +71,9 @@
 	height: 40px;
 	margin-top: 24px;
 	margin-bottom: 16px;
+	&.marketing-tools__searchbox-container--mobile {
+		width: 100%;
+	}
 }
 
 .tools__header-body {
