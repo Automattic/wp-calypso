@@ -65,7 +65,7 @@ class StatsTabs extends Component {
 				const tabOptions = {
 					attr: tab.attr,
 					icon: tab.icon,
-					className: clsx( tab.className, { 'is-highlighted': !! previousData } ),
+					className: clsx( tab.className, { 'is-highlighted': aggregate } ),
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
@@ -76,7 +76,7 @@ class StatsTabs extends Component {
 
 				return (
 					<StatTab key={ tabOptions.attr } { ...tabOptions }>
-						{ !! previousData && (
+						{ !! previousValue && (
 							<div className="stats-tabs__highlight">
 								<span className="stats-tabs__highlight-value">{ formatNumber( value ) }</span>
 								<TrendComparison count={ value } previousCount={ previousValue } />
