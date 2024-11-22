@@ -4,7 +4,6 @@
 $stats-tab-outer-padding: 10px;
 
 .stats-tabs {
-	@include clear-fix;
 	background: var(--color-surface);
 	border-top: 1px solid var(--color-border-subtle);
 	list-style: none;

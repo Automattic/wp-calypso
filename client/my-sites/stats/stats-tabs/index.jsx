@@ -31,7 +31,7 @@ class StatsTabs extends Component {
 		if ( ! aggregate ) {
 			activeData = find( data, { [ activeKey ]: activeIndex } );
 		} else {
-			data.map( ( day ) =>
+			data?.map( ( day ) =>
 				tabs.map( ( tab ) => {
 					if ( isFinite( day[ tab.attr ] ) ) {
 						if ( ! ( tab.attr in activeData ) ) {
@@ -65,7 +65,7 @@ class StatsTabs extends Component {
 				const tabOptions = {
 					attr: tab.attr,
 					icon: tab.icon,
-					className: clsx( tab.className, { 'is-highlighted': !! activePreviousData } ),
+					className: clsx( tab.className, { 'is-highlighted': !! previousData } ),
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
