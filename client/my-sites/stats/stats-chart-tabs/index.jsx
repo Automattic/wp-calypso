@@ -153,6 +153,7 @@ class StatModuleChartTabs extends Component {
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ isNewDateFilteringEnabled ? countsComp : null }
+					tabCountsAlt={ this.props.tabCountsAlt }
 					tabs={ this.props.charts }
 					switchTab={ this.props.switchTab }
 					selectedTab={ this.props.chartTab }
