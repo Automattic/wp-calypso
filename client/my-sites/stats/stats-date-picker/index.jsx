@@ -53,17 +53,42 @@ class StatsDatePicker extends Component {
 
 	dateForDisplay() {
 		const { date, moment, period, translate, isShort, dateRange } = this.props;
-
-		// ll is a date localized with abbreviated Month by momentjs
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		// If we have chartStart/chartEnd in dateRange, use those for the date range
 		if ( dateRange?.chartStart && dateRange?.chartEnd ) {
+			const startDate = moment( dateRange.chartStart );
+			const endDate = moment( dateRange.chartEnd );
+
+			// If it's the same day, show single date
+			if ( startDate.isSame( endDate, 'day' ) ) {
+				return startDate.format( 'LL' );
+			}
+
+			// If it's a full month
+			if (
+				startDate.isSame( startDate.clone().startOf( 'month' ), 'day' ) &&
+				endDate.isSame( endDate.clone().endOf( 'month' ), 'day' ) &&
+				startDate.isSame( endDate, 'month' )
+			) {
+				return startDate.format( 'MMMM YYYY' );
+			}
+
+			// If it's a full year
+			if (
+				startDate.isSame( startDate.clone().startOf( 'year' ), 'day' ) &&
+				endDate.isSame( endDate.clone().endOf( 'year' ), 'day' ) &&
+				startDate.isSame( endDate, 'year' )
+			) {
+				return startDate.format( 'YYYY' );
+			}
+
+			// Default to date range
 			return translate( '%(startDate)s - %(endDate)s', {
 				context: 'Date range for which stats are being displayed',
 				args: {
-					startDate: moment( dateRange.chartStart ).format( weekPeriodFormat ),
-					endDate: moment( dateRange.chartEnd ).format( weekPeriodFormat ),
+					startDate: startDate.format( weekPeriodFormat ),
+					endDate: endDate.format( weekPeriodFormat ),
 				},
 			} );
 		}
