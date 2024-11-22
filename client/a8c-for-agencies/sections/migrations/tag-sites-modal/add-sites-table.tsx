@@ -9,7 +9,6 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFetchAllManagedSites } from '../hooks/use-fetch-all-managed-sites';
-import { TaggedSite } from '../types';
 
 export type SiteItem = {
 	id: number;
@@ -20,11 +19,9 @@ export type SiteItem = {
 export default function MigrationsAddSitesTable( {
 	selectedSites,
 	setSelectedSites,
-	taggedSites,
 }: {
-	selectedSites: SiteItem[];
-	setSelectedSites: ( sites: SiteItem[] ) => void;
-	taggedSites?: TaggedSite[];
+	selectedSites: number[];
+	setSelectedSites: ( sites: number[] ) => void;
 } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -32,34 +29,24 @@ export default function MigrationsAddSitesTable( {
 
 	const { items, isLoading } = useFetchAllManagedSites();
 
-	const taggedSitesIds = useMemo(
-		() => taggedSites?.map( ( site ) => site.id ) || [],
-		[ taggedSites ]
-	);
-
-	// Filter out sites that are already tagged
-	const availableSites = useMemo( () => {
-		return items.filter( ( item ) => ! taggedSitesIds.includes( item.id ) );
-	}, [ items, taggedSitesIds ] );
-
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
 	const onSelectAllSites = useCallback( () => {
-		const isAllSitesSelected = selectedSites.length === availableSites.length;
-		setSelectedSites( isAllSitesSelected ? [] : availableSites );
+		const isAllSitesSelected = selectedSites.length === items.length;
+		setSelectedSites( isAllSitesSelected ? [] : items.map( ( item ) => item.id ) );
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
 				type: isAllSitesSelected ? 'deselect' : 'select',
 			} )
 		);
-	}, [ dispatch, availableSites, selectedSites.length, setSelectedSites ] );
+	}, [ dispatch, items, selectedSites.length, setSelectedSites ] );
 
 	const onSelectSite = useCallback(
 		( checked: boolean, item: SiteItem ) => {
 			if ( checked ) {
-				setSelectedSites( [ ...selectedSites, item ] );
+				setSelectedSites( [ ...selectedSites, item.id ] );
 			} else {
-				setSelectedSites( selectedSites.filter( ( site ) => site.id !== item.id ) );
+				setSelectedSites( selectedSites.filter( ( id ) => id !== item.id ) );
 			}
 			dispatch(
 				recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
@@ -77,7 +64,7 @@ export default function MigrationsAddSitesTable( {
 				<div>
 					<CheckboxControl
 						label={ translate( 'Site' ).toUpperCase() }
-						checked={ selectedSites.length === availableSites.length }
+						checked={ selectedSites.length === items.length }
 						onChange={ onSelectAllSites }
 						disabled={ false }
 					/>
@@ -89,7 +76,7 @@ export default function MigrationsAddSitesTable( {
 					className="view-details-button"
 					data-site-id={ item.id }
 					label={ item.site }
-					checked={ selectedSites.map( ( site ) => site.id ).includes( item.id ) }
+					checked={ selectedSites.includes( item.id ) }
 					onChange={ ( checked ) => onSelectSite( checked, item ) }
 					disabled={ false }
 				/>
@@ -108,18 +95,11 @@ export default function MigrationsAddSitesTable( {
 		};
 
 		return isDesktop ? [ siteColumn, dateColumn ] : [ siteColumn ];
-	}, [
-		isDesktop,
-		availableSites.length,
-		onSelectAllSites,
-		onSelectSite,
-		selectedSites,
-		translate,
-	] );
+	}, [ isDesktop, items.length, onSelectAllSites, onSelectSite, selectedSites, translate ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( availableSites, dataViewsState, fields );
-	}, [ availableSites, dataViewsState, fields ] );
+		return filterSortAndPaginate( items, dataViewsState, fields );
+	}, [ items, dataViewsState, fields ] );
 
 	return (
 		<div className="add-sites-table redesigned-a8c-table">

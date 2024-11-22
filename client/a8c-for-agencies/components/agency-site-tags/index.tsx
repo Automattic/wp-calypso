@@ -63,13 +63,8 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 			{ tags.length ? (
 				<Card tagName="ul" className="agency-site-tags__list">
 					{ tags.map( ( tag ) => (
-						<li key={ tag }>
-							<AgencySiteTag
-								key={ tag }
-								tag={ tag }
-								onRemoveTag={ onRemoveTag }
-								isRemovable={ tag !== 'a4a_self_migrated_site' }
-							/>
+						<li>
+							<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
 						</li>
 					) ) }
 				</Card>

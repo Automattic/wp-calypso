@@ -46,7 +46,7 @@ export const useFetchAllManagedSites = () => {
 			const foundSite = sites.find( ( s ) => s?.ID === site.blog_id );
 			return foundSite
 				? {
-						id: site.a4a_site_id,
+						id: site.blog_id,
 						site: urlToSlug( site.url ),
 						date: foundSite.options?.created_at || '',
 				  }

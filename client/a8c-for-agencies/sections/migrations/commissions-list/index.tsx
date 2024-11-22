@@ -6,10 +6,14 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import MigrationsCommissionsListMobileView from './mobile-view';
-import type { TaggedSite } from '../types';
+import type { MigrationCommissionItem } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
-export default function MigrationsCommissionsList( { items }: { items: TaggedSite[] } ) {
+export default function MigrationsCommissionsList( {
+	items,
+}: {
+	items: MigrationCommissionItem[];
+} ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
@@ -29,17 +33,15 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 				id: 'site',
 				label: translate( 'Site' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
+				render: ( { item } ): ReactNode => <SiteColumn site={ item.siteUrl } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'migratedOn',
-				// FIXME: This should be "Migrated on" instead of "Date Added"
-				// We will change this when the MC tool is implemented and we have the migration date
-				label: translate( 'Date Added' ).toUpperCase(),
+				label: translate( 'Migrated on' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
+				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.migratedOn } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -47,7 +49,9 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 				id: 'reviewStatus',
 				label: translate( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <ReviewStatusColumn reviewStatus={ item.state } />,
+				render: ( { item } ): ReactNode => (
+					<ReviewStatusColumn reviewStatus={ item.reviewStatus } />
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},

@@ -6,72 +6,18 @@ import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useUpdateTagsForSitesMutation from '../../../hooks/use-update-tags-for-sites';
-import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
-import MigrationsAddSitesTable, { SiteItem } from './add-sites-table';
-import type { TaggedSite } from '../types';
+import MigrationsAddSitesTable from './add-sites-table';
 
 import './style.scss';
 
-export default function MigrationsTagSitesModal( {
-	onClose,
-	taggedSites,
-	fetchMigratedSites,
-}: {
-	onClose: () => void;
-	taggedSites?: TaggedSite[];
-	fetchMigratedSites: () => void;
-} ) {
+export default function MigrationsTagSitesModal( { onClose }: { onClose: () => void } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { mutate: tagSitesForMigration, isPending } = useUpdateTagsForSitesMutation();
-
-	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
+	const [ selectedSites, setSelectedSites ] = useState< number[] | [] >( [] );
 
 	const handleAddSites = () => {
-		tagSitesForMigration(
-			{
-				siteIds: selectedSites.map( ( site ) => site.id ),
-				tags: [ A4A_MIGRATED_SITE_TAG ],
-			},
-			{
-				onSuccess: () => {
-					// Refetch the sites to update the UI
-					fetchMigratedSites();
-					dispatch(
-						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
-							count: selectedSites.length,
-						} )
-					);
-					const hasSingleSite = selectedSites.length === 1;
-					const siteUrl = hasSingleSite ? selectedSites[ 0 ].site : '';
-					dispatch(
-						hasSingleSite
-							? successNotice(
-									translate(
-										'The site {{strong}}%(siteUrl)s{{/strong}} has been successfully tagged for commission.',
-										{
-											components: { strong: <strong /> },
-											args: { siteUrl },
-										}
-									)
-							  )
-							: successNotice(
-									translate( '%(count)s sites have been successfully tagged for commission.', {
-										args: { count: selectedSites.length },
-										comment: '%(count)s is the number of sites tagged.',
-									} )
-							  )
-					);
-					onClose();
-				},
-				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
-				},
-			}
-		);
+		// TODO: Implement this
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
 				count: selectedSites.length,
@@ -88,12 +34,7 @@ export default function MigrationsTagSitesModal( {
 		<A4AModal
 			onClose={ handleOnClose }
 			extraActions={
-				<Button
-					variant="primary"
-					onClick={ handleAddSites }
-					disabled={ isPending }
-					isBusy={ isPending }
-				>
+				<Button variant="primary" onClick={ handleAddSites }>
 					{ selectedSites.length > 0
 						? translate( 'Add %(count)d site', 'Add %(count)d sites', {
 								args: {
@@ -119,7 +60,6 @@ export default function MigrationsTagSitesModal( {
 				) }
 			</div>
 			<MigrationsAddSitesTable
-				taggedSites={ taggedSites }
 				selectedSites={ selectedSites }
 				setSelectedSites={ setSelectedSites }
 			/>
