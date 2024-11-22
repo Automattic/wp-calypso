@@ -4,7 +4,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import Search from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
-import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -49,22 +48,13 @@ export default function MarketingTools() {
 		);
 	}, [ searchTerm, marketingFeatures ] );
 
-	const handleRecordSearch = useMemo(
-		() =>
-			debounce(
-				( term ) =>
-					recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
-						search_term: term as string,
-					} ),
-				500
-			),
-		[ recordTracksEvent ]
-	);
 	useEffect( () => {
 		if ( searchTerm !== '' ) {
-			handleRecordSearch( searchTerm );
+			recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
+				search_term: searchTerm,
+			} );
 		}
-	}, [ handleRecordSearch, searchTerm ] );
+	}, [ searchTerm, recordTracksEvent ] );
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -86,10 +76,10 @@ export default function MarketingTools() {
 				defaultValue={ searchTerm }
 				searchMode="when-typing"
 				placeholder={ translate( 'Try searching "seo"' ) }
-				delaySearch={ false }
 				submitOnOpenIconClick
 				openIconSide="right"
 				displayOpenAndCloseIcons
+				delaySearch
 			/>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {
