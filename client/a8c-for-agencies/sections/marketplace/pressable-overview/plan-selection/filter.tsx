@@ -6,7 +6,12 @@ import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { FILTER_TYPE_INSTALL, FILTER_TYPE_VISITS } from '../constants';
+import {
+	FILTER_TYPE_INSTALL,
+	FILTER_TYPE_VISITS,
+	PLAN_CATEGORY_STANDARD,
+	PLAN_CATEGORY_ENTERPRISE,
+} from '../constants';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
@@ -35,7 +40,7 @@ export default function PlanSelectionFilter( {
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
-	const [ selectedTab, setSelectedTab ] = useState( 'standard' );
+	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
 
 	const options = useMemo(
 		() => [
@@ -54,11 +59,11 @@ export default function PlanSelectionFilter( {
 
 	// Split options based on category then remove the category property
 	const standardOptions = options
-		.filter( ( option ) => option.category === 'standard' )
+		.filter( ( option ) => option.category === PLAN_CATEGORY_STANDARD )
 		.map( ( { category, ...rest } ) => rest );
 
 	const enterpriseOptions = options
-		.filter( ( option ) => option.category === 'enterprise' )
+		.filter( ( option ) => option.category === PLAN_CATEGORY_ENTERPRISE )
 		.map( ( { category, ...rest } ) => rest );
 
 	const onSelectOption = useCallback(
@@ -75,7 +80,7 @@ export default function PlanSelectionFilter( {
 	);
 
 	const selectedOptionIndex = (
-		'standard' === selectedTab ? standardOptions : enterpriseOptions
+		PLAN_CATEGORY_STANDARD === selectedTab ? standardOptions : enterpriseOptions
 	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
 
 	const onSelectInstallFilterType = useCallback( () => {
@@ -105,9 +110,15 @@ export default function PlanSelectionFilter( {
 			}
 
 			// Depending on the category of the existing plan, we might want to show other category slider at the most min or max
-			if ( 'standard' === category && 'standard' !== pressablePlan?.category ) {
+			if (
+				PLAN_CATEGORY_STANDARD === category &&
+				PLAN_CATEGORY_STANDARD !== pressablePlan?.category
+			) {
 				return categoryOptions.length - 1;
-			} else if ( 'enterprise' === category && 'enterprise' !== pressablePlan?.category ) {
+			} else if (
+				PLAN_CATEGORY_ENTERPRISE === category &&
+				PLAN_CATEGORY_ENTERPRISE !== pressablePlan?.category
+			) {
 				return 0;
 			}
 
@@ -123,7 +134,7 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
-		setSelectedTab( pressablePlan?.category ?? 'standard' );
+		setSelectedTab( pressablePlan?.category ?? PLAN_CATEGORY_STANDARD );
 	}, [ pressablePlan ] );
 
 	if ( isLoading ) {
@@ -172,38 +183,38 @@ export default function PlanSelectionFilter( {
 				initialTabName={ selectedTab }
 				tabs={ [
 					{
-						name: 'standard',
+						name: PLAN_CATEGORY_STANDARD,
 						title: translate( 'Shared Resource Plans' ),
 					},
 					{
-						name: 'enterprise',
+						name: PLAN_CATEGORY_ENTERPRISE,
 						title: translate( 'Signature Shared Resource Plans' ),
 					},
 				] }
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {
-						case 'standard':
+						case PLAN_CATEGORY_STANDARD:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ 'standard' === selectedTab ? selectedOptionIndex : 0 }
+										value={ PLAN_CATEGORY_STANDARD === selectedTab ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ standardOptions }
-										minimum={ getSliderMinimum( 'standard', standardOptions ) }
+										minimum={ getSliderMinimum( PLAN_CATEGORY_STANDARD, standardOptions ) }
 									/>
 								</>
 							);
-						case 'enterprise':
+						case PLAN_CATEGORY_ENTERPRISE:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ 'enterprise' === selectedTab ? selectedOptionIndex : 0 }
+										value={ PLAN_CATEGORY_ENTERPRISE === selectedTab ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ enterpriseOptions }
-										minimum={ getSliderMinimum( 'enterprise', enterpriseOptions ) }
+										minimum={ getSliderMinimum( PLAN_CATEGORY_ENTERPRISE, enterpriseOptions ) }
 									/>
 								</>
 							);
