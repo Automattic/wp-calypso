@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
@@ -66,10 +67,11 @@ export default function PluginsListDataViews( {
 	} ) );
 
 	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
+	const isMobile = useMobileBreakpoint();
 
 	const header = (
 		<>
-			{ pluginUpdateCount > 0 && (
+			{ pluginUpdateCount > 0 && ! isMobile && (
 				<Button
 					isPressed={ isFilteringUpdates }
 					onClick={ () => {
