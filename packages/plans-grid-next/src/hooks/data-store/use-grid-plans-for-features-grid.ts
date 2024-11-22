@@ -116,7 +116,11 @@ const useGridPlansForFeaturesGrid = ( {
 				} )
 			);
 		},
-		/* eslint-disable react-hooks/exhaustive-deps */ [
+		/* eslint-disable react-hooks/exhaustive-deps */
+		/**
+		 * It is asking for `gridPlans`, but we don't want that dependency here. The code needed to get `gridPlans` memoized is complex,
+		 * so grabbing the values directly from the hooks is a bit more efficient, also for potential extensions (introducing more terms, etc.)
+		 */ [
 			gridPlans[ EFFECTIVE_TERMS_LIST[ 0 ] ],
 			gridPlans[ EFFECTIVE_TERMS_LIST[ 1 ] ],
 			gridPlans[ EFFECTIVE_TERMS_LIST[ 2 ] ],
