@@ -16,7 +16,7 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	// All available Pressable plans
 	plans: APIProductFamilyProduct[];
-	// The users existing Pressable plan
+	// The users existing Pressable plan if any
 	pressablePlan?: PressablePlan | null;
 	// Plan selection handler
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
@@ -102,23 +102,29 @@ export default function PlanSelectionFilter( {
 			: 'a4a-pressable-filter-wrapper-visits';
 	const wrapperClass = clsx( additionalWrapperClass, 'pressable-overview-plan-selection__filter' );
 
-	const minimum = useMemo( () => {
-		if ( ! pressablePlan ) {
-			return 0;
-		}
-
-		const allAvailablePlans = plans
-			.map( ( plan ) => getPressablePlan( plan.slug ) )
-			.filter( ( plan ) => plan !== undefined )
-			.sort( ( a, b ) => a?.install - b?.install );
-
-		for ( let i = 0; i < allAvailablePlans.length; i++ ) {
-			if ( pressablePlan?.install < allAvailablePlans[ i ]?.install ) {
-				return i;
+	const getSliderMinimum = useCallback(
+		( category: string, categoryOptions: Option[] ) => {
+			if ( ! pressablePlan ) {
+				return 0;
 			}
-		}
-		return allAvailablePlans.length;
-	}, [ plans, pressablePlan ] );
+
+			// Depending on the category of the existing plan, we might want to show other category slider at the most min or max
+			if ( 'standard' === category && 'standard' !== pressablePlan?.category ) {
+				return categoryOptions.length - 1;
+			} else if ( 'enterprise' === category && 'enterprise' !== pressablePlan?.category ) {
+				return 0;
+			}
+
+			for ( let i = 0; i < categoryOptions.length; i++ ) {
+				const plan = getPressablePlan( categoryOptions[ i ].value as string );
+				if ( pressablePlan?.install < plan?.install ) {
+					return i;
+				}
+			}
+			return categoryOptions.length;
+		},
+		[ pressablePlan ]
+	);
 
 	useEffect( () => {
 		setSelectedTab( pressablePlan?.category ?? 'standard' );
@@ -189,9 +195,7 @@ export default function PlanSelectionFilter( {
 										value={ 'standard' === selectedCategory ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ standardOptions }
-										minimum={
-											'standard' === pressablePlan?.category ? minimum : standardOptions.length - 1
-										}
+										minimum={ getSliderMinimum( 'standard', standardOptions ) }
 									/>
 								</>
 							);
@@ -203,7 +207,7 @@ export default function PlanSelectionFilter( {
 										value={ 'enterprise' === selectedCategory ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ enterpriseOptions }
-										minimum={ 'enterprise' === pressablePlan?.category ? minimum : 0 }
+										minimum={ getSliderMinimum( 'enterprise', enterpriseOptions ) }
 									/>
 								</>
 							);
