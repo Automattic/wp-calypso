@@ -41,6 +41,7 @@ export default function PlanSelectionFilter( {
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
 	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
+	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const standardOptions = useMemo(
 		() =>
@@ -136,8 +137,20 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
-		setSelectedTab( pressablePlan?.category ?? PLAN_CATEGORY_STANDARD );
-	}, [ pressablePlan ] );
+		if ( ! pressablePlan ) {
+			return;
+		}
+
+		setSelectedTab( pressablePlan.category ?? PLAN_CATEGORY_STANDARD );
+
+		// Disable the standard tab if the existing plan is the highest standard plan or higher
+		if (
+			pressablePlan.category !== PLAN_CATEGORY_STANDARD ||
+			pressablePlan.slug === standardOptions[ standardOptions.length - 1 ]?.value
+		) {
+			setDisableStandardTab( true );
+		}
+	}, [ pressablePlan, standardOptions ] );
 
 	if ( isLoading ) {
 		return (
@@ -187,6 +200,7 @@ export default function PlanSelectionFilter( {
 					{
 						name: PLAN_CATEGORY_STANDARD,
 						title: translate( 'Shared Resource Plans' ),
+						disabled: disableStandardTab,
 					},
 					{
 						name: PLAN_CATEGORY_ENTERPRISE,

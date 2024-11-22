@@ -316,9 +316,14 @@
 		button {
 			flex: 1;
 			margin: 0 7px;
+
 			&:hover {
 				background-color: initial;
 				color: inherit;
+			}
+
+			&:disabled, &[aria-disabled="true"] {
+				color: var(--color-neutral-20);
 			}
 
 			&.pressable-overview-plan-selection__plan-category-tab-is-active {
