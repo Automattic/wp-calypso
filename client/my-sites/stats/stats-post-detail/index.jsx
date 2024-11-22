@@ -21,8 +21,6 @@ import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sit
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsModuleUTM from '../features/modules/stats-utm';
-import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -211,24 +209,14 @@ class StatsPostDetail extends Component {
 
 					{ ! isLoading && countViews > 0 && (
 						<>
-							<PostSummary siteId={ siteId } postId={ postId } />
+							<PostSummary
+								siteId={ siteId }
+								postId={ postId }
+								supportsUTMStats={ supportsUTMStats }
+							/>
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
-
-					<StatsGlobalValuesContext.Consumer>
-						{ ( isInternal ) =>
-							( supportsUTMStats || isInternal ) && (
-								<div className="stats-module-utm__post-detail">
-									<StatsModuleUTM
-										siteId={ siteId }
-										postId={ postId }
-										query={ { num: -1, max: 0 } }
-									/>
-								</div>
-							)
-						}
-					</StatsGlobalValuesContext.Consumer>
 
 					<JetpackColophon />
 				</div>
