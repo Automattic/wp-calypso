@@ -6,7 +6,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import Notice from 'calypso/components/notice';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../hooks/use-credentials-form';
-import { ApplicationPasswordInfo } from '../types';
+import { ApplicationPasswordsInfo } from '../types';
 import { AccessMethodPicker } from './access-method-picker';
 import { BackupFileField } from './backup-file-field';
 import { ErrorMessage } from './error-message';
@@ -18,7 +18,7 @@ import { UsernameField } from './username-field';
 interface CredentialsFormProps {
 	onSubmit: (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordInfo?: ApplicationPasswordInfo
+		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => void;
 	onSkip: () => void;
 }

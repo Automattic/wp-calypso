@@ -639,7 +639,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'submits application-password-approval action when using password application', async () => {
+	it( 'submits application-passwords-approval action when using password application', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		await fillAddressField();
@@ -647,7 +647,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
-			action: 'application-password-approval',
+			action: 'application-passwords-approval',
 			from: 'https://site-url.wordpress.com',
 			platform: 'wordpress',
 		} );

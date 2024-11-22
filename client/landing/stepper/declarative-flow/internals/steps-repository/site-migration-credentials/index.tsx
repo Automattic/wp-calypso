@@ -10,17 +10,17 @@ import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/us
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CredentialsForm } from './components/credentials-form';
-import { ApplicationPasswordInfo } from './types';
+import { ApplicationPasswordsInfo } from './types';
 import type { Step } from '../../types';
 import './style.scss';
 
-const getAction = ( siteInfo?: UrlData, applicationPasswordInfo?: ApplicationPasswordInfo ) => {
+const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => {
 	if ( ! siteInfo ) {
 		return 'submit';
 	}
 
-	if ( applicationPasswordInfo?.isAvailable ) {
-		return 'application-password-approval';
+	if ( applicationPasswordsInfo?.isAvailable ) {
+		return 'application-passwords-approval';
 	}
 
 	if ( siteInfo?.platform_data?.is_wpcom ) {
@@ -42,9 +42,9 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 
 	const handleSubmit = (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordInfo?: ApplicationPasswordInfo
+		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
-		const action = getAction( siteInfo, applicationPasswordInfo );
+		const action = getAction( siteInfo, applicationPasswordsInfo );
 		return navigation.submit?.( { action, from: siteInfo?.url, platform: siteInfo?.platform } );
 	};
 

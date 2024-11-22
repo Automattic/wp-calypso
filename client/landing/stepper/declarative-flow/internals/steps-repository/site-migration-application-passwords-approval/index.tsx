@@ -5,7 +5,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const SiteMigrationApplicationPasswordApproval: Step = function ( { navigation } ) {
+const SiteMigrationApplicationPasswordsApproval: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 
 	return (
@@ -35,4 +35,4 @@ const SiteMigrationApplicationPasswordApproval: Step = function ( { navigation }
 	);
 };
 
-export default SiteMigrationApplicationPasswordApproval;
+export default SiteMigrationApplicationPasswordsApproval;

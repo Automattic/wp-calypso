@@ -6,7 +6,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import { CredentialsFormData, ApplicationPasswordInfo } from '../types';
+import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
@@ -30,7 +30,7 @@ const isWPCOM = ( siteInfo?: UrlData ) => {
 };
 
 export const useCredentialsForm = (
-	onSubmit: ( siteInfo?: UrlData, applicationPasswordInfo?: ApplicationPasswordInfo ) => void
+	onSubmit: ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => void
 ) => {
 	const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 	const siteSlug = useSiteSlugParam();
@@ -101,10 +101,10 @@ export const useCredentialsForm = (
 			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
 				onSubmit( siteInfoResult );
 			} else {
-				const applicationPasswordInfo = {
+				const applicationPasswordsInfo = {
 					isAvailable: true,
 				};
-				onSubmit( siteInfoResult, applicationPasswordInfo );
+				onSubmit( siteInfoResult, applicationPasswordsInfo );
 			}
 		},
 		[ onSubmit ]

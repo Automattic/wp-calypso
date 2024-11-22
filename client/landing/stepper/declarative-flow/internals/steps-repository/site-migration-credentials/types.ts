@@ -44,6 +44,6 @@ export interface MigrationError {
 	};
 }
 
-export interface ApplicationPasswordInfo {
+export interface ApplicationPasswordsInfo {
 	isAvailable: boolean;
 }
