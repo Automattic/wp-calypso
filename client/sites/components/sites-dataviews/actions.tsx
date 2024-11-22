@@ -30,6 +30,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { Action } from '@wordpress/dataviews';
+
 export function useActions( {
 	openSitePreviewPane,
 	selectedItem,
@@ -45,7 +46,7 @@ export function useActions( {
 
 	const queryClient = useQueryClient();
 	const reduxDispatch = useReduxDispatch();
-	const { mutate: restoreSite, isPending: isRestoring } = useRestoreSiteMutation( {
+	const { mutate: restoreSite } = useRestoreSiteMutation( {
 		onSuccess() {
 			queryClient.invalidateQueries( {
 				queryKey: [
@@ -397,7 +398,6 @@ export function useActions( {
 				id: 'restore',
 				label: __( 'Restore' ),
 				isPrimary: true,
-				disabled: isRestoring,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					restoreSite( site.ID );
@@ -405,6 +405,6 @@ export function useActions( {
 				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, selectedItem?.ID ]
+		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, selectedItem?.ID ]
 	);
 }
