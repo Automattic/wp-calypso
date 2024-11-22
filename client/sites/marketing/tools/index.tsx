@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -6,12 +7,11 @@ import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -22,23 +22,11 @@ import './style.scss';
 
 export default function MarketingTools() {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 
-	const recordTracksEvent = useCallback(
-		( event: string, properties?: Record< string, string > ) =>
-			dispatch( recordTracksEventAction( event, properties ) ),
-		[ dispatch ]
-	);
-
-	const marketingFeatures = getMarketingFeaturesData(
-		selectedSiteSlug,
-		recordTracksEvent,
-		translate,
-		localizeUrl
-	);
+	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
 
 	const marketingFeaturesFiltered = useMemo( () => {
 		return marketingFeatures.filter(
@@ -48,13 +36,12 @@ export default function MarketingTools() {
 		);
 	}, [ searchTerm, marketingFeatures ] );
 
-	useEffect( () => {
-		if ( searchTerm !== '' ) {
-			recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
-				search_term: searchTerm,
-			} );
-		}
-	}, [ searchTerm, recordTracksEvent ] );
+	const handleSearch = ( term: string ) => {
+		setSearchTerm( term );
+		recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
+			search_term: term,
+		} );
+	};
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -75,7 +62,7 @@ export default function MarketingTools() {
 			>
 				<Search
 					className="marketing-tools__searchbox"
-					onSearch={ setSearchTerm }
+					onSearch={ handleSearch }
 					defaultValue={ searchTerm }
 					searchMode="when-typing"
 					placeholder={ translate( 'Try searching "seo"' ) }
