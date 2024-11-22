@@ -75,11 +75,11 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		checkoutOnSuccessCallback?.();
 		onClose?.();
 
-		// Reload the page to get latest data
 		if ( isRelativeUrl( redirectTo ) ) {
-			navigate( redirectTo );
+			// Using full page reload here to refresh the latest plan data for the new site
+			window.location.href = redirectTo;
 		} else {
-			navigate( previousRouteWithArgs );
+			window.location.href = previousRouteWithArgs;
 		}
 	};
 
