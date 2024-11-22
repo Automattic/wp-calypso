@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import Search, { useTermsSuggestions } from '@automattic/search';
+import Search from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -49,9 +49,6 @@ export default function MarketingTools() {
 		page( pluginsPath( selectedSiteSlug ) );
 	};
 
-	const searchTerms = [ 'seo', 'monetize', 'design', 'share' ];
-	const searchTermSuggestion = useTermsSuggestions( searchTerms );
-
 	return (
 		<Fragment>
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
@@ -65,12 +62,8 @@ export default function MarketingTools() {
 				onSearch={ setSearchTerm }
 				defaultValue={ searchTerm }
 				searchMode="when-typing"
-				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
-					args: { searchTermSuggestion: searchTermSuggestion ?? 'seo' },
-					textOnly: true,
-				} ) }
+				placeholder={ translate( 'Try searching "seo"' ) }
 				delaySearch={ false }
-				// recordEvent={ recordSearchEvent }
 				submitOnOpenIconClick
 				openIconSide="right"
 				displayOpenAndCloseIcons
