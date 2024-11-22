@@ -65,7 +65,7 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	{ dataView: 'icon', sortKey: 'alphabetically' },
+	{ dataView: 'title-text', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
@@ -75,8 +75,8 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
-const desktopFields = [ 'icon', 'site', 'title-text', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'icon', 'title-text', 'site-url', 'admin-url' ];
+const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields = [ 'title-text', 'site-url', 'admin-url' ];
 const listViewFields = [ 'title-text', 'site-url' ];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
@@ -204,8 +204,7 @@ const SitesDashboard = ( {
 						combinedFields: [
 							{
 								id: 'site-title',
-								label: '',
-								header: '',
+								label: 'site-title',
 								children: [ 'title-text', 'site-url', 'admin-url' ],
 								direction: 'vertical',
 							},

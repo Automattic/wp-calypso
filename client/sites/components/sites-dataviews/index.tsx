@@ -207,7 +207,7 @@ const DotcomSitesDataViews = ( {
 					return <SiteIcon site={ item } />;
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 			},
 		],
