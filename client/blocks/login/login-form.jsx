@@ -168,7 +168,8 @@ export class LoginForm extends Component {
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' ) &&
-			requestError.code === 'unknown_user'
+			requestError.code === 'unknown_user' &&
+			! this.props.isWooPasswordlessJPC
 		) {
 			this.jetpackCreateAccountWithMagicLink();
 		}
