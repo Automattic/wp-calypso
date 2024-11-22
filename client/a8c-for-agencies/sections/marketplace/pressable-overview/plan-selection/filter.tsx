@@ -156,26 +156,21 @@ export default function PlanSelectionFilter( {
 		</div>
 	);
 
-	// Until the plans have been added on the backend we need to make sure we have enterprise plans
-	const planCategoryTabs = [
-		{
-			name: 'standard',
-			title: translate( 'Standard Plans' ),
-		},
-	];
-	if ( enterpriseOptions.length > 0 ) {
-		planCategoryTabs.push( {
-			name: 'enterprise',
-			title: translate( 'Signature Shared Resource Plans' ),
-		} );
-	}
-
 	return (
 		<section className={ wrapperClass }>
 			<TabPanel
 				className="pressable-overview-plan-selection__plan-category-panel"
 				activeClass="active-tab"
-				tabs={ planCategoryTabs }
+				tabs={ [
+					{
+						name: 'standard',
+						title: translate( 'Shared Resource Plans' ),
+					},
+					{
+						name: 'enterprise',
+						title: translate( 'Signature Shared Resource Plans' ),
+					},
+				] }
 				onSelect={ setSelectedTab }
 				initialTabName={ selectedTab }
 			>
