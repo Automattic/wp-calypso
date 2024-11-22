@@ -204,6 +204,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 
 				.stats-tabs__highlight {
 					display: flex;
+					align-items: center;
 					justify-content: end;
 				}
 				// TODO: The relevant class names could be refactored to be more comprehensive.
@@ -222,6 +223,10 @@ $custom-stats-tab-mobile-break: $break-medium;
 						font-weight: 500;
 						font-size: $font-title-large;
 						line-height: 40px;
+					}
+					.stats-tabs__highlight {
+						display: flex;
+						justify-content: start;
 					}
 				}
 			}
