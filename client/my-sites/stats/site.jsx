@@ -243,6 +243,8 @@ class StatsSite extends Component {
 	// Used in case no starting date is present in the URL.
 	getDefaultDaysForPeriod( period, defaultSevenDaysForPeriodDay = false ) {
 		switch ( period ) {
+			case 'hour':
+				return 1;
 			case 'day':
 				// TODO: Temporary fix for the new date filtering feature.
 				if ( defaultSevenDaysForPeriodDay ) {
