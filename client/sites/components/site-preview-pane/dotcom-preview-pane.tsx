@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
-import { areHostingFeaturesSupported } from 'calypso/sites/features';
+import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';

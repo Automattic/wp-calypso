@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
-import { useAreAdvancedHostingFeaturesSupported } from '../features';
+import { useAreAdvancedHostingFeaturesSupported } from '../hosting-features/features';
 import Database from './database/page';
 import {
 	DeploymentCreation,

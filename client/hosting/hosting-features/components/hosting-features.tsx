@@ -1,16 +1,14 @@
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { useRef, useEffect } from 'react';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
+import HostingActivationButton from 'calypso/sites/hosting-features/components/hosting-activation-button';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -18,6 +16,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 type PromoCardProps = {
@@ -40,9 +39,6 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 const HostingFeatures = () => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
-	const showActivationModal = searchParams.get( 'activate' ) !== null;
-	const redirectToParam = searchParams.get( 'redirect_to' );
-	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
@@ -115,19 +111,6 @@ const HostingFeatures = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const handleTransfer = ( options: { geo_affinity?: string } ) => {
-		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
-		const params = new URLSearchParams( {
-			siteId: String( siteId ),
-			redirect_to: addQueryArgs( redirectToParam ?? redirectUrl, {
-				hosting_features: 'activated',
-			} ),
-			feature: FEATURE_SFTP,
-			initiate_transfer_context: 'hosting',
-			initiate_transfer_geo_affinity: options.geo_affinity || '',
-		} );
-		page( `/setup/transferring-hosted-site?${ params }` );
-	};
 
 	const activateTitle = hasEnTranslation( 'Activate all hosting features' )
 		? translate( 'Activate all hosting features' )
@@ -183,37 +166,7 @@ const HostingFeatures = () => {
 	} else if ( showActivationButton ) {
 		title = activateTitle;
 		description = activateDescription;
-		buttons = (
-			<>
-				<HostingHeroButton
-					onClick={ () => {
-						if ( showActivationButton ) {
-							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
-							return setShowEligibility( true );
-						}
-					} }
-				>
-					{ translate( 'Activate now' ) }
-				</HostingHeroButton>
-
-				<Dialog
-					additionalClassNames="plugin-details-cta__dialog-content"
-					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-					isVisible={ showEligibility }
-					onClose={ () => setShowEligibility( false ) }
-					showCloseIcon
-				>
-					<EligibilityWarnings
-						className="hosting__activating-warnings"
-						onProceed={ handleTransfer }
-						backUrl={ redirectUrl }
-						showDataCenterPicker
-						standaloneProceed
-						currentContext="hosting-features"
-					/>
-				</Dialog>
-			</>
-		);
+		buttons = <HostingActivationButton redirectUrl={ redirectUrl } />;
 	} else {
 		title = unlockTitle;
 		description = unlockDescription;
