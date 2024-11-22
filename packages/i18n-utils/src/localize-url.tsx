@@ -4,6 +4,7 @@ import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
+	localesWithWpcomDeveloperSite,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
@@ -135,6 +136,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'developer.wordpress.com': prefixLocalizedUrlPath( localesWithWpcomDeveloperSite ),
 	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
