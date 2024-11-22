@@ -35,6 +35,8 @@ import {
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
+	isJetpackGrowthPlan,
+	JETPACK_GROWTH_UPGRADE_MAP,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -519,6 +521,14 @@ class ManagePurchase extends Component<
 			}
 
 			return null;
+		}
+
+		if ( isJetpackGrowthPlan( purchase.productSlug ) ) {
+			const upgradePlan =
+				JETPACK_GROWTH_UPGRADE_MAP[
+					purchase.productSlug as keyof typeof JETPACK_GROWTH_UPGRADE_MAP
+				];
+			return `/checkout/${ siteSlug }/${ upgradePlan }`;
 		}
 
 		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
