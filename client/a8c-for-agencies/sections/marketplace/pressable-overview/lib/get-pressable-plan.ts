@@ -158,14 +158,14 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 };
 
 export default function getPressablePlan( slug: string ) {
-	return addCategoryToPlan( PLAN_DATA[ slug ] );
+	return addPlanCategory( PLAN_DATA[ slug ] );
 }
 
 export function getAllPressablePlans() {
 	return Object.keys( PLAN_DATA );
 }
 
-function addCategoryToPlan( plan: PressablePlan ) {
+function addPlanCategory( plan: PressablePlan ) {
 	if ( plan.slug.startsWith( 'pressable-enterprise' ) ) {
 		plan.category = 'enterprise';
 	} else {
