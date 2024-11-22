@@ -21,7 +21,23 @@ interface Props {
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
-
+const tableLayout = {
+	styles: {
+		plugins: {
+			width: '60%',
+			minWidth: '300px',
+		},
+		sites: {
+			width: '70px',
+		},
+		update: {
+			minWidth: '200px',
+		},
+		actions: {
+			width: '50px',
+		},
+	},
+};
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,
@@ -34,7 +50,7 @@ export default function PluginsListDataViews( {
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
 	const { sitesDialog, toggleDialogForPlugin } = useSitesDialog();
-	const fields = useFields( bulkActionDialog, toggleDialogForPlugin );
+
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
@@ -42,35 +58,23 @@ export default function PluginsListDataViews( {
 		perPage: 15,
 		search: initialSearch,
 		fields: [ 'plugins', 'sites', 'update' ],
-		layout: {
-			styles: {
-				plugins: {
-					width: '60%',
-					minWidth: '300px',
-				},
-				sites: {
-					width: '70px',
-				},
-				update: {
-					minWidth: '200px',
-				},
-				actions: {
-					width: '50px',
-				},
-			},
-		},
+		layout: tableLayout,
 	} ) );
+
+	const fields = useFields( bulkActionDialog, toggleDialogForPlugin, dataViewsState.type );
 
 	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
 	const isMobile = useMobileBreakpoint();
 
 	const defaultLayouts = {
-		table: {},
+		table: {
+			layout: tableLayout,
+		},
 		...( isMobile && {
 			grid: {
 				layout: {
 					mediaField: 'plugins',
-					primaryField: 'title',
+					primaryField: 'name',
 				},
 			},
 		} ),

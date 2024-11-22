@@ -10,10 +10,28 @@ import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
-	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
+	toggleDialogForPlugin: ( plugin: Plugin | null ) => void,
+	layout: string = 'table'
 ) {
 	const fields = useMemo(
 		() => [
+			...( layout === 'grid'
+				? [
+						{
+							id: 'name',
+							label: translate( 'Plugin' ),
+							getValue: ( { item }: { item: Plugin } ) => item.name,
+							enableHiding: false,
+							enableSorting: false,
+							enableGlobalSearch: true,
+							render: ( { item }: { item: Plugin } ) => (
+								<a href={ '/plugins/' + item.slug }>
+									<span>{ item.name }</span>
+								</a>
+							),
+						},
+				  ]
+				: [] ),
 			{
 				id: 'status',
 				label: translate( 'Status' ),
@@ -66,11 +84,9 @@ export function useFields(
 
 					return (
 						<>
-							<a href={ '/plugins/' + item.slug }>
-								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
-								<span>{ item.name }</span>
-							</a>
+							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
+							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
+							{ layout === 'table' && <a href={ '/plugins/' + item.slug }>{ item.name }</a> }
 							{ pluginActionStatus }
 						</>
 					);
@@ -125,7 +141,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog, toggleDialogForPlugin ]
+		[ bulkActionDialog, layout, toggleDialogForPlugin ]
 	);
 
 	return fields;

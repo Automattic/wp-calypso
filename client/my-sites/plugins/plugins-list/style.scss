@@ -43,10 +43,21 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
             @media (max-width: $break-mobile) {
                 padding-inline: 24px;
             }
+            
+            .dataviews-view-grid__media {
+                background-color: transparent;
+            }
+
+            .dataviews-view-grid__media svg {
+                width: 100%;
+                height: 100%;
+                margin-bottom: 12px;
+            }
 
             .dataviews-view-grid__media img {
-                border-radius: 4px;
                 margin-bottom: 12px;
+                object-fit: none;
+                
             }
         }
     }
