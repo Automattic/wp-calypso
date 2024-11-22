@@ -16,7 +16,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
 	CampaignChartSeriesData,
-	CampaignChartStatsResponse,
 	useCampaignChartStatsQuery,
 } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
