@@ -37,8 +37,14 @@
 	margin-top: 24px;
 	margin-bottom: 16px;
 	&.marketing-tools__searchbox-container--mobile {
-		width: 100%;
+		width: auto;
+		margin-left: 16px;
+		margin-right: 16px;
 	}
+}
+.panel-with-sidebar .marketing-tools__searchbox-container--mobile {
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .tools__header-body {
