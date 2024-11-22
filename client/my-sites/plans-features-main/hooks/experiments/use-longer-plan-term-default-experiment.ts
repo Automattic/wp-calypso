@@ -40,7 +40,9 @@ const useLongerPlanTermDefaultExperiment = (): {
 	return {
 		isLoadingExperiment: isLoadingExperimentAssignment,
 		term: isLoadingExperimentAssignment ? undefined : term,
-		isEligibleForTermSavings: experimentAssignment?.variationName !== 'control',
+		isEligibleForTermSavings: !! (
+			experimentAssignment?.variationName && experimentAssignment.variationName !== 'control'
+		),
 	};
 };
 
