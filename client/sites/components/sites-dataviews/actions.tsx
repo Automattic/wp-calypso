@@ -122,6 +122,9 @@ export function useActions( {
 					if ( site.ID === selectedItem?.ID ) {
 						return false;
 					}
+					if ( site.is_deleted ) {
+						return false;
+					}
 					return true;
 				},
 			},
@@ -137,6 +140,12 @@ export function useActions( {
 						siteUrl.opener = null;
 						siteUrl.focus();
 					}
+				},
+				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+					return true;
 				},
 			},
 			{
