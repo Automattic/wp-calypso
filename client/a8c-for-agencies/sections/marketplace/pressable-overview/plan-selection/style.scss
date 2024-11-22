@@ -304,7 +304,7 @@
 	max-width: 400px;
 }
 
-.pressable-overview-plan-selection__plan-category-panel {
+.pressable-overview-plan-selection__plan-category-tabpanel {
 	.components-tab-panel__tabs {
 		justify-content: center;
 		border: 1px solid var(--color-neutral-5);
@@ -320,7 +320,7 @@
 				color: inherit;
 			}
 
-			&.active-tab {
+			&.pressable-overview-plan-selection__plan-category-tab-is-active {
 				background-color: var(--color-primary-50);
 				border-color: var(--color-primary-50);
 				fill: var(--color-text-inverted);

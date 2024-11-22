@@ -1,7 +1,7 @@
 import { Button, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -120,6 +120,10 @@ export default function PlanSelectionFilter( {
 		return allAvailablePlans.length;
 	}, [ plans, pressablePlan ] );
 
+	useEffect( () => {
+		setSelectedTab( pressablePlan?.category ?? 'standard' );
+	}, [ pressablePlan ] );
+
 	if ( isLoading ) {
 		return (
 			<div className="pressable-overview-plan-selection__filter is-placeholder">
@@ -159,8 +163,11 @@ export default function PlanSelectionFilter( {
 	return (
 		<section className={ wrapperClass }>
 			<TabPanel
-				className="pressable-overview-plan-selection__plan-category-panel"
-				activeClass="active-tab"
+				key={ selectedTab } // Force re-render when selectedTab changes
+				className="pressable-overview-plan-selection__plan-category-tabpanel"
+				activeClass="pressable-overview-plan-selection__plan-category-tab-is-active"
+				onSelect={ setSelectedTab }
+				initialTabName={ selectedTab }
 				tabs={ [
 					{
 						name: 'standard',
@@ -171,8 +178,6 @@ export default function PlanSelectionFilter( {
 						title: translate( 'Signature Shared Resource Plans' ),
 					},
 				] }
-				onSelect={ setSelectedTab }
-				initialTabName={ selectedTab }
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {
