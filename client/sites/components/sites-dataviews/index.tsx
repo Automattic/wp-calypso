@@ -184,7 +184,7 @@ const DotcomSitesDataViews = ( {
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
-	const actions = useActions( { openSitePreviewPane } );
+	const actions = useActions( { openSitePreviewPane, selectedItem } );
 
 	return (
 		<div className="sites-dataviews">

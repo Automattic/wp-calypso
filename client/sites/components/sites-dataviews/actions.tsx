@@ -24,11 +24,13 @@ import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
 export function useActions( {
 	openSitePreviewPane,
+	selectedItem,
 }: {
 	openSitePreviewPane?: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
+	selectedItem?: SiteExcerptData | null;
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
@@ -63,6 +65,12 @@ export function useActions( {
 					} else {
 						navigate( adminUrl );
 					}
+				},
+				isEligible: ( site ) => {
+					if ( site.ID === selectedItem?.ID ) {
+						return false;
+					}
+					return true;
 				},
 			},
 			{
@@ -282,6 +290,6 @@ export function useActions( {
 				},
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane ]
+		[ __, capabilities, dispatch, openSitePreviewPane, selectedItem?.ID ]
 	);
 }
