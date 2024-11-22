@@ -99,7 +99,7 @@
 	}
 
 	:hover, :focus {
-		background-color: var(--studio-blue-50);
+		background-color: $help-center-blue;
 		color: var(--studio-white);
 
 		svg {
