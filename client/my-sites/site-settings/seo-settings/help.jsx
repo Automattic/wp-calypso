@@ -1,11 +1,10 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -23,10 +22,10 @@ export const SeoSettingsHelpCard = ( {
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
-		<div id="seo">
-			<SettingsSectionHeader title={ translate( 'Search engine optimization' ) } />
+		<PanelSection>
+			<PanelHeading>{ translate( 'Search engine optimization' ) }</PanelHeading>
 			{ hasAdvancedSEOFeature && (
-				<Card className="seo-settings__help">
+				<>
 					<p>
 						{ translate(
 							'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
@@ -50,9 +49,9 @@ export const SeoSettingsHelpCard = ( {
 							disabled={ disabled }
 						/>
 					) }
-				</Card>
+				</>
 			) }
-		</div>
+		</PanelSection>
 	);
 };
 

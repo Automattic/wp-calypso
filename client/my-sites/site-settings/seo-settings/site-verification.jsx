@@ -1,4 +1,4 @@
-import { Card, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, omit } from 'lodash';
 import { Component } from 'react';
@@ -13,7 +13,7 @@ import SupportInfo from 'calypso/components/support-info';
 import { protectForm } from 'calypso/lib/protect-form';
 import versionCompare from 'calypso/lib/version-compare';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -271,26 +271,26 @@ class SiteVerification extends Component {
 		} );
 
 		return (
-			<div className="seo-settings__site-verification">
+			<PanelSection className="seo-settings__site-verification">
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				<SettingsSectionHeader
-					disabled={ isSaveDisabled || isVerificationDisabled }
-					isSaving={ isSubmittingForm }
-					onButtonClick={ this.handleFormSubmit }
-					showButton
-					title={ translate( 'Site verification services' ) }
-				/>
-				<Card>
+				<PanelHeading>
+					{ translate( 'Site verification services' ) }
 					{ siteIsJetpack && (
-						<FormFieldset>
+						<>
 							<SupportInfo
 								text={ translate(
 									'Provides the necessary hidden tags needed to verify your WordPress site with various services.'
 								) }
 								link="https://jetpack.com/support/site-verification-tools/"
 							/>
+						</>
+					) }
+				</PanelHeading>
+				<>
+					{ siteIsJetpack && (
+						<FormFieldset>
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"
@@ -299,7 +299,6 @@ class SiteVerification extends Component {
 							/>
 						</FormFieldset>
 					) }
-
 					<p>
 						{ translate(
 							'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
@@ -347,9 +346,17 @@ class SiteVerification extends Component {
 								{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 						) ) }
+						<Button
+							className="is-primary"
+							disabled={ isSaveDisabled || isVerificationDisabled }
+							busy={ isSubmittingForm }
+							onClick={ this.handleFormSubmit }
+						>
+							{ translate( 'Save' ) }
+						</Button>
 					</form>
-				</Card>
-			</div>
+				</>
+			</PanelSection>
 		);
 	}
 }

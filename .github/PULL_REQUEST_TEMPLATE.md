@@ -43,4 +43,5 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Have you checked for TypeScript, React or other console errors?
 - [ ] Have you used memoizing on expensive computations? More info in [Memoizing with create-selector](https://github.com/Automattic/wp-calypso/blob/trunk/packages/state-utils/src/create-selector/README.md) and [Using memoizing selectors](https://react-redux.js.org/api/hooks#using-memoizing-selectors) and [Our Approach to Data](https://github.com/Automattic/wp-calypso/blob/trunk/docs/our-approach-to-data.md)
 - [ ] Have we added the "[Status] String Freeze" label as soon as any new strings were ready for translation (p4TIVU-5Jq-p2)?
+    - [ ] For UI changes, have we tested the change in various languages (for example, ES, PT, FR, or DE)? The length of text and words vary significantly between languages. 
 - [ ] For changes affecting Jetpack: Have we added the "[Status] Needs Privacy Updates" label if this pull request changes what data or activity we track or use (p4TIVU-aUh-p2)?

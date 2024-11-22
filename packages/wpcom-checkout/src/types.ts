@@ -10,6 +10,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	paypal_order_id?: string;
 	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
@@ -45,9 +46,17 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	razorpay_option_recurring?: boolean;
 };
 
+export type WPCOMTransactionEndpointResponsePayPal = {
+	order_id: number | '';
+	paypal_order_id: string;
+	redirect_url?: string;
+	qr_code?: string;
+};
+
 export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseSuccess
 	| WPCOMTransactionEndpointResponseFailed
+	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
 export interface TaxVendorInfo {
@@ -319,7 +328,11 @@ export type CheckoutPaymentMethodSlug =
 	| 'eps'
 	| 'ideal'
 	| 'p24'
-	| 'paypal'
+	// NOTE: we cannot use the key `paypal` because composite-checkout
+	// ends up using this as an `id`, which overwrites `window.paypal`
+	// which is the namespace used by the PayPal JS SDK.
+	| 'paypal-js'
+	| 'paypal-express'
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'
@@ -344,6 +357,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
+	| 'WPCOM_Billing_PayPal_PPCP'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'
 	| 'WPCOM_Billing_Stripe_Bancontact'

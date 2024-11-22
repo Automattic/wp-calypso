@@ -23,6 +23,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
 	SitesDashboardQueryParams,
@@ -76,9 +77,14 @@ const DEFAULT_SITE_TYPE = 'non-p2';
 // Limit fields on breakpoints smaller than 960px wide.
 const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
 const mobileFields = [ 'site' ];
+const listViewFields = [ 'site' ];
 
-const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
-	isDesktop ? desktopFields : mobileFields;
+const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
+	if ( selectedSite ) {
+		return listViewFields;
+	}
+	return isDesktop ? desktopFields : mobileFields;
+};
 
 export function showSitesPage( route: string ) {
 	const currentParams = new URL( window.location.href ).searchParams;
@@ -171,7 +177,7 @@ const SitesDashboard = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		fields: getFieldsByBreakpoint( isDesktop ),
+		fields: getFieldsByBreakpoint( !! selectedSite, isDesktop ),
 		...( status
 			? {
 					filters: [
@@ -211,7 +217,7 @@ const SitesDashboard = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
 	useEffect( () => {
-		const fields = getFieldsByBreakpoint( isDesktop );
+		const fields = getFieldsByBreakpoint( !! selectedSite, isDesktop );
 		const fieldsForBreakpoint = [ ...fields ].sort().toString();
 		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
 		// Compare the content of the arrays, not its referrences that will always be different.
@@ -238,7 +244,7 @@ const SitesDashboard = ( {
 				},
 			} );
 		}
-	}, [ isDesktop, isWide, dataViewsState ] );
+	}, [ isDesktop, isWide, dataViewsState, selectedSite ] );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -336,7 +342,14 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const openSitePreviewPane = ( site: SiteExcerptData ) => {
+	const openSitePreviewPane = (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => {
+		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+			site_id: site.ID,
+			source,
+		} );
 		showSitesPage(
 			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
 		);
@@ -345,7 +358,7 @@ const SitesDashboard = ( {
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
-			openSitePreviewPane( targetSite );
+			openSitePreviewPane( targetSite, 'environment_switcher' );
 		}
 	};
 

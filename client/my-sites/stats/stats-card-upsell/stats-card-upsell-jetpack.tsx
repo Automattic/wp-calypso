@@ -6,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL } from 'calypso/my-sites/stats/const';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -53,13 +54,32 @@ const insightsSupportLinkWithAnchor = ( anchor: string ) => {
 	);
 };
 
-const useUpsellCopy = ( statType: string ) => {
+const utmLearnMoreLink = ( isOdysseyStats: boolean ) => {
+	return isOdysseyStats ? (
+		<a
+			href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+			target="_blank"
+			rel="noopenner noreferrer"
+		/>
+	) : (
+		<InlineSupportLink supportContext="utm-upsell-overlay" showIcon={ false } />
+	);
+};
+
+const useUpsellCopy = ( statType: string, isOdysseyStats: boolean ) => {
 	const translate = useTranslate();
 	switch ( statType ) {
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		case STATS_FEATURE_UTM_STATS:
-			return translate( 'Generate UTM parameters and track your campaign performance data.' );
+			return translate(
+				'Generate UTM parameters and track your campaign performance data. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: utmLearnMoreLink( isOdysseyStats ),
+					},
+				}
+			);
 		case STATS_TYPE_DEVICE_STATS:
 			return translate( 'See which devices your visitors are using.' );
 		case STAT_TYPE_TOP_POSTS:
@@ -144,7 +164,7 @@ const useUpsellCopy = ( statType: string ) => {
 const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statType } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const copyText = useUpsellCopy( statType );
+	const copyText = useUpsellCopy( statType, isOdysseyStats );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
