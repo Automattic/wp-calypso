@@ -20,6 +20,15 @@ type InputFieldProps = {
 	ariaDescribedBy?: string;
 };
 
+export type UtmBuilderProps = {
+	initialData?: {
+		url?: string;
+		utm_source?: string;
+		utm_medium?: string;
+		utm_campaign?: string;
+	};
+};
+
 const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
 
 type UtmKeyType = ( typeof utmKeys )[ number ];
@@ -109,13 +118,13 @@ const InputField: React.FC< InputFieldProps > = ( {
 	);
 };
 
-const UtmBuilder: React.FC = () => {
+const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 	const translate = useTranslate();
-	const [ url, setUrl ] = useState( '' );
+	const [ url, setUrl ] = useState( initialData?.url || '' );
 	const [ inputValues, setInputValues ] = useState< inputValuesType >( {
-		utm_source: '',
-		utm_medium: '',
-		utm_campaign: '',
+		utm_source: initialData?.utm_source || '',
+		utm_medium: initialData?.utm_medium || '',
+		utm_campaign: initialData?.utm_campaign || '',
 	} );
 	// Focus the initial input field when rendered.
 	const initialFieldReference = useRef< HTMLLabelElement >( null );

@@ -5,14 +5,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
 import { trackStatsAnalyticsEvent } from '../utils';
-import StatsUtmBuilderForm from './stats-module-utm-builder-form';
+import StatsUtmBuilderForm, { type UtmBuilderProps } from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
 	trigger?: React.ReactElement;
+	initialData?: UtmBuilderProps[ 'initialData' ];
 }
 
-const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
+const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData } ) => {
 	const [ isOpen, setOpen ] = useState< boolean | null >( null );
 	const scrollY = useRef( { y: 0, mobile: false } );
 
@@ -77,7 +78,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 							<div className="stats-utm-builder__description">
 								{ translate( 'Generate URLs to share and track UTM parameters.' ) }
 							</div>
-							<StatsUtmBuilderForm />
+							<StatsUtmBuilderForm initialData={ initialData } />
 						</div>
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>

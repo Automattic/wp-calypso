@@ -53,8 +53,8 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					element.setAttribute( 'href', new URL( hash, link ).href );
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
-
-						const target = node?.querySelector( hash );
+						// We need to use CSS.escape since we can have non latin chars in the hash
+						const target = node?.querySelector( `#${ CSS.escape( hash.slice( 1 ) ) }` );
 						if ( target ) {
 							target.scrollIntoView();
 						}

@@ -25,12 +25,13 @@ import type {
 	CountryListItem,
 	PossiblyCompleteDomainContactDetails,
 	ContactDetailsType,
+	WPCOMPaymentMethod,
 } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/lib/explat' );
 ( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
-export const normalAllowedPaymentMethods = [
+export const normalAllowedPaymentMethods: WPCOMPaymentMethod[] = [
 	'WPCOM_Billing_PayPal_Express',
 	'WPCOM_Billing_Stripe_Payment_Method',
 ];

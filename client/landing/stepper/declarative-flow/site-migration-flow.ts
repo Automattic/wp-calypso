@@ -79,24 +79,8 @@ const siteMigration: Flow = {
 			}
 		}, [ isAdmin ] );
 
-		useEffect( () => {
-			// We don't need to do anything if the user isn't logged in.
-			if ( ! userIsLoggedIn ) {
-				return;
-			}
-
-			if ( siteSlug || siteId ) {
-				return;
-			}
-
-			if ( isHostedSiteMigrationFlow( flowPath ) ) {
-				return;
-			}
-
-			window.location.assign( '/start' );
-		}, [ flowPath, siteId, siteSlug, userIsLoggedIn, isAdmin ] );
-
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+			window.location.assign( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration does not have the site slug or site id.',

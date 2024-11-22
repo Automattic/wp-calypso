@@ -32,7 +32,8 @@ const isValidJSONArray = ( string: string ) => {
 
 const topPostsParser = (
 	posts: Array< UTMMetricItemTopPostRaw >,
-	siteSlug?: string
+	siteSlug?: string,
+	utmData?: { [ key: string ]: string }
 ): Array< UTMMetricItemTopPost > => {
 	return posts.map( ( topPost: UTMMetricItemTopPostRaw ) => ( {
 		id: topPost.id,
@@ -45,6 +46,13 @@ const topPostsParser = (
 				data: topPost.href,
 				type: 'link',
 			},
+			{
+				data: {
+					url: topPost.href,
+					...utmData,
+				},
+				type: 'url-builder',
+			},
 		],
 	} ) );
 };
@@ -52,7 +60,8 @@ const topPostsParser = (
 const metricsParser = (
 	UTMValues: { [ key: string ]: number },
 	topPosts: { [ key: string ]: Array< UTMMetricItemTopPostRaw > } | undefined,
-	siteSlug?: string
+	siteSlug?: string,
+	utmParam?: string
 ) => {
 	const combinedKeys = Object.keys( UTMValues );
 	// Stop fetching top posts by other requests
@@ -88,7 +97,16 @@ const metricsParser = (
 
 			// Prepare top posts of each UTM parameter value.
 			if ( posts.length ) {
-				data.children = topPostsParser( posts, siteSlug );
+				const utmParamKeys = utmParam?.split( ',' );
+				const UTMdata = utmParamKeys?.reduce(
+					( acc, key, index ) => ( {
+						...acc,
+						[ key ]: parsedKeys[ index ],
+					} ),
+					{}
+				);
+
+				data.children = topPostsParser( posts, siteSlug, UTMdata );
 			}
 
 			// Set no `paramValues` to prevent top post requests.
@@ -115,10 +133,11 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 			const values = action.data.top_utm_values || {};
 			const topPosts = action.data.top_posts;
 			const siteSlug = action.siteSlug;
+			const utmParam = action.utmParam;
 
 			return {
 				...state,
-				metrics: metricsParser( values, topPosts, siteSlug ),
+				metrics: metricsParser( values, topPosts, siteSlug, utmParam ),
 			};
 		}
 

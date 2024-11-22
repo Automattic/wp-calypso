@@ -127,9 +127,15 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 			isUpdatingPrivacy,
 			privacyAvailable,
 			privateDomain,
+			isHundredYearDomain,
 		} = props;
 
-		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
+		if (
+			! privacyAvailable ||
+			! contactInfoDisclosureAvailable ||
+			privateDomain ||
+			isHundredYearDomain
+		) {
 			return false;
 		}
 
@@ -176,7 +182,8 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent, currentRoute, readOnly } = props;
+	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
+		props;
 
 	return (
 		<div>
@@ -185,20 +192,22 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					{ props.registeredViaTrustee && renderTrusteeNotice() }
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
-						<Button
-							disabled={ disableEdit || readOnly || pendingContactUpdate }
-							href={
-								disableEdit || readOnly || pendingContactUpdate
-									? ''
-									: domainManagementEditContactInfo(
-											props.selectedSite.slug,
-											props.selectedDomainName,
-											currentRoute
-									  )
-							}
-						>
-							{ translate( 'Edit' ) }
-						</Button>
+						{ ! isHundredYearDomain && (
+							<Button
+								disabled={ disableEdit || readOnly || pendingContactUpdate }
+								href={
+									disableEdit || readOnly || pendingContactUpdate
+										? ''
+										: domainManagementEditContactInfo(
+												props.selectedSite.slug,
+												props.selectedDomainName,
+												currentRoute
+										  )
+								}
+							>
+								{ translate( 'Edit' ) }
+							</Button>
+						) }
 
 						{ canManageConsent && (
 							<Button
@@ -227,11 +236,13 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						</p>
 					) }
 				</div>
-				<div className="contact-information__toggle-container">
-					{ getPrivacyProtection() }
-					{ getContactInfoDisclosed() }
-					{ getPrivacyProtectionRecommendationText() }
-				</div>
+				{ ! isHundredYearDomain && (
+					<div className="contact-information__toggle-container">
+						{ getPrivacyProtection() }
+						{ getContactInfoDisclosed() }
+						{ getPrivacyProtectionRecommendationText() }
+					</div>
+				) }
 			</Card>
 		</div>
 	);

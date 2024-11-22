@@ -85,6 +85,10 @@
 
 	.sharing-service__name {
 		float: left;
+
+		h3 {
+			font-weight: 500;
+		}
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -104,6 +108,20 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			margin-left: 6px;
 		}
+	}
+}
+
+.sharing {
+	.sharing-services-group {
+		margin-bottom: 16px;
+	}
+}
+
+.sharing-services-group__services {
+	margin: 24px -22px -23px -22px;
+
+	.notice {
+		margin-bottom: 0;
 	}
 }
 
@@ -456,7 +474,7 @@
 .sharing-connection__account-sitewide-connection.form-label {
 	display: block;
 	margin-bottom: 0;
-	font-size: 1rem;
+	font-size: 0.875rem;
 }
 
 .sharing-connection__account-sitewide-connection input[type="checkbox"] {

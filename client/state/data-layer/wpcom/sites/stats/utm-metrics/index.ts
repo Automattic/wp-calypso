@@ -62,12 +62,12 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 	[ STATS_UTM_METRICS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
-			onSuccess: ( { siteId, postId, siteSlug }: AnyAction, data: object ) => {
+			onSuccess: ( { siteId, postId, siteSlug, utmParam }: AnyAction, data: object ) => {
 				if ( postId ) {
 					return receiveMetricsByPost( siteId, postId, data );
 				}
 
-				return receiveMetrics( siteId, data, siteSlug );
+				return receiveMetrics( siteId, data, siteSlug, utmParam );
 			},
 			onError: ( { siteId }: AnyAction ) => requestMetricsFail( siteId ),
 			// fromApi,

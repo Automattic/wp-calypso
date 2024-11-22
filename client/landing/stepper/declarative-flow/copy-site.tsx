@@ -130,7 +130,7 @@ const copySite: Flow = {
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 					return window.location.assign(
-						`/checkout/${ encodeURIComponent(
+						`/checkout/business/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);

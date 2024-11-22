@@ -1,0 +1,57 @@
+.promote-post-i2 {
+	.location-chart {
+
+		&__country-stats-container {
+			margin-top: 24px;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		&__country-stat {
+			margin-bottom: 12px;
+		}
+
+		&__country-info {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 10px;
+			font-size: .875rem;
+			color: var( --studio-gray-60 );
+		}
+
+		&__percentage {
+			color: var( --studio-gray-100 );
+			font-weight: 500;
+		}
+
+		&__progress-bar {
+			height: 3px;
+			overflow: hidden;
+			display: flex;
+			gap: 10px;
+		}
+
+		&__progress-bar-filled {
+			height: 100%;
+			background-color: var(--color-primary);
+			border-radius: 4px;
+		}
+
+		&__progress-bar-unfilled {
+			height: 100%;
+			background-color: var(--studio-gray-5);
+			border-radius: 4px;
+			flex-grow: 1;
+		}
+
+		&__show-more-button {
+			color: var(--color-primary);
+			font-weight: 500;
+			text-align: center;
+			margin-top: 12px;
+		}
+	}
+
+}
+

@@ -4,6 +4,7 @@ import {
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
+import { CartKey } from '@automattic/shopping-cart';
 import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
@@ -27,10 +28,17 @@ import type { LocalizeProps } from 'i18n-calypso';
  *
  * NOTE: if countryCode is not provided, geolocation will be used to determine
  * which Stripe account to use to create the Payment Method.
+ * The cartKey is optional and is only used in the Checkout flow to create
+ * the SetupIntent using information from the cart - for special cases like
+ * Indian Payments Methods with e-mandates.
  */
-async function createStripeSetupIntent( countryCode?: string ): Promise< StripeSetupIntentId > {
+async function createStripeSetupIntent(
+	countryCode?: string,
+	cartKey?: CartKey
+): Promise< StripeSetupIntentId > {
 	const configuration = await wp.req.post( '/me/stripe-setup-intent', {
 		country: countryCode,
+		cart_key: cartKey,
 	} );
 	const intentId: string | undefined =
 		configuration?.setup_intent_id && typeof configuration.setup_intent_id === 'string'
@@ -90,6 +98,7 @@ export async function assignNewCardProcessor(
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
+		cartKey,
 	}: {
 		purchase: Purchase | undefined;
 		translate: LocalizeProps[ 'translate' ];
@@ -98,6 +107,7 @@ export async function assignNewCardProcessor(
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
+		cartKey?: CartKey;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -178,7 +188,7 @@ export async function assignNewCardProcessor(
 		// but since `prepareAndConfirmStripeSetupIntent()` uses the `stripe`
 		// object created by `StripeHookProvider`, that object must also be
 		// created with the same countryCode, and right now it is not.
-		const stripeSetupIntentId = await createStripeSetupIntent();
+		const stripeSetupIntentId = await createStripeSetupIntent( undefined, cartKey );
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',

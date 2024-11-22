@@ -4,13 +4,15 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { PanelHeading } from 'calypso/sites/components/panel';
+import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getSettingsSource } from '../site-tools/utils';
 import { ConfirmationTransfer } from './confirmation-transfer';
 import PendingDomainTransfer from './pending-domain-transfer';
 import SiteOwnerTransferEligibility from './site-owner-user-search';
@@ -29,7 +31,8 @@ const SiteTransferComplete = () => {
 		return null;
 	}
 
-	return (
+	const isUntangled = isHostingMenuUntangled();
+	const message = (
 		<p>
 			{ translate(
 				/* translators: %email is the email of the user who is going to be the new owner of the site */
@@ -40,6 +43,12 @@ const SiteTransferComplete = () => {
 				}
 			) }
 		</p>
+	);
+	return (
+		<>
+			{ isUntangled && <PanelHeading>{ translate( 'Confirmation email sent' ) }</PanelHeading> }
+			{ message }
+		</>
 	);
 };
 
@@ -72,7 +81,9 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			const source = getSettingsSource();
+			const source = isHostingMenuUntangled()
+				? '/sites/settings/administration'
+				: getSettingsSource();
 			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};
