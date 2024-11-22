@@ -37,7 +37,7 @@ export function HelpCenterChat( {
 		}
 	}, [] );
 
-	const odieVersion = config.isEnabled( 'help-center-experience' ) ? '14.0.0' : null;
+	const odieVersion = config.isEnabled( 'help-center-experience' ) ? '14.0.3' : null;
 
 	return (
 		<OdieAssistantProvider
