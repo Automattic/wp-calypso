@@ -68,19 +68,22 @@ export default function MarketingTools() {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<Search
-				className={ clsx( 'marketing-tools__searchbox', {
-					'marketing-tools__searchbox--mobile': ! isDesktop(),
-				} ) }
-				onSearch={ setSearchTerm }
-				defaultValue={ searchTerm }
-				searchMode="when-typing"
-				placeholder={ translate( 'Try searching "seo"' ) }
-				submitOnOpenIconClick
-				openIconSide="right"
-				displayOpenAndCloseIcons
-				delaySearch
-			/>
+			<div className="marketing-tools__searchbox-container">
+				<Search
+					className={ clsx( 'marketing-tools__searchbox', {
+						'marketing-tools__searchbox--mobile': ! isDesktop(),
+					} ) }
+					onSearch={ setSearchTerm }
+					defaultValue={ searchTerm }
+					searchMode="when-typing"
+					placeholder={ translate( 'Try searching "seo"' ) }
+					submitOnOpenIconClick
+					openIconSide="right"
+					displayOpenAndCloseIcons
+					delaySearch
+					fitsContainer
+				/>
+			</div>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {
 					return (
