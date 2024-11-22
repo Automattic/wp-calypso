@@ -229,6 +229,12 @@
 			color: var(--studio-gray-80);
 			line-height: 20px;
 		}
+
+		&.odie-introduction-message-content__conversation_feedback {
+			flex-direction: column;
+			align-items: baseline;
+			padding: 0;
+		}
 	}
 
 	.message-header {

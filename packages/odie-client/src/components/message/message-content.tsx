@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
@@ -24,6 +25,7 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
 } ) => {
+	const { __ } = useI18n();
 	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const messageClasses = clsx(
 		'odie-chatbox-message',
@@ -86,6 +88,16 @@ export const MessageContent = ( {
 									{ message.content }
 								</Markdown>
 							</div>
+						</div>
+					) }
+					{ message.type === 'conversation-feedback' && message?.meta?.feedbackUrl && (
+						<div className="odie-introduction-message-content odie-introduction-message-content__conversation_feedback">
+							<p>{ message.content }</p>
+							<p>
+								<a target="_blank" rel="noreferrer" href={ message?.meta?.feedbackUrl }>
+									{ __( 'Submit Rating', __i18n_text_domain__ ) }
+								</a>
+							</p>
 						</div>
 					) }
 					{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }

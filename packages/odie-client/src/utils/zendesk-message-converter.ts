@@ -56,11 +56,20 @@ function getContentMessage( message: ZendeskMessage ): string {
 }
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
+	let type = message.type as MessageType;
+	let feedbackUrl;
+
+	if ( message.source.type === 'zd:surveys' && message?.actions?.length ) {
+		type = 'conversation-feedback';
+		feedbackUrl = message?.actions[ 0 ].uri;
+	}
+
 	return {
+		...( feedbackUrl ? { meta: { feedbackUrl } } : undefined ),
 		content: getContentMessage( message ),
 		role: ( [ 'user', 'business' ].includes( message.role )
 			? message.role
 			: 'user' ) as MessageRole,
-		type: message.type as MessageType,
+		type,
 	};
 };

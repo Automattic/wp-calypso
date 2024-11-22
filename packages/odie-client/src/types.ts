@@ -130,6 +130,7 @@ export type MessageType =
 	| 'error'
 	| 'placeholder'
 	| 'dislike-feedback'
+	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
 	| 'image'
@@ -179,14 +180,22 @@ interface ConversationParticipant {
 	lastRead: number;
 }
 
+type MessageAction = {
+	id: string;
+	default: boolean;
+	fallback: string;
+	uri: string;
+};
+
 export type ZendeskMessage = {
 	avatarUrl?: string;
 	displayName: string;
 	id: string;
 	received: number;
 	role: string;
+	actions?: MessageAction[];
 	source: {
-		type: 'web' | 'slack';
+		type: 'web' | 'slack' | 'zd:surveys';
 		id: string;
 		integrationId: string;
 	};
