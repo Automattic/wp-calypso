@@ -1,8 +1,16 @@
 import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import {
+	SiteExcerptData,
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+} from '@automattic/sites';
+import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
+import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -16,18 +24,56 @@ import {
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import type { SiteExcerptData } from '@automattic/sites';
 import type { Action } from '@wordpress/dataviews';
-import type { mutateFunction } from 'calypso/sites/hooks/use-restore-site-mutation';
 
-export function useActions( {
-	restoreSite,
-}: {
-	restoreSite: mutateFunction;
-} ): Action< SiteExcerptData >[] {
+export function useActions(): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
+
+	const queryClient = useQueryClient();
+	const reduxDispatch = useReduxDispatch();
+	const { mutate: restoreSite, isPending: isRestoring } = useRestoreSiteMutation( {
+		onSuccess() {
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'all',
+				],
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'deleted',
+				],
+			} );
+			reduxDispatch(
+				successNotice( __( 'The site has been restored.' ), {
+					duration: 3000,
+				} )
+			);
+		},
+		onError: ( error ) => {
+			if ( error.status === 403 ) {
+				reduxDispatch(
+					errorNotice( __( 'Only an administrator can restore a deleted site.' ), {
+						duration: 5000,
+					} )
+				);
+			} else {
+				reduxDispatch(
+					errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
+				);
+			}
+		},
+	} );
 
 	return useMemo(
 		() => [
@@ -287,6 +333,8 @@ export function useActions( {
 			{
 				id: 'restore',
 				label: __( 'Restore' ),
+				isPrimary: true,
+				disabled: isRestoring,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					restoreSite( site.ID );
@@ -294,6 +342,6 @@ export function useActions( {
 				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
-		[ __, dispatch, restoreSite ]
+		[ __, dispatch, isRestoring, restoreSite ]
 	);
 }

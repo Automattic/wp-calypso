@@ -1,6 +1,5 @@
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import styled from '@emotion/styled';
-import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
@@ -34,10 +33,9 @@ const DeletedStatus = styled.div`
 
 interface SiteStatusProps {
 	site: SiteExcerptData;
-	isRestoring?: boolean;
 }
 
-export const SiteStatus = ( { site, isRestoring }: SiteStatusProps ) => {
+export const SiteStatus = ( { site }: SiteStatusProps ) => {
 	const { __ } = useI18n();
 
 	const translatedStatus = useSiteLaunchStatusLabel( site );
@@ -47,7 +45,6 @@ export const SiteStatus = ( { site, isRestoring }: SiteStatusProps ) => {
 		return (
 			<DeletedStatus>
 				<span>{ __( 'Deleted' ) }</span>
-				{ isRestoring && <Spinner /> }
 			</DeletedStatus>
 		);
 	}

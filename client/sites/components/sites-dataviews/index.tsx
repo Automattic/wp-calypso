@@ -1,22 +1,13 @@
-import {
-	SiteExcerptData,
-	SITE_EXCERPT_REQUEST_FIELDS,
-	SITE_EXCERPT_REQUEST_OPTIONS,
-} from '@automattic/sites';
-import { useQueryClient } from '@tanstack/react-query';
+import { SiteExcerptData } from '@automattic/sites';
 import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
@@ -137,49 +128,6 @@ const DotcomSitesDataViews = ( {
 		};
 	}, [] );
 
-	const queryClient = useQueryClient();
-	const reduxDispatch = useReduxDispatch();
-	const { mutate: restoreSite, isPending: isRestoring } = useRestoreSiteMutation( {
-		onSuccess() {
-			queryClient.invalidateQueries( {
-				queryKey: [
-					USE_SITE_EXCERPTS_QUERY_KEY,
-					SITE_EXCERPT_REQUEST_FIELDS,
-					SITE_EXCERPT_REQUEST_OPTIONS,
-					[],
-					'all',
-				],
-			} );
-			queryClient.invalidateQueries( {
-				queryKey: [
-					USE_SITE_EXCERPTS_QUERY_KEY,
-					SITE_EXCERPT_REQUEST_FIELDS,
-					SITE_EXCERPT_REQUEST_OPTIONS,
-					[],
-					'deleted',
-				],
-			} );
-			reduxDispatch(
-				successNotice( __( 'The site has been restored.' ), {
-					duration: 3000,
-				} )
-			);
-		},
-		onError: ( error ) => {
-			if ( error.status === 403 ) {
-				reduxDispatch(
-					errorNotice( __( 'Only an administrator can restore a deleted site.' ), {
-						duration: 5000,
-					} )
-				);
-			} else {
-				reduxDispatch(
-					errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
-				);
-			}
-		},
-	} );
-
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
@@ -209,9 +157,7 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'status',
 				label: __( 'Status' ),
-				render: ( { item }: { item: SiteExcerptData } ) => (
-					<SiteStatus site={ item } isRestoring={ isRestoring } />
-				),
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: true,
 				elements: siteStatusGroups,
@@ -250,10 +196,10 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, siteStatusGroups, isRestoring ]
+		[ __, openSitePreviewPane, userId, siteStatusGroups ]
 	);
 
-	const actions = useActions( { restoreSite } );
+	const actions = useActions();
 
 	return (
 		<div className="sites-dataviews">
