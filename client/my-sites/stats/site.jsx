@@ -486,6 +486,7 @@ class StatsSite extends Component {
 								statsType="statsTopPosts"
 								showQueryDate
 								isShort
+								dateRange={ customChartRange }
 							/>
 						</StatsPeriodNavigation>
 					</StatsPeriodHeader>
