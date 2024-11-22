@@ -79,8 +79,8 @@ export default function MarketingTools() {
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 			<Search
-				className={ clsx( 'search-categories__searchbox', {
-					'search-categories__searchbox--mobile': ! isDesktop(),
+				className={ clsx( 'marketing-tools__searchbox', {
+					'marketing-tools__searchbox--mobile': ! isDesktop(),
 				} ) }
 				onSearch={ setSearchTerm }
 				defaultValue={ searchTerm }

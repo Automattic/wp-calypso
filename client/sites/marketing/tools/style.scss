@@ -20,17 +20,16 @@
 	background-color: #fff;
 }
 
-.search-component.search-categories__searchbox {
+.search-component.marketing-tools__searchbox {
 	max-width: 250px;
 	width: 100%;
 	height: 40px;
 	z-index: 0;
 	margin-top: 24px;
 	margin-bottom: 16px;
-	
 	border-radius: 4px;
 
-	&.search-categories__searchbox--mobile {
+	&.marketing-tools__searchbox--mobile {
 		max-width: none;
 	}
 
@@ -75,7 +74,7 @@
 	}
 }
 
-.panel-with-sidebar .search-categories__searchbox {
+.panel-with-sidebar .marketing-tools__searchbox {
 	display: none;
 }
 
