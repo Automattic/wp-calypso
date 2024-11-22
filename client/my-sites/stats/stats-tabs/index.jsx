@@ -25,8 +25,8 @@ class StatsTabs extends Component {
 		aggregate: PropTypes.bool,
 	};
 
-	formatData = ( data ) => {
-		const { activeIndex, activeKey, tabs, aggregate } = this.props;
+	formatData = ( data, aggregate = true ) => {
+		const { activeIndex, activeKey, tabs } = this.props;
 		let activeData = {};
 		if ( ! aggregate ) {
 			activeData = find( data, { [ activeKey ]: activeIndex } );
@@ -46,12 +46,13 @@ class StatsTabs extends Component {
 	};
 
 	render() {
-		const { children, data, previousData, tabs, switchTab, selectedTab, borderless } = this.props;
+		const { children, data, previousData, tabs, switchTab, selectedTab, borderless, aggregate } =
+			this.props;
 
 		let statsTabs;
 
 		if ( data && ! children ) {
-			const activeData = this.formatData( data );
+			const activeData = this.formatData( data, aggregate );
 			const activePreviousData = this.formatData( previousData );
 
 			statsTabs = tabs.map( ( tab ) => {
