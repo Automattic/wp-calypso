@@ -2220,6 +2220,15 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		translate( 'Downtime monitoring' ),
 		translate( 'CDN (Content Delivery Networks)' ),
 	];
+	const growthPlanIncludesInfo = [
+		translate( 'Display ads with WordAds' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Paid content gating' ),
+		translate( 'Paywall access' ),
+		translate( 'Newsletter' ),
+		translate( 'Priority support' ),
+		translate( '2% transaction fees' ),
+	];
 
 	return {
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
@@ -2250,9 +2259,9 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: [ ...freeBundleFeatures ],
 		[ PLAN_JETPACK_COMPLETE ]: [ ...freeBundleFeatures ],
 		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: [ ...freeBundleFeatures ],
-		[ PLAN_JETPACK_GROWTH_MONTHLY ]: [ ...freeBundleFeatures ],
-		[ PLAN_JETPACK_GROWTH_YEARLY ]: [ ...freeBundleFeatures ],
-		[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: [ ...freeBundleFeatures ],
+		[ PLAN_JETPACK_GROWTH_MONTHLY ]: [ ...growthPlanIncludesInfo, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_GROWTH_YEARLY ]: [ ...growthPlanIncludesInfo, ...freeBundleFeatures ],
+		[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: [ ...growthPlanIncludesInfo, ...freeBundleFeatures ],
 	};
 };
 

@@ -30,7 +30,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 			/>
 
 			<AllItems
-				heading={ translate( 'Products' ) }
+				heading={ translate( 'Individual products' ) }
 				items={ allItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				siteId={ siteId }
