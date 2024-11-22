@@ -49,7 +49,6 @@ $custom-stats-tab-mobile-break: $break-medium;
 		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
 			font-family: $font-sf-pro-text;
-			flex: 1 1 250px;
 			border: 0;
 
 			// Keep the original mobile stats-tabs styles
@@ -75,9 +74,11 @@ $custom-stats-tab-mobile-break: $break-medium;
 				width: 45%;
 			}
 
-			@media (min-width: $break-wide) {
-				flex: 1 1 250px;
+			@media (min-width: $break-xlarge) {
+				flex: 1 1 155px;
+				gap: 14px;
 				max-width: 250px;
+				padding: 4px 4px;
 			}
 
 			.gridicon {
@@ -217,11 +218,11 @@ $custom-stats-tab-mobile-break: $break-medium;
 				}
 				@media (min-width: $custom-stats-tab-mobile-break) {
 					& > a {
-						padding: 16px 24px;
+						padding: 8px 16px;
 					}
 					.stats-tabs__highlight-value {
 						font-weight: 500;
-						font-size: $font-title-large;
+						font-size: $font-title-medium;
 						line-height: 40px;
 					}
 					.stats-tabs__highlight {
