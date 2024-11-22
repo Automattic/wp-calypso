@@ -127,6 +127,10 @@ const Home = ( {
 	useEffect( () => {
 		const studioSiteId = getQueryArgs().studioSiteId;
 		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
+		recordTracksEvent( 'calypso_studio_sync_connect_site', {
+			remoteSiteId: siteId,
+			click: false,
+		} );
 		window.location.href = studioSiteUrl;
 	}, [ siteId ] );
 
@@ -275,6 +279,10 @@ const Home = ( {
 			>
 				<NoticeAction
 					onClick={ () => {
+						recordTracksEvent( 'calypso_studio_sync_connect_site', {
+							remoteSiteId: siteId,
+							click: true,
+						} );
 						window.location.href = studioSiteUrl;
 					} }
 				>
