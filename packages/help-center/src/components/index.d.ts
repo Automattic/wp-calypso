@@ -184,3 +184,13 @@ declare module '*.svg' {
 	const content: string;
 	export default content;
 }
+
+// Can be removed after experiment is removed - shouldUseHelpCenterExperience
+declare module 'calypso/server/lib/logger';
+
+// Can be removed after experiment is removed - shouldUseHelpCenterExperience
+declare module 'calypso/lib/explat' {
+	export const useExperiment: (
+		experimentName: string
+	) => [ boolean, { variationName: string } | undefined ];
+}
