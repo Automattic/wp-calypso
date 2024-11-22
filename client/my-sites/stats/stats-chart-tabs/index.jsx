@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -96,7 +97,10 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		this.props.requestChartCounts( this.props.query );
+		this.props.requestChartCounts( this.props.queryComp );
+	};
 
 	render() {
 		const {
@@ -106,6 +110,7 @@ class StatModuleChartTabs extends Component {
 			selectedPeriod,
 			isActiveTabLoading,
 			className,
+			countsComp,
 			showChartHeader = false,
 		} = this.props;
 		const classes = [
@@ -139,9 +144,7 @@ class StatModuleChartTabs extends Component {
 				</Chart>
 				<StatTabs
 					data={ this.props.counts }
-					previousData={
-						isNewDateFilteringEnabled ? { views: 1, visitors: 1, likes: 1, comments: 1 } : null
-					}
+					previousData={ isNewDateFilteringEnabled ? countsComp : null }
 					tabs={ this.props.charts }
 					switchTab={ this.props.switchTab }
 					selectedTab={ this.props.chartTab }
@@ -196,6 +199,17 @@ const connectComponent = connect(
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
+		const dateComp = moment( date ).subtract( quantity, period ).format( 'YYYY-MM-DD' );
+		const chartStartComp = moment( chartStart ).subtract( quantity, period ).format( 'YYYY-MM-DD' );
+		const queryComp = memoizedQuery( chartTab, dateComp, period, quantity, siteId, chartStartComp );
+		const countsComp = getCountRecords(
+			state,
+			siteId,
+			queryComp.date,
+			queryComp.period,
+			queryComp.quantity
+		);
+
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
@@ -204,8 +218,10 @@ const connectComponent = connect(
 		return {
 			chartData,
 			counts,
+			countsComp,
 			isActiveTabLoading,
 			query,
+			queryComp,
 			queryKey,
 			siteId,
 			selectedPeriod: period,

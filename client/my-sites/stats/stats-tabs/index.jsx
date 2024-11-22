@@ -15,7 +15,7 @@ class StatsTabs extends Component {
 	static propTypes = {
 		children: PropTypes.node,
 		data: PropTypes.array,
-		previousData: PropTypes.object,
+		previousData: PropTypes.array,
 		activeIndex: PropTypes.string,
 		activeKey: PropTypes.string,
 		tabs: PropTypes.array,
@@ -25,51 +25,46 @@ class StatsTabs extends Component {
 		aggregate: PropTypes.bool,
 	};
 
+	formatData = ( data ) => {
+		const { activeIndex, activeKey, tabs, aggregate } = this.props;
+		let activeData = {};
+		if ( ! aggregate ) {
+			activeData = find( data, { [ activeKey ]: activeIndex } );
+		} else {
+			data.map( ( day ) =>
+				tabs.map( ( tab ) => {
+					if ( isFinite( day[ tab.attr ] ) ) {
+						if ( ! ( tab.attr in activeData ) ) {
+							activeData[ tab.attr ] = 0;
+						}
+						activeData[ tab.attr ] = activeData[ tab.attr ] + day[ tab.attr ];
+					}
+				} )
+			);
+		}
+		return activeData;
+	};
+
 	render() {
-		const {
-			children,
-			data,
-			previousData,
-			activeIndex,
-			activeKey,
-			tabs,
-			switchTab,
-			selectedTab,
-			borderless,
-			aggregate,
-		} = this.props;
+		const { children, data, previousData, tabs, switchTab, selectedTab, borderless } = this.props;
 
 		let statsTabs;
 
 		if ( data && ! children ) {
-			let activeData = {};
-			if ( ! aggregate ) {
-				activeData = find( data, { [ activeKey ]: activeIndex } );
-			} else {
-				// TODO: not major but we might want to cache the data.
-				data.map( ( day ) =>
-					tabs.map( ( tab ) => {
-						if ( isFinite( day[ tab.attr ] ) ) {
-							if ( ! ( tab.attr in activeData ) ) {
-								activeData[ tab.attr ] = 0;
-							}
-							activeData[ tab.attr ] = activeData[ tab.attr ] + day[ tab.attr ];
-						}
-					} )
-				);
-			}
+			const activeData = this.formatData( data );
+			const activePreviousData = this.formatData( previousData );
 
 			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 
 				const value = hasData ? activeData[ tab.attr ] : null;
-				const previousValue = previousData && previousData[ tab.attr ];
+				const previousValue = activePreviousData && activePreviousData[ tab.attr ];
 
 				const tabOptions = {
 					attr: tab.attr,
 					icon: tab.icon,
-					className: clsx( tab.className, { 'is-highlighted': !! previousData } ),
+					className: clsx( tab.className, { 'is-highlighted': !! activePreviousData } ),
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,

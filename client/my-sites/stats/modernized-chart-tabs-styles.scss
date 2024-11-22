@@ -3,7 +3,7 @@
 @import "@automattic/components/src/highlight-cards/variables";
 @import "@automattic/components/src/styles/typography";
 
-$custom-stats-tab-mobile-break: $break-small;
+$custom-stats-tab-mobile-break: $break-medium;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
@@ -49,14 +49,15 @@ $custom-stats-tab-mobile-break: $break-small;
 		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
 			font-family: $font-sf-pro-text;
-			display: block;
-			flex: 1 1 252px;
-			max-width: 252px;
+			flex: 1 1 200px;
+			max-width: 250px;
 			border: 0;
 
 			// Keep the original mobile stats-tabs styles
 			@media (max-width: $custom-stats-tab-mobile-break) {
 				width: 100%;
+				flex: 1 1 100%;
+				max-width: initial;
 				float: none;
 				border-bottom: 1px solid var(--color-neutral-5);
 
@@ -189,7 +190,6 @@ $custom-stats-tab-mobile-break: $break-small;
 
 			// Apply highlight card styles to stats-tabs.
 			&.is-highlighted {
-				width: 250px;
 				text-align: left;
 
 				& > a {
@@ -201,11 +201,12 @@ $custom-stats-tab-mobile-break: $break-small;
 					align-items: end;
 					margin-top: 16px;
 				}
-
-				.stats-tabs__highlight-value {
-					font-weight: 500;
-					font-size: $font-title-large;
-					line-height: 40px;
+				@media (min-width: $custom-stats-tab-mobile-break) {
+					.stats-tabs__highlight-value {
+						font-weight: 500;
+						font-size: $font-title-large;
+						line-height: 40px;
+					}
 				}
 
 				// TODO: The relevant class names could be refactored to be more comprehensive.
