@@ -23,6 +23,13 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
+jest.mock( '../shared/header-price/header-price-context', () => ( {
+	useHeaderPriceContext: () => ( {
+		isAnyPlanPriceDiscounted: false,
+		setIsAnyPlanPriceDiscounted: jest.fn(),
+	} ),
+} ) );
+
 import {
 	type PlanSlug,
 	PLAN_ANNUAL_PERIOD,
