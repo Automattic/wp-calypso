@@ -1026,6 +1026,7 @@ export class LoginForm extends Component {
 								{ requestError && requestError.field === 'usernameOrEmail' && (
 									<FormInputValidation isError text={ requestError.message }>
 										{ 'unknown_user' === requestError.code &&
+											! this.props.isWooPasswordlessJPC &&
 											this.props.translate(
 												' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 												{
