@@ -629,63 +629,63 @@ export default function CampaignItemDetails( props: Props ) {
 											</>
 										) }
 									</div>
-								</div>
 
-								{ ! campaignsStatsIsLoading && campaignStats && (
-									<>
-										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-											<div>
-												<div className="campaign-item-page__graph">
-													<DropdownMenu
-														class="campaign-item-page__graph-selector"
-														controls={ [
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																title: __( 'Clicks' ),
-																isDisabled: chartSource === ChartSourceOptions.Clicks,
-															},
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-																title: __( 'Impressions' ),
-																isDisabled: chartSource === ChartSourceOptions.Impressions,
-															},
-														] }
-														icon={ chevronDown }
-														text={
-															chartSource === ChartSourceOptions.Clicks
-																? __( 'Clicks' )
-																: __( 'Impressions' )
-														}
-														label={ chartSource }
-													/>
-													{ getCampaignStatsChart(
-														campaignStats?.series[ chartSource ],
-														chartSource
-													) }
-												</div>
-											</div>
-										</div>
-
-										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-											<div>
-												<div className="campaign-item-page__locaton-charts">
-													<span className="campaign-item-details__label">
-														{ chartSource === ChartSourceOptions.Clicks
-															? __( 'Clicks by location' )
-															: __( 'Impressions by location' ) }
-													</span>
-													<div>
-														<LocationChart
-															stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
-															total={ campaignStats.total_stats.total[ chartSource ] }
-															source={ chartSource }
+									{ ! campaignsStatsIsLoading && campaignStats && (
+										<>
+											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+												<div>
+													<div className="campaign-item-page__graph">
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ [
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																	title: __( 'Clicks' ),
+																	isDisabled: chartSource === ChartSourceOptions.Clicks,
+																},
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																	title: __( 'Impressions' ),
+																	isDisabled: chartSource === ChartSourceOptions.Impressions,
+																},
+															] }
+															icon={ chevronDown }
+															text={
+																chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks' )
+																	: __( 'Impressions' )
+															}
+															label={ chartSource }
 														/>
+														{ getCampaignStatsChart(
+															campaignStats?.series[ chartSource ],
+															chartSource
+														) }
 													</div>
 												</div>
 											</div>
-										</div>
-									</>
-								) }
+
+											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+												<div>
+													<div className="campaign-item-page__locaton-charts">
+														<span className="campaign-item-details__label">
+															{ chartSource === ChartSourceOptions.Clicks
+																? __( 'Clicks by location' )
+																: __( 'Impressions by location' ) }
+														</span>
+														<div>
+															<LocationChart
+																stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+																total={ campaignStats.total_stats.total[ chartSource ] }
+																source={ chartSource }
+															/>
+														</div>
+													</div>
+												</div>
+											</div>
+										</>
+									) }
+								</div>
 							</div>
 						) }
 
