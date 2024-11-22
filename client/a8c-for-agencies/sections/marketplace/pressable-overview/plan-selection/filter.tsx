@@ -42,11 +42,22 @@ export default function PlanSelectionFilter( {
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
 	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
 
-	const options = useMemo(
+	const standardOptions = useMemo(
+		() =>
+			getSliderOptions(
+				filterType,
+				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
+				PLAN_CATEGORY_STANDARD
+			),
+		[ filterType, plans ]
+	);
+
+	const enterpriseOptions = useMemo(
 		() => [
 			...getSliderOptions(
 				filterType,
-				plans.map( ( plan ) => getPressablePlan( plan.slug ) )
+				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
+				PLAN_CATEGORY_ENTERPRISE
 			),
 			{
 				label: translate( 'More' ),
@@ -56,15 +67,6 @@ export default function PlanSelectionFilter( {
 		],
 		[ filterType, plans, translate ]
 	);
-
-	// Split options based on category then remove the category property
-	const standardOptions = options
-		.filter( ( option ) => option.category === PLAN_CATEGORY_STANDARD )
-		.map( ( { category, ...rest } ) => rest );
-
-	const enterpriseOptions = options
-		.filter( ( option ) => option.category === PLAN_CATEGORY_ENTERPRISE )
-		.map( ( { category, ...rest } ) => rest );
 
 	const onSelectOption = useCallback(
 		( option: Option ) => {
