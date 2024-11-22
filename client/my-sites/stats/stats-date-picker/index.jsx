@@ -52,15 +52,26 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay() {
-		const { date, moment, period, translate, isShort } = this.props;
+		const { date, moment, period, translate, isShort, dateRange } = this.props;
+
+		// ll is a date localized with abbreviated Month by momentjs
+		const weekPeriodFormat = isShort ? 'll' : 'LL';
+
+		// If we have chartStart/chartEnd in dateRange, use those for the date range
+		if ( dateRange?.chartStart && dateRange?.chartEnd ) {
+			return translate( '%(startDate)s - %(endDate)s', {
+				context: 'Date range for which stats are being displayed',
+				args: {
+					startDate: moment( dateRange.chartStart ).format( weekPeriodFormat ),
+					endDate: moment( dateRange.chartEnd ).format( weekPeriodFormat ),
+				},
+			} );
+		}
 
 		// Ensure we have a moment instance here to work with.
 		const momentDate = moment.isMoment( date ) ? date : moment( date );
 		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
-
-		// ll is a date localized with abbreviated Month by momentjs
-		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		switch ( period ) {
 			case 'week':
