@@ -6,10 +6,12 @@ import {
 	SITE_EXCERPT_REQUEST_OPTIONS,
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
+import { drawerLeft, wordpress, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
+import { navigate } from 'calypso/lib/navigate';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
@@ -21,14 +23,23 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
+	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { Action } from '@wordpress/dataviews';
-
-export function useActions(): Action< SiteExcerptData >[] {
+export function useActions( {
+	openSitePreviewPane,
+	selectedItem,
+}: {
+	openSitePreviewPane?: (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => void;
+	selectedItem?: SiteExcerptData | null;
+} ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
 
@@ -75,8 +86,76 @@ export function useActions(): Action< SiteExcerptData >[] {
 		},
 	} );
 
+	const capabilities = useSelector<
+		{
+			currentUser: {
+				capabilities: Record< string, Record< string, boolean > >;
+			};
+		},
+		Record< string, Record< string, boolean > >
+	>( ( state ) => state.currentUser.capabilities );
+
 	return useMemo(
 		() => [
+			{
+				id: 'site-overview',
+				isPrimary: true,
+				label: __( 'Overview' ),
+				icon: drawerLeft,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const adminUrl = site.options?.admin_url ?? '';
+					const isAdmin = capabilities[ site.ID ]?.manage_options;
+					if (
+						isAdmin &&
+						! isP2Site( site ) &&
+						! isNotAtomicJetpack( site ) &&
+						! isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						openSitePreviewPane && openSitePreviewPane( site, 'action' );
+					} else {
+						navigate( adminUrl );
+					}
+				},
+				isEligible: ( site ) => {
+					if ( site.ID === selectedItem?.ID ) {
+						return false;
+					}
+					return true;
+				},
+			},
+			{
+				id: 'open-site',
+				isPrimary: true,
+				label: __( 'Open site' ),
+				icon: external,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const siteUrl = window.open( site.URL, '_blank' );
+					if ( siteUrl ) {
+						siteUrl.opener = null;
+						siteUrl.focus();
+					}
+				},
+			},
+			{
+				id: 'admin',
+				isPrimary: true,
+				label: __( 'WP Admin' ),
+				icon: wordpress,
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					window.location.href = site.options?.admin_url ?? '';
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
+				},
+				isEligible: ( site ) => {
+					if ( site.is_deleted ) {
+						return false;
+					}
+					return true;
+				},
+			},
+
 			{
 				id: 'launch-site',
 				label: __( 'Launch site' ),
@@ -315,22 +394,6 @@ export function useActions(): Action< SiteExcerptData >[] {
 			},
 
 			{
-				id: 'admin',
-				label: __( 'WP Admin' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					window.location.href = site.options?.admin_url ?? '';
-					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
-				},
-				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
-						return false;
-					}
-					return true;
-				},
-			},
-
-			{
 				id: 'restore',
 				label: __( 'Restore' ),
 				isPrimary: true,
@@ -342,6 +405,6 @@ export function useActions(): Action< SiteExcerptData >[] {
 				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
-		[ __, dispatch, isRestoring, restoreSite ]
+		[ __, capabilities, dispatch, openSitePreviewPane, selectedItem?.ID ]
 	);
 }

@@ -23,6 +23,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
 	SitesDashboardQueryParams,
@@ -341,7 +342,14 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const openSitePreviewPane = ( site: SiteExcerptData ) => {
+	const openSitePreviewPane = (
+		site: SiteExcerptData,
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+	) => {
+		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+			site_id: site.ID,
+			source,
+		} );
 		showSitesPage(
 			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
 		);
@@ -350,7 +358,7 @@ const SitesDashboard = ( {
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
-			openSitePreviewPane( targetSite );
+			openSitePreviewPane( targetSite, 'environment_switcher' );
 		}
 	};
 
