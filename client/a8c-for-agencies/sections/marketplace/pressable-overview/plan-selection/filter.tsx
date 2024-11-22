@@ -74,12 +74,8 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedCategory =
-		options.find( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) )
-			?.category || null;
-
 	const selectedOptionIndex = (
-		'standard' === selectedCategory ? standardOptions : enterpriseOptions
+		'standard' === selectedTab ? standardOptions : enterpriseOptions
 	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
 
 	const onSelectInstallFilterType = useCallback( () => {
@@ -192,7 +188,7 @@ export default function PlanSelectionFilter( {
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ 'standard' === selectedCategory ? selectedOptionIndex : 0 }
+										value={ 'standard' === selectedTab ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ standardOptions }
 										minimum={ getSliderMinimum( 'standard', standardOptions ) }
@@ -204,7 +200,7 @@ export default function PlanSelectionFilter( {
 								<>
 									<FilterByPicker />
 									<A4ASlider
-										value={ 'enterprise' === selectedCategory ? selectedOptionIndex : 0 }
+										value={ 'enterprise' === selectedTab ? selectedOptionIndex : 0 }
 										onChange={ onSelectOption }
 										options={ enterpriseOptions }
 										minimum={ getSliderMinimum( 'enterprise', enterpriseOptions ) }
