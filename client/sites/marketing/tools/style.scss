@@ -23,10 +23,12 @@
 .search-component.marketing-tools__searchbox {
 	box-shadow: 0 0 0 1px var(--studio-gray-10);
 
-	.search-component__input {
+	.search-component__input[type="search"] {
 		padding-left: 16px;
 	}
 }
+
+
 
 .marketing-tools__searchbox-container {
 	position: relative;
@@ -48,7 +50,7 @@
 	flex-wrap: wrap;
 	border-radius: 4px;
 	background-color: var(--color-neutral-0);
-  box-shadow: none;
+	box-shadow: none;
 }
 
 .tools__header-info {
