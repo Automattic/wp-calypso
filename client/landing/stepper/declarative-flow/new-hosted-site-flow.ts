@@ -85,6 +85,18 @@ const hosting: Flow = {
 			}
 		};
 
+		const saveStudioSiteId = ( siteId: number ) => {
+			const studioSiteId = queryParams[ 'studio-site-id' ];
+			if ( ! studioSiteId ) {
+				return;
+			}
+
+			// TODO: Save studio site ID to the backend. In the meantime, we'll save it in local storage.
+			const studioSiteIds = JSON.parse( localStorage.getItem( 'studio-site-ids' ) || '{}' );
+			studioSiteIds[ studioSiteId ] = siteId;
+			localStorage.setItem( 'studio-site-ids', JSON.stringify( studioSiteIds ) );
+		};
+
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			if ( providedDependencies.siteId ) {
 				setSignupCompleteSiteID( providedDependencies.siteId );
@@ -130,10 +142,19 @@ const hosting: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const hasStudioSyncSiteId = queryParams[ 'studio-site-id' ];
+					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+					const destinationParams: Record< string, string > = {
+						siteId,
+					};
+					if ( hasStudioSyncSiteId ) {
+						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+							'studio-site-id': queryParams[ 'studio-site-id' ],
+						} );
+						saveStudioSiteId( siteId );
+					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
-					} );
+					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
