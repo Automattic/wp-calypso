@@ -76,7 +76,7 @@ class StatsTabs extends Component {
 
 				return (
 					<StatTab key={ tabOptions.attr } { ...tabOptions }>
-						{ !! previousValue && (
+						{ previousData && (
 							<div className="stats-tabs__highlight">
 								<span className="stats-tabs__highlight-value">{ formatNumber( value ) }</span>
 								<TrendComparison count={ value } previousCount={ previousValue } />
