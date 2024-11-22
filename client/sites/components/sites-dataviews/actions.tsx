@@ -397,7 +397,6 @@ export function useActions( {
 			{
 				id: 'restore',
 				label: __( 'Restore' ),
-				isPrimary: true,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					restoreSite( site.ID );
