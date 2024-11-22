@@ -5,63 +5,89 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
+	PLAN_JETPACK_GROWTH_MONTHLY,
+	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_GROWTH_BI_YEARLY,
 } from '@automattic/calypso-products';
-import CompleteLg from 'calypso/assets/images/jetpack/hero-complete-lg.png';
-import CompleteMd from 'calypso/assets/images/jetpack/hero-complete-md.png';
-import CompleteSm from 'calypso/assets/images/jetpack/hero-complete-sm.png';
-import SecurityLg from 'calypso/assets/images/jetpack/hero-security-lg.png';
-import SecuritySm from 'calypso/assets/images/jetpack/hero-security-sm.png';
+import CompleteHorizontalMd from 'calypso/assets/images/jetpack/hero-complete-horizontal-md.png';
+// import CompleteLg from 'calypso/assets/images/jetpack/hero-complete-lg.png';
+// import CompleteMd from 'calypso/assets/images/jetpack/hero-complete-md.png';
+// import CompleteSm from 'calypso/assets/images/jetpack/hero-complete-sm.png';
+import GrowthHorizontalMd from 'calypso/assets/images/jetpack/hero-growth-horizontal-md.png';
+import SecurityHorizontalMd from 'calypso/assets/images/jetpack/hero-security-horizontal-md.png';
+// import SecurityLg from 'calypso/assets/images/jetpack/hero-security-lg.png';
+// import SecuritySm from 'calypso/assets/images/jetpack/hero-security-sm.png';
 import { HeroImageProps, HeroImageAPIFamilyProps } from '../types';
 import './style.scss';
 
 const HERO_IMAGES: Record< string, { lg: string; md: string; sm: string } > = {
 	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
-		lg: SecurityLg,
-		md: SecurityLg,
-		sm: SecuritySm,
+		lg: SecurityHorizontalMd,
+		md: SecurityHorizontalMd,
+		sm: SecurityHorizontalMd,
 	},
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
-		lg: SecurityLg,
-		md: SecurityLg,
-		sm: SecuritySm,
+		lg: SecurityHorizontalMd,
+		md: SecurityHorizontalMd,
+		sm: SecurityHorizontalMd,
 	},
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
-		lg: SecurityLg,
-		md: SecurityLg,
-		sm: SecuritySm,
+		lg: SecurityHorizontalMd,
+		md: SecurityHorizontalMd,
+		sm: SecurityHorizontalMd,
 	},
 	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
-		lg: CompleteLg,
-		md: CompleteMd,
-		sm: CompleteSm,
+		lg: CompleteHorizontalMd,
+		md: CompleteHorizontalMd,
+		sm: CompleteHorizontalMd,
 	},
 	[ PLAN_JETPACK_COMPLETE ]: {
-		lg: CompleteLg,
-		md: CompleteMd,
-		sm: CompleteSm,
+		lg: CompleteHorizontalMd,
+		md: CompleteHorizontalMd,
+		sm: CompleteHorizontalMd,
 	},
 	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
-		lg: CompleteLg,
-		md: CompleteMd,
-		sm: CompleteSm,
+		lg: CompleteHorizontalMd,
+		md: CompleteHorizontalMd,
+		sm: CompleteHorizontalMd,
+	},
+	[ PLAN_JETPACK_GROWTH_MONTHLY ]: {
+		lg: GrowthHorizontalMd,
+		md: GrowthHorizontalMd,
+		sm: GrowthHorizontalMd,
+	},
+	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
+		lg: GrowthHorizontalMd,
+		md: GrowthHorizontalMd,
+		sm: GrowthHorizontalMd,
+	},
+	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
+		lg: GrowthHorizontalMd,
+		md: GrowthHorizontalMd,
+		sm: GrowthHorizontalMd,
 	},
 };
 
 const HERO_IMAGES_API_FAMILY: Record< string, { lg: string; md: string; sm: string } > = {
 	[ 'jetpack-security-t1' ]: {
-		lg: SecurityLg,
-		md: SecurityLg,
-		sm: SecuritySm,
+		lg: SecurityHorizontalMd,
+		md: SecurityHorizontalMd,
+		sm: SecurityHorizontalMd,
 	},
 	[ 'jetpack-security-t2' ]: {
-		lg: SecurityLg,
-		md: SecurityLg,
-		sm: SecuritySm,
+		lg: SecurityHorizontalMd,
+		md: SecurityHorizontalMd,
+		sm: SecurityHorizontalMd,
 	},
 	[ 'jetpack-complete' ]: {
-		lg: CompleteLg,
-		md: CompleteMd,
-		sm: CompleteSm,
+		lg: CompleteHorizontalMd,
+		md: CompleteHorizontalMd,
+		sm: CompleteHorizontalMd,
+	},
+	[ 'jetpack-growth' ]: {
+		lg: GrowthHorizontalMd,
+		md: GrowthHorizontalMd,
+		sm: GrowthHorizontalMd,
 	},
 };
 

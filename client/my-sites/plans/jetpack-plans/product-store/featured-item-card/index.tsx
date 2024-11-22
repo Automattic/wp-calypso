@@ -16,6 +16,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	isCtaDisabled,
 	isCtaExternal,
 	isProductInCart,
+	isVertical,
 	onClickCta,
 	price,
 	title,
@@ -23,9 +24,9 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 } ) => {
 	return (
 		<div
-			className={ clsx( 'featured-item-card', { [ 'featured-item-card--only-body' ]: ! hero } ) }
+			className={ clsx( 'featured-item-card', { [ 'featured-item-card--vertical' ]: isVertical } ) }
 		>
-			{ hero ? <div className="featured-item-card--hero">{ hero }</div> : null }
+			<div className="featured-item-card--hero">{ hero }</div>
 
 			<div className="featured-item-card--body">
 				<div>

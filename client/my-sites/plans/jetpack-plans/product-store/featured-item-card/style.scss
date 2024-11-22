@@ -50,6 +50,11 @@
 		flex-direction: row-reverse;
 		justify-content: space-between;
 	}
+
+	&.featured-item-card--vertical {
+		flex-direction: column;
+		justify-content: stretch;
+	}
 }
 
 .featured-item-card--hero {
@@ -63,6 +68,12 @@
 
 	@media (max-width: $break-mobile) {
 		width: auto;
+	}
+
+	.featured-item-card--vertical & {
+		max-height: 200px;
+		width: 100%;
+		flex: 0 1 200px;
 	}
 }
 
@@ -81,13 +92,11 @@
 	@media (max-width: $break-mobile) {
 		width: auto;
 	}
-}
 
-.featured-item-card--only-body {
-	.featured-item-card--body {
-		@include break-mobile {
-			width: 100%;
-		}
+	.featured-item-card--vertical & {
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
 	}
 }
 
