@@ -22,6 +22,8 @@
 		flex-direction: row;
 		padding-bottom: 8px;
 		padding-top: 8px;
+		// not to cut off the focus outline
+		padding-left: 2px;
 		overflow: hidden;
 		cursor: pointer;
 
