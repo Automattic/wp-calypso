@@ -61,7 +61,9 @@ export default function MarketingTools() {
 		[ recordTracksEvent ]
 	);
 	useEffect( () => {
-		handleRecordSearch( searchTerm );
+		if ( searchTerm !== '' ) {
+			handleRecordSearch( searchTerm );
+		}
 	}, [ handleRecordSearch, searchTerm ] );
 
 	const handleBusinessToolsClick = () => {
