@@ -4,9 +4,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import Search from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -24,9 +25,14 @@ export default function MarketingTools() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
+
+	const recordTracksEvent = useCallback(
+		( event: string, properties?: Record< string, string > ) =>
+			dispatch( recordTracksEventAction( event, properties ) ),
+		[ dispatch ]
+	);
 
 	const marketingFeatures = getMarketingFeaturesData(
 		selectedSiteSlug,
@@ -42,6 +48,21 @@ export default function MarketingTools() {
 				feature.description.toLowerCase().includes( searchTerm.toLowerCase() )
 		);
 	}, [ searchTerm, marketingFeatures ] );
+
+	const handleRecordSearch = useMemo(
+		() =>
+			debounce(
+				( term ) =>
+					recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
+						search_term: term as string,
+					} ),
+				500
+			),
+		[ recordTracksEvent ]
+	);
+	useEffect( () => {
+		handleRecordSearch( searchTerm );
+	}, [ handleRecordSearch, searchTerm ] );
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );

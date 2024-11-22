@@ -11,7 +11,7 @@ import { MarketingToolsFeatureData } from './types';
 
 export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
-	recordTracksEvent: ( event: string ) => void,
+	recordTracksEvent: ( event: string, properties?: Record< string, string > ) => void,
 	translate: ( text: string ) => string,
 	localizeUrl: ( url: string ) => string
 ): MarketingToolsFeatureData[] => {
