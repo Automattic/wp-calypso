@@ -227,53 +227,32 @@ const usePricingMetaForGridPlans = ( {
 					};
 
 					// Do not return discounted prices if discount is due to plan proration
+					// If there is, however, a sale coupon, show the discounted price
+					// without proration. This isn't ideal, but is intentional. Because of
+					// this, the price will differ between the plans grid and checkout screen.
 					if (
+						! sitePlan?.pricing?.hasSaleCoupon &&
 						! withProratedDiscounts &&
 						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
 							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
 					) {
-						// TODO: Reconsider approach with hasSaleCoupon flag
-						return sitePlan?.pricing?.hasSaleCoupon
-							? [
-									planSlug,
-									{
-										originalPrice,
-										discountedPrice: {
-											monthly: getTotalPrice(
-												sitePlan?.pricing.discountedPrice.monthly,
-												storageAddOnPriceMonthly
-											),
-											full: getTotalPrice(
-												sitePlan?.pricing.discountedPrice.full,
-												storageAddOnPriceYearly
-											),
-										},
-										currencyCode: sitePlan?.pricing?.currencyCode,
-										...( sitePlan?.pricing.introOffer && {
-											introOffer: {
-												...sitePlan?.pricing.introOffer,
-												rawPrice: introOfferPrice,
-											},
-										} ),
+						return [
+							planSlug,
+							{
+								originalPrice,
+								discountedPrice: {
+									monthly: null,
+									full: null,
+								},
+								currencyCode: sitePlan?.pricing?.currencyCode,
+								...( sitePlan?.pricing.introOffer && {
+									introOffer: {
+										...sitePlan?.pricing.introOffer,
+										rawPrice: introOfferPrice,
 									},
-							  ]
-							: [
-									planSlug,
-									{
-										originalPrice,
-										discountedPrice: {
-											monthly: null,
-											full: null,
-										},
-										currencyCode: sitePlan?.pricing?.currencyCode,
-										...( sitePlan?.pricing.introOffer && {
-											introOffer: {
-												...sitePlan?.pricing.introOffer,
-												rawPrice: introOfferPrice,
-											},
-										} ),
-									},
-							  ];
+								} ),
+							},
+						];
 					}
 
 					const discountedPrice = {
