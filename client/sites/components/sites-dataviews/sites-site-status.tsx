@@ -1,7 +1,6 @@
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
 import { getMigrationStatus, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
@@ -67,10 +66,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 						{ isDIFMInProgress ? (
 							<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 						) : (
-							<div>
-								{ statusElement }
-								<SiteLaunchNag site={ site } />
-							</div>
+							statusElement
 						) }
 					</>
 				)
