@@ -160,7 +160,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 									),
 									{
 										email: user?.email,
-										webSite: fromUrl,
+										// Strip protocol and trailing slash.
+										webSite: fromUrl.replace( /(^\w+:|^)\/\//, '' ).replace( /\/$/, '' ),
 									}
 								),
 								{
