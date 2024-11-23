@@ -31,7 +31,7 @@ function PayPalLabel() {
 	return (
 		<>
 			<div>
-				<span>PayPal</span>
+				<span>PayPal (PPCP)</span>
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
