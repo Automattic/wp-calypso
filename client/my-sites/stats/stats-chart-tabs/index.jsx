@@ -199,8 +199,12 @@ const connectComponent = connect(
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
-		const dateComp = moment( date ).subtract( quantity, period ).format( 'YYYY-MM-DD' );
-		const chartStartComp = moment( chartStart ).subtract( quantity, period ).format( 'YYYY-MM-DD' );
+		const dateComp = moment( date )
+			.subtract( customRange.daysInRange, 'day' )
+			.format( 'YYYY-MM-DD' );
+		const chartStartComp = moment( chartStart )
+			.subtract( customRange.daysInRange, 'day' )
+			.format( 'YYYY-MM-DD' );
 		const queryComp = memoizedQuery( chartTab, dateComp, period, quantity, siteId, chartStartComp );
 		const countsComp = getCountRecords(
 			state,
