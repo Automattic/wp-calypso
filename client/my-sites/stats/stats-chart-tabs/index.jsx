@@ -99,7 +99,7 @@ class StatModuleChartTabs extends Component {
 
 	makeQuery = () => {
 		this.props.requestChartCounts( this.props.query );
-		this.props.requestChartCounts( this.props.queryComp );
+		this.props.queryComp && this.props.requestChartCounts( this.props.queryComp );
 	};
 
 	render() {
@@ -199,20 +199,24 @@ const connectComponent = connect(
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
-		const dateComp = moment( date )
-			.subtract( customRange.daysInRange, 'day' )
-			.format( 'YYYY-MM-DD' );
-		const chartStartComp = moment( chartStart )
-			.subtract( customRange.daysInRange, 'day' )
-			.format( 'YYYY-MM-DD' );
-		const queryComp = memoizedQuery( chartTab, dateComp, period, quantity, siteId, chartStartComp );
-		const countsComp = getCountRecords(
-			state,
-			siteId,
-			queryComp.date,
-			queryComp.period,
-			queryComp.quantity
-		);
+		let countsComp = null;
+		let queryComp = null;
+		if ( customRange ) {
+			const dateComp = moment( date )
+				.subtract( customRange.daysInRange, 'day' )
+				.format( 'YYYY-MM-DD' );
+			const chartStartComp = moment( chartStart )
+				.subtract( customRange.daysInRange, 'day' )
+				.format( 'YYYY-MM-DD' );
+			queryComp = memoizedQuery( chartTab, dateComp, period, quantity, siteId, chartStartComp );
+			countsComp = getCountRecords(
+				state,
+				siteId,
+				queryComp.date,
+				queryComp.period,
+				queryComp.quantity
+			);
+		}
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
