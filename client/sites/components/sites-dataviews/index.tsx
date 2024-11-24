@@ -1,3 +1,4 @@
+import { SiteExcerptData } from '@automattic/sites';
 import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
@@ -14,7 +15,6 @@ import SiteIcon from './site-icon';
 import SiteUrl from './site-url';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import type { SiteExcerptData } from '@automattic/sites';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';

@@ -17,7 +17,7 @@ const usePlanTypeDestinationCallback = () => {
 			const { intervalType = '' } = additionalArgs;
 			const defaultArgs = {
 				customerType: undefined,
-				discount: props.withDiscount,
+				coupon: props.coupon,
 				feature: props.selectedFeature,
 				plan: props.selectedPlan,
 			};

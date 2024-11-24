@@ -107,16 +107,6 @@
 	}
 }
 
-// Style the sortable table headers.
-.wpcom-site .dataviews-view-table .components-button.is-tertiary {
-	&:active:not(:disabled),
-	&:hover:not(:disabled) {
-		box-shadow: none;
-		background-color: inherit;
-		color: var(--color-accent) !important;
-	}
-}
-
 .wpcom-site {
 	.layout__content {
 		min-height: 100vh;
@@ -392,37 +382,10 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-
-		.dataviews-wrapper {
-			.dataviews-pagination {
-				border: 0;
-				margin: 0;
-				padding-left: 0;
-				padding-right: 0;
-				position: relative;
-			}
-
-			.spinner-wrapper {
-				position: absolute;
-				left: 50%;
-				top: 70px;
-				z-index: 2;
-			}
-		}
 	}
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
-	.dataviews-wrapper {
-		margin: 0 auto;
-		max-width: 1400px;
-		box-sizing: border-box;
-
-		.dataviews-pagination {
-			width: auto;
-		}
-	}
-
 	div.a4a-layout__viewport {
 		margin: 0 auto;
 		max-width: 1400px;

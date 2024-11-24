@@ -14,7 +14,13 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) }
+						/>
+					),
 				},
 				context: 'Stats: Info box label when the Posts & Pages module is empty',
 			}
@@ -32,7 +38,13 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) }
+						/>
+					),
 				},
 				context: 'Stats: Info box label when the Referrers module is empty',
 			}
@@ -48,7 +60,9 @@ export default function () {
 		empty: translate( 'Your most {{link}}clicked external links{{/link}} will display here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+				link: (
+					<a target="_blank" rel="noreferrer" href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />
+				),
 			},
 			context: 'Stats: Info box label when the Clicks module is empty',
 		} ),
@@ -65,7 +79,13 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ SUPPORT_URL }#countries` ) }
+						/>
+					),
 				},
 				context: 'Stats: Info box label when the Countries module is empty',
 			}
@@ -83,7 +103,13 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#utm-stats` ) } />,
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#utm-stats` ) }
+						/>
+					),
 				},
 				context: 'Stats: Info box label when the UTM module is empty',
 			}
@@ -101,7 +127,13 @@ export default function () {
 		empty: translate( 'See {{link}}terms that visitors search{{/link}} to find your site, here. ', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+				link: (
+					<a
+						target="_blank"
+						rel="noreferrer"
+						href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) }
+					/>
+				),
 			},
 			context: 'Stats: Info box label when the Search Terms module is empty',
 		} ),
@@ -116,7 +148,9 @@ export default function () {
 		empty: translate( '{{link}}Traffic that authors have generated{{/link}} will show here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />,
+				link: (
+					<a target="_blank" rel="noreferrer" href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />
+				),
 			},
 			context: 'Stats: Info box label when the Authors module is empty',
 		} ),
@@ -131,7 +165,9 @@ export default function () {
 		empty: translate( 'Your most viewed {{link}}video stats{{/link}} will show up here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+				link: (
+					<a target="_blank" rel="noreferrer" href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />
+				),
 			},
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
@@ -146,7 +182,13 @@ export default function () {
 		empty: translate( 'Stats from any {{link}}downloaded files{{/link}} will display here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
+				link: (
+					<a
+						target="_blank"
+						rel="noreferrer"
+						href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+					/>
+				),
 			},
 			context: 'Stats: Info box label when the file downloads module is empty',
 		} ),
@@ -162,7 +204,11 @@ export default function () {
 			comment: '{{link}} links to support documentation.',
 			components: {
 				link: (
-					<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />
+					<a
+						target="_blank"
+						rel="noreferrer"
+						href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) }
+					/>
 				),
 			},
 			context: 'Stats: Info box label when the Tags module is empty',
@@ -187,7 +233,9 @@ export default function () {
 		empty: translate( 'Stats from {{link}}your emails{{/link}} will display here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+				link: (
+					<a target="_blank" rel="noreferrer" href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />
+				),
 			},
 			context: 'Stats: Info box label when the Email Open module is empty',
 		} ),
@@ -215,7 +263,13 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) } />,
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) }
+						/>
+					),
 				},
 				context: 'Stats: Info box label when the Devices module is empty',
 			}

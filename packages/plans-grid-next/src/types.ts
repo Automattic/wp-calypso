@@ -264,7 +264,6 @@ export type PlanTypeSelectorProps = {
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
-	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
 	onPlanIntervalUpdate: ( interval: SupportedUrlFriendlyTermType ) => void;

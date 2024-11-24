@@ -208,6 +208,10 @@ export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) =
 	return Boolean( flowName && [ DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName ) );
 };
 
+export const isHundredYearPlanFlow = ( flowName: string | null | undefined ) => {
+	return Boolean( flowName && [ HUNDRED_YEAR_PLAN_FLOW ].includes( flowName ) );
+};
+
 export const isHundredYearDomainFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) );
 };

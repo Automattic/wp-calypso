@@ -123,7 +123,6 @@ export interface PlansFeaturesMainProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	planTypeSelector?: 'interval';
-	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
 	coupon?: string;
@@ -192,7 +191,6 @@ const PlansFeaturesMain = ( {
 	basePlansPath,
 	selectedFeature,
 	plansWithScroll,
-	withDiscount,
 	discountEndDate,
 	hideFreePlan,
 	hidePersonalPlan,
@@ -366,7 +364,7 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		isLaunchPage,
 		showModalAndExit,
-		withDiscount,
+		coupon,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -485,7 +483,6 @@ const PlansFeaturesMain = ( {
 			recordTracksEvent,
 			coupon,
 			selectedSiteId: siteId,
-			withDiscount,
 			intent,
 		};
 
@@ -541,7 +538,6 @@ const PlansFeaturesMain = ( {
 		sitePlanSlug,
 		coupon,
 		siteId,
-		withDiscount,
 		getPlanTypeDestination,
 		onPlanIntervalUpdate,
 		intent,
@@ -771,10 +767,10 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
-						{ ...( withDiscount &&
+						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {
-									withDiscount,
+									coupon,
 									discountEndDate,
 								},
 							} ) }
