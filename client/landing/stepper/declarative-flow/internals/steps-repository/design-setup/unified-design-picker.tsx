@@ -112,6 +112,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
 
+	const [ isAddedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
+		'calypso_onboarding_goals_step_added_goals'
+	);
+
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
 
@@ -120,10 +124,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 
-	const intent = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-		[]
-	);
+	const { intent, goals } = useSelect( ( select ) => {
+		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
+		return {
+			intent: onboardStore.getIntent(),
+			goals: onboardStore.getGoals(),
+		};
+	}, [] );
 
 	const { site, siteSlug, siteSlugOrId } = useSiteData();
 	const siteTitle = site?.name;
@@ -217,7 +224,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}, [ hasTrackedView, designs ] );
 
-	const categorizationOptions = getCategorizationOptions( intent );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		goals,
+		addedGoalsExpAssignment?.variationName === 'treatment'
+	);
 	const categorization = useCategorizationFromApi(
 		allDesigns?.filters?.subject || EMPTY_OBJECT,
 		categorizationOptions
@@ -791,7 +802,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingDesigns ) {
+	if ( ! site || isLoadingDesigns || isAddedGoalsExpLoading ) {
 		return <StepperLoader />;
 	}
 
