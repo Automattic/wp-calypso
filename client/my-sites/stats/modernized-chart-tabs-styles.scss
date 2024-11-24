@@ -76,9 +76,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 
 			@media (min-width: $break-xlarge) {
 				flex: 1 1 155px;
-				gap: 14px;
-				max-width: 250px;
-				padding: 4px 4px;
+				// For wrap layout of three items in a row.
+				max-width: 31%;
 			}
 
 			.gridicon {
@@ -224,6 +223,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 						font-weight: 500;
 						font-size: $font-title-medium;
 						line-height: 40px;
+						// Prevent different heights of Flexbox items.
+						white-space: nowrap;
 					}
 					.stats-tabs__highlight {
 						display: flex;
