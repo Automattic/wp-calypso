@@ -240,7 +240,7 @@ class StatsPeriodNavigation extends PureComponent {
 
 		// TODO: Refactor the isWithNewDateFiltering dedicated variables.
 		const isChartRangeEndToday = moment( dateRange.chartEnd ).isSame( momentSiteZone, period );
-		const showArrowsForDateRange = showArrows && dateRange.daysInRange <= 30;
+		const showArrowsForDateRange = showArrows && dateRange.daysInRange <= 31;
 
 		return (
 			<div
