@@ -100,14 +100,8 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => {
 		this.props.requestChartCounts( this.props.query );
 		this.props.queryComp && this.props.requestChartCounts( this.props.queryComp );
-
-		// query format needs to align with `memoizedQuery`.
-		if (
-			this.props.query.chartStart === this.props.query.date &&
-			this.props.query.period === 'hour'
-		) {
-			this.props.requestChartCounts( this.props.queryDay );
-		}
+		this.props.queryDay && this.props.requestChartCounts( this.props.queryDay );
+		this.props.queryDayComp && this.props.requestChartCounts( this.props.queryDayComp );
 	};
 
 	render() {
@@ -154,6 +148,7 @@ class StatModuleChartTabs extends Component {
 					data={ this.props.counts }
 					previousData={ isNewDateFilteringEnabled ? countsComp : null }
 					tabCountsAlt={ this.props.tabCountsAlt }
+					tabCountsAltComp={ this.props.tabCountsAltComp }
 					tabs={ this.props.charts }
 					switchTab={ this.props.switchTab }
 					selectedTab={ this.props.chartTab }
@@ -207,12 +202,6 @@ const connectComponent = connect(
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
-		const queryDay = {
-			...query,
-			period: 'day',
-			quantity: 1,
-			statFields: [ 'visitors', 'likes', 'comments' ],
-		};
 
 		let countsComp = null;
 		let queryComp = null;
@@ -233,15 +222,48 @@ const connectComponent = connect(
 			);
 		}
 
+		// Query single day stats for the display of visitors, likes, and comments, as we don't have hourly data for them at the moment.
+		let queryDay = null;
+		let tabCountsAlt = null;
+		if ( period === 'hour' && date === chartStart ) {
+			queryDay = {
+				...query,
+				period: 'day',
+				quantity: 1,
+				statFields: [ 'visitors', 'likes', 'comments' ],
+			};
+			tabCountsAlt = getCountRecords(
+				state,
+				siteId,
+				queryDay.date,
+				queryDay.period,
+				queryDay.quantity
+			);
+		}
+
+		// Query single day stats for the display of visitors, likes, and comments, as we don't have hourly data for them at the moment.
+		let queryDayComp = null;
+		let tabCountsAltComp = null;
+		if ( period === 'hour' && date === chartStart ) {
+			const previousDate = moment( date ).subtract( 1, 'day' ).format( 'YYYY-MM-DD' );
+			queryDayComp = {
+				...query,
+				date: previousDate,
+				period: 'day',
+				quantity: 1,
+				statFields: [ 'visitors', 'likes', 'comments' ],
+			};
+			tabCountsAltComp = getCountRecords(
+				state,
+				siteId,
+				queryDayComp.date,
+				queryDayComp.period,
+				queryDayComp.quantity
+			);
+		}
+
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const tabCountsAlt = getCountRecords(
-			state,
-			siteId,
-			queryDay.date,
-			queryDay.period,
-			queryDay.quantity
-		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
@@ -257,6 +279,8 @@ const connectComponent = connect(
 			selectedPeriod: period,
 			queryDay,
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
+			queryDayComp,
+			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }
