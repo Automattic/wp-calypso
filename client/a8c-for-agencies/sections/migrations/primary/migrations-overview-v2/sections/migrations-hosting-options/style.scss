@@ -77,3 +77,39 @@
 		text-decoration: underline;
 	}
 }
+
+.migrations-pressable-schedule-demo-modal {
+	width: 900px;
+	max-height: 100%;
+}
+
+.components-modal__frame {
+	max-height: 100%;
+}
+
+.migrations-pressable-schedule-demo-modal__iframe {
+	margin: 10px;
+	min-width: 312px;
+	min-height: 690px;
+	border: none;
+}
+
+.migrations-pressable-schedule-demo-modal__close-button {
+	position: absolute;
+	inset-inline-end: 1rem;
+	inset-block-start: 1rem;
+	cursor: pointer;
+	transition: scale 0.2s ease-in;
+	max-height: 24px;
+
+	&:hover {
+		scale: 1.2;
+	}
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		outline: none;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
+	}
+}

@@ -1,5 +1,5 @@
-import { Button, Card } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
+import { Button, Card, Modal } from '@wordpress/components';
+import { Icon, close } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -14,8 +14,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
-
-const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
 function HostingOptionCard( {
 	banner,
@@ -56,15 +54,22 @@ export default function MigrationsHostingOptions() {
 	const [ showWPCOMDevSiteConfigurationsModal, setShowWPCOMDevSiteConfigurationsModal ] =
 		useState( false );
 
+	const [ showSchedulePressableDemoModal, setShowSchedulePressableDemoModal ] = useState( false );
+
 	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 
 	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
 	const onSchedulePressableDemoClick = useCallback( () => {
+		setShowSchedulePressableDemoModal( true );
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_migrations_hosting_options_schedule_pressable_demo_click' )
+			recordTracksEvent( 'calypso_a4a_migrations_hosting_options_pressable_schedule_demo_click' )
 		);
-	}, [ dispatch ] );
+	}, [ dispatch, setShowSchedulePressableDemoModal ] );
+
+	const onHideSchedulePressableDemoModal = useCallback( () => {
+		setShowSchedulePressableDemoModal( false );
+	}, [ setShowSchedulePressableDemoModal ] );
 
 	const onClickCreateWPCOMDevSite = useCallback( () => {
 		dispatch(
@@ -118,7 +123,6 @@ export default function MigrationsHostingOptions() {
 						</Button>,
 					] }
 				/>
-
 				<HostingOptionCard
 					banner={ PressableBanner }
 					title={ translate( 'Managing over 50 sites? Schedule a demo' ) }
@@ -141,15 +145,40 @@ export default function MigrationsHostingOptions() {
 						<Button
 							variant="secondary"
 							key="schedule-pressable-demo-button"
-							href={ PRESSABLE_CONTACT_LINK }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ onSchedulePressableDemoClick }
 						>
-							{ translate( 'Schedule a demo' ) } <Icon icon={ external } size={ 16 } />
+							{ translate( 'Schedule a demo' ) }
 						</Button>,
 					] }
 				/>
+				{ showSchedulePressableDemoModal && (
+					<Modal
+						className="migrations-pressable-schedule-demo-modal"
+						onRequestClose={ onHideSchedulePressableDemoModal }
+						__experimentalHideHeader
+					>
+						<div>
+							<Button
+								className="migrations-pressable-schedule-demo-modal__close-button"
+								onClick={ () => {
+									setShowSchedulePressableDemoModal( false );
+								} }
+								aria-label={ translate( 'Close' ) }
+							>
+								<Icon size={ 24 } icon={ close } />
+							</Button>
+						</div>
+						<iframe
+							className="migrations-pressable-schedule-demo-modal__iframe"
+							title={ translate( 'Schedule a demo' ) }
+							src="https://meetings.hubspot.com/pressable/schedule-a-demo?embed=true&amp;parentHubspotUtk=63e0ee624a481b4949ebe0a77e186bf9&amp;parentPageUrl=https://pressable.com/request-demo/"
+							width="100%"
+							data-hs-ignore="true"
+						/>
+					</Modal>
+				) }
 			</div>
 
 			<div className="migrations-hosting-options__footnote">
