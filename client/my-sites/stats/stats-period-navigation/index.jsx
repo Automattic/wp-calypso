@@ -28,6 +28,7 @@ import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/anal
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getMomentSiteZone } from '../hooks/use-moment-site-zone';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { withStatsPurchases } from '../hooks/use-stats-purchases';
 import NavigationArrows from '../navigation-arrows';
@@ -232,12 +233,13 @@ class StatsPeriodNavigation extends PureComponent {
 			gateDateControl,
 			intervals,
 			siteId,
+			momentSiteZone,
 		} = this.props;
 
-		const isToday = moment( date ).isSame( moment(), period );
+		const isToday = moment( date ).isSame( momentSiteZone, period );
 
 		// TODO: Refactor the isWithNewDateFiltering dedicated variables.
-		const isChartRangeEndToday = moment( dateRange.chartEnd ).isSame( moment(), period );
+		const isChartRangeEndToday = moment( dateRange.chartEnd ).isSame( momentSiteZone, period );
 		const showArrowsForDateRange = showArrows && dateRange.daysInRange <= 30;
 
 		return (
@@ -445,6 +447,7 @@ const connectComponent = connect(
 			intervals,
 			siteId,
 			isSiteJetpackNotAtomic,
+			momentSiteZone: getMomentSiteZone( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
