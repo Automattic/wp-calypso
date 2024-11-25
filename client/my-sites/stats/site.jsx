@@ -356,7 +356,7 @@ class StatsSite extends Component {
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
 		if ( period === 'day' && daysInRange === 1 ) {
-			page.redirect( `/stats/hour/${ slug } ${ window.location.search }` );
+			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
 			return;
 		}
 
