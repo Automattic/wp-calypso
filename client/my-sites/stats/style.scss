@@ -60,6 +60,10 @@ $stats-card-min-width: 390px;
 	padding: 0 32px;
 }
 
+.stats__period-header {
+	padding: 0 32px;
+}
+
 
 .stats-card {
 	@media (max-width: $break-medium) {
@@ -228,6 +232,9 @@ $stats-card-min-width: 390px;
 		@include apply-improved-classic-dark-colors();
 	}
 
+	.sticky-panel.is-sticky {
+		padding: 0;
+	}
 	.sticky-panel.is-sticky {
 		padding: 0;
 	}
