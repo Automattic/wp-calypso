@@ -85,6 +85,7 @@ const redirectToSiteTrafficPage = () => {
 
 export default function ( pageBase = '/' ) {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validTrafficPagePeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [
@@ -116,7 +117,7 @@ export default function ( pageBase = '/' ) {
 	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
-	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, site );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.

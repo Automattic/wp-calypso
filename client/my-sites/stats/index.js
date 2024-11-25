@@ -27,7 +27,8 @@ const statsPage = ( url, controller ) => {
 };
 
 export default function () {
-	const validPeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
+	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validTrafficPagePeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [
@@ -50,7 +51,7 @@ export default function () {
 	page( '/stats', '/stats/day' );
 
 	// Stat Overview Page
-	statsPage( `/stats/:period(${ validPeriods })`, overview );
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })`, overview );
 
 	// Stat Purchase Page
 	statsPage( '/stats/purchase/:site?', purchase );
