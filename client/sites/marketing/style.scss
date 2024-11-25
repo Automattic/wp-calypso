@@ -122,10 +122,11 @@
 }
 
 .sharing-services-group__services {
-	.notice {
+	.notice.is-compact {
 		margin-bottom: 0;
 		margin-left: -22px;
 		margin-right: -22px;
+		display: flex;
 	}
 }
 
