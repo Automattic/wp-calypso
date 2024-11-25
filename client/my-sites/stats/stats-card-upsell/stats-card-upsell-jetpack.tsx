@@ -6,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL } from 'calypso/my-sites/stats/const';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -54,7 +55,11 @@ const insightsSupportLinkWithAnchor = ( anchor: string ) => {
 };
 
 const utmLearnMoreLink = () => {
-	return (
+	const hasInlineSupportLink = !! ( InlineSupportLink as { render?: () => void } ).render;
+
+	return hasInlineSupportLink ? (
+		<InlineSupportLink supportContext="utm-upsell-overlay" showIcon={ false } />
+	) : (
 		<a
 			href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-utm-url-builder"
 			target="_blank"
