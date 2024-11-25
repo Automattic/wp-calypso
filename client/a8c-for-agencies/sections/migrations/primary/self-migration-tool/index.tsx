@@ -9,6 +9,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { TaskSteps } from 'calypso/a8c-for-agencies/components/task-steps';
+import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { getMigrationInfo } from './migration-info';
 
 import './style.scss';
@@ -17,15 +18,23 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 	const translate = useTranslate();
 
 	const stepInfo = getMigrationInfo( type, translate );
+	const { data: tipaltiData } = useGetTipaltiPayee();
 
 	const { pageTitle, heading, pageHeading, pageSubheading, steps, sessionStorageKey } = stepInfo;
 
-	const stepsWithCompletion = steps.map( ( step ) => {
-		return {
-			...step,
-			isCompleted: false,
-		};
-	} );
+	const stepsWithCompletion = steps
+		.map( ( step ) => {
+			return {
+				...step,
+				isCompleted: false,
+			};
+		} )
+		.filter( ( step ) => {
+			if ( tipaltiData?.Status === 'Active' && step.stepId === 'add-bank-info' ) {
+				return false;
+			}
+			return true;
+		} );
 
 	return (
 		<Layout className="self-migration-tool" title={ pageTitle } wide>
