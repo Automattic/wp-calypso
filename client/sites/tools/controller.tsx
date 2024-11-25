@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import { useAreAdvancedHostingFeaturesSupported } from '../hosting-features/features';
@@ -11,7 +12,6 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import HostingFeatures from './hosting-features/components/hosting-features';
 import Logs from './logs';
 import Monitoring from './monitoring';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
