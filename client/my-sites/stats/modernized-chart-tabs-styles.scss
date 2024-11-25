@@ -150,6 +150,11 @@ $custom-stats-tab-mobile-break: $break-medium;
 				}
 			}
 
+			&.tab-disabled a {
+				pointer-events: none;
+				cursor: default;
+			}
+
 			&.is-low {
 				a {
 					.value {
@@ -214,6 +219,9 @@ $custom-stats-tab-mobile-break: $break-medium;
 					line-height: 25px;
 					letter-spacing: -0.24px;
 					margin-left: 8px;
+				}
+				.stats-tabs__value.value {
+					display: none;
 				}
 				@media (min-width: $custom-stats-tab-mobile-break) {
 					& > a {

@@ -81,7 +81,7 @@ class StatsTabs extends Component {
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
 					tabClick: hasTrend ? switchTab : undefined,
-					value: hasData ? activeData?.[ tab.attr ] ?? tabCountsAlt?.[ tab.attr ] : null,
+					value,
 					format: tab.format,
 				};
 
