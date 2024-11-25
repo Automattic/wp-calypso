@@ -1,18 +1,27 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, ReactNode, useState } from 'react';
+import { useMemo, ReactNode, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import MigrationsCommissionsListMobileView from './mobile-view';
 import type { TaggedSite } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
-export default function MigrationsCommissionsList( { items }: { items: TaggedSite[] } ) {
+export default function MigrationsCommissionsList( {
+	items,
+	fetchMigratedSites,
+}: {
+	items: TaggedSite[];
+	fetchMigratedSites: () => void;
+} ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
+	const { mutate } = useUpdateSiteTagsMutation();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -22,6 +31,13 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 		totalItems: items.length,
 		totalPages: 1,
 	};
+
+	const onRemove = useCallback(
+		async ( siteId: number ) => {
+			await mutate( { siteId, tags: [] }, { onSuccess: fetchMigratedSites } );
+		},
+		[ fetchMigratedSites, mutate ]
+	);
 
 	const fields: Field< any >[] = useMemo(
 		() => [
@@ -51,8 +67,18 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 				enableHiding: false,
 				enableSorting: false,
 			},
+			{
+				id: 'remove',
+				label: translate( 'Remove' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item }: { item: TaggedSite } ) => (
+					<Button onClick={ () => onRemove( item.id ) }>{ translate( 'Remove' ) }</Button>
+				),
+				enableHiding: false,
+				enableSorting: false,
+			},
 		],
-		[ translate ]
+		[ translate, onRemove ]
 	);
 
 	if ( ! isDesktop ) {
