@@ -11,7 +11,7 @@ $illustration-width: 214px;
 		.task__illustration {
 			display: flex;
 			
-			@include break-small() {
+			@include break-small {
 				width: calc(45% + 32px);
 				margin-bottom: -32px !important;
 				margin-right: -32px !important;
