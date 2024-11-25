@@ -50,6 +50,7 @@
 .tools__header-body {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 	padding: 42px;
 	justify-content: space-between;
 	gap: 20px;
@@ -98,7 +99,7 @@
 			font-weight: 500;
 			text-decoration: none;
 			color: var(--color-gray-80);
-			
+
 			svg {
 				margin-left: 8px;
 			}
@@ -109,7 +110,7 @@
 .tools__header-image-wrapper {
 	@include wide-screen {
 		display: flex;
-		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
+		margin-right: -20px; // This is to compensate the gap in .tools__header-body
 	}
 
 	.tools__header-image {

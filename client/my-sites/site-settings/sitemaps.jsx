@@ -8,9 +8,9 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
 import HostingActivationButton from './hosting-activation-button';
 
 export default function HostingActivation( { redirectUrl }: { redirectUrl: string } ) {

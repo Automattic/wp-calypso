@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { Panel } from 'calypso/sites/components/panel';
+import { Panel } from 'calypso/components/panel';
 import HostingActivation from 'calypso/sites/hosting-features/components/hosting-activation';
 import {
 	useAreHostingFeaturesSupported,

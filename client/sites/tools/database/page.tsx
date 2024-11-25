@@ -1,10 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import { Panel } from 'calypso/components/panel';
 import { useAreAdvancedHostingFeaturesSupported } from '../../hosting-features/features';
 import PhpMyAdminForm from './form';
-
-import './style.scss';
 
 function Container( { children }: { children: React.ReactNode } ) {
 	return children;
@@ -45,8 +44,8 @@ export default function Database() {
 	};
 
 	return (
-		<div className="tools-database phpmyadmin-card">
+		<Panel className="tools-database phpmyadmin-card">
 			{ isSupported ? renderSetting() : renderNotSupportedNotice() }
-		</div>
+		</Panel>
 	);
 }

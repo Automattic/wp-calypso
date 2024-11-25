@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { Panel } from 'calypso/sites/components/panel';
+import { Panel } from 'calypso/components/panel';
 import SharingConnections from './connections';
 
 import '../style.scss';
@@ -16,7 +16,10 @@ export default function MarketingConnections( {
 } ) {
 	const translate = useTranslate();
 	return (
-		<Panel className="marketing-connections connections__sharing-settings connections__sharing-connections">
+		<Panel
+			wide
+			className="marketing-connections connections__sharing-settings connections__sharing-connections"
+		>
 			<NavigationHeader
 				title={ translate( 'Connections' ) }
 				subtitle={ translate(

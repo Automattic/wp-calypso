@@ -6,12 +6,22 @@ import './style.scss';
 
 export function Panel( {
 	className,
+	wide,
 	children,
 }: {
 	className?: string;
+	wide?: boolean;
 	children: React.ReactNode;
 } ) {
-	return <Main className={ clsx( 'panel', className ) }>{ children }</Main>;
+	return (
+		<Main
+			className={ clsx( 'panel', className, {
+				'panel--wide': wide,
+			} ) }
+		>
+			{ children }
+		</Main>
+	);
 }
 
 export function PanelSection( {

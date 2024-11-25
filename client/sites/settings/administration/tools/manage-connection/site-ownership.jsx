@@ -9,8 +9,8 @@ import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-us
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import accept from 'calypso/lib/accept';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { changeOwner } from 'calypso/state/jetpack/connection/actions';
