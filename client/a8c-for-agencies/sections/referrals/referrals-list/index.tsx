@@ -1,9 +1,9 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, ReactNode, useEffect } from 'react';
+import { useMemo, useCallback, ReactNode, useEffect, useState } from 'react';
+import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -23,6 +23,7 @@ interface Props {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	referralInvoices: ReferralInvoice[];
 	isArchiveView?: boolean;
+	onArchiveReferral?: ( referral: Referral ) => void;
 }
 
 export default function ReferralList( {
@@ -31,6 +32,7 @@ export default function ReferralList( {
 	setDataViewsState,
 	referralInvoices,
 	isArchiveView,
+	onArchiveReferral,
 }: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
@@ -47,6 +49,8 @@ export default function ReferralList( {
 		},
 		[ dispatch, setDataViewsState ]
 	);
+
+	const [ referralForArchive, setReferralForArchive ] = useState< Referral | null >( null );
 
 	const handleArchiveReferral = useHandleReferralArchive();
 
@@ -191,28 +195,9 @@ export default function ReferralList( {
 					id: 'archive-referral',
 					label: translate( 'Archive' ),
 					isPrimary: false,
-					modalHeader: translate( 'Are you sure you want to archive this referral?' ),
-					RenderModal: ( { items, closeModal } ) => (
-						<>
-							<p>
-								{ translate(
-									"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
-								) }
-							</p>
-							<div className="referral-archive-buttons">
-								<Button onClick={ () => closeModal?.() }>{ translate( 'Keep Referral' ) }</Button>
-								<Button
-									onClick={ () => {
-										handleArchiveReferral( items[ 0 ] );
-										closeModal?.();
-									} }
-									isDestructive
-								>
-									{ translate( 'Archive referral' ) }
-								</Button>
-							</div>
-						</>
-					),
+					callback( items ) {
+						setReferralForArchive( items[ 0 ] );
+					},
 					isEligible( referral: Referral ) {
 						return ! isArchiveView && ! referral.referralStatuses.includes( 'active' );
 					},
@@ -221,13 +206,7 @@ export default function ReferralList( {
 		}
 
 		return [];
-	}, [
-		openSitePreviewPane,
-		translate,
-		dataViewsState.type,
-		isArchiveView,
-		handleArchiveReferral,
-	] );
+	}, [ openSitePreviewPane, translate, dataViewsState.type, isArchiveView ] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
 		const filteredReferrals = referrals.filter( ( referral ) => {
@@ -260,6 +239,28 @@ export default function ReferralList( {
 					defaultLayouts: { table: {} },
 				} }
 			/>
+
+			{ referralForArchive && (
+				<A4AConfirmationDialog
+					title={ translate( 'Are you sure you want to archive this referral?' ) }
+					onClose={ () => setReferralForArchive( null ) }
+					onConfirm={ () => {
+						handleArchiveReferral( referralForArchive, ( isSuccess ) => {
+							if ( isSuccess ) {
+								onArchiveReferral?.( referralForArchive );
+							}
+							setReferralForArchive( null );
+						} );
+					} }
+					closeLabel={ translate( 'Keep referral' ) }
+					ctaLabel={ translate( 'Archive' ) }
+					isDestructive
+				>
+					{ translate(
+						"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+					) }
+				</A4AConfirmationDialog>
+			) }
 		</div>
 	);
 }
