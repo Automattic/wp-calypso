@@ -15,6 +15,7 @@ import {
 	purchase,
 	emailStats,
 	emailSummary,
+	redirectToDaySummary,
 } from 'calypso/my-sites/stats/controller';
 import {
 	SITE_REQUEST,
@@ -125,6 +126,8 @@ export default function ( pageBase = '/' ) {
 
 	// Stat Summary Pages
 	statsPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
+	// No hourly stats for modules
+	statsPage( `/stats/hour/:module(${ validModules })/:site`, redirectToDaySummary );
 
 	// Stat Single Post Page
 	statsPage( '/stats/post/:post_id/:site', post );

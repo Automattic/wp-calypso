@@ -17,6 +17,7 @@ import {
 	emailSummary,
 	subscribers,
 	purchase,
+	redirectToDaySummary,
 } from './controller';
 
 import './style.scss';
@@ -73,6 +74,8 @@ export default function () {
 
 	// Stat Summary Pages
 	statsPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
+	// No hourly stats for modules
+	statsPage( `/stats/hour/:module(${ validModules })/:site`, redirectToDaySummary );
 
 	// Stat Single Post Page
 	statsPage( '/stats/post/:post_id/:site', post );
