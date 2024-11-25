@@ -78,8 +78,11 @@ export default function ReferralsOverview( {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } =
-		useFetchReferrals( isAutomatedReferral );
+	const {
+		data: referrals,
+		isFetching: isFetchingReferrals,
+		refetch: refetchReferrals,
+	} = useFetchReferrals( isAutomatedReferral );
 
 	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
 		useFetchReferralInvoices( isAutomatedReferral );
@@ -182,6 +185,7 @@ export default function ReferralsOverview( {
 						referralInvoices={ referralInvoices ?? [] }
 						isFetchingInvoices={ isFetchingReferralInvoices }
 						isArchiveView={ isArchiveView }
+						onReferralRefetch={ refetchReferrals }
 					/>
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
