@@ -7,7 +7,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const Affiliates = () => {
+const BlackFriday2024 = () => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -28,4 +28,4 @@ const Affiliates = () => {
 	);
 };
 
-export default Affiliates;
+export default BlackFriday2024;
