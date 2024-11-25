@@ -57,7 +57,11 @@ $stats-card-min-width: 390px;
 }
 
 .stats__period-header {
-	padding: 0 32px;
+	padding: 0;
+
+	.is-sticky & {
+		padding: 0 32px;
+	}
 }
 
 .stats-card {
