@@ -20,8 +20,6 @@ import { getMarketingFeaturesData } from './marketing-features-data';
 
 import './style.scss';
 
-const MARKETING_FEATURES_SEARCH_KEYS = [ 'title', 'description' ];
-
 const items = [
 	{ key: '', text: 'All' },
 	{ key: 'seo', text: 'New tools' },
@@ -51,12 +49,6 @@ export default function MarketingTools() {
 		} );
 	};
 
-	const marketingFeaturesFiltered = useFuzzySearch( {
-		data: marketingFeatures,
-		keys: MARKETING_FEATURES_SEARCH_KEYS,
-		query: searchTerm ?? '',
-	} );
-
 	function handleSelect( key: string ): void {
 		setSearchTerm( key );
 	}
@@ -67,44 +59,44 @@ export default function MarketingTools() {
 		page( pluginsPath( selectedSiteSlug ) );
 	};
 
-	const searchTerms = [ 'seo', 'monetize', 'design', 'share' ];
-	const searchTermSuggestion = useTermsSuggestions( searchTerms );
-
 	return (
 		<div className="tools__wrapper">
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<div
-				className={ clsx( 'marketing-tools__searchbox-container', {
-					'marketing-tools__searchbox-container--mobile': isMobile(),
-				} ) }
-			>
-				<Search
-					className="marketing-tools__searchbox"
-					onSearch={ handleSearch }
-					defaultValue={ searchTerm }
-					searchMode="when-typing"
-					placeholder={ translate( 'Try searching "seo"' ) }
-					submitOnOpenIconClick
-					openIconSide="right"
-					displayOpenAndCloseIcons
-					delaySearch
-					fitsContainer
-				/>
+			<div className="marketing-tools__toolbar-container">
+				<div
+					className={ clsx( 'marketing-tools__searchbox-container', {
+						'marketing-tools__searchbox-container--mobile': isMobile(),
+					} ) }
+				>
+					<Search
+						className="marketing-tools__searchbox"
+						onSearch={ handleSearch }
+						defaultValue={ searchTerm }
+						searchMode="when-typing"
+						placeholder={ translate( 'Try searching "seo"' ) }
+						submitOnOpenIconClick
+						openIconSide="right"
+						displayOpenAndCloseIcons
+						delaySearch
+						fitsContainer
+					/>
+				</div>
+				<div className="marketing-tools__tooolbar-vertical-separator" />
+				<ResponsiveToolbarGroup
+					className="marketing-tools__search-categories-toolbar"
+					initialActiveIndex={ 0 }
+					forceSwipe={ 'undefined' === typeof window }
+					onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
+					swipeEnabled={ false }
+				>
+					{ items.map( ( item ) => (
+						<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
+					) ) }
+				</ResponsiveToolbarGroup>
 			</div>
-      <ResponsiveToolbarGroup
-        className="search-categories__toolbar"
-        initialActiveIndex={ 0 }
-        forceSwipe={ 'undefined' === typeof window }
-        onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
-        swipeEnabled={ false }
-      >
-        { items.map( ( item ) => (
-          <span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
-        ) ) }
-      </ResponsiveToolbarGroup>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {
 					return (
