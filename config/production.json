@@ -30,7 +30,7 @@
 		"bulk-plugin-management": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
-		"calypso/big-sky": false,
+		"calypso/big-sky": true,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
