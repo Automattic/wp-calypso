@@ -234,7 +234,7 @@ const useGridPlans: UseGridPlansType = ( {
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	enableTermSavingsPriceDisplay,
+	reflectStorageSelectionInPlanPrices,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -291,7 +291,7 @@ const useGridPlans: UseGridPlansType = ( {
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
-		enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.

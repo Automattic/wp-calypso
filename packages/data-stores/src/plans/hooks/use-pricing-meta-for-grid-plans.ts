@@ -61,7 +61,7 @@ interface Props {
 	 * TODO: Add more detailed comments because we've decided to make a tempoarary decision around storage-addons
 	 * while the calypso_plans_page_emphasize_longer_plan_savings experiment is running.
 	 */
-	enableTermSavingsPriceDisplay?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -85,7 +85,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
 	withProratedDiscounts,
-	enableTermSavingsPriceDisplay,
+	reflectStorageSelectionInPlanPrices,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
@@ -139,7 +139,7 @@ const usePricingMetaForGridPlans = ( {
 				const sitePlan = sitePlans.data?.[ planSlug ];
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 				const selectedStorageAddOn =
-					selectedStorageOption && ! enableTermSavingsPriceDisplay
+					selectedStorageOption && ! reflectStorageSelectionInPlanPrices
 						? storageAddOns?.find( ( addOn ) => {
 								return addOn?.addOnSlug === selectedStorageOption;
 						  } )

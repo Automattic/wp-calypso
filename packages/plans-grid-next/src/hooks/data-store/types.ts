@@ -32,7 +32,7 @@ export interface UseGridPlansParams {
 	isDomainOnlySite?: boolean;
 	// TODO: Add more detailed comments because we've decided to make a tempoarary decision around storage-addons
 	// while the calypso_plans_page_emphasize_longer_plan_savings experiment is running.
-	enableTermSavingsPriceDisplay?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export type UseGridPlansType = (
