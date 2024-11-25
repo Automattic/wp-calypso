@@ -10,8 +10,6 @@
 	.sites-dataviews__site {
 		display: flex;
 		flex-direction: row;
-		padding-bottom: 8px;
-		padding-top: 8px;
 		// not to cut off the focus outline
 		padding-left: 2px;
 		overflow: hidden;
@@ -50,7 +48,6 @@
 	}
 
 	.sites-dataviews__site-name {
-		align-self: center;
 		display: inline-block;
 		text-align: left;
 		text-overflow: ellipsis;
@@ -110,6 +107,9 @@
 		color: var(--color-warning-80);
 	}
 
+	.stats-sparkline {
+		padding-top: 0;
+	}
 }
 
 .is-section-a8c-for-agencies-sites {
