@@ -44,6 +44,7 @@ interface Props {
 	referralInvoices: ReferralInvoice[];
 	isFetchingInvoices: boolean;
 	isArchiveView?: boolean;
+	onReferralRefetch?: () => void;
 }
 
 export default function LayoutBodyContent( {
@@ -56,6 +57,7 @@ export default function LayoutBodyContent( {
 	referralInvoices,
 	isFetchingInvoices,
 	isArchiveView,
+	onReferralRefetch,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -136,6 +138,7 @@ export default function LayoutBodyContent( {
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
 					isArchiveView={ isArchiveView }
+					onArchiveReferral={ () => onReferralRefetch?.() }
 				/>
 			</>
 		);
