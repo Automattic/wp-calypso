@@ -26,6 +26,7 @@ const UnavailableScreenshot = styled.div`
 
 const ScreenShot = styled.img`
 	max-height: 100%;
+	clip-path: inset( 0 4px 0 0 round 6px );
 `;
 
 export const ScreenshotThumbnail = ( props: {
