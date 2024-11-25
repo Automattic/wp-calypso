@@ -22,6 +22,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				"Hire our dedicated experts to build a handcrafted, personalized website. Share some details about what you're looking for, and we'll make it happen."
 			),
+			categories: [ 'design', 'favourite' ],
 			imagePath: wordPressLogo,
 			buttonText: translate( 'Get started' ),
 			buttonHref: localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ),
@@ -35,6 +36,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
 			),
+			categories: [ 'monetize', 'favourite' ],
 			imagePath: earnIllustration,
 			imageAlt: translate( 'A stack of coins' ),
 			buttonText: translate( 'Start earning' ),
@@ -49,6 +51,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				'Create a standout brand with a custom logo. Our partner makes it easy and quick to design a professional logo that leaves a lasting impression.'
 			),
+			categories: [ 'design', 'new' ],
 			imagePath: fiverrLogo,
 			imageAlt: translate( 'Fiverr logo' ),
 			buttonText: translate( 'Make your brand' ),
@@ -63,6 +66,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				'In today‘s digital age, visibility is key. Hire an SEO expert to boost your online presence and capture valuable opportunities.'
 			),
+			categories: [ 'seo', 'favourite' ],
 			imagePath: fiverrLogo,
 			imageAlt: translate( 'Fiverr logo' ),
 			buttonText: translate( 'Talk to an SEO expert today' ),
@@ -77,6 +81,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Facebook, LinkedIn, and more."
 			),
+			categories: [ 'share', 'new' ],
 			imagePath: '/calypso/images/marketing/social-media-logos.svg',
 			imageAlt: translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ),
 			buttonText: translate( 'Start sharing' ),
@@ -93,6 +98,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				'Take our free introductory course about search engine optimization (SEO) and learn how to improve your site or blog for both search engines and humans.'
 			),
+			categories: [ 'seo', 'new' ],
 			imagePath: rocket,
 			imageAlt: translate( 'A rocketship' ),
 			buttonText: translate( 'Register now' ),

@@ -22,25 +22,32 @@ import './style.scss';
 
 const items = [
 	{ key: '', text: 'All' },
-	{ key: 'seo', text: 'New tools' },
-	{ key: 'share', text: 'User favorites' },
+	{ key: 'new', text: 'New tools' },
+	{ key: 'favourite', text: 'User favorites' },
 ];
 
 export default function MarketingTools() {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ selectedCategory, setSelectedCategory ] = useState( '' );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 
 	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
 
 	const marketingFeaturesFiltered = useMemo( () => {
-		return marketingFeatures.filter(
-			( feature ) =>
-				feature.title.toLowerCase().includes( searchTerm.toLowerCase() ) ||
-				feature.description.toLowerCase().includes( searchTerm.toLowerCase() )
+		let filteredFeatures = marketingFeatures.filter( ( feature ) =>
+			( feature.title.toLowerCase() + feature.description.toLowerCase() ).includes(
+				searchTerm.toLowerCase()
+			)
 		);
-	}, [ searchTerm, marketingFeatures ] );
+		if ( selectedCategory ) {
+			filteredFeatures = filteredFeatures.filter( ( feature ) =>
+				feature.categories.includes( selectedCategory )
+			);
+		}
+		return filteredFeatures;
+	}, [ searchTerm, selectedCategory, marketingFeatures ] );
 
 	const handleSearch = ( term: string ) => {
 		setSearchTerm( term );
@@ -50,7 +57,7 @@ export default function MarketingTools() {
 	};
 
 	function handleSelect( key: string ): void {
-		setSearchTerm( key );
+		setSelectedCategory( key );
 	}
 
 	const handleBusinessToolsClick = () => {
