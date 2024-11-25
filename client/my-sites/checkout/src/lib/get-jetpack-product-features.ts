@@ -97,7 +97,7 @@ function getFeatureStrings(
 			];
 		case 'growth':
 			return [
-				translate( 'Stats (Up to 10K site views, upgradeable)' ),
+				translate( 'Stats (10K site views, upgradeable)' ),
 				translate( 'Social' ),
 				translate( 'Display ads with WordAds' ),
 				translate( 'Pay with PayPal' ),

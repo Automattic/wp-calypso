@@ -6,14 +6,10 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import MigrationsCommissionsListMobileView from './mobile-view';
-import type { MigrationCommissionItem } from '../types';
+import type { TaggedSite } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
-export default function MigrationsCommissionsList( {
-	items,
-}: {
-	items: MigrationCommissionItem[];
-} ) {
+export default function MigrationsCommissionsList( { items }: { items: TaggedSite[] } ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
@@ -33,15 +29,17 @@ export default function MigrationsCommissionsList( {
 				id: 'site',
 				label: translate( 'Site' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <SiteColumn site={ item.siteUrl } />,
+				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'migratedOn',
-				label: translate( 'Migrated on' ).toUpperCase(),
+				// FIXME: This should be "Migrated on" instead of "Date Added"
+				// We will change this when the MC tool is implemented and we have the migration date
+				label: translate( 'Date Added' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.migratedOn } />,
+				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -49,9 +47,7 @@ export default function MigrationsCommissionsList( {
 				id: 'reviewStatus',
 				label: translate( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => (
-					<ReviewStatusColumn reviewStatus={ item.reviewStatus } />
-				),
+				render: ( { item } ): ReactNode => <ReviewStatusColumn reviewStatus={ item.state } />,
 				enableHiding: false,
 				enableSorting: false,
 			},

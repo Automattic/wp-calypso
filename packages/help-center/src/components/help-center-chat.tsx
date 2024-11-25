@@ -37,6 +37,8 @@ export function HelpCenterChat( {
 		}
 	}, [] );
 
+	const odieVersion = config.isEnabled( 'help-center-experience' ) ? '14.0.3' : null;
+
 	return (
 		<OdieAssistantProvider
 			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
@@ -48,6 +50,7 @@ export function HelpCenterChat( {
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
 			}
+			version={ odieVersion }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

@@ -55,22 +55,16 @@ class StatsTabsTab extends Component {
 
 		return (
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-			<li className={ tabClass } onClick={ this.clickHandler }>
-				{ hasClickAction ? (
-					<a href={ href }>
-						{ tabIcon }
-						{ tabLabel }
-						{ tabValue }
-						{ children }
-					</a>
-				) : (
-					<span className="stats-tabs__span no-link">
-						{ tabIcon }
-						{ tabLabel }
-						{ tabValue }
-						{ children }
-					</span>
-				) }
+			<li
+				className={ clsx( tabClass, { 'tab-disabled': ! hasClickAction } ) }
+				onClick={ this.clickHandler }
+			>
+				<a href={ href }>
+					{ tabIcon }
+					{ tabLabel }
+					{ tabValue }
+					{ children }
+				</a>
 			</li>
 		);
 	}

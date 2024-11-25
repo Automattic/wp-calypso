@@ -126,7 +126,11 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) } />
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
+											/>
 										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
@@ -171,7 +175,11 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) } />
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
+											/>
 										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',

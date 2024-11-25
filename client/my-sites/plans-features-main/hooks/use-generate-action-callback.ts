@@ -28,11 +28,11 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler( {
 	siteSlug,
-	withDiscount,
+	coupon,
 	cartHandler,
 }: {
 	siteSlug?: string | null;
-	withDiscount?: string;
+	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 } ) {
 	const processCartItems = useCallback(
@@ -62,15 +62,12 @@ function useUpgradeHandler( {
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
-			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( withDiscount && { coupon: withDiscount } ) },
-				checkoutUrl
-			);
+			const checkoutUrlWithArgs = addQueryArgs( { ...( coupon && { coupon } ) }, checkoutUrl );
 
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, withDiscount, cartHandler ]
+		[ siteSlug, coupon, cartHandler ]
 	);
 
 	return useCallback(
@@ -154,7 +151,7 @@ function useGenerateActionCallback( {
 	showModalAndExit,
 	sitePlanSlug,
 	siteId,
-	withDiscount,
+	coupon,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -164,7 +161,7 @@ function useGenerateActionCallback( {
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
-	withDiscount?: string;
+	coupon?: string;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
@@ -177,7 +174,7 @@ function useGenerateActionCallback( {
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
-	const handleUpgradeClick = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
+	const handleUpgradeClick = useUpgradeHandler( { siteSlug, coupon, cartHandler } );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
 		currentPlan,

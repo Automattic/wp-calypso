@@ -121,7 +121,13 @@ class StatModuleFollowers extends Component {
 						{
 							comment: '{{link}} links to support documentation.',
 							components: {
-								link: <a href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) } />,
+								link: (
+									<a
+										target="_blank"
+										rel="noreferrer"
+										href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) }
+									/>
+								),
 							},
 							context: 'Stats: Info box label when the Subscribers module is empty',
 						}

@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import { useAreAdvancedHostingFeaturesSupported } from 'calypso/sites/features';
-import { SftpForm } from 'calypso/sites/tools/sftp-ssh/sftp-form';
+import { useAreAdvancedHostingFeaturesSupported } from '../../hosting-features/features';
 import useSftpSshSettingTitle from './hooks/use-sftp-ssh-setting-title';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
+import { SftpForm } from './sftp-form';
 
 import './style.scss';
 

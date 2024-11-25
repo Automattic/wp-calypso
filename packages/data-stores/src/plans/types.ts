@@ -120,6 +120,7 @@ export interface PlanPricing {
 }
 
 export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {
+	hasSaleCoupon?: boolean;
 	costOverrides?: CostOverride[];
 }
 
@@ -269,6 +270,7 @@ export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntrod
 export interface PricedAPISitePlan
 	extends PricedAPISitePlanPricing,
 		PricedAPIPlanIntroductoryOffer {
+	has_sale_coupon?: boolean;
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;
 	current_plan?: boolean;

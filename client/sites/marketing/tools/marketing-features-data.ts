@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -11,7 +12,6 @@ import { MarketingToolsFeatureData } from './types';
 
 export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
-	recordTracksEvent: ( event: string ) => void,
 	translate: ( text: string ) => string,
 	localizeUrl: ( url: string ) => string
 ): MarketingToolsFeatureData[] => {

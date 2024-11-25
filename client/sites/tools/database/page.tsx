@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import { useAreAdvancedHostingFeaturesSupported } from 'calypso/sites/features';
+import { useAreAdvancedHostingFeaturesSupported } from '../../hosting-features/features';
 import PhpMyAdminForm from './form';
 
 import './style.scss';

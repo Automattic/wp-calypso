@@ -83,7 +83,7 @@ const usePricingMetaForGridPlans = ( {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
-	const sitePlans = Plans.useSitePlans( { siteId } );
+	const sitePlans = Plans.useSitePlans( { coupon, siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
@@ -227,7 +227,11 @@ const usePricingMetaForGridPlans = ( {
 					};
 
 					// Do not return discounted prices if discount is due to plan proration
+					// If there is, however, a sale coupon, show the discounted price
+					// without proration. This isn't ideal, but is intentional. Because of
+					// this, the price will differ between the plans grid and checkout screen.
 					if (
+						! sitePlan?.pricing?.hasSaleCoupon &&
 						! withProratedDiscounts &&
 						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
 							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
