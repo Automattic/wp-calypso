@@ -122,7 +122,7 @@ export class PlansStep extends Component {
 			intervalType ||
 			getIntervalType(
 				this.props.path,
-				flowName === 'onboarding' && longerPlanTermDefaultExperiment.term
+				flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
 					? longerPlanTermDefaultExperiment.term
 					: undefined
 			);
