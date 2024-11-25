@@ -76,7 +76,7 @@ const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
 const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'title-text', 'site-url', 'admin-url' ];
+const mobileFields = [ 'site' ];
 const listViewFields = [ 'title-text', 'site-url' ];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
@@ -205,7 +205,7 @@ const SitesDashboard = ( {
 							{
 								id: 'site-title',
 								label: 'site-title',
-								children: [ 'title-text', 'site-url', 'admin-url' ],
+								children: [ 'title-text', 'site-url' ],
 								direction: 'vertical',
 							},
 							{

@@ -10,7 +10,6 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
-import SiteAdminUrl from './site-admin-url';
 import SiteIcon from './site-icon';
 import SiteUrl from './site-url';
 import { SiteStats } from './sites-site-stats';
@@ -138,15 +137,7 @@ const DotcomSitesDataViews = ( {
 				header: <span>{ __( 'URL' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteUrl site={ item } />,
 				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: 'admin-url',
-				label: __( 'Admin URL' ),
-				header: <span>{ __( 'Admin URL' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <SiteAdminUrl site={ item } />,
-				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'plan',
