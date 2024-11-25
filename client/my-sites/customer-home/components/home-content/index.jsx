@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
+import AITranslationsBanner from 'calypso/blocks/ai-translations-banner';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
@@ -292,6 +293,7 @@ const HomeContent = ( {
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
+			<AITranslationsBanner />
 			{ header }
 			{ ! isLoading && ! layout && homeLayoutError ? (
 				<TrackComponentView
@@ -302,11 +304,13 @@ const HomeContent = ( {
 					} }
 				/>
 			) : null }
+<<<<<<< HEAD
 
 			{ renderStudioSyncNotice() }
+=======
+>>>>>>> 2bf7e03b481 (i18n: Add AI Translations Banner)
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
-
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
 			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>

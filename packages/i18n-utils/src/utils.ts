@@ -289,3 +289,7 @@ export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
 
 	return 'en';
 }
+
+export function isAITranslatedLocale( locale: string ) {
+	return [ 'el', 'fi', 'hu', 'nb', 'pl', 'th' ].indexOf( locale ) > -1;
+}
