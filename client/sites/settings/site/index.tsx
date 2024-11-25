@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { Panel } from 'calypso/components/panel';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -35,13 +36,13 @@ export function SiteSettings( props: any ) {
 	};
 
 	return (
-		<div className="settings-site">
+		<Panel className="settings-site">
 			<NavigationHeader
 				title={ translate( 'Site' ) }
 				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
 			<SiteSettingsForm { ...props } { ...additionalProps } />
-		</div>
+		</Panel>
 	);
 }
 

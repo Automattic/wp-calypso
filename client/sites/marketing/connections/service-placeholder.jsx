@@ -15,7 +15,7 @@ class SharingServicePlaceholder extends Component {
 				<Gridicon icon="share" size={ 48 } className="sharing-service__logo" />
 
 				<div className="sharing-service__name">
-					<h2 />
+					<h3 />
 					<p className="sharing-service__description" />
 				</div>
 			</div>

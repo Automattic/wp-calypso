@@ -20,7 +20,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 	);
 
 	return (
-		<div className="connections__sharing-settings connections__sharing-connections">
+		<>
 			<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 
 			{ isP2Hub && <QueryP2Connections siteId={ siteId } /> }
@@ -51,7 +51,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 			/>
 
 			{ adminInterfaceIsWPAdmin && <GoogleAnalyticsSettings /> }
-		</div>
+		</>
 	);
 };
 

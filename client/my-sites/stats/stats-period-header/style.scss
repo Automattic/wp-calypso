@@ -8,7 +8,12 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	margin: 16px 0;
+	// .stats-content has a gap already, so the .stats__period-header from the new design only needs margin-top.
+	margin-top: 16px;
+
+	.stats-content & {
+		margin: 16px 0;
+	}
 
 	.period {
 		font-family: $brand-serif;
@@ -20,6 +25,7 @@
 	 // this new selector removes padding only for the date filtering design
 		&.stats-period-navigation__is-with-new-date-filtering {
 			padding: 0;
+			align-items: center;
 
 			@media (max-width: $break-medium) {
 				padding: 0 16px;

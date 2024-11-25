@@ -11,7 +11,7 @@ import {
 	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
 } from 'calypso/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/sites/controller';
+import { showHostingFeaturesNoticeIfPresent, siteDashboard } from 'calypso/sites/controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
@@ -94,6 +94,7 @@ export default function () {
 		'/sites/settings/caching/:site',
 		siteSelection,
 		navigation,
+		showHostingFeaturesNoticeIfPresent,
 		cachingSettings,
 		siteDashboard( SETTINGS_CACHING ),
 		makeLayout,

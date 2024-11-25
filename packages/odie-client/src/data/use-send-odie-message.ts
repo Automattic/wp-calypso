@@ -61,12 +61,20 @@ export const useSendOdieMessage = () => {
 						method: 'POST',
 						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
-						body: { message: message.content, version, context: { selectedSiteId } },
+						body: {
+							message: message.content,
+							...( version && { version } ),
+							context: { selectedSiteId },
+						},
 				  } )
 				: await apiFetch( {
 						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
-						data: { message: message.content, version, context: { selectedSiteId } },
+						data: {
+							message: message.content,
+							...( version && { version } ),
+							context: { selectedSiteId },
+						},
 				  } );
 		},
 		onMutate: () => {

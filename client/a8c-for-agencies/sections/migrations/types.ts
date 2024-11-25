@@ -1,10 +1,7 @@
-export interface MigrationCommissionItem {
+export interface TaggedSite {
 	id: number;
-	siteUrl: string;
-	migratedOn: Date;
-	reviewStatus: 'confirmed' | 'pending' | 'rejected';
-}
-
-export interface MigrationCommissionAPIResponse {
-	// TODO: Define the API response shape
+	blog_id: number;
+	created_at: number;
+	url: string;
+	state: string;
 }

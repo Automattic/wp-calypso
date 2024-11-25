@@ -56,7 +56,7 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
+		it( 'redirects the user to home when there is not siteSlug and SiteID', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
 			runUseAssertionCondition( {
@@ -64,7 +64,7 @@ describe( 'Site Migration Flow', () => {
 				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/' );
 		} );
 
 		it( 'redirects the user to the start page when the user is not the site admin', () => {

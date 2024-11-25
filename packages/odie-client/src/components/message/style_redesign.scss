@@ -463,7 +463,7 @@
 			font-size: $font-body;
 			line-height: 1;
 			appearance: none;
-			background-color: var(--color-primary);
+			background-color: $blueberry-color;
 			color: var(--studio-white);
 			border: 1px none;
 			display: flex;
@@ -476,6 +476,16 @@
 
 			&.is-active {
 				border-width: 1px;
+			}
+		}
+	}
+
+	.odie-send-message-input-container {
+		textarea.odie-send-message-input {
+			&:focus {
+				box-shadow: 0 0 0 2px $blueberry-color;
+				outline: none;
+				border-color: transparent;
 			}
 		}
 	}
@@ -635,5 +645,9 @@
 		height: 30px;
 		text-align: center;
 		padding-top: 6px;
+	}
+	
+	.odie-send-message-input-spinner {
+		color: $blueberry-color !important;
 	}
 }

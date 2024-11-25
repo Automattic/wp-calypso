@@ -522,7 +522,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     debug: "npm:^4.3.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1227,6 +1227,8 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/languages": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.4.5"
     "@testing-library/react": "npm:^15.0.7"
     clsx: "npm:^2.1.1"
@@ -2224,7 +2226,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     "@testing-library/jest-dom": "npm:^6.4.5"
     "@testing-library/react": "npm:^15.0.7"
     "@wordpress/data": "npm:^10.8.0"
@@ -5112,6 +5114,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paypal/paypal-js@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "@paypal/paypal-js@npm:8.1.2"
+  dependencies:
+    promise-polyfill: "npm:^8.3.0"
+  checksum: 85dc39a50a085011276193ec43a15bfbbbda7f563a34a3589a225ae17a148857820274cbfb070d0de98e81068d3eeb1a5cdfaf40a761d6c31a252a8145d30a42
+  languageName: node
+  linkType: hard
+
+"@paypal/react-paypal-js@npm:^8.7.0":
+  version: 8.7.0
+  resolution: "@paypal/react-paypal-js@npm:8.7.0"
+  dependencies:
+    "@paypal/paypal-js": "npm:^8.1.2"
+    "@paypal/sdk-constants": "npm:^1.0.122"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: cab40d633e8e3bce41a2fdc9a654424f1c25720b9cf8d5e1f6614fa5befc6edae204c2b50914cc178cefa4d3a84b3f824804f31571cb4ca58a2c72fd88708ebe
+  languageName: node
+  linkType: hard
+
+"@paypal/sdk-constants@npm:^1.0.122":
+  version: 1.0.150
+  resolution: "@paypal/sdk-constants@npm:1.0.150"
+  dependencies:
+    hi-base32: "npm:^0.5.0"
+  checksum: 18d6ebced71f14b2f126d5b7c354ef7d17bf3744f06c2558635d7c38ba6c849d9cc9d56cb39fd941f2a116c87c7a905cf7b92fa104b9424776cbffa07eb3c805
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -7358,7 +7391,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.53.0":
+"@stripe/stripe-js@npm:^1.54.2":
   version: 1.54.2
   resolution: "@stripe/stripe-js@npm:1.54.2"
   checksum: cf6ea20039fde28a0edc5562f08120ea820b1f8b8f2cf8b769aa92c0a4799a85e614f4112d8d790238960d0a3e1a194c76f6d2d941aa91acc8fbbc8920e63f02
@@ -12924,10 +12957,11 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@github/webauthn-json": "npm:^2.1.1"
+    "@paypal/react-paypal-js": "npm:^8.7.0"
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@storybook/addon-actions": "npm:^7.6.19"
     "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.53.0"
+    "@stripe/stripe-js": "npm:^1.54.2"
     "@tanstack/query-sync-storage-persister": "npm:^5.15.5"
     "@tanstack/react-query": "npm:^5.15.5"
     "@tanstack/react-query-devtools": "npm:^5.15.5"
@@ -19739,6 +19773,13 @@ __metadata:
   version: 1.0.0
   resolution: "hexoid@npm:1.0.0"
   checksum: 9c45e8ba676b9eb88455631ebceec4c829a8374a583410dc735472ab9808bf11339fcd074633c3fa30e420901b894d8a92ffd5e2e21eddd41149546e05a91f69
+  languageName: node
+  linkType: hard
+
+"hi-base32@npm:^0.5.0":
+  version: 0.5.1
+  resolution: "hi-base32@npm:0.5.1"
+  checksum: 45adb99249b04108fd689cb344f4b625b49d0518327117c34c403dbaf4723aaefb2a1bde6d7a0288ff0f835970d0f844a3ae103534dc237c99b8552a0e689177
   languageName: node
   linkType: hard
 
@@ -27493,10 +27534,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-polyfill@npm:^8.1.3":
-  version: 8.2.0
-  resolution: "promise-polyfill@npm:8.2.0"
-  checksum: 9c57f475c74d159c6cb93413f2461f509cf6aa422ba3e498574453b85765118d5fa55c5d7a22920694afebdf0e34e22acd5992b00af09f8adcd18496da20bb21
+"promise-polyfill@npm:^8.1.3, promise-polyfill@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
   languageName: node
   linkType: hard
 
@@ -34532,6 +34573,7 @@ __metadata:
     "@babel/register": "npm:^7.25.7"
     "@babel/runtime": "npm:^7.25.7"
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
+    "@paypal/react-paypal-js": "npm:^8.7.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/cli": "npm:^7.6.19"

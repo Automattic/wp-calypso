@@ -7,11 +7,11 @@ import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
 } from 'calypso/data/hosting/use-cache';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/sites/settings/caching/edge-cache-loading-placeholder';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

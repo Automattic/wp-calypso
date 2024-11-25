@@ -63,7 +63,7 @@ export default function useGenerateActionHook( {
 	isInSignup,
 	isLaunchPage,
 	showModalAndExit,
-	withDiscount,
+	coupon,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -72,7 +72,7 @@ export default function useGenerateActionHook( {
 	isInSignup: boolean;
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
-	withDiscount?: string;
+	coupon?: string;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -102,7 +102,7 @@ export default function useGenerateActionHook( {
 		showModalAndExit,
 		sitePlanSlug,
 		siteId,
-		withDiscount,
+		coupon,
 	} );
 
 	const useActionHook = ( {

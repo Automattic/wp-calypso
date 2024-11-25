@@ -130,6 +130,7 @@ export default function UserContactSupportModalForm( {
 			name,
 			email,
 			product,
+			agency_id: agency?.id,
 			...( site && { site } ),
 			...( pressableContactType && { contact_type: pressableContactType } ),
 			...( pressable_id && { pressable_id } ),

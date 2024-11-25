@@ -337,23 +337,6 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		description: __( 'Building a money-making blog doesn’t have to be as hard as you might think' ),
 		tags: [ 'affiliate-marketing', 'advertising', 'adwords' ],
 		preview: [
-			// TikTok for Business is only promoted for the first two weeks of November 2024
-			...( () => {
-				const currentDate = new Date();
-				const isNovember2024 = currentDate.getFullYear() === 2024 && currentDate.getMonth() === 10;
-				const isFirstTwoWeeks = currentDate.getDate() <= 14;
-
-				return isNovember2024 && isFirstTwoWeeks
-					? [
-							{
-								slug: 'tiktok-for-business',
-								name: __( 'Find new prospects through TikTok' ),
-								icon: 'https://ps.w.org/tiktok-for-business/assets/icon-256x256.jpg?rev=2721531',
-								short_description: __( 'Run Lead Generation Ads and improve targeting' ),
-							},
-					  ]
-					: [];
-			} )(),
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
@@ -387,7 +370,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'elementor',
 				name: __( 'Elementor' ),
-				icon: 'https://ps.w.org/elementor/assets/icon.svg',
+				icon: 'https://ps.w.org/elementor/assets/icon-256x256.gif?rev=3111597',
 				short_description: __( 'Drag and drop page builder' ),
 			},
 		],
