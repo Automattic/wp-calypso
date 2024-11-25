@@ -50,7 +50,7 @@ export default function MarketingTools() {
 	};
 
 	return (
-		<div>
+		<div className="tools__wrapper">
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
