@@ -2341,7 +2341,7 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 	],
 	getFeaturedDescription: () =>
 		translate(
-			'Grow your audience effortlessly.{{br}}{{/br}}{{br}}{{/br}}This bundle includes:{{ul}}{{li}}Stats (100k site views - upgradeable){{/li}}{{li}}Social{{/li}}{{li}}Newsletter and monetization tools{{/li}}{{/ul}}',
+			'Grow your audience effortlessly.{{br}}{{/br}}{{br}}{{/br}}This bundle includes:{{ul}}{{li}}Stats (10k site views - upgradeable){{/li}}{{li}}Social{{/li}}{{li}}Newsletter and monetization tools{{/li}}{{/ul}}',
 			{
 				components: {
 					br: <br />,
