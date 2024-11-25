@@ -23,7 +23,7 @@ import {
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
-	advancedTools,
+	tools,
 } from './controller';
 
 export default function () {
@@ -32,7 +32,7 @@ export default function () {
 		'/sites/tools/:site',
 		siteSelection,
 		navigation,
-		advancedTools,
+		tools,
 		siteDashboard( TOOLS ),
 		makeLayout,
 		clientRender

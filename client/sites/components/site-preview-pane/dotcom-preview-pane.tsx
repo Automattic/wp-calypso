@@ -4,8 +4,8 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import HostingFeaturesIcon from 'calypso/sites/tools/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
+import HostingFeaturesIcon from 'calypso/sites/tools/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -98,7 +98,8 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled: areHostingFeaturesSupported( site ),
+				enabled:
+					( isSimpleSite || isPlanExpired ) && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_HOSTING_FEATURES ],
 			},
 			{
@@ -137,16 +138,10 @@ const DotcomPreviewPane = ( {
 				],
 			},
 			{
-				label: (
-					<span>
-						{ __( 'Advanced Tools' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
+				label: __( 'Advanced Tools' ),
 				enabled:
-					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
+					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [
-					TOOLS,
 					TOOLS_STAGING_SITE,
 					TOOLS_DEPLOYMENTS,
 					TOOLS_MONITORING,
@@ -155,6 +150,17 @@ const DotcomPreviewPane = ( {
 					TOOLS_SFTP_SSH,
 					TOOLS_DATABASE,
 				],
+			},
+			{
+				label: (
+					<span>
+						{ __( 'Advanced Tools' ) }
+						<HostingFeaturesIcon />
+					</span>
+				),
+				enabled:
+					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [ TOOLS ],
 			},
 			{
 				label: __( 'Settings' ),

@@ -51,7 +51,7 @@ export function ToolsSidebar() {
 	);
 }
 
-export function advancedTools( context: PageJSContext, next: () => void ) {
+export function tools( context: PageJSContext, next: () => void ) {
 	context.primary = <HostingFeatures showAsTools />;
 	next();
 }
