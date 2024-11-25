@@ -51,7 +51,7 @@ export default function () {
 	page( '/stats', '/stats/day' );
 
 	// Stat Overview Page
-	statsPage( `/stats/:period(${ validTrafficPagePeriods })`, overview );
+	statsPage( `/stats/:period(${ validPeriods })`, overview );
 
 	// Stat Purchase Page
 	statsPage( '/stats/purchase/:site?', purchase );
@@ -65,7 +65,7 @@ export default function () {
 	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
-	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, site );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.
