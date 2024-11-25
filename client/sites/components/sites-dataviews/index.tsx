@@ -1,8 +1,7 @@
 import { SiteExcerptData } from '@automattic/sites';
-import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useMemo, useRef, useLayoutEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -57,34 +56,6 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
-
-	// Scroll to selected site in the list when in list view.
-	const scrollContainerRef = useRef< HTMLElement >();
-	const previousDataViewsState = usePrevious( dataViewsState );
-	const previousSelectedItem = usePrevious( selectedItem );
-	useLayoutEffect( () => {
-		if ( ! scrollContainerRef.current || previousDataViewsState?.type !== dataViewsState.type ) {
-			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
-		}
-
-		if ( ! previousSelectedItem && selectedItem && dataViewsState.type === 'list' ) {
-			window.setTimeout(
-				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
-				300
-			);
-			return;
-		}
-
-		if ( previousDataViewsState?.page !== dataViewsState.page ) {
-			scrollContainerRef.current?.scrollTo( 0, 0 );
-		}
-	}, [
-		dataViewsState.type,
-		dataViewsState.page,
-		selectedItem,
-		previousDataViewsState,
-		previousSelectedItem,
-	] );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
 	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
