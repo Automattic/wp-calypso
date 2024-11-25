@@ -33,15 +33,13 @@ import type { Action } from '@wordpress/dataviews';
 
 export function useActions( {
 	openSitePreviewPane,
-	selectedItem,
 	viewType,
 }: {
 	openSitePreviewPane?: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	selectedItem?: SiteExcerptData | null;
-	viewType: 'list' | 'table';
+	viewType: 'list' | 'table' | 'grid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
@@ -416,6 +414,6 @@ export function useActions( {
 				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, selectedItem?.ID ]
+		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType ]
 	);
 }

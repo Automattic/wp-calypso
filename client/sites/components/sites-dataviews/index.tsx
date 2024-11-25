@@ -186,7 +186,6 @@ const DotcomSitesDataViews = ( {
 
 	const actions = useActions( {
 		openSitePreviewPane,
-		selectedItem,
 		viewType: dataViewsState.type,
 	} );
 
