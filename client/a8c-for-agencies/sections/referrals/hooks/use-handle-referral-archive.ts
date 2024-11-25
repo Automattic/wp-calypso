@@ -11,7 +11,7 @@ export default function useHandleReferralArchive() {
 	const { mutate: archiveReferral } = useArchiveReferralMutation();
 
 	return useCallback(
-		( referral: Referral, callback?: () => void ) => {
+		( referral: Referral, callback?: ( isSuccess: boolean ) => void ) => {
 			archiveReferral(
 				{ id: referral.referralId },
 				{
@@ -22,7 +22,7 @@ export default function useHandleReferralArchive() {
 								duration: 5000,
 							} )
 						);
-						callback?.();
+						callback?.( true );
 					},
 
 					onError: ( error ) => {
@@ -32,7 +32,7 @@ export default function useHandleReferralArchive() {
 								duration: 5000,
 							} )
 						);
-						callback?.();
+						callback?.( false );
 					},
 				}
 			);
