@@ -66,18 +66,15 @@ export function useFields(
 
 					return (
 						<>
-							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
-							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-							<a
-								href="#"
+							<button
 								onClick={ () => toggleDialogForPlugin( item ) }
 								onKeyDown={ ( e ) => e.key === 'Enter' && toggleDialogForPlugin( item ) }
-								role="button"
-								tabIndex={ 0 }
+								className="components-button plugin-name-button"
 							>
+								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
+								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
 								{ item.name }
-							</a>
+							</button>
 							{ pluginActionStatus }
 						</>
 					);
