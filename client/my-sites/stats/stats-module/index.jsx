@@ -90,7 +90,10 @@ class StatsModule extends Component {
 			return undefined;
 		}
 
-		let url = `/stats/${ period.period }/${ path }/${ siteSlug }`;
+		// Summary pages don't support hourly periods so we default to daily.
+		const finalPeriod = period.period === 'hour' ? 'day' : period.period;
+
+		let url = `/stats/${ finalPeriod }/${ path }/${ siteSlug }`;
 
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
