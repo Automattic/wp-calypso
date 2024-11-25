@@ -80,7 +80,8 @@
 		"subscriber-csv-upload": true,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": false,
+		"bulk-plugin-management": true
 	},
 	"enable_all_sections": false,
 	"sections": {
