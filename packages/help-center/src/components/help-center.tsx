@@ -6,7 +6,6 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
-import { useExperiment } from 'calypso/lib/explat';
 /**
  * Internal Dependencies
  */
@@ -83,13 +82,8 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
-	// Just testing with the Stepper experiment
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_stepper_flow_2'
-	);
 	const shouldUseHelpCenterExperience =
-		config.isEnabled( 'help-center-experience' ) ||
-		( ! isLoadingExperiment && experimentAssignment?.variationName === 'stepper' );
+		config.isEnabled( 'help-center-experience' ) || props.shouldUseHelpCenterExperience;
 
 	return (
 		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
