@@ -26,7 +26,7 @@
 			max-width: none;
 			padding-bottom: 0;
 			@media (max-width: $break-mobile), (max-height: $break-mobile) {
-				overflow-y: auto;
+				overflow-y: visible;
 				overflow-x: hidden;
 			}
 		}

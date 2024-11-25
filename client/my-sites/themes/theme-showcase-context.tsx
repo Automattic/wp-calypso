@@ -1,8 +1,9 @@
 import { isMobileWidthOrHeight } from '@automattic/viewport';
 import { createContext, FC, PropsWithChildren, RefObject } from 'react';
+import { useMainContext } from 'calypso/components/main';
 
 interface ThemeShowcaseContextInterface {
-	themeShowcaseWrapperRef: RefObject< HTMLDivElement > | undefined;
+	themeShowcaseWrapperRef: RefObject< HTMLElement > | undefined;
 }
 
 // This context is used to pass the ref of the theme showcase wrapper to the Theme component
@@ -14,20 +15,25 @@ export const ThemeShowcaseContext = createContext< ThemeShowcaseContextInterface
 export const ThemeShowcaseContextProvider: FC<
 	PropsWithChildren< ThemeShowcaseContextInterface & { isLoggedOut: boolean } >
 > = ( { children, isLoggedOut, themeShowcaseWrapperRef } ) => {
-	// When the user is logged in and not on a mobile device, we need to pass the ref to the theme
-	// showcase wrapper so it is used to determine the themes' lazy loading. Otherwise, the document
-	// viewport is used directly.
-	const shouldUseShowcaseWrapperAsIntersectionObserverRoot =
-		! isLoggedOut && ! isMobileWidthOrHeight();
+	const { mainRef } = useMainContext();
+
+	let refToUse = undefined;
+
+	// When logged out, use the document viewport is used to determine the themes' lazy loading.
+	if ( isLoggedOut ) {
+		refToUse = undefined;
+	}
+	// On mobile devices, we rely on the <Main> component instead.
+	else if ( isMobileWidthOrHeight() ) {
+		refToUse = mainRef;
+	}
+	//Otherwise, rely on the theme showcase wrapper
+	else {
+		refToUse = themeShowcaseWrapperRef;
+	}
 
 	return (
-		<ThemeShowcaseContext.Provider
-			value={ {
-				themeShowcaseWrapperRef: shouldUseShowcaseWrapperAsIntersectionObserverRoot
-					? themeShowcaseWrapperRef
-					: undefined,
-			} }
-		>
+		<ThemeShowcaseContext.Provider value={ { themeShowcaseWrapperRef: refToUse } }>
 			{ children }
 		</ThemeShowcaseContext.Provider>
 	);
