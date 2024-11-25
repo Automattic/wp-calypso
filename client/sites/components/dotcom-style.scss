@@ -18,10 +18,9 @@
 	.a4a-layout__body {
 		> * {
 			padding-inline: 48px;
-			max-width: none;
-			max-width: 1400px !important;
-			margin-inline: auto !important;
-
+			// Override the max-width set in a8c-for-agencies/components/layout/style.scss
+			// as the title aligns with DataViews (full width).
+			max-width: revert;
 			@media (max-width: 402px) {
 				padding-inline: 24px;
 			}
@@ -387,9 +386,9 @@
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
 	div.a4a-layout__viewport {
-		margin: 0 auto;
-		max-width: 1400px;
-		box-sizing: border-box;
+		// margin: 0 auto;
+		// max-width: 1400px;
+		// box-sizing: border-box;
 	}
 }
 
