@@ -114,10 +114,6 @@
 			}
 		}
 
-		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
-			min-width: 40px;
-		}
-
 		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
@@ -196,13 +192,6 @@
 				height: 28px;
 			}
 		}
-	}
-
-	thead .dataviews-view-table__row th span {
-		font-size: rem(11px);
-		font-weight: 500;
-		line-height: 14px;
-		color: var(--color-accent-80);
 	}
 
 	.sites-overview__content-wrapper {

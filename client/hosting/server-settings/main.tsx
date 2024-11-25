@@ -13,11 +13,11 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import Main from 'calypso/components/main';
 import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { Panel } from 'calypso/components/panel';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
 import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
@@ -296,7 +296,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main wideLayout className="page-server-settings">
+		<Panel wide className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -342,7 +342,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				/>
 			) }
 			<QueryReaderTeams />
-		</Main>
+		</Panel>
 	);
 };
 

@@ -1,8 +1,10 @@
+import { Icon } from '@wordpress/components';
+import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
-import { Card, CompactCard, ScreenReaderText, Gridicon } from '../';
+import { Card, CompactCard, Gridicon, ScreenReaderText } from '../';
 
 import './style.scss';
 
@@ -18,6 +20,7 @@ class FoldableCard extends Component {
 		clickableHeader: PropTypes.bool,
 		compact: PropTypes.bool,
 		disabled: PropTypes.bool,
+		expandable: PropTypes.bool,
 		expandedSummary: PropTypes.node,
 		expanded: PropTypes.bool,
 		headerTagName: PropTypes.string,
@@ -40,8 +43,8 @@ class FoldableCard extends Component {
 		onClose: noop,
 		cardKey: '',
 		headerTagName: 'span',
-		icon: 'chevron-down',
 		iconSize: 24,
+		expandable: true,
 		expanded: false,
 		screenReaderText: false,
 		smooth: false,
@@ -75,7 +78,7 @@ class FoldableCard extends Component {
 	};
 
 	getClickAction() {
-		if ( this.props.disabled ) {
+		if ( this.props.disabled || ! this.props.expandable ) {
 			return;
 		}
 		return this.onClick;
@@ -101,14 +104,18 @@ class FoldableCard extends Component {
 			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
 				<button
-					disabled={ this.props.disabled }
+					disabled={ this.props.disabled || ! this.props.expandable }
 					type="button"
 					className="foldable-card__action foldable-card__expand"
 					aria-expanded={ this.state.expanded }
 					onClick={ clickAction }
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
-					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+					{ this.props.icon ? (
+						<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+					) : (
+						<Icon icon={ chevronDown } size={ this.props.iconSize } className="gridicon" />
+					) }
 				</button>
 			);
 		}
@@ -135,7 +142,7 @@ class FoldableCard extends Component {
 		const headerClickAction = this.props.clickableHeader ? this.getClickAction() : null;
 		const headerClasses = clsx( 'foldable-card__header', {
 			'is-clickable': !! this.props.clickableHeader,
-			'has-border': !! this.props.summary,
+			'is-expandable': this.props.expandable,
 		} );
 		const header = createElement(
 			this.props.headerTagName,

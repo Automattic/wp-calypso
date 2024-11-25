@@ -89,3 +89,39 @@
 		}
 	}
 }
+
+.clear-conversation__wrapper {
+	padding: 4px 0;
+    text-align: center;
+
+	svg {
+		fill: var(--studio-gray-70);
+	}
+
+	:hover, :focus {
+		background-color: $help-center-blue;
+		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+	
+	button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		padding: 8px;
+		cursor: pointer;
+		gap: 4px;
+		color: var(--studio-gray-70);
+		border: none;
+		background: unset;
+
+		div {
+			margin-bottom: 2px;
+			font-size: 0.875rem;
+		}
+	}
+}

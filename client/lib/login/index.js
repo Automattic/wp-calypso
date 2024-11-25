@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
+import { getLocaleSlug } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
@@ -248,13 +249,32 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate ) => {
-	const pluginNames = {
+export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
 		'order-attribution': translate( 'Order Attribution' ),
-		default: translate( 'Jetpack' ),
 	};
 
-	return pluginNames[ pluginName ] || pluginNames.default;
+	const listFormatter = new Intl.ListFormat( langSlug, {
+		style: 'long',
+		type: 'conjunction',
+	} );
+
+	const defaultTitle = listFormatter.format( Object.values( allowedPluginNames ) );
+
+	if ( ! pluginName ) {
+		// Handle null, undefined, or empty strings
+		return defaultTitle;
+	}
+
+	// Handle multiple plugin names separated by commas
+	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
+
+	if ( uniqueTitles.length === 0 ) {
+		return defaultTitle;
+	}
+
+	return listFormatter.format( uniqueTitles );
 };

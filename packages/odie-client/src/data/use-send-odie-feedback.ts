@@ -8,7 +8,7 @@ import type { Chat } from '../types';
  * @returns useMutation return object.
  */
 export const useSendOdieFeedback = () => {
-	const { botNameSlug, chat } = useOdieAssistantContext();
+	const { botNameSlug, chat, version } = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 
 	return useMutation( {
@@ -17,7 +17,7 @@ export const useSendOdieFeedback = () => {
 				method: 'POST',
 				path: `/odie/chat/${ botNameSlug }/${ chat.odieId }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
-				body: { rating_value: ratingValue },
+				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
 		},
 		onSuccess: ( data, { messageId, ratingValue } ) => {

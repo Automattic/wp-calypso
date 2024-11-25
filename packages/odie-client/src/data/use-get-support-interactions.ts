@@ -10,7 +10,8 @@ export const useGetSupportInteractions = (
 	provider: SupportProvider | null = null,
 	per_page = 10,
 	status = 'open',
-	page = 1
+	page = 1,
+	enabled = true
 ) => {
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 
@@ -32,5 +33,6 @@ export const useGetSupportInteractions = (
 
 			return response;
 		},
+		enabled,
 	} );
 };

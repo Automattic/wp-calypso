@@ -148,7 +148,7 @@ export type Message = {
 	created_at?: string;
 };
 
-export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer';
+export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
 
 export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
 

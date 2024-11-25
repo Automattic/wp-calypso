@@ -98,7 +98,7 @@ function getFeatureStrings(
 		case 'growth':
 			// JetPack Creator features
 			return [
-				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Stats (10K site views, upgradeable)' ),
 				translate( 'Social' ),
 				translate( 'Display ads with WordAds' ),
 				translate( 'Pay with PayPal' ),

@@ -8,10 +8,6 @@
 	position: relative;
 	transition: margin 0.15s linear;
 	padding: 0;
-
-	&.is-expanded {
-		margin: 8px 0;
-	}
 }
 
 .foldable-card__header {
@@ -24,7 +20,7 @@
 	justify-content: space-between;
 	position: relative;
 
-	&.is-clickable {
+	&.is-clickable.is-expandable {
 		cursor: pointer;
 	}
 
@@ -78,7 +74,7 @@
 	outline: thin dotted;
 }
 
-button.foldable-card__action {
+button:not(:disabled).foldable-card__action {
 	cursor: pointer;
 }
 
@@ -109,7 +105,6 @@ button.foldable-card__action {
 	width: 48px;
 
 	.gridicon {
-		fill: var(--color-neutral-30);
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -118,12 +113,12 @@ button.foldable-card__action {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	.gridicon:hover {
-		fill: var(--color-neutral-30);
+	&:not(:disabled) .gridicon {
+		fill: var(--studio-gray-100);
 	}
 
-	&:hover .gridicon {
-		fill: var(--color-neutral-50);
+	&:disabled .gridicon {
+		fill: var(--studio-gray-20);
 	}
 }
 

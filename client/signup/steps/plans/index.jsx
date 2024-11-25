@@ -25,6 +25,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -114,9 +115,17 @@ export class PlansStep extends Component {
 			initialContext,
 			intervalType,
 			isDomainOnlySite,
+			longerPlanTermDefaultExperiment,
 		} = this.props;
 
-		const intervalTypeValue = intervalType || getIntervalType( this.props.path );
+		const intervalTypeValue =
+			intervalType ||
+			getIntervalType(
+				this.props.path,
+				flowName === 'onboarding' && longerPlanTermDefaultExperiment.term
+					? longerPlanTermDefaultExperiment.term
+					: undefined
+			);
 
 		let errorDisplay;
 
@@ -431,6 +440,14 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
+const WrappedPlansStep = ( props ) => {
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+
+	return (
+		<PlansStep { ...props } longerPlanTermDefaultExperiment={ longerPlanTermDefaultExperiment } />
+	);
+};
+
 export default connect(
 	( state, { path, signupDependencies: { siteSlug, siteId, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
@@ -446,4 +463,4 @@ export default connect(
 		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
-)( localize( PlansStep ) );
+)( localize( WrappedPlansStep ) );

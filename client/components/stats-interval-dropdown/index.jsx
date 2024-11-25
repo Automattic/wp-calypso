@@ -80,14 +80,23 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	function getDisplayLabel() {
 		// If the period is not in the intervals list, capitalize it and show in the label - however user wouldn't be able to select it.
 		// TODO: this is a temporary solution, we should remove this once we have all the intervals in the list.
-		return intervals[ period ]?.label ?? capitalize( period );
+		return intervals[ period ]?.label ?? `${ capitalize( period ) }s`;
 	}
 
 	function onSelectionHandler( interval ) {
+		// Temporary fix to prevent selecting intervals when the applied interval is not in the list. E.g., Hour.
+		// TODO: Remove the selection if the current applied interval is not in the list.
+		if ( ! intervals[ period ] ) {
+			return;
+		}
+
 		page( generateNewLink( interval ) );
 	}
 
-	return (
+	// Check if the selected period is in the intervals list.
+	const selectedPeriod = intervals[ period ];
+
+	return selectedPeriod ? (
 		<Dropdown
 			className="stats-interval-dropdown"
 			renderToggle={ ( { isOpen, onToggle } ) => (
@@ -108,6 +117,11 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			) }
 			focusOnMount={ false }
 		/>
+	) : (
+		// TODO: Tweak the styles or move this to another place for better UX.
+		<div className="stats-interval-display">
+			<label>{ getDisplayLabel() }</label>
+		</div>
 	);
 };
 

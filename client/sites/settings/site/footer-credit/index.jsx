@@ -6,10 +6,10 @@ import {
 import { CompactCard, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

@@ -34,7 +34,7 @@ export default function useProcessPayment( paymentProcessorId: string ): Process
 	);
 }
 
-function useHandlePaymentProcessorResponse() {
+export function useHandlePaymentProcessorResponse() {
 	const { __ } = useI18n();
 	const redirectErrorMessage = useMemo(
 		() =>

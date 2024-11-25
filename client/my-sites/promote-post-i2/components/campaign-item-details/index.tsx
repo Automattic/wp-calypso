@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -16,7 +16,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
 	CampaignChartSeriesData,
-	CampaignChartStatsResponse,
 	useCampaignChartStatsQuery,
 } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
@@ -28,6 +27,7 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
+import LocationChart from 'calypso/my-sites/promote-post-i2/components/location-charts';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -56,7 +56,6 @@ interface Props {
 	isLoading?: boolean;
 	siteId: number;
 	campaign: CampaignResponse;
-	campaignChartStats?: CampaignChartStatsResponse;
 }
 
 const FlexibleSkeleton = () => {
@@ -128,10 +127,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
-	const campaignStatsQuery = useCampaignChartStatsQuery( siteId, campaignId, campaign.start_date );
-	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
-	const { data: campaignStats } = campaignStatsQuery;
-
 	const {
 		audience_list,
 		content_config,
@@ -167,6 +162,15 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_rate,
 		conversion_last_currency_found,
 	} = campaign_stats || {};
+
+	const campaignStatsQuery = useCampaignChartStatsQuery(
+		siteId,
+		campaignId,
+		campaign.start_date,
+		!! impressions_total
+	);
+	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
+	const { data: campaignStats } = campaignStatsQuery;
 
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
@@ -625,48 +629,63 @@ export default function CampaignItemDetails( props: Props ) {
 											</>
 										) }
 									</div>
-								</div>
 
-								{ ! campaignsStatsIsLoading && campaignStats && (
-									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-										<div>
-											<div className="campaign-item-page__graph">
-												<DropdownMenu
-													class="campaign-item-page__graph-selector"
-													controls={ [
-														{
-															onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-															title: __( 'Clicks' ),
-															isDisabled: chartSource === ChartSourceOptions.Clicks,
-														},
-														{
-															onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-															title: __( 'Impressions' ),
-															isDisabled: chartSource === ChartSourceOptions.Impressions,
-														},
-													] }
-													icon={ chevronDown }
-													text={
-														chartSource === ChartSourceOptions.Clicks
-															? __( 'Clicks' )
-															: __( 'Impressions' )
-													}
-													label={ chartSource }
-												/>
-												{ ChartSourceOptions.Clicks === chartSource &&
-													getCampaignStatsChart(
-														campaignStats?.series.clicks,
-														ChartSourceOptions.Clicks
-													) }
-												{ ChartSourceOptions.Impressions === chartSource &&
-													getCampaignStatsChart(
-														campaignStats?.series.impressions,
-														ChartSourceOptions.Impressions
-													) }
+									{ ! campaignsStatsIsLoading && campaignStats && (
+										<>
+											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+												<div>
+													<div className="campaign-item-page__graph">
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ [
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																	title: __( 'Clicks' ),
+																	isDisabled: chartSource === ChartSourceOptions.Clicks,
+																},
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																	title: __( 'Impressions' ),
+																	isDisabled: chartSource === ChartSourceOptions.Impressions,
+																},
+															] }
+															icon={ chevronDown }
+															text={
+																chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks' )
+																	: __( 'Impressions' )
+															}
+															label={ chartSource }
+														/>
+														{ getCampaignStatsChart(
+															campaignStats?.series[ chartSource ],
+															chartSource
+														) }
+													</div>
+												</div>
 											</div>
-										</div>
-									</div>
-								) }
+
+											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+												<div>
+													<div className="campaign-item-page__locaton-charts">
+														<span className="campaign-item-details__label">
+															{ chartSource === ChartSourceOptions.Clicks
+																? __( 'Clicks by location' )
+																: __( 'Impressions by location' ) }
+														</span>
+														<div>
+															<LocationChart
+																stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+																total={ campaignStats.total_stats.total[ chartSource ] }
+																source={ chartSource }
+															/>
+														</div>
+													</div>
+												</div>
+											</div>
+										</>
+									) }
+								</div>
 							</div>
 						) }
 
@@ -743,6 +762,17 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 								</div>
 
+								<div className="campaign-item-details__secondary-stats-interests-mobile">
+									<>
+										<span className="campaign-item-details__label">
+											{ translate( 'Interests' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</>
+								</div>
+
 								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 									<div>
 										<div className="campaign-item-page__graph">
@@ -755,18 +785,11 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
 
-								<div className="campaign-item-details__secondary-stats-interests-mobile">
-									<>
-										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</>
-								</div>
-
+						<div className="campaign-item-details__main-stats-container">
+							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
 									{ objective && objectiveFormatted && (
 										<div>
@@ -837,6 +860,7 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							</div>
 						</div>
+
 						{ canDisplayPaymentSection ? (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">

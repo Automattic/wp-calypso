@@ -1,17 +1,17 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import Search, { useTermsSuggestions, useFuzzySearch } from '@automattic/search';
-import { isDesktop } from '@automattic/viewport';
+import Search from '@automattic/search';
+import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState } from 'react';
+import { useMemo, useState } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -30,18 +30,26 @@ const items = [
 
 export default function MarketingTools() {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 
-	const marketingFeatures = getMarketingFeaturesData(
-		selectedSiteSlug,
-		recordTracksEvent,
-		translate,
-		localizeUrl
-	);
+	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
+
+	const marketingFeaturesFiltered = useMemo( () => {
+		return marketingFeatures.filter(
+			( feature ) =>
+				feature.title.toLowerCase().includes( searchTerm.toLowerCase() ) ||
+				feature.description.toLowerCase().includes( searchTerm.toLowerCase() )
+		);
+	}, [ searchTerm, marketingFeatures ] );
+
+	const handleSearch = ( term: string ) => {
+		setSearchTerm( term );
+		recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
+			search_term: term,
+		} );
+	};
 
 	const marketingFeaturesFiltered = useFuzzySearch( {
 		data: marketingFeatures,
@@ -63,41 +71,40 @@ export default function MarketingTools() {
 	const searchTermSuggestion = useTermsSuggestions( searchTerms );
 
 	return (
-		<Fragment>
+		<div className="tools__wrapper">
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<div className="search-categories__container">
+			<div
+				className={ clsx( 'marketing-tools__searchbox-container', {
+					'marketing-tools__searchbox-container--mobile': isMobile(),
+				} ) }
+			>
 				<Search
-					className={ clsx( 'search-categories__searchbox', {
-						'search-categories__searchbox--mobile': ! isDesktop(),
-					} ) }
-					onSearch={ setSearchTerm }
+					className="marketing-tools__searchbox"
+					onSearch={ handleSearch }
 					defaultValue={ searchTerm }
 					searchMode="when-typing"
-					placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
-						args: { searchTermSuggestion: searchTermSuggestion ?? 'seo' },
-						textOnly: true,
-					} ) }
-					delaySearch={ false }
-					// recordEvent={ recordSearchEvent }
+					placeholder={ translate( 'Try searching "seo"' ) }
 					submitOnOpenIconClick
 					openIconSide="right"
 					displayOpenAndCloseIcons
+					delaySearch
+					fitsContainer
 				/>
-				<ResponsiveToolbarGroup
-					className="search-categories__toolbar"
-					initialActiveIndex={ 0 }
-					forceSwipe={ 'undefined' === typeof window }
-					onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
-					swipeEnabled={ false }
-				>
-					{ items.map( ( item ) => (
-						<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
-					) ) }
-				</ResponsiveToolbarGroup>
 			</div>
+      <ResponsiveToolbarGroup
+        className="search-categories__toolbar"
+        initialActiveIndex={ 0 }
+        forceSwipe={ 'undefined' === typeof window }
+        onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
+        swipeEnabled={ false }
+      >
+        { items.map( ( item ) => (
+          <span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
+        ) ) }
+      </ResponsiveToolbarGroup>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {
 					return (
@@ -121,6 +128,6 @@ export default function MarketingTools() {
 					);
 				} ) }
 			</div>
-		</Fragment>
+		</div>
 	);
 }

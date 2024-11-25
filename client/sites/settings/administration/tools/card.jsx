@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
 import SiteToolsLink from 'calypso/my-sites/site-settings/site-tools/link';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { isHostingMenuUntangled } from '../../utils';
 
 export default function AdministrationToolCard( props ) {

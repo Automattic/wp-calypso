@@ -158,7 +158,13 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) } />,
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) }
+							/>
+						),
 					},
 					context: 'Stats: Info popover content when the Devices module has data.',
 				}
@@ -197,6 +203,8 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 												components: {
 													link: (
 														<a
+															target="_blank"
+															rel="noreferrer"
 															href={ localizeUrl(
 																`${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats`
 															) }

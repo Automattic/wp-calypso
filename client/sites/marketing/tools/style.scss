@@ -20,9 +20,31 @@
 	background-color: #fff;
 }
 
-.search-categories__container {
-	display: flex;
+.search-component.marketing-tools__searchbox {
+	box-shadow: 0 0 0 1px var(--studio-gray-10);
+
+	.search-component__input[type="search"] {
+		padding-left: 16px;
+	}
+}
+
+.marketing-tools__searchbox-container {
+	position: relative;
+	width: 250px;
+	height: 40px;
+	margin-top: 24px;
+	margin-bottom: 16px;
+  display: flex;
 	align-items: center;
+	&.marketing-tools__searchbox-container--mobile {
+		width: auto;
+		margin-left: 16px;
+		margin-right: 16px;
+	}
+}
+.panel-with-sidebar .marketing-tools__searchbox-container--mobile {
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .responsive-toolbar-group.search-categories__toolbar {
@@ -30,76 +52,22 @@
 	width: 280px;
 	padding: 0;
 }
-
-.search-component.search-categories__searchbox {
-	max-width: 250px;
-	width: 100%;
-	height: 40px;
-	z-index: 0;
-	margin-top: 24px;
-	margin-bottom: 16px;
-	
-	border-radius: 4px;
-
-	&.search-categories__searchbox--mobile {
-		max-width: none;
-	}
-
-	box-shadow: 0 0 0 1px var(--studio-gray-10);
-
-	.search-component__icon-navigation:focus {
-		box-shadow: none;
-	}
-	.search-component__open-icon,
-	.search-component__close-icon {
-		color: var(--studio-gray-30);
-
-		&:hover {
-			color: var(--studio-gray-60);
-		}
-	}
-
-	.search-component__icon-navigation {
-		margin-right: 4px;
-	}
-
-	.search-component__icon-navigation-separator {
-		user-select: none;
-		color: var(--studio-gray-5);
-		margin-bottom: 3px;
-	}
-
-	.search-component__input-fade {
-		font-size: $font-body-small !important;
-		padding-left: 14px !important;
-	}
-
-	.search-component__open-icon {
-		height: 24px;
-		margin-right: -9px;
-	}
-
-	.search-component__close-icon {
-		height: 20px;
-		margin-left: -9px;
-		margin-right: -10px;
-	}
-}
-
-.panel-with-sidebar .search-categories__container {
-	display: none;
+  
+.tools__wrapper {
+	align-self: stretch;
 }
 
 .tools__header-body {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 	padding: 42px;
 	justify-content: space-between;
 	gap: 20px;
 	flex-wrap: wrap;
 	border-radius: 4px;
 	background-color: var(--color-neutral-0);
-  box-shadow: none;
+	box-shadow: none;
 }
 
 .tools__header-info {
@@ -141,7 +109,7 @@
 			font-weight: 500;
 			text-decoration: none;
 			color: var(--color-gray-80);
-			
+
 			svg {
 				margin-left: 8px;
 			}
@@ -152,7 +120,7 @@
 .tools__header-image-wrapper {
 	@include wide-screen {
 		display: flex;
-		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
+		margin-right: -20px; // This is to compensate the gap in .tools__header-body
 	}
 
 	.tools__header-image {
