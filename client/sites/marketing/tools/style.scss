@@ -39,9 +39,8 @@
 	width: 250px;
 	height: 40px;
 	&.marketing-tools__searchbox-container--mobile {
-		width: auto;
+		width: 100%;
 		margin-left: 16px;
-		margin-right: 16px;
 	}
 }
 .panel-with-sidebar .marketing-tools__searchbox-container--mobile {
@@ -52,6 +51,7 @@
 .responsive-toolbar-group.marketing-tools__search-categories-toolbar {
 	width: 280px;
 	padding: 0;
+	margin-right: 16px;
 }
 .marketing-tools__tooolbar-vertical-separator {
 	border: 0.5px solid var(--studio-gray-5);

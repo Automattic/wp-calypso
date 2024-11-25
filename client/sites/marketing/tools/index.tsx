@@ -84,7 +84,7 @@ export default function MarketingTools() {
 						fitsContainer
 					/>
 				</div>
-				<div className="marketing-tools__tooolbar-vertical-separator" />
+				{ ! isMobile() && <div className="marketing-tools__tooolbar-vertical-separator" /> }
 				<ResponsiveToolbarGroup
 					className="marketing-tools__search-categories-toolbar"
 					initialActiveIndex={ 0 }
