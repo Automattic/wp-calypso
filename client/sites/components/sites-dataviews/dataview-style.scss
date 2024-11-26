@@ -20,9 +20,10 @@
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
 
-		// We use combined fields on Site title, url, admin url to form the vertical "site-title" field.
-		// We then combine the icon and site-title to form the horizontal "site" field.
+		// dataviews-override: We combine the icon and site title fields to form the horizontal "site" field.
 		// Without this rule the combined field receives justify-content: space-between but we want the icon to be aligned with the text.
+		// This can be removed when https://github.com/WordPress/gutenberg/pull/67226 / Gutenberg 19.8 lands in calypso.
+		// See https://github.com/Automattic/wp-calypso/pull/96657#discussion_r1853690792
 		.components-h-stack {
 			&:has(.sites-dataviews__site) {
 				justify-content: flex-start;
