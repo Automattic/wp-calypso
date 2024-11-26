@@ -15,7 +15,7 @@ import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { ThemeShowcaseContext } from 'calypso/my-sites/themes/theme-showcase-context';
+import { ThemeShowcaseIntersectionObserverRootContext } from 'calypso/my-sites/themes/theme-showcase-intersection-observer-root-context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -352,12 +352,12 @@ export class Theme extends Component {
 		}
 
 		return (
-			<ThemeShowcaseContext.Consumer>
-				{ ( { themeShowcaseWrapperRef } ) => (
+			<ThemeShowcaseIntersectionObserverRootContext.Consumer>
+				{ ( { themeShowcaseIntersectionObserverRootRef } ) => (
 					<InView
 						triggerOnce
 						rootMargin={ VIEWPORT_HEIGHT }
-						root={ themeShowcaseWrapperRef?.current || null }
+						root={ themeShowcaseIntersectionObserverRootRef?.current || null }
 					>
 						{ ( { inView, ref } ) => (
 							<div ref={ ref }>
@@ -390,7 +390,7 @@ export class Theme extends Component {
 						) }
 					</InView>
 				) }
-			</ThemeShowcaseContext.Consumer>
+			</ThemeShowcaseIntersectionObserverRootContext.Consumer>
 		);
 	}
 }

@@ -60,8 +60,8 @@ import {
 import PatternAssemblerButton from './pattern-assembler-button';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
-import { ThemeShowcaseContextProvider } from './theme-showcase-context';
 import ThemeShowcaseHeader from './theme-showcase-header';
+import { ThemeShowcaseIntersectionObserverRootContextProvider } from './theme-showcase-intersection-observer-root-context';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
@@ -451,7 +451,7 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase__all-themes" ref={ this.themeShowcaseWrapperRef }>
-				<ThemeShowcaseContextProvider
+				<ThemeShowcaseIntersectionObserverRootContextProvider
 					isLoggedOut={ loggedOutComponent }
 					themeShowcaseWrapperRef={ this.themeShowcaseWrapperRef }
 				>
@@ -476,7 +476,7 @@ class ThemeShowcase extends Component {
 							</>
 						) }
 					</ThemesSelection>
-				</ThemeShowcaseContextProvider>
+				</ThemeShowcaseIntersectionObserverRootContextProvider>
 			</div>
 		);
 	};
