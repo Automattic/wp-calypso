@@ -11,7 +11,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
-import SiteUrl from './site-url';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
@@ -121,8 +120,8 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
-				id: 'title-text',
-				label: __( 'Site' ),
+				id: 'site-title',
+				label: __( 'Site Title' ),
 				header: <span></span>,
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
@@ -130,14 +129,6 @@ const DotcomSitesDataViews = ( {
 				},
 				enableHiding: false,
 				enableSorting: true,
-			},
-			{
-				id: 'site-url',
-				label: __( 'URL' ),
-				header: <span>{ __( 'URL' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <SiteUrl site={ item } />,
-				enableHiding: false,
-				enableSorting: false,
 			},
 			{
 				id: 'plan',
