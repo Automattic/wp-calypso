@@ -158,15 +158,6 @@ const SitesDashboard = ( {
 	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
-	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
-		if ( isWide ) {
-			return '40%';
-		}
-		if ( isDesktop ) {
-			return '50%';
-		}
-		return '70%';
-	};
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState: View = {
@@ -211,7 +202,7 @@ const SitesDashboard = ( {
 						],
 						styles: {
 							site: {
-								width: getSiteNameColWidth( isDesktop, isWide ),
+								width: '40%',
 							},
 							plan: {
 								width: '126px',
@@ -239,25 +230,6 @@ const SitesDashboard = ( {
 		// sort() sorts the array in place, so we need to clone them first.
 		if ( existingFields !== fieldsForBreakpoint ) {
 			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
-		}
-
-		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
-
-		if (
-			dataViewsState.type === 'table' &&
-			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
-		) {
-			setDataViewsState( {
-				...dataViewsState,
-				layout: {
-					styles: {
-						...dataViewsState.layout?.styles,
-						site: {
-							width: siteNameColumnWidth,
-						},
-					},
-				},
-			} );
 		}
 	}, [ isDesktop, isWide, dataViewsState, selectedSite ] );
 
