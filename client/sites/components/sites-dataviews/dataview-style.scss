@@ -8,10 +8,6 @@
 		width: 100%;
 	}
 
-	.dataviews-view-list__primary-field:hover {
-		// todo: need to fix deleted site text style somehow, ideally without an override
-	}
-
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
 
