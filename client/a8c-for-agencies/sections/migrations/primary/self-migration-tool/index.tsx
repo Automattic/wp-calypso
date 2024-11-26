@@ -22,19 +22,17 @@ const SelfMigrationTool = ( { type }: { type: 'pressable' | 'wpcom' } ) => {
 
 	const { pageTitle, heading, pageHeading, pageSubheading, steps, sessionStorageKey } = stepInfo;
 
-	const stepsWithCompletion = steps
-		.map( ( step ) => {
-			return {
-				...step,
-				isCompleted: false,
-			};
-		} )
-		.filter( ( step ) => {
-			if ( tipaltiData?.Status === 'Active' && step.stepId === 'add-bank-info' ) {
-				return false;
-			}
-			return true;
-		} );
+	const stepsWithCompletion = steps.reduce( ( acc, step ) => {
+		// Remove the step to add the bank info if already added
+		if ( tipaltiData.IsPayable && step.stepId === 'add-bank-info' ) {
+			return acc;
+		}
+		acc.push( {
+			...step,
+			isCompleted: false,
+		} as never );
+		return acc;
+	}, [] );
 
 	return (
 		<Layout className="self-migration-tool" title={ pageTitle } wide>
