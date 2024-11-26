@@ -11,7 +11,7 @@ const BlackFriday2024 = () => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const title = translate( 'The Biggest Sale of the Year' );
+	const title = translate( 'Our Biggest Sale of the Year' );
 	const description = translate( 'For a limited time, we’re offering an unbeatable deal.' );
 
 	return (
