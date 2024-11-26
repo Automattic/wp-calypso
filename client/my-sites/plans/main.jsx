@@ -266,9 +266,11 @@ class PlansComponent extends Component {
 		// The Jetpack mobile app wants to display a specific selection of plans
 		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
-			this.props.domainAndPlanPackage &&
-			( ! this.props.isDomainUpsell ||
-				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
+			( this.props.domainAndPlanPackage &&
+				( ! this.props.isDomainUpsell ||
+					( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) ) ) ||
+			// TODO: Remove after 1733443200000.
+			( this.props.coupon === 'REPLACE_ME' && Date.now() < new Date( 1733443200000 ) );
 
 		return (
 			<PlansFeaturesMain
