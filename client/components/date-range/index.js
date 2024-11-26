@@ -147,6 +147,12 @@ export class DateRange extends Component {
 	openPopover = () => {
 		this.setState( {
 			popoverVisible: true,
+			startDate: this.props.selectedStartDate,
+			endDate: this.props.selectedEndDate,
+			textInputStartDate: this.toDateString( this.props.selectedStartDate ),
+			textInputEndDate: this.toDateString( this.props.selectedEndDate ),
+			staleStartDate: this.props.selectedStartDate,
+			staleEndDate: this.props.selectedEndDate,
 		} );
 	};
 
