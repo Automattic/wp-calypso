@@ -28,25 +28,31 @@
 }
 
 .sites-dataviews__site-url {
-	display: block;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
-	font-size: rem(12px);
-	font-weight: 400;
+	display: flex;
+	flex-direction: row;
+	gap: 2px;
 
-	&,
-	&:focus,
-	&:hover,
-	&:visited {
-		color: var(--color-neutral-60);
-		outline: none;
-	}
+	a {
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		font-size: rem(12px);
+		font-weight: 400;
 
-	&:focus,
-	&:hover {
-		color: var(--color-primary);
-		fill: var(--color-primary);
+		&,
+		&:focus,
+		&:hover,
+		&:visited {
+			color: var(--color-neutral-60);
+			outline: none;
+		}
+
+		&:focus,
+		&:hover {
+			color: var(--color-primary);
+			fill: var(--color-primary);
+		}
 	}
 
 	svg {

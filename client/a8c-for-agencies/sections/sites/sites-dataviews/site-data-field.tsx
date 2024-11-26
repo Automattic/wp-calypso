@@ -41,16 +41,18 @@ const SiteDataField = ( {
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && (
-					<a
-						className="sites-dataviews__site-url"
-						href={ site.url_with_scheme }
-						title={ site.url_with_scheme }
-						target="_blank"
-						rel="noreferrer"
-						onClick={ ( e ) => e.stopPropagation() }
-					>
-						{ site.url } <Icon icon={ external } size={ 16 } />
-					</a>
+					<span className="sites-dataviews__site-url">
+						<a
+							href={ site.url_with_scheme }
+							title={ site.url_with_scheme }
+							target="_blank"
+							rel="noreferrer"
+							onClick={ ( e ) => e.stopPropagation() }
+						>
+							{ site.url }
+						</a>
+						<Icon icon={ external } size={ 18 } />
+					</span>
 				) }
 				{ migrationInProgress && (
 					<Badge className="status-badge" type="info-blue">
