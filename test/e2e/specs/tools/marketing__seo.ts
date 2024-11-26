@@ -8,7 +8,6 @@ import {
 	envToFeatureKey,
 	envVariables,
 	DataHelper,
-	SidebarComponent,
 	MarketingPage,
 	TestAccount,
 	NoticeComponent,
@@ -54,12 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-			await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-		} else {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Tools', 'Marketing' );
-		}
+		await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 	} );
 
 	it( 'Click on Traffic tab', async function () {
