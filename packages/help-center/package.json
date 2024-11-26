@@ -46,7 +46,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-draggable": "^4.4.4",
-		"smooch": "^2.1.0"
+		"smooch": "5.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
@@ -56,6 +56,7 @@
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
+		"@types/smooch": "^5.3.7",
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/element": "^6.8.0",
 		"react": "^18.3.1",
