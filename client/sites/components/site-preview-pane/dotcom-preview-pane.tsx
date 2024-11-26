@@ -14,6 +14,7 @@ import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
+	FEATURE_TO_ROUTE_MAP,
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
@@ -23,8 +24,11 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
+	OVERVIEW,
 	MARKETING_TOOLS,
 	MARKETING_CONNECTIONS,
+	MARKETING_TRAFFIC,
+	MARKETING_SHARING,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -33,17 +37,14 @@ import {
 	SETTINGS_ADMINISTRATION_MANAGE_CONNECTION,
 	SETTINGS_CACHING,
 	SETTINGS_WEB_SERVER,
-	TOOLS_SFTP_SSH,
+	TOOLS,
 	TOOLS_STAGING_SITE,
 	TOOLS_DEPLOYMENTS,
 	TOOLS_MONITORING,
-	TOOLS_DATABASE,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
-	FEATURE_TO_ROUTE_MAP,
-	MARKETING_TRAFFIC,
-	MARKETING_SHARING,
-	TOOLS,
+	TOOLS_SFTP_SSH,
+	TOOLS_DATABASE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -86,8 +87,13 @@ const DotcomPreviewPane = ( {
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
-				enabled: true,
+				enabled: ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_OVERVIEW ],
+			},
+			{
+				label: __( 'Overview' ),
+				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [ OVERVIEW ],
 			},
 			{
 				label: (

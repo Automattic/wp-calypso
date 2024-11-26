@@ -19,6 +19,7 @@ const SITE_DASHBOARD_ROUTES = {
 	'staging-site': '/staging-site/',
 
 	// New Information Architecture
+	'site-overview': '/sites/overview',
 	'site-marketing': '/sites/marketing',
 	'site-tools': '/sites/tools',
 	'site-settings': '/sites/settings',
