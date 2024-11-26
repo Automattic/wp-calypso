@@ -170,13 +170,20 @@ describe( 'StepRoute', () => {
 			} );
 		} );
 
-		it( 'skips tracking when the step is re-entered', () => {
+		it( 'records recordStepStart with additional props when the step is re-entered', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
 
 			render( { step: regularStep } );
 
-			expect( recordStepStart ).not.toHaveBeenCalled();
+			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+				is_reentering_step_after_signup_complete: true,
+				signup_complete_flow_name: 'some-flow',
+				signup_complete_step_name: 'some-step-slug',
+				intent: 'build',
+				assembler_source: 'premium',
+				is_in_hosting_flow: false,
+			} );
 		} );
 
 		it( 'records step-complete when the step is unmounted and step-start was previously recorded', () => {
@@ -191,18 +198,10 @@ describe( 'StepRoute', () => {
 				flow: 'some-flow',
 				optionalProps: {
 					intent: 'build',
+					signup_complete_flow_name: 'some-other-flow',
+					signup_complete_step_name: 'some-other-step-slug',
 				},
 			} );
-		} );
-
-		it( 'skips recording step-complete when the step is unmounted and step-start was not recorded', () => {
-			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
-			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
-			const { unmount } = render( { step: regularStep } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			unmount();
-			expect( recordStepComplete ).not.toHaveBeenCalled();
 		} );
 
 		it( 'records skip_step_render on start, complete and page view when the login is required and the user is not logged in', async () => {
@@ -217,10 +216,14 @@ describe( 'StepRoute', () => {
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
+				signup_complete_flow_name: 'some-other-flow',
+				signup_complete_step_name: 'some-other-step-slug',
 			} );
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
 				skip_step_render: true,
+				signup_complete_flow_name: 'some-other-flow',
+				signup_complete_step_name: 'some-other-step-slug',
 			} );
 
 			unmount();
@@ -231,6 +234,8 @@ describe( 'StepRoute', () => {
 				optionalProps: {
 					intent: 'build',
 					skip_step_render: true,
+					signup_complete_flow_name: 'some-other-flow',
+					signup_complete_step_name: 'some-other-step-slug',
 				},
 			} );
 		} );
@@ -245,10 +250,14 @@ describe( 'StepRoute', () => {
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
+				signup_complete_flow_name: 'some-other-flow',
+				signup_complete_step_name: 'some-other-step-slug',
 			} );
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
 				skip_step_render: true,
+				signup_complete_flow_name: 'some-other-flow',
+				signup_complete_step_name: 'some-other-step-slug',
 			} );
 
 			unmount();
@@ -259,6 +268,8 @@ describe( 'StepRoute', () => {
 				optionalProps: {
 					intent: 'build',
 					skip_step_render: true,
+					signup_complete_flow_name: 'some-other-flow',
+					signup_complete_step_name: 'some-other-step-slug',
 				},
 			} );
 		} );
