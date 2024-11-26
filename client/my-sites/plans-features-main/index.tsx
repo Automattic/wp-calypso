@@ -242,12 +242,13 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const reflectStorageSelectionInPlanPrices = config.isEnabled(
-		'plans/term-savings-price-display'
-	);
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	const reflectStorageSelectionInPlanPrices =
+		( isEnabled( 'plans/term-savings-price-display' ) ||
+			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+		isInSignup;
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
