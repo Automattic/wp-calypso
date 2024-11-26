@@ -34,8 +34,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const selectedPostId = selectedItem?.postId?.toString();
 	const postContentId = 'reader-post-content';
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
-	useKeyboardNavigation( selectedItem, postContentId );
-	usePostContentAnnouncements( postContentId );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
