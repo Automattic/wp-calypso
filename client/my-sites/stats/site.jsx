@@ -456,14 +456,6 @@ class StatsSite extends Component {
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
-				{ isNewDateFilteringEnabled && (
-					<div
-						className="stats-new-date-filtering-callout"
-						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
-					>
-						<p>New date filtering enabled.</p>
-					</div>
-				) }
 				{ ! isNewDateFilteringEnabled && (
 					// @TODO: remove highlight section completely once flag is released
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />

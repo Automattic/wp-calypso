@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import { useAreAdvancedHostingFeaturesSupported } from '../hosting-features/features';
@@ -48,6 +49,11 @@ export function ToolsSidebar() {
 			</SidebarItem>
 		</Sidebar>
 	);
+}
+
+export function tools( context: PageJSContext, next: () => void ) {
+	context.primary = <HostingFeatures showAsTools />;
+	next();
 }
 
 export function stagingSite( context: PageJSContext, next: () => void ) {

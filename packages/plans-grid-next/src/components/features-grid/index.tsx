@@ -385,6 +385,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		featureGroupMap = {},
 		hideFeatureGroupTitles,
 		enterpriseFeaturesList,
+		enableTermSavingsPriceDisplay,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -430,6 +431,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
 				enterpriseFeaturesList={ enterpriseFeaturesList }
+				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

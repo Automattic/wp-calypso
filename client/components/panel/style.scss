@@ -1,6 +1,7 @@
 .panel {
 	display: flex;
 	flex-direction: column;
+	max-width: 720px;
 	gap: 16px;
 	font-size: 0.875rem;
 	align-items: flex-start;
@@ -9,12 +10,18 @@
 		margin: 0;
 	}
 
+	&--wide.main {
+		max-width: 100%;
+	}
+
 	.header-cake__back {
 		padding: 0;
 	}
 
-	.upsell-nudge {
-		width: 100%;
+	// TODO: remove after the untangling/hosting-menu flag is enabled
+	#primary > & {
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 
@@ -50,7 +57,18 @@
 		font-size: rem(14px) !important;
 	}
 
+	> *:last-child {
+		margin-bottom: 0;
+	}
+
+	.foldable-card {
+		margin-left: -22px;
+		margin-right: -22px;
+	}
+
 	.upsell-nudge {
-		margin: 0 -22px -22px -22px !important;
+		margin-bottom: -22px;
+		margin-left: -22px;
+		margin-right: -22px;
 	}
 }

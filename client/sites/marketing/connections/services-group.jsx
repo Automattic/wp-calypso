@@ -5,7 +5,7 @@ import { Fragment, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';

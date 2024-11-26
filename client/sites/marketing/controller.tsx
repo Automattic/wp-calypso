@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -10,7 +9,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { PanelWithSidebar, Sidebar, SidebarItem } from '../components/panel-sidebar';
 import MarketingConnections from './connections';
 import MarketingSharing from './sharing';
-import MarketingTools from './tools';
+import MarketingTools from './tools/page';
 import MarketingTraffic from './traffic';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -35,15 +34,7 @@ export function marketingTools( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<MarketingSidebar />
-			<div>
-				<NavigationHeader
-					title={ __( 'Marketing Tools' ) }
-					subtitle={ __(
-						'Explore tools to build your audience, market your site, and engage your visitors.'
-					) }
-				/>
-				<MarketingTools />
-			</div>
+			<MarketingTools />
 		</PanelWithSidebar>
 	);
 	next();

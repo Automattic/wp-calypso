@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import { Panel } from 'calypso/sites/components/panel';
+import { Panel } from 'calypso/components/panel';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import {
 	getSiteAdminUrl,
@@ -30,7 +30,7 @@ export default function MarketingTraffic() {
 	};
 
 	return (
-		<Panel className="marketing-traffic">
+		<Panel wide className="marketing-traffic">
 			<NavigationHeader
 				title={ translate( 'Traffic' ) }
 				subtitle={ translate(

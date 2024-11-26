@@ -2,11 +2,9 @@ import { useTranslate } from 'i18n-calypso';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { Panel, PanelSection } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { Panel, PanelSection } from 'calypso/sites/components/panel';
 import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
-
-import './style.scss';
 
 export function SiteTransferCard( {
 	children,

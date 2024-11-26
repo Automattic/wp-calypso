@@ -117,16 +117,17 @@
 	}
 }
 
-.sharing-services-group__services {
-	margin: 24px -22px -23px -22px;
-
-	.notice {
-		margin-bottom: 0;
-	}
+.panel-section.sharing-services-group {
+	padding-bottom: 0;
 }
 
-.sharing-services-group__services .notice.sharing-service__unsupported {
-	width: 100%;
+.sharing-services-group__services {
+	.notice.is-compact {
+		margin-bottom: 0;
+		margin-left: -22px;
+		margin-right: -22px;
+		display: flex;
+	}
 }
 
 .buttons__sharing-settings,

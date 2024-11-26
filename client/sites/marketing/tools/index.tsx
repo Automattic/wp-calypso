@@ -7,7 +7,7 @@ import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -50,7 +50,7 @@ export default function MarketingTools() {
 	};
 
 	return (
-		<Fragment>
+		<div className="tools__wrapper">
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
@@ -96,6 +96,6 @@ export default function MarketingTools() {
 					);
 				} ) }
 			</div>
-		</Fragment>
+		</div>
 	);
 }
