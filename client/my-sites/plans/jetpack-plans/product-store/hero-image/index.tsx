@@ -9,85 +9,80 @@ import {
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_BI_YEARLY,
 } from '@automattic/calypso-products';
-import CompleteHorizontalMd from 'calypso/assets/images/jetpack/hero-complete-horizontal-md.png';
-// import CompleteLg from 'calypso/assets/images/jetpack/hero-complete-lg.png';
-// import CompleteMd from 'calypso/assets/images/jetpack/hero-complete-md.png';
-// import CompleteSm from 'calypso/assets/images/jetpack/hero-complete-sm.png';
-import GrowthHorizontalMd from 'calypso/assets/images/jetpack/hero-growth-horizontal-md.png';
-import SecurityHorizontalMd from 'calypso/assets/images/jetpack/hero-security-horizontal-md.png';
-// import SecurityLg from 'calypso/assets/images/jetpack/hero-security-lg.png';
-// import SecuritySm from 'calypso/assets/images/jetpack/hero-security-sm.png';
+import CompleteHorizontalLg from 'calypso/assets/images/jetpack/hero-complete-horizontal-lg.jpg';
+import GrowthHorizontalLg from 'calypso/assets/images/jetpack/hero-growth-horizontal-lg.jpg';
+import SecurityHorizontalLg from 'calypso/assets/images/jetpack/hero-security-horizontal-lg.jpg';
 import { HeroImageProps, HeroImageAPIFamilyProps } from '../types';
 import './style.scss';
 
 const HERO_IMAGES: Record< string, { lg: string; md: string; sm: string } > = {
 	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
-		lg: SecurityHorizontalMd,
-		md: SecurityHorizontalMd,
-		sm: SecurityHorizontalMd,
+		lg: SecurityHorizontalLg,
+		md: SecurityHorizontalLg,
+		sm: SecurityHorizontalLg,
 	},
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
-		lg: SecurityHorizontalMd,
-		md: SecurityHorizontalMd,
-		sm: SecurityHorizontalMd,
+		lg: SecurityHorizontalLg,
+		md: SecurityHorizontalLg,
+		sm: SecurityHorizontalLg,
 	},
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
-		lg: SecurityHorizontalMd,
-		md: SecurityHorizontalMd,
-		sm: SecurityHorizontalMd,
+		lg: SecurityHorizontalLg,
+		md: SecurityHorizontalLg,
+		sm: SecurityHorizontalLg,
 	},
 	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
-		lg: CompleteHorizontalMd,
-		md: CompleteHorizontalMd,
-		sm: CompleteHorizontalMd,
+		lg: CompleteHorizontalLg,
+		md: CompleteHorizontalLg,
+		sm: CompleteHorizontalLg,
 	},
 	[ PLAN_JETPACK_COMPLETE ]: {
-		lg: CompleteHorizontalMd,
-		md: CompleteHorizontalMd,
-		sm: CompleteHorizontalMd,
+		lg: CompleteHorizontalLg,
+		md: CompleteHorizontalLg,
+		sm: CompleteHorizontalLg,
 	},
 	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
-		lg: CompleteHorizontalMd,
-		md: CompleteHorizontalMd,
-		sm: CompleteHorizontalMd,
+		lg: CompleteHorizontalLg,
+		md: CompleteHorizontalLg,
+		sm: CompleteHorizontalLg,
 	},
 	[ PLAN_JETPACK_GROWTH_MONTHLY ]: {
-		lg: GrowthHorizontalMd,
-		md: GrowthHorizontalMd,
-		sm: GrowthHorizontalMd,
+		lg: GrowthHorizontalLg,
+		md: GrowthHorizontalLg,
+		sm: GrowthHorizontalLg,
 	},
 	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
-		lg: GrowthHorizontalMd,
-		md: GrowthHorizontalMd,
-		sm: GrowthHorizontalMd,
+		lg: GrowthHorizontalLg,
+		md: GrowthHorizontalLg,
+		sm: GrowthHorizontalLg,
 	},
 	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
-		lg: GrowthHorizontalMd,
-		md: GrowthHorizontalMd,
-		sm: GrowthHorizontalMd,
+		lg: GrowthHorizontalLg,
+		md: GrowthHorizontalLg,
+		sm: GrowthHorizontalLg,
 	},
 };
 
 const HERO_IMAGES_API_FAMILY: Record< string, { lg: string; md: string; sm: string } > = {
 	[ 'jetpack-security-t1' ]: {
-		lg: SecurityHorizontalMd,
-		md: SecurityHorizontalMd,
-		sm: SecurityHorizontalMd,
+		lg: SecurityHorizontalLg,
+		md: SecurityHorizontalLg,
+		sm: SecurityHorizontalLg,
 	},
 	[ 'jetpack-security-t2' ]: {
-		lg: SecurityHorizontalMd,
-		md: SecurityHorizontalMd,
-		sm: SecurityHorizontalMd,
+		lg: SecurityHorizontalLg,
+		md: SecurityHorizontalLg,
+		sm: SecurityHorizontalLg,
 	},
 	[ 'jetpack-complete' ]: {
-		lg: CompleteHorizontalMd,
-		md: CompleteHorizontalMd,
-		sm: CompleteHorizontalMd,
+		lg: CompleteHorizontalLg,
+		md: CompleteHorizontalLg,
+		sm: CompleteHorizontalLg,
 	},
 	[ 'jetpack-growth' ]: {
-		lg: GrowthHorizontalMd,
-		md: GrowthHorizontalMd,
-		sm: GrowthHorizontalMd,
+		lg: GrowthHorizontalLg,
+		md: GrowthHorizontalLg,
+		sm: GrowthHorizontalLg,
 	},
 };
 
