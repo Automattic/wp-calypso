@@ -126,6 +126,9 @@ const Home = ( {
 
 	useEffect( () => {
 		const studioSiteId = getQueryArgs().studioSiteId;
+		if ( ! studioSiteId ) {
+			return;
+		}
 		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
 		recordTracksEvent( 'calypso_studio_sync_connect_site', {
 			remoteSiteId: siteId,
