@@ -1,4 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .is-section-reader .recent-feed {
 	$recent-feed-spacing: 12px;
@@ -55,108 +57,90 @@
 		}
 
 		.dataviews-no-results {
-			padding: 0 $recent-feed-spacing;
+			padding: $recent-feed-spacing;
 		}
 
 		ul {
 			list-style: none;
 			margin: 16px 0 0;
-		}
 
-		li {
-			border-top: 1px solid var( --studio-gray-0 );
+			li {
+				border-top: 1px solid var( --studio-gray-0 );
+				
+				&.is-selected + li {
+					border-top: 1px solid var( --studio-gray-0 );
+				}
 
-			&:hover {
-				cursor: pointer;
-				background-color: #f7faff;
-			}
+				&:hover {
+					cursor: pointer;
+					background-color: #f7faff;
+				}
 
-			&.is-selected {
-				background-color: #f7faff;
-				border-top: 1px solid #3858e940;
-			}
+				&.is-selected {
+					border-top: 1px solid #3858e940;
 
-			// This is necessary because the media field wrapper in DataView is rendered even
-			// if no media is given.
-			// The presence of this element adds a gap on the left side of the element,
-			// throwing off the padding.
-			.dataviews-view-list__media-wrapper {
-				display: none;
-			}
+					.dataviews-view-list__item-wrapper {
+						background-color: #f7faff;
+					}
+				}
 
-			.dataviews-view-list__item-wrapper {
-				justify-content: start;
+				.components-flex {
+					align-items: center;
+				}
 
-				[role="gridcell"] {
+				.dataviews-view-list__media-wrapper {
+					border-radius: 50%;
+					width: 24px;
+					height: 24px;
+					background-color: transparent;
+
+					&::after {
+						box-shadow: none;
+					}
+				}
+
+				.recent-post-field {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					text-align: left;
 					width: 100%;
+					min-height: fit-content;
+					gap: $recent-feed-spacing;
+		
+					%text-shared {
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+					}
+		
+					&__title {
+						min-width: 0;
+					}
+		
+					&__title-text {
+						font-weight: 700;
+						font-size: rem(13px);
+						@extend %text-shared;
+					}
+		
+					&__site-name {
+						font-weight: 400;
+						font-size: rem( 11px );
+						line-height: 1;
+						@extend %text-shared;
+					}
+		
+					&__featured-image {
+						max-width: 38px;
+						align-self: flex-end;
+						flex-shrink: 0;
+					}
 				}
 			}
 
-			.dataviews-view-list__field-wrapper {
-				width: 100%;
-			}
-
-			.dataviews-view-list__fields {
-				display: flex;
-				align-items: center;
-				gap: $recent-feed-spacing;
-				padding: 0 $recent-feed-spacing;
-			}
-
-			.dataviews-view-list__field:has(.recent-post-field) {
-				overflow: hidden;
-				flex-grow: 1;
-			}
-		}
-
-		.recent-seen-field {
-			padding: $recent-feed-spacing 0;
-
-			img {
-				border-radius: 50%;
-			}
-
-			svg:hover {
-				fill: unset;
-			}
-		}
-
-		.recent-post-field {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			text-align: left;
-			padding: $recent-feed-spacing 0;
-			width: 100%;
-			min-height: fit-content;
-			gap: $recent-feed-spacing;
-
-			%text-shared {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
-			}
-
-			&__title {
-				min-width: 0;
-			}
-
-			&__title-text {
-				font-weight: 700;
-				font-size: rem(13px);
-				@extend %text-shared;
-			}
-
-			&__site-name {
-				font-weight: 400;
-				font-size: rem( 11px );
-				@extend %text-shared;
-			}
-
-			&__featured-image {
-				max-width: 38px;
-				align-self: flex-end;
-				flex-shrink: 0;
+			.dataviews-view-list__item {
+				padding: $recent-feed-spacing;
 			}
 		}
 

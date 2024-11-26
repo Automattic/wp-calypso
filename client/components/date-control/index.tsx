@@ -103,6 +103,7 @@ const DateControl = ( {
 				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
 				onShortcutClick={ onShortcutClick }
 				isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
+				trackExternalDateChanges
 			/>
 		</div>
 	);

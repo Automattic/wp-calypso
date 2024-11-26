@@ -7,11 +7,17 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControl from '../date-control';
 import { DateControlPickerShortcut } from '../date-control/types';
+
+type DateRange = {
+	chartStart: string;
+	chartEnd: string;
+	daysInRange: number;
+};
 interface StatsDateControlProps {
 	slug: string;
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
-	dateRange: any;
+	dateRange: DateRange;
 	shortcutList: DateControlPickerShortcut[];
 	overlay?: JSX.Element;
 	onGatedHandler: (
