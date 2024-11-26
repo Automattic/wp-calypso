@@ -30,8 +30,6 @@ export interface UseGridPlansParams {
 	 * Used to hide the "Your Plan" label for domain-only sites
 	 */
 	isDomainOnlySite?: boolean;
-	// TODO: Add more detailed comments because we've decided to make a tempoarary decision around storage-addons
-	// while the calypso_plans_page_emphasize_longer_plan_savings experiment is running.
 	reflectStorageSelectionInPlanPrices?: boolean;
 }
 

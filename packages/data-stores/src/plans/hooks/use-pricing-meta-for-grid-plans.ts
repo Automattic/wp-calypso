@@ -58,8 +58,9 @@ interface Props {
 	withProratedDiscounts?: boolean;
 
 	/**
-	 * TODO: Add more detailed comments because we've decided to make a tempoarary decision around storage-addons
-	 * while the calypso_plans_page_emphasize_longer_plan_savings experiment is running.
+	 * Storage add-on products ( e.g. increase site storage by 50GB ) can be purchased alongside plans. If true,
+	 * storage add-on selections will be included in final plan price calculations. Otherwise, omit the add-ons
+	 * from the final price.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 }
