@@ -2,12 +2,12 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import Search from '@automattic/search';
+import Search, { ImperativeHandle } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -30,6 +30,8 @@ export default function MarketingTools() {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedCategory, setSelectedCategory ] = useState( '' );
+	const [ isUserTyping, setIsUserTyping ] = useState( false );
+	const searchRef = useRef< ImperativeHandle >( null );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 
@@ -50,15 +52,26 @@ export default function MarketingTools() {
 	}, [ searchTerm, selectedCategory, marketingFeatures ] );
 
 	const handleSearch = ( term: string ) => {
+		// Prevents loops, only clears the category when the user is typing
+		if ( isUserTyping ) {
+			setSelectedCategory( '' );
+		}
+		setIsUserTyping( false );
 		setSearchTerm( term );
 		recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
 			search_term: term,
 		} );
 	};
 
-	function handleSelect( key: string ): void {
+	const handleSelect = ( key: string ) => {
 		setSelectedCategory( key );
-	}
+		setSearchTerm( '' );
+		searchRef?.current?.clear();
+	};
+
+	const handleSearchChange = () => {
+		setIsUserTyping( true );
+	};
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -80,7 +93,9 @@ export default function MarketingTools() {
 				>
 					<Search
 						className="marketing-tools__searchbox"
+						ref={ searchRef }
 						onSearch={ handleSearch }
+						onSearchChange={ handleSearchChange }
 						defaultValue={ searchTerm }
 						searchMode="when-typing"
 						placeholder={ translate( 'Try searching "seo"' ) }
@@ -94,7 +109,9 @@ export default function MarketingTools() {
 				{ ! isMobile() && <div className="marketing-tools__tooolbar-vertical-separator" /> }
 				<ResponsiveToolbarGroup
 					className="marketing-tools__search-categories-toolbar"
-					initialActiveIndex={ 0 }
+					initialActiveIndex={
+						selectedCategory ? items.findIndex( ( item ) => item.key === selectedCategory ) : 0
+					}
 					forceSwipe={ 'undefined' === typeof window }
 					onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
 					swipeEnabled={ false }
