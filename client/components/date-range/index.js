@@ -456,7 +456,7 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.closePopoverAndCommit }
+				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-content">
 					<div
