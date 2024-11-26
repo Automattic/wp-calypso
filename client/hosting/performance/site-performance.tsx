@@ -82,7 +82,7 @@ const usePerformanceReport = (
 		isLoading: isLoadingInsights,
 	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
-	const { pagespeed: performanceInsights } = data ?? {};
+	const performanceInsights = data?.pagespeed;
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;

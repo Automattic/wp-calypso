@@ -37,7 +37,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data, isError: isPerformanceInsightsError } = useUrlPerformanceInsightsQuery( url, hash );
-	const performanceInsights = data?.pagespeed ?? {};
+	const performanceInsights = data?.pagespeed;
 
 	const isError =
 		isBasicMetricsError ||
