@@ -11,10 +11,7 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = (
-	canConnectToZendesk: boolean,
-	shouldUseHelpCenterExperience: boolean | undefined
-) => {
+export const useGetCombinedChat = ( shouldUseHelpCenterExperience: boolean | undefined ) => {
 	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -38,38 +35,47 @@ export const useGetCombinedChat = (
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		setMainChatState( ( prevChat ) => ( {
-			...prevChat,
-			...( currentSupportInteraction && {
-				supportInteractionId: currentSupportInteraction!.uuid,
-			} ),
-			status: 'loaded',
-
-			// Has ODIE chat
-			...( odieChat && { ...odieChat, provider: 'odie' } ),
-
-			// Has Zendesk conversation
-			...( shouldUseHelpCenterExperience &&
-				canConnectToZendesk &&
-				conversationId &&
+		if ( odieId && ( ! conversationId || ! shouldUseHelpCenterExperience ) ) {
+			if ( odieChat ) {
+				setMainChatState( {
+					...odieChat,
+					provider: 'odie',
+					conversationId: null,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loaded',
+				} );
+			}
+		} else if ( odieId && conversationId && shouldUseHelpCenterExperience ) {
+			if ( odieChat && isChatLoaded ) {
 				getZendeskConversation( {
-					chatId: odieChat?.odieId,
+					chatId: odieChat.odieId,
 					conversationId: conversationId.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
-						return {
+						setMainChatState( {
+							...odieChat,
+							supportInteractionId: currentSupportInteraction!.uuid,
 							conversationId: conversation.id,
 							messages: [
-								...( odieChat?.messages ?? [] ),
+								...odieChat.messages,
 								...getOdieTransferMessageConstant( true ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
 							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
-						};
+						} );
 					}
-				} ) ),
-		} ) );
+				} );
+			}
+		} else if ( currentSupportInteraction ) {
+			setMainChatState( ( prevChat ) => ( {
+				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
+					? emptyChat
+					: prevChat ),
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: 'loaded',
+			} ) );
+		}
 	}, [
 		isOdieChatLoading,
 		isChatLoaded,
@@ -78,7 +84,6 @@ export const useGetCombinedChat = (
 		odieId,
 		currentSupportInteraction,
 		shouldUseHelpCenterExperience,
-		canConnectToZendesk,
 	] );
 
 	return { mainChatState, setMainChatState };
