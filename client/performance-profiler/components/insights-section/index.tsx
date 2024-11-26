@@ -5,6 +5,7 @@ import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
+import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import {
@@ -14,6 +15,7 @@ import {
 } from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
+import { LLMMessage } from '../llm-message';
 import './style.scss';
 
 type InsightsSectionProps = {
@@ -29,8 +31,15 @@ type InsightsSectionProps = {
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
-			props;
+		const {
+			audits,
+			fullPageScreenshot,
+			isWpcom,
+			url,
+			hash,
+			filter,
+			onRecommendationsFilterChange,
+		} = props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
 		const sortHighImpactAudits = ( a: string, b: string ) =>
@@ -52,6 +61,9 @@ export const InsightsSection = forwardRef(
 			},
 			[ onRecommendationsFilterChange ]
 		);
+
+		const { data } = useUrlPerformanceInsightsQuery( url, hash );
+		const isWpscanLoading = data?.wpscan?.status !== 'completed';
 
 		useEffect( () => {
 			if ( filter && filter !== selectedFilter ) {
@@ -93,6 +105,13 @@ export const InsightsSection = forwardRef(
 							compact
 						/>
 					</div>
+					{ isWpscanLoading && (
+						<LLMMessage
+							message={ translate(
+								"We're still checking some details of your site to make the best possible recommendations."
+							) }
+						/>
+					) }
 				</div>
 				{ filteredAudits.map( ( key, index ) => (
 					<MetricsInsight

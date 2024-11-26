@@ -76,11 +76,13 @@ const usePerformanceReport = (
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ token ] );
 	const {
-		data: performanceInsights,
+		data,
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
 	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
+
+	const { pagespeed: performanceInsights } = data ?? {};
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
