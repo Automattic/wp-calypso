@@ -37,7 +37,7 @@ const SiteListTile = styled( ListTile )`
 	gap: 0;
 	margin-inline-end: 0;
 	width: 280px;
-	// Position the item at the top to align with Core.
+	// Position the item at the top to align with Core, reverting ListTile's default centering.
 	align-items: revert;
 
 	.preview-hidden & {
