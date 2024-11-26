@@ -2,13 +2,14 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
+import Focusable from 'calypso/components/focusable';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
@@ -30,6 +31,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const selectedPostId = selectedItem?.postId?.toString();
+	const postContentId = 'reader-post-content';
+	const postColumnRef = useRef< HTMLDivElement | null >( null );
+	useKeyboardNavigation( selectedItem, postContentId );
+	usePostContentAnnouncements( postContentId );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -97,14 +103,23 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				getValue: ( { item }: { item: ReaderPost } ) =>
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentPostField post={ getPostFromItem( item ) } />;
+					const isItemSelected = item.postId?.toString() === selectedPostId;
+					return (
+						<Focusable
+							id={ `post-${ item.postId }` }
+							aria-expanded={ isItemSelected }
+							aria-controls={ isItemSelected ? postContentId : undefined }
+						>
+							<RecentPostField post={ getPostFromItem( item ) } />
+						</Focusable>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem ]
+		[ getPostFromItem, selectedPostId ]
 	);
 
 	const fetchData = useCallback( () => {
@@ -190,6 +205,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
+							// Focus the post column after a short delay to ensure DOM updates.
+							setTimeout( () => {
+								postColumnRef.current?.focus();
+							}, 0 );
 						} }
 					/>
 				</div>
