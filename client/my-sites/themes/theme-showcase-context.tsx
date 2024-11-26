@@ -1,6 +1,6 @@
 import { isMobileWidthOrHeight } from '@automattic/viewport';
 import { createContext, FC, PropsWithChildren, RefObject } from 'react';
-import { useMainContext } from 'calypso/components/main';
+import { useMainRefContext } from 'calypso/components/main';
 
 interface ThemeShowcaseContextInterface {
 	themeShowcaseWrapperRef: RefObject< HTMLElement > | undefined;
@@ -15,7 +15,7 @@ export const ThemeShowcaseContext = createContext< ThemeShowcaseContextInterface
 export const ThemeShowcaseContextProvider: FC<
 	PropsWithChildren< ThemeShowcaseContextInterface & { isLoggedOut: boolean } >
 > = ( { children, isLoggedOut, themeShowcaseWrapperRef } ) => {
-	const { mainRef } = useMainContext();
+	const { mainRef } = useMainRefContext();
 
 	let refToUse = undefined;
 

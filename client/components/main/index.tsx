@@ -21,7 +21,7 @@ export const MainRefContext = createContext< MainRefContextInterface >( {
 	mainRef: undefined,
 } );
 
-export const useMainContext = () => useContext( MainRefContext );
+export const useMainRefContext = () => useContext( MainRefContext );
 
 export default function Main( {
 	className = '',
