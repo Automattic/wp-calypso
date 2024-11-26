@@ -1,6 +1,7 @@
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
 import { getMigrationStatus, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
@@ -38,6 +39,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 	const { __ } = useI18n();
 
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const isPending = getMigrationStatus( site ) === 'pending';
 	const isDIFMInProgress = useSelector( ( state ) => isDIFMLiteInProgress( state, site.ID ) );
 
 	if ( site.is_deleted ) {
@@ -48,12 +50,11 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 		);
 	}
 
-	const statusElement =
-		getMigrationStatus( site ) === 'pending' ? (
-			<span className="sites-dataviews__migration-pending-status">{ translatedStatus }</span>
-		) : (
-			translatedStatus
-		);
+	const statusElement = isPending ? (
+		<span className="sites-dataviews__migration-pending-status">{ translatedStatus }</span>
+	) : (
+		translatedStatus
+	);
 
 	return (
 		<WithAtomicTransfer site={ site }>
@@ -66,7 +67,10 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 						{ isDIFMInProgress ? (
 							<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 						) : (
-							statusElement
+							<div>
+								{ statusElement }
+								{ ! isPending && <SiteLaunchNag site={ site } /> }
+							</div>
 						) }
 					</>
 				)
