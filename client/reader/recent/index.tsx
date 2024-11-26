@@ -167,7 +167,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
 			>
 				<div className="recent-feed__list-column-header">
-					<NavigationHeader title={ translate( 'Recent' ) } rightComponent={ viewToggle } />
+					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<div className="recent-feed__list-column-content">
 					{ ! hasSubscriptions ? (

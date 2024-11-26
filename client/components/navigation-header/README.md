@@ -29,4 +29,3 @@ function render() {
 - `title` (`string`) - Title of the header (optional)
 - `subtitle` (`string`) - Subtitle of the header (optional)
 - `screenReader` (`string`) - Used for screen readers and it's hidden on the view (optional)
-- `rightComponent` (`ReactNode`) - Component to be rendered on the right side of the header (optional)

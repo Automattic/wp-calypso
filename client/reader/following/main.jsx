@@ -42,8 +42,9 @@ function FollowingStream( { ...props } ) {
 						className={ clsx( 'following-stream-header', {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
-						rightComponent={ viewToggle }
-					/>
+					>
+						{ viewToggle }
+					</NavigationHeader>
 					<ReaderOnboarding />
 				</Stream>
 			) }
