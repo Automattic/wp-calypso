@@ -245,6 +245,10 @@ const PlansFeaturesMain = ( {
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	const reflectStorageSelectionInPlanPrices =
+		( isEnabled( 'plans/term-savings-price-display' ) ||
+			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+		isInSignup;
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
