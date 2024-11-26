@@ -140,7 +140,7 @@ const usePricingMetaForGridPlans = ( {
 				const sitePlan = sitePlans.data?.[ planSlug ];
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 				const selectedStorageAddOn =
-					selectedStorageOption && ! reflectStorageSelectionInPlanPrices
+					selectedStorageOption && reflectStorageSelectionInPlanPrices
 						? storageAddOns?.find( ( addOn ) => {
 								return addOn?.addOnSlug === selectedStorageOption;
 						  } )
