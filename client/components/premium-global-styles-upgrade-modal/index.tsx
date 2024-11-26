@@ -45,7 +45,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 		coupon: undefined,
 		planSlugs: [ upgradeToPlan ],
 		siteId: selectedSiteId,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 

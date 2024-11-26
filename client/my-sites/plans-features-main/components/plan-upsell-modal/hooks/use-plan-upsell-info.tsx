@@ -20,7 +20,7 @@ export const usePlanUpsellInfo = ( { planSlug }: { planSlug: PlanSlug } ): PlanU
 		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 	} );
 	const currencyCode = pricingMeta?.[ planSlug ].currencyCode ?? 'USD';
 	const priceMonthly =

@@ -6,7 +6,7 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -74,11 +74,10 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		ignoreWhitespace: true,
 	} );
 
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: termVariantPlanSlug ? [ termVariantPlanSlug ] : [],
-		storageAddOns,
+		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,

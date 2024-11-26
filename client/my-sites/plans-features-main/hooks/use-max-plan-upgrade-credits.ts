@@ -20,7 +20,7 @@ export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
 	const pricing = Plans.usePricingMetaForGridPlans( {
 		siteId,
 		planSlugs: plans,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		withProratedDiscounts: true,

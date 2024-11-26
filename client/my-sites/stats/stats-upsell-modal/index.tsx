@@ -34,7 +34,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 	} )?.[ planKey ];
 	const planSlug = plan?.pathSlug ?? planKey;
 	const isLoading = plans.isLoading || ! pricing;

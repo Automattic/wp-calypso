@@ -23,14 +23,14 @@ export default function useMaxDiscount(
 		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 	} );
 	const yearlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
 		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 	} );
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {

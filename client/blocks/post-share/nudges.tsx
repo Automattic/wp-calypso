@@ -32,7 +32,7 @@ export const UpgradeToPremiumNudge = ( { siteId }: Props ) => {
 	const pricing = Plans.usePricingMetaForGridPlans( {
 		siteId,
 		planSlugs: [ proposedPlanSlug as PlanSlug ],
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		withProratedDiscounts: true,

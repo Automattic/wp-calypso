@@ -64,7 +64,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		coupon: undefined,
 		planSlugs: planSlugs,
 		siteId: site.ID,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 	const pricing = planSlugs.reduce(

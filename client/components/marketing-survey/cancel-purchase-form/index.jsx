@@ -889,7 +889,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		planSlugs: [ personalDowngradePlan?.getStoreSlug(), monthlyDowngradePlan?.getStoreSlug() ],
 		coupon: undefined,
 		siteId: null,
-		storageAddOns: null,
+		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
