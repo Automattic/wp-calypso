@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -417,7 +416,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-				{ ! isEnabled( 'untangling/hosting-menu' ) && <SiteSettingsForm { ...this.props } /> }
+				<SiteSettingsForm { ...this.props } />
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);
