@@ -26,7 +26,7 @@
 		}
 		.task__illustration {
 			display: flex;
-			width: calc(60% + 32px);
+			width: calc(75% + 32px);
 			position: absolute;
 			bottom: 0;
 			right: 0;
@@ -35,11 +35,12 @@
 			z-index: -1;
 
 			img {
-				transform: translate(11px, 3px);
+				transform: translateX(14%);
 
 				[dir="rtl"] & {
-					transform: translate(0, 3px);
+					transform: translateX(20%);
 				}
+
 			}
 		}
 	}
