@@ -24,6 +24,7 @@
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
+			padding-bottom: 0;
 			@media (max-width: $break-mobile), (max-height: $break-mobile) {
 				overflow-y: auto;
 				overflow-x: hidden;
