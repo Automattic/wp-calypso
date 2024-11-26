@@ -15,6 +15,10 @@ import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import {
+	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteStepNameAndClear,
+} from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
 import type { Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -74,12 +78,26 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			return;
 		}
 
+		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
+		const isReEnteringStepAfterSignupComplete =
+			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
+
+		const reenteringStepAfterSignupCompleteProps = {
+			...( isReEnteringStepAfterSignupComplete && {
+				is_reentering_step_after_signup_complete: true,
+			} ),
+			...( signupCompleteFlowName && { signup_complete_flow_name: signupCompleteFlowName } ),
+			...( signupCompleteStepName && { signup_complete_step_name: signupCompleteStepName } ),
+		};
+
 		recordStepStart( flowName, kebabCase( stepSlug ), {
 			intent,
 			is_in_hosting_flow: isAnyHostingFlow( flowName ),
 			...( design && { assembler_source: getAssemblerSource( design ) } ),
 			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
+			...reenteringStepAfterSignupCompleteProps,
 			...signupStepStartProps,
 		} );
 
@@ -87,7 +105,11 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		stepCompleteEventPropsRef.current = {
 			flow: flowName,
 			step: stepSlug,
-			optionalProps: { intent, ...( skipStepRender && { skip_step_render: skipStepRender } ) },
+			optionalProps: {
+				intent,
+				...( skipStepRender && { skip_step_render: skipStepRender } ),
+				...reenteringStepAfterSignupCompleteProps,
+			},
 		};
 
 		const stepOldSlug = getStepOldSlug( stepSlug );
@@ -98,6 +120,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
+				...reenteringStepAfterSignupCompleteProps,
 				...signupStepStartProps,
 			} );
 		}
@@ -107,6 +130,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		const params = {
 			flow: flowName,
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
+			...reenteringStepAfterSignupCompleteProps,
 		};
 		recordPageView( pathname, pageTitle, params );
 
