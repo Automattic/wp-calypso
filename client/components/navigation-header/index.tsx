@@ -31,6 +31,7 @@ interface Props {
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
 	style?: object;
+	rightComponent?: ReactNode;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -46,6 +47,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		subtitle,
 		screenReader,
 		screenOptionsTab,
+		rightComponent,
 	} = props;
 	return (
 		<header
@@ -76,6 +78,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 						/>
 					) }
 					<div className="navigation-header__actions">{ children }</div>
+					{ rightComponent && <div className="navigation-header__right">{ rightComponent }</div> }
 				</div>
 			</Container>
 		</header>
