@@ -63,17 +63,8 @@ export default function PhpMyAdminForm( { disabled, ContainerComponent, Descript
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
-	return (
-		<ContainerComponent
-			className="phpmyadmin-card"
-			headingId="database-access"
-			title={ translate( 'Database access' ) }
-		>
-			<DescriptionComponent>
-				{ translate(
-					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-				) }
-			</DescriptionComponent>
+	const form = (
+		<div className="phpmyadmin-card__wrapper">
 			<div className="phpmyadmin-card__questions">
 				<PanelBody title={ translate( 'What is phpMyAdmin?' ) } initialOpen={ false }>
 					{ translate(
@@ -121,6 +112,21 @@ export default function PhpMyAdminForm( { disabled, ContainerComponent, Descript
 				onCancel={ () => setIsRestorePasswordDialogVisible( false ) }
 				onRestore={ () => setIsRestorePasswordDialogVisible( false ) }
 			/>
+		</div>
+	);
+
+	return (
+		<ContainerComponent
+			className="phpmyadmin-card"
+			headingId="database-access"
+			title={ translate( 'Database access' ) }
+		>
+			<DescriptionComponent>
+				{ translate(
+					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+				) }
+			</DescriptionComponent>
+			{ form }
 		</ContainerComponent>
 	);
 }

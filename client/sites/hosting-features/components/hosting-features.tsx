@@ -1,16 +1,14 @@
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { useRef, useEffect } from 'react';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
+import HostingActivationButton from 'calypso/sites/hosting-features/components/hosting-activation-button';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -18,6 +16,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 type PromoCardProps = {
@@ -37,12 +36,13 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	</HostingCard>
 );
 
-const HostingFeatures = () => {
+type HostingFeaturesProps = {
+	showAsTools?: boolean;
+};
+
+const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
-	const showActivationModal = searchParams.get( 'activate' ) !== null;
-	const redirectToParam = searchParams.get( 'redirect_to' );
-	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
@@ -115,27 +115,34 @@ const HostingFeatures = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const handleTransfer = ( options: { geo_affinity?: string } ) => {
-		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
-		const params = new URLSearchParams( {
-			siteId: String( siteId ),
-			redirect_to: addQueryArgs( redirectToParam ?? redirectUrl, {
-				hosting_features: 'activated',
-			} ),
-			feature: FEATURE_SFTP,
-			initiate_transfer_context: 'hosting',
-			initiate_transfer_geo_affinity: options.geo_affinity || '',
-		} );
-		page( `/setup/transferring-hosted-site?${ params }` );
-	};
 
 	const activateTitle = hasEnTranslation( 'Activate all hosting features' )
 		? translate( 'Activate all hosting features' )
 		: translate( 'Activate all developer tools' );
 
+	const activateTitleAsTools = hasEnTranslation( 'Activate all advanced tools' );
+
+	const activationStatusTitle = translate( 'Activating hosting features' );
+	const activationStatusTitleAsTools = translate( 'Activating advanced tools' );
+
+	const activationStatusDescription = translate(
+		"The hosting features will appear here automatically when they're ready!",
+		{
+			comment: 'Description of the hosting features page when the features are being activated.',
+		}
+	);
+	const activationStatusDescriptionAsTools = translate(
+		"The advanced tools will appear here automatically when they're ready!",
+		{
+			comment: 'Description of the advanced tools page when the features are being activated.',
+		}
+	);
+
 	const unlockTitle = hasEnTranslation( 'Unlock all hosting features' )
 		? translate( 'Unlock all hosting features' )
 		: translate( 'Unlock all developer tools' );
+
+	const unlockTitleAsTools = translate( 'Unlock all advanced tools' );
 
 	const activateDescription = hasEnTranslation(
 		'Your plan includes all the hosting features listed below. Click "Activate now" to begin.'
@@ -146,6 +153,10 @@ const HostingFeatures = () => {
 		: translate(
 				'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
 		  );
+
+	const activateDescriptionAsTools = translate(
+		'Your plan includes all the advanced tools listed below. Click "Activate now" to begin.'
+	);
 
 	const unlockDescription = hasEnTranslation(
 		'Upgrade to the %(planName)s plan or higher to get access to all hosting features'
@@ -169,54 +180,28 @@ const HostingFeatures = () => {
 				}
 		  );
 
+	const unlockDescriptionAsTools = translate(
+		'Upgrade to the %(planName)s plan or higher to get access to all advanced tools',
+		{
+			args: {
+				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+			},
+		}
+	);
+
 	let title;
 	let description;
 	let buttons;
 	if ( shouldRenderActivatingCopy ) {
-		title = translate( 'Activating hosting features' );
-		description = translate(
-			"The hosting features will appear here automatically when they're ready!",
-			{
-				comment: 'Description of the hosting features page when the features are being activated.',
-			}
-		);
+		title = showAsTools ? activationStatusTitleAsTools : activationStatusTitle;
+		description = showAsTools ? activationStatusDescriptionAsTools : activationStatusDescription;
 	} else if ( showActivationButton ) {
-		title = activateTitle;
-		description = activateDescription;
-		buttons = (
-			<>
-				<HostingHeroButton
-					onClick={ () => {
-						if ( showActivationButton ) {
-							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
-							return setShowEligibility( true );
-						}
-					} }
-				>
-					{ translate( 'Activate now' ) }
-				</HostingHeroButton>
-
-				<Dialog
-					additionalClassNames="plugin-details-cta__dialog-content"
-					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-					isVisible={ showEligibility }
-					onClose={ () => setShowEligibility( false ) }
-					showCloseIcon
-				>
-					<EligibilityWarnings
-						className="hosting__activating-warnings"
-						onProceed={ handleTransfer }
-						backUrl={ redirectUrl }
-						showDataCenterPicker
-						standaloneProceed
-						currentContext="hosting-features"
-					/>
-				</Dialog>
-			</>
-		);
+		title = showAsTools ? activateTitleAsTools : activateTitle;
+		description = showAsTools ? activateDescriptionAsTools : activateDescription;
+		buttons = <HostingActivationButton redirectUrl={ redirectUrl } />;
 	} else {
-		title = unlockTitle;
-		description = unlockDescription;
+		title = showAsTools ? unlockTitleAsTools : unlockTitle;
+		description = showAsTools ? unlockDescriptionAsTools : unlockDescription;
 		buttons = (
 			<HostingHeroButton
 				href={ upgradeLink }

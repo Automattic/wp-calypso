@@ -88,6 +88,15 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+
+		// Update query with date range if it provided.
+		const dateRange = this.props.dateRange;
+		if ( dateRange ) {
+			query.start_date = dateRange.startDate.format( 'YYYY-MM-DD' );
+			query.date = dateRange.endDate.format( 'YYYY-MM-DD' );
+			query.summarize = 1;
+		}
+
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';

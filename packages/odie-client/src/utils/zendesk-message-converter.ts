@@ -6,13 +6,20 @@ function prepareMarkdownImage( imgUrl: string ): string {
 	return `![Image](${ imgUrl })`;
 }
 
-// Format markdown to support links inside text
 function convertUrlsToMarkdown( text: string ): string {
-	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+[^\s]*)/g;
+	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w.-]+\.[a-z]{2,}(\.[a-z]{2,})*(\/[^\s]*)?)/gi;
 
-	return text.replace( urlRegex, ( url ) => {
-		const fullUrl = url.startsWith( 'http' ) ? url : `https://${ url }`;
-		return `[${ url }](${ fullUrl })`;
+	return text.replace( urlRegex, ( match ) => {
+		let url = match;
+		if ( ! /^https?:\/\//i.test( url ) ) {
+			url = `https://${ url }`;
+		}
+		try {
+			const validUrl = new URL( url );
+			return `[${ match }](${ validUrl.href })`;
+		} catch {
+			return match;
+		}
 	} );
 }
 

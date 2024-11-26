@@ -9,11 +9,11 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';

@@ -181,6 +181,8 @@ function getFilterByCategory( category: string ): {
 	return {
 		bool: {
 			should: [
+				// matching category name from titles
+				{ match: { 'plugin.title.en': category } },
 				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
 				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags || [ category ] } },

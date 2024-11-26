@@ -34,7 +34,7 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": false,
 		"checkout/vat-form": true,
-		"checkout/paypal-ppcp": false,
+		"checkout/paypal-ppcp": true,
 		"checkout/checkout-version": false,
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
@@ -83,7 +83,8 @@
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": false,
+		"bulk-plugin-management": true
 	},
 	"enable_all_sections": false,
 	"sections": {

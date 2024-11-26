@@ -166,6 +166,27 @@
 				}
 			}
 		}
+
+		.bulk-domains-empty-state {
+			.bulk-domains-empty-state__main {
+				padding-inline: 16px;
+
+				@include break-mobile {
+					padding-inline: 48px;
+				}
+			}
+
+			@include break-huge {
+				max-width: 100%;
+
+				.bulk-domains-empty-state__main {
+					box-sizing: border-box;
+					max-width: 1400px;
+					margin: 0 auto;
+					padding-inline: 48px;
+				}
+			}
+		}
 	}
 
 	.empty-domains-list-card {

@@ -1055,9 +1055,27 @@ class RegisterDomainStep extends Component {
 		// Skips availability check for the Gravatar flow - so TLDs that are
 		// available but not eligible for Gravatar won't be displayed
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			this.clearSuggestionErrorMessage();
+			const gravatarTlds = [
+				'link',
+				'bio',
+				'contact',
+				'cool',
+				'fyi',
+				'guru',
+				'info',
+				'life',
+				'live',
+				'ninja',
+				'place',
+				'pro',
+				'rocks',
+				'social',
+				'world',
+			];
 			// Also, we want to error messages for unavailable TLDs in Gravatar.
 			// Since only a limited number of tlds is enabled for now, we show the message for all other TLDs.
-			if ( ! this.state.availableTlds.includes( getTld( domain ) ) ) {
+			if ( ! gravatarTlds.includes( getTld( domain ) ) ) {
 				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
 			}
 			return;
@@ -1787,6 +1805,19 @@ class RegisterDomainStep extends Component {
 			availabilityError: error,
 			availabilityErrorData: errorData,
 			availabilityErrorDomain: domain,
+		} );
+	}
+
+	clearSuggestionErrorMessage() {
+		this.setState( {
+			showSuggestionNotice: false,
+			suggestionError: null,
+			suggestionErrorData: null,
+			suggestionErrorDomain: null,
+			showAvailabilityNotice: false,
+			availabilityError: null,
+			availabilityErrorData: null,
+			availabilityErrorDomain: null,
 		} );
 	}
 

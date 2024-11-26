@@ -2,13 +2,14 @@ import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
+import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { removeNotice } from 'calypso/state/notices/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
-import { areHostingFeaturesSupported } from './features';
+import { areHostingFeaturesSupported } from './hosting-features/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -87,10 +88,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			}
 		}
 
-		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
-			padding-bottom: 0;
-		}
-
 		// Update body margin to account for the sidebar width
 		@media only screen and ( min-width: 782px ) {
 			div.layout.is-global-sidebar-visible {
@@ -155,7 +152,26 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const site = getSelectedSite( state );
 
 	if ( ! areHostingFeaturesSupported( site ) ) {
-		return page.redirect( `/hosting-features/${ site?.slug }` );
+		return page.redirect( `/sites/tools/${ site?.slug }` );
+	}
+
+	next();
+}
+
+export function showHostingFeaturesNoticeIfPresent( context: PageJSContext, next: () => void ) {
+	// Update the url and show the notice after a redirect
+	if ( context.query && context.query.hosting_features === 'activated' ) {
+		context.store.dispatch(
+			successNotice( i18n.translate( 'Hosting features activated successfully!' ), {
+				displayOnNextPage: true,
+			} )
+		);
+		// Remove query param without triggering a re-render
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.href, 'hosting_features' )
+		);
 	}
 
 	next();

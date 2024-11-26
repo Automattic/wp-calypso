@@ -37,6 +37,12 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
     .dataviews-pagination {
         padding: 12px 16px 12px 16px;
     }
+
+    .plugin-name-button {
+        padding: 0;
+		text-align: start;
+		height: auto;
+    }
 }
 
 .is-section-jetpack-cloud-plugin-management {

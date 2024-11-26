@@ -2,10 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
-import {
-	useAreAdvancedHostingFeaturesSupported,
-	useAreHostingFeaturesSupported,
-} from '../features';
+import { useAreAdvancedHostingFeaturesSupported } from '../hosting-features/features';
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
 import DeleteSite from './administration/tools/delete-site';
@@ -22,7 +19,6 @@ export function SettingsSidebar() {
 
 	const shouldShowAdministration = useIsAdministrationSettingSupported();
 
-	const shouldShowHostingFeatures = useAreHostingFeaturesSupported();
 	const shouldShowAdvancedHostingFeatures = useAreAdvancedHostingFeaturesSupported();
 
 	return (
@@ -34,12 +30,7 @@ export function SettingsSidebar() {
 			>
 				{ __( 'Administration' ) }
 			</SidebarItem>
-			<SidebarItem
-				enabled={ shouldShowHostingFeatures }
-				href={ `/sites/settings/caching/${ slug }` }
-			>
-				{ __( 'Caching' ) }
-			</SidebarItem>
+			<SidebarItem href={ `/sites/settings/caching/${ slug }` }>{ __( 'Caching' ) }</SidebarItem>
 			<SidebarItem
 				enabled={ !! shouldShowAdvancedHostingFeatures }
 				href={ `/sites/settings/web-server/${ slug }` }

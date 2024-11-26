@@ -5,6 +5,7 @@ $brand-text: "SF Pro Text", $sans;
 	display: flex;
 	flex-direction: column;
 	gap: 32px;
+	width: 100%;
 
 	.github-deployments__search {
 		max-width: 504px;

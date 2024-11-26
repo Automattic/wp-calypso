@@ -69,7 +69,12 @@ function ResetNetbankingStoreFields() {
 describe( 'Netbanking payment method', () => {
 	it( 'renders a netbanking option', async () => {
 		const paymentMethod = getPaymentMethod();
-		render( <TestWrapper paymentMethods={ [ paymentMethod ] }></TestWrapper> );
+		render(
+			<TestWrapper
+				paymentMethods={ [ paymentMethod ] }
+				paymentProcessors={ { netbanking: () => makeSuccessResponse( 'ok' ) } }
+			></TestWrapper>
+		);
 		await waitFor( () => {
 			expect( screen.queryByText( 'Net Banking' ) ).toBeInTheDocument();
 		} );
@@ -77,7 +82,12 @@ describe( 'Netbanking payment method', () => {
 
 	it( 'renders submit button when netbanking is selected', async () => {
 		const paymentMethod = getPaymentMethod();
-		render( <TestWrapper paymentMethods={ [ paymentMethod ] }></TestWrapper> );
+		render(
+			<TestWrapper
+				paymentMethods={ [ paymentMethod ] }
+				paymentProcessors={ { netbanking: () => makeSuccessResponse( 'ok' ) } }
+			></TestWrapper>
+		);
 		await waitFor( () => {
 			expect( screen.queryByText( activePayButtonText ) ).toBeInTheDocument();
 		} );

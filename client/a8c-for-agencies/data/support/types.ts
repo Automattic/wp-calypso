@@ -10,6 +10,7 @@ export interface SubmitContactSupportParams {
 	email: string;
 	message: string;
 	product: string;
+	agency_id: number | undefined;
 	site?: string;
 	no_of_sites?: number;
 	contact_type?: string;

@@ -39,7 +39,8 @@ export type CampaignChartStatsResponse = {
 export const useCampaignChartStatsQuery = (
 	siteId: number,
 	campaignId: number,
-	startDate: string
+	startDate: string,
+	hasStats: boolean
 ) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-campaign-stats', siteId, campaignId, startDate ],
@@ -55,7 +56,7 @@ export const useCampaignChartStatsQuery = (
 				'1.1'
 			);
 		},
-		enabled: !! siteId && !! campaignId && !! startDate,
+		enabled: !! siteId && !! campaignId && !! startDate && hasStats,
 		retryDelay: 3000,
 		meta: {
 			persist: false,

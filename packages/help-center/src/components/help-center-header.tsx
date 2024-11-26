@@ -12,7 +12,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -85,13 +84,12 @@ const ChatEllipsisMenu = () => {
 			popoverClassName="help-center help-center__container-header-menu"
 			position="bottom"
 		>
-			<PopoverMenuItem
-				onClick={ clearChat }
-				className="help-center help-center__container-header-menu-item"
-			>
-				<Gridicon icon="comment" />
-				{ __( 'Clear Conversation' ) }
-			</PopoverMenuItem>
+			<div className="clear-conversation__wrapper">
+				<button onClick={ clearChat }>
+					<Gridicon icon="comment" />
+					<div>{ __( 'Clear Conversation' ) }</div>
+				</button>
+			</div>
 		</EllipsisMenu>
 	);
 };

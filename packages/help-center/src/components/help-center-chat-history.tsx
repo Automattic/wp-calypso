@@ -68,12 +68,12 @@ export const HelpCenterChatHistory = () => {
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
-	const { data: supportInteractionsResolved } = useGetSupportInteractions(
-		'zendesk',
-		100,
-		'resolved'
-	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
+		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
+		useGetSupportInteractions( 'zendesk', 100, 'closed' );
+	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+		useGetSupportInteractions( 'zendesk', 10, 'open' );
 
 	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -89,16 +89,15 @@ export const HelpCenterChatHistory = () => {
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if (
-			isChatLoaded &&
-			getConversations &&
-			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
-				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
-		) {
+		const isLoadingInteractions =
+			isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
+
+		if ( isChatLoaded && getConversations && ! isLoadingInteractions ) {
 			const conversations = getConversations();
 			const supportInteractions = [
 				...( supportInteractionsResolved || [] ),
 				...( supportInteractionsOpen || [] ),
+				...( supportInteractionsClosed || [] ),
 			];
 
 			const filteredConversations = getConversationsFromSupportInteractions(

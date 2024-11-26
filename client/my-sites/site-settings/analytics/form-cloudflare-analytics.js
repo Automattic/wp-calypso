@@ -19,7 +19,7 @@ import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudfla
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

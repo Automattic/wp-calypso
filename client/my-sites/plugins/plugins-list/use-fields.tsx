@@ -66,9 +66,14 @@ export function useFields(
 
 					return (
 						<>
-							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
-							<a href={ '/plugins/' + item.slug }>{ item.name }</a>
+							<Button
+								onClick={ () => toggleDialogForPlugin( item ) }
+								className="plugin-name-button"
+							>
+								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
+								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
+								{ item.name }
+							</Button>
 							{ pluginActionStatus }
 						</>
 					);

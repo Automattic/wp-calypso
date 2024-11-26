@@ -128,17 +128,4 @@
 		padding: 0;
 		align-self: flex-start;
 	}
-
-	.dataviews-pagination {
-		.components-base-control {
-			width: unset !important;
-			margin-right: 0 !important;
-		}
-	}
-}
-
-.main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
-	.dataviews-view-table {
-		margin: 0;
-	}
 }

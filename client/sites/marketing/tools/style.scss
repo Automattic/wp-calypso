@@ -20,16 +20,59 @@
 	background-color: #fff;
 }
 
+.search-component.marketing-tools__searchbox {
+	box-shadow: 0 0 0 1px var(--studio-gray-10);
+
+	.search-component__input[type="search"] {
+		padding-left: 16px;
+	}
+}
+.marketing-tools__toolbar-container {
+	display: flex;
+	align-items: center;
+	margin-top: 24px;
+	margin-bottom: 16px;
+	gap: 16px;
+}
+.marketing-tools__searchbox-container {
+	position: relative;
+	width: 250px;
+	height: 40px;
+	&.marketing-tools__searchbox-container--mobile {
+		width: 100%;
+		margin-left: 16px;
+	}
+}
+.panel-with-sidebar .marketing-tools__searchbox-container--mobile {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.responsive-toolbar-group.marketing-tools__search-categories-toolbar {
+	width: 280px;
+	padding: 0;
+	margin-right: 16px;
+}
+.marketing-tools__tooolbar-vertical-separator {
+	border: 0.5px solid var(--studio-gray-5);
+	height: 14px;
+}
+  
+.tools__wrapper {
+	align-self: stretch;
+}
+
 .tools__header-body {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 	padding: 42px;
 	justify-content: space-between;
 	gap: 20px;
 	flex-wrap: wrap;
 	border-radius: 4px;
 	background-color: var(--color-neutral-0);
-  box-shadow: none;
+	box-shadow: none;
 }
 
 .tools__header-info {
@@ -71,7 +114,7 @@
 			font-weight: 500;
 			text-decoration: none;
 			color: var(--color-gray-80);
-			
+
 			svg {
 				margin-left: 8px;
 			}
@@ -82,7 +125,7 @@
 .tools__header-image-wrapper {
 	@include wide-screen {
 		display: flex;
-		margin-right: -20px; // This is to compensate the gap in .tools__header-body 
+		margin-right: -20px; // This is to compensate the gap in .tools__header-body
 	}
 
 	.tools__header-image {

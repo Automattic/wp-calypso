@@ -60,6 +60,7 @@ $button-border: 4px;
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
+			padding-bottom: 0;
 		}
 	}
 
@@ -70,7 +71,6 @@ $button-border: 4px;
 
 		@media screen and (min-width: 960px) {
 			padding: 24px 20px;
-			box-sizing: initial;
 		}
 	}
 }

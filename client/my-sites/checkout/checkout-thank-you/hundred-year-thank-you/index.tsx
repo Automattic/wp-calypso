@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -35,9 +35,15 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 		min-height: ${ ( { isMobile } ) => ( isMobile ? '100%' : 'unset' ) };
 	}
 `;
+const hundredYearProducts = [
+	PLAN_100_YEARS,
+	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
+] as const;
+
 interface Props {
 	siteSlug: string;
 	receiptId: number;
+	productSlug: ( typeof hundredYearProducts )[ number ];
 }
 
 const MasterBar = styled.div`
@@ -129,7 +135,11 @@ function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
 	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
 }
 
-export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
+export default function HundredYearThankYou( {
+	siteSlug,
+	receiptId,
+	productSlug = PLAN_100_YEARS,
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -166,6 +176,47 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 
 	const isMobile = useMobileBreakpoint();
 	const isPageLoading = isReceiptLoading || isLoadingDomains;
+	const hundredYearPlanCta =
+		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
+			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
+				{ translate( 'Start building' ) }
+			</StyledLightButton>
+		) : (
+			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+				{ translate( 'Manage your site' ) }
+			</StyledLightButton>
+		);
+	const hundredYearDomainCta = (
+		<StyledLightButton
+			onClick={ () =>
+				page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
+			}
+		>
+			{ translate( 'Manage your domain' ) }
+		</StyledLightButton>
+	);
+	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
+
+	const description =
+		productSlug === PLAN_100_YEARS
+			? translate(
+					'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
+					{
+						args: {
+							domain: registeredDomain?.domain || siteSlug,
+							planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+						},
+					}
+			  )
+			: translate(
+					'Your 100-Year Domain %(domain)s has been registered. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
+					{
+						args: {
+							domain: registeredDomain?.domain || siteSlug,
+						},
+					}
+			  );
+
 	return (
 		<>
 			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
@@ -194,32 +245,8 @@ export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props 
 							<Header className="wp-brand-font" isMobile={ isMobile }>
 								{ translate( 'Your century-long legacy begins now' ) }
 							</Header>
-							<Highlight isMobile={ isMobile }>
-								{ translate(
-									'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-									{
-										args: {
-											domain: registeredDomain?.domain || siteSlug,
-											planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-										},
-									}
-								) }
-							</Highlight>
-							{ siteCreatedTimeStamp && (
-								<ButtonBar isMobile={ isMobile }>
-									{ isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
-										<StyledLightButton
-											onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }
-										>
-											{ translate( 'Start building' ) }
-										</StyledLightButton>
-									) : (
-										<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
-											{ translate( 'Manage your site' ) }
-										</StyledLightButton>
-									) }
-								</ButtonBar>
-							) }
+							<Highlight isMobile={ isMobile }>{ description }</Highlight>
+							{ siteCreatedTimeStamp && <ButtonBar isMobile={ isMobile }>{ cta }</ButtonBar> }
 						</div>
 						<VideoContainer isMobile={ isMobile }>
 							<video
