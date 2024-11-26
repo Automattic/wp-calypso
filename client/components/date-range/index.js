@@ -54,6 +54,7 @@ export class DateRange extends Component {
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
 		onShortcutClick: PropTypes.func,
+		trackExternalDateChanges: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -145,15 +146,18 @@ export class DateRange extends Component {
 	 * Note this does not commit the current date state
 	 */
 	openPopover = () => {
-		this.setState( {
+		const newState = {
 			popoverVisible: true,
-			startDate: this.props.selectedStartDate,
-			endDate: this.props.selectedEndDate,
-			textInputStartDate: this.toDateString( this.props.selectedStartDate ),
-			textInputEndDate: this.toDateString( this.props.selectedEndDate ),
-			staleStartDate: this.props.selectedStartDate,
-			staleEndDate: this.props.selectedEndDate,
-		} );
+		};
+		if ( this.props.trackExternalDateChanges ) {
+			newState.startDate = this.props.selectedStartDate;
+			newState.endDate = this.props.selectedEndDate;
+			newState.textInputStartDate = this.toDateString( this.props.selectedStartDate );
+			newState.textInputEndDate = this.toDateString( this.props.selectedEndDate );
+			newState.staleStartDate = this.props.selectedStartDate;
+			newState.staleEndDate = this.props.selectedEndDate;
+		}
+		this.setState( newState );
 	};
 
 	/**

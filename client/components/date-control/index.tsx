@@ -100,6 +100,7 @@ const DateControl = ( {
 				customTitle="Date Range"
 				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
 				onShortcutClick={ onShortcutClick }
+				trackExternalDateChanges
 			/>
 		</div>
 	);
