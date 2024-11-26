@@ -279,29 +279,8 @@ export const SftpForm = ( {
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
 		  );
 
-	return (
-		<ContainerComponent
-			className="sftp-card"
-			headingId="sftp-credentials"
-			title={
-				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
-			}
-			isLoading={ hasSftpFeatureAndIsLoading }
-		>
-			{ ! hasSftpFeatureAndIsLoading && (
-				<DescriptionComponent>
-					{ username
-						? translate(
-								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
-								{
-									components: {
-										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
-									},
-								}
-						  )
-						: featureExplanation }
-				</DescriptionComponent>
-			) }
+	const form = (
+		<div className="sftp-card__wrapper">
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions-container">
 					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
@@ -397,6 +376,33 @@ export const SftpForm = ( {
 			) }
 			{ isLoading && <Spinner /> }
 			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
+		</div>
+	);
+
+	return (
+		<ContainerComponent
+			className="sftp-card"
+			headingId="sftp-credentials"
+			title={
+				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
+			}
+			isLoading={ hasSftpFeatureAndIsLoading }
+		>
+			{ ! hasSftpFeatureAndIsLoading && (
+				<DescriptionComponent>
+					{ username
+						? translate(
+								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								{
+									components: {
+										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
+									},
+								}
+						  )
+						: featureExplanation }
+				</DescriptionComponent>
+			) }
+			{ form }
 		</ContainerComponent>
 	);
 };

@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import { Panel } from 'calypso/components/panel';
 import { useAreAdvancedHostingFeaturesSupported } from '../../hosting-features/features';
 import DefensiveModeForm from './defensive-mode-form';
 import ServerConfigurationForm from './server-configuration-form';
@@ -35,7 +36,7 @@ export default function WebServerSettings() {
 	};
 
 	return (
-		<div className="settings-web-server">
+		<Panel className="settings-web-server">
 			<NavigationHeader
 				title={ translate( 'Web server' ) }
 				subtitle={ translate(
@@ -43,6 +44,6 @@ export default function WebServerSettings() {
 				) }
 			/>
 			{ isSupported ? renderSetting() : renderNotSupportedNotice() }
-		</div>
+		</Panel>
 	);
 }

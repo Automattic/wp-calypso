@@ -39,94 +39,22 @@
 	}
 
 	tr.dataviews-view-table__row {
-		background: var(--studio-white);
-
-		.components-checkbox-control__input {
-			opacity: 0;
-		}
-		.components-checkbox-control__input:checked,
-		.components-checkbox-control__input:indeterminate {
-			opacity: 1;
-		}
-
-		.dataviews-view-table-selection-checkbox {
-			padding-left: 12px;
-			&.is-selected {
-				.components-checkbox-control__input {
-					opacity: 1;
-				}
-			}
-		}
-
-		&:hover {
-			background-color: #f7faff;
-			.site-set-favorite__favorite-icon,
-			.components-checkbox-control__input {
-				opacity: 1;
-			}
-		}
-
 		th {
-			border-bottom: 1px solid var(--color-neutral-5);
-			font-size: rem(13px);
-			font-weight: 400;
 			vertical-align: middle;
 		}
-
 		td {
-			border-bottom: 1px solid var(--color-neutral-5);
 			vertical-align: middle;
-
-			&:has(.sites-dataviews__site) {
-				width: 20%;
-			}
-		}
-
-		.dataviews-view-table__cell-content-wrapper {
-			font-size: rem(13px);
-		}
-
-		.dataviews-view-table__checkbox-column,
-		.components-checkbox-control__input {
-			label.components-checkbox-control__label {
-				display: none;
-			}
-			&[type="checkbox"] {
-				border-color: var(--color-neutral-5);
-			}
-		}
-
-		.site-sort__clickable {
-			cursor: pointer;
 		}
 	}
 
 	ul.dataviews-view-list {
+		// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
 		li:hover {
 			background: var(--color-neutral-0);
 		}
+		// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
 		.is-selected {
 			background-color: var(--color-neutral-0);
-		}
-
-		// Needs to be moved upstream to the gutenberg repository.
-		.dataviews-view-list__item {
-			box-sizing: border-box;
-		}
-	}
-
-	thead .dataviews-view-table__row th {
-		span,
-		button {
-			font-size: rem(11px);
-			font-weight: 500;
-			line-height: 20px;
-			color: var(--color-accent-80);
-			text-transform: uppercase;
-		}
-
-		.dataviews-view-table-header-button {
-			color: inherit;
 		}
 	}
 }

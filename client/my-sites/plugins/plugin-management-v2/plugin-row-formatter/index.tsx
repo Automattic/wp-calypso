@@ -252,7 +252,6 @@ export default function PluginRowFormatter( {
 					selectedSite={ selectedSite }
 					className={ className }
 					updatePlugin={ updatePlugin }
-					siteCount={ siteCount }
 				/>
 			);
 		case 'install':

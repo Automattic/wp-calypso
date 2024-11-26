@@ -3,12 +3,14 @@
 
 .task {
 	display: flex;
+	flex-direction: column;
 	position: relative;
 	margin-top: 0;
 	margin-bottom: 30px;
 	border-radius: 3px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-small {
+		flex-direction: row;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin-bottom: 16px;
 	}
@@ -16,13 +18,12 @@
 	.task__text,
 	.task__illustration {
 		box-sizing: border-box;
-		padding: 24px 24px 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include break-small {
 			padding: 24px 16px;
 		}
 
-		@include breakpoint-deprecated( ">1040px" ) {
+		@include break-xlarge {
 			padding: 32px 24px;
 		}
 	}
@@ -35,11 +36,17 @@
 	}
 
 	.task__illustration {
-		width: 33.33%;
+		width: 100%;
 		align-self: center;
 		flex-shrink: 0;
 		margin-left: auto;
 		text-align: center;
+		margin-top: 32px;
+		
+		@include break-small {
+			width: 33.33%;
+			margin-top: 0;
+		}
 	}
 
 	.task__timing {
@@ -66,7 +73,7 @@
 		line-height: 36px;
 		margin-bottom: 16px;
 
-		@include breakpoint-deprecated( ">800px" ) {
+		@include break-medium {
 			line-height: 40px;
 		}
 	}
@@ -77,7 +84,7 @@
 		line-height: 24px;
 		color: var(--color-text-subtle);
 		
-		@include breakpoint-deprecated( ">800px" ) {
+		@include break-medium {
 			line-height: 28px;
 			margin-bottom: 32px;
 		}

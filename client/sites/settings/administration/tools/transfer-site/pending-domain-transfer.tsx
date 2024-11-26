@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
+import { PanelHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { PanelHeading } from 'calypso/sites/components/panel';
 import { isHostingMenuUntangled } from '../../../utils';
 
 const Strong = styled( 'strong' )( {

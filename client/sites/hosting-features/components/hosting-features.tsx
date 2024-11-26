@@ -36,7 +36,11 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	</HostingCard>
 );
 
-const HostingFeatures = () => {
+type HostingFeaturesProps = {
+	showAsTools?: boolean;
+};
+
+const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const siteId = useSelector( getSelectedSiteId );
@@ -116,9 +120,29 @@ const HostingFeatures = () => {
 		? translate( 'Activate all hosting features' )
 		: translate( 'Activate all developer tools' );
 
+	const activateTitleAsTools = hasEnTranslation( 'Activate all advanced tools' );
+
+	const activationStatusTitle = translate( 'Activating hosting features' );
+	const activationStatusTitleAsTools = translate( 'Activating advanced tools' );
+
+	const activationStatusDescription = translate(
+		"The hosting features will appear here automatically when they're ready!",
+		{
+			comment: 'Description of the hosting features page when the features are being activated.',
+		}
+	);
+	const activationStatusDescriptionAsTools = translate(
+		"The advanced tools will appear here automatically when they're ready!",
+		{
+			comment: 'Description of the advanced tools page when the features are being activated.',
+		}
+	);
+
 	const unlockTitle = hasEnTranslation( 'Unlock all hosting features' )
 		? translate( 'Unlock all hosting features' )
 		: translate( 'Unlock all developer tools' );
+
+	const unlockTitleAsTools = translate( 'Unlock all advanced tools' );
 
 	const activateDescription = hasEnTranslation(
 		'Your plan includes all the hosting features listed below. Click "Activate now" to begin.'
@@ -129,6 +153,10 @@ const HostingFeatures = () => {
 		: translate(
 				'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
 		  );
+
+	const activateDescriptionAsTools = translate(
+		'Your plan includes all the advanced tools listed below. Click "Activate now" to begin.'
+	);
 
 	const unlockDescription = hasEnTranslation(
 		'Upgrade to the %(planName)s plan or higher to get access to all hosting features'
@@ -152,24 +180,28 @@ const HostingFeatures = () => {
 				}
 		  );
 
+	const unlockDescriptionAsTools = translate(
+		'Upgrade to the %(planName)s plan or higher to get access to all advanced tools',
+		{
+			args: {
+				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+			},
+		}
+	);
+
 	let title;
 	let description;
 	let buttons;
 	if ( shouldRenderActivatingCopy ) {
-		title = translate( 'Activating hosting features' );
-		description = translate(
-			"The hosting features will appear here automatically when they're ready!",
-			{
-				comment: 'Description of the hosting features page when the features are being activated.',
-			}
-		);
+		title = showAsTools ? activationStatusTitleAsTools : activationStatusTitle;
+		description = showAsTools ? activationStatusDescriptionAsTools : activationStatusDescription;
 	} else if ( showActivationButton ) {
-		title = activateTitle;
-		description = activateDescription;
+		title = showAsTools ? activateTitleAsTools : activateTitle;
+		description = showAsTools ? activateDescriptionAsTools : activateDescription;
 		buttons = <HostingActivationButton redirectUrl={ redirectUrl } />;
 	} else {
-		title = unlockTitle;
-		description = unlockDescription;
+		title = showAsTools ? unlockTitleAsTools : unlockTitle;
+		description = showAsTools ? unlockDescriptionAsTools : unlockDescription;
 		buttons = (
 			<HostingHeroButton
 				href={ upgradeLink }

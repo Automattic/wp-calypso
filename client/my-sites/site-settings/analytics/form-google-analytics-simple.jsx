@@ -18,7 +18,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 
 import './style.scss';
 

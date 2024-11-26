@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -69,6 +69,7 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
+import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
@@ -240,6 +241,8 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		flowName,
@@ -281,6 +284,13 @@ const PlansFeaturesMain = ( {
 		!! getPlan( selectedPlan ) &&
 		! isPersonalPlan( selectedPlan ) &&
 		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
+
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		flowName,
+		paidDomainName,
+	} );
 
 	const term = usePlanBillingPeriod( {
 		intervalType,
@@ -457,13 +467,6 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
-		productSlug: currentPlan?.productSlug,
-		displayedIntervals,
-		flowName,
-		paidDomainName,
-	} );
-
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
 			basePlansPath,
@@ -632,7 +635,8 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+			! gridPlansForComparisonGrid ||
+			longerPlanTermDefaultExperiment.isLoadingExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -838,6 +842,10 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
+										enableTermSavingsPriceDisplay={
+											isEnabled( 'plans/term-savings-price-display' ) ||
+											longerPlanTermDefaultExperiment.isEligibleForTermSavings
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -897,6 +905,10 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
+													enableTermSavingsPriceDisplay={
+														isEnabled( 'plans/term-savings-price-display' ) ||
+														longerPlanTermDefaultExperiment.isEligibleForTermSavings
+													}
 												/>
 											) }
 											<ComparisonGridToggle

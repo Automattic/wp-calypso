@@ -13,14 +13,17 @@ const supportedIntervalTypes: SupportedIntervalTypes[] = [
 	'3yearly',
 ];
 
-export const getIntervalType = ( path?: string ): SupportedIntervalTypes => {
+export const getIntervalType = (
+	path?: string,
+	defaultType = 'yearly'
+): SupportedIntervalTypes => {
 	const url = path ?? window?.location?.href ?? '';
-	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || 'yearly';
+	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || defaultType;
 
 	return (
 		supportedIntervalTypes.includes( intervalType as SupportedIntervalTypes )
 			? intervalType
-			: 'yearly'
+			: defaultType
 	) as SupportedIntervalTypes;
 };
 

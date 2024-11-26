@@ -25,6 +25,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
@@ -351,14 +352,14 @@ class StatsSite extends Component {
 				.format( 'YYYY-MM-DD' );
 		}
 
+		customChartRange.daysInRange = daysInRange;
+
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
 		if ( period === 'day' && daysInRange === 1 ) {
-			page( '/stats/hour/' + slug + window.location.search );
+			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
 			return;
 		}
-
-		customChartRange.daysInRange = daysInRange;
 
 		// Calculate diff between requested start and end in `priod` units.
 		// Move end point (most recent) to the end of period to account for partial periods
@@ -455,50 +456,44 @@ class StatsSite extends Component {
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
-				{ isNewDateFilteringEnabled && (
-					<div
-						className="stats-new-date-filtering-callout"
-						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
-					>
-						<p>New date filtering enabled.</p>
-					</div>
-				) }
 				{ ! isNewDateFilteringEnabled && (
 					// @TODO: remove highlight section completely once flag is released
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StatsPeriodHeader>
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/stats/${ period }/${ slug }` }
-							queryParams={ context.query }
-							pathTemplate={ pathTemplate }
-							charts={ CHARTS }
-							availableLegend={ this.getAvailableLegend() }
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							onChangeLegend={ this.onChangeLegend }
-							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
-							isWithNewDateControl
-							showArrows
-							slug={ slug }
-							dateRange={ customChartRange }
-						>
-							{ ' ' }
-							<DatePicker
-								period={ period }
+					<StickyPanel>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
 								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
-								isShort
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+								isWithNewDateControl
+								showArrows
+								slug={ slug }
 								dateRange={ customChartRange }
-							/>
-						</StatsPeriodNavigation>
-					</StatsPeriodHeader>
+							>
+								{ ' ' }
+								<DatePicker
+									period={ period }
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+									dateRange={ customChartRange }
+								/>
+							</StatsPeriodNavigation>
+						</StatsPeriodHeader>
+					</StickyPanel>
 				) }
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>

@@ -20,6 +20,7 @@ export const TOOLS_LOGS_PHP = 'tools-logs-php';
 export const TOOLS_LOGS_WEB = 'tools-logs-web';
 export const TOOLS_SFTP_SSH = 'tools-sftp-ssh';
 export const TOOLS_DATABASE = 'tools-database';
+export const TOOLS = 'tools';
 
 export const SETTINGS_SITE = 'settings-site';
 export const SETTINGS_ADMINISTRATION = 'settings-administration';
@@ -55,6 +56,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ TOOLS_LOGS_WEB ]: 'sites/tools/logs/:site/web',
 	[ TOOLS_SFTP_SSH ]: 'sites/tools/sftp-ssh/:site',
 	[ TOOLS_DATABASE ]: 'sites/tools/database/:site',
+	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION ]: 'sites/settings/administration/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/administration/:site/reset-site',

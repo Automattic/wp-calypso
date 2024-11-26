@@ -1,19 +1,5 @@
 .settings-administration__delete-site {
-	.panel-with-sidebar & {
-		margin-left: 0;
-
-		.panel-section {
-			width: 100%;
-			max-width: 800px !important;
-		}
-	}
-
 	input.delete-site__confirm-input {
 		margin-bottom: 12px !important;
-	}
-
-	button:last-child,
-	.notice:last-child {
-		margin-bottom: 0;
 	}
 }

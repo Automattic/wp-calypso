@@ -152,7 +152,7 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const site = getSelectedSite( state );
 
 	if ( ! areHostingFeaturesSupported( site ) ) {
-		return page.redirect( `/hosting-features/${ site?.slug }` );
+		return page.redirect( `/sites/tools/${ site?.slug }` );
 	}
 
 	next();

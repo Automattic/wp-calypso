@@ -33,13 +33,13 @@ import type { Action } from '@wordpress/dataviews';
 
 export function useActions( {
 	openSitePreviewPane,
-	selectedItem,
+	viewType,
 }: {
 	openSitePreviewPane?: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	selectedItem?: SiteExcerptData | null;
+	viewType: 'list' | 'table' | 'grid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useReduxDispatch();
@@ -98,36 +98,37 @@ export function useActions( {
 
 	return useMemo(
 		() => [
-			{
-				id: 'site-overview',
-				isPrimary: true,
-				label: __( 'Overview' ),
-				icon: drawerLeft,
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					const adminUrl = site.options?.admin_url ?? '';
-					const isAdmin = capabilities[ site.ID ]?.manage_options;
-					if (
-						isAdmin &&
-						! isP2Site( site ) &&
-						! isNotAtomicJetpack( site ) &&
-						! isDisconnectedJetpackAndNotAtomic( site )
-					) {
-						openSitePreviewPane && openSitePreviewPane( site, 'action' );
-					} else {
-						navigate( adminUrl );
-					}
-				},
-				isEligible: ( site ) => {
-					if ( site.ID === selectedItem?.ID ) {
-						return false;
-					}
-					if ( site.is_deleted ) {
-						return false;
-					}
-					return true;
-				},
-			},
+			...( viewType !== 'list'
+				? [
+						{
+							id: 'site-overview',
+							isPrimary: true,
+							label: __( 'Overview' ),
+							icon: drawerLeft,
+							callback: ( sites: SiteExcerptData[] ) => {
+								const site = sites[ 0 ];
+								const adminUrl = site.options?.admin_url ?? '';
+								const isAdmin = capabilities[ site.ID ]?.manage_options;
+								if (
+									isAdmin &&
+									! isP2Site( site ) &&
+									! isNotAtomicJetpack( site ) &&
+									! isDisconnectedJetpackAndNotAtomic( site )
+								) {
+									openSitePreviewPane && openSitePreviewPane( site, 'action' );
+								} else {
+									navigate( adminUrl );
+								}
+							},
+							isEligible: ( site: SiteExcerptData ) => {
+								if ( site.is_deleted ) {
+									return false;
+								}
+								return true;
+							},
+						},
+				  ]
+				: [] ),
 			{
 				id: 'open-site',
 				isPrimary: true,
@@ -413,6 +414,6 @@ export function useActions( {
 				isEligible: ( site ) => !! site?.is_deleted,
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, selectedItem?.ID ]
+		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType ]
 	);
 }

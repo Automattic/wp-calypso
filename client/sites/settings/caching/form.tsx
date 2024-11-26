@@ -6,12 +6,12 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useDispatch, useSelector } from 'calypso/state';
 import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';

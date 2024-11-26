@@ -26,7 +26,30 @@
 	}
 }
 
-.plugin-action-status-inProgress,
+.plugin-action-status-inProgress {
+	background: #b8e6bf;
+	color: #00450c;
+	/* reference busy state from https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/button/style.scss */
+	animation: plugin-action-status-inProgress__busy-animation 2500ms infinite linear;
+	@media (prefers-reduced-motion: reduce) {
+		animation-duration: 0s;
+	}
+	background-size: 100px 100%;
+	background-image: linear-gradient(
+	-45deg,
+		darken( #b8e6bf, 2%) 33%,
+		darken( #b8e6bf, 12%) 33%,
+		darken( #b8e6bf, 12%) 70%,
+		darken( #b8e6bf, 2%) 70%
+	);
+}
+
+@keyframes plugin-action-status-inProgress__busy-animation {
+	0% {
+		background-position: 200px 0;
+	}
+}
+
 .plugin-action-status-up-to-date {
 	background: #f6f7f7;
 	color: #50575e;

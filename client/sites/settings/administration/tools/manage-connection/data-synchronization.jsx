@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
