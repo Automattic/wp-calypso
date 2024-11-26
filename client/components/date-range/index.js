@@ -72,6 +72,7 @@ export class DateRange extends Component {
 		useArrowNavigation: false,
 		overlay: null,
 		customTitle: '',
+		trackExternalDateChanges: false,
 	};
 
 	constructor( props ) {
