@@ -110,8 +110,6 @@ const StatsDateControl = ( {
 	};
 
 	// Handler for Apply button.
-	// This is being called even when canceling the date selection.
-	// TODO: Fix this so it's only called when the Apply button is clicked.
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
