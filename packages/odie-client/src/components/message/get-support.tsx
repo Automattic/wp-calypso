@@ -1,3 +1,4 @@
+import { NewThirdPartyCookiesNotice } from '@automattic/help-center';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
@@ -20,12 +21,22 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
-	const { chat, isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
+		canConnectToZendesk,
+	} = useOdieAssistantContext();
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
 		return null;
+	}
+
+	if (
+		! canConnectToZendesk &&
+		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
+	) {
+		return <NewThirdPartyCookiesNotice />;
 	}
 
 	const getButtonConfig = (): ButtonConfig => {

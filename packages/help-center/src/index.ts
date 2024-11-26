@@ -4,6 +4,7 @@ export { SuccessIcon } from './components/success-icon';
 export { SuccessScreen } from './components/ticket-success-screen';
 export { BackButton } from './components/back-button';
 export { HelpCenterContactForm } from './components/help-center-contact-form';
+export { NewThirdPartyCookiesNotice } from './components/help-center-third-party-cookies-notice';
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';

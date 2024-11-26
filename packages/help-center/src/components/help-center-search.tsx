@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch } from '@wordpress/data';
@@ -16,6 +15,7 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
+import { NewThirdPartyCookiesNotice } from './help-center-third-party-cookies-notice';
 
 type HelpCenterSearchProps = {
 	onSearchChange?: ( query: string ) => void;
@@ -27,7 +27,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
-	const { sectionName, site } = useHelpCenterContext();
+	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -93,6 +93,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
+			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

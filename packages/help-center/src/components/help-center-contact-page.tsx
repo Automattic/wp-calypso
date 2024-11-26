@@ -193,8 +193,7 @@ const HelpCenterFooterButton = ( {
 	icon: ReactElement;
 } ) => {
 	const { url, isLoading } = useStillNeedHelpURL();
-	const helpCenterContext = useHelpCenterContext();
-	const sectionName = helpCenterContext.sectionName;
+	const { sectionName } = useHelpCenterContext();
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 	const navigate = useNavigate();
 	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
@@ -244,6 +243,7 @@ const HelpCenterFooterButton = ( {
 
 export const HelpCenterContactButton: FC = () => {
 	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const { canConnectToZendesk } = useHelpCenterContext();
 	const { __ } = useI18n();
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
@@ -265,7 +265,10 @@ export const HelpCenterContactButton: FC = () => {
 		...( supportInteractionsOpen || [] ),
 	];
 
-	return shouldUseHelpCenterExperience && supportInteractions && supportInteractions?.length > 0 ? (
+	return shouldUseHelpCenterExperience &&
+		canConnectToZendesk &&
+		supportInteractions &&
+		supportInteractions?.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }

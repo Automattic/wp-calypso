@@ -24,7 +24,7 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site } = useHelpCenterContext();
+	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
 	const { id: conversationId = null } = useParams();
 
 	useEffect( () => {
@@ -43,6 +43,7 @@ export function HelpCenterChat( {
 		<OdieAssistantProvider
 			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
 			currentUser={ currentUser }
+			canConnectToZendesk={ canConnectToZendesk }
 			selectedSiteId={ site?.ID as number }
 			selectedSiteURL={ site?.URL as string }
 			selectedConversationId={ conversationId }
