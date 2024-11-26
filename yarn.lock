@@ -1150,6 +1150,7 @@ __metadata:
     "@popperjs/core": "npm:^2.11.8"
     "@storybook/addon-backgrounds": "npm:^7.6.19"
     "@tanstack/react-query": "npm:^5.15.5"
+    "@types/smooch": "npm:^5.3.7"
     "@wordpress/base-styles": "npm:^5.8.0"
     "@wordpress/components": "npm:^28.8.0"
     "@wordpress/i18n": "npm:^5.8.0"
@@ -1163,7 +1164,6 @@ __metadata:
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
-    "@types/smooch": ^5.3.7
     "@wordpress/data": ^10.8.0
     "@wordpress/element": ^6.8.0
     react: ^18.3.1
@@ -1516,6 +1516,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/autosize": "npm:^4.0.3"

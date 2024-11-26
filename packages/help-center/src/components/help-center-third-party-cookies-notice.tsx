@@ -6,31 +6,6 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-third-party-cookies-notice.scss';
 
-export const NewThirdPartyCookiesNotice: React.FC = () => {
-	const { __ } = useI18n();
-
-	return (
-		<div className="help-center__cookie-warning">
-			<p>
-				<strong>{ __( 'Enable cookies to get support.', __i18n_text_domain__ ) }</strong>
-				&nbsp;
-				{ __(
-					'To access support, please turn on third-party cookies for WordPress.com.',
-					__i18n_text_domain__
-				) }
-				&nbsp;
-				<a
-					target="_blank"
-					rel="noopener noreferrer"
-					href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
-				>
-					{ __( 'Learn more.', __i18n_text_domain__ ) }
-				</a>
-			</p>
-		</div>
-	);
-};
-
 const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
 	const { sectionName } = useHelpCenterContext();

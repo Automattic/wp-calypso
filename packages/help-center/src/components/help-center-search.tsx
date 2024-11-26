@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { NewThirdPartyCookiesNotice } from '@automattic/odie-client';
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -15,7 +16,6 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
-import { NewThirdPartyCookiesNotice } from './help-center-third-party-cookies-notice';
 
 type HelpCenterSearchProps = {
 	onSearchChange?: ( query: string ) => void;
