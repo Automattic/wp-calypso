@@ -111,12 +111,14 @@ const HelpCenterFeedbackForm = ( {
 
 	const handleContactSupportClick = async () => {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
-		await resetSupportInteraction();
-		startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: uuidv4(),
-		} );
-		navigate( '/odie' );
+		if ( isUserEligibleForPaidSupport ) {
+			await resetSupportInteraction();
+			startNewInteraction( {
+				event_source: 'help-center',
+				event_external_id: uuidv4(),
+			} );
+			navigate( '/odie' );
+		}
 	};
 
 	return (
