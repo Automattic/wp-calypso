@@ -8,18 +8,7 @@
 		width: 100%;
 	}
 
-	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-secondary);
-
-		span,
-		.dataviews-view-table-header-button {
-			color: inherit;
-		}
-	}
-
 	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-secondary);
-
 		// dataviews-override: We combine the icon and site title fields to form the horizontal "site" field.
 		// Without this rule the combined field receives justify-content: space-between but we want the icon to be aligned with the text.
 		// This can be removed when https://github.com/WordPress/gutenberg/pull/67226 / Gutenberg 19.8 lands in calypso.
@@ -29,10 +18,6 @@
 				justify-content: flex-start;
 			}
 		}
-	}
-
-	thead tr.dataviews-view-table__row:hover {
-		background: var(--studio-white);
 	}
 
 	tr.dataviews-view-table__row {
