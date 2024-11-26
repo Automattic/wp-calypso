@@ -28,8 +28,8 @@ export function useActions(
 		{
 			id: 'manage-plugin',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'manage-plugin' );
 				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
 			},
 			label: translate( 'Manage Plugin' ),
@@ -40,8 +40,8 @@ export function useActions(
 		{
 			id: 'activate-plugin',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'activate-plugin' );
 				bulkActionDialog( PluginActions.ACTIVATE, plugins );
 			},
 			label: translate( 'Activate' ),
@@ -55,8 +55,8 @@ export function useActions(
 		{
 			id: 'deactivate-plugin',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'deactivate-plugin' );
 				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
 			},
 			label: translate( 'Deactivate' ),
@@ -70,8 +70,8 @@ export function useActions(
 		{
 			id: 'enable-autoupdate',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'enable-autoupdate' );
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Enable auto-updates' ),
@@ -84,8 +84,8 @@ export function useActions(
 		{
 			id: 'disable-autoupdate',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'disable-autoupdate' );
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Disable auto-updates' ),
@@ -98,8 +98,8 @@ export function useActions(
 		{
 			id: 'remove-plugin',
 			href: `some-url`,
-			callback( plugins: Array< Plugin > ) {
-				recordIntentionEvent( plugins, this.id );
+			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'remove-plugin' );
 				bulkActionDialog( PluginActions.REMOVE, plugins );
 			},
 			label: translate( 'Remove' ),
