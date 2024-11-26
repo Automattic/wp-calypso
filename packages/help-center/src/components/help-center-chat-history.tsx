@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { useSmooch } from '@automattic/zendesk-client';
 import { Card, CardHeader, CardBody } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -17,6 +16,7 @@ import {
 	getConversationsFromSupportInteractions,
 	getSortedRecentAndArchivedConversations,
 	getLastMessage,
+	getZendeskConversations,
 } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
@@ -25,6 +25,11 @@ import './help-center-chat-history.scss';
 // temporarily we want to show a simplified version of the chat history
 // this bool controls it.
 const simplifiedHistoryChat = true;
+
+const TAB_STATES = {
+	recent: 'recent',
+	archived: 'archived',
+};
 
 const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 	const { __ } = useI18n();
@@ -60,14 +65,8 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
-	const TAB_STATES = {
-		recent: 'recent',
-		archived: 'archived',
-	};
-
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
-	const { getConversations } = useSmooch();
 	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
 	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
@@ -92,8 +91,8 @@ export const HelpCenterChatHistory = () => {
 		const isLoadingInteractions =
 			isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
 
-		if ( isChatLoaded && getConversations && ! isLoadingInteractions ) {
-			const conversations = getConversations();
+		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
+			const allConversations = getZendeskConversations();
 			const supportInteractions = [
 				...( supportInteractionsResolved || [] ),
 				...( supportInteractionsOpen || [] ),
@@ -101,7 +100,7 @@ export const HelpCenterChatHistory = () => {
 			];
 
 			const filteredConversations = getConversationsFromSupportInteractions(
-				conversations,
+				allConversations,
 				supportInteractions
 			);
 			setConversations( filteredConversations );
@@ -110,8 +109,11 @@ export const HelpCenterChatHistory = () => {
 		supportInteractionsResolved,
 		supportInteractionsOpen,
 		isChatLoaded,
-		getConversations,
 		setUnreadCount,
+		isLoadingResolvedInteractions,
+		isLoadingClosedInteractions,
+		isLoadingOpenInteractions,
+		supportInteractionsClosed,
 	] );
 
 	const EmptyArchivedConversations = () => {

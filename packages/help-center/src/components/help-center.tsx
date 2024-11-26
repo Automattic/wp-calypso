@@ -38,7 +38,7 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
 
 	useEffect( () => {
 		if ( currentUser ) {
@@ -73,7 +73,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			{ shouldUseHelpCenterExperience && <HelpCenterSmooch /> }
+			{ shouldUseHelpCenterExperience && canConnectToZendesk && <HelpCenterSmooch /> }
 		</>,
 		portalParent
 	);
