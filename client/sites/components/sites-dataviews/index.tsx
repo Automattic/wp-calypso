@@ -120,6 +120,15 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
+				id: 'icon',
+				render: ( { item }: { item: SiteExcerptData } ) => {
+					return <SiteIcon site={ item } openSitePreviewPane={ openSitePreviewPane } />;
+				},
+				enableHiding: false,
+				enableSorting: false,
+				enableGlobalSearch: false,
+			},
+			{
 				id: 'site-title',
 				label: __( 'Site Title' ),
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
@@ -177,15 +186,6 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: true,
 				getValue: () => null,
-			},
-			{
-				id: 'icon',
-				render: ( { item }: { item: SiteExcerptData } ) => {
-					return <SiteIcon site={ item } openSitePreviewPane={ openSitePreviewPane } />;
-				},
-				enableHiding: false,
-				enableSorting: false,
-				enableGlobalSearch: false,
 			},
 		],
 		[ __, openSitePreviewPane, userId, siteStatusGroups ]
