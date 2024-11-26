@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -23,8 +22,6 @@ import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
-
-const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -56,6 +53,8 @@ class StatModuleChartTabs extends Component {
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
 		showChartHeader: PropTypes.bool,
+		// Temporary prop to enable new date filtering UI.
+		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -114,6 +113,7 @@ class StatModuleChartTabs extends Component {
 			className,
 			countsComp,
 			showChartHeader = false,
+			isNewDateFilteringEnabled = false,
 		} = this.props;
 		const classes = [
 			'is-chart-tabs',
@@ -182,7 +182,15 @@ const memoizedQuery = memoizeLast(
 const connectComponent = connect(
 	(
 		state,
-		{ activeLegend, period: { period }, chartTab, queryDate, customQuantity, customRange }
+		{
+			isNewDateFilteringEnabled = false,
+			activeLegend,
+			period: { period },
+			chartTab,
+			queryDate,
+			customQuantity,
+			customRange,
+		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
@@ -281,6 +289,7 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			isNewDateFilteringEnabled,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }

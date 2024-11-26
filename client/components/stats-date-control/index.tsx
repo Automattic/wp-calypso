@@ -19,6 +19,8 @@ interface StatsDateControlProps {
 		event_from: string,
 		stat_type: string
 	) => void;
+	// Temporary prop to enable new date filtering UI.
+	isNewDateFilteringEnabled: boolean;
 }
 
 // Define the event name keys for tracking events
@@ -71,6 +73,7 @@ const StatsDateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
+	isNewDateFilteringEnabled = false,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
@@ -78,7 +81,6 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
@@ -142,6 +144,7 @@ const StatsDateControl = ( {
 			tooltip={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
 			overlay={ overlay }
 			shortcutList={ shortcutList }
+			isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 		/>
 	);
 };

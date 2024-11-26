@@ -18,6 +18,8 @@ const DateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
+	// Temporary prop to enable new date filtering UI.
+	isNewDateFilteringEnabled = false,
 }: DateControlProps ) => {
 	const moment = useLocalizedMoment();
 	const siteToday = useMomentSiteZone();
@@ -100,6 +102,7 @@ const DateControl = ( {
 				customTitle="Date Range"
 				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
 				onShortcutClick={ onShortcutClick }
+				isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 			/>
 		</div>
 	);
