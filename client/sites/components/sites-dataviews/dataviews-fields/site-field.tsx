@@ -1,4 +1,4 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -92,7 +92,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
-		<button className="sites-dataviews__site" onClick={ onSiteClick }>
+		<Button
+			className="sites-dataviews__site"
+			onClick={ onSiteClick }
+			borderless
+			disabled={ site.is_deleted }
+		>
 			<SiteListTile
 				contentClassName={ clsx(
 					'sites-dataviews__site-name',
@@ -114,22 +119,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					</ListTileTitle>
 				}
 				subtitle={
-					site.is_deleted ? (
-						<>
-							<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-						</>
-					) : (
-						<>
-							<div className="sites-dataviews__site-urls">
-								<Truncated className="sites-dataviews__site-url">
-									{ displaySiteUrl( siteUrl ) }
-								</Truncated>
-							</div>
-						</>
-					)
+					<div className="sites-dataviews__site-urls">
+						<Truncated className="sites-dataviews__site-url">
+							{ displaySiteUrl( siteUrl ) }
+						</Truncated>
+					</div>
 				}
 			/>
-		</button>
+		</Button>
 	);
 };
 

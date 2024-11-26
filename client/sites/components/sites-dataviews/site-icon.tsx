@@ -20,7 +20,7 @@ export default function SiteIcon( {
 	openSitePreviewPane,
 }: {
 	site: SiteExcerptData;
-	openSitePreviewPane?: (
+	openSitePreviewPane: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
@@ -29,7 +29,7 @@ export default function SiteIcon( {
 	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
-	const onSiteClick = ( event: React.MouseEvent ) => {
+	const onClick = ( event: React.MouseEvent ) => {
 		if (
 			isAdmin &&
 			! isP2Site &&
@@ -48,8 +48,8 @@ export default function SiteIcon( {
 
 	return (
 		<Button
-			className="sites-dataviews__preview-trigger"
-			onClick={ onSiteClick }
+			className="sites-dataviews__site-icon"
+			onClick={ onClick }
 			borderless
 			disabled={ site.is_deleted }
 		>

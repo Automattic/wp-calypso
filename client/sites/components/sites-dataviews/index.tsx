@@ -103,7 +103,7 @@ const DotcomSitesDataViews = ( {
 				return;
 			}
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
-			if ( site ) {
+			if ( site && ! site.is_deleted ) {
 				openSitePreviewPane( site, 'list_row_click' );
 			}
 		},
@@ -186,7 +186,7 @@ const DotcomSitesDataViews = ( {
 				label: 'Icon',
 				header: <span>{ __( 'Site' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => {
-					return <SiteIcon site={ item } />;
+					return <SiteIcon site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
