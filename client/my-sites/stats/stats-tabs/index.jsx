@@ -1,5 +1,3 @@
-import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -82,19 +80,12 @@ class StatsTabs extends Component {
 					selected: selectedTab === tab.attr,
 					tabClick: hasTrend ? switchTab : undefined,
 					value,
+					previousValue,
 					format: tab.format,
+					hasPreviousData: !! previousData,
 				};
 
-				return (
-					<StatTab key={ tabOptions.attr } { ...tabOptions }>
-						{ previousData && (
-							<div className="stats-tabs__highlight">
-								<span className="stats-tabs__highlight-value">{ formatNumber( value ) }</span>
-								<TrendComparison count={ value } previousCount={ previousValue } />
-							</div>
-						) }
-					</StatTab>
-				);
+				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
 			} );
 		}
 
