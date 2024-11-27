@@ -843,8 +843,9 @@ const PlansFeaturesMain = ( {
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
 										enableTermSavingsPriceDisplay={
-											isEnabled( 'plans/term-savings-price-display' ) ||
-											longerPlanTermDefaultExperiment.isEligibleForTermSavings
+											( isEnabled( 'plans/term-savings-price-display' ) ||
+												longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+											isInSignup
 										}
 									/>
 								) }
@@ -906,8 +907,9 @@ const PlansFeaturesMain = ( {
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={
-														isEnabled( 'plans/term-savings-price-display' ) ||
-														longerPlanTermDefaultExperiment.isEligibleForTermSavings
+														( isEnabled( 'plans/term-savings-price-display' ) ||
+															longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+														isInSignup
 													}
 												/>
 											) }
