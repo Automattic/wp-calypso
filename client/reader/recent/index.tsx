@@ -207,7 +207,12 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					/>
 				</div>
 			</div>
-			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
+			<section
+				aria-labelledby={ selectedItem ? `post-${ selectedItem.postId }` : undefined }
+				ref={ postColumnRef }
+				className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }
+				tabIndex={ -1 }
+			>
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
@@ -225,13 +230,21 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							require="calypso/blocks/reader-full-post"
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
-							onClose={ () => setSelectedItem( null ) }
+							onClose={ () => {
+								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								if ( ! isWide ) {
+									setSelectedItem( null );
+								}
+								requestAnimationFrame( () => {
+									focusItem?.focus();
+								} );
+							} }
 							layout="recent"
 						/>
 						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
 					</>
 				) }
-			</div>
+			</section>
 		</div>
 	);
 };
