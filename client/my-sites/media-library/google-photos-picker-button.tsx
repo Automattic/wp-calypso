@@ -1,6 +1,5 @@
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
-import './google-photos-picker-button.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import mediaImage from 'calypso/assets/images/illustrations/media.svg';
