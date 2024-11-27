@@ -312,7 +312,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// If the user skips starting point, redirect them to the post editor
-					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
+					if ( isGoalsHoldout && intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 						}
@@ -384,8 +384,8 @@ const siteSetupFlow: Flow = {
 
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
+
 						case SiteIntent.Write:
-							return navigate( 'options' );
 						case SiteIntent.Sell:
 							// If we're not in the holdout, intentionally fall through to the default case
 							if ( isGoalsHoldout ) {
@@ -536,7 +536,6 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 						case SiteIntent.Write:
-							return navigate( 'bloggerStartingPoint' );
 						case SiteIntent.Sell:
 							// If we're not in the holdout, intentionally fall through to the default case
 							if ( isGoalsHoldout ) {
