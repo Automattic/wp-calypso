@@ -17,7 +17,7 @@ export const DislikeFeedbackMessage = () => {
 	const handleContactSupportClick = () => {
 		trackEvent( 'chat_dislike_feedback', {
 			force_site_id: true,
-			botName,
+			bot_name: botName,
 			location: 'chat',
 			is_user_eligible: isUserEligibleForPaidSupport,
 		} );
