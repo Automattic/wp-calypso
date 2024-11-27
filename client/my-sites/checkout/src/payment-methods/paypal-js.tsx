@@ -62,6 +62,8 @@ function PayPalSubmitButton( {
 } ) {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
+
+	// Wait for PayPal.js to load before marking this payment method as active.
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
 	useEffect( () => {
 		if ( isResolved ) {
