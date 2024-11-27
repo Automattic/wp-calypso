@@ -124,6 +124,17 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			} ),
 		};
 
+		const INCLUDED_PRODUCT_DESCRIPTION_GROWTH_MAP: Record< string, ProductDescription > = {
+			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
+			...INCLUDED_PRODUCT_DESCRIPTION_T2_MAP,
+
+			// overvrite stats description
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
+				value: statsDescription,
+				calloutText: translate( '10k views/mo' ),
+			} ),
+		};
+
 		const productMap = ( () => {
 			const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
 				productSlug
@@ -133,8 +144,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				productSlug
 			);
 
-			if ( isJetpackCompletePlan || isJetpackGrowthPlan ) {
+			if ( isJetpackCompletePlan ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
+			} else if ( isJetpackGrowthPlan ) {
+				return INCLUDED_PRODUCT_DESCRIPTION_GROWTH_MAP;
 			}
 
 			return INCLUDED_PRODUCT_DESCRIPTION_T1_MAP;

@@ -53,6 +53,7 @@
 
 	&.featured-item-card--vertical {
 		flex-direction: row;
+		justify-content: flex-start;
 
 		@media only screen and (min-width: 1125px) {
 			flex-direction: column;
@@ -105,7 +106,7 @@
 	}
 
 	.featured-item-card--vertical & {
-
+		max-width: 400px;
 		@media only screen and (min-width: 1125px) {
 			width: 100%;
 			height: 100%;
