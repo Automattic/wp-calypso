@@ -24,6 +24,7 @@ export const UserMessage = ( {
 		isUserEligibleForPaidSupport,
 		shouldUseHelpCenterExperience,
 		trackEvent,
+		chat,
 	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
@@ -43,7 +44,14 @@ export const UserMessage = ( {
 		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
 	const renderExtraContactOptions = () => {
-		return shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions;
+		const currentMessageIndex = chat.messages.findIndex(
+			( msg ) => msg.message_id === message.message_id
+		);
+		const isLastMessage = currentMessageIndex === chat.messages.length - 1;
+
+		return (
+			isLastMessage && ( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions )
+		);
 	};
 
 	const isMessageShowingDisclaimer =

@@ -10,10 +10,7 @@
 	.sites-dataviews__site {
 		display: flex;
 		flex-direction: row;
-		padding-bottom: 8px;
-		padding-top: 8px;
-		// not to cut off the focus outline
-		padding-left: 2px;
+		padding: 0;
 		overflow: hidden;
 		cursor: pointer;
 
@@ -50,7 +47,6 @@
 	}
 
 	.sites-dataviews__site-name {
-		align-self: center;
 		display: inline-block;
 		text-align: left;
 		text-overflow: ellipsis;
@@ -65,6 +61,7 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+		line-height: 18px;
 	}
 
 	.sites-dataviews__site-url {
@@ -110,6 +107,9 @@
 		color: var(--color-warning-80);
 	}
 
+	.stats-sparkline {
+		padding-top: 0;
+	}
 }
 
 .is-section-a8c-for-agencies-sites {
@@ -129,20 +129,5 @@
 		[role="menuitemradio"] {
 			border-radius: 4px;
 		}
-	}
-}
-
-.sites-dashboard__layout:not(.preview-hidden) {
-	.sites-dataviews__preview-trigger {
-		flex-shrink: 0;
-	}
-
-	.sites-dataviews__site {
-		padding: 2px 0 2px 2px;
-	}
-
-	.sites-dataviews__site-name {
-		padding: 0;
-		align-self: flex-start;
 	}
 }

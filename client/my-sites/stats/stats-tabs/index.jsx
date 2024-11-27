@@ -25,7 +25,7 @@ class StatsTabs extends Component {
 		aggregate: PropTypes.bool,
 	};
 
-	formatData = ( data, aggregate = true ) => {
+	formatData = ( data, aggregate = false ) => {
 		const { activeIndex, activeKey, tabs } = this.props;
 		let activeData = {};
 		if ( ! aggregate ) {

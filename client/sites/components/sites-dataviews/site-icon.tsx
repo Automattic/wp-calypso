@@ -17,12 +17,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 export default function SiteIcon( {
 	site,
 	openSitePreviewPane,
+	viewType,
 }: {
 	site: SiteExcerptData;
 	openSitePreviewPane: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
+	viewType: 'list' | 'table' | 'grid';
 } ) {
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );
 	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
@@ -56,7 +58,7 @@ export default function SiteIcon( {
 				className="sites-site-favicon"
 				blogId={ site.ID }
 				fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
-				size={ 52 }
+				size={ viewType === 'list' ? 52 : 32 }
 			/>
 		</ThumbnailLink>
 	);
