@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
@@ -77,12 +78,20 @@ const ChatEllipsisMenu = () => {
 			event_external_id: uuidv4(),
 		} );
 		clearHelpCenterZendeskConversationStarted();
+		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	};
+
+	const menuTrackEventProps = {
+		props: {
+			source: 'help_center',
+		},
 	};
 
 	return (
 		<EllipsisMenu
 			popoverClassName="help-center help-center__container-header-menu"
 			position="bottom"
+			trackEventProps={ menuTrackEventProps }
 		>
 			<div className="clear-conversation__wrapper">
 				<button onClick={ clearChat }>

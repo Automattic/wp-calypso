@@ -207,7 +207,7 @@ const HelpCenterFooterButton = ( {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-			button_type: buttonTextEventProp,
+			button_content: buttonTextEventProp,
 		} );
 	};
 

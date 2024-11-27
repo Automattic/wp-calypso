@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useRef, useState, FunctionComponent, PropsWithChildren } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import PopoverMenu from 'calypso/components/popover-menu';
+import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
 
 import './style.scss';
@@ -10,18 +11,24 @@ import './style.scss';
 type EllipsisMenuProps = {
 	position?: string;
 	popoverClassName?: string;
+	trackEventProps?: { props: Record< string, unknown > };
 } & PropsWithChildren;
 
 export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 	position,
 	children,
 	popoverClassName,
+	trackEventProps,
 } ) => {
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const popoverContext = useRef< HTMLButtonElement >( null );
+	const { trackEvent } = useOdieAssistantContext();
 
 	const handleClick = () => {
 		setMenuVisible( ! isMenuVisible );
+		if ( isMenuVisible && trackEvent && trackEventProps ) {
+			trackEvent( 'open_ellipsis_menu', trackEventProps );
+		}
 	};
 
 	const hideMenu = () => {

@@ -11,7 +11,12 @@ export const DislikeFeedbackMessage = () => {
 		extraContactOptions,
 		botName,
 		isUserEligibleForPaidSupport,
+		trackEvent,
 	} = useOdieAssistantContext();
+
+	const handleContactSupportClick = () => {
+		trackEvent( 'chat_dislike_feedback' );
+	};
 
 	const renderEligibleUserMessage = () => {
 		return (
@@ -51,7 +56,7 @@ export const DislikeFeedbackMessage = () => {
 						: renderNotEligibleUserMessage() }
 				</div>
 
-				<GetSupport />
+				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
 			</>
 		);
 	};
