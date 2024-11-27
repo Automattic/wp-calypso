@@ -10,8 +10,7 @@
 	.sites-dataviews__site {
 		display: flex;
 		flex-direction: row;
-		// not to cut off the focus outline
-		padding-left: 2px;
+		padding: 0;
 		overflow: hidden;
 		cursor: pointer;
 
@@ -129,20 +128,5 @@
 		[role="menuitemradio"] {
 			border-radius: 4px;
 		}
-	}
-}
-
-.sites-dashboard__layout:not(.preview-hidden) {
-	.sites-dataviews__preview-trigger {
-		flex-shrink: 0;
-	}
-
-	.sites-dataviews__site {
-		padding: 2px 0 2px 2px;
-	}
-
-	.sites-dataviews__site-name {
-		padding: 0;
-		align-self: flex-start;
 	}
 }
