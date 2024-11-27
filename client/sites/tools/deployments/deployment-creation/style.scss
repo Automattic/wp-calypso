@@ -1,5 +1,5 @@
 .repository-selection-dialog {
-	width: 622px;
+	max-width: 622px;
 	height: 515px;
 	display: flex;
 	flex-direction: column;
@@ -10,6 +10,7 @@
 	}
 
 	.formatted-header {
+		margin: 0;
 		margin-bottom: 24px !important;
 	}
 
