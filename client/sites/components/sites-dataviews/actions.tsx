@@ -229,7 +229,7 @@ export function useActions( {
 					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
 					if (
 						site.is_deleted ||
-						// ! canManageOptions || // todo Do non manage_options users have access to this acreen?
+						// ! canManageOptions || // TODO: Do non manage_options users have access to this acreen?
 						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
@@ -255,7 +255,7 @@ export function useActions( {
 					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
 					if (
 						site.is_deleted ||
-						// ! canManageOptions || // todo Do non manage_options users have access to this acreen?
+						// ! canManageOptions || // TODO: Do non manage_options users have access to this acreen?
 						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
@@ -448,6 +448,85 @@ export function useActions( {
 					restoreSite( site.ID );
 				},
 				isEligible: ( site ) => !! site?.is_deleted,
+			},
+
+			// Jetpack menu items
+			{
+				label: __( 'Jetpack Cloud' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					window.location.href = `https://cloud.jetpack.com/landing/${ site.slug }`;
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_jetpack_cloud_click' );
+				},
+				isEligible: ( site ) => {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						return false;
+					}
+
+					return isNotAtomicJetpack( site );
+				},
+			},
+			{
+				label: __( 'Billing' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					window.location.href = `https://cloud.jetpack.com/purchases/${ site.slug }`;
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_jetpack_billing_click' );
+				},
+				isEligible: ( site ) => {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						return false;
+					}
+
+					return isNotAtomicJetpack( site );
+				},
+			},
+			{
+				label: __( 'Support' ),
+				callback: () => {
+					window.location.href = `https://jetpack.com/support`;
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_jetpack_support_click' );
+				},
+				isEligible: ( site ) => {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						return false;
+					}
+
+					return isNotAtomicJetpack( site );
+				},
+			},
+			{
+				label: __( 'Migrate to WordPress.com' ),
+				callback: () => {
+					page( '/move' );
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
+				},
+				isEligible: ( site ) => {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if ( site.is_deleted || ! canManageOptions || isP2Site( site ) ) {
+						return false;
+					}
+
+					return isNotAtomicJetpack( site ) || isDisconnectedJetpackAndNotAtomic( site );
+				},
 			},
 		],
 		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType ]
