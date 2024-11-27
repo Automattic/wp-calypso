@@ -13,28 +13,34 @@ import Recent from '../recent';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
+	let MainComponent: JSX.Element;
+
+	if ( config.isEnabled( 'reader/recent-feed-overhaul' ) ) {
+		MainComponent = <Recent />;
+	} else {
+		MainComponent = (
+			<Stream
+				{ ...props }
+				className="following"
+				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+			>
+				<BloganuaryHeader />
+				<NavigationHeader
+					title={ translate( 'Recent' ) }
+					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+					className={ clsx( 'following-stream-header', {
+						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+					} ) }
+				/>
+
+				<ReaderOnboarding />
+			</Stream>
+		);
+	}
+
 	return (
 		<>
-			{ config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent />
-			) : (
-				<Stream
-					{ ...props }
-					className="following"
-					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
-				>
-					<BloganuaryHeader />
-					<NavigationHeader
-						title={ translate( 'Recent' ) }
-						subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
-						className={ clsx( 'following-stream-header', {
-							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-						} ) }
-					/>
-
-					<ReaderOnboarding />
-				</Stream>
-			) }
+			{ MainComponent }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);
