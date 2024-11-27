@@ -15,7 +15,12 @@ export const DislikeFeedbackMessage = () => {
 	} = useOdieAssistantContext();
 
 	const handleContactSupportClick = () => {
-		trackEvent( 'chat_dislike_feedback' );
+		trackEvent( 'chat_dislike_feedback', {
+			force_site_id: true,
+			botName,
+			location: 'chat',
+			isUserEligibleForPaidSupport,
+		} );
 	};
 
 	const renderEligibleUserMessage = () => {
