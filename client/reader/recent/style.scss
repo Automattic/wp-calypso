@@ -155,10 +155,10 @@
 			.recent-feed__list-column-header {
 				max-width: none;
 				margin: 0;
-				padding: 16px 0;
+				padding: 16px 24px;
 				border-bottom: 1px solid var( --studio-gray-0 );
 
-				header {
+				header.navigation-header {
 					max-width: $break-medium;
 					margin: 0 auto;
 					padding: 0;
