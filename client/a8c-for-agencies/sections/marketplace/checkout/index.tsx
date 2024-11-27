@@ -209,7 +209,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	}
 
 	if ( isClient ) {
-		actionContent = <SubmitPaymentInfo disableButton={ checkoutItems?.length === 0 } isClient />;
+		actionContent = <SubmitPaymentInfo disableButton={ checkoutItems?.length === 0 } />;
 	}
 
 	return (
