@@ -62,10 +62,13 @@ class StatsDatePicker extends Component {
 		const localizedStartDate = moment( query.start_date );
 		const localizedEndDate = moment( query.date );
 
+		const firstFormatString =
+			localizedStartDate.year() === localizedEndDate.year() ? 'MMM D' : 'll';
+
 		return translate( '%(startDate)s ~ %(endDate)s', {
 			context: 'Date range for which stats are being displayed',
 			args: {
-				startDate: localizedStartDate.format( 'll' ),
+				startDate: localizedStartDate.format( firstFormatString ),
 				endDate: localizedEndDate.format( 'll' ),
 			},
 		} );
