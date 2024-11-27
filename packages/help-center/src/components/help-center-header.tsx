@@ -81,17 +81,11 @@ const ChatEllipsisMenu = () => {
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
 
-	const menuTrackEventProps = {
-		props: {
-			source: 'help_center',
-		},
-	};
-
 	return (
 		<EllipsisMenu
 			popoverClassName="help-center help-center__container-header-menu"
 			position="bottom"
-			trackEventProps={ menuTrackEventProps }
+			trackEventProps={ { source: 'help_center' } }
 		>
 			<div className="clear-conversation__wrapper">
 				<button onClick={ clearChat }>
