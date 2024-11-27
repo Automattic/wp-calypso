@@ -19,7 +19,7 @@ export const DislikeFeedbackMessage = () => {
 			force_site_id: true,
 			botName,
 			location: 'chat',
-			isUserEligibleForPaidSupport,
+			is_user_eligible: isUserEligibleForPaidSupport,
 		} );
 	};
 
