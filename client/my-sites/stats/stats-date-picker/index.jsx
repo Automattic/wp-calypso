@@ -93,7 +93,7 @@ class StatsDatePicker extends Component {
 			context: 'Date range for which stats are being displayed',
 			args: {
 				startDate: localizedStartDate.format( firstFormatString ),
-				endDate: localizedEndDate.format( 'll' ),
+				endDate: localizedEndDate.format( `${ firstFormatString }, YYYY` ),
 			},
 		} );
 	}
