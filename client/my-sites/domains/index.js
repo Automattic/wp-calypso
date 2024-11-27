@@ -9,6 +9,7 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
+import emailController from 'calypso/my-sites/email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import * as paths from './paths';
@@ -150,10 +151,20 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementRoot() + '-overview/:domain',
-		noSite,
+		paths.domainManagementRoot() + '/overview/:domain/:site',
+		siteSelection,
 		navigation,
 		domainManagementController.domainManagementV2,
+		domainManagementController.domainDashboard( 'domain-management' ),
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementRoot() + '/email/:domain',
+		noSite,
+		navigation,
+		emailController.emailManagementPurchaseNewEmailAccount,
 		domainManagementController.domainDashboard( 'domain-management' ),
 		makeLayout,
 		clientRender

@@ -19,7 +19,7 @@ export function domainManagementLink(
 	}
 
 	if ( isAllSitesView ) {
-		return `${ domainManagementRoot() }-overview/${ domain }`;
+		return `${ domainManagementRoot() }/overview/${ domain }/${ siteSlug }`;
 	}
 
 	return `${ domainManagementRoot() }/${ domain }/${ viewSlug }/${ siteSlug }`;
