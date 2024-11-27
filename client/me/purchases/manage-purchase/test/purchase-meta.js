@@ -24,6 +24,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -63,6 +66,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -102,6 +108,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -141,6 +150,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -180,6 +192,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -219,6 +234,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -258,6 +276,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -298,6 +319,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -338,6 +362,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
@@ -380,6 +407,9 @@ describe( 'PurchaseMeta', () => {
 				},
 				sites: {
 					requestingAll: false,
+					domains: {
+						items: [],
+					},
 				},
 				currentUser: {
 					id: 1,
