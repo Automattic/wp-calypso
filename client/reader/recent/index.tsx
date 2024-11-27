@@ -31,6 +31,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
+	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -98,7 +99,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				getValue: ( { item }: { item: ReaderPost } ) =>
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentPostField post={ getPostFromItem( item ) } />;
+					return (
+						<RecentPostField
+							ref={ ( el ) => {
+								itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+							} }
+							post={ getPostFromItem( item ) }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
