@@ -23,7 +23,8 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, shouldUseHelpCenterExperience, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser, site, shouldUseHelpCenterExperience, canConnectToZendesk } =
+		useHelpCenterContext();
 	const { id: conversationId = null } = useParams();
 
 	useEffect( () => {
