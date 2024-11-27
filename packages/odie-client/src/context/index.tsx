@@ -89,7 +89,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat( shouldUseHelpCenterExperience );
+	const { mainChatState, setMainChatState } = useGetCombinedChat(
+		canConnectToZendesk,
+		shouldUseHelpCenterExperience
+	);
 
 	/**
 	 * Tracking event.
