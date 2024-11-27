@@ -452,6 +452,7 @@ export function useActions( {
 
 			// Jetpack menu items
 			{
+				id: 'jetpack-cloud',
 				label: __( 'Jetpack Cloud' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
@@ -473,6 +474,7 @@ export function useActions( {
 				},
 			},
 			{
+				id: 'jetpack-billing',
 				label: __( 'Billing' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
@@ -494,6 +496,7 @@ export function useActions( {
 				},
 			},
 			{
+				id: 'jetpack-support',
 				label: __( 'Support' ),
 				callback: () => {
 					window.location.href = `https://jetpack.com/support`;
@@ -514,6 +517,7 @@ export function useActions( {
 				},
 			},
 			{
+				id: 'migrate-to-wpcom',
 				label: __( 'Migrate to WordPress.com' ),
 				callback: () => {
 					page( '/move' );
