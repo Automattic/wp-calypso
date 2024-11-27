@@ -93,6 +93,15 @@ const migrationSignup: Flow = {
 					};
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
+
+						// Substack specific migration flow
+						if ( platform === 'substack' ) {
+							return exitFlow(
+								addQueryArgs( { from }, `/import/newsletter/substack/${ siteSlug }` )
+							);
+						}
+
+						// Other importers
 						return exitFlow(
 							addQueryArgs(
 								{

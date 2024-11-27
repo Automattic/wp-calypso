@@ -139,6 +139,20 @@ const siteMigration: Flow = {
 								return navigate( STEPS.SITE_CREATION_STEP.slug );
 							}
 						}
+
+						// Substack specific migration flow
+						if ( platform === 'substack' ) {
+							return exitFlow(
+								addQueryArgs(
+									{
+										from: from || fromQueryParam,
+									},
+									`/import/newsletter/substack/${ siteSlug }`
+								)
+							);
+						}
+
+						// Other importers
 						return exitFlow(
 							addQueryArgs(
 								{
