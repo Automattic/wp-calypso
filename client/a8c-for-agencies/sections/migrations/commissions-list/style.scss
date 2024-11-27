@@ -5,3 +5,8 @@
 .migrations-commissions-list-mobile-view__column {
 	@include a4a-font-body-md;
 }
+
+.untag-site__dialog {
+	text-wrap: pretty;
+    max-width: 800px;
+}
