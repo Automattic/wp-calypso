@@ -64,7 +64,10 @@ class StatsTabs extends Component {
 		if ( data && ! children ) {
 			const trendData = this.formatData( data, aggregate );
 			const activeData = { ...tabCountsAlt, ...trendData };
-			const activePreviousData = { ...tabCountsAltComp, ...this.formatData( previousData ) };
+			const activePreviousData = {
+				...tabCountsAltComp,
+				...this.formatData( previousData, aggregate ),
+			};
 
 			statsTabs = tabs.map( ( tab ) => {
 				const hasTrend = trendData?.[ tab.attr ] >= 0 && trendData[ tab.attr ] !== null;
