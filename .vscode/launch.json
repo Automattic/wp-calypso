@@ -15,6 +15,14 @@
 			"type": "chrome",
 			"url": "http://calypso.localhost:3000",
 			"webRoot": "${workspaceFolder}/client"
+		},
+		{
+			"name": "Launch Firefox",
+			"request": "launch",
+			"reAttach": true,
+			"type": "firefox",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client"
 		}
 	]
 }
