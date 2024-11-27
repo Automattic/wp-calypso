@@ -1,5 +1,6 @@
 import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import {
 	SiteExcerptData,
 	SITE_EXCERPT_REQUEST_FIELDS,
@@ -243,6 +244,9 @@ export function useActions( {
 	viewType: 'list' | 'table' | 'grid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
+
+	const localizeUrl = useLocalizeUrl();
+
 	const dispatch = useReduxDispatch();
 
 	const queryClient = useQueryClient();
@@ -539,12 +543,12 @@ export function useActions( {
 				id: 'migrate-to-wpcom',
 				label: __( 'Migrate to WordPress.com' ),
 				callback: () => {
-					page( '/move' );
+					page( localizeUrl( 'https://wordpress.com/move' ) );
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
 				},
 				isEligible: isActionEligible( 'migrate-to-wpcom', capabilities ),
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType ]
+		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]
 	);
 }
