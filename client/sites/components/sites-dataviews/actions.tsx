@@ -189,6 +189,7 @@ export function useActions( {
 				},
 			},
 
+			// https://github.com/Automattic/wp-calypso/pull/93737
 			{
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
@@ -230,7 +231,6 @@ export function useActions( {
 					if (
 						site.is_deleted ||
 						! canManageOptions ||
-						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
 					) {
@@ -256,7 +256,6 @@ export function useActions( {
 					if (
 						site.is_deleted ||
 						! canManageOptions ||
-						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
 					) {
@@ -338,11 +337,18 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_plugins_click' ) );
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
-					return ! isP2Site( site );
+					return !! site.is_wpcom_atomic;
 				},
 			},
 
@@ -359,7 +365,14 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
@@ -388,7 +401,14 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
@@ -410,7 +430,13 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
@@ -430,13 +456,19 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
 					const hasCustomDomain = isCustomDomain( site.slug );
-					const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
-					return hasCustomDomain && ! isSiteJetpackNotAtomic;
+					return hasCustomDomain;
 				},
 			},
 
@@ -447,7 +479,19 @@ export function useActions( {
 					const site = sites[ 0 ];
 					restoreSite( site.ID );
 				},
-				isEligible: ( site ) => !! site?.is_deleted,
+				isEligible: ( site ) => {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						return false;
+					}
+
+					return !! site?.is_deleted;
+				},
 			},
 
 			// Jetpack menu items
@@ -529,7 +573,7 @@ export function useActions( {
 						return false;
 					}
 
-					return isNotAtomicJetpack( site ) || isDisconnectedJetpackAndNotAtomic( site );
+					return isNotAtomicJetpack( site ) || !! isDisconnectedJetpackAndNotAtomic( site );
 				},
 			},
 		],
