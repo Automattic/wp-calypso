@@ -6,6 +6,8 @@ interface PayPalConfigurationApiResponse {
 	client_id: string | undefined;
 }
 
+export type FetchPayPalConfiguration = () => Promise< PayPalConfigurationApiResponse >;
+
 export interface PayPalConfiguration {
 	clientId: string | undefined;
 }
@@ -14,7 +16,7 @@ export interface UsePayPalConfiguration {
 	payPalConfiguration: PayPalConfiguration | undefined;
 }
 
-async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
+async function defaultFetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
 	return await wpcomRequest( {
 		path: `/me/paypal-configuration`,
 		method: 'GET',
@@ -27,7 +29,11 @@ const defaultConfiguration: PayPalConfiguration = {
 	clientId: undefined,
 };
 
-function usePayPalConfigurationInternalOnly(): {
+function usePayPalConfigurationInternalOnly( {
+	fetchPayPalConfiguration,
+}: {
+	fetchPayPalConfiguration?: FetchPayPalConfiguration;
+} ): {
 	payPalConfiguration: PayPalConfiguration | undefined;
 	error: undefined | Error;
 } {
@@ -38,7 +44,7 @@ function usePayPalConfigurationInternalOnly(): {
 
 	useEffect( () => {
 		let isSubscribed = true;
-		fetchPayPalConfiguration()
+		( fetchPayPalConfiguration ?? defaultFetchPayPalConfiguration )()
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
@@ -56,7 +62,7 @@ function usePayPalConfigurationInternalOnly(): {
 		return () => {
 			isSubscribed = false;
 		};
-	}, [] );
+	}, [ fetchPayPalConfiguration ] );
 
 	return { payPalConfiguration, error: configurationError };
 }
@@ -72,8 +78,14 @@ export function usePayPalConfiguration(): UsePayPalConfiguration {
 export function PayPalProvider( {
 	children,
 	currency,
-}: PropsWithChildren< { currency: string } > ) {
-	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly();
+	fetchPayPalConfiguration,
+}: PropsWithChildren< {
+	currency: string;
+	fetchPayPalConfiguration?: FetchPayPalConfiguration;
+} > ) {
+	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly( {
+		fetchPayPalConfiguration,
+	} );
 
 	if ( error ) {
 		throw error;

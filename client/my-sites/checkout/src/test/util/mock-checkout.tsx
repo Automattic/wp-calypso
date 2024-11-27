@@ -1,3 +1,4 @@
+import { PayPalProvider } from '@automattic/calypso-paypal';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
@@ -9,6 +10,7 @@ import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main
 import {
 	mockGetCartEndpointWith,
 	fetchStripeConfiguration,
+	fetchPayPalConfiguration,
 	fetchRazorpayConfiguration,
 	siteId,
 	mockSetCartEndpointWith,
@@ -47,11 +49,13 @@ export function MockCheckout( {
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
-							<CheckoutMain
-								siteId={ useUndefinedSiteId ? undefined : siteId }
-								siteSlug="foo.com"
-								{ ...additionalProps }
-							/>
+							<PayPalProvider currency="USD" fetchPayPalConfiguration={ fetchPayPalConfiguration }>
+								<CheckoutMain
+									siteId={ useUndefinedSiteId ? undefined : siteId }
+									siteSlug="foo.com"
+									{ ...additionalProps }
+								/>
+							</PayPalProvider>
 						</RazorpayHookProvider>
 					</StripeHookProvider>
 				</ShoppingCartProvider>
