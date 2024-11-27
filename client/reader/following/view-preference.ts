@@ -9,7 +9,7 @@ export const DEFAULT_VIEW: ReaderFollowingView = 'stream';
 
 export const useFollowingView = () => {
 	const dispatch = useDispatch();
-	const currentView = useSelector(
+	const currentView: ReaderFollowingView = useSelector(
 		( state ) => getPreference( state, READER_FOLLOWING_VIEW_PREFERENCE ) ?? DEFAULT_VIEW
 	);
 

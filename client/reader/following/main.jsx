@@ -17,12 +17,8 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView, setView } = useFollowingView();
 
-	const handleViewChange = ( view ) => {
-		setView( view );
-	};
-
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-		<ViewToggle currentView={ currentView } onChange={ handleViewChange } />
+		<ViewToggle currentView={ currentView } onChange={ setView } />
 	) : null;
 
 	return (
