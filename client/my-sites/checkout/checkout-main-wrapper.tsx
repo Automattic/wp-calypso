@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import { CheckoutPaymentMethodWrapper } from './checkout-payment-method-wrapper';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -116,28 +117,30 @@ export default function CheckoutMainWrapper( {
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 						<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-							<CheckoutMain
-								siteSlug={ siteSlug }
-								siteId={ selectedSiteId }
-								productAliasFromUrl={ productAliasFromUrl }
-								productSourceFromUrl={ productSourceFromUrl }
-								purchaseId={ purchaseId }
-								couponCode={ couponCode }
-								redirectTo={ redirectTo }
-								feature={ selectedFeature }
-								plan={ plan }
-								isComingFromUpsell={ isComingFromUpsell }
-								sitelessCheckoutType={ sitelessCheckoutType }
-								isLoggedOutCart={ isLoggedOutCart }
-								isNoSiteCart={ isNoSiteCart }
-								isGiftPurchase={ isGiftPurchase }
-								jetpackSiteSlug={ jetpackSiteSlug }
-								jetpackPurchaseToken={ jetpackPurchaseToken }
-								isUserComingFromLoginForm={ isUserComingFromLoginForm }
-								connectAfterCheckout={ connectAfterCheckout }
-								fromSiteSlug={ fromSiteSlug }
-								adminUrl={ adminUrl }
-							/>
+							<CheckoutPaymentMethodWrapper>
+								<CheckoutMain
+									siteSlug={ siteSlug }
+									siteId={ selectedSiteId }
+									productAliasFromUrl={ productAliasFromUrl }
+									productSourceFromUrl={ productSourceFromUrl }
+									purchaseId={ purchaseId }
+									couponCode={ couponCode }
+									redirectTo={ redirectTo }
+									feature={ selectedFeature }
+									plan={ plan }
+									isComingFromUpsell={ isComingFromUpsell }
+									sitelessCheckoutType={ sitelessCheckoutType }
+									isLoggedOutCart={ isLoggedOutCart }
+									isNoSiteCart={ isNoSiteCart }
+									isGiftPurchase={ isGiftPurchase }
+									jetpackSiteSlug={ jetpackSiteSlug }
+									jetpackPurchaseToken={ jetpackPurchaseToken }
+									isUserComingFromLoginForm={ isUserComingFromLoginForm }
+									connectAfterCheckout={ connectAfterCheckout }
+									fromSiteSlug={ fromSiteSlug }
+									adminUrl={ adminUrl }
+								/>
+							</CheckoutPaymentMethodWrapper>
 						</RazorpayHookProvider>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
