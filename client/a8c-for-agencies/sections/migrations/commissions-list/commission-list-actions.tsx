@@ -7,6 +7,7 @@ import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-c
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
+import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
 import { TaggedSite } from '../types';
 
 type Props = {
@@ -31,8 +32,15 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 
 	const onRemoveSite = useCallback( () => {
 		closeDropdown();
+		const newTags = site.tags.reduce( ( acc, tag ) => {
+			if ( tag.name === A4A_MIGRATED_SITE_TAG ) {
+				return acc;
+			}
+			acc.push( tag.name );
+			return acc;
+		}, [] as string[] );
 		mutate(
-			{ siteId: site.id, tags: [] },
+			{ siteId: site.id, tags: newTags },
 			{
 				onSuccess: () => {
 					fetchMigratedSites();
