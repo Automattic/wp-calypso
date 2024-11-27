@@ -14,6 +14,7 @@
 		{ "path": "./calypso-e2e" },
 		{ "path": "./calypso-products" },
 		{ "path": "./calypso-razorpay" },
+		{ "path": "./calypso-paypal" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
 		{ "path": "./command-palette" },
