@@ -9,7 +9,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
-import Focusable from 'calypso/components/focusable';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
@@ -31,8 +30,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
-	const selectedPostId = selectedItem?.postId?.toString();
-	const postContentId = 'reader-post-content';
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 
 	const [ view, setView ] = useState< View >( {
@@ -101,23 +98,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				getValue: ( { item }: { item: ReaderPost } ) =>
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
-					const isItemSelected = item.postId?.toString() === selectedPostId;
-					return (
-						<Focusable
-							id={ `post-${ item.postId }` }
-							aria-expanded={ isItemSelected }
-							aria-controls={ isItemSelected ? postContentId : undefined }
-						>
-							<RecentPostField post={ getPostFromItem( item ) } />
-						</Focusable>
-					);
+					return <RecentPostField post={ getPostFromItem( item ) } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, selectedPostId ]
+		[ getPostFromItem ]
 	);
 
 	const fetchData = useCallback( () => {
