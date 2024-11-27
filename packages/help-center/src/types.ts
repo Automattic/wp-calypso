@@ -9,7 +9,6 @@ export interface Container {
 	hidden?: boolean;
 	currentRoute?: string;
 	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
-	shouldUseHelpCenterExperience?: boolean;
 }
 
 export interface PostObject {

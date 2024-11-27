@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
@@ -69,7 +70,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	version = null,
 	currentUser,
 	children,
-	shouldUseHelpCenterExperience,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -91,7 +91,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
 		canConnectToZendesk,
-		shouldUseHelpCenterExperience
+		config.isEnabled( 'help-center-experience' )
 	);
 
 	/**
@@ -188,7 +188,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
-				shouldUseHelpCenterExperience: shouldUseHelpCenterExperience ?? false,
+				shouldUseHelpCenterExperience: config.isEnabled( 'help-center-experience' ),
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,

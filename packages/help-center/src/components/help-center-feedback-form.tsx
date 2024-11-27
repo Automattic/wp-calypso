@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
@@ -35,7 +36,9 @@ const HelpCenterFeedbackForm = ( {
 
 	const { data } = useSupportStatus();
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
-	const { sectionName, site, shouldUseHelpCenterExperience } = useHelpCenterContext();
+
+	const { sectionName, site } = useHelpCenterContext();
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const navigate = useNavigate();
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
