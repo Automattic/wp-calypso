@@ -11,7 +11,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import { navigate } from 'calypso/lib/navigate';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
@@ -107,21 +106,17 @@ export function useActions( {
 							icon: drawerLeft,
 							callback: ( sites: SiteExcerptData[] ) => {
 								const site = sites[ 0 ];
-								const adminUrl = site.options?.admin_url ?? '';
-								const isAdmin = capabilities[ site.ID ]?.manage_options;
-								if (
-									isAdmin &&
-									! isP2Site( site ) &&
-									! isNotAtomicJetpack( site ) &&
-									! isDisconnectedJetpackAndNotAtomic( site )
-								) {
-									openSitePreviewPane && openSitePreviewPane( site, 'action' );
-								} else {
-									navigate( adminUrl );
-								}
+								openSitePreviewPane && openSitePreviewPane( site, 'action' );
 							},
 							isEligible: ( site: SiteExcerptData ) => {
-								if ( site.is_deleted ) {
+								const canManageOptions = capabilities[ site.ID ]?.manage_options;
+								if (
+									site.is_deleted ||
+									! canManageOptions ||
+									isP2Site( site ) ||
+									isNotAtomicJetpack( site ) ||
+									isDisconnectedJetpackAndNotAtomic( site )
+								) {
 									return false;
 								}
 								return true;
@@ -175,7 +170,14 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_launch_click' ) );
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
@@ -197,7 +199,14 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
@@ -217,7 +226,14 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						// ! canManageOptions || // todo Do non manage_options users have access to this acreen?
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 					return true;
@@ -227,15 +243,6 @@ export function useActions( {
 			{
 				id: 'general-settings',
 				label: __( 'General settings' ),
-				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
-						return false;
-					}
-
-					const adminInterface = getAdminInterface( site );
-					const isWpAdminInterface = adminInterface === 'wp-admin';
-					return isWpAdminInterface;
-				},
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					const wpAdminUrl = getSiteAdminUrl( site );
@@ -243,6 +250,22 @@ export function useActions( {
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_settings_click' )
 					);
+				},
+				isEligible: ( site ) => {
+					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						// ! canManageOptions || // todo Do non manage_options users have access to this acreen?
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
+						return false;
+					}
+
+					const adminInterface = getAdminInterface( site );
+					const isWpAdminInterface = adminInterface === 'wp-admin';
+					return isWpAdminInterface;
 				},
 			},
 
@@ -259,12 +282,18 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
-					const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
-					return ! isSiteJetpackNotAtomic && ! isP2Site( site );
+					return true;
 				},
 			},
 
@@ -278,7 +307,14 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					if ( site.is_deleted ) {
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					if (
+						site.is_deleted ||
+						! canManageOptions ||
+						isP2Site( site ) ||
+						isNotAtomicJetpack( site ) ||
+						isDisconnectedJetpackAndNotAtomic( site )
+					) {
 						return false;
 					}
 
