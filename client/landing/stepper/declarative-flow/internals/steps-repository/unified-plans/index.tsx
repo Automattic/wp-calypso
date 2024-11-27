@@ -51,7 +51,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	};
 
 	const site = useSite();
-	const customerType = useQuery().get( 'customerType' );
+	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const dispatch = useDispatch();
 
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
@@ -96,9 +96,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			recordTracksEvent={ ( name: string, props: unknown ) => {
-				dispatch( recordTracksEvent( name, props ) );
-			} }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {

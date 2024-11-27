@@ -1,4 +1,4 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
@@ -16,7 +16,6 @@ import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -1348,7 +1347,7 @@ export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	const planCartItem = getPlanCartItem( cartItems );
 
 	if ( planCartItem ) {
-		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
+		recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: planCartItem.product_slug,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
@@ -1365,7 +1364,7 @@ export const buildUpgradeFunction = ( planProps, cartItems ) => {
 			} );
 		}
 	} else {
-		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
+		recordTracksEvent( 'calypso_signup_free_plan_select', {
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 	}

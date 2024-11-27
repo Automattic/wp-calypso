@@ -24,7 +24,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { render, screen, waitFor } from '@testing-library/react';
-import { PlansStep, isDotBlogDomainRegistration } from '../index';
+import { PlansStep } from '../index';
 
 const noop = () => {};
 const props = {
@@ -223,35 +223,5 @@ describe( 'Plans.getCustomerType', () => {
 	test( "Should return customerType prop when it's provided", () => {
 		const comp = new PlansStep( { ...props, customerType: 'customerType' } );
 		expect( comp.getCustomerType() ).toEqual( 'customerType' );
-	} );
-} );
-
-describe( 'isDotBlogDomainRegistration()', () => {
-	test( 'should return true for dot blog domain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.blog',
-				is_domain_registration: true,
-			} )
-		).toBe( true );
-	} );
-
-	test( 'should return false for dot blog domain mapping', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.blog',
-				is_domain_registration: false,
-				is_domain_mapping: true,
-			} )
-		).toBe( false );
-	} );
-
-	test( 'should return false for dot com domain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.com',
-				is_domain_registration: true,
-			} )
-		).toBe( false );
 	} );
 } );
