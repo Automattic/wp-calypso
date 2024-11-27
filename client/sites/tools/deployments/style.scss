@@ -10,12 +10,6 @@
 		margin: 0;
 	}
 
-	// FIXME: Button style overrides necessary because of conflicting WPcom styles. Looking for a fix in p1731590534067879-slack-C03DY3RJ5.
-	.components-button.is-primary.is-busy {
-		background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
-		background-size: 100px 100%;
-	}
-
 	.github-deployments__body {
 		overflow: auto;
 	}
