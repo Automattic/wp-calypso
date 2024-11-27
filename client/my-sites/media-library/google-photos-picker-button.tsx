@@ -4,6 +4,7 @@ import './google-photos-picker-button.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import mediaImage from 'calypso/assets/images/illustrations/media.svg';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCreateGooglePhotosPickerSessionMutation } from 'calypso/data/media/use-google-photos-picker-session-mutation';
 import useGooglePhotosPickerSessionQuery from 'calypso/data/media/use-google-photos-picker-session-query';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -11,6 +12,7 @@ import { setPhotoPickerSession } from 'calypso/state/media/actions';
 import getGooglePhotosPickerSession from 'calypso/state/selectors/get-google-photos-picker-session';
 
 const GooglePhotosPickerButton = () => {
+	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const session = useSelector( getGooglePhotosPickerSession );
@@ -22,8 +24,13 @@ const GooglePhotosPickerButton = () => {
 	};
 
 	useEffect( () => {
-		! session && createSession();
-	}, [ session, createSession ] );
+		const isSessionExpired =
+			session?.expireTime && moment( session.expireTime ).isBefore( new Date() );
+
+		if ( ! session || isSessionExpired ) {
+			createSession();
+		}
+	}, [ session, createSession, moment ] );
 
 	useEffect( () => {
 		const interval = setInterval( refetch, 3000 );
