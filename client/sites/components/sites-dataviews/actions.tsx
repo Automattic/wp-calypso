@@ -147,6 +147,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 					page(
 						addQueryArgs( `/setup/copy-site`, {
 							sourceSlug: site.slug,
+							plan: site.plan?.product_slug,
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
