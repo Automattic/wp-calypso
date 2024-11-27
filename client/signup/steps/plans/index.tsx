@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
@@ -13,9 +15,8 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
 import { useEffect, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
-import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
@@ -28,11 +29,13 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import {
+	saveSignupStep as saveSignupStepAction,
+	submitSignupStep as submitSignupStepAction,
+} from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
@@ -44,108 +47,112 @@ interface Props {
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
 
-	/**
-	 * TODO clk use if defined (i.e. from Stepper) or resolve to imported
-	 */
-	saveSignupStep: ( step: { stepName: string } ) => void;
-	/**
-	 * TODO clk use if defined (i.e. from Stepper) or resolve to imported
-	 */
-	submitSignupStep: ( stepInfo: object, domainInfo: object ) => void;
-
 	flowName: string;
 	stepName: string;
 
-	/**
-	 * TODO clk: Stepper pass something?
-	 */
-	customerType?: string;
+	// Upgrade Handler - START
+	goToNextStep: () => void;
+	additionalStepData?: object;
+	stepSectionName?: string;
+	launchSite?: boolean;
+	themeSlugWithRepo?: string;
+	// Upgrade Handler - END
 
 	/**
-	 * TODO clk Define proper type
+	 * Make required once Start is removed
 	 */
-	displayedIntervals: any;
-
-	onPlanIntervalUpdate: ( path: string ) => void;
-	headerText?: string;
-	fallbackHeaderText?: string;
-	deemphasizeFreePlan?: boolean;
-	useStepperWrapper?: boolean;
-	steps: string[];
+	saveSignupStep?: ( step: { stepName: string } ) => void;
 
 	/**
-	 * TODO clk Define proper type
+	 * Make required once Start is removed
 	 */
-	wrapperProps: object;
-	/**
-	 * TODO clk: Stepper pass something?
-	 * treated as always defined
-	 */
-	queryParams: object;
-	/**
-	 * TODO clk Define proper type
-	 */
-	progress?: Record< string, any >;
-	positionInFlow: number;
-	shouldHideNavButtons: boolean;
+	submitSignupStep?: (
+		stepInfo: {
+			stepName: string;
+			domainItem?: { meta?: string };
+			isPurchasingItem?: boolean;
+			stepSectionName?: string;
+			siteUrl?: string;
+		},
+		domainInfo: {
+			domainItem?: { meta?: string };
+			signupDomainOrigin?: string;
+		}
+	) => void;
+
 	signupDependencies: {
-		siteSlug?: string;
-		siteUrl?: string;
-		domainItem?: { meta?: string };
-		siteTitle?: string;
-		username?: string;
-		coupon?: string;
+		siteId?: number | null;
+		siteSlug?: string | null;
+		siteUrl?: string | null;
+		domainItem?: { meta?: string } | null;
+		siteTitle?: string | null;
+		username?: string | null;
+		coupon?: string | null;
 		/**
 		 * TODO clk Define proper type
 		 */
 		segmentationSurveyAnswers?: any;
 	};
-	selectedSite: {
-		URL?: string;
-		ID?: number;
-	};
+	onPlanIntervalUpdate: ( path: string ) => void;
+
+	customerType?: string;
+	displayedIntervals?: Array<
+		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
+	>;
+	headerText?: string;
+	fallbackHeaderText?: string;
+	deemphasizeFreePlan?: boolean;
+	useStepperWrapper?: boolean;
+
+	/**
+	 * TODO clk Define proper type
+	 */
+	wrapperProps: object;
+
+	/**
+	 * TODO clk Define proper type
+	 */
+	progress?: Record< string, any >;
+
+	shouldHideNavButtons?: boolean;
+	selectedSite?: SiteDetails;
 	intent?: PlansIntent;
 	isLaunchPage?: boolean;
 	intervalType?: string;
 	initialContext?: {
 		trailMapExperimentVariant?: null | 'treatment_guided' | 'treatment_survey_only';
 	};
-	step?: {
-		status?: string;
-		errors?: { message: string };
-	};
-	fallbackSubHeaderText?: string;
 
-	/**
-	 * TODO clk state-query internally
-	 */
-	isDomainOnlySite: boolean;
+	fallbackSubHeaderText?: string;
 
 	/**
 	 * TODO clk: Stepper pass something?
 	 */
-	path: string;
+	positionInFlow?: number;
 
 	/**
-	 * Used in upgrade handler
+	 * TODO clk: Stepper pass something?
+	 * treated as always defined
 	 */
-	goToNextStep: () => void;
+	queryParams?: object;
+
 	/**
-	 * Used in upgrade handler
+	 * TODO clk: Stepper pass something?
 	 */
-	additionalStepData?: object;
+	steps?: string[];
+
 	/**
-	 * Used in upgrade handler
+	 * TODO clk: Stepper pass something?
 	 */
-	stepSectionName?: string;
+	step?: {
+		status?: string;
+		errors?: { message: string };
+	};
+
 	/**
-	 * Used in upgrade handler
+	 * TODO clk: Stepper pass something?
 	 */
-	launchSite?: boolean;
-	/**
-	 * Used in upgrade handler
-	 */
-	themeSlugWithRepo?: string;
+	path?: string;
 
 	/**
 	 * @deprecated used only in "mailbox-plan" step (old Signup/Start)
@@ -158,20 +165,90 @@ interface Props {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 }
 
-export function PlansStep( props: Props ) {
+export function PlansStep( {
+	hideFreePlan,
+	hideEcommercePlan,
+	hidePersonalPlan,
+	hidePremiumPlan,
+	hideEnterprisePlan,
+	saveSignupStep: saveSignupStepFromProps,
+	submitSignupStep: submitSignupStepFromProps,
+	customerType: customerTypeFromProps,
+	additionalStepData,
+	flowName,
+	selectedSite: selectedSiteFromProps,
+	stepName,
+	stepSectionName,
+	themeSlugWithRepo,
+	goToNextStep,
+	launchSite,
+	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
+	isLaunchPage,
+	intent,
+	initialContext,
+	intervalType,
+	path,
+	step,
+	signupDependencies,
+	displayedIntervals,
+	headerText,
+	useEmailOnboardingSubheader,
+	onPlanIntervalUpdate,
+	positionInFlow,
+	steps,
+	wrapperProps,
+	useStepperWrapper,
+	isCustomDomainAllowedOnFreePlan,
+	fallbackHeaderText: fallbackHeaderTextFromProps,
+	fallbackSubHeaderText: fallbackSubHeaderTextFromProps,
+	progress,
+	queryParams: queryParamsFromProps,
+	shouldHideNavButtons,
+}: Props ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
+	const dispatch = useDispatch();
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
 
+	const customerType =
+		customerTypeFromProps ??
+		( parseQs( path?.split( '?' ).pop() ?? '' ).customerType as string ) ??
+		undefined;
+
+	// This step could be used to set up an existing site, in which case
+	// some descendants of this component may display discounted prices if
+	// they apply to the given site.
+	const selectedSiteFromState = useSelector( ( state ) =>
+		signupDependencies.siteSlug ? getSiteBySlug( state, signupDependencies.siteSlug ) : null
+	);
+	const selectedSite = selectedSiteFromProps ?? selectedSiteFromState;
+
+	const isDomainOnlySite = useSelector( ( state ) =>
+		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
+	);
+
+	const effectiveSubmitSignupStep =
+		submitSignupStepFromProps ??
+		function ( stepInfo: object, domainInfo: object ) {
+			dispatch( submitSignupStepAction( stepInfo, domainInfo ) );
+		};
+
+	const effectiveSaveSignupStep =
+		saveSignupStepFromProps ??
+		function ( step: { stepName: string } ) {
+			dispatch( saveSignupStepAction( step ) );
+		};
+
 	useEffect( () => {
 		const unsubscribe = subscribeIsDesktop( ( matchesDesktop ) => setIsDesktop( matchesDesktop ) );
-		props.saveSignupStep( { stepName: props.stepName } );
 
-		if ( isTailoredSignupFlow( props.flowName ) ) {
-			triggerGuidesForStep( props.flowName, 'plans' );
+		effectiveSaveSignupStep( { stepName } );
+
+		if ( isTailoredSignupFlow( flowName ) ) {
+			triggerGuidesForStep( flowName, 'plans' );
 		}
 
 		return () => {
@@ -180,12 +257,25 @@ export function PlansStep( props: Props ) {
 	}, [] );
 
 	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
-		buildUpgradeFunction( props, cartItems );
+		buildUpgradeFunction(
+			{
+				additionalStepData,
+				flowName,
+				launchSite,
+				selectedSite,
+				stepName,
+				stepSectionName,
+				themeSlugWithRepo,
+				goToNextStep,
+				submitSignupStep: effectiveSubmitSignupStep,
+			},
+			cartItems
+		);
 	};
 
 	const getCustomerType = () => {
-		if ( props.customerType ) {
-			return props.customerType;
+		if ( customerType ) {
+			return customerType;
 		}
 
 		return 'personal';
@@ -194,7 +284,7 @@ export function PlansStep( props: Props ) {
 	const removePaidDomain = () => {
 		const domainItem = undefined;
 
-		props.submitSignupStep(
+		effectiveSubmitSignupStep(
 			{
 				stepName: 'domains',
 				domainItem,
@@ -218,7 +308,7 @@ export function PlansStep( props: Props ) {
 
 		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
 
-		props.submitSignupStep(
+		effectiveSubmitSignupStep(
 			{
 				stepName: 'domains',
 				siteUrl,
@@ -228,26 +318,14 @@ export function PlansStep( props: Props ) {
 	};
 
 	const shouldHideEcommercePlan = () => {
-		return isSiteAssemblerFlow( props.flowName ) || props?.hideEcommercePlan;
+		return isSiteAssemblerFlow( flowName ) || hideEcommercePlan;
 	};
 
 	const plansFeaturesList = () => {
-		const {
-			deemphasizeFreePlan: deemphasizeFreePlanFromProps,
-			hideFreePlan,
-			isLaunchPage,
-			selectedSite,
-			intent,
-			flowName,
-			initialContext,
-			intervalType,
-			isDomainOnlySite,
-		} = props;
-
 		const intervalTypeValue =
 			intervalType ||
 			getIntervalType(
-				props.path,
+				path,
 				flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
 					? longerPlanTermDefaultExperiment.term
 					: undefined
@@ -255,17 +333,16 @@ export function PlansStep( props: Props ) {
 
 		let errorDisplay;
 
-		if ( 'invalid' === props.step?.status ) {
+		if ( 'invalid' === step?.status ) {
 			errorDisplay = (
 				<div>
 					<Notice status="is-error" showDismiss={ false }>
-						{ props.step?.errors?.message }
+						{ step?.errors?.message }
 					</Notice>
 				</div>
 			);
 		}
 
-		const { signupDependencies } = props;
 		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
 			signupDependencies;
 
@@ -280,7 +357,7 @@ export function PlansStep( props: Props ) {
 
 		let paidDomainName = domainItem?.meta;
 
-		if ( ! paidDomainName && isDomainOnlySite && selectedSite.URL ) {
+		if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
 			paidDomainName = getDomainFromUrl( selectedSite.URL );
 		}
 
@@ -299,16 +376,16 @@ export function PlansStep( props: Props ) {
 				<PlansFeaturesMain
 					paidDomainName={ paidDomainName }
 					freeSubdomain={ freeWPComSubdomain }
-					siteTitle={ siteTitle }
-					signupFlowUserName={ username }
+					siteTitle={ siteTitle ?? undefined }
+					signupFlowUserName={ username ?? undefined }
 					siteId={ selectedSite?.ID }
-					isCustomDomainAllowedOnFreePlan={ props.isCustomDomainAllowedOnFreePlan }
+					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 					isInSignup
 					isLaunchPage={ isLaunchPage }
 					intervalType={
 						intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
 					}
-					displayedIntervals={ props.displayedIntervals }
+					displayedIntervals={ displayedIntervals }
 					onUpgradeClick={ ( cartItems ) => onSelectPlan( cartItems ) }
 					customerType={ getCustomerType() }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
@@ -316,23 +393,21 @@ export function PlansStep( props: Props ) {
 					intent={ intent || surveyedIntent }
 					flowName={ flowName }
 					hideFreePlan={ hideFreePlan }
-					hidePersonalPlan={ props.hidePersonalPlan }
-					hidePremiumPlan={ props.hidePremiumPlan }
+					hidePersonalPlan={ hidePersonalPlan }
+					hidePremiumPlan={ hidePremiumPlan }
 					hideEcommercePlan={ shouldHideEcommercePlan() }
-					hideEnterprisePlan={ props.hideEnterprisePlan }
+					hideEnterprisePlan={ hideEnterprisePlan }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					coupon={ coupon }
+					coupon={ coupon ?? undefined }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					onPlanIntervalUpdate={ props.onPlanIntervalUpdate }
+					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				/>
 			</div>
 		);
 	};
 
 	const getHeaderText = () => {
-		const { headerText } = props;
-
 		if ( headerText ) {
 			return headerText;
 		}
@@ -341,21 +416,6 @@ export function PlansStep( props: Props ) {
 	};
 
 	const getSubHeaderText = () => {
-		const {
-			useEmailOnboardingSubheader,
-			signupDependencies,
-			flowName,
-			deemphasizeFreePlan,
-			additionalStepData,
-			launchSite,
-			selectedSite,
-			stepName,
-			stepSectionName,
-			themeSlugWithRepo,
-			goToNextStep,
-			submitSignupStep,
-		} = props;
-
 		const { segmentationSurveyAnswers } = signupDependencies;
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
@@ -392,7 +452,7 @@ export function PlansStep( props: Props ) {
 							stepSectionName,
 							themeSlugWithRepo,
 							goToNextStep,
-							submitSignupStep,
+							submitSignupStep: effectiveSubmitSignupStep,
 						},
 						null
 					)
@@ -408,18 +468,16 @@ export function PlansStep( props: Props ) {
 			);
 		}
 
-		if ( deemphasizeFreePlan ) {
+		if ( deemphasizeFreePlanFromProps ) {
 			return null;
 		}
 	};
 
 	const plansFeaturesSelection = () => {
-		const { flowName, stepName, positionInFlow, steps, wrapperProps, useStepperWrapper } = props;
-
 		const headerText = getHeaderText();
-		const fallbackHeaderText = props.fallbackHeaderText || headerText;
+		const fallbackHeaderText = fallbackHeaderTextFromProps || headerText;
 		const subHeaderText = getSubHeaderText();
-		const fallbackSubHeaderText = props.fallbackSubHeaderText || subHeaderText;
+		const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || subHeaderText;
 
 		let backUrl;
 		let backLabelText;
@@ -430,15 +488,20 @@ export function PlansStep( props: Props ) {
 		}
 
 		let queryParams;
-		if ( ! isNaN( Number( positionInFlow ) ) && 0 !== positionInFlow ) {
-			const previousStepName = steps[ props.positionInFlow - 1 ];
-			const previousStep = props.progress?.[ previousStepName ];
+		if (
+			! isNaN( Number( positionInFlow ) ) &&
+			'undefined' !== typeof positionInFlow &&
+			0 !== positionInFlow &&
+			steps
+		) {
+			const previousStepName = steps[ positionInFlow - 1 ];
+			const previousStep = progress?.[ previousStepName ];
 
 			const isComingFromUseYourDomainStep = 'use-your-domain' === previousStep?.stepSectionName;
 
 			if ( isComingFromUseYourDomainStep ) {
 				queryParams = {
-					...props.queryParams,
+					...( queryParamsFromProps && queryParamsFromProps ),
 					step: 'transfer-or-connect',
 					initialQuery: previousStep?.siteUrl,
 				};
@@ -484,7 +547,7 @@ export function PlansStep( props: Props ) {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
-				shouldHideNavButtons={ props.shouldHideNavButtons }
+				shouldHideNavButtons={ shouldHideNavButtons }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
@@ -513,15 +576,4 @@ export function PlansStep( props: Props ) {
 	);
 }
 
-export default connect(
-	( state, { path, signupDependencies: { siteSlug, siteId } } ) => ( {
-		// This step could be used to set up an existing site, in which case
-		// some descendants of this component may display discounted prices if
-		// they apply to the given site.
-		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-		isDomainOnlySite:
-			siteId || siteSlug ? isDomainOnlySiteSelector( state, siteId || siteSlug ) : false,
-		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-	} ),
-	{ saveSignupStep, submitSignupStep, errorNotice }
-)( localize( PlansStep ) );
+export default PlansStep;
