@@ -35,7 +35,7 @@ class StatsDatePicker extends Component {
 		const { query, moment, translate } = this.props;
 
 		if ( query.start_date ) {
-			return this.dateForCustomRange();
+			return this.dateForCustomRange( query.start_date, query.date );
 		}
 
 		const localizedDate = moment();
@@ -56,11 +56,11 @@ class StatsDatePicker extends Component {
 		}
 	}
 
-	dateForCustomRange() {
-		const { query, moment, translate } = this.props;
+	dateForCustomRange( startDate, endDate ) {
+		const { moment, translate } = this.props;
 
-		const localizedStartDate = moment( query.start_date );
-		const localizedEndDate = moment( query.date );
+		const localizedStartDate = moment( startDate );
+		const localizedEndDate = moment( endDate );
 
 		const firstFormatString =
 			localizedStartDate.year() === localizedEndDate.year() ? 'MMM D' : 'll';
