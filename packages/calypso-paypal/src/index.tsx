@@ -75,14 +75,6 @@ export function usePayPalConfiguration(): UsePayPalConfiguration {
 	return { payPalConfiguration };
 }
 
-/**
- * This is the default provided by PayPalScriptProvider itself:
- * https://github.com/paypal/react-paypal-js/blob/44a01f5532ca4274e5e4041e68a2ff3a95bb0f3b/src/components/PayPalScriptProvider.tsx#L22
- */
-const temporaryLoadingOptions: ReactPayPalScriptOptions = {
-	clientId: 'test',
-};
-
 export function PayPalProvider( {
 	children,
 	currency,
@@ -110,11 +102,19 @@ export function PayPalProvider( {
 
 	const isConfigurationLoaded = payPalConfiguration?.clientId ? true : false;
 
+	// Even though `PayPalScriptProvider` has a `deferLoading` option, it still
+	// requires the `options` prop to include a `clientId`, and it appears that
+	// the ID you provide is cached for the lifetime of the provider, even if
+	// it later changes. Therefore, we have to avoid loading the
+	// `PayPalScriptProvider` at all until we have the correct client ID.
+	if ( ! isConfigurationLoaded ) {
+		return (
+			<PayPalContext.Provider value={ payPalConfiguration }>{ children }</PayPalContext.Provider>
+		);
+	}
+
 	return (
-		<PayPalScriptProvider
-			options={ isConfigurationLoaded ? payPalScriptOptions : temporaryLoadingOptions }
-			deferLoading={ isConfigurationLoaded ? false : true }
-		>
+		<PayPalScriptProvider options={ payPalScriptOptions }>
 			<PayPalContext.Provider value={ payPalConfiguration }>{ children }</PayPalContext.Provider>
 		</PayPalScriptProvider>
 	);
