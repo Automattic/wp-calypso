@@ -226,10 +226,10 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
 				},
 				isEligible: ( site ) => {
-					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
 					if (
 						site.is_deleted ||
-						// ! canManageOptions || // TODO: Do non manage_options users have access to this acreen?
+						! canManageOptions ||
 						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
@@ -252,10 +252,10 @@ export function useActions( {
 					);
 				},
 				isEligible: ( site ) => {
-					// const canManageOptions = capabilities[ site.ID ]?.manage_options;
+					const canManageOptions = capabilities[ site.ID ]?.manage_options;
 					if (
 						site.is_deleted ||
-						// ! canManageOptions || // TODO: Do non manage_options users have access to this acreen?
+						! canManageOptions ||
 						isP2Site( site ) ||
 						isNotAtomicJetpack( site ) ||
 						isDisconnectedJetpackAndNotAtomic( site )
