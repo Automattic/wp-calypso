@@ -7,8 +7,6 @@ interface PayPalConfigurationApiResponse {
 	client_id: string | undefined;
 }
 
-export type FetchPayPalConfiguration = () => Promise< PayPalConfigurationApiResponse >;
-
 export interface PayPalConfiguration {
 	clientId: string | undefined;
 }
@@ -17,7 +15,7 @@ export interface UsePayPalConfiguration {
 	payPalConfiguration: PayPalConfiguration | undefined;
 }
 
-async function defaultFetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
+async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
 	return await wpcomRequest( {
 		path: `/me/paypal-configuration`,
 		method: 'GET',
@@ -30,11 +28,7 @@ const defaultConfiguration: PayPalConfiguration = {
 	clientId: undefined,
 };
 
-function usePayPalConfigurationInternalOnly( {
-	fetchPayPalConfiguration,
-}: {
-	fetchPayPalConfiguration?: FetchPayPalConfiguration;
-} ): {
+function usePayPalConfigurationInternalOnly(): {
 	payPalConfiguration: PayPalConfiguration | undefined;
 	error: undefined | Error;
 } {
@@ -45,7 +39,7 @@ function usePayPalConfigurationInternalOnly( {
 
 	useEffect( () => {
 		let isSubscribed = true;
-		( fetchPayPalConfiguration ?? defaultFetchPayPalConfiguration )()
+		fetchPayPalConfiguration()
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
@@ -63,7 +57,7 @@ function usePayPalConfigurationInternalOnly( {
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ fetchPayPalConfiguration ] );
+	}, [] );
 
 	return { payPalConfiguration, error: configurationError };
 }
@@ -79,14 +73,8 @@ export function usePayPalConfiguration(): UsePayPalConfiguration {
 export function PayPalProvider( {
 	children,
 	currency,
-	fetchPayPalConfiguration,
-}: PropsWithChildren< {
-	currency: string;
-	fetchPayPalConfiguration?: FetchPayPalConfiguration;
-} > ) {
-	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly( {
-		fetchPayPalConfiguration,
-	} );
+}: PropsWithChildren< { currency: string } > ) {
+	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly();
 
 	if ( error ) {
 		throw error;

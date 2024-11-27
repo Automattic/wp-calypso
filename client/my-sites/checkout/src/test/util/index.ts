@@ -36,10 +36,6 @@ export const normalAllowedPaymentMethods: WPCOMPaymentMethod[] = [
 	'WPCOM_Billing_Stripe_Payment_Method',
 ];
 
-export const payPalConfiguration = {
-	client_id: 'mock-paypal-client-id',
-};
-
 export const stripeConfiguration = {
 	processor_id: 'IE',
 	js_url: 'https://stripe-js-url',
@@ -460,8 +456,6 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 	bill_period: '31',
 	months_per_bill_period: 1,
 };
-
-export const fetchPayPalConfiguration = async () => payPalConfiguration;
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
