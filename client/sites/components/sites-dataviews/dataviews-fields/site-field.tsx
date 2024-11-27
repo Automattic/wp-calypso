@@ -5,8 +5,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-//import { useInView } from 'react-intersection-observer';
-import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import { navigate } from 'calypso/lib/navigate';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
@@ -14,7 +12,6 @@ import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
 import {
 	displaySiteUrl,
 	isNotAtomicJetpack,
@@ -45,8 +42,8 @@ const SiteListTile = styled( ListTile )`
 		gap: 12px;
 		max-width: 500px;
 		width: 100%;
-		/*  
-		 * Ensures the row fits within the device width on mobile in most cases, 
+		/*
+		 * Ensures the row fits within the device width on mobile in most cases,
 		 * as it's not apparent to users that they can scroll horizontally.
 		*/
 		@media ( max-width: 480px ) {
@@ -62,10 +59,6 @@ const ListTileTitle = styled.div`
 
 const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
-
-	// Todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }.
-	// It does not work as expected. Fix it.
-	// const { inView } = useInView( { triggerOnce: true } );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -99,7 +92,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
-		<button className="sites-dataviews__site" onClick={ onSiteClick }>
+		<Button
+			className="sites-dataviews__site"
+			onClick={ onSiteClick }
+			borderless
+			disabled={ site.is_deleted }
+		>
 			<SiteListTile
 				contentClassName={ clsx(
 					'sites-dataviews__site-name',
@@ -108,23 +106,6 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						text-align: start;
 					`
 				) }
-				leading={
-					<Button
-						className="sites-dataviews__preview-trigger"
-						onClick={ onSiteClick }
-						borderless
-						disabled={ site.is_deleted }
-					>
-						<ThumbnailLink title={ title }>
-							<SiteFavicon
-								className="sites-site-favicon"
-								blogId={ site.ID }
-								fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
-								size={ 56 }
-							/>
-						</ThumbnailLink>
-					</Button>
-				}
 				title={
 					<ListTileTitle>
 						<SiteName className="sites-dataviews__site-title" as="div" title={ title }>
@@ -138,22 +119,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					</ListTileTitle>
 				}
 				subtitle={
-					site.is_deleted ? (
-						<>
-							<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-						</>
-					) : (
-						<>
-							<div className="sites-dataviews__site-urls">
-								<Truncated className="sites-dataviews__site-url">
-									{ displaySiteUrl( siteUrl ) }
-								</Truncated>
-							</div>
-						</>
-					)
+					<div className="sites-dataviews__site-urls">
+						<Truncated className="sites-dataviews__site-url">
+							{ displaySiteUrl( siteUrl ) }
+						</Truncated>
+					</div>
 				}
 			/>
-		</button>
+		</Button>
 	);
 };
 

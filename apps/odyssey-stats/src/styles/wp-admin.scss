@@ -78,6 +78,11 @@
 	& .inner-notice-container.has-odyssey-stats-bg-color {
 		background-color: var(--jetpack-white-off);
 	}
+	& .stats .navigation-header__main .jetpack-header {
+		@media (max-width: 600px) {
+			padding-left: 0;
+		}
+	}
 
 	// Offset margin of menu items set in Calypso.
 	ul.wp-submenu,

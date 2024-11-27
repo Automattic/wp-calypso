@@ -40,11 +40,8 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
 
     .plugin-name-button {
         padding: 0;
-        cursor: pointer;
-
-        &:focus {
-            box-shadow: none;
-        }
+		text-align: start;
+		height: auto;
     }
 }
 

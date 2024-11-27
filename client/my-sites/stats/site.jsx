@@ -193,10 +193,10 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( bar ) => {
+	barClick = ( isNewDateFilteringEnabled, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 
-		if ( ! config.isEnabled( 'stats/new-date-filtering' ) ) {
+		if ( ! isNewDateFilteringEnabled ) {
 			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
 			return;
 		}
@@ -304,7 +304,7 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -475,7 +475,7 @@ class StatsSite extends Component {
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								isWithNewDateControl
 								showArrows
 								slug={ slug }
@@ -537,7 +537,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
@@ -546,6 +546,7 @@ class StatsSite extends Component {
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
 								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+								isNewDateFilteringEnabled
 							/>
 						) }
 						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
@@ -554,7 +555,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }

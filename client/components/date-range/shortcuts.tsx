@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -22,6 +21,8 @@ const DateRangePickerShortcuts = ( {
 	locked = false,
 	startDate,
 	endDate,
+	// Temporary prop to enable new date filtering UI.
+	isNewDateFilteringEnabled = false,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
@@ -29,6 +30,7 @@ const DateRangePickerShortcuts = ( {
 	locked?: boolean;
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
+	isNewDateFilteringEnabled?: boolean;
 } ) => {
 	const translate = useTranslate();
 	const siteToday = useMomentSiteZone();
@@ -85,7 +87,7 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
-	if ( config.isEnabled( 'stats/new-date-filtering' ) ) {
+	if ( isNewDateFilteringEnabled ) {
 		shortcutList.unshift(
 			{
 				id: 'today',

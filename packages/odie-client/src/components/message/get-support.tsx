@@ -6,6 +6,7 @@ import './get-support.scss';
 
 interface GetSupportProps {
 	onClickAdditionalEvent?: () => void;
+	isUserEligibleForPaidSupport?: boolean;
 }
 
 interface ButtonConfig {
@@ -13,10 +14,13 @@ interface ButtonConfig {
 	action: () => Promise< void >;
 }
 
-export const GetSupport: React.FC< GetSupportProps > = ( { onClickAdditionalEvent } ) => {
+export const GetSupport: React.FC< GetSupportProps > = ( {
+	onClickAdditionalEvent,
+	isUserEligibleForPaidSupport,
+} ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
-	const { shouldUseHelpCenterExperience, chat, isUserEligibleForPaidSupport } =
+	const { chat, isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 
 	// Early return if user is already talking to a human
@@ -25,11 +29,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( { onClickAdditionalEven
 	}
 
 	const getButtonConfig = (): ButtonConfig => {
-		if ( isUserEligibleForPaidSupport ) {
+		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			return {
-				text: shouldUseHelpCenterExperience
-					? __( 'Get instant support', __i18n_text_domain__ )
-					: __( 'Get support', __i18n_text_domain__ ),
+				text: __( 'Get instant support', __i18n_text_domain__ ),
 				action: async () => {
 					onClickAdditionalEvent?.();
 					await newConversation();

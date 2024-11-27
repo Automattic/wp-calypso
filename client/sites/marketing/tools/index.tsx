@@ -1,13 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { ResponsiveToolbarGroup, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import Search from '@automattic/search';
+import Search, { ImperativeHandle } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -20,27 +20,57 @@ import { getMarketingFeaturesData } from './marketing-features-data';
 
 import './style.scss';
 
+const items = [
+	{ key: '', text: 'All' },
+	{ key: 'new', text: 'New tools' },
+	{ key: 'favourite', text: 'User favorites' },
+];
+
 export default function MarketingTools() {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ selectedCategory, setSelectedCategory ] = useState( '' );
+	const [ isUserTyping, setIsUserTyping ] = useState( false );
+	const searchRef = useRef< ImperativeHandle >( null );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 
 	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
 
 	const marketingFeaturesFiltered = useMemo( () => {
-		return marketingFeatures.filter(
-			( feature ) =>
-				feature.title.toLowerCase().includes( searchTerm.toLowerCase() ) ||
-				feature.description.toLowerCase().includes( searchTerm.toLowerCase() )
+		let filteredFeatures = marketingFeatures.filter( ( feature ) =>
+			( feature.title.toLowerCase() + feature.description.toLowerCase() ).includes(
+				searchTerm.toLowerCase()
+			)
 		);
-	}, [ searchTerm, marketingFeatures ] );
+		if ( selectedCategory ) {
+			filteredFeatures = filteredFeatures.filter( ( feature ) =>
+				feature.categories.includes( selectedCategory )
+			);
+		}
+		return filteredFeatures;
+	}, [ searchTerm, selectedCategory, marketingFeatures ] );
 
 	const handleSearch = ( term: string ) => {
+		// Prevents loops, only clears the category when the user is typing
+		if ( isUserTyping ) {
+			setSelectedCategory( '' );
+		}
+		setIsUserTyping( false );
 		setSearchTerm( term );
 		recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
 			search_term: term,
 		} );
+	};
+
+	const handleSelect = ( key: string ) => {
+		setSelectedCategory( key );
+		setSearchTerm( '' );
+		searchRef?.current?.clear();
+	};
+
+	const handleSearchChange = () => {
+		setIsUserTyping( true );
 	};
 
 	const handleBusinessToolsClick = () => {
@@ -55,23 +85,41 @@ export default function MarketingTools() {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<div
-				className={ clsx( 'marketing-tools__searchbox-container', {
-					'marketing-tools__searchbox-container--mobile': isMobile(),
-				} ) }
-			>
-				<Search
-					className="marketing-tools__searchbox"
-					onSearch={ handleSearch }
-					defaultValue={ searchTerm }
-					searchMode="when-typing"
-					placeholder={ translate( 'Try searching "seo"' ) }
-					submitOnOpenIconClick
-					openIconSide="right"
-					displayOpenAndCloseIcons
-					delaySearch
-					fitsContainer
-				/>
+			<div className="marketing-tools__toolbar-container">
+				<div
+					className={ clsx( 'marketing-tools__searchbox-container', {
+						'marketing-tools__searchbox-container--mobile': isMobile(),
+					} ) }
+				>
+					<Search
+						className="marketing-tools__searchbox"
+						ref={ searchRef }
+						onSearch={ handleSearch }
+						onSearchChange={ handleSearchChange }
+						defaultValue={ searchTerm }
+						searchMode="when-typing"
+						placeholder={ translate( 'Try searching "seo"' ) }
+						submitOnOpenIconClick
+						openIconSide="right"
+						displayOpenAndCloseIcons
+						delaySearch
+						fitsContainer
+					/>
+				</div>
+				{ ! isMobile() && <div className="marketing-tools__tooolbar-vertical-separator" /> }
+				<ResponsiveToolbarGroup
+					className="marketing-tools__search-categories-toolbar"
+					initialActiveIndex={
+						selectedCategory ? items.findIndex( ( item ) => item.key === selectedCategory ) : 0
+					}
+					forceSwipe={ 'undefined' === typeof window }
+					onClick={ ( index: number ) => handleSelect( items[ index ]?.key ) }
+					swipeEnabled={ false }
+				>
+					{ items.map( ( item ) => (
+						<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
+					) ) }
+				</ResponsiveToolbarGroup>
 			</div>
 			<div className="tools__feature-list">
 				{ marketingFeaturesFiltered.map( ( feature, index ) => {

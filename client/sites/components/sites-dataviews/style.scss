@@ -17,13 +17,25 @@
 		overflow: hidden;
 		cursor: pointer;
 
-		&:hover,
-		&:focus {
+		&:not(:disabled) {
+			&:hover,
+			&:focus {
+				.sites-dataviews__site-title {
+					color: var(--color-accent);
+				}
+				.sites-dataviews__site-url {
+					color: var(--color-accent);
+				}
+			}
+		}
+
+		&:disabled {
+			cursor: default;
 			.sites-dataviews__site-title {
-				color: var(--color-accent);
+				color: var(--color-neutral-30);
 			}
 			.sites-dataviews__site-url {
-				color: var(--color-accent);
+				color: var(--color-neutral-30);
 			}
 		}
 
@@ -59,6 +71,11 @@
 		color: var(--color-neutral-70);
 		font-size: rem(14px);
 		font-weight: 400;
+	}
+
+	.sites-dataviews__site-icon {
+		cursor: pointer;
+		padding: 0;
 	}
 
 	.site-sort__clickable {

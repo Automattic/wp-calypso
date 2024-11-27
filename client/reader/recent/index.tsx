@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'reac
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -17,7 +18,6 @@ import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
-import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -32,9 +32,13 @@ const Recent = () => {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		search: '',
-		fields: [ 'seen', 'post' ],
+		fields: [ 'icon', 'post' ],
 		perPage: 10,
 		page: 1,
+		layout: {
+			primaryField: 'post',
+			mediaField: 'icon',
+		},
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
@@ -75,10 +79,12 @@ const Recent = () => {
 	const fields = useMemo(
 		() => [
 			{
-				id: 'seen',
-				label: translate( 'Seen' ),
+				id: 'icon',
+				label: translate( 'Icon' ),
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentSeenField post={ getPostFromItem( item ) } />;
+					const post = getPostFromItem( item );
+					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
+					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
 				},
 				enableHiding: false,
 				enableSorting: false,

@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
+import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
@@ -73,7 +74,7 @@ const DotcomSitesDataViews = ( {
 				return;
 			}
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
-			if ( site ) {
+			if ( site && ! site.is_deleted ) {
 				openSitePreviewPane( site, 'list_row_click' );
 			}
 		},
@@ -90,10 +91,18 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
-				id: 'site',
-				label: __( 'Site' ),
-				header: <span>{ __( 'Site' ) }</span>,
-				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
+				id: 'icon',
+				render: ( { item }: { item: SiteExcerptData } ) => {
+					return <SiteIcon site={ item } openSitePreviewPane={ openSitePreviewPane } />;
+				},
+				enableHiding: false,
+				enableSorting: false,
+				enableGlobalSearch: false,
+			},
+			{
+				id: 'site-title',
+				label: __( 'Site Title' ),
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
@@ -103,7 +112,6 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'plan',
 				label: __( 'Plan' ),
-				header: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => (
 					<SitePlan site={ item } userId={ userId } />
 				),
@@ -124,7 +132,6 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'last-publish',
 				label: __( 'Last Published' ),
-				header: <span>{ __( 'Last Published' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -136,7 +143,7 @@ const DotcomSitesDataViews = ( {
 				header: (
 					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
-						<span>{ __( 'Stats' ) }</span>
+						{ __( 'Stats' ) }
 					</span>
 				),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
