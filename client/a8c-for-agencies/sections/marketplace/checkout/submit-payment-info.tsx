@@ -16,7 +16,13 @@ import useSubmitPaymentInfoMutation from '../hooks/use-submit-payment-info-mutat
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import NoticeSummary from './notice-summary';
 
-export default function SubmitPaymentInfo( { disableButton }: { disableButton?: boolean } ) {
+export default function SubmitPaymentInfo( {
+	disableButton,
+	isClient,
+}: {
+	disableButton?: boolean;
+	isClient?: boolean;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -68,9 +74,9 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 			dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_submit_payment_info_success' ) );
 			dispatch(
 				successNotice(
-					paymentMethodRequired
-						? translate( 'Thank you for your purchase!' )
-						: translate( 'Thank you for your purchase! Your agency can now set up your product.' ),
+					isClient
+						? translate( 'Thank you for your purchase! Your agency can now set up your product.' )
+						: translate( 'Thank you for your purchase!' ),
 					{
 						displayOnNextPage: true,
 					}
