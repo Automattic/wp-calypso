@@ -132,7 +132,7 @@ const Recent = () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Set the first item as selected if no item is selected and screen is wide.
+	// Set the first item as selected on the current page.
 	useEffect( () => {
 		if ( isWide && data?.items?.length > 0 ) {
 			if ( view.page && view.perPage ) {
