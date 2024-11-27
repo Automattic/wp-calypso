@@ -134,10 +134,13 @@ const Recent = () => {
 
 	// Set the first item as selected if no item is selected and screen is wide.
 	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 && ! selectedItem ) {
-			setSelectedItem( data.items[ 0 ] );
+		if ( isWide && data?.items?.length > 0 ) {
+			if ( view.page && view.perPage ) {
+				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
+				setSelectedItem( selectedPost || null );
+			}
 		}
-	}, [ isWide, data?.items, selectedItem ] );
+	}, [ isWide, data?.items, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
