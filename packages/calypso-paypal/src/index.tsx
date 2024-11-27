@@ -1,4 +1,5 @@
 import { PayPalScriptProvider, ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, createContext, PropsWithChildren, useContext } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
@@ -102,15 +103,15 @@ export function PayPalProvider( {
 
 	const isConfigurationLoaded = payPalConfiguration?.clientId ? true : false;
 
+	const { __ } = useI18n();
+
 	// Even though `PayPalScriptProvider` has a `deferLoading` option, it still
 	// requires the `options` prop to include a `clientId`, and it appears that
 	// the ID you provide is cached for the lifetime of the provider, even if
 	// it later changes. Therefore, we have to avoid loading the
 	// `PayPalScriptProvider` at all until we have the correct client ID.
 	if ( ! isConfigurationLoaded ) {
-		return (
-			<PayPalContext.Provider value={ payPalConfiguration }>{ children }</PayPalContext.Provider>
-		);
+		return <div>{ __( 'Loading…' ) }</div>;
 	}
 
 	return (

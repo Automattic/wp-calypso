@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { usePayPalConfiguration } from '@automattic/calypso-paypal';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
@@ -68,12 +67,7 @@ export function useCreatePayPalExpress( {
 
 export function useCreatePayPalPPCP(): PaymentMethod | null {
 	const shouldUsePayPalPPCP = isEnabled( 'checkout/paypal-ppcp' );
-	const { payPalConfiguration } = usePayPalConfiguration();
-	const isPayPalJsLoaded = payPalConfiguration?.clientId ? true : false;
-	return useMemo(
-		() => ( shouldUsePayPalPPCP && isPayPalJsLoaded ? createPayPal() : null ),
-		[ shouldUsePayPalPPCP, isPayPalJsLoaded ]
-	);
+	return useMemo( () => ( shouldUsePayPalPPCP ? createPayPal() : null ), [ shouldUsePayPalPPCP ] );
 }
 
 export function useCreateCreditCard( {
