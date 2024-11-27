@@ -1,5 +1,6 @@
 import { Button, Tooltip } from '@wordpress/components';
 import { pullquote, drawerLeft } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { useFollowingView } from './view-preference';
 
 export default function ViewToggle() {
@@ -7,20 +8,20 @@ export default function ViewToggle() {
 
 	return (
 		<div className="following__view-toggle">
-			<Tooltip text="Full post">
+			<Tooltip text={ translate( 'Full post' ) }>
 				<Button
 					icon={ drawerLeft }
 					isPressed={ currentView === 'recent' }
 					onClick={ () => setView( 'recent' ) }
-					label="Recent view"
+					label={ translate( 'Full post' ) }
 				/>
 			</Tooltip>
-			<Tooltip text="Scrolling feed">
+			<Tooltip text={ translate( 'Scrolling feed' ) }>
 				<Button
 					icon={ pullquote }
 					isPressed={ currentView === 'stream' }
 					onClick={ () => setView( 'stream' ) }
-					label="Stream view"
+					label={ translate( 'Scrolling feed' ) }
 				/>
 			</Tooltip>
 		</div>
