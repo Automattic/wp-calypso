@@ -52,7 +52,6 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
-import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
 import './style.scss';
@@ -954,13 +953,6 @@ class Account extends Component {
 								<ToggleUseCommunityTranslator />
 							</FormFieldset>
 						) }
-
-						<FormFieldset className="account__settings-admin-home">
-							<FormLabel id="account__default_landing_page">
-								{ translate( 'Admin home' ) }
-							</FormLabel>
-							<ToggleSitesAsLandingPage />
-						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel id="account__color_scheme" htmlFor="color_scheme">
