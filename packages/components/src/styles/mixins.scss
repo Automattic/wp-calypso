@@ -12,5 +12,9 @@
 
 	@media (max-width: $break-mobile) {
 		font-size: $font-title-medium;
+
+		.prefix {
+			display: none;
+		}
 	}
 }

@@ -181,8 +181,9 @@ class StatsDatePicker extends Component {
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		let sectionTitle = isActivity
-			? translate( 'Activity for {{period/}}', {
+			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
 					components: {
+						prefix: <span className="prefix" />,
 						period: (
 							<span className="period">
 								<span className="date">
@@ -193,8 +194,9 @@ class StatsDatePicker extends Component {
 					},
 					comment: 'Example: "Activity for December 2017"',
 			  } )
-			: translate( 'Stats for {{period/}}', {
+			: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
 					components: {
+						prefix: <span className="prefix" />,
 						period: (
 							<span className="period">
 								<span className="date">
