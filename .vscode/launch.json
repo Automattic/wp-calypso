@@ -1,0 +1,20 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Brave",
+			"request": "launch",
+			"type": "chrome",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client",
+			"runtimeExecutable": "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+		},
+		{
+			"name": "Launch Chrome",
+			"request": "launch",
+			"type": "chrome",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client"
+		}
+	]
+}
