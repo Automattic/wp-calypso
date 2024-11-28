@@ -239,7 +239,10 @@ class StatsPeriodNavigation extends PureComponent {
 		const isToday = moment( date ).isSame( momentSiteZone, period );
 
 		// TODO: Refactor the isNewDateFilteringEnabled dedicated variables.
-		const isChartRangeEndToday = moment( dateRange?.chartEnd ).isSame( momentSiteZone, period );
+		const isChartRangeEndSameOrAfterToday = moment( dateRange?.chartEnd ).isSameOrAfter(
+			momentSiteZone,
+			'day'
+		);
 		const showArrowsForDateRange = showArrows && dateRange?.daysInRange <= 31;
 
 		return (
@@ -266,7 +269,7 @@ class StatsPeriodNavigation extends PureComponent {
 					<div className="stats-period-navigation__date-range-control">
 						{ showArrowsForDateRange && (
 							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isChartRangeEndToday }
+								disableNextArrow={ disableNextArrow || isChartRangeEndSameOrAfterToday }
 								disablePreviousArrow={ disablePreviousArrow }
 								onClickNext={ this.handleNextRangeDateNavigation }
 								onClickPrevious={ this.handlePreviousDateRangeNavigation }
