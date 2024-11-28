@@ -1,23 +1,9 @@
+import { translate } from 'i18n-calypso';
 import type { ActionTexts, ActionHeadings, ActionMessages } from '../types';
 
 const headings: ActionHeadings = {
-	onePlugin: ( plugin ) => ( translate ) =>
-		translate(
-			'Disable auto-updates for %(plugin)s',
-			'Disable auto-updates for %(pluginCount)d plugins',
-			{
-				args: { plugin: plugin.name ?? plugin.slug },
-			}
-		),
-	manyPlugins: ( plugins ) => ( translate ) =>
-		translate(
-			'Disable auto-updates for %(pluginCount)d plugin',
-			'Disable auto-updates for %(pluginCount)d plugins',
-			{
-				count: plugins.length,
-				args: { pluginCount: plugins.length },
-			}
-		),
+	onePlugin: ( translate ) => translate( 'Disable auto-updates for plugin' ),
+	manyPlugins: ( translate ) => translate( 'Disable auto-updates for plugins' ),
 };
 
 const messages: ActionMessages = {
@@ -85,9 +71,15 @@ const messages: ActionMessages = {
 	},
 };
 
+const cta = {
+	confirm: translate( 'Disable' ),
+	cancel: translate( 'Cancel' ),
+};
+
 const actionTexts: ActionTexts = {
 	headings,
 	messages,
+	cta,
 };
 
 export default actionTexts;

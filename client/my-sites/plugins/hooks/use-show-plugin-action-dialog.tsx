@@ -6,15 +6,9 @@ import type { Site, Plugin } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 type DialogMessageProps = {
-	heading: TranslateResult;
 	message: TranslateResult;
 };
-const DialogMessage: React.FC< DialogMessageProps > = ( { heading, message } ) => (
-	<div>
-		<div className="plugins__confirmation-modal-heading">{ heading }</div>
-		<span className="plugins__confirmation-modal-desc">{ message }</span>
-	</div>
-);
+const DialogMessage: React.FC< DialogMessageProps > = ( { message } ) => <p>{ message }</p>;
 
 type DialogCallback = ( accepted: boolean ) => void;
 const useShowPluginActionDialog = () => {
@@ -22,17 +16,22 @@ const useShowPluginActionDialog = () => {
 
 	return useCallback(
 		( action: string, plugins: Plugin[], sites: Site[], callback: DialogCallback ) => {
+			const { heading, message, cta } = getDialogText( action, plugins, sites );
+
 			const dialogOptions = {
 				additionalClassNames: 'plugins__confirmation-modal',
 				...( action === PluginActions.REMOVE && { isScary: true } ),
+				useModal: true,
+				modalOptions: {
+					title: heading,
+				},
 			};
 
-			const { heading, message } = getDialogText( action, plugins, sites );
 			acceptDialog(
-				<DialogMessage heading={ heading } message={ message } />,
+				<DialogMessage message={ message } />,
 				callback,
-				heading,
-				null,
+				cta?.confirm,
+				cta?.cancel,
 				dialogOptions
 			);
 		},

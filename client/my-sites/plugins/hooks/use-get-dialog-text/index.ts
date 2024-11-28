@@ -57,10 +57,10 @@ const getAffectedSites = ( plugins: Plugin[], sites: Site[] ) => {
 
 const getTranslatableHeading = ( { headings }: ActionTexts, plugins: Plugin[] ) => {
 	if ( plugins.length === 1 ) {
-		return headings.onePlugin( plugins[ 0 ] );
+		return headings.onePlugin;
 	}
 
-	return headings.manyPlugins( plugins );
+	return headings.manyPlugins;
 };
 
 const getTranslatableMessage = ( { messages }: ActionTexts, plugins: Plugin[], sites: Site[] ) => {
@@ -90,6 +90,7 @@ const useGetDialogText = () => {
 			return {
 				heading: getTranslatableHeading( actionTexts, plugins )( translate ),
 				message: getTranslatableMessage( actionTexts, plugins, affectedSites )( translate ),
+				cta: actionTexts.cta,
 			};
 		},
 		[ translate ]

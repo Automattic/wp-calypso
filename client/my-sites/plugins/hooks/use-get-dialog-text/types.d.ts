@@ -4,8 +4,8 @@ import type { translate as TranslateFn, TranslateResult } from 'i18n-calypso';
 export type TranslatableText = ( translate: TranslateFn ) => TranslateResult;
 
 export type ActionHeadings = {
-	onePlugin: ( plugin: Plugin ) => TranslatableText;
-	manyPlugins: ( plugins: Plugin[] ) => TranslatableText;
+	onePlugin: TranslatableText;
+	manyPlugins: TranslatableText;
 };
 
 export type ActionMessages = {
@@ -15,9 +15,15 @@ export type ActionMessages = {
 	manyPluginsManySites: ( plugins: Plugin[], sites: Site[] ) => TranslatableText;
 };
 
+export type ActionCTA = {
+	confirm?: string;
+	cancel?: string;
+};
+
 export type ActionTexts = {
 	headings: ActionHeadings;
 	messages: ActionMessages;
+	cta?: ActionCTA;
 };
 
 export type DialogText = {
