@@ -224,14 +224,13 @@ class StatsNavigation extends Component {
 					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 					! hideModuleSettings && (
 						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].filter(
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map(
 								( module ) => {
-									// do not show "videos" toogle on sites that do not have VideoPress enabled
+									// disable the "videos" toggle on sites that do not have VideoPress enabled
+									// the toggle will be disabled (grayed out and non interactive)
 									if ( ! isVideoPress && module.key === 'videos' ) {
-										return false;
+										module.disabled = true;
 									}
-
-									return true;
 								}
 							) }
 							pageModules={ pageModules }
