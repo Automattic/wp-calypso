@@ -20,13 +20,13 @@ class ManageConnection extends Component {
 			<Panel className="settings-administration__manage-connection">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 
+				<HeaderCakeBack icon="chevron-left" onClick={ redirect } />
 				<NavigationHeader
 					title={ translate( 'Manage connection' ) }
 					subtitle={ translate(
 						'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 					) }
 				/>
-				<HeaderCakeBack onClick={ redirect } />
 
 				<SiteOwnership />
 				<DataSynchronization />

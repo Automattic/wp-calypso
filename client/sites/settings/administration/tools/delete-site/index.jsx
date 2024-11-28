@@ -254,6 +254,7 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
+				<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
@@ -271,7 +272,6 @@ class DeleteSite extends Component {
 					) }
 				></NavigationHeader>
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<HeaderCakeBack onClick={ this._goBack } />
 				{ canDeleteSite ? (
 					<PanelSection>
 						<>
