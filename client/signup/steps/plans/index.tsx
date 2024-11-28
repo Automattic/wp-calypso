@@ -13,7 +13,7 @@ import {
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
-import { useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -162,7 +162,7 @@ interface Props {
 	path?: string;
 
 	/**
-	 * @deprecated used only in "mailbox-plan" step (old Signup/Start)
+	 * Used only in "mailbox-plan" step (old Signup/Start)
 	 */
 	useEmailOnboardingSubheader?: boolean;
 
@@ -223,7 +223,7 @@ export function PlansStep( {
 	const customerType =
 		customerTypeFromProps ??
 		( parseQs( path?.split( '?' ).pop() ?? '' ).customerType as string ) ??
-		undefined;
+		'personal';
 
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
@@ -237,11 +237,14 @@ export function PlansStep( {
 		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
 	);
 
-	const effectiveSubmitSignupStep =
-		submitSignupStepFromProps ??
-		function ( stepInfo: object, domainInfo: object ) {
-			dispatch( submitSignupStepAction( stepInfo, domainInfo ) );
-		};
+	const effectiveSubmitSignupStep = useMemo(
+		() =>
+			submitSignupStepFromProps ??
+			function ( stepInfo: object, domainInfo: object ) {
+				dispatch( submitSignupStepAction( stepInfo, domainInfo ) );
+			},
+		[ dispatch, submitSignupStepFromProps ]
+	);
 
 	const effectiveSaveSignupStep =
 		saveSignupStepFromProps ??
@@ -263,32 +266,39 @@ export function PlansStep( {
 		};
 	}, [] );
 
-	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
-		buildUpgradeFunction(
-			{
-				additionalStepData,
-				flowName,
-				launchSite,
-				selectedSite,
-				stepName,
-				stepSectionName,
-				themeSlugWithRepo,
-				goToNextStep,
-				submitSignupStep: effectiveSubmitSignupStep,
-			},
-			cartItems
-		);
-	};
+	const handleUpgradeClick = useCallback(
+		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			buildUpgradeFunction(
+				{
+					additionalStepData,
+					flowName,
+					launchSite,
+					selectedSite,
+					stepName,
+					stepSectionName,
+					themeSlugWithRepo,
+					goToNextStep,
+					submitSignupStep: effectiveSubmitSignupStep,
+				},
+				cartItems
+			);
 
-	const getCustomerType = () => {
-		if ( customerType ) {
-			return customerType;
-		}
+			return;
+		},
+		[
+			additionalStepData,
+			effectiveSubmitSignupStep,
+			flowName,
+			goToNextStep,
+			launchSite,
+			selectedSite,
+			stepName,
+			stepSectionName,
+			themeSlugWithRepo,
+		]
+	);
 
-		return 'personal';
-	};
-
-	const removePaidDomain = () => {
+	const handleRemovePaidDomain = useCallback( () => {
 		const domainItem = undefined;
 
 		effectiveSubmitSignupStep(
@@ -303,118 +313,32 @@ export function PlansStep( {
 				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.FREE,
 			}
 		);
-	};
+	}, [ effectiveSubmitSignupStep ] );
 
-	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: {
-		domain_name: string;
-		product_slug?: string;
-	} ) => {
-		if ( freeDomainSuggestion?.product_slug ) {
-			return;
-		}
+	const handleSetSiteUrlAsFreeDomainSuggestion = useCallback(
+		( freeDomainSuggestion: { domain_name: string; product_slug?: string } ) => {
+			if ( freeDomainSuggestion?.product_slug ) {
+				return;
+			}
 
-		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+			const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
 
-		effectiveSubmitSignupStep(
-			{
-				stepName: 'domains',
-				siteUrl,
-			},
-			{}
-		);
-	};
+			effectiveSubmitSignupStep(
+				{
+					stepName: 'domains',
+					siteUrl,
+				},
+				{}
+			);
+		},
+		[ effectiveSubmitSignupStep ]
+	);
 
 	const shouldHideEcommercePlan = () => {
 		return isSiteAssemblerFlow( flowName ) || hideEcommercePlan;
 	};
 
-	const plansFeaturesList = () => {
-		const intervalTypeValue =
-			intervalType ||
-			getIntervalType(
-				path,
-				flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
-					? longerPlanTermDefaultExperiment.term
-					: undefined
-			);
-
-		let errorDisplay;
-
-		if ( 'invalid' === step?.status ) {
-			errorDisplay = (
-				<div>
-					<Notice status="is-error" showDismiss={ false }>
-						{ step?.errors?.message }
-					</Notice>
-				</div>
-			);
-		}
-
-		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
-			signupDependencies;
-
-		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
-
-		const surveyedIntent = shouldBasePlansOnSegment(
-			flowName,
-			initialContext?.trailMapExperimentVariant
-		)
-			? segmentSlug
-			: undefined;
-
-		let paidDomainName = domainItem?.meta;
-
-		if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
-			paidDomainName = getDomainFromUrl( selectedSite.URL );
-		}
-
-		let freeWPComSubdomain;
-		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
-			freeWPComSubdomain = siteUrl;
-		}
-
-		const deemphasizeFreePlan =
-			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
-			deemphasizeFreePlanFromProps;
-
-		return (
-			<div>
-				{ errorDisplay }
-				<PlansFeaturesMain
-					paidDomainName={ paidDomainName }
-					freeSubdomain={ freeWPComSubdomain }
-					siteTitle={ siteTitle ?? undefined }
-					signupFlowUserName={ username ?? undefined }
-					siteId={ selectedSite?.ID }
-					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-					isInSignup
-					isLaunchPage={ isLaunchPage }
-					intervalType={
-						intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
-					}
-					displayedIntervals={ displayedIntervals }
-					onUpgradeClick={ ( cartItems ) => onSelectPlan( cartItems ) }
-					customerType={ getCustomerType() }
-					deemphasizeFreePlan={ deemphasizeFreePlan }
-					plansWithScroll={ isDesktop }
-					intent={ intent || surveyedIntent }
-					flowName={ flowName }
-					hideFreePlan={ hideFreePlan }
-					hidePersonalPlan={ hidePersonalPlan }
-					hidePremiumPlan={ hidePremiumPlan }
-					hideEcommercePlan={ shouldHideEcommercePlan() }
-					hideEnterprisePlan={ hideEnterprisePlan }
-					removePaidDomain={ removePaidDomain }
-					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					coupon={ coupon ?? undefined }
-					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					onPlanIntervalUpdate={ onPlanIntervalUpdate }
-				/>
-			</div>
-		);
-	};
-
-	const getHeaderText = () => {
+	const HeaderText = () => {
 		if ( headerText ) {
 			return headerText;
 		}
@@ -422,7 +346,7 @@ export function PlansStep( {
 		return translate( 'Choose your flavor of WordPress' );
 	};
 
-	const getSubHeaderText = () => {
+	const SubHeaderText = () => {
 		const { segmentationSurveyAnswers } = signupDependencies;
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
@@ -480,11 +404,89 @@ export function PlansStep( {
 		}
 	};
 
-	const plansFeaturesSelection = () => {
-		const headerText = getHeaderText();
-		const fallbackHeaderText = fallbackHeaderTextFromProps || headerText;
-		const subHeaderText = getSubHeaderText();
-		const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || subHeaderText;
+	const PlansFeaturesMainRender = () => {
+		const intervalTypeValue =
+			intervalType ||
+			getIntervalType(
+				path,
+				flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
+					? longerPlanTermDefaultExperiment.term
+					: undefined
+			);
+
+		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
+			signupDependencies;
+
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext?.trailMapExperimentVariant
+		)
+			? segmentSlug
+			: undefined;
+
+		let paidDomainName = domainItem?.meta;
+
+		if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
+			paidDomainName = getDomainFromUrl( selectedSite.URL );
+		}
+
+		let freeWPComSubdomain;
+		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
+			freeWPComSubdomain = siteUrl;
+		}
+
+		const deemphasizeFreePlan =
+			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
+			deemphasizeFreePlanFromProps;
+
+		return (
+			<div>
+				{ 'invalid' === step?.status && (
+					<div>
+						<Notice status="is-error" showDismiss={ false }>
+							{ step?.errors?.message }
+						</Notice>
+					</div>
+				) }
+				<PlansFeaturesMain
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ freeWPComSubdomain }
+					siteTitle={ siteTitle ?? undefined }
+					signupFlowUserName={ username ?? undefined }
+					siteId={ selectedSite?.ID }
+					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+					isInSignup
+					isLaunchPage={ isLaunchPage }
+					intervalType={
+						intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
+					}
+					displayedIntervals={ displayedIntervals }
+					onUpgradeClick={ handleUpgradeClick }
+					customerType={ customerType }
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					plansWithScroll={ isDesktop }
+					intent={ intent || surveyedIntent }
+					flowName={ flowName }
+					hideFreePlan={ hideFreePlan }
+					hidePersonalPlan={ hidePersonalPlan }
+					hidePremiumPlan={ hidePremiumPlan }
+					hideEcommercePlan={ shouldHideEcommercePlan() }
+					hideEnterprisePlan={ hideEnterprisePlan }
+					removePaidDomain={ handleRemovePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
+					coupon={ coupon ?? undefined }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					onPlanIntervalUpdate={ onPlanIntervalUpdate }
+				/>
+			</div>
+		);
+	};
+
+	const PlansFeaturesMainStepContainer = () => {
+		const fallbackHeaderText = fallbackHeaderTextFromProps || <HeaderText />;
+		const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || <SubHeaderText />;
 
 		let backUrl;
 		let backLabelText;
@@ -534,13 +536,13 @@ export function PlansStep( {
 							id="plans-header"
 							align="center"
 							subHeaderAlign="center"
-							headerText={ headerText }
+							headerText={ <HeaderText /> }
 							subHeaderText={ fallbackSubHeaderText }
 						/>
 					}
 					isWideLayout={ false }
 					isExtraWideLayout
-					stepContent={ plansFeaturesList() }
+					stepContent={ <PlansFeaturesMainRender /> }
 					backLabelText={ backLabelText }
 					{ ...wrapperProps }
 				/>
@@ -553,14 +555,14 @@ export function PlansStep( {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ headerText }
+				headerText={ <HeaderText /> }
 				shouldHideNavButtons={ shouldHideNavButtons }
 				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
+				subHeaderText={ <SubHeaderText /> }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ false }
 				isExtraWideLayout
-				stepContent={ plansFeaturesList() }
+				stepContent={ <PlansFeaturesMainRender /> }
 				allowBackFirstStep={ !! initializedSitesBackUrl }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
@@ -578,7 +580,9 @@ export function PlansStep( {
 	return (
 		<>
 			<MarketingMessage path="signup/plans" />
-			<div className={ classes }>{ plansFeaturesSelection() }</div>
+			<div className={ classes }>
+				<PlansFeaturesMainStepContainer />
+			</div>
 		</>
 	);
 }
