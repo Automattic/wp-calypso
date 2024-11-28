@@ -3,6 +3,8 @@ import { Operator } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
@@ -12,6 +14,8 @@ export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
 	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
 ) {
+	const dispatch = useDispatch();
+
 	const fields = useMemo(
 		() => [
 			{
@@ -48,13 +52,24 @@ export function useFields(
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
+					const trackPluginNameClick = () => {
+						dispatch(
+							recordTracksEvent( 'calypso_plugins_manage_list_plugin_name_click', {
+								plugin_slug: item.slug,
+							} )
+						);
+					};
+
 					let pluginActionStatus = null;
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
 							<Button
 								className="sites-manage-plugin-status-button"
-								onClick={ () => toggleDialogForPlugin( item ) }
+								onClick={ () => {
+									trackPluginNameClick();
+									toggleDialogForPlugin( item );
+								} }
 							>
 								<PluginActionStatus
 									currentSiteStatuses={ item.allStatuses }
@@ -67,7 +82,10 @@ export function useFields(
 					return (
 						<>
 							<Button
-								onClick={ () => toggleDialogForPlugin( item ) }
+								onClick={ () => {
+									trackPluginNameClick();
+									toggleDialogForPlugin( item );
+								} }
 								className="plugin-name-button"
 							>
 								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
@@ -93,7 +111,16 @@ export function useFields(
 					return (
 						<Button
 							className="sites-manage-plugin-button"
-							onClick={ () => toggleDialogForPlugin( item ) }
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_plugins_manage_list_plugin_sitecount_click', {
+										plugin_slug: item.slug,
+										site_count: numberOfSites,
+									} )
+								);
+
+								toggleDialogForPlugin( item );
+							} }
 						>
 							{ numberOfSites }
 						</Button>
@@ -113,7 +140,15 @@ export function useFields(
 						return (
 							<Button
 								variant="secondary"
-								onClick={ () => bulkActionDialog( PluginActions.UPDATE, [ item ] ) }
+								onClick={ () => {
+									dispatch(
+										recordTracksEvent( 'calypso_plugins_manage_list_plugin_updateavailable_click', {
+											plugin_slug: item.slug,
+										} )
+									);
+
+									bulkActionDialog( PluginActions.UPDATE, [ item ] );
+								} }
 							>
 								{ translate( 'Update to version %(version)s', {
 									args: {

@@ -7,11 +7,17 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControl from '../date-control';
 import { DateControlPickerShortcut } from '../date-control/types';
+
+type DateRange = {
+	chartStart: string;
+	chartEnd: string;
+	daysInRange: number;
+};
 interface StatsDateControlProps {
 	slug: string;
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
-	dateRange: any;
+	dateRange: DateRange;
 	shortcutList: DateControlPickerShortcut[];
 	overlay?: JSX.Element;
 	onGatedHandler: (
@@ -19,6 +25,8 @@ interface StatsDateControlProps {
 		event_from: string,
 		stat_type: string
 	) => void;
+	// Temporary prop to enable new date filtering UI.
+	isNewDateFilteringEnabled: boolean;
 }
 
 // Define the event name keys for tracking events
@@ -71,6 +79,7 @@ const StatsDateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
+	isNewDateFilteringEnabled = false,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
@@ -78,12 +87,33 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
+
+	/**
+	 * Remove start date from query params if it's out of range.
+	 * @param queryParamsObject
+	 * @param startDate
+	 * @param endDate
+	 */
+	const removeOutOfRangeStartDate = (
+		queryParamsObject: Record< string, any >,
+		startDate: string,
+		endDate: string
+	): void => {
+		const selectedStartDate = queryParamsObject.startDate as string | undefined;
+
+		if ( selectedStartDate && ( selectedStartDate < startDate || selectedStartDate > endDate ) ) {
+			// When there is no selected date, it takes today by default.
+			delete queryParamsObject.startDate;
+		}
+	};
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
+		const queryParamsObject = qs.parse( queryParams );
+		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
+
 		const newRangeQuery = qs.stringify(
-			Object.assign( {}, queryParams, { chartStart: startDate, chartEnd: endDate } ),
+			Object.assign( {}, queryParamsObject, { chartStart: startDate, chartEnd: endDate } ),
 			{
 				addQueryPrefix: true,
 			}
@@ -142,6 +172,7 @@ const StatsDateControl = ( {
 			tooltip={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
 			overlay={ overlay }
 			shortcutList={ shortcutList }
+			isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 		/>
 	);
 };

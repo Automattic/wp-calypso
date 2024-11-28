@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	hasPaymentMethod,
 	isRechargeable,
@@ -21,6 +22,7 @@ import {
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -58,6 +60,11 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
+
+	const allDomains = useSelector( getAllDomains );
+	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+		( domain: ResponseDomain ) => domain.domain === purchase.meta
+	);
 
 	if (
 		! purchase ||
@@ -203,7 +210,7 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
+				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails, translate } ) }
 			</em>
 			<span className="manage-purchase__detail">
 				{ renderRenewsOrExpiresOn( {

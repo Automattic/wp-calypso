@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -130,10 +131,18 @@ const hosting: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const hasStudioSyncSiteId = queryParams.studioSiteId;
+					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+					const destinationParams: Record< string, string > = {
+						siteId,
+					};
+					if ( hasStudioSyncSiteId ) {
+						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+							studioSiteId: queryParams.studioSiteId,
+						} );
+					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
-					} );
+					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
@@ -200,6 +209,16 @@ const hosting: Flow = {
 				window.location.assign( urlWithQueryParams );
 			}
 		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, logInUrl ] );
+
+		useEffect( () => {
+			if ( queryParams.studioSiteId ) {
+				recordTracksEvent( 'calypso_studio_sync_step', {
+					flow: NEW_HOSTED_SITE_FLOW,
+					step: currentStepSlug,
+				} );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ currentStepSlug ] );
 
 		useEffect(
 			() => {

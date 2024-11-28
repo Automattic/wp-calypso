@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
-import { useAreAdvancedHostingFeaturesSupported } from '../hosting-features/features';
 import Database from './database/page';
 import {
 	DeploymentCreation,
@@ -21,7 +20,6 @@ import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
-	const shouldShowAdvancedHostingFeatures = useAreAdvancedHostingFeaturesSupported();
 
 	const sftpSshTitle = useSftpSshSettingTitle();
 
@@ -35,18 +33,8 @@ export function ToolsSidebar() {
 			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
 			<SidebarItem href={ `/sites/tools/logs/${ slug }` }>{ __( 'Logs' ) }</SidebarItem>
-			<SidebarItem
-				enabled={ !! shouldShowAdvancedHostingFeatures }
-				href={ `/sites/tools/sftp-ssh/${ slug }` }
-			>
-				{ sftpSshTitle }
-			</SidebarItem>
-			<SidebarItem
-				enabled={ !! shouldShowAdvancedHostingFeatures }
-				href={ `/sites/tools/database/${ slug }` }
-			>
-				{ __( 'Database' ) }
-			</SidebarItem>
+			<SidebarItem href={ `/sites/tools/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
+			<SidebarItem href={ `/sites/tools/database/${ slug }` }>{ __( 'Database' ) }</SidebarItem>
 		</Sidebar>
 	);
 }
