@@ -106,6 +106,7 @@ export default function () {
 		'/sites/settings/web-server/:site',
 		siteSelection,
 		navigation,
+		showHostingFeaturesNoticeIfPresent,
 		webServerSettings,
 		siteDashboard( SETTINGS_WEB_SERVER ),
 		makeLayout,

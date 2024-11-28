@@ -106,6 +106,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 				&:hover {
 					color: var(--studio-black);
 					background-color: var(--color-neutral-0);
+					border: 1.5px solid var(--color-neutral-10);
 
 					.label,
 					.value {
@@ -151,8 +152,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 			}
 
 			&.tab-disabled a {
-				pointer-events: none;
 				cursor: default;
+				border: none;
 			}
 
 			&.is-low {

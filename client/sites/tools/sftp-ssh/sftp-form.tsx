@@ -89,12 +89,14 @@ const disableSshAccess = ( siteId: number | null ) =>
 type SftpFormProps = {
 	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	upsell?: React.ReactNode;
 	disabled?: boolean;
 };
 
 export const SftpForm = ( {
 	ContainerComponent,
 	DescriptionComponent,
+	upsell,
 	disabled,
 }: SftpFormProps ) => {
 	const translate = useTranslate();
@@ -410,7 +412,7 @@ export const SftpForm = ( {
 						: featureExplanation }
 				</DescriptionComponent>
 			) }
-			{ form }
+			{ upsell ?? form }
 		</ContainerComponent>
 	);
 };

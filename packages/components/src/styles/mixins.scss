@@ -1,4 +1,6 @@
 @use "sass:math";
+
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
 @mixin stats-section-header {
@@ -7,4 +9,12 @@
 	font-size: $font-title-large;
 	font-weight: 400;
 	line-height: 40px;
+
+	@media (max-width: $break-mobile) {
+		font-size: $font-title-medium;
+
+		.prefix {
+			display: none;
+		}
+	}
 }

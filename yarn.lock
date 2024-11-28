@@ -430,6 +430,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-paypal@workspace:^, @automattic/calypso-paypal@workspace:packages/calypso-paypal":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-paypal@workspace:packages/calypso-paypal"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@paypal/react-paypal-js": "npm:^8.7.0"
+    "@wordpress/i18n": "npm:^5.8.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.3.3"
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-polyfills@workspace:^, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
@@ -12897,6 +12911,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-paypal": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-razorpay": "workspace:^"
