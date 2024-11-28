@@ -10,9 +10,15 @@ type SubscriberStatsProps = {
 	siteId: number;
 	subscriptionId?: number;
 	userId?: number;
+	dateSubscribed?: Date;
 };
 
-const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsProps ) => {
+const SubscriberStats = ( {
+	siteId,
+	subscriptionId,
+	userId,
+	dateSubscribed,
+}: SubscriberStatsProps ) => {
 	const translate = useTranslate();
 
 	const { data: subscriberStats, isLoading } = useSubscriberStatsQuery(
@@ -46,8 +52,7 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 					value={ `${ clickRate }%` }
 				/>
 			</div>
-			{ subscriberStats?.blog_registration_date &&
-			subscriberStats.blog_registration_date < new Date( '2023-08-17' ) ? (
+			{ dateSubscribed && dateSubscribed < new Date( '2023-08-17' ) ? (
 				<div className="subscriber-stats__tip">
 					<Icon icon={ tip } size={ 16 } />
 					{ translate( 'Data available since August 17th, 2023' ) }
