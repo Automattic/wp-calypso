@@ -52,12 +52,8 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 		marketingPage = new MarketingPage( page );
 	} );
 
-	it( 'Navigate to Tools > Marketing page', async function () {
-		await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-	} );
-
-	it( 'Click on Traffic tab', async function () {
-		await marketingPage.clickTab( 'Traffic' );
+	it( 'Navigate to Tools > Marketing > Traffic page', async function () {
+		await marketingPage.visitTab( testAccount.getSiteURL( { protocol: false } ), 'traffic' );
 	} );
 
 	it( 'Enter and verify SEO page title front page structure', async function () {
