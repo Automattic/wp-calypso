@@ -55,7 +55,7 @@
 		flex-direction: row;
 		justify-content: flex-start;
 
-		@media only screen and (min-width: 1125px) {
+		@media only screen and (min-width: $break-xlarge) {
 			flex-direction: column;
 			justify-content: stretch;
 		}
@@ -80,7 +80,7 @@
 		max-width: 330px;
 		min-width: 250px;
 
-		@media only screen and (min-width: 1125px) {
+		@media only screen and (min-width: $break-xlarge) {
 			max-height: 200px;
 			max-width: 100%;
 			width: 100%;
@@ -107,7 +107,8 @@
 
 	.featured-item-card--vertical & {
 		max-width: 400px;
-		@media only screen and (min-width: 1125px) {
+
+		@media only screen and (min-width: $break-xlarge) {
 			width: 100%;
 			height: 100%;
 			box-sizing: border-box;
