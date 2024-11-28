@@ -50,6 +50,7 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 				if ( lastMessage ) {
 					return (
 						<HelpCenterSupportChatMessage
+							sectionName="chat_history"
 							navigateTo="/odie"
 							supportInteractionId={ conversation.metadata?.supportInteractionId }
 							key={ conversation.id }

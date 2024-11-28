@@ -88,10 +88,32 @@ const StatsDateControl = ( {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
+	/**
+	 * Remove start date from query params if it's out of range.
+	 * @param queryParamsObject
+	 * @param startDate
+	 * @param endDate
+	 */
+	const removeOutOfRangeStartDate = (
+		queryParamsObject: Record< string, any >,
+		startDate: string,
+		endDate: string
+	): void => {
+		const selectedStartDate = queryParamsObject.startDate as string | undefined;
+
+		if ( selectedStartDate && ( selectedStartDate < startDate || selectedStartDate > endDate ) ) {
+			// When there is no selected date, it takes today by default.
+			delete queryParamsObject.startDate;
+		}
+	};
+
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
+		const queryParamsObject = qs.parse( queryParams );
+		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
+
 		const newRangeQuery = qs.stringify(
-			Object.assign( {}, queryParams, { chartStart: startDate, chartEnd: endDate } ),
+			Object.assign( {}, queryParamsObject, { chartStart: startDate, chartEnd: endDate } ),
 			{
 				addQueryPrefix: true,
 			}

@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useEffect } from '@wordpress/element';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,7 +23,8 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser, site, shouldUseHelpCenterExperience, canConnectToZendesk } =
+		useHelpCenterContext();
 	const { id: conversationId = null } = useParams();
 
 	useEffect( () => {
@@ -37,11 +37,11 @@ export function HelpCenterChat( {
 		}
 	}, [] );
 
-	const odieVersion = config.isEnabled( 'help-center-experience' ) ? '14.0.3' : null;
+	const odieVersion = shouldUseHelpCenterExperience ? '14.0.3' : null;
 
 	return (
 		<OdieAssistantProvider
-			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
+			shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
 			selectedSiteId={ site?.ID as number }

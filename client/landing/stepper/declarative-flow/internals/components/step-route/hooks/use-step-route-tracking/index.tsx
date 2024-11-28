@@ -80,38 +80,49 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 
 		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
-
-		const isReEnteringStep =
+		const isReEnteringStepAfterSignupComplete =
 			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
 
-		if ( ! isReEnteringStep ) {
-			recordStepStart( flowName, kebabCase( stepSlug ), {
+		const reenteringStepAfterSignupCompleteProps = {
+			...( isReEnteringStepAfterSignupComplete && {
+				is_reentering_step_after_signup_complete: true,
+			} ),
+			...( signupCompleteFlowName && { signup_complete_flow_name: signupCompleteFlowName } ),
+			...( signupCompleteStepName && { signup_complete_step_name: signupCompleteStepName } ),
+		};
+
+		recordStepStart( flowName, kebabCase( stepSlug ), {
+			intent,
+			is_in_hosting_flow: isAnyHostingFlow( flowName ),
+			...( design && { assembler_source: getAssemblerSource( design ) } ),
+			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+			...( skipStepRender && { skip_step_render: skipStepRender } ),
+			...reenteringStepAfterSignupCompleteProps,
+			...signupStepStartProps,
+		} );
+
+		// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
+		stepCompleteEventPropsRef.current = {
+			flow: flowName,
+			step: stepSlug,
+			optionalProps: {
+				intent,
+				...( skipStepRender && { skip_step_render: skipStepRender } ),
+				...reenteringStepAfterSignupCompleteProps,
+			},
+		};
+
+		const stepOldSlug = getStepOldSlug( stepSlug );
+		if ( stepOldSlug ) {
+			recordStepStart( flowName, kebabCase( stepOldSlug ), {
 				intent,
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
+				...reenteringStepAfterSignupCompleteProps,
 				...signupStepStartProps,
 			} );
-
-			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
-			stepCompleteEventPropsRef.current = {
-				flow: flowName,
-				step: stepSlug,
-				optionalProps: { intent, ...( skipStepRender && { skip_step_render: skipStepRender } ) },
-			};
-
-			const stepOldSlug = getStepOldSlug( stepSlug );
-			if ( stepOldSlug ) {
-				recordStepStart( flowName, kebabCase( stepOldSlug ), {
-					intent,
-					is_in_hosting_flow: isAnyHostingFlow( flowName ),
-					...( design && { assembler_source: getAssemblerSource( design ) } ),
-					...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
-					...( skipStepRender && { skip_step_render: skipStepRender } ),
-					...signupStepStartProps,
-				} );
-			}
 		}
 
 		// Also record page view for data and analytics
@@ -119,6 +130,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		const params = {
 			flow: flowName,
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
+			...reenteringStepAfterSignupCompleteProps,
 		};
 		recordPageView( pathname, pageTitle, params );
 

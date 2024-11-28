@@ -99,6 +99,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
+					sectionName="recent_conversations"
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
 					message={ chatMessage }

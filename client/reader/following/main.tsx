@@ -10,37 +10,40 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
 import Recent from '../recent';
+import { useFollowingView } from './view-preference';
+import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
-	let MainComponent: JSX.Element;
+	const { currentView, setView } = useFollowingView();
 
-	if ( config.isEnabled( 'reader/recent-feed-overhaul' ) ) {
-		MainComponent = <Recent />;
-	} else {
-		MainComponent = (
-			<Stream
-				{ ...props }
-				className="following"
-				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
-			>
-				<BloganuaryHeader />
-				<NavigationHeader
-					title={ translate( 'Recent' ) }
-					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
-					className={ clsx( 'following-stream-header', {
-						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-					} ) }
-				/>
-
-				<ReaderOnboarding />
-			</Stream>
-		);
-	}
+	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+		<ViewToggle currentView={ currentView } onChange={ setView } />
+	) : null;
 
 	return (
 		<>
-			{ MainComponent }
+			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+				<Recent viewToggle={ viewToggle } />
+			) : (
+				<Stream
+					{ ...props }
+					className="following"
+					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+				>
+					<BloganuaryHeader />
+					<NavigationHeader
+						title={ translate( 'Recent' ) }
+						subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+						className={ clsx( 'following-stream-header', {
+							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+						} ) }
+					>
+						{ viewToggle }
+					</NavigationHeader>
+					<ReaderOnboarding />
+				</Stream>
+			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);
