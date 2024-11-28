@@ -13,6 +13,7 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
@@ -56,6 +57,7 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -110,7 +112,8 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, isVideoPress, siteId } =
+			this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -130,6 +133,9 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+
+			case 'videopress':
+				return isVideoPress;
 
 			default:
 				return true;
@@ -267,6 +273,7 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			isVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
