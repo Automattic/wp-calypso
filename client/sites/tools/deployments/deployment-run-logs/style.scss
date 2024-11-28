@@ -80,6 +80,10 @@ td.github-deployments-logs-content {
 
 .github-deployments-runs {
 	width: 100%;
+	
+	.action-panel {
+		overflow: auto;
+	}
 }
 
 .github-deployments-commit-author {
