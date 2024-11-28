@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
@@ -47,6 +48,14 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
+const useGoalsFirstExperiment = (): [ boolean, boolean ] => {
+	// Currently loading isn't required because we're using a feature flag, but in the future
+	// we may need to take account of loading time.
+	const isLoading = false;
+
+	return [ isLoading, isEnabled( 'onboarding/goals-first' ) ];
+};
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
@@ -66,7 +75,9 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
+		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
 			STEPS.OPTIONS,
@@ -94,6 +105,14 @@ const siteSetupFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.DIFM_STARTING_POINT,
 		];
+
+		if ( isGoalsAtFrontExperiment ) {
+			// The user has already seen the goals step in the `onboarding` flow
+			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
+			steps.splice( 0, 4 );
+		}
+
+		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
