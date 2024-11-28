@@ -125,7 +125,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 		? translate( 'Activate all hosting features' )
 		: translate( 'Activate all developer tools' );
 
-	const activateTitleAsTools = hasEnTranslation( 'Activate all advanced tools' );
+	const activateTitleAsTools = translate( 'Activate all advanced tools' );
 
 	const activationStatusTitle = translate( 'Activating hosting features' );
 	const activationStatusTitleAsTools = translate( 'Activating advanced tools' );
