@@ -36,14 +36,20 @@ export type CampaignChartStatsResponse = {
 		};
 	};
 };
+
+export enum ChartResolution {
+	Hour = 'hour',
+	Day = 'day',
+}
+
 export const useCampaignChartStatsQuery = (
 	siteId: number,
 	campaignId: number,
-	startDate: string,
+	chartParams: { startDate: string; resolution: ChartResolution },
 	hasStats: boolean
 ) => {
 	return useQuery( {
-		queryKey: [ 'promote-post-campaign-stats', siteId, campaignId, startDate ],
+		queryKey: [ 'promote-post-campaign-stats', siteId, campaignId, chartParams ],
 		queryFn: async () => {
 			return await requestDSPHandleErrors< CampaignChartStatsResponse >(
 				siteId,
@@ -51,13 +57,13 @@ export const useCampaignChartStatsQuery = (
 				'GET',
 				{
 					tz: 'UTC',
-					start_date: startDate,
-					resolution: 'hour',
+					start_date: chartParams.startDate,
+					resolution: chartParams.resolution,
 				},
 				'1.1'
 			);
 		},
-		enabled: !! siteId && !! campaignId && !! startDate && hasStats,
+		enabled: !! siteId && !! campaignId && !! chartParams.startDate && hasStats,
 		retryDelay: 3000,
 		meta: {
 			persist: false,

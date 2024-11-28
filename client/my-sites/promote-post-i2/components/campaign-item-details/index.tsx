@@ -16,6 +16,7 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
 	CampaignChartSeriesData,
+	ChartResolution,
 	useCampaignChartStatsQuery,
 } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
@@ -183,14 +184,15 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const getChartStartDate = ( range: ChartSourceDateRanges ): string => {
+	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
+		const endDate = campaign?.end_date ? new Date( campaign.end_date ) : null;
 		const today = new Date();
-		const endDate = new Date( campaign.end_date );
-		const effectiveEndDate = endDate < today ? endDate : today;
 
-		const startDate = new Date( campaign.start_date );
+		// If the campaign has already finished, fetch data relative to the end date (we can't fetch data after that point)
+		const effectiveEndDate = endDate && endDate < today ? endDate : today;
+		let startDate = new Date( effectiveEndDate );
 
-		switch ( range ) {
+		switch ( dateRange ) {
 			case ChartSourceDateRanges.YESTERDAY:
 				startDate.setDate( effectiveEndDate.getDate() - 1 );
 				break;
@@ -203,18 +205,43 @@ export default function CampaignItemDetails( props: Props ) {
 			case ChartSourceDateRanges.LAST_30_DAYS:
 				startDate.setDate( effectiveEndDate.getDate() - 30 );
 				break;
+			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
+				if ( campaign?.start_date ) {
+					startDate = new Date( campaign.start_date );
+				}
+				break;
 		}
 
 		return startDate.toISOString().split( 'T' )[ 0 ];
 	};
 
-	// Use the date from the selected range to fetch data
-	const startDate = getChartStartDate( selectedDateRange );
+	const [ chartParams, setChartParams ] = useState( {
+		startDate: getChartStartDate( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+		resolution: ChartResolution.Day,
+	} );
+
+	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
+		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
+		const newResolution = [ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
+			newDateRange
+		)
+			? ChartResolution.Hour
+			: ChartResolution.Day;
+
+		const newStartDate = getChartStartDate( newDateRange );
+
+		// Update the params for the chart here, which will trigger the refetch
+		setChartParams( {
+			startDate: newStartDate,
+			resolution: newResolution,
+		} );
+		setSelectedDateRange( newDateRange );
+	};
 
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
-		startDate,
+		chartParams,
 		!! impressions_total
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
@@ -225,56 +252,30 @@ export default function CampaignItemDetails( props: Props ) {
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
-	// If the chart range is more than X, group hourly data into days
-	const chartStatsFormatted = ( data: CampaignChartSeriesData[], showChartAsHourly: boolean ) => {
-		if ( showChartAsHourly ) {
-			return data;
-		}
-
-		const dailyTotals: Record< string, number > = {};
-
-		data.forEach( ( record ) => {
-			const dateOnly = new Date( record.date_utc ).toISOString().split( 'T' )[ 0 ];
-			if ( ! dailyTotals[ dateOnly ] ) {
-				dailyTotals[ dateOnly ] = 0;
-			}
-			dailyTotals[ dateOnly ] += record.total;
-		} );
-
-		return Object.entries( dailyTotals ).map( ( [ date_utc, total ] ) => ( { date_utc, total } ) );
-	};
-
 	const getCampaignStatsChart = (
-		campaignChartStats: CampaignChartSeriesData[],
+		data: CampaignChartSeriesData[],
 		source: ChartSourceOptions,
 		isLoading = false
 	) => {
-		const endDate = new Date( end_date );
-		const today = new Date();
-
-		// druid doesn't store hourly data for more than 30 days
-		const thirtyDaysAgo = new Date();
-		thirtyDaysAgo.setDate( today.getDate() - 30 );
-
-		// If the time range of the chart is short, we can show the suer an hourly breakdown
-		const showChartAsHourly =
-			[ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
-				selectedDateRange
-			) && endDate >= thirtyDaysAgo;
-
-		const chartDataFormatted = chartStatsFormatted( campaignChartStats, showChartAsHourly );
-		if ( isLoading || ! campaignChartStats ) {
+		if ( isLoading ) {
 			return (
-				<div className="campaign-item-details__graph-stats-row">
-					<Spinner />
+				<div className="campaign-item-details__graph-stats-loader">
+					<div>
+						<Spinner />
+					</div>
 				</div>
 			);
 		}
+
+		if ( ! data ) {
+			return null;
+		}
+
 		return (
 			<CampaignStatsLineChart
-				data={ chartDataFormatted }
+				data={ data }
 				source={ source }
-				hourly={ showChartAsHourly }
+				resolution={ chartParams.resolution }
 			/>
 		);
 	};
@@ -441,39 +442,69 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const chartControls = [];
 
-	// Skip "today" or "yesterday" if the campaign is finished, we could make this condition more complex
-	// but they can see the data clearly using last 7 days.
-	if ( ! campaignIsFinished ) {
-		chartControls.push( {
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.TODAY ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.TODAY ],
-		} );
+	// Some controls are conditional, depending on how long the campaign has been active, or if the campaign is in the past
+	// It would be pointless showing "today" to a finished campaign, or 30 days to a 7-day campaign
+	const conditionalControls = [
+		{
+			condition: ! campaignIsFinished,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.TODAY ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.TODAY ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.TODAY,
+				},
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.YESTERDAY ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.YESTERDAY ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.YESTERDAY,
+				},
+			],
+		},
+		{
+			condition: activeDays >= 7,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_7_DAYS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_7_DAYS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_7_DAYS,
+				},
+			],
+		},
+		{
+			condition: activeDays >= 14,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_14_DAYS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_14_DAYS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_14_DAYS,
+				},
+			],
+		},
+		{
+			condition: activeDays >= 30,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_30_DAYS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_30_DAYS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_30_DAYS,
+				},
+			],
+		},
+	];
 
-		chartControls.push( {
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.YESTERDAY ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.YESTERDAY ],
-		} );
-	}
-
-	// The rest of the controls are safe to show permanently
-	chartControls.push(
-		{
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_7_DAYS ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_7_DAYS ],
-		},
-		{
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_14_DAYS ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_14_DAYS ],
-		},
-		{
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_30_DAYS ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_30_DAYS ],
-		},
-		{
-			onClick: () => setSelectedDateRange( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
-			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.WHOLE_CAMPAIGN ],
+	// Add the available controls
+	conditionalControls.forEach( ( { condition, controls } ) => {
+		if ( condition ) {
+			chartControls.push( ...controls );
 		}
-	);
+	} );
+
+	// The controls that are always shown
+	chartControls.push( {
+		onClick: () => setSelectedDateRange( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+		title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.WHOLE_CAMPAIGN ],
+		isDisabled: selectedDateRange === ChartSourceDateRanges.WHOLE_CAMPAIGN,
+	} );
 
 	const buttons = [
 		{

@@ -4,7 +4,10 @@ import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import { CampaignChartSeriesData } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
+import {
+	CampaignChartSeriesData,
+	ChartResolution,
+} from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import 'uplot/dist/uPlot.min.css';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
@@ -17,11 +20,12 @@ const DEFAULT_DIMENSIONS = {
 type GraphProps = {
 	data: CampaignChartSeriesData[];
 	source: ChartSourceOptions;
-	hourly: boolean;
+	resolution: ChartResolution;
 };
 
-const CampaignStatsLineChart = ( { data, source, hourly }: GraphProps ) => {
+const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
+	const hourly = resolution === ChartResolution.Hour;
 
 	const primaryColor = getComputedStyle( document.body )
 		.getPropertyValue( '--color-primary' )

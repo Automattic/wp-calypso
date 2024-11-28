@@ -228,10 +228,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__payment {
 			display: flex;
 			flex-direction: column;
-
-			@media (max-width: $break-medium) {
-				flex-direction: row;
-			}
 		}
 
 		.campaign-item-details__payment {
@@ -324,6 +320,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 		.campaign-item-details__graph-stats-row {
 			grid-template-columns: 1fr;
+		}
+
+		.campaign-item-details__graph-stats-loader {
+			display: block;
+			text-align: center;
+			height: 100%;
 		}
 
 		.campaign-item-page__graph {
@@ -981,7 +983,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		display: inline-block;
 		overflow: hidden;
 		position: relative;
-		max-width: 250px;
 		height: 16px;
 		width: 100%;
 
