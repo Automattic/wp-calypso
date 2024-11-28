@@ -5,14 +5,15 @@ import { useTranslate } from 'i18n-calypso';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
 import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { findShortcutFromList, Shortcut } from './utils';
 
-const DATERANGE_PERIOD = {
+export const DATERANGE_PERIOD = {
 	DAY: 'day',
 	WEEK: 'week',
 	MONTH: 'month',
 };
 
-type MomentOrNull = Moment | null;
+export type MomentOrNull = Moment | null;
 
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
@@ -44,7 +45,7 @@ const DateRangePickerShortcuts = ( {
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
 	// TODO: Receive this list from the parent component.
-	const shortcutList = [
+	const shortcutList: Shortcut[] = [
 		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
@@ -117,25 +118,8 @@ const DateRangePickerShortcuts = ( {
 		const today = siteToday.clone().startOf( 'day' );
 		const yesterday = siteToday.clone().subtract( 1, 'days' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
-		const shortcut = shortcutList.find( ( element ) => {
-			// For the Last xxx Days, including yesterday, which ended yesterday.
-			if (
-				endDate.isSame( yesterday, 'day' ) &&
-				element.offset === 1 &&
-				daysInRange === element.range
-			) {
-				return element;
-			}
 
-			// For Today.
-			if ( endDate.isSame( today, 'day' ) && daysInRange === element.range ) {
-				return element;
-			}
-
-			return null;
-		} );
-
-		return shortcut;
+		return findShortcutFromList( shortcutList, endDate, daysInRange, today, yesterday );
 	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {

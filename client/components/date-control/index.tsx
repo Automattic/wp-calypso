@@ -5,6 +5,7 @@ import { RefObject } from 'react';
 import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { findShortcutFromList } from '../date-range/utils';
 import { DateControlProps } from './types';
 import './style.scss';
 
@@ -27,27 +28,18 @@ const DateControl = ( {
 	const getShortcutForRange = () => {
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
-		const today = siteToday.format( 'YYYY-MM-DD' );
-		const yesterday = siteToday.clone().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
-		const shortcut = shortcutList.find( ( element ) => {
-			// For the Last xxx Days, including yesterday, which ended yesterday.
-			if (
-				yesterday === dateRange.chartEnd &&
-				element.offset === 1 &&
-				dateRange.daysInRange === element.range + 1
-			) {
-				return element;
-			}
+		const today = siteToday.clone().startOf( 'day' );
+		const yesterday = siteToday.clone().subtract( 1, 'days' );
+		const endDate = moment( dateRange.chartEnd );
 
-			// For Today.
-			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
-				return element;
-			}
-
-			return null;
-		} );
-
-		return shortcut;
+		return findShortcutFromList(
+			shortcutList,
+			endDate,
+			// dateRange.daysInRange differs from the moment diff days by 1.
+			dateRange.daysInRange - 1,
+			today,
+			yesterday
+		);
 	};
 
 	const getButtonLabel = () => {
