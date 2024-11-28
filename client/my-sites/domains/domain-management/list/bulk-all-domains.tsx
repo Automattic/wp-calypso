@@ -27,6 +27,7 @@ import './style.scss';
 interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
+	sidebarMode?: boolean;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -265,6 +266,15 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						}
 					}
 				}
+				.domains-overview__list .domains-table {
+					table {
+						grid-template-columns: 4fr auto;
+
+						.domains-table__domain-name {
+							overflow-wrap: anywhere;
+						}
+					}
+				}
 				.is-global-sidebar-visible header.navigation-header {
 					padding-inline: 26px;
 				}
@@ -378,6 +388,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						createBulkAction={ createBulkAction }
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
+						sidebarMode={ props.sidebarMode }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

@@ -28,6 +28,7 @@
 		"automated-migration/application-password": false,
 		"automated-migration/collect-credentials": true,
 		"automated-migration/pending-status": true,
+		"calypso/all-domain-management": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,

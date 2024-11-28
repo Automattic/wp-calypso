@@ -322,4 +322,45 @@ export default {
 		);
 		next();
 	},
+
+	// The main layout that wraps all the domain management pages.
+	domainDashboardLayout( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagement.DomainDashboardLayout innerContent={ pageContext.primary } />
+		);
+
+		next();
+	},
+
+	domainManagementV2( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot( ':domain' ) }
+				analyticsTitle="Domain Management"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				selectedDomainName={ selectedDomainName }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	domainManagementPaneView( feature ) {
+		return ( pageContext, next ) => {
+			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+			pageContext.primary = (
+				<DomainManagement.DomainOverviewPane
+					selectedDomainPreview={ pageContext.primary }
+					selectedDomain={ selectedDomainName }
+					selectedFeature={ feature }
+				/>
+			);
+
+			next();
+		};
+	},
 };

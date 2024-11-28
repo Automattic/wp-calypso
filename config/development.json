@@ -40,6 +40,7 @@
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-assembler": true,
+		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
