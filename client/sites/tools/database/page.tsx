@@ -6,7 +6,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel } from 'calypso/components/panel';
 import HostingActivation from 'calypso/sites/hosting-features/components/hosting-activation';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	useAreAdvancedHostingFeaturesSupported,
 	useAreAdvancedHostingFeaturesSupportedAfterActivation,
@@ -29,7 +29,6 @@ export default function Database() {
 	const isSupportedAfterActivation = useAreAdvancedHostingFeaturesSupportedAfterActivation();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const renderSetting = () => {
 		if ( isSupported ) {
@@ -59,9 +58,8 @@ export default function Database() {
 		const upsell = (
 			<UpsellNudge
 				title={ translate(
-					'Upgrade to the %(businessPlanName)s plan to get access to this feature and all {{a}}advanced tools{{/a}}.',
+					'Upgrade to the %(businessPlanName)s plan to get access to this feature.',
 					{
-						components: { a: <a href={ `/sites/tools/${ siteSlug }` } /> },
 						args: { businessPlanName: getPlanBusinessTitle() },
 					}
 				) }
