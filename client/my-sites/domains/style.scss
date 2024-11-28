@@ -65,3 +65,14 @@ body.is-section-domains.is-domain-plan-package-flow {
     max-height: calc(100vh - 32px - var(--masterbar-height));
     border-radius: 8px; /* stylelint-disable-line scales/radii */
 }
+
+.domains-overview {
+	.domain-settings-page {
+		max-width: 1200px;
+		margin-left: 0;
+	}
+	
+	.item-preview__content div {
+		flex-grow: 1;
+	}
+}
