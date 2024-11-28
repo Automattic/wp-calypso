@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import './style.scss';
 import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, DropdownMenu } from '@wordpress/components';
+import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -100,18 +100,31 @@ const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 	</span>
 );
 
-const getCampaignStatsChart = (
-	campaignChartStats: CampaignChartSeriesData[],
-	source: ChartSourceOptions
-) => {
-	return <CampaignStatsLineChart data={ campaignChartStats } source={ source } />;
-};
-
 export enum ChartSourceOptions {
 	Impressions = 'impressions',
 	Clicks = 'clicks',
 	Spend = 'spend',
 }
+
+// Define the available date range options
+enum ChartSourceDateRanges {
+	TODAY = 'today',
+	YESTERDAY = 'yesterday',
+	LAST_7_DAYS = 'last_7_days',
+	LAST_14_DAYS = 'last_14_days',
+	LAST_30_DAYS = 'last_30_days',
+	WHOLE_CAMPAIGN = 'whole_campaign',
+}
+
+// User facing strings for date ranges
+const ChartSourceDateRangeLabels = {
+	[ ChartSourceDateRanges.TODAY ]: __( 'Today' ),
+	[ ChartSourceDateRanges.YESTERDAY ]: __( 'Yesterday' ),
+	[ ChartSourceDateRanges.LAST_7_DAYS ]: __( 'Last 7 days' ),
+	[ ChartSourceDateRanges.LAST_14_DAYS ]: __( 'Last 14 days' ),
+	[ ChartSourceDateRanges.LAST_30_DAYS ]: __( 'Last 30 days' ),
+	[ ChartSourceDateRanges.WHOLE_CAMPAIGN ]: __( 'Whole Campaign' ),
+};
 
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInWpAdmin = useIsRunningInWpAdmin();
@@ -120,6 +133,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const [ chartSource, setChartSource ] = useState< ChartSourceOptions >(
 		ChartSourceOptions.Clicks
+	);
+	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
+		ChartSourceDateRanges.WHOLE_CAMPAIGN
 	);
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -167,10 +183,38 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
+	const getChartStartDate = ( range: ChartSourceDateRanges ): string => {
+		const today = new Date();
+		const endDate = new Date( campaign.end_date );
+		const effectiveEndDate = endDate < today ? endDate : today;
+
+		const startDate = new Date( campaign.start_date );
+
+		switch ( range ) {
+			case ChartSourceDateRanges.YESTERDAY:
+				startDate.setDate( effectiveEndDate.getDate() - 1 );
+				break;
+			case ChartSourceDateRanges.LAST_7_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 7 );
+				break;
+			case ChartSourceDateRanges.LAST_14_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 14 );
+				break;
+			case ChartSourceDateRanges.LAST_30_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 30 );
+				break;
+		}
+
+		return startDate.toISOString().split( 'T' )[ 0 ];
+	};
+
+	// Use the date from the selected range to fetch data
+	const startDate = getChartStartDate( selectedDateRange );
+
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
-		campaign.start_date,
+		startDate,
 		!! impressions_total
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
@@ -180,6 +224,60 @@ export default function CampaignItemDetails( props: Props ) {
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
+
+	// If the chart range is more than X, group hourly data into days
+	const chartStatsFormatted = ( data: CampaignChartSeriesData[], showChartAsHourly: boolean ) => {
+		if ( showChartAsHourly ) {
+			return data;
+		}
+
+		const dailyTotals: Record< string, number > = {};
+
+		data.forEach( ( record ) => {
+			const dateOnly = new Date( record.date_utc ).toISOString().split( 'T' )[ 0 ];
+			if ( ! dailyTotals[ dateOnly ] ) {
+				dailyTotals[ dateOnly ] = 0;
+			}
+			dailyTotals[ dateOnly ] += record.total;
+		} );
+
+		return Object.entries( dailyTotals ).map( ( [ date_utc, total ] ) => ( { date_utc, total } ) );
+	};
+
+	const getCampaignStatsChart = (
+		campaignChartStats: CampaignChartSeriesData[],
+		source: ChartSourceOptions,
+		isLoading = false
+	) => {
+		const endDate = new Date( end_date );
+		const today = new Date();
+
+		// druid doesn't store hourly data for more than 30 days
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate( today.getDate() - 30 );
+
+		// If the time range of the chart is short, we can show the suer an hourly breakdown
+		const showChartAsHourly =
+			[ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
+				selectedDateRange
+			) && endDate >= thirtyDaysAgo;
+
+		const chartDataFormatted = chartStatsFormatted( campaignChartStats, showChartAsHourly );
+		if ( isLoading || ! campaignChartStats ) {
+			return (
+				<div className="campaign-item-details__graph-stats-row">
+					<Spinner />
+				</div>
+			);
+		}
+		return (
+			<CampaignStatsLineChart
+				data={ chartDataFormatted }
+				source={ source }
+				hourly={ showChartAsHourly }
+			/>
+		);
+	};
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
@@ -340,6 +438,42 @@ export default function CampaignItemDetails( props: Props ) {
 		[ campaignStatus.CANCELED, campaignStatus.FINISHED, campaignStatus.SUSPENDED ].includes(
 			ui_status
 		);
+
+	const chartControls = [];
+
+	// Skip "today" or "yesterday" if the campaign is finished, we could make this condition more complex
+	// but they can see the data clearly using last 7 days.
+	if ( ! campaignIsFinished ) {
+		chartControls.push( {
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.TODAY ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.TODAY ],
+		} );
+
+		chartControls.push( {
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.YESTERDAY ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.YESTERDAY ],
+		} );
+	}
+
+	// The rest of the controls are safe to show permanently
+	chartControls.push(
+		{
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_7_DAYS ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_7_DAYS ],
+		},
+		{
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_14_DAYS ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_14_DAYS ],
+		},
+		{
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.LAST_30_DAYS ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_30_DAYS ],
+		},
+		{
+			onClick: () => setSelectedDateRange( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+			title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.WHOLE_CAMPAIGN ],
+		}
+	);
 
 	const buttons = [
 		{
@@ -670,41 +804,49 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</div>
 
-									{ ! campaignsStatsIsLoading && campaignStats && (
-										<>
-											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-												<div>
-													<div className="campaign-item-page__graph">
-														<DropdownMenu
-															class="campaign-item-page__graph-selector"
-															controls={ [
-																{
-																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																	title: __( 'Clicks' ),
-																	isDisabled: chartSource === ChartSourceOptions.Clicks,
-																},
-																{
-																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-																	title: __( 'Impressions' ),
-																	isDisabled: chartSource === ChartSourceOptions.Impressions,
-																},
-															] }
-															icon={ chevronDown }
-															text={
-																chartSource === ChartSourceOptions.Clicks
-																	? __( 'Clicks' )
-																	: __( 'Impressions' )
-															}
-															label={ chartSource }
-														/>
-														{ getCampaignStatsChart(
-															campaignStats?.series[ chartSource ],
-															chartSource
-														) }
-													</div>
+									<>
+										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+											<div>
+												<div className="campaign-item-page__graph">
+													<DropdownMenu
+														class="campaign-item-page__graph-selector"
+														controls={ chartControls }
+														icon={ chevronDown }
+														text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+														label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+													/>
+													<DropdownMenu
+														class="campaign-item-page__graph-selector"
+														controls={ [
+															{
+																onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																title: __( 'Clicks' ),
+																isDisabled: chartSource === ChartSourceOptions.Clicks,
+															},
+															{
+																onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																title: __( 'Impressions' ),
+																isDisabled: chartSource === ChartSourceOptions.Impressions,
+															},
+														] }
+														icon={ chevronDown }
+														text={
+															chartSource === ChartSourceOptions.Clicks
+																? __( 'Clicks' )
+																: __( 'Impressions' )
+														}
+														label={ chartSource }
+													/>
+													{ getCampaignStatsChart(
+														campaignStats?.series[ chartSource ] ?? [],
+														chartSource,
+														campaignsStatsIsLoading
+													) }
 												</div>
 											</div>
+										</div>
 
+										{ campaignStats && (
 											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 												<div>
 													<div className="campaign-item-page__locaton-charts">
@@ -723,8 +865,8 @@ export default function CampaignItemDetails( props: Props ) {
 													</div>
 												</div>
 											</div>
-										</>
-									) }
+										) }
+									</>
 								</div>
 							</div>
 						) }
@@ -816,12 +958,11 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 									<div>
 										<div className="campaign-item-page__graph">
-											{ ! campaignsStatsIsLoading &&
-												campaignStats &&
-												getCampaignStatsChart(
-													campaignStats?.series.spend,
-													ChartSourceOptions.Spend
-												) }
+											{ getCampaignStatsChart(
+												campaignStats?.series.spend ?? [],
+												ChartSourceOptions.Spend,
+												campaignsStatsIsLoading
+											) }
 										</div>
 									</div>
 								</div>

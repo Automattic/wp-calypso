@@ -52,6 +52,7 @@ export const useCampaignChartStatsQuery = (
 				{
 					tz: 'UTC',
 					start_date: startDate,
+					resolution: 'hour',
 				},
 				'1.1'
 			);

@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -16,9 +17,10 @@ const DEFAULT_DIMENSIONS = {
 type GraphProps = {
 	data: CampaignChartSeriesData[];
 	source: ChartSourceOptions;
+	hourly: boolean;
 };
 
-const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
+const CampaignStatsLineChart = ( { data, source, hourly }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 
 	const primaryColor = getComputedStyle( document.body )
@@ -37,12 +39,12 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 	};
 
 	useEffect( () => {
-		// set initial width
+		// Set initial width
 		updateWidth();
 		window.addEventListener( 'resize', updateWidth );
 
 		return () => {
-			// remove on unmount
+			// Remove on unmount
 			window.removeEventListener( 'resize', updateWidth );
 		};
 	}, [] );
@@ -53,6 +55,14 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 
 	// Convert to uPlot's AlignedData format
 	const uplotData: uPlot.AlignedData = [ new Float64Array( labels ), new Float64Array( values ) ];
+	const locale = useLocale();
+
+	const formatDate = ( date: Date, hourly: boolean ) => {
+		const options: Intl.DateTimeFormatOptions = hourly
+			? { hour: 'numeric', minute: 'numeric' }
+			: { month: 'short', day: 'numeric' };
+		return new Intl.DateTimeFormat( locale, options ).format( date );
+	};
 
 	const options = useMemo( () => {
 		return {
@@ -73,12 +83,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
-							i % 4 === 0
-								? new Intl.DateTimeFormat( 'en', {
-										month: 'short',
-										day: 'numeric',
-								  } ).format( new Date( s * 1000 ) )
-								: ''
+							i % 4 === 0 ? formatDate( new Date( s * 1000 ), hourly ) : ''
 						);
 					},
 				},
@@ -110,12 +115,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 						if ( rawValue == null ) {
 							return '-';
 						}
-
-						const date = new Date( rawValue * 1000 );
-						return new Intl.DateTimeFormat( 'en', {
-							month: 'short',
-							day: 'numeric',
-						} ).format( date );
+						return formatDate( new Date( rawValue * 1000 ), hourly );
 					},
 				},
 				{
@@ -158,7 +158,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 				},
 			],
 		};
-	}, [ source, primaryColor, primaryRGB ] );
+	}, [ width, source, primaryColor, formatDate, hourly, primaryRGB ] );
 
 	return (
 		<div style={ { position: 'relative' } }>
