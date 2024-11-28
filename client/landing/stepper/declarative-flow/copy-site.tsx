@@ -90,18 +90,6 @@ const COPY_SITE_STEPS = [
 	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
 ];
 
-const getValidCopyPlanFromSearchParams = ( urlQueryParams: URLSearchParams ) => {
-	const plan = urlQueryParams.get( 'plan' );
-	switch ( plan ) {
-		case 'ecommerce-bundle':
-			return 'ecommerce';
-		case 'business-bundle':
-			return 'business';
-		default:
-			return 'business';
-	}
-};
-
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
@@ -141,7 +129,7 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					const plan = getValidCopyPlanFromSearchParams( urlQueryParams );
+					const plan = urlQueryParams.get( 'plan' );
 					return window.location.assign(
 						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''
