@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
@@ -21,6 +20,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -48,14 +48,6 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
-const useGoalsFirstExperiment = (): [ boolean, boolean ] => {
-	// Currently loading isn't required because we're using a feature flag, but in the future
-	// we may need to take account of loading time.
-	const isLoading = false;
-
-	return [ isLoading, isEnabled( 'onboarding/goals-first' ) ];
-};
-
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
@@ -75,6 +67,7 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSteps() {
+		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		const steps = [
@@ -735,6 +728,13 @@ const siteSetupFlow: Flow = {
 				state: AssertConditionState.FAILURE,
 				message:
 					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		const [ isLoadingGoalsFirstExp ] = useGoalsFirstExperiment();
+		if ( isLoadingGoalsFirstExp ) {
+			result = {
+				state: AssertConditionState.CHECKING,
 			};
 		}
 

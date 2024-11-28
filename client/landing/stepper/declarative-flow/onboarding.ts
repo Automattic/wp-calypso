@@ -13,9 +13,10 @@ import {
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
-import { Flow, ProvidedDependencies } from './internals/types';
+import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -31,19 +32,12 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 	}
 };
 
-const useGoalsFirstExperiment = (): [ boolean, boolean ] => {
-	// Currently loading isn't required because we're using a feature flag, but in the future
-	// we may need to take account of loading time.
-	const isLoading = false;
-
-	return [ isLoading, isEnabled( 'onboarding/goals-first' ) ];
-};
-
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useSteps() {
+		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		const steps = stepsWithRequiredLogin( [
@@ -70,7 +64,7 @@ const onboarding: Flow = {
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
-			// Note that this step is not wrapped in `stepsWithRequiredLogin`
+			// This step is not wrapped in `stepsWithRequiredLogin`
 			steps.unshift( STEPS.GOALS );
 		}
 
@@ -268,6 +262,13 @@ const onboarding: Flow = {
 		};
 
 		return { goBack, submit };
+	},
+	useAssertConditions() {
+		const [ isLoading ] = useGoalsFirstExperiment();
+
+		return {
+			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
+		};
 	},
 };
 
