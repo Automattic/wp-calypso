@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
@@ -32,6 +31,7 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 
 	const onRemoveSite = useCallback( () => {
 		closeDropdown();
+		//Remove=ing the A4A_MIGRATED_SITE_TAG tag only
 		const newTags = site.tags.reduce( ( acc, tag ) => {
 			if ( tag.name === A4A_MIGRATED_SITE_TAG ) {
 				return acc;
@@ -51,12 +51,8 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 
 	return (
 		<div>
-			<Button
-				onClick={ showActions }
-				ref={ buttonActionRef }
-				className={ clsx( 'site-actions__actions-large-screen' ) }
-			>
-				<Gridicon icon="ellipsis" size={ 18 } className="site-actions__all-actions" />
+			<Button onClick={ showActions } ref={ buttonActionRef }>
+				<Gridicon icon="ellipsis" size={ 18 } />
 			</Button>
 			<PopoverMenu
 				context={ buttonActionRef.current }
@@ -65,12 +61,10 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 				position="bottom left"
 			>
 				<PopoverMenuItem
-					key="untag-site"
 					localizeUrl={ false }
 					onClick={ () => {
 						setShowRemoveSiteDialog( true );
 					} }
-					className={ clsx( 'site-actions__menu-item' ) }
 				>
 					{ translate( 'Untag site' ) }
 				</PopoverMenuItem>
@@ -81,16 +75,16 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 					onClose={ () => setShowRemoveSiteDialog( false ) }
 					onConfirm={ onRemoveSite }
 					isLoading={ isPending }
+					isDisabled={ isPending }
 					title={ translate( 'Untag site' ) }
-					className="untag-site__dialog"
 					children={ translate(
-						'Are you sure you want to remove the site {{b}}%(siteURL)s{{/b}} from the dashboard?',
+						'Are you sure you want to untag {{b}}%(site)s{{/b}}? This will stop it from being considered for a migration payout.',
 						{
-							args: { siteURL: site.url },
+							args: { site: site.url },
 							components: {
 								b: <b />,
 							},
-							comment: '%(siteName)s is the site name',
+							comment: '%(site)s is the site name',
 						}
 					) }
 				/>
