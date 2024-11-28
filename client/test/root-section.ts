@@ -45,7 +45,7 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a primary site but no permissions goes to day stats', async () => {
+	test( 'user with a primary site but no permissions goes to sites', async () => {
 		const state = {
 			currentUser: { id: 1, capabilities: { 1: {} }, user: { primary_blog: 1 } },
 			ui: {},
@@ -62,10 +62,10 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/stats/day/test.wordpress.com' ) );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a primary site and edit permissions goes to My Home', async () => {
+	test( 'user with a primary site and edit permissions goes to sites', async () => {
 		const state = {
 			currentUser: { id: 1, capabilities: { 1: { edit_posts: true } }, user: { primary_blog: 1 } },
 			ui: {},
@@ -82,10 +82,10 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/home/test.wordpress.com' ) );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a Jetpack site set as their primary site goes to day stats', async () => {
+	test( 'user with a Jetpack site set as their primary site goes to sites', async () => {
 		const state = {
 			currentUser: { id: 1, capabilities: { 1: { edit_posts: true } }, user: { primary_blog: 1 } },
 			ui: {},
@@ -103,7 +103,7 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/stats/day/test.jurassic.ninja' ) );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
 	test( 'user who opts in goes to sites page', async () => {
@@ -140,7 +140,7 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a selected site goes to My Home for Default Style interface', async () => {
+	test( 'user with a selected site goes to sites', async () => {
 		const state = {
 			currentUser: {
 				id: 1,
@@ -166,45 +166,6 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/home/selected.wordpress.com' ) );
-	} );
-
-	test( 'user with a selected site goes to WP Admin Dashboard for Classic Style interface', async () => {
-		const state = {
-			currentUser: {
-				id: 1,
-				capabilities: { 1: { edit_posts: true } },
-				user: { primary_blog: 1 },
-			},
-			ui: { selectedSiteId: 1 },
-			sites: {
-				items: {
-					1: {
-						ID: 1,
-						URL: 'https://test.wordpress.com',
-						options: {
-							wpcom_admin_interface: 'wp-admin',
-							admin_url: 'https://test.wordpress.com/wp-admin/',
-						},
-					},
-				},
-			},
-		};
-
-		const { page } = initRouter( { state } );
-
-		Object.defineProperty( window, 'location', {
-			value: {
-				assign: jest.fn(),
-			},
-		} );
-
-		page( '/' );
-
-		await waitFor( () => {
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'https://test.wordpress.com/wp-admin/'
-			);
-		} );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 } );
