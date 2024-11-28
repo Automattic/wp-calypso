@@ -21,6 +21,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
@@ -36,7 +37,9 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
+import { StepState } from 'calypso/state/signup/progress/schema';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { SurveyData } from '../initial-intent/types';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
@@ -88,10 +91,7 @@ interface Props {
 		siteTitle?: string | null;
 		username?: string | null;
 		coupon?: string | null;
-		/**
-		 * TODO clk Define proper type
-		 */
-		segmentationSurveyAnswers?: any;
+		segmentationSurveyAnswers?: SurveyData;
 	};
 	onPlanIntervalUpdate: ( path: string ) => void;
 
@@ -105,14 +105,15 @@ interface Props {
 	useStepperWrapper?: boolean;
 
 	/**
-	 * TODO clk Define proper type
+	 * Passed from Stepper for @automattic/onboarding step-container
 	 */
-	wrapperProps: object;
-
-	/**
-	 * TODO clk Define proper type
-	 */
-	progress?: Record< string, any >;
+	wrapperProps?: {
+		hideBack: boolean;
+		goBack: NavigationControls[ 'goBack' ];
+		recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
+		isFullLayout: boolean;
+		isExtraWideLayout: boolean;
+	};
 
 	shouldHideNavButtons?: boolean;
 	selectedSite?: SiteDetails;
@@ -122,27 +123,32 @@ interface Props {
 	initialContext?: {
 		trailMapExperimentVariant?: null | 'treatment_guided' | 'treatment_survey_only';
 	};
-
 	fallbackSubHeaderText?: string;
 
 	/**
-	 * TODO clk: Stepper pass something?
+	 * Used only in old Signup/Start
+	 * Can be queried through a selector (as is and passed through),
+	 * although the return type is incomplete (missing added terms here)
+	 */
+	progress?: Record< string, StepState & { stepSectionName?: string; siteUrl?: string } >;
+
+	/**
+	 * Used only in old Signup/Start
 	 */
 	positionInFlow?: number;
 
 	/**
-	 * TODO clk: Stepper pass something?
-	 * treated as always defined
+	 * Used only in old Signup/Start
 	 */
 	queryParams?: object;
 
 	/**
-	 * TODO clk: Stepper pass something?
+	 * Used only in old Signup/Start
 	 */
 	steps?: string[];
 
 	/**
-	 * TODO clk: Stepper pass something?
+	 * Used only in old Signup/Start
 	 */
 	step?: {
 		status?: string;
@@ -150,6 +156,7 @@ interface Props {
 	};
 
 	/**
+	 * Used only in old Signup/Start
 	 * TODO clk: Stepper pass something?
 	 */
 	path?: string;
