@@ -48,7 +48,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
-		isWithNewDateFiltering: PropTypes.bool,
+		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -60,7 +60,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
-		isWithNewDateFiltering: false,
+		isNewDateFilteringEnabled: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -227,7 +227,7 @@ class StatsPeriodNavigation extends PureComponent {
 			queryParams,
 			slug,
 			isWithNewDateControl,
-			isWithNewDateFiltering,
+			isNewDateFilteringEnabled,
 			dateRange,
 			shortcutList,
 			gateDateControl,
@@ -238,15 +238,18 @@ class StatsPeriodNavigation extends PureComponent {
 
 		const isToday = moment( date ).isSame( momentSiteZone, period );
 
-		// TODO: Refactor the isWithNewDateFiltering dedicated variables.
-		const isChartRangeEndToday = moment( dateRange?.chartEnd ).isSame( momentSiteZone, period );
+		// TODO: Refactor the isNewDateFilteringEnabled dedicated variables.
+		const isChartRangeEndSameOrAfterToday = moment( dateRange?.chartEnd ).isSameOrAfter(
+			momentSiteZone,
+			'day'
+		);
 		const showArrowsForDateRange = showArrows && dateRange?.daysInRange <= 31;
 
 		return (
 			<div
 				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
-					'stats-period-navigation__is-with-new-date-filtering': isWithNewDateFiltering,
+					'stats-period-navigation__is-with-new-date-filtering': isNewDateFilteringEnabled,
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
@@ -262,11 +265,11 @@ class StatsPeriodNavigation extends PureComponent {
 				) }
 
 				{ /* New filtering view: Shows date control in a simplified layout */ }
-				{ isWithNewDateControl && isWithNewDateFiltering && (
+				{ isWithNewDateControl && isNewDateFilteringEnabled && (
 					<div className="stats-period-navigation__date-range-control">
 						{ showArrowsForDateRange && (
 							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isChartRangeEndToday }
+								disableNextArrow={ disableNextArrow || isChartRangeEndSameOrAfterToday }
 								disablePreviousArrow={ disablePreviousArrow }
 								onClickNext={ this.handleNextRangeDateNavigation }
 								onClickPrevious={ this.handlePreviousDateRangeNavigation }
@@ -288,13 +291,14 @@ class StatsPeriodNavigation extends PureComponent {
 										/>
 									)
 								}
+								isNewDateFilteringEnabled
 							/>
 						</div>
 					</div>
 				) }
 
 				{ /* Standard new date control view: Shows date control with additional controls (Legend, IntervalDropdown) */ }
-				{ isWithNewDateControl && ! isWithNewDateFiltering && (
+				{ isWithNewDateControl && ! isNewDateFilteringEnabled && (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
 							slug={ slug }
@@ -346,7 +350,7 @@ class StatsPeriodNavigation extends PureComponent {
 }
 
 const connectComponent = connect(
-	( state, { period, isWithNewDateFiltering } ) => {
+	( state, { period, isNewDateFilteringEnabled } ) => {
 		const siteId = getSelectedSiteId( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
 		const gatePeriodInterval = shouldGateStats(
@@ -395,7 +399,7 @@ const connectComponent = connect(
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 			},
 		];
-		if ( isWithNewDateFiltering ) {
+		if ( isNewDateFilteringEnabled ) {
 			shortcutList.unshift(
 				{
 					id: 'today',

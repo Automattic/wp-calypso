@@ -10,6 +10,7 @@ import {
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -65,7 +66,7 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	{ dataView: 'site', sortKey: 'alphabetically' },
+	{ dataView: 'site-title', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
@@ -75,10 +76,9 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
-// Limit fields on breakpoints smaller than 960px wide.
 const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
 const mobileFields = [ 'site' ];
-const listViewFields = [ 'site' ];
+const listViewFields = [ 'site-title' ];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	if ( selectedSite ) {
@@ -159,15 +159,6 @@ const SitesDashboard = ( {
 	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
-	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
-		if ( isWide ) {
-			return '40%';
-		}
-		if ( isDesktop ) {
-			return '50%';
-		}
-		return '70%';
-	};
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState: View = {
@@ -191,13 +182,28 @@ const SitesDashboard = ( {
 			  }
 			: {} ),
 		...( selectedSite
-			? { type: 'list', layout: {} }
+			? {
+					type: 'list',
+					layout: {
+						primaryField: 'site-title',
+						mediaField: 'icon',
+					},
+			  }
 			: {
 					type: 'table',
 					layout: {
+						primaryField: 'site',
+						combinedFields: [
+							{
+								id: 'site',
+								label: __( 'Site' ),
+								children: [ 'icon', 'site-title' ],
+								direction: 'horizontal',
+							},
+						],
 						styles: {
 							site: {
-								width: getSiteNameColWidth( isDesktop, isWide ),
+								width: '40%',
 							},
 							plan: {
 								width: '126px',
@@ -225,25 +231,6 @@ const SitesDashboard = ( {
 		// sort() sorts the array in place, so we need to clone them first.
 		if ( existingFields !== fieldsForBreakpoint ) {
 			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
-		}
-
-		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
-
-		if (
-			dataViewsState.type === 'table' &&
-			dataViewsState.layout?.styles?.site?.width !== siteNameColumnWidth
-		) {
-			setDataViewsState( {
-				...dataViewsState,
-				layout: {
-					styles: {
-						...dataViewsState.layout?.styles,
-						site: {
-							width: siteNameColumnWidth,
-						},
-					},
-				},
-			} );
 		}
 	}, [ isDesktop, isWide, dataViewsState, selectedSite ] );
 

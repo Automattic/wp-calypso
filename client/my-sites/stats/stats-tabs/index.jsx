@@ -1,5 +1,3 @@
-import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -25,7 +23,7 @@ class StatsTabs extends Component {
 		aggregate: PropTypes.bool,
 	};
 
-	formatData = ( data, aggregate = true ) => {
+	formatData = ( data, aggregate = false ) => {
 		const { activeIndex, activeKey, tabs } = this.props;
 		let activeData = {};
 		if ( ! aggregate ) {
@@ -64,7 +62,10 @@ class StatsTabs extends Component {
 		if ( data && ! children ) {
 			const trendData = this.formatData( data, aggregate );
 			const activeData = { ...tabCountsAlt, ...trendData };
-			const activePreviousData = { ...tabCountsAltComp, ...this.formatData( previousData ) };
+			const activePreviousData = {
+				...tabCountsAltComp,
+				...this.formatData( previousData, aggregate ),
+			};
 
 			statsTabs = tabs.map( ( tab ) => {
 				const hasTrend = trendData?.[ tab.attr ] >= 0 && trendData[ tab.attr ] !== null;
@@ -82,19 +83,12 @@ class StatsTabs extends Component {
 					selected: selectedTab === tab.attr,
 					tabClick: hasTrend ? switchTab : undefined,
 					value,
+					previousValue,
 					format: tab.format,
+					hasPreviousData: !! previousData,
 				};
 
-				return (
-					<StatTab key={ tabOptions.attr } { ...tabOptions }>
-						{ previousData && (
-							<div className="stats-tabs__highlight">
-								<span className="stats-tabs__highlight-value">{ formatNumber( value ) }</span>
-								<TrendComparison count={ value } previousCount={ previousValue } />
-							</div>
-						) }
-					</StatTab>
-				);
+				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
 			} );
 		}
 

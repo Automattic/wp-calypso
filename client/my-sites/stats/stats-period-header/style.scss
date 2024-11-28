@@ -8,11 +8,16 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	// .stats-content has a gap already, so the .stats__period-header from the new design only needs margin-top.
-	margin-top: 16px;
+	margin-top: 32px;
+	padding: 0;
 
 	.stats-content & {
 		margin: 16px 0;
+	}
+
+	.is-sticky & {
+		margin-top: 0;
+		padding: 0 32px;
 	}
 
 	.period {

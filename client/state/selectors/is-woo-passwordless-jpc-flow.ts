@@ -8,9 +8,28 @@ const isWooCommercePaymentsOnboardingFlow = ( state: AppState ): boolean => {
 	const from =
 		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
 		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments';
+
+	const redirectTo =
+		get( getInitialQueryArguments( state ), 'redirect_to' ) ||
+		get( getCurrentQueryArguments( state ), 'redirect_to' );
+
+	// Unlike WooCommerce Core Profiler flow, we use both `from` and `plugin_name` to determine if the user is in the Woo Payments onboarding flow.
+	// `plugin_name` might not present in the query arguments, so we need to check the `redirect_to` query argument as well.
+	const redirectToHasWooCommercePayments =
+		typeof redirectTo === 'string' &&
+		( () => {
+			try {
+				return new URLSearchParams( redirectTo ).get( 'plugin_name' ) === 'woocommerce-payments';
+			} catch {
+				return false;
+			}
+		} )();
+
 	const plugin =
 		get( getInitialQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
-		get( getCurrentQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments';
+		get( getCurrentQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
+		redirectToHasWooCommercePayments;
+
 	return from && plugin;
 };
 /**

@@ -42,4 +42,5 @@ export const OdieAssistant: React.FC = () => {
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
 export { EllipsisMenu } from './components/ellipsis-menu';
+export { NewThirdPartyCookiesNotice } from './components/message/get-support';
 export type { ZendeskConversation, ZendeskMessage, SupportInteraction } from './types';
