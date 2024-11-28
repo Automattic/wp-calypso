@@ -28,6 +28,7 @@ test-results*.xml
 /client/chart.json
 /client/style.json
 *xunit_*.xml
+/results
 /vendor
 checkstyle.xml
 /apps/notifications/stats.json
