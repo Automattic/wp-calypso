@@ -9,7 +9,7 @@ $search-categories-padding-top: 40px;
 	gap: 12px;
 	padding-top: $search-categories-padding-top;
 
-	@media (max-width: 660px) {
+	@media (max-width: $break-small) {
 		padding: 0 16px;
 	}
 

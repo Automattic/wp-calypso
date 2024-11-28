@@ -71,8 +71,7 @@ body.is-section-plugins {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
 			@include break-small {
-				padding-left: 2rem;
-				padding-right: 2rem;
+				padding-inline: 48px;
 			}
 		}
 
@@ -134,7 +133,8 @@ body.is-section-plugins {
 		.plugins-update-manager-multisite__header,
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
-			padding: 1.5rem 4rem;
+			padding: 24px;
+			padding-inline: 48px;
 
 			@include breakpoint-deprecated( "<960px" ) {
 				padding: 1rem;

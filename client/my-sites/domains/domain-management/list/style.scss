@@ -149,7 +149,7 @@
 			padding-inline: 0;
 
 			.navigation-header__main {
-				padding-inline: 16px;
+				padding-inline: 21px;
 
 				@include break-mobile {
 					padding-inline: 48px;
@@ -160,7 +160,6 @@
 				max-width: 100%;
 
 				.navigation-header__main {
-					max-width: 1400px;
 					margin: 0 auto;
 					padding-inline: 48px;
 				}
@@ -241,7 +240,6 @@
 		}
 	}
 	.domains-table {
-		max-width: 1400px;
 		margin-left: auto;
 		margin-right: auto;
 
@@ -252,7 +250,7 @@
 
 
 		.domains-table-toolbar {
-			margin-inline: 0;
+			margin-inline: 5px;
 
 			@include break-mobile {
 				margin-inline: 32px;
