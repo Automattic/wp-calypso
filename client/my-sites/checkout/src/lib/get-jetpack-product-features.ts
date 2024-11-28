@@ -3,7 +3,7 @@ import {
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
 	isJetpackCompleteSlug,
-	isJetpackGrowthPlan,
+	isJetpackGrowthSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecurityT1Slug,
@@ -228,7 +228,7 @@ export default function getJetpackProductFeatures(
 		];
 	}
 
-	if ( isJetpackGrowthPlan( product.product_slug ) ) {
+	if ( isJetpackGrowthSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'growth', translate ),
 			...getFeatureStrings( 'support', translate ),
