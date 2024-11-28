@@ -285,15 +285,6 @@ export const canPromoteAgainCampaign = ( status: string ) => {
 };
 
 export const canGetCampaignStats = ( status: string ) => {
-	if (
-		status === campaignStatus.REJECTED ||
-		status === campaignStatus.SCHEDULED ||
-		status === campaignStatus.CREATED ||
-		status === campaignStatus.PROCESSING
-	) {
-		return false;
-	}
-
 	return [ campaignStatus.ACTIVE, campaignStatus.FINISHED, campaignStatus.CANCELED ].includes(
 		status
 	);
@@ -420,8 +411,7 @@ export const isRunningInWpAdmin = ( site: SiteDetails | null | undefined ): bool
 };
 
 export const cvsStatsDownload = ( csvData: string, fileName: string = 'report.csv' ) => {
-	const csvContent = atob( csvData );
-	const blob = new Blob( [ csvContent ], { type: 'text/csv;charset=utf-8;' } );
+	const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8;' } );
 	const link = document.createElement( 'a' );
 	link.href = URL.createObjectURL( blob );
 	link.download = fileName;

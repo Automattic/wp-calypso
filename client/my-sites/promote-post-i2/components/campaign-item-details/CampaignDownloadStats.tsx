@@ -39,6 +39,7 @@ export default function CampaignDownloadStats( props: Props ) {
 	const [ reportId, setReportId ] = useState( '' );
 	const [ shouldFetchReportStatus, setShouldFetchReportStatus ] = useState( false );
 	const [ shouldFetchReportData, setShouldFetchReportData ] = useState( false );
+	const [ reportFilename, setReportFilename ] = useState( '' );
 
 	// 1 RequestCampaignReport
 	const { requestCampaignReport } = useRequestCampaignReportMutation( () => {
@@ -84,6 +85,7 @@ export default function CampaignDownloadStats( props: Props ) {
 			start_date: startDate,
 			end_date: endDate,
 		} ) );
+		setReportFilename( `blaze_report_${ startDate }_${ endDate }.csv` );
 	}, [ campaign ] );
 
 	const downloadStatsInit = async () => {
@@ -133,9 +135,7 @@ export default function CampaignDownloadStats( props: Props ) {
 		if ( reportData ) {
 			setIsStatsDownloading( false );
 			setShouldFetchReportData( false );
-			if ( reportData.fileName && reportData.content ) {
-				cvsStatsDownload( reportData.content, reportData.fileName );
-			}
+			cvsStatsDownload( reportData, reportFilename );
 		}
 	}, [ reportData ] );
 
