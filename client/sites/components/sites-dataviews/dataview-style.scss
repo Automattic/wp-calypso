@@ -14,17 +14,6 @@
 			}
 		}
 	}
-
-	ul.dataviews-view-list {
-		// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
-		li:hover {
-			background: var(--color-neutral-0);
-		}
-		// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
-		.is-selected {
-			background-color: var(--color-neutral-0);
-		}
-	}
 }
 
 // Selected and hover states on the site list.
@@ -42,13 +31,6 @@
 				.dataviews-view-list__item-actions {
 					background-color: #ebf2fc;
 					box-shadow: -12px 0 8px 0 #ebf2fc;
-				}
-			}
-			li:hover {
-				--color-neutral-0: #f7faff;
-				.dataviews-view-list__item-actions {
-					background-color: #f7faff;
-					box-shadow: -12px 0 8px 0 #f7faff;
 				}
 			}
 		}
