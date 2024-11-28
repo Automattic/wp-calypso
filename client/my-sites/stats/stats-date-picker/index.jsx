@@ -139,24 +139,24 @@ class StatsDatePicker extends Component {
 		return formattedDate;
 	}
 
+	// TODO: need the align today with site timezone.
 	renderQueryDate() {
 		const { query, queryDate, moment, translate } = this.props;
-		let content;
 
 		if ( ! queryDate || ! isAutoRefreshAllowedForQuery( query ) ) {
-			content = null;
-		} else {
-			const today = moment();
-			const date = moment( queryDate );
-			const isToday = today.isSame( date, 'day' );
-
-			content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
-				args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
-				components: {
-					b: <span className="stats-date-picker__last-update" />,
-				},
-			} );
+			return null;
 		}
+
+		const today = moment();
+		const date = moment( queryDate );
+		const isToday = today.isSame( date, 'day' );
+
+		const content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
+			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+			components: {
+				b: <span className="stats-date-picker__last-update" />,
+			},
+		} );
 
 		return (
 			<div className="stats-date-picker__refresh-status">
