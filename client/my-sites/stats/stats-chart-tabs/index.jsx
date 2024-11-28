@@ -115,6 +115,15 @@ class StatModuleChartTabs extends Component {
 			showChartHeader = false,
 			isNewDateFilteringEnabled = false,
 		} = this.props;
+
+		let chartData = this.props.chartData;
+		if ( isNewDateFilteringEnabled ) {
+			chartData = chartData?.map( ( record ) => {
+				record.className = record.className?.replaceAll( 'is-selected', '' );
+				return record;
+			} );
+		}
+
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -141,7 +150,7 @@ class StatModuleChartTabs extends Component {
 				) }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
 				<StatTabs

@@ -10,13 +10,21 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
 import Recent from '../recent';
+import { useFollowingView } from './view-preference';
+import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
+	const { currentView, setView } = useFollowingView();
+
+	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+		<ViewToggle currentView={ currentView } onChange={ setView } />
+	) : null;
+
 	return (
 		<>
-			{ config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent />
+			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+				<Recent viewToggle={ viewToggle } />
 			) : (
 				<Stream
 					{ ...props }
@@ -30,8 +38,9 @@ function FollowingStream( { ...props } ) {
 						className={ clsx( 'following-stream-header', {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
-					/>
-
+					>
+						{ viewToggle }
+					</NavigationHeader>
 					<ReaderOnboarding />
 				</Stream>
 			) }

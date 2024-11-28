@@ -1,4 +1,5 @@
-import page from '@automattic/calypso-router';
+import { isEnabled } from '@automattic/calypso-config';
+import page, { type Context } from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
@@ -14,16 +15,22 @@ import { renderStagingSite } from './controller';
 export default function () {
 	page( '/staging-site', siteSelection, sites, makeLayout, clientRender );
 
-	page(
-		'/staging-site/:site',
-		siteSelection,
-		navigation,
-		redirectToHostingPromoIfNotAtomic,
-		redirectIfCurrentUserCannot( 'manage_options' ),
-		handleHostingPanelRedirect,
-		renderStagingSite,
-		siteDashboard( DOTCOM_STAGING_SITE ),
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/staging-site/:site', ( context: Context ) => {
+			page.redirect( `/sites/tools/staging-site/${ context.params.site }` );
+		} );
+	} else {
+		page(
+			'/staging-site/:site',
+			siteSelection,
+			navigation,
+			redirectToHostingPromoIfNotAtomic,
+			redirectIfCurrentUserCannot( 'manage_options' ),
+			handleHostingPanelRedirect,
+			renderStagingSite,
+			siteDashboard( DOTCOM_STAGING_SITE ),
+			makeLayout,
+			clientRender
+		);
+	}
 }

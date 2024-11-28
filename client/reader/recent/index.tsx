@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -23,7 +23,11 @@ import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
-const Recent = () => {
+interface RecentProps {
+	viewToggle?: React.ReactNode;
+}
+
+const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -132,12 +136,15 @@ const Recent = () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Set the first item as selected if no item is selected and screen is wide.
+	// Set the first item as selected on the current page.
 	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 && ! selectedItem ) {
-			setSelectedItem( data.items[ 0 ] );
+		if ( isWide && data?.items?.length > 0 ) {
+			if ( view.page && view.perPage ) {
+				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
+				setSelectedItem( selectedPost || null );
+			}
 		}
-	}, [ isWide, data?.items, selectedItem ] );
+	}, [ isWide, data?.items, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
@@ -163,7 +170,7 @@ const Recent = () => {
 				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
 			>
 				<div className="recent-feed__list-column-header">
-					<FormattedHeader align="left" headerText={ translate( 'Recent' ) } />
+					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<div className="recent-feed__list-column-content">
 					{ ! hasSubscriptions ? (

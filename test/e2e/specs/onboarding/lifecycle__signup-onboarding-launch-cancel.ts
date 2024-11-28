@@ -40,7 +40,6 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
 	} );
-	const blogTagLine = DataHelper.getRandomPhrase();
 
 	let page: Page;
 	let newUserDetails: NewUserResponse;
@@ -146,15 +145,6 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 
 		it( 'Select "Sell" goal', async function () {
 			await startSiteFlow.selectGoal( 'Sell' );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
-		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( testUser.siteName );
-		} );
-
-		it( 'Enter blog tagline', async function () {
-			await startSiteFlow.enterTagline( blogTagLine );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 	} );

@@ -44,7 +44,7 @@ export default function CachingSettings() {
 		return (
 			<UpsellNudge
 				title={ translate(
-					'Upgrade to the %(businessPlanName)s plan to manage your site’s server-side caching and get access to all {{a}}advanced tools{{/a}}.',
+					'Upgrade to the %(businessPlanName)s plan to get access to this feature and all {{a}}advanced tools{{/a}}.',
 					{
 						components: { a: <a href={ `/sites/tools/${ siteSlug }` } /> },
 						args: { businessPlanName: getPlanBusinessTitle() },

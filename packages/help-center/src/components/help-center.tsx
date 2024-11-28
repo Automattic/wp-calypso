@@ -27,9 +27,9 @@ const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
+	shouldUseHelpCenterExperience,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -38,7 +38,7 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
 
 	useEffect( () => {
 		if ( currentUser ) {
@@ -73,7 +73,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			{ shouldUseHelpCenterExperience && <HelpCenterSmooch /> }
+			{ shouldUseHelpCenterExperience && canConnectToZendesk && <HelpCenterSmooch /> }
 		</>,
 		portalParent
 	);
@@ -82,9 +82,12 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
+	const shouldUseHelpCenterExperience =
+		config.isEnabled( 'help-center-experience' ) || props.shouldUseHelpCenterExperience;
+
 	return (
-		<HelpCenterRequiredContextProvider value={ props }>
-			<HelpCenter { ...props } />
+		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
+			<HelpCenter { ...props } shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience } />
 		</HelpCenterRequiredContextProvider>
 	);
 }

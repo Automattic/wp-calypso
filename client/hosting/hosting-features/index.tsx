@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
@@ -18,15 +19,22 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 
 export default function () {
 	page( '/hosting-features', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/hosting-features/:site',
-		siteSelection,
-		navigation,
-		redirectForNonSimpleSite,
-		redirectIfP2,
-		hostingFeatures,
-		siteDashboard( DOTCOM_HOSTING_FEATURES ),
-		makeLayout,
-		clientRender
-	);
+
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/hosting-features/:site', ( context: PageJSContext ) => {
+			page.redirect( `/sites/tools/${ context.params.site }` );
+		} );
+	} else {
+		page(
+			'/hosting-features/:site',
+			siteSelection,
+			navigation,
+			redirectForNonSimpleSite,
+			redirectIfP2,
+			hostingFeatures,
+			siteDashboard( DOTCOM_HOSTING_FEATURES ),
+			makeLayout,
+			clientRender
+		);
+	}
 }

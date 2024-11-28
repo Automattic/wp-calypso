@@ -32,7 +32,7 @@ export function useOpenPhpMyAdmin() {
 	const dispatch = useDispatch();
 
 	const openPhpMyAdmin = useCallback(
-		async function openPhpMyAdmin( siteId ) {
+		async function openPhpMyAdmin( siteId: number | null ) {
 			setLoading( true );
 			try {
 				const { token } = await wpcom.req.post( {
@@ -58,7 +58,19 @@ export function useOpenPhpMyAdmin() {
 	};
 }
 
-export default function PhpMyAdminForm( { disabled, ContainerComponent, DescriptionComponent } ) {
+interface PhpMyAdminFormProps {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	upsell?: React.ReactNode;
+	disabled?: boolean;
+}
+
+export default function PhpMyAdminForm( {
+	disabled,
+	ContainerComponent,
+	DescriptionComponent,
+	upsell,
+}: PhpMyAdminFormProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
@@ -126,7 +138,7 @@ export default function PhpMyAdminForm( { disabled, ContainerComponent, Descript
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
 			</DescriptionComponent>
-			{ form }
+			{ upsell ?? form }
 		</ContainerComponent>
 	);
 }
