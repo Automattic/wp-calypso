@@ -67,7 +67,13 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( 'Most {{link}}downloaded files{{/link}} from your site.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
+									link: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+										/>
+									),
 								},
 								context: 'Stats: Info popover content when the file downloads module has data.',
 							} ) }
@@ -100,7 +106,13 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+											/>
+										),
 									},
 									context: 'Stats: Info box label when the file downloads module is empty',
 								}

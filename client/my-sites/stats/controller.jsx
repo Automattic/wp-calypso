@@ -225,6 +225,12 @@ export function site( context, next ) {
 	next();
 }
 
+export function redirectToDaySummary( context ) {
+	page.redirect(
+		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`
+	);
+}
+
 export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
@@ -283,6 +289,14 @@ export function summary( context, next ) {
 		: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 	const period = rangeOfPeriod( activeFilter.period, date );
 
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? moment( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
@@ -302,6 +316,7 @@ export function summary( context, next ) {
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
 				date={ date }
+				dateRange={ dateRange }
 				context={ context }
 				period={ period }
 				{ ...extraProps }

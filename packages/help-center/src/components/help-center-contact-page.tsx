@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
@@ -183,27 +182,30 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 const HelpCenterFooterButton = ( {
 	children,
+	eventName,
 	buttonTextEventProp,
 	redirectTo,
 	icon,
 }: {
 	children: ReactNode;
+	eventName: string;
 	buttonTextEventProp: string;
 	redirectTo: string;
 	icon: ReactElement;
 } ) => {
 	const { url, isLoading } = useStillNeedHelpURL();
-	const helpCenterContext = useHelpCenterContext();
-	const sectionName = helpCenterContext.sectionName;
+	const { sectionName } = useHelpCenterContext();
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 	const navigate = useNavigate();
 	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
 	const handleContactButtonClicked = ( {
+		eventName,
 		buttonTextEventProp,
 	}: {
+		eventName: string;
 		buttonTextEventProp: string;
 	} ) => {
-		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+		recordTracksEvent( eventName, {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
@@ -223,7 +225,10 @@ const HelpCenterFooterButton = ( {
 
 	const handleClick = async () => {
 		setIsCreatingChat( true );
-		handleContactButtonClicked( { buttonTextEventProp: buttonTextEventProp } );
+		handleContactButtonClicked( {
+			eventName: eventName,
+			buttonTextEventProp: buttonTextEventProp,
+		} );
 
 		setIsCreatingChat( false );
 		const url = redirectionURL();
@@ -243,25 +248,37 @@ const HelpCenterFooterButton = ( {
 };
 
 export const HelpCenterContactButton: FC = () => {
+	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
+	const { canConnectToZendesk } = useHelpCenterContext();
 	const { __ } = useI18n();
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
 		100,
-		'resolved'
+		'resolved',
+		undefined,
+		shouldUseHelpCenterExperience
 	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { data: supportInteractionsOpen } = useGetSupportInteractions(
+		'zendesk',
+		10,
+		'open',
+		undefined,
+		shouldUseHelpCenterExperience
+	);
 
 	const supportInteractions = [
 		...( supportInteractionsResolved || [] ),
 		...( supportInteractionsOpen || [] ),
 	];
 
-	return config.isEnabled( 'help-center-experience' ) &&
+	return shouldUseHelpCenterExperience &&
+		canConnectToZendesk &&
 		supportInteractions &&
 		supportInteractions?.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
+				eventName="calypso_inlinehelp_morehelp_click"
 				buttonTextEventProp="Still need help?"
 				redirectTo="/odie"
 			>
@@ -269,6 +286,7 @@ export const HelpCenterContactButton: FC = () => {
 			</HelpCenterFooterButton>
 			<HelpCenterFooterButton
 				icon={ backup }
+				eventName="calypso_inlinehelp_history_click"
 				buttonTextEventProp="History"
 				redirectTo="/chat-history"
 			>
@@ -278,6 +296,7 @@ export const HelpCenterContactButton: FC = () => {
 	) : (
 		<HelpCenterFooterButton
 			icon={ comment }
+			eventName="calypso_inlinehelp_morehelp_click"
 			buttonTextEventProp="Still need help?"
 			redirectTo="/odie"
 		>

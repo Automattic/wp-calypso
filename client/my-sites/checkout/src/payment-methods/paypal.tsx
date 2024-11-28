@@ -27,10 +27,7 @@ import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
 
-// Disabling this rule to make migrating this easier with fewer changes
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
-const storeKey = 'paypal';
+const storeKey = 'paypal-express';
 type NounsInStore = 'postalCode' | 'countryCode' | 'address1' | 'organization' | 'city' | 'state';
 type PaypalSelectors = StoreSelectors< NounsInStore >;
 
@@ -330,26 +327,6 @@ function PayPalSubmitButton( {
 	);
 }
 
-function PayPalButtonContents( {
-	formStatus,
-	transactionStatus,
-}: {
-	formStatus: FormStatus;
-	transactionStatus: TransactionStatus;
-} ) {
-	const { __ } = useI18n();
-	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
-		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
-	}
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <span>{ __( 'Processing…' ) }</span>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		return <ButtonPayPalIcon />;
-	}
-	return <span>{ __( 'Please wait…' ) }</span>;
-}
-
 const ButtonPayPalIcon = styled( PayPalLogo )`
 	transform: translateY( 2px );
 `;
@@ -409,4 +386,24 @@ function PayPalLogo( { className }: { className?: string } ) {
 			</defs>
 		</svg>
 	);
+}
+
+function PayPalButtonContents( {
+	formStatus,
+	transactionStatus,
+}: {
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatus;
+} ) {
+	const { __ } = useI18n();
+	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
+		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
+	}
+	if ( formStatus === FormStatus.SUBMITTING ) {
+		return <span>{ __( 'Processing…' ) }</span>;
+	}
+	if ( formStatus === FormStatus.READY ) {
+		return <ButtonPayPalIcon />;
+	}
+	return <span>{ __( 'Please wait…' ) }</span>;
 }

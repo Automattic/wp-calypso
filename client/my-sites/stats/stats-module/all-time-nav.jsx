@@ -38,6 +38,9 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const dispatch = useDispatch();
 
 	const getSummaryPeriodLabel = () => {
+		if ( query.start_date ) {
+			return translate( 'Custom Range Summary' );
+		}
 		switch ( period.period ) {
 			case 'day':
 				return translate( 'Day Summary' );
@@ -62,12 +65,21 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		recordStats( item );
 	};
 
+	// Template for standard range options (7, 30, Quarter, Year, All Time).
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
 		'YYYY-MM-DD'
 	) }&summarize=1&num=`;
-	const summaryPeriodPath = `/stats/${
+
+	// Path for summary or custom range option. ie: The first button in the row.
+	// Defaults to one day/week/month/year.
+	let summaryPeriodPath = `/stats/${
 		period.period
 	}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+	// Override if custom range was used in query.
+	if ( query.start_date ) {
+		summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
+	}
+
 	const options = [
 		{
 			value: '0',

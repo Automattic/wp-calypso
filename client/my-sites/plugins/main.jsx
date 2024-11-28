@@ -529,7 +529,12 @@ export class PluginsMain extends Component {
 					<QueryJetpackSitesFeatures />
 				) }
 				{ this.renderPageViewTracking() }
-				<div className="plugin-management-wrapper">
+				<div
+					className={ clsx(
+						'plugin-management-wrapper',
+						this.props.newBulkPluginManagement && 'is-bulk-plugin-management'
+					) }
+				>
 					{ ! isJetpackCloud && (
 						<NavigationHeader
 							navigationItems={ [] }
@@ -600,13 +605,17 @@ export class PluginsMain extends Component {
 							) }
 						</div>
 					</div>
-					<div
-						className={ clsx( 'plugins__main-content', {
-							'plugins__main-content-jc': isJetpackCloud,
-						} ) }
-					>
-						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
-					</div>
+					{ this.props.newBulkPluginManagement ? (
+						this.renderPluginsContent()
+					) : (
+						<div
+							className={ clsx( 'plugins__main-content', {
+								'plugins__main-content-jc': isJetpackCloud,
+							} ) }
+						>
+							<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
+						</div>
+					) }
 				</div>
 			</>
 		);

@@ -361,12 +361,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
-					bodyClass={ [
-						'edit__body-white',
-						'is-bulk-domains-page',
-						'is-bulk-all-domains-page',
-						...( isDomainsEmpty ? [ 'is-bulk-all-domains-page--is-empty' ] : [] ),
-					] }
+					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
 				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
@@ -385,7 +380,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						deleteBulkActionStatus={ deleteBulkActionStatus }
 					/>
 				) : (
-					<EmptyState />
+					<div className="bulk-domains-empty-state">
+						<div className="bulk-domains-empty-state__main">
+							<EmptyState />
+						</div>
+					</div>
 				) }
 			</Main>
 		</>

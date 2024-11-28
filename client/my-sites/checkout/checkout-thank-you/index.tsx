@@ -548,10 +548,11 @@ export class CheckoutThankYou extends Component<
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
-			} else if ( isOnlyDomainPurchases( purchases ) ) {
+			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				pageContent = (
 					<DomainOnlyThankYou
 						purchases={ purchases }
+						receipt={ this.props.receipt.data }
 						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
 					/>
 				);

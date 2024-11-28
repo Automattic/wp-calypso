@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -22,8 +22,6 @@ import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
-
-const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -55,6 +53,8 @@ class StatModuleChartTabs extends Component {
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
 		showChartHeader: PropTypes.bool,
+		// Temporary prop to enable new date filtering UI.
+		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -96,7 +96,12 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		this.props.requestChartCounts( this.props.query );
+		this.props.queryComp && this.props.requestChartCounts( this.props.queryComp );
+		this.props.queryDay && this.props.requestChartCounts( this.props.queryDay );
+		this.props.queryDayComp && this.props.requestChartCounts( this.props.queryDayComp );
+	};
 
 	render() {
 		const {
@@ -106,8 +111,19 @@ class StatModuleChartTabs extends Component {
 			selectedPeriod,
 			isActiveTabLoading,
 			className,
+			countsComp,
 			showChartHeader = false,
+			isNewDateFilteringEnabled = false,
 		} = this.props;
+
+		let chartData = this.props.chartData;
+		if ( isNewDateFilteringEnabled ) {
+			chartData = chartData?.map( ( record ) => {
+				record.className = record.className?.replaceAll( 'is-selected', '' );
+				return record;
+			} );
+		}
+
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -134,11 +150,14 @@ class StatModuleChartTabs extends Component {
 				) }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
 				<StatTabs
 					data={ this.props.counts }
+					previousData={ isNewDateFilteringEnabled ? countsComp : null }
+					tabCountsAlt={ this.props.tabCountsAlt }
+					tabCountsAltComp={ this.props.tabCountsAltComp }
 					tabs={ this.props.charts }
 					switchTab={ this.props.switchTab }
 					selectedTab={ this.props.chartTab }
@@ -172,7 +191,15 @@ const memoizedQuery = memoizeLast(
 const connectComponent = connect(
 	(
 		state,
-		{ activeLegend, period: { period }, chartTab, queryDate, customQuantity, customRange }
+		{
+			isNewDateFilteringEnabled = false,
+			activeLegend,
+			period: { period },
+			chartTab,
+			queryDate,
+			customQuantity,
+			customRange,
+		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
@@ -193,6 +220,65 @@ const connectComponent = connect(
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
 
+		let countsComp = null;
+		let queryComp = null;
+		if ( customRange ) {
+			const dateComp = moment( date )
+				.subtract( customRange.daysInRange, 'day' )
+				.format( 'YYYY-MM-DD' );
+			const chartStartComp = moment( chartStart )
+				.subtract( customRange.daysInRange, 'day' )
+				.format( 'YYYY-MM-DD' );
+			queryComp = memoizedQuery( chartTab, dateComp, period, quantity, siteId, chartStartComp );
+			countsComp = getCountRecords(
+				state,
+				siteId,
+				queryComp.date,
+				queryComp.period,
+				queryComp.quantity
+			);
+		}
+
+		// Query single day stats for the display of visitors, likes, and comments, as we don't have hourly data for them at the moment.
+		let queryDay = null;
+		let tabCountsAlt = null;
+		if ( period === 'hour' && date === chartStart ) {
+			queryDay = {
+				...query,
+				period: 'day',
+				quantity: 1,
+				statFields: [ 'visitors', 'likes', 'comments' ],
+			};
+			tabCountsAlt = getCountRecords(
+				state,
+				siteId,
+				queryDay.date,
+				queryDay.period,
+				queryDay.quantity
+			);
+		}
+
+		// Query single day stats for the display of visitors, likes, and comments, as we don't have hourly data for them at the moment.
+		let queryDayComp = null;
+		let tabCountsAltComp = null;
+		if ( period === 'hour' && date === chartStart ) {
+			const previousDate = moment( date ).subtract( 1, 'day' ).format( 'YYYY-MM-DD' );
+			queryDayComp = {
+				...query,
+				date: previousDate,
+				period: 'day',
+				quantity: 1,
+				statFields: [ 'visitors', 'likes', 'comments' ],
+			};
+			tabCountsAltComp = getCountRecords(
+				state,
+				siteId,
+				queryDayComp.date,
+				queryDayComp.period,
+				queryDayComp.quantity
+			);
+		}
+
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
@@ -201,11 +287,18 @@ const connectComponent = connect(
 		return {
 			chartData,
 			counts,
+			countsComp,
 			isActiveTabLoading,
 			query,
+			queryComp,
 			queryKey,
 			siteId,
 			selectedPeriod: period,
+			queryDay,
+			tabCountsAlt: tabCountsAlt?.[ 0 ],
+			queryDayComp,
+			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			isNewDateFilteringEnabled,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }

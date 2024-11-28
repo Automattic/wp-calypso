@@ -168,7 +168,8 @@ export class LoginForm extends Component {
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' ) &&
-			requestError.code === 'unknown_user'
+			requestError.code === 'unknown_user' &&
+			! this.props.isWooPasswordlessJPC
 		) {
 			this.jetpackCreateAccountWithMagicLink();
 		}
@@ -940,6 +941,13 @@ export class LoginForm extends Component {
 		const shouldRenderForgotPasswordLink =
 			! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless;
 
+		const signUpUrlWithEmail = addQueryArgs(
+			{
+				user_email: this.state.usernameOrEmail,
+			},
+			signupUrl
+		);
+
 		return (
 			<form
 				className={ clsx( {
@@ -1031,12 +1039,11 @@ export class LoginForm extends Component {
 													components: {
 														newAccountLink: (
 															<a
-																href={ addQueryArgs(
-																	{
-																		user_email: this.state.usernameOrEmail,
-																	},
-																	signupUrl
-																) }
+																onClick={ ( e ) => {
+																	e.preventDefault();
+																	window.location.href = signUpUrlWithEmail;
+																} }
+																href={ signUpUrlWithEmail }
 															/>
 														),
 													},

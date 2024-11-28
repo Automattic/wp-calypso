@@ -1,86 +1,30 @@
 /**
  * @jest-environment jsdom
  */
-import { act, renderHook, render } from '@testing-library/react';
+import { act, fireEvent, renderHook, render } from '@testing-library/react';
 import { useSteps } from '../use-steps';
 
-describe( 'useSteps', () => {
-	const baseStepsOptions = {
-		fromUrl: 'https://mytestsite.com',
-		migrationKey: '123',
-		preparationError: null,
-		showMigrationKeyFallback: false,
-		onComplete: jest.fn(),
-	};
+const siteUrl = 'https://staging.wordpress.com';
+const baseStepsOptions = {
+	fromUrl: 'https://mytestsite.com',
+	lastCompleteStep: -1,
+	migrationKey: '123',
+	onComplete: jest.fn(),
+	preparationError: null,
+	setCurrentStep: jest.fn(),
+	setLastCompleteStep: jest.fn(),
+	showMigrationKeyFallback: false,
+};
 
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => ( { URL: siteUrl } ),
+} ) );
+
+describe( 'Steps', () => {
 	it( 'Should return 3 steps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		expect( result.current.steps ).toHaveLength( 3 );
-	} );
-
-	it( 'Should have the action labels as "Next" for the 2 first steps', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		expect( result.current.steps[ 0 ].expandable?.action?.label ).toEqual( 'Next' );
-		expect( result.current.steps[ 1 ].expandable?.action?.label ).toEqual( 'Next' );
-	} );
-
-	it( 'Should have the last step action label as "Done"', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		expect(
-			result.current.steps[ result.current.steps.length - 1 ].expandable?.action?.label
-		).toEqual( 'Done' );
-	} );
-
-	it( 'Should start with the steps marked as not completed', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		expect( result.current.steps[ 0 ].task.completed ).toBeFalsy();
-	} );
-
-	it( 'Should mark step as completed after navigating through it', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		act( () => {
-			result.current.steps[ 0 ].expandable?.action?.onClick();
-		} );
-
-		expect( result.current.steps[ 0 ].task.completed ).toBeTruthy();
-	} );
-
-	it( 'Should start with no completed steps', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		expect( result.current.completedSteps ).toEqual( 0 );
-	} );
-
-	it( 'Should return the correct number of completed steps when navigating through them', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
-		act( () => {
-			result.current.steps[ 0 ].expandable?.action?.onClick();
-		} );
-
-		expect( result.current.completedSteps ).toEqual( 1 );
-	} );
-
-	it( 'Should call onComplete after calling the action of the last step', () => {
-		const onCompleteMock = jest.fn();
-
-		const options = {
-			...baseStepsOptions,
-			onComplete: onCompleteMock,
-		};
-
-		const { result } = renderHook( () => useSteps( options ) );
-
-		act( () => {
-			result.current.steps[ 2 ].expandable?.action?.onClick();
-		} );
-
-		expect( onCompleteMock ).toHaveBeenCalled();
 	} );
 
 	it( 'Should start with the first step open', () => {
@@ -91,32 +35,74 @@ describe( 'useSteps', () => {
 
 	it( 'Should have only the current step as open', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
 		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeFalsy();
 
-		act( () => {
-			result.current.steps[ 0 ].expandable?.action?.onClick();
-		} );
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
 		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
-	it( 'Should not allow navigate directly to a step when it was not completed yet', () => {
+	it( 'Should start with each step marked as not completed', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+
+		expect( result.current.steps[ 0 ].task.completed ).toBeFalsy();
+	} );
+
+	it( 'Should start with no completed steps', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+
+		expect( result.current.completedSteps ).toEqual( 0 );
+	} );
+
+	it( 'Should mark step as completed after navigating through it', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( result.current.steps[ 0 ].task.completed ).toBeTruthy();
+	} );
+
+	it( 'Should not allow navigating directly to a step when it was not completed yet', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		expect( result.current.steps[ 0 ].onClick ).toBeUndefined();
 		expect( result.current.steps[ 1 ].onClick ).toBeUndefined();
 	} );
 
-	it( 'Should allow to navigate directly to already visited steps', () => {
+	it( 'Should return the correct number of completed steps when navigating through them', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( result.current.completedSteps ).toEqual( 1 );
+	} );
+
+	it( 'Should call onComplete after calling the action of the last step', () => {
+		const onCompleteMock = jest.fn();
+		const options = {
+			...baseStepsOptions,
+			onComplete: onCompleteMock,
+		};
+		const { result } = renderHook( () => useSteps( options ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Done/ } ) );
+
+		expect( onCompleteMock ).toHaveBeenCalled();
+	} );
+
+	it( 'Should enable navigating directly to already visited steps', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		// Navigate through the action button to the next step.
-		act( () => {
-			result.current.steps[ 0 ].expandable?.action?.onClick();
-		} );
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
 
@@ -134,62 +120,97 @@ describe( 'useSteps', () => {
 
 		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
+} );
 
-	it( 'Should have a link to migrate plugin on the source site on the first step', () => {
+describe( 'Step 1 - Install the Migrate to WordPress.com plugin', () => {
+	it( 'Should render the "Install plugin" and "Next" buttons in the first step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
-		const link = getByRole( 'link', {
-			name: /Migrate to WordPress.com plugin/,
-		} );
-
-		expect( link.getAttribute( 'href' ) ).toEqual(
-			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`
-		);
+		expect( getByRole( 'button', { name: /Install plugin/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should have generic link to migrate plugin on the first step when the from is empty', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
-
+	it( 'Should open the Migrate to WordPress.com plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
-		const link = getByRole( 'link', {
-			name: /Migrate to WordPress.com plugin/,
-		} );
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
 
-		expect( link.getAttribute( 'href' ) ).toEqual(
-			'https://wordpress.org/plugins/wpcom-migration/'
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`,
+			'_blank'
 		);
 	} );
+} );
 
-	it( 'Should have a link to the migrate plugin screen on the source site on the second step', () => {
+describe( 'Step 2 - Get your site ready', () => {
+	it( 'Should render the "Get started" and "Next" buttons in the second step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
 		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
-		const link = getByRole( 'link', {
-			name: /Migrate to WordPress.com plugin screen on your source site/,
-		} );
-
-		expect( link.getAttribute( 'href' ) ).toEqual(
-			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=wpcom-migration`
-		);
+		expect( getByRole( 'button', { name: /Get started/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should have a text about the migrate plugin screen on the source site on the second step when the from is empty', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+	it( 'Should open the Migrate to WordPress.com plugin page on the source site when the "Get started" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
-		const { getByText } = render( result.current.steps[ 1 ].expandable?.content );
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Get started/ } ) );
 
-		const text = getByText( 'Migrate to WordPress.com plugin screen on your source site' );
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=wpcom-migration`,
+			'_blank'
+		);
+	} );
+} );
 
-		expect( text.tagName ).toEqual( 'STRONG' );
+describe( 'Step 3 - Add your migration key', () => {
+	it( 'Should not render any buttons if the migration key is not set and the fallback is not displayed', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'Should render the "Get key" and "Done" buttons if the migration key is not set and the fallback is displayed', () => {
+		const { result } = renderHook( () =>
+			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
+		);
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Get key/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should render the "Done" button if the migration key is set', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should open the Migrate to WordPress.com plugin page on the new site when the "Get key" button is clicked', () => {
+		const { result } = renderHook( () =>
+			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
+		);
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Get key/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ siteUrl }/wp-admin/admin.php?page=wpcom-migration`,
+			'_blank'
+		);
 	} );
 
 	it( 'Should display the migration key field when the key is ready', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
 		expect( getByRole( 'textbox', { name: 'Migration key' } ) ).toBeInTheDocument();
@@ -197,17 +218,43 @@ describe( 'useSteps', () => {
 
 	it( 'Should display waiting message when migration key is not ready', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
-
 		const { getByText } = render( result.current.steps[ 2 ].expandable?.content );
 
 		expect(
 			getByText( 'The key will be available here when your new site is ready.' )
 		).toBeInTheDocument();
 	} );
+} );
 
-	it( 'Should not display done button when migration key is not ready yet', () => {
+describe( 'Unknown source site', () => {
+	beforeAll( () => ( baseStepsOptions.fromUrl = '' ) );
+
+	it( 'Should open the plugin page on WordPress.org when the "Install plugin" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			'https://wordpress.org/plugins/wpcom-migration/',
+			'_blank'
+		);
+	} );
+
+	it( 'Should not render the "Get started" button', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { queryByRole } = render( result.current.steps[ 1 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Get started/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should not render any buttons on the migration key step if the migration key is not set and the fallback is not displayed', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
-		expect( result.current.steps[ 2 ].expandable?.action ).toBeUndefined();
+		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
 	} );
 } );

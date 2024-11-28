@@ -14,6 +14,11 @@ interface PricedAPISitePlansIndex {
 }
 
 interface Props {
+	/**
+	 * To match the use-plans hook, `coupon` is required on purpose to mitigate risk of not passing
+	 * something through when we should
+	 */
+	coupon: string | undefined;
 	siteId: string | number | null | undefined;
 }
 
@@ -22,15 +27,18 @@ interface Props {
  * - Plans from `/sites/[siteId]/plans`, unlike `/plans`, are returned indexed by product_id, and do not include that in the plan's payload.
  * - UI works with product/plan slugs everywhere, so returned index is transformed to be keyed by product_slug
  */
-function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
+function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansIndex > {
 	const queryKeys = useQueryKeysFactory();
+	const params = new URLSearchParams();
+	coupon && params.append( 'coupon_code', coupon );
 
 	return useQuery( {
-		queryKey: queryKeys.sitePlans( siteId ),
+		queryKey: queryKeys.sitePlans( coupon, siteId ),
 		queryFn: async (): Promise< SitePlansIndex > => {
 			const data: PricedAPISitePlansIndex = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
+				query: params.toString(),
 			} );
 
 			return Object.fromEntries(
@@ -52,6 +60,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							hasRedeemedDomainCredit: plan?.has_redeemed_domain_credit,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
 							pricing: {
+								hasSaleCoupon: plan.has_sale_coupon,
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
 								costOverrides: unpackCostOverrides( plan ),

@@ -3,6 +3,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
+	canConnectToZendesk: boolean;
 	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
@@ -30,6 +31,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	shouldUseHelpCenterExperience?: boolean;
+	canConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
@@ -148,7 +150,7 @@ export type Message = {
 	created_at?: string;
 };
 
-export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer';
+export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
 
 export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
 

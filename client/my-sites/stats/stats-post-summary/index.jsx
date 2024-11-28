@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import StatsModuleUTM from '../features/modules/stats-utm';
+import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-picker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -32,6 +34,7 @@ class StatsPostSummary extends Component {
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		supportsUTMStats: PropTypes.bool,
 	};
 
 	state = {
@@ -122,6 +125,48 @@ class StatsPostSummary extends Component {
 		}
 	}
 
+	getQuery() {
+		let selectedRecord = this.state.selectedRecord;
+		const { period } = this.state;
+		const { moment } = this.props;
+		const query = {
+			period,
+			max: 0,
+		};
+
+		if ( ! selectedRecord ) {
+			const chartData = this.getChartData();
+
+			if ( chartData.length ) {
+				selectedRecord = chartData[ chartData.length - 1 ];
+			} else {
+				return query;
+			}
+		}
+
+		let date = selectedRecord.startDate;
+
+		switch ( period ) {
+			case 'week':
+				date = moment( date ).add( 6, 'days' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'month':
+				date = moment( date ).endOf( 'month' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'year':
+				date = moment( date ).endOf( 'year' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'day':
+			default:
+				break;
+		}
+
+		return {
+			...query,
+			date,
+		};
+	}
+
 	render() {
 		const { isRequesting, postId, siteId, translate } = this.props;
 		const periods = [
@@ -141,40 +186,57 @@ class StatsPostSummary extends Component {
 		} );
 
 		return (
-			<div className={ summaryWrapperClass }>
-				<QueryPostStats siteId={ siteId } postId={ postId } />
+			<>
+				<div className={ summaryWrapperClass }>
+					<QueryPostStats siteId={ siteId } postId={ postId } />
 
-				<StatsPeriodHeader>
-					<StatsPeriodNavigation showArrows={ false }>
-						<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
-					</StatsPeriodNavigation>
-					<SegmentedControl primary>
-						{ periods.map( ( { id, label } ) => (
-							<SegmentedControl.Item
-								key={ id }
-								onClick={ this.selectPeriod( id ) }
-								selected={ this.state.period === id }
-							>
-								{ label }
-							</SegmentedControl.Item>
-						) ) }
-					</SegmentedControl>
-				</StatsPeriodHeader>
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation showArrows={ false }>
+							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+						</StatsPeriodNavigation>
+						<SegmentedControl primary>
+							{ periods.map( ( { id, label } ) => (
+								<SegmentedControl.Item
+									key={ id }
+									onClick={ this.selectPeriod( id ) }
+									selected={ this.state.period === id }
+								>
+									{ label }
+								</SegmentedControl.Item>
+							) ) }
+						</SegmentedControl>
+					</StatsPeriodHeader>
 
-				<SummaryChart
-					isLoading={ isRequesting && ! chartData.length }
-					data={ chartData }
-					activeKey="period"
-					dataKey="value"
-					labelKey="periodLabel"
-					chartType="views"
-					sectionClass="is-views"
-					selected={ selectedRecord }
-					onClick={ this.selectRecord }
-					tabLabel={ translate( 'Views' ) }
-					type="post"
-				/>
-			</div>
+					<SummaryChart
+						isLoading={ isRequesting && ! chartData.length }
+						data={ chartData }
+						activeKey="period"
+						dataKey="value"
+						labelKey="periodLabel"
+						chartType="views"
+						sectionClass="is-views"
+						selected={ selectedRecord }
+						onClick={ this.selectRecord }
+						tabLabel={ translate( 'Views' ) }
+						type="post"
+					/>
+				</div>
+
+				<StatsGlobalValuesContext.Consumer>
+					{ ( isInternal ) =>
+						( this.props.supportsUTMStats || isInternal ) && (
+							<div className="stats-module-utm__post-detail">
+								<StatsModuleUTM
+									siteId={ siteId }
+									postId={ postId }
+									period={ this.state.period }
+									query={ this.getQuery() }
+								/>
+							</div>
+						)
+					}
+				</StatsGlobalValuesContext.Consumer>
+			</>
 		);
 	}
 }

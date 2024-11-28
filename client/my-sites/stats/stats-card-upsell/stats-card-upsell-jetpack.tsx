@@ -53,13 +53,30 @@ const insightsSupportLinkWithAnchor = ( anchor: string ) => {
 	);
 };
 
+const utmLearnMoreLink = () => {
+	return (
+		<a
+			href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-utm-url-builder"
+			target="_blank"
+			rel="noopenner noreferrer"
+		/>
+	);
+};
+
 const useUpsellCopy = ( statType: string ) => {
 	const translate = useTranslate();
 	switch ( statType ) {
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		case STATS_FEATURE_UTM_STATS:
-			return translate( 'Generate UTM parameters and track your campaign performance data.' );
+			return translate(
+				'Generate UTM parameters and track your campaign performance data. {{link}}Learn more{{/link}}',
+				{
+					components: {
+						link: utmLearnMoreLink(),
+					},
+				}
+			);
 		case STATS_TYPE_DEVICE_STATS:
 			return translate( 'See which devices your visitors are using.' );
 		case STAT_TYPE_TOP_POSTS:

@@ -13,9 +13,9 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { HostingCardDescription } from 'calypso/components/hosting-card';
+import { PanelHeading, PanelSection } from 'calypso/components/panel';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useSelector } from 'calypso/state';
 import {
 	updateAtomicPhpVersion,

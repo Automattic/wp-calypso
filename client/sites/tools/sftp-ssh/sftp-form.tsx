@@ -29,7 +29,8 @@ import {
 	enableAtomicSshAccess,
 	disableAtomicSshAccess,
 } from 'calypso/state/hosting/actions';
-import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
+import { getAtomicHostingIsLoadingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-users';
+import { getAtomicHostingIsLoadingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-is-loading-ssh-access';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -88,12 +89,14 @@ const disableSshAccess = ( siteId: number | null ) =>
 type SftpFormProps = {
 	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
 	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	upsell?: React.ReactNode;
 	disabled?: boolean;
 };
 
 export const SftpForm = ( {
 	ContainerComponent,
 	DescriptionComponent,
+	upsell,
 	disabled,
 }: SftpFormProps ) => {
 	const translate = useTranslate();
@@ -110,8 +113,11 @@ export const SftpForm = ( {
 	);
 	const isSshAccessEnabled =
 		'ssh' === useSelector( ( state ) => getAtomicHostingSshAccess( state, siteId ) );
-	const isLoadingSftpData = useSelector( ( state ) =>
-		getAtomicHostingIsLoadingSftpData( state, siteId )
+	const isLoadingSshAccess = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSshAccess( state, siteId )
+	);
+	const isLoadingSftpUsers = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSftpUsers( state, siteId )
 	);
 	const { username, password } = useSelector( ( state ) => {
 		let username;
@@ -138,7 +144,8 @@ export const SftpForm = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
-	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpData;
+	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpUsers;
+	const hasSshFeatureAndIsLoading = siteHasSshFeature && isLoadingSshAccess;
 	const siteIntent = useSiteOption( 'site_intent' );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
@@ -268,7 +275,8 @@ export const SftpForm = ( {
 			</div>
 		);
 	};
-	const displayQuestionsAndButton = ! hasSftpFeatureAndIsLoading && ! ( username || isLoading );
+	const displayQuestionsAndButton =
+		! hasSftpFeatureAndIsLoading && ! hasSshFeatureAndIsLoading && ! ( username || isLoading );
 	const showSshPanel = ! siteHasSftpFeature || siteHasSshFeature;
 
 	const featureExplanation = siteHasSshFeature
@@ -279,29 +287,8 @@ export const SftpForm = ( {
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
 		  );
 
-	return (
-		<ContainerComponent
-			className="sftp-card"
-			headingId="sftp-credentials"
-			title={
-				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
-			}
-			isLoading={ hasSftpFeatureAndIsLoading }
-		>
-			{ ! hasSftpFeatureAndIsLoading && (
-				<DescriptionComponent>
-					{ username
-						? translate(
-								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
-								{
-									components: {
-										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
-									},
-								}
-						  )
-						: featureExplanation }
-				</DescriptionComponent>
-			) }
+	const form = (
+		<div className="sftp-card__wrapper">
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions-container">
 					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
@@ -396,7 +383,36 @@ export const SftpForm = ( {
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
-			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
+			{ ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
+				<SftpCardLoadingPlaceholder />
+			) }
+		</div>
+	);
+
+	return (
+		<ContainerComponent
+			className="sftp-card"
+			headingId="sftp-credentials"
+			title={
+				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
+			}
+			isLoading={ hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading }
+		>
+			{ ! ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
+				<DescriptionComponent>
+					{ username
+						? translate(
+								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								{
+									components: {
+										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
+									},
+								}
+						  )
+						: featureExplanation }
+				</DescriptionComponent>
+			) }
+			{ upsell ?? form }
 		</ContainerComponent>
 	);
 };

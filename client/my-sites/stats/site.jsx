@@ -25,6 +25,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
@@ -192,10 +193,10 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( bar ) => {
+	barClick = ( isNewDateFilteringEnabled, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 
-		if ( ! config.isEnabled( 'stats/new-date-filtering' ) ) {
+		if ( ! isNewDateFilteringEnabled ) {
 			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
 			return;
 		}
@@ -243,6 +244,8 @@ class StatsSite extends Component {
 	// Used in case no starting date is present in the URL.
 	getDefaultDaysForPeriod( period, defaultSevenDaysForPeriodDay = false ) {
 		switch ( period ) {
+			case 'hour':
+				return 1;
 			case 'day':
 				// TODO: Temporary fix for the new date filtering feature.
 				if ( defaultSevenDaysForPeriodDay ) {
@@ -261,17 +264,24 @@ class StatsSite extends Component {
 		}
 	}
 
-	getStatHref( period, path, siteSlug ) {
-		return period && path && siteSlug
-			? '/stats/' +
-					period?.period +
-					'/' +
-					path +
-					'/' +
-					siteSlug +
-					'?startDate=' +
-					period?.startOf?.format( 'YYYY-MM-DD' )
-			: undefined;
+	// Note: This is only used in the empty version of the module.
+	// There's a similar function inside stats-module/index.jsx that is used when we have content.
+	getStatHref( path, query ) {
+		const { period, slug } = this.props;
+		const paramsValid = period && path && slug;
+		if ( ! paramsValid ) {
+			return undefined;
+		}
+
+		let url = `/stats/${ period.period }/${ path }/${ slug }`;
+
+		if ( query?.start_date ) {
+			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
+		} else {
+			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+		}
+
+		return url;
 	}
 
 	renderStats( isInternal ) {
@@ -294,7 +304,7 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -342,14 +352,14 @@ class StatsSite extends Component {
 				.format( 'YYYY-MM-DD' );
 		}
 
+		customChartRange.daysInRange = daysInRange;
+
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
 		if ( period === 'day' && daysInRange === 1 ) {
-			page( '/stats/hour/' + slug + window.location.search );
+			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
 			return;
 		}
-
-		customChartRange.daysInRange = daysInRange;
 
 		// Calculate diff between requested start and end in `priod` units.
 		// Move end point (most recent) to the end of period to account for partial periods
@@ -446,49 +456,44 @@ class StatsSite extends Component {
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
-				{ isNewDateFilteringEnabled && (
-					<div
-						className="stats-new-date-filtering-callout"
-						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
-					>
-						<p>New date filtering enabled.</p>
-					</div>
-				) }
 				{ ! isNewDateFilteringEnabled && (
 					// @TODO: remove highlight section completely once flag is released
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StatsPeriodHeader>
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/stats/${ period }/${ slug }` }
-							queryParams={ context.query }
-							pathTemplate={ pathTemplate }
-							charts={ CHARTS }
-							availableLegend={ this.getAvailableLegend() }
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							onChangeLegend={ this.onChangeLegend }
-							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
-							isWithNewDateControl
-							showArrows
-							slug={ slug }
-							dateRange={ customChartRange }
-						>
-							{ ' ' }
-							<DatePicker
-								period={ period }
+					<StickyPanel>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
 								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
-								isShort
-							/>
-						</StatsPeriodNavigation>
-					</StatsPeriodHeader>
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
+								isWithNewDateControl
+								showArrows
+								slug={ slug }
+								dateRange={ customChartRange }
+							>
+								{ ' ' }
+								<DatePicker
+									period={ period }
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+									dateRange={ customChartRange }
+								/>
+							</StatsPeriodNavigation>
+						</StatsPeriodHeader>
+					</StickyPanel>
 				) }
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
@@ -532,7 +537,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
@@ -541,6 +546,7 @@ class StatsSite extends Component {
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
 								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+								isNewDateFilteringEnabled
 							/>
 						) }
 						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
@@ -549,7 +555,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
@@ -568,14 +574,14 @@ class StatsSite extends Component {
 							moduleStrings={ moduleStrings.posts }
 							period={ this.props.period }
 							query={ query }
-							summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
+							summaryUrl={ this.getStatHref( 'posts', query ) }
 							className={ halfWidthModuleClasses }
 						/>
 						<StatsModuleReferrers
 							moduleStrings={ moduleStrings.referrers }
 							period={ this.props.period }
 							query={ query }
-							summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
+							summaryUrl={ this.getStatHref( 'referrers', query ) }
 							className={ halfWidthModuleClasses }
 						/>
 
@@ -583,7 +589,7 @@ class StatsSite extends Component {
 							moduleStrings={ moduleStrings.countries }
 							period={ this.props.period }
 							query={ query }
-							summaryUrl={ this.getStatHref( this.props.period, 'countryviews', slug ) }
+							summaryUrl={ this.getStatHref( 'countryviews', query ) }
 							className={ clsx( 'stats__flexible-grid-item--full' ) }
 						/>
 
@@ -593,7 +599,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'utm', slug ) }
+								summaryUrl={ this.getStatHref( 'utm', query ) }
 								summary={ false }
 								className={ halfWidthModuleClasses }
 							/>
@@ -617,7 +623,7 @@ class StatsSite extends Component {
 							moduleStrings={ moduleStrings.clicks }
 							period={ this.props.period }
 							query={ query }
-							summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
+							summaryUrl={ this.getStatHref( 'clicks', query ) }
 							className={ halfWidthModuleClasses }
 						/>
 
@@ -626,7 +632,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'authors', slug ) }
+								summaryUrl={ this.getStatHref( 'authors', query ) }
 								className={ halfWidthModuleClasses }
 							/>
 						) }
@@ -637,7 +643,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
 								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'emails', slug ) }
+								summaryUrl={ this.getStatHref( 'emails', query ) }
 								className={ halfWidthModuleClasses }
 							/>
 						) }
@@ -646,7 +652,7 @@ class StatsSite extends Component {
 							moduleStrings={ moduleStrings.search }
 							period={ this.props.period }
 							query={ query }
-							summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
+							summaryUrl={ this.getStatHref( 'searchterms', query ) }
 							className={ halfWidthModuleClasses }
 						/>
 
@@ -655,7 +661,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'videoplays', slug ) }
+								summaryUrl={ this.getStatHref( 'videoplays', query ) }
 								className={ halfWidthModuleClasses }
 							/>
 						) }
@@ -667,7 +673,7 @@ class StatsSite extends Component {
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }
-									summaryUrl={ this.getStatHref( this.props.period, 'filedownloads', slug ) }
+									summaryUrl={ this.getStatHref( 'filedownloads', query ) }
 									className={ halfWidthModuleClasses }
 								/>
 							)

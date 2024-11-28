@@ -5,6 +5,7 @@ import {
 	WOOEXPRESS_FLOW,
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
+	isHundredYearPlanFlow,
 	isHundredYearDomainFlow,
 } from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -66,7 +67,7 @@ export function getDomainSuggestionsVendor(
 	if ( isDomainForGravatarFlow( options.flowName ) ) {
 		return 'gravatar';
 	}
-	if ( isHundredYearDomainFlow( options.flowName ) ) {
+	if ( isHundredYearPlanFlow( options.flowName ) || isHundredYearDomainFlow( options.flowName ) ) {
 		return '100-year-domains';
 	}
 	if ( options.flowName === LINK_IN_BIO_TLD_FLOW ) {

@@ -1,8 +1,9 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables";
+@import "@automattic/components/src/styles/typography";
 
-$custom-stats-tab-mobile-break: $break-small;
+$custom-stats-tab-mobile-break: $break-medium;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
@@ -28,6 +29,9 @@ $custom-stats-tab-mobile-break: $break-small;
 
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+		flex-flow: row wrap;
+		gap: 24px;
 
 		@media (max-width: $custom-mobile-breakpoint) {
 			padding: 24px math.div($vertical-margin, 2) 16px;
@@ -44,17 +48,14 @@ $custom-stats-tab-mobile-break: $break-small;
 
 		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
-			flex: 1;
-			width: auto;
+			font-family: $font-sf-pro-text;
 			border: 0;
-
-			&:not(:first-child) {
-				margin-left: 16px;
-			}
 
 			// Keep the original mobile stats-tabs styles
 			@media (max-width: $custom-stats-tab-mobile-break) {
 				width: 100%;
+				flex: 1 1 100%;
+				max-width: initial;
 				float: none;
 				border-bottom: 1px solid var(--color-neutral-5);
 
@@ -65,6 +66,18 @@ $custom-stats-tab-mobile-break: $break-small;
 				&:not(:first-child) {
 					margin: 0;
 				}
+			}
+
+			// Keep the original mobile stats-tabs styles
+			@media (min-width: $custom-stats-tab-mobile-break) {
+				flex: 1 1 45%;
+				width: 45%;
+			}
+
+			@media (min-width: $break-xlarge) {
+				flex: 1 1 155px;
+				// For wrap layout of three items in a row.
+				max-width: 31%;
 			}
 
 			.gridicon {
@@ -84,8 +97,8 @@ $custom-stats-tab-mobile-break: $break-small;
 				padding: 10px 6px;
 
 				@media (max-width: $custom-stats-tab-mobile-break) {
-					display: flex;
-					flex-direction: row;
+					display: grid;
+					grid-template-columns: 2fr 2fr 3fr;
 					align-items: center;
 					justify-content: space-between;
 				}
@@ -93,6 +106,7 @@ $custom-stats-tab-mobile-break: $break-small;
 				&:hover {
 					color: var(--studio-black);
 					background-color: var(--color-neutral-0);
+					border: 1.5px solid var(--color-neutral-10);
 
 					.label,
 					.value {
@@ -135,6 +149,11 @@ $custom-stats-tab-mobile-break: $break-small;
 						display: none;
 					}
 				}
+			}
+
+			&.tab-disabled a {
+				cursor: default;
+				border: none;
 			}
 
 			&.is-low {
@@ -181,6 +200,44 @@ $custom-stats-tab-mobile-break: $break-small;
 						.value {
 							color: var(--studio-black);
 						}
+					}
+				}
+			}
+
+			// Apply highlight card styles to stats-tabs.
+			&.is-highlighted {
+				text-align: left;
+
+				.stats-tabs__highlight {
+					display: flex;
+					align-items: center;
+					justify-content: end;
+				}
+				// TODO: The relevant class names could be refactored to be more comprehensive.
+				.highlight-card-difference {
+					font-size: $font-body-small;
+					font-weight: 600;
+					line-height: 25px;
+					letter-spacing: -0.24px;
+					margin-left: 8px;
+				}
+				.stats-tabs__value.value {
+					display: none;
+				}
+				@media (min-width: $custom-stats-tab-mobile-break) {
+					& > a {
+						padding: 8px 16px;
+					}
+					.stats-tabs__highlight-value {
+						font-weight: 500;
+						font-size: $font-title-medium;
+						line-height: 40px;
+						// Prevent different heights of Flexbox items.
+						white-space: nowrap;
+					}
+					.stats-tabs__highlight {
+						display: flex;
+						justify-content: start;
 					}
 				}
 			}

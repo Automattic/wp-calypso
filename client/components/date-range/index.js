@@ -54,6 +54,9 @@ export class DateRange extends Component {
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
 		onShortcutClick: PropTypes.func,
+		// Temporary prop to enable new date filtering UI.
+		isNewDateFilteringEnabled: PropTypes.bool,
+		trackExternalDateChanges: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,6 +74,8 @@ export class DateRange extends Component {
 		useArrowNavigation: false,
 		overlay: null,
 		customTitle: '',
+		isNewDateFilteringEnabled: false,
+		trackExternalDateChanges: false,
 	};
 
 	constructor( props ) {
@@ -145,9 +150,18 @@ export class DateRange extends Component {
 	 * Note this does not commit the current date state
 	 */
 	openPopover = () => {
-		this.setState( {
+		const newState = {
 			popoverVisible: true,
-		} );
+		};
+		if ( this.props.trackExternalDateChanges ) {
+			newState.startDate = this.props.selectedStartDate;
+			newState.endDate = this.props.selectedEndDate;
+			newState.textInputStartDate = this.toDateString( this.props.selectedStartDate );
+			newState.textInputEndDate = this.toDateString( this.props.selectedEndDate );
+			newState.staleStartDate = this.props.selectedStartDate;
+			newState.staleEndDate = this.props.selectedEndDate;
+		}
+		this.setState( newState );
 	};
 
 	/**
@@ -456,7 +470,7 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.closePopoverAndCommit }
+				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-content">
 					<div
@@ -481,6 +495,7 @@ export class DateRange extends Component {
 								startDate={ this.state.startDate }
 								endDate={ this.state.endDate }
 								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
+								isNewDateFilteringEnabled={ this.props.isNewDateFilteringEnabled }
 							/>
 						</div>
 					) }

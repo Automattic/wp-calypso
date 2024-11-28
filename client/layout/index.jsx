@@ -27,6 +27,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useExperiment } from 'calypso/lib/explat';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -61,7 +62,7 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-import { getColorScheme, refreshColorScheme } from './color-scheme';
+import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
@@ -149,6 +150,9 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'calypso_helpcenter_new_support_flow'
+	);
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -169,6 +173,9 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			shouldUseHelpCenterExperience={
+				! isLoading && experimentAssignment?.variationName === 'treatment'
+			}
 		/>
 	);
 }
@@ -504,11 +511,13 @@ export default withCurrentRoute(
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
-		const colorScheme = getColorScheme( {
-			state,
-			sectionName,
-			isGlobalSidebarVisible,
-		} );
+		const colorScheme = isWooPasswordlessJPC
+			? getColorSchemeFromCurrentQuery( currentQuery )
+			: getColorScheme( {
+					state,
+					isGlobalSidebarVisible,
+					sectionName,
+			  } );
 
 		return {
 			masterbarIsHidden,

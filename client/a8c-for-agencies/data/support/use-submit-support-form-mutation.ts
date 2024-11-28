@@ -9,7 +9,7 @@ interface APIResponse {
 function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {
 	let path = '/agency/help/zendesk/create-ticket';
 
-	if ( params.product === 'pressable' ) {
+	if ( params.product === 'pressable' && params.contact_type === 'support' ) {
 		path = '/agency/help/pressable/support';
 	}
 

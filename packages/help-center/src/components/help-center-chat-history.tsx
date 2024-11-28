@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { useSmooch } from '@automattic/zendesk-client';
 import { Card, CardHeader, CardBody } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -17,6 +16,7 @@ import {
 	getConversationsFromSupportInteractions,
 	getSortedRecentAndArchivedConversations,
 	getLastMessage,
+	getZendeskConversations,
 } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
@@ -25,6 +25,11 @@ import './help-center-chat-history.scss';
 // temporarily we want to show a simplified version of the chat history
 // this bool controls it.
 const simplifiedHistoryChat = true;
+
+const TAB_STATES = {
+	recent: 'recent',
+	archived: 'archived',
+};
 
 const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 	const { __ } = useI18n();
@@ -45,6 +50,7 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 				if ( lastMessage ) {
 					return (
 						<HelpCenterSupportChatMessage
+							sectionName="chat_history"
 							navigateTo="/odie"
 							supportInteractionId={ conversation.metadata?.supportInteractionId }
 							key={ conversation.id }
@@ -60,20 +66,14 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
-	const TAB_STATES = {
-		recent: 'recent',
-		archived: 'archived',
-	};
-
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
-	const { getConversations } = useSmooch();
-	const { data: supportInteractionsResolved } = useGetSupportInteractions(
-		'zendesk',
-		100,
-		'resolved'
-	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
+		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
+		useGetSupportInteractions( 'zendesk', 100, 'closed' );
+	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+		useGetSupportInteractions( 'zendesk', 10, 'open' );
 
 	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -89,20 +89,19 @@ export const HelpCenterChatHistory = () => {
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if (
-			isChatLoaded &&
-			getConversations &&
-			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
-				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
-		) {
-			const conversations = getConversations();
+		const isLoadingInteractions =
+			isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
+
+		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
+			const allConversations = getZendeskConversations();
 			const supportInteractions = [
 				...( supportInteractionsResolved || [] ),
 				...( supportInteractionsOpen || [] ),
+				...( supportInteractionsClosed || [] ),
 			];
 
 			const filteredConversations = getConversationsFromSupportInteractions(
-				conversations,
+				allConversations,
 				supportInteractions
 			);
 			setConversations( filteredConversations );
@@ -111,8 +110,11 @@ export const HelpCenterChatHistory = () => {
 		supportInteractionsResolved,
 		supportInteractionsOpen,
 		isChatLoaded,
-		getConversations,
 		setUnreadCount,
+		isLoadingResolvedInteractions,
+		isLoadingClosedInteractions,
+		isLoadingOpenInteractions,
+		supportInteractionsClosed,
 	] );
 
 	const EmptyArchivedConversations = () => {

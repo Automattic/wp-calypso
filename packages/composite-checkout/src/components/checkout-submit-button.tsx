@@ -6,6 +6,7 @@ import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods
 import { makeErrorResponse } from '../lib/payment-processors';
 import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import { useHandlePaymentProcessorResponse } from './use-process-payment';
 import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
@@ -62,6 +63,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
 } ) {
+	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
@@ -72,9 +74,11 @@ function CheckoutSubmitButtonForPaymentMethod( {
 		processorData: PaymentProcessorSubmitData
 	) => {
 		if ( ! isActive ) {
-			return Promise.resolve(
+			const rejection = Promise.resolve(
 				makeErrorResponse( __( 'This payment method is not currently available.' ) )
 			);
+			handlePaymentProcessorPromise( paymentMethod.id, rejection );
+			return rejection;
 		}
 
 		if ( validateForm ) {

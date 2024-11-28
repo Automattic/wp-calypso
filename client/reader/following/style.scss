@@ -169,3 +169,25 @@
 		width: 20px;
 	}
 }
+
+.following__view-toggle {
+	display: flex;
+	gap: 8px;
+	
+	.components-button {
+		height: 36px;
+		min-width: 36px;
+		padding: 6px;
+		color: var(--color-text);
+		
+		&.is-pressed {
+			background: var(--color-text);
+			color: var(--color-surface);
+		}
+		
+		&:hover {
+			background: var(--color-text);
+			color: var(--color-surface);
+		}
+	}
+}
