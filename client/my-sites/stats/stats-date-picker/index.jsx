@@ -35,7 +35,7 @@ class StatsDatePicker extends Component {
 		const { query, moment, translate } = this.props;
 
 		if ( query.start_date ) {
-			return this.dateForCustomRange();
+			return this.dateForCustomRange( query.start_date, query.date );
 		}
 
 		const localizedDate = moment();
@@ -56,17 +56,44 @@ class StatsDatePicker extends Component {
 		}
 	}
 
-	dateForCustomRange() {
-		const { query, moment, translate } = this.props;
+	dateForCustomRange( startDate, endDate ) {
+		const { moment, translate } = this.props;
 
-		const localizedStartDate = moment( query.start_date );
-		const localizedEndDate = moment( query.date );
+		const localizedStartDate = moment( startDate );
+		const localizedEndDate = moment( endDate );
+
+		// If it's the same day, show single date.
+		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
+			return localizedStartDate.format( 'LL' );
+		}
+
+		// If it's a full month.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
+			localizedEndDate.isSame( localizedEndDate.clone().endOf( 'month' ), 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'month' )
+		) {
+			return localizedStartDate.format( 'MMMM YYYY' );
+		}
+
+		// If it's a full year.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
+			localizedEndDate.isSame( localizedEndDate.clone().endOf( 'year' ), 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'year' )
+		) {
+			return localizedStartDate.format( 'YYYY' );
+		}
+
+		// Default to date range
+		const firstFormatString =
+			localizedStartDate.year() === localizedEndDate.year() ? 'MMM D' : 'll';
 
 		return translate( '%(startDate)s ~ %(endDate)s', {
 			context: 'Date range for which stats are being displayed',
 			args: {
-				startDate: localizedStartDate.format( 'll' ),
-				endDate: localizedEndDate.format( 'll' ),
+				startDate: localizedStartDate.format( firstFormatString ),
+				endDate: localizedEndDate.format( `${ firstFormatString }, YYYY` ),
 			},
 		} );
 	}
@@ -75,42 +102,9 @@ class StatsDatePicker extends Component {
 		const { date, moment, period, translate, isShort, dateRange } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
-		// If we have chartStart/chartEnd in dateRange, use those for the date range
+		// Respect the dateRange if provided.
 		if ( dateRange?.chartStart && dateRange?.chartEnd ) {
-			const startDate = moment( dateRange.chartStart );
-			const endDate = moment( dateRange.chartEnd );
-
-			// If it's the same day, show single date
-			if ( startDate.isSame( endDate, 'day' ) ) {
-				return startDate.format( 'LL' );
-			}
-
-			// If it's a full month
-			if (
-				startDate.isSame( startDate.clone().startOf( 'month' ), 'day' ) &&
-				endDate.isSame( endDate.clone().endOf( 'month' ), 'day' ) &&
-				startDate.isSame( endDate, 'month' )
-			) {
-				return startDate.format( 'MMMM YYYY' );
-			}
-
-			// If it's a full year
-			if (
-				startDate.isSame( startDate.clone().startOf( 'year' ), 'day' ) &&
-				endDate.isSame( endDate.clone().endOf( 'year' ), 'day' ) &&
-				startDate.isSame( endDate, 'year' )
-			) {
-				return startDate.format( 'YYYY' );
-			}
-
-			// Default to date range
-			return translate( '%(startDate)s - %(endDate)s', {
-				context: 'Date range for which stats are being displayed',
-				args: {
-					startDate: startDate.format( weekPeriodFormat ),
-					endDate: endDate.format( weekPeriodFormat ),
-				},
-			} );
+			return this.dateForCustomRange( dateRange.chartStart, dateRange.chartEnd );
 		}
 
 		// Ensure we have a moment instance here to work with.
@@ -181,8 +175,9 @@ class StatsDatePicker extends Component {
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		let sectionTitle = isActivity
-			? translate( 'Activity for {{period/}}', {
+			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
 					components: {
+						prefix: <span className="prefix" />,
 						period: (
 							<span className="period">
 								<span className="date">
@@ -193,8 +188,9 @@ class StatsDatePicker extends Component {
 					},
 					comment: 'Example: "Activity for December 2017"',
 			  } )
-			: translate( 'Stats for {{period/}}', {
+			: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
 					components: {
+						prefix: <span className="prefix" />,
 						period: (
 							<span className="period">
 								<span className="date">

@@ -45,12 +45,14 @@
 		"clsx": "^2.1.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-draggable": "^4.4.4"
+		"react-draggable": "^4.4.4",
+		"smooch": "5.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-backgrounds": "^7.6.19",
+		"@types/smooch": "^5.3.7",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {

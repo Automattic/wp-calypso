@@ -1,9 +1,11 @@
+import { PayPalProvider } from '@automattic/calypso-paypal';
 import {
 	useTogglePaymentMethod,
 	type PaymentMethod,
 	type ProcessPayment,
 	usePaymentMethodId,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	PayPalButtons,
 	PayPalButtonsComponentProps,
@@ -12,6 +14,7 @@ import {
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 
 const debug = debugFactory( 'calypso:paypal-js' );
@@ -21,7 +24,7 @@ export function createPayPal(): PaymentMethod {
 		id: 'paypal-js',
 		paymentProcessorId: 'paypal-js',
 		label: <PayPalLabel />,
-		submitButton: <PayPalSubmitButton />,
+		submitButton: <PayPalSubmitButtonWrapper />,
 		getAriaLabel: () => 'PayPal',
 		isInitiallyDisabled: true,
 	};
@@ -53,6 +56,22 @@ function deferred< T >() {
 	return { resolve, reject, promise };
 }
 
+function PayPalSubmitButtonWrapper( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+} ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	return (
+		<PayPalProvider currency={ responseCart.currency }>
+			<PayPalSubmitButton disabled={ disabled } onClick={ onClick } />
+		</PayPalProvider>
+	);
+}
+
 function PayPalSubmitButton( {
 	disabled,
 	onClick,
@@ -62,6 +81,8 @@ function PayPalSubmitButton( {
 } ) {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
+
+	// Wait for PayPal.js to load before marking this payment method as active.
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
 	useEffect( () => {
 		if ( isResolved ) {

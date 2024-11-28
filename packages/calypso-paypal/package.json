@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/calypso-paypal",
+	"version": "1.0.0",
+	"description": "A set of helper functions and components for using PayPal on WordPress.com.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "index.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-paypal"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-paypal#readme",
+	"dependencies": {
+		"@paypal/react-paypal-js": "^8.7.0",
+		"@wordpress/i18n": "^5.8.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^5.3.3"
+	},
+	"private": true
+}

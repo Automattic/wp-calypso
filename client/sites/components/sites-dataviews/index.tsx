@@ -93,7 +93,13 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'icon',
 				render: ( { item }: { item: SiteExcerptData } ) => {
-					return <SiteIcon site={ item } openSitePreviewPane={ openSitePreviewPane } />;
+					return (
+						<SiteIcon
+							site={ item }
+							openSitePreviewPane={ openSitePreviewPane }
+							viewType={ dataViewsState.type }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -159,7 +165,7 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, siteStatusGroups ]
+		[ __, siteStatusGroups, openSitePreviewPane, dataViewsState.type, userId ]
 	);
 
 	const actions = useActions( {

@@ -29,7 +29,8 @@ import {
 	enableAtomicSshAccess,
 	disableAtomicSshAccess,
 } from 'calypso/state/hosting/actions';
-import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
+import { getAtomicHostingIsLoadingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-users';
+import { getAtomicHostingIsLoadingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-is-loading-ssh-access';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -110,8 +111,11 @@ export const SftpForm = ( {
 	);
 	const isSshAccessEnabled =
 		'ssh' === useSelector( ( state ) => getAtomicHostingSshAccess( state, siteId ) );
-	const isLoadingSftpData = useSelector( ( state ) =>
-		getAtomicHostingIsLoadingSftpData( state, siteId )
+	const isLoadingSshAccess = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSshAccess( state, siteId )
+	);
+	const isLoadingSftpUsers = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSftpUsers( state, siteId )
 	);
 	const { username, password } = useSelector( ( state ) => {
 		let username;
@@ -138,7 +142,8 @@ export const SftpForm = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
-	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpData;
+	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpUsers;
+	const hasSshFeatureAndIsLoading = siteHasSshFeature && isLoadingSshAccess;
 	const siteIntent = useSiteOption( 'site_intent' );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
@@ -268,7 +273,8 @@ export const SftpForm = ( {
 			</div>
 		);
 	};
-	const displayQuestionsAndButton = ! hasSftpFeatureAndIsLoading && ! ( username || isLoading );
+	const displayQuestionsAndButton =
+		! hasSftpFeatureAndIsLoading && ! hasSshFeatureAndIsLoading && ! ( username || isLoading );
 	const showSshPanel = ! siteHasSftpFeature || siteHasSshFeature;
 
 	const featureExplanation = siteHasSshFeature
@@ -375,7 +381,9 @@ export const SftpForm = ( {
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
-			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
+			{ ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
+				<SftpCardLoadingPlaceholder />
+			) }
 		</div>
 	);
 
@@ -386,9 +394,9 @@ export const SftpForm = ( {
 			title={
 				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
 			}
-			isLoading={ hasSftpFeatureAndIsLoading }
+			isLoading={ hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading }
 		>
-			{ ! hasSftpFeatureAndIsLoading && (
+			{ ! ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
 				<DescriptionComponent>
 					{ username
 						? translate(

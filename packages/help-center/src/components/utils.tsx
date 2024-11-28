@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
@@ -20,6 +21,11 @@ export const getLastMessage = ( { conversation }: { conversation: ZendeskConvers
 	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
 		? conversation.messages[ conversation.messages.length - 1 ]
 		: null;
+};
+
+export const getZendeskConversations = () => {
+	const conversations = Smooch.getConversations();
+	return conversations as unknown as ZendeskConversation[];
 };
 
 export const getSortedRecentAndArchivedConversations = ( {

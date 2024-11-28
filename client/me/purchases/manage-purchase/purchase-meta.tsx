@@ -15,6 +15,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	getName,
 	isExpired,
@@ -27,6 +28,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
@@ -71,6 +73,8 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
+	const allDomains = useSelector( getAllDomains );
+
 	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
@@ -78,7 +82,14 @@ export default function PurchaseMeta( {
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
-	const renewalPriceHeader = translate( 'Renewal Price' );
+	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+		( domain: ResponseDomain ) => domain.domain === purchase.meta
+	);
+
+	// 100-year domains will only show a "Price" label since their renewal date is a long time in the future
+	const renewalPriceHeader = domainDetails?.isHundredYearDomain
+		? translate( 'Price' )
+		: translate( 'Renewal Price' );
 
 	const hideRenewalPriceSection = isOneTimePurchase( purchase );
 	const hideTaxString = isIncludedWithPlan( purchase );
@@ -148,9 +159,11 @@ export default function PurchaseMeta( {
 
 function renderRenewsOrExpiresOnLabel( {
 	purchase,
+	domainDetails,
 	translate,
 }: {
 	purchase: Purchase;
+	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
 	if ( isExpiring( purchase ) ) {
@@ -186,6 +199,9 @@ function renderRenewsOrExpiresOnLabel( {
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
+		if ( domainDetails?.isHundredYearDomain ) {
+			return translate( 'Paid until' );
+		}
 		return translate( 'Domain renews on' );
 	}
 

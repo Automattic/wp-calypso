@@ -19,8 +19,13 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { extraContactOptions, isUserEligibleForPaidSupport, shouldUseHelpCenterExperience } =
-		useOdieAssistantContext();
+	const {
+		extraContactOptions,
+		isUserEligibleForPaidSupport,
+		shouldUseHelpCenterExperience,
+		trackEvent,
+		chat,
+	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
@@ -39,11 +44,22 @@ export const UserMessage = ( {
 		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
 	const renderExtraContactOptions = () => {
-		return shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions;
+		const currentMessageIndex = chat.messages.findIndex(
+			( msg ) => msg.message_id === message.message_id
+		);
+		const isLastMessage = currentMessageIndex === chat.messages.length - 1;
+
+		return (
+			isLastMessage && ( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions )
+		);
 	};
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
+
+	const handleClick = () => {
+		trackEvent?.( 'ai_guidelines_link_clicked' );
+	};
 
 	const renderDisclaimers = () => (
 		<>
@@ -51,7 +67,7 @@ export const UserMessage = ( {
 			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 			<div className="disclaimer">
 				{ __( 'Powered by Support AI. Some responses may be inaccurate', __i18n_text_domain__ ) }
-				<ExternalLink href="https://automattic.com/ai-guidelines">
+				<ExternalLink href="https://automattic.com/ai-guidelines" onClick={ handleClick }>
 					{ __( 'Learn more.', __i18n_text_domain__ ) }
 				</ExternalLink>
 			</div>
