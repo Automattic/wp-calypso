@@ -112,8 +112,7 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, isVideoPress, siteId } =
-			this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -133,9 +132,6 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
-
-			case 'videopress':
-				return isVideoPress;
 
 			default:
 				return true;
@@ -157,6 +153,7 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
+			isVideoPress,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -227,7 +224,16 @@ class StatsNavigation extends Component {
 					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 					! hideModuleSettings && (
 						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].filter(
+								( module ) => {
+									// do not show "videos" toogle on sites that do not have VideoPress enabled
+									if ( ! isVideoPress && module.key === 'videos' ) {
+										return false;
+									}
+
+									return true;
+								}
+							) }
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
