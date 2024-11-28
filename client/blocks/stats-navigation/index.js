@@ -232,6 +232,8 @@ class StatsNavigation extends Component {
 										toggleItem.disabled = true;
 										toggleItem.defaultValue = false;
 									}
+
+									return toggleItem;
 								}
 							) }
 							pageModules={ pageModules }
