@@ -6,7 +6,10 @@ import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
-import { getThemes } from 'calypso/state/themes/selectors';
+import {
+	getThemes,
+	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
+} from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
@@ -117,10 +120,25 @@ export function useThemesThankYouData(
 				( dotComTheme: { id: string } | undefined ) => dotComTheme?.id === theme.id
 			)
 	);
+
+	const themesSubscribed = useSelector( ( state ) =>
+		themeSlugs.filter( ( themeId ) => getIsMarketplaceThemeSubscribed( state, themeId, siteId ) )
+	);
+
+	const hasExternallyManagedThemesSubscribed = themesSubscribed.length > 0;
+
 	const hasExternallyManagedThemes = useSelector( ( state ) =>
 		getHasExternallyManagedThemes( state, themeSlugs )
 	);
-	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
+
+	useEffect( () => {
+		if ( ! hasExternallyManagedThemesSubscribed && hasExternallyManagedThemes ) {
+			page( `/home/${ siteSlug }` );
+		}
+	}, [ hasExternallyManagedThemes, hasExternallyManagedThemesSubscribed, siteSlug ] );
+
+	const isAtomicNeeded =
+		hasDotOrgThemes || ( hasExternallyManagedThemes && hasExternallyManagedThemesSubscribed );
 
 	// Clear completed activated theme request state to avoid displaying the Thanks modal
 	useEffect( () => {
@@ -163,6 +181,6 @@ export function useThemesThankYouData(
 		// Always display the loading screen for the following situations:
 		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
 		// - Redirect to the Theme Details page after the atomic transfer if it's required.
-		! ( continueWithPluginBundle || isAtomicNeeded ),
+		! ( continueWithPluginBundle || isAtomicNeeded || allThemesFetched ),
 	];
 }
