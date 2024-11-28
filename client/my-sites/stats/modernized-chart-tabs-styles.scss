@@ -42,6 +42,10 @@ $custom-stats-tab-mobile-break: $break-medium;
 			padding: 24px 0 16px;
 		}
 
+		@media (min-width: $custom-stats-tab-mobile-break) {
+			padding: 24px;
+		}
+
 		&.is-enabled {
 			background-color: inherit;
 		}
@@ -83,7 +87,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 			.gridicon {
 				@media (max-width: $custom-stats-tab-mobile-break) {
 					float: left;
-					margin: 3px 8px 0 20px;
+					margin: 0;
 				}
 			}
 
@@ -94,7 +98,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 				border-radius: 4px;
 				overflow: hidden;
 				color: var(--studio-black);
-				padding: 10px 6px;
+				padding: 10px 24px;
 
 				@media (max-width: $custom-stats-tab-mobile-break) {
 					display: grid;

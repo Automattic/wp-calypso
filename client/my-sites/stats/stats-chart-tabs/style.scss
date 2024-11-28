@@ -245,14 +245,13 @@ ul.module-tabs {
 		background-color: var(--studio-white);
 		border: 1px solid var(--studio-gray-5);
 		border-radius: 4px;
-		padding: 24px;
 
 		/* styling for chart header with new date filtering design */
 		.stats-chart-tabs__header {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			margin-bottom: 24px;
+			padding: 24px;
 		}
 
 		.chart__legend{
@@ -261,6 +260,10 @@ ul.module-tabs {
 
 		.chart__y-axis-marker {
 			border-top-color: #DCDCDE;
+		}
+
+		.chart__y-axis {
+			padding-left: 8px;
 		}
 
 		.stats-interval-dropdown, .stats-interval-display {
