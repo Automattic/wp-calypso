@@ -135,13 +135,21 @@ export const isActionEligible = (
 				return true;
 			};
 		case 'site-monitoring':
-		case 'plugins':
 			return ( site: SiteExcerptData ) => {
 				if ( ! canOpenHosting( site ) ) {
 					return false;
 				}
 
 				return !! site.is_wpcom_atomic;
+			};
+		case 'plugins':
+			return ( site: SiteExcerptData ) => {
+				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				if ( site.is_deleted || ! canManageOptions || isP2Site( site ) ) {
+					return false;
+				}
+
+				return true;
 			};
 		case 'copy-site':
 			return ( site: SiteExcerptData ) => {
