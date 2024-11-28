@@ -355,7 +355,7 @@ export class MediaLibraryContent extends Component {
 			<div className="media-library__connect-message">
 				<p>
 					<img
-						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						src="/calypso/images/sharing/google-photos-logo-text.svg?v=20241124"
 						width="400"
 						alt={ translate( 'Google Photos' ) }
 					/>
