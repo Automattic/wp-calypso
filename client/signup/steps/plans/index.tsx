@@ -110,7 +110,6 @@ interface Props {
 	wrapperProps?: {
 		hideBack: boolean;
 		goBack: NavigationControls[ 'goBack' ];
-		recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 		isFullLayout: boolean;
 		isExtraWideLayout: boolean;
 	};
@@ -524,13 +523,23 @@ export function PlansStep( {
 			}
 		}
 
-		if ( useStepperWrapper ) {
+		if ( useStepperWrapper && wrapperProps ) {
 			return (
-				// TODO clk: confirm what's missing here
 				<AsyncLoad
+					/**
+					 * Common Start/Stepper props [START]
+					 */
 					require="@automattic/onboarding/src/step-container"
 					flowName={ flowName }
 					stepName={ stepName }
+					stepContent={ <PlansFeaturesMainRender /> }
+					backLabelText={ backLabelText }
+					isWideLayout={ false }
+					isExtraWideLayout={ wrapperProps.isExtraWideLayout }
+					/**
+					 * Common Start/Stepper props [END]
+					 */
+					isFullLayout={ wrapperProps.isFullLayout }
 					formattedHeader={
 						<FormattedHeader
 							id="plans-header"
@@ -540,32 +549,36 @@ export function PlansStep( {
 							subHeaderText={ fallbackSubHeaderText }
 						/>
 					}
-					isWideLayout={ false }
-					isExtraWideLayout
-					stepContent={ <PlansFeaturesMainRender /> }
-					backLabelText={ backLabelText }
-					{ ...wrapperProps }
+					recordTracksEvent={ recordTracksEvent }
+					hideBack={ wrapperProps.hideBack }
+					goBack={ wrapperProps.goBack }
 				/>
 			);
 		}
 
 		return (
 			<AsyncLoad
+				/**
+				 * Common Start/Stepper props [START]
+				 */
 				require="calypso/signup/step-wrapper"
 				flowName={ flowName }
 				stepName={ stepName }
+				stepContent={ <PlansFeaturesMainRender /> }
+				isWideLayout={ false }
+				isExtraWideLayout
+				backLabelText={ backLabelText }
+				/**
+				 * Common Start/Stepper props [END]
+				 */
+				backUrl={ backUrl }
 				positionInFlow={ positionInFlow }
 				headerText={ <HeaderText /> }
 				shouldHideNavButtons={ shouldHideNavButtons }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ <SubHeaderText /> }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				isWideLayout={ false }
-				isExtraWideLayout
-				stepContent={ <PlansFeaturesMainRender /> }
 				allowBackFirstStep={ !! initializedSitesBackUrl }
-				backUrl={ backUrl }
-				backLabelText={ backLabelText }
 				queryParams={ queryParams }
 			/>
 		);

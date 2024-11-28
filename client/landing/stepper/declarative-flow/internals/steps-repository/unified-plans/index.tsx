@@ -3,7 +3,6 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -11,7 +10,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { PlansStep } from 'calypso/signup/steps/plans';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
 
@@ -48,8 +46,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 
 	const site = useSite();
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
-	const dispatch = useDispatch();
-
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
 	/**
@@ -96,8 +92,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			wrapperProps={ {
 				hideBack: isMobile,
 				goBack: props.navigation.goBack,
-				recordTracksEvent: ( name: string, props: unknown ) =>
-					dispatch( recordTracksEvent( name, props ) ),
 				isFullLayout: true,
 				isExtraWideLayout: false,
 			} }
