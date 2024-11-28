@@ -365,7 +365,7 @@ const connectComponent = connect(
 			{
 				id: 'last_7_days',
 				label: translate( 'Last 7 Days' ),
-				offset: 0,
+				offset: 1,
 				range: 6,
 				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS ),
@@ -374,7 +374,7 @@ const connectComponent = connect(
 			{
 				id: 'last_30_days',
 				label: translate( 'Last 30 Days' ),
-				offset: 0,
+				offset: 1,
 				range: 29,
 				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ),
@@ -383,7 +383,7 @@ const connectComponent = connect(
 			{
 				id: 'last_3_months',
 				label: translate( 'Last 90 Days' ),
-				offset: 0,
+				offset: 1,
 				range: 89,
 				period: STATS_PERIOD.WEEK,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS ),
@@ -392,7 +392,7 @@ const connectComponent = connect(
 			{
 				id: 'last_year',
 				label: translate( 'Last Year' ),
-				offset: 0,
+				offset: 1,
 				range: 364, // ranges are zero based!
 				period: STATS_PERIOD.MONTH,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_YEAR ),

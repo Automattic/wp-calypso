@@ -30,18 +30,23 @@ const DateControl = ( {
 		const today = siteToday.format( 'YYYY-MM-DD' );
 		const yesterday = siteToday.clone().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 		const shortcut = shortcutList.find( ( element ) => {
+			// For the Last xxx Days, including yesterday, which ended yesterday.
 			if (
 				yesterday === dateRange.chartEnd &&
-				dateRange.daysInRange === element.range + 1 &&
-				element.id === 'yesterday'
+				element.offset === 1 &&
+				dateRange.daysInRange === element.range + 1
 			) {
 				return element;
 			}
+
+			// For Today.
 			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
 				return element;
 			}
+
 			return null;
 		} );
+
 		return shortcut;
 	};
 

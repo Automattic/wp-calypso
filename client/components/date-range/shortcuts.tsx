@@ -48,7 +48,7 @@ const DateRangePickerShortcuts = ( {
 		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
-			offset: 0,
+			offset: 1,
 			range: 6,
 			period: DATERANGE_PERIOD.DAY,
 			shortcutId: 'last_7_days',
@@ -56,7 +56,7 @@ const DateRangePickerShortcuts = ( {
 		{
 			id: 'last_30_days',
 			label: translate( 'Last 30 Days' ),
-			offset: 0,
+			offset: 1,
 			range: 29,
 			period: DATERANGE_PERIOD.DAY,
 			shortcutId: 'last_30_days',
@@ -64,7 +64,7 @@ const DateRangePickerShortcuts = ( {
 		{
 			id: 'last_3_months',
 			label: translate( 'Last 90 Days' ),
-			offset: 0,
+			offset: 1,
 			range: 89,
 			period: DATERANGE_PERIOD.WEEK,
 			shortcutId: 'last_3_months',
@@ -72,7 +72,7 @@ const DateRangePickerShortcuts = ( {
 		{
 			id: 'last_year',
 			label: translate( 'Last Year' ),
-			offset: 0,
+			offset: 1,
 			range: 364, // ranges are zero based!
 			period: DATERANGE_PERIOD.MONTH,
 			shortcutId: 'last_year',
@@ -115,16 +115,26 @@ const DateRangePickerShortcuts = ( {
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
 		const today = siteToday.clone().startOf( 'day' );
+		const yesterday = siteToday.clone().subtract( 1, 'days' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
+			// For the Last xxx Days, including yesterday, which ended yesterday.
 			if (
-				( endDate.isSame( today, 'day' ) || element.offset === 1 ) &&
+				endDate.isSame( yesterday, 'day' ) &&
+				element.offset === 1 &&
 				daysInRange === element.range
 			) {
 				return element;
 			}
+
+			// For Today.
+			if ( endDate.isSame( today, 'day' ) && daysInRange === element.range ) {
+				return element;
+			}
+
 			return null;
 		} );
+
 		return shortcut;
 	};
 

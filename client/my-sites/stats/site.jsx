@@ -331,7 +331,8 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
+			// Default to a complete day before the current day.
+			customChartRange = { chartEnd: momentSiteZone.subtract( 1, 'days' ).format( 'YYYY-MM-DD' ) };
 		}
 
 		// Find the quantity of bars for the chart.
