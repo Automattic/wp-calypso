@@ -270,7 +270,7 @@ class PlansComponent extends Component {
 				( ! this.props.isDomainUpsell ||
 					( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) ) ) ||
 			// TODO: Remove after 1733443200000.
-			( this.props.coupon === 'REPLACE_ME' && Date.now() < new Date( 1733443200000 ) );
+			( this.props.coupon === 'BF25' && Date.now() < new Date( 1733443200000 ) );
 
 		return (
 			<PlansFeaturesMain

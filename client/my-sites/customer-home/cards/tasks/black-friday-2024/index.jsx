@@ -20,7 +20,7 @@ const BlackFriday2024 = () => {
 			title={ title }
 			description={ description }
 			actionText={ translate( 'Get the Sale' ) }
-			actionUrl={ `/plans/${ siteSlug }?coupon=` }
+			actionUrl={ `/plans/${ siteSlug }?coupon=BF25` }
 			completeOnStart={ false }
 			illustration={ blackFriday2024Illustration }
 			taskId={ TASK_BLACK_FRIDAY_2024 }
