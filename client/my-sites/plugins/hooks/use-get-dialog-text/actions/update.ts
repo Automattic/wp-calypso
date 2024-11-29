@@ -3,7 +3,11 @@ import type { ActionTexts, ActionHeadings, ActionMessages } from '../types';
 
 const headings: ActionHeadings = {
 	onePlugin: ( translate ) => translate( 'Update plugin' ),
-	manyPlugins: ( translate ) => translate( 'Update plugins' ),
+	manyPlugins: ( plugins ) => ( translate ) =>
+		translate( 'Update %(pluginCount)d plugin', 'Update %(pluginCount)d plugins', {
+			count: plugins.length,
+			args: { pluginCount: plugins.length },
+		} ),
 };
 
 const messages: ActionMessages = {

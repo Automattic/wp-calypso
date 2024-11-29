@@ -3,7 +3,15 @@ import type { ActionTexts, ActionHeadings, ActionMessages } from '../types';
 
 const headings: ActionHeadings = {
 	onePlugin: ( translate ) => translate( 'Deactivate and remove plugin' ),
-	manyPlugins: ( translate ) => translate( 'Deactivate and remove plugins' ),
+	manyPlugins: ( plugins ) => ( translate ) =>
+		translate(
+			'Deactivate and remove %(pluginCount)d plugin',
+			'Deactivate and remove %(pluginCount)d plugins',
+			{
+				count: plugins.length,
+				args: { pluginCount: plugins.length },
+			}
+		),
 };
 
 const messages: ActionMessages = {

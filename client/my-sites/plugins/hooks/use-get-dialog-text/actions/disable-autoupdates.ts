@@ -3,7 +3,15 @@ import type { ActionTexts, ActionHeadings, ActionMessages } from '../types';
 
 const headings: ActionHeadings = {
 	onePlugin: ( translate ) => translate( 'Disable auto-updates for plugin' ),
-	manyPlugins: ( translate ) => translate( 'Disable auto-updates for plugins' ),
+	manyPlugins: ( plugins ) => ( translate ) =>
+		translate(
+			'Disable auto-updates for %(pluginCount)d plugin',
+			'Disable auto-updates for %(pluginCount)d plugins',
+			{
+				count: plugins.length,
+				args: { pluginCount: plugins.length },
+			}
+		),
 };
 
 const messages: ActionMessages = {

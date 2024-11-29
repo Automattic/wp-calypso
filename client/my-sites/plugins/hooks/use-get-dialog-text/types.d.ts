@@ -5,7 +5,7 @@ export type TranslatableText = ( translate: TranslateFn ) => TranslateResult;
 
 export type ActionHeadings = {
 	onePlugin: TranslatableText;
-	manyPlugins: TranslatableText;
+	manyPlugins: ( plugins: Plugin[] ) => TranslatableText;
 };
 
 export type ActionMessages = {

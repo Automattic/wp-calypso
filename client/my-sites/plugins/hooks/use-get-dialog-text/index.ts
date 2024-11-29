@@ -60,7 +60,7 @@ const getTranslatableHeading = ( { headings }: ActionTexts, plugins: Plugin[] ) 
 		return headings.onePlugin;
 	}
 
-	return headings.manyPlugins;
+	return headings.manyPlugins( plugins );
 };
 
 const getTranslatableMessage = ( { messages }: ActionTexts, plugins: Plugin[], sites: Site[] ) => {
