@@ -108,21 +108,15 @@ export default function () {
 		);
 	}
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/settings/manage-connection/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/manage-connection` );
-		} );
-	} else {
-		page(
-			'/settings/manage-connection/:site_id',
-			siteSelection,
-			navigation,
-			setScroll,
-			manageConnection,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/manage-connection/:site_id',
+		siteSelection,
+		navigation,
+		setScroll,
+		manageConnection,
+		makeLayout,
+		clientRender
+	);
 
 	if ( isEnabled( 'untangling/hosting-menu' ) ) {
 		page( '/settings/start-site-transfer/:site', ( context ) => {
