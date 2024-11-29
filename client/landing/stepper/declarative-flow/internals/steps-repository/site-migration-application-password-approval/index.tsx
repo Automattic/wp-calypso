@@ -1,5 +1,6 @@
 import { StepContainer, NextButton } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
+import { check, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -11,6 +12,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ApiError } from '../site-migration-credentials/types';
 import type { Step } from '../../types';
+import './style.scss';
 
 interface StoreApplicationPasswordResponse {
 	success: boolean;
@@ -42,10 +44,25 @@ const useStoreApplicationPassword = ( siteSlug: string ) => {
 	);
 };
 
+const AuthorizationBenefits = ( { benefits }: { benefits: string[] } ) => {
+	return (
+		<div className="site-migration-application-password-approval__benefits">
+			{ benefits.map( ( benefit, index ) => (
+				<div className="site-migration-application-password-approval__benefits-item" key={ index }>
+					<div className="site-migration-application-password-approval__benefits-item-icon">
+						<Icon icon={ check } size={ 20 } />
+					</div>
+					<span>{ benefit }</span>
+				</div>
+			) ) }
+		</div>
+	);
+};
+
 const Authorization = () => {
 	const translate = useTranslate();
 	return (
-		<>
+		<div className="site-migration-application-password-approval__authorization">
 			<div>
 				<NextButton>{ translate( 'Authorize' ) }</NextButton>
 			</div>
@@ -57,19 +74,17 @@ const Authorization = () => {
 					{ translate( 'Share credentials instead' ) }
 				</button>
 			</div>
-			<div>
+			<div className="site-migration-application-password-approval__benefits-container">
 				<h3>{ translate( "Here's what else you're getting" ) }</h3>
-				<ul>
-					<li>
-						{ translate( 'Uninterrupted service throughout the entire migration experience.' ) }
-					</li>
-					<li>
-						{ translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ) }
-					</li>
-					<li>{ translate( 'Round-the-clock security monitoring and DDoS protection.' ) }</li>
-				</ul>
+				<AuthorizationBenefits
+					benefits={ [
+						translate( 'Uninterrupted service throughout the entire migration experience.' ),
+						translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+						translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+					] }
+				/>
 			</div>
-		</>
+		</div>
 	);
 };
 
@@ -101,7 +116,7 @@ const SiteMigrationApplicationPasswordsApproval: Step = function ( { navigation 
 		<>
 			<DocumentHead title={ translate( 'Get ready for blazing fast speeds' ) } />
 			<StepContainer
-				stepName="site-migration-approval"
+				stepName="site-migration-application-password-approval"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
