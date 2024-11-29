@@ -228,12 +228,13 @@ class StatsNavigation extends Component {
 								( toggleItem ) => {
 									// disable the "videos" toggle on sites that do not have VideoPress enabled
 									// the toggle will be disabled (grayed out and non interactive)
-									if ( ! isVideoPress && toggleItem.key === 'videos' ) {
-										toggleItem.disabled = true;
-										toggleItem.defaultValue = false;
-									}
+									const shouldDisableVideoToggle = ! isVideoPress && toggleItem.key === 'videos';
 
-									return toggleItem;
+									return {
+										...toggleItem,
+										disabled: shouldDisableVideoToggle,
+										defaultValue: shouldDisableVideoToggle === false,
+									};
 								}
 							) }
 							pageModules={ pageModules }
