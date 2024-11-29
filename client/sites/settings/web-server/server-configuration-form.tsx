@@ -30,7 +30,11 @@ import getRequest from 'calypso/state/selectors/get-request';
 import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+	getSelectedSite,
+} from 'calypso/state/ui/selectors';
 
 import './server-configuration-form.scss';
 
@@ -62,6 +66,9 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const wpVersionNumber =
+		selectedSite?.options?.software_version?.match( /^\d+(\.\d+){0,2}/ )?.[ 0 ]; // Some times it can be `6.6.1-alpha-58760`, so we strip the `-alpha-58760` part
 
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 	const geoAffinity = useSelector( ( state ) => getAtomicHostingGeoAffinity( state, siteId ) );
@@ -153,7 +160,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const getWpVersions = () => {
 		return [
 			{
-				label: translate( 'Latest' ),
+				label: translate( 'Latest' ) + ( wpVersionNumber ? ` (${ wpVersionNumber })` : '' ),
 				value: 'latest',
 			},
 			{
