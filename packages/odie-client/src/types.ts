@@ -74,8 +74,6 @@ export type Source = {
 	post_id: number;
 	content: string;
 	railcar?: {
-		ui_position: number;
-		ui_algo: string;
 		fetch_algo: string;
 		fetch_lang: string;
 		fetch_position: number;
@@ -84,6 +82,8 @@ export type Source = {
 		rec_blog_id: string;
 		rec_post_id: string;
 		rec_url: string;
+		ui_position: number;
+		ui_algo: string;
 	};
 };
 

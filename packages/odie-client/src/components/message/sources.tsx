@@ -24,7 +24,6 @@ export const Sources = ( { message }: { message: Message } ) => {
 						fetch_query: source?.railcar?.fetch_query,
 						fetch_lang: source?.railcar?.fetch_lang,
 						ui_position: index,
-						rec_query: source?.railcar?.rec_query,
 						rec_blog_id: source?.railcar?.rec_blog_id,
 						rec_post_id: source?.railcar?.rec_post_id,
 					} );
