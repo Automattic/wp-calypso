@@ -70,7 +70,8 @@ describe( '<UpdatePlugin>', () => {
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
 		await userEvent.click( updateButton );
 
-		const [ confirmButton ] = document.querySelectorAll( '.confirm-modal__buttons .is-primary' );
+		// debug elements
+		const [ confirmButton ] = document.querySelectorAll( '.accept__dialog-buttons .is-primary' );
 		await userEvent.click( confirmButton );
 
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );
