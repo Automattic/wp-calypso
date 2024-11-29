@@ -110,4 +110,32 @@
 	.stats-sparkline {
 		padding-top: 0;
 	}
+
+	// dataviews-override: We combine the icon and site title fields to form the horizontal "site" field.
+	// Without this rule the combined field receives justify-content: space-between but we want the icon to be aligned with the text.
+	// TODO: This can be removed when https://github.com/WordPress/gutenberg/pull/67226 / Gutenberg 19.8 lands in calypso.
+	// See https://github.com/Automattic/wp-calypso/pull/96657#discussion_r1853690792
+	table.dataviews-view-table .dataviews-view-table__row td {
+		.components-h-stack {
+			&:has(.sites-dataviews__site) {
+				justify-content: flex-start;
+			}
+		}
+	}
+
+	// Selected and hover states on the site list.
+	// TODO: Remove when theming APIs are implemented. pbxlJb-6A9-p2#comment-4011
+	ul.dataviews-view-list {
+		li.is-selected,
+		li.is-selected:hover {
+			// Override this element to ensure it doesn’t blend with the Core's alpha-based color.
+			.dataviews-view-list__item-wrapper {
+				background-color: #ebf2fc;
+			}
+			.dataviews-view-list__item-actions {
+				background-color: #ebf2fc;
+				box-shadow: -12px 0 8px 0 #ebf2fc;
+			}
+		}
+	}
 }

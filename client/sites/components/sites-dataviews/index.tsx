@@ -15,7 +15,6 @@ import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
-import './dataview-style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];

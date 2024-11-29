@@ -22,6 +22,13 @@
 			// as the title aligns with DataViews (full width).
 			// TODO: Remove when we drop A4A Layout or when A4A Layout drops the max-width.
 			max-width: revert;
+
+			// To align with Core's hard-coded device width.
+			// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84
+			// TODO: Remove when Core changes to use one of the predefined breakpoints.
+			@media (max-width: 430px) {
+				padding-inline: 24px;
+			}
 		}
 	}
 
@@ -77,6 +84,14 @@
 		margin: 0 auto;
 		padding-inline: 48px;
 		width: 100%;
+
+		// To align with Core's hard-coded device width.
+		// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84
+		// TODO: Remove when Core changes to use one of the predefined breakpoints.
+		@media (max-width: 430px) {
+			padding-inline: 24px;
+		}
+
 	}
 
 	.sites-banner {
