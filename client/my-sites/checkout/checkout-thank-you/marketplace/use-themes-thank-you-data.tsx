@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
@@ -50,6 +51,7 @@ export function useThemesThankYouData(
 	);
 
 	useQuerySitePurchases( siteId );
+	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
 
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
@@ -141,7 +143,9 @@ export function useThemesThankYouData(
 	}, [ hasExternallyManagedThemes, hasExternallyManagedThemesSubscribed, siteSlug ] );
 
 	const isAtomicNeeded =
-		hasDotOrgThemes || ( hasExternallyManagedThemes && hasExternallyManagedThemesSubscribed );
+		hasDotOrgThemes ||
+		( hasExternallyManagedThemes &&
+			( isRequestingSitePurchases || hasExternallyManagedThemesSubscribed ) );
 
 	// Clear completed activated theme request state to avoid displaying the Thanks modal
 	useEffect( () => {
@@ -184,6 +188,7 @@ export function useThemesThankYouData(
 		// Always display the loading screen for the following situations:
 		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
 		// - Redirect to the Theme Details page after the atomic transfer if it's required.
-		! ( continueWithPluginBundle || isAtomicNeeded || allThemesFetched ),
+		// - Redirect to the /home page if the user removed the externally managed theme from checkout.
+		! ( continueWithPluginBundle || isAtomicNeeded || ( ! isAtomicNeeded && allThemesFetched ) ),
 	];
 }
