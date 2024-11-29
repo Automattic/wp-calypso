@@ -290,6 +290,12 @@ export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
 	return 'en';
 }
 
+/**
+ * Check whether the provided locale is translated wit AI.
+ *
+ * @param {string} locale Locale slug
+ * @returns {boolean}
+ */
 export function isAITranslatedLocale( locale: string ) {
 	return [ 'el', 'fi', 'hu', 'nb', 'pl', 'th' ].indexOf( locale ) > -1;
 }
