@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
@@ -252,6 +254,10 @@ ul.module-tabs {
 			flex-direction: row;
 			align-items: center;
 			padding: 24px;
+
+			@media (max-width: $break-medium) {
+				padding: 8px 24px;
+			}
 		}
 
 		.chart__legend{

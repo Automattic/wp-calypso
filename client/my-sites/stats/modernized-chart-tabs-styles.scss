@@ -7,6 +7,9 @@ $custom-stats-tab-mobile-break: $break-medium;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
+	@media (max-width: $custom-mobile-breakpoint) {
+		padding-top: 0;
+	}
 }
 
 // For modernized main charts with tabs inside the Traffic, Store, and Ads pages

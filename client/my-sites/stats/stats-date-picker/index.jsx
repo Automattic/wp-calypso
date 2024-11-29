@@ -57,7 +57,7 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForCustomRange( startDate, endDate ) {
-		const { moment, translate } = this.props;
+		const { moment } = this.props;
 
 		const localizedStartDate = moment( startDate );
 		const localizedEndDate = moment( endDate );
@@ -85,17 +85,17 @@ class StatsDatePicker extends Component {
 			return localizedStartDate.format( 'YYYY' );
 		}
 
-		// Default to date range
-		const firstFormatString =
-			localizedStartDate.year() === localizedEndDate.year() ? 'MMM D' : 'll';
+		// Only show year for the second date.
+		if (
+			localizedStartDate.year() === localizedEndDate.year() &&
+			localizedStartDate.isSame( moment(), 'year' )
+		) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
+				`MMM D, YYYY`
+			) }`;
+		}
 
-		return translate( '%(startDate)s ~ %(endDate)s', {
-			context: 'Date range for which stats are being displayed',
-			args: {
-				startDate: localizedStartDate.format( firstFormatString ),
-				endDate: localizedEndDate.format( `${ firstFormatString }, YYYY` ),
-			},
-		} );
+		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
 	dateForDisplay() {
