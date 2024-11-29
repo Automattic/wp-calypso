@@ -147,7 +147,10 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+				addQueryArgs( A4A_REFERRALS_DASHBOARD, {
+					args: { email },
+					redirectArgs: { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email },
+				} ) + '#feedback'
 			);
 			setEmail( '' );
 			setMessage( '' );
