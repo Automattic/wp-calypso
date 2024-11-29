@@ -1674,7 +1674,8 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const currentRoute = getCurrentRoute( state );
 	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
 	const selectedDomainName = purchase && getName( purchase );
-	const selectedDomain = selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
+	const selectedDomain =
+		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
 	return {
 		currentRoute,
