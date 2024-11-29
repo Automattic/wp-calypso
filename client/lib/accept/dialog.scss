@@ -12,6 +12,7 @@
 	.components-button.is-primary.is-scary {
 		background-color: var(--color-error);
 		color: var(--color-text-inverted);
+		border-color: var(--color-error);
 
 		&:hover,
 		&:focus-visible {
@@ -23,4 +24,8 @@
 // TODO: remove after /plugins/manage details doesn't use Dialog
 .is-section-plugins .components-modal__screen-overlay {
 	z-index: z-index( 'root', '.is-section-plugins .components-modal__screen-overlay');
+}
+// TODO: remove after /plugins/manage details doesn't use Dialog
+.is-section-jetpack-cloud-plugin-management .components-modal__screen-overlay {
+	z-index: z-index( 'root', '.is-section-jetpack-cloud-plugin-management .components-modal__screen-overlay' );
 }
