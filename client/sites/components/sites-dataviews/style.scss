@@ -7,6 +7,11 @@
 	overflow: hidden;
 	padding-bottom: 0;
 
+	// TODO: DataViews adds is-hovered to row/li's when hovering over them, we're targeting that
+	// to style the site name with a blue color to match core page list view. We need to target
+	// the row hover as the .sites-dataviews__site button doesn't cover the whole cell.
+	// At some point, this may be able to be cleaned up via a new onClick handler for primary fields,
+	// see https://github.com/WordPress/gutenberg/issues/67391#issuecomment-2506037360
 	.is-hovered {
 		.sites-dataviews__site {
 			.sites-dataviews__site-name:not(.sites-dataviews__site-name--deleted) {
