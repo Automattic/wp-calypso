@@ -60,16 +60,16 @@ body.is-section-accept-invite {
 		max-width: 372px;
 		button.is-primary {
 			border-radius: 2px;
-			border: 1px solid #117ac9;
-			background: #117ac9;
+			border: 1px solid var(--studio-wordpress-blue, #3858e9);
+			background: var(--studio-wordpress-blue, #3858e9);
 			height: 48px;
 			font-weight: 500;
 			&:hover {
-				background: #0e64a5;
+				background: var(--studio-wordpress-blue-60);
 			}
 			&:focus {
-				background-color: #0e64a5;
-				border-color: #0e64a5;
+				background-color: var(--studio-wordpress-blue-60);
+				border-color: var(--studio-wordpress-blue-60);
 				color: var(--color-text-inverted);
 				box-shadow: none;
 			}
