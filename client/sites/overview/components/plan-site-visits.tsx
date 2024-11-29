@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useLayoutEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
+import { untrailingslashit } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import './style.scss';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -11,7 +12,12 @@ import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	getSiteSlug,
+	isAdminInterfaceWPAdmin,
+	isJetpackModuleActive,
+} from 'calypso/state/sites/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -80,6 +86,12 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	useLayoutEffect( () => {
 		fetchVisits();
 	}, [ fetchVisits, hasModuleActive ] );
+
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
+	);
 
 	if ( ! canViewStat ) {
 		return null;
@@ -171,11 +183,16 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			);
 		}
 
+		const statsPageUrl =
+			adminInterfaceIsWPAdmin && siteAdminUrl
+				? `${ untrailingslashit( siteAdminUrl ) }/admin.php?page=stats#!/stats/month/${ siteId }`
+				: `/stats/month/${ siteSlug }`;
+
 		return (
 			<Button
 				variant="link"
 				css={ { textDecoration: 'none !important', fontSize: 'inherit' } }
-				href={ `/stats/month/${ siteSlug }` }
+				href={ statsPageUrl }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_overview_visit_stats_click' ) );
 				} }
