@@ -107,6 +107,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 					message={ translate(
 						"We're still checking some details of your site to make the best possible recommendations."
 					) }
+					rotate
 				/>
 			);
 		}
