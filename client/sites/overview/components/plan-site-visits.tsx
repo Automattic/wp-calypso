@@ -96,16 +96,20 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			} );
 		}
 
-		const visits = visitsResponse === 'disabled' ? 0 : visitsResponse;
+		if ( visitsResponse === 'disabled' ) {
+			return translate( 'Stats are disabled', {
+				comment: 'A message that the stats are disabled',
+			} );
+		}
 
-		if ( visits === 0 ) {
+		if ( visitsResponse === 0 ) {
 			return translate( 'No visits so far this month', {
 				comment: 'A notice that the site has not yet received any visits during the current month',
 			} );
 		}
 
 		return translate( '%(visitCount)s this month', {
-			args: { visitCount: visits },
+			args: { visitCount: visitsResponse },
 			comment: 'A description of the number of visits the site has received in the current month',
 		} );
 	};
