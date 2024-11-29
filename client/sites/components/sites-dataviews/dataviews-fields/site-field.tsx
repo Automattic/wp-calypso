@@ -103,6 +103,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			<SiteListTile
 				contentClassName={ clsx(
 					'sites-dataviews__site-name',
+					site.is_deleted && 'sites-dataviews__site-name--deleted',
 					css`
 						min-width: 0;
 						text-align: start;
