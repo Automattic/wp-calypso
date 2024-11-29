@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
@@ -47,6 +48,8 @@ export function useThemesThankYouData(
 	const subtitle = translate(
 		"Your new theme is a reflection of your unique style and personality, and we're thrilled to see it come to life."
 	);
+
+	useQuerySitePurchases( siteId );
 
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
