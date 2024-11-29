@@ -3,8 +3,14 @@
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
-	@media screen and (max-width: $break-medium) {
-		margin: 1rem;
+	padding-inline: 48px;
+
+	@media (max-width: $break-medium) {
+		padding-inline: 2rem;
+	}
+
+	@media (max-width: $break-small) {
+		padding-inline: 16px;	
 	}
 
 	&__header {

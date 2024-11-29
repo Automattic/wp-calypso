@@ -12,8 +12,12 @@
 		border-block-end: 1px solid var(--color-border-secondary);
 	}
 
+	@media (max-width: $break-medium) {
+		padding-inline: 2rem;
+	}
+
 	@media (max-width: $break-small) {
-		padding-inline: 16px;
+		padding-inline: 16px;	
 	}
 
 	@include break-xhuge {
