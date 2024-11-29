@@ -7,11 +7,11 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { PlansStep } from 'calypso/signup/steps/plans';
-import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
+import UnifiedPlansStep from './unified-plans-step';
+import { getIntervalType } from './util';
 
 import './style.scss';
 
@@ -60,7 +60,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	};
 
 	return (
-		<PlansStep
+		<UnifiedPlansStep
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );

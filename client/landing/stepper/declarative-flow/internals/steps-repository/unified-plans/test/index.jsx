@@ -24,7 +24,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { render, screen, waitFor } from '@testing-library/react';
-import { PlansStep } from '../index';
+import PlansStep from '../unified-plans-step';
 
 const noop = () => {};
 const props = {
