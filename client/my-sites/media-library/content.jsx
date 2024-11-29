@@ -469,6 +469,11 @@ export class MediaLibraryContent extends Component {
 				return null;
 			}
 
+			const hasRefreshButton =
+				'pexels' !== this.props.source &&
+				'openverse' !== this.props.source &&
+				! this.props.photosPickerApiEnabled;
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
@@ -481,7 +486,7 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
+					hasRefreshButton={ hasRefreshButton }
 					mediaScale={ this.props.mediaScale }
 					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
 					photosPickerSession={ this.props.photosPickerSession }
