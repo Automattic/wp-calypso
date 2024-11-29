@@ -7,16 +7,9 @@
 	overflow: hidden;
 	padding-bottom: 0;
 
-	.sites-dataviews__site {
-		display: flex;
-		flex-direction: row;
-		padding: 0;
-		overflow: hidden;
-		cursor: pointer;
-
-		&:not(:disabled) {
-			&:hover,
-			&:focus {
+	.is-hovered {
+		.sites-dataviews__site {
+			.sites-dataviews__site-name:not(.sites-dataviews__site-name--deleted) {
 				.sites-dataviews__site-title {
 					color: var(--color-accent);
 				}
@@ -25,8 +18,16 @@
 				}
 			}
 		}
+	}
 
-		&:disabled {
+	.sites-dataviews__site {
+		display: flex;
+		flex-direction: row;
+		padding: 0;
+		overflow: hidden;
+		cursor: pointer;
+
+		.sites-dataviews__site-name--deleted {
 			.sites-dataviews__site-title {
 				color: var(--color-neutral-30);
 			}
@@ -72,6 +73,11 @@
 	.sites-dataviews__site-icon {
 		cursor: pointer;
 		padding: 0;
+
+		&.sites-dataviews__site-icon--deleted {
+			cursor: default;
+			filter: grayscale(100%);
+		}
 	}
 
 	.site-sort__clickable {

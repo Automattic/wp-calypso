@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
@@ -33,6 +34,10 @@ export default function SiteIcon( {
 	const onClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
 
+		if ( site.is_deleted ) {
+			return;
+		}
+
 		if (
 			isAdmin &&
 			! isP2Site &&
@@ -48,19 +53,15 @@ export default function SiteIcon( {
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
-	if ( site.is_deleted ) {
-		return (
-			<SiteFavicon
-				className="sites-site-favicon"
-				blogId={ site.ID }
-				fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
-				size={ viewType === 'list' ? 52 : 32 }
-			/>
-		);
-	}
-
 	return (
-		<ThumbnailLink title={ siteTitle } onClick={ onClick } className="sites-dataviews__site-icon">
+		<ThumbnailLink
+			title={ siteTitle }
+			onClick={ onClick }
+			className={ clsx(
+				'sites-dataviews__site-icon',
+				site.is_deleted && 'sites-dataviews__site-icon--deleted'
+			) }
+		>
 			<SiteFavicon
 				className="sites-site-favicon"
 				blogId={ site.ID }
