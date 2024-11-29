@@ -464,7 +464,7 @@ const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as string );
+					return navigate( addQueryArgs( { origin }, providedDependencies?.url as string ) );
 				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as string );
@@ -579,9 +579,9 @@ const siteSetupFlow: Flow = {
 						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
 							return goToFlow( backToFlow );
 						}
-						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
-					return navigate( `importList?siteSlug=${ siteSlug }` );
+					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
 
 				case 'importerWordpress':
 					if ( backToFlow ) {
