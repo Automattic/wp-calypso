@@ -306,7 +306,7 @@ export function clearSite( siteId ) {
  * @param session
  */
 export function setPhotoPickerSession( session ) {
-	persistGooglePhotosPickerSessionCookie( session );
+	persistGooglePhotosPickerSessionCookie( session.id );
 
 	return {
 		type: MEDIA_PHOTOS_PICKER_SESSION_SET,

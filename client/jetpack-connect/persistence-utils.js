@@ -72,25 +72,14 @@ export const retrieveSource = () => {
 	return window.sessionStorage.getItem( SESSION_STORAGE_SOURCE );
 };
 
-export const persistGooglePhotosPickerSessionCookie = ( session ) => {
+export const persistGooglePhotosPickerSessionCookie = ( sessionId ) => {
 	const options = { path: '/' };
 
-	if ( typeof session === 'object' ) {
-		session = JSON.stringify( session );
-	}
-
-	document.cookie = cookie.serialize( GOOGLE_PHOTOS_PICKER_SESSION, session, options );
+	document.cookie = cookie.serialize( GOOGLE_PHOTOS_PICKER_SESSION, sessionId, options );
 };
 
 export const retrieveGooglePhotosPickerSessionCookie = () => {
 	const cookies = cookie.parse( document.cookie );
-	const session = cookies[ GOOGLE_PHOTOS_PICKER_SESSION ];
 
-	let parsedSession;
-	try {
-		parsedSession = JSON.parse( session );
-	} catch ( error ) {
-		parsedSession = null;
-	}
-	return parsedSession;
+	return cookies[ GOOGLE_PHOTOS_PICKER_SESSION ];
 };

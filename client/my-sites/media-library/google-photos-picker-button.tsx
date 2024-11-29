@@ -37,7 +37,7 @@ const GooglePhotosPickerButton = () => {
 			session && refetch();
 		}, 3000 );
 		return () => clearInterval( interval );
-	}, [ refetch ] );
+	}, [ session, refetch ] );
 
 	useEffect( () => {
 		sessionData && dispatch( setPhotoPickerSession( sessionData ) );
