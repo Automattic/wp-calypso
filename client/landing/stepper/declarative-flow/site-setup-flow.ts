@@ -464,7 +464,11 @@ const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( addQueryArgs( { origin }, providedDependencies?.url as string ) );
+					const url = providedDependencies?.url;
+					if ( typeof url === 'string' ) {
+						return navigate( addQueryArgs( { origin }, url ) );
+					}
+					return navigate( url as string );
 				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as string );
