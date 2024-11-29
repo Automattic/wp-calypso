@@ -102,7 +102,7 @@ export const useCredentialsForm = (
 				onSubmit( siteInfoResult );
 			} else {
 				const applicationPasswordsInfo = {
-					isAvailable: true,
+					isAvailable: false,
 				};
 				onSubmit( siteInfoResult, applicationPasswordsInfo );
 			}

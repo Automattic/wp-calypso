@@ -23,6 +23,10 @@ const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPa
 		return 'application-passwords-approval';
 	}
 
+	if ( applicationPasswordsInfo?.isAvailable === false ) {
+		return 'credentials-required';
+	}
+
 	if ( siteInfo?.platform_data?.is_wpcom ) {
 		return 'already-wpcom';
 	}

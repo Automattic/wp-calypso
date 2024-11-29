@@ -53,6 +53,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL,
+			STEPS.SITE_MIGRATION_SECURE_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
@@ -417,6 +418,7 @@ const siteMigration: Flow = {
 							| 'skip'
 							| 'submit'
 							| 'application-passwords-approval'
+							| 'credentials-required'
 							| 'already-wpcom'
 							| 'site-is-not-using-wordpress';
 						from: string;
@@ -459,6 +461,38 @@ const siteMigration: Flow = {
 							addQueryArgs(
 								{ siteId, from: from || fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL.slug
+							)
+						);
+					}
+
+					if ( action === 'credentials-required' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_SECURE_CREDENTIALS.slug
+							)
+						);
+					}
+
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+
+				case STEPS.SITE_MIGRATION_SECURE_CREDENTIALS.slug: {
+					const { action, from } = providedDependencies as {
+						action: 'skip' | 'submit';
+						from: string;
+					};
+
+					if ( action === 'skip' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
 					}
