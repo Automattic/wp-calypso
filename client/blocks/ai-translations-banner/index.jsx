@@ -1,23 +1,15 @@
 import { getLanguage, isAITranslatedLocale, isDefaultLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import Banner from 'calypso/components/banner';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import { useSelector } from 'calypso/state';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
-import { setUserSetting } from 'calypso/state/user-settings/actions';
-import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 
 const BANNER_NAME = 'ai_translations_banner';
 
 export default function AITranslationsBanner() {
 	const translate = useTranslate();
 	const localeSuggestions = useSelector( getLocaleSuggestions );
-	const dispatch = useDispatch();
-	const [ isBusy, setIsBusy ] = useState( false );
-
 	const isCurrentlyUsingAITranslatedLocale = isAITranslatedLocale( translate.localeSlug );
 
 	if ( ! isDefaultLocale( translate.localeSlug ) && ! isCurrentlyUsingAITranslatedLocale ) {
@@ -33,14 +25,6 @@ export default function AITranslationsBanner() {
 	}
 
 	const language = getLanguage( localeSuggestions?.[ 0 ]?.locale );
-	const handleClick = async () => {
-		setIsBusy( true );
-		dispatch( setUserSetting( 'language', language.langSlug ) );
-		await dispatch( saveUnsavedUserSettings( [ 'language' ] ) );
-		dispatch( dismissCard( BANNER_NAME ) );
-
-		window.location.reload();
-	};
 
 	return (
 		<Banner
@@ -59,10 +43,8 @@ export default function AITranslationsBanner() {
 			}
 			event={ BANNER_NAME }
 			dismissPreferenceName={ BANNER_NAME }
-			onClick={ handleClick }
-			isBusy={ isBusy }
+			href="/me/account"
 			horizontal
-			disableHref
 		/>
 	);
 }

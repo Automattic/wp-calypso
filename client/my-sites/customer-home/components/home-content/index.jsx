@@ -304,11 +304,7 @@ const HomeContent = ( {
 					} }
 				/>
 			) : null }
-<<<<<<< HEAD
-
 			{ renderStudioSyncNotice() }
-=======
->>>>>>> 2bf7e03b481 (i18n: Add AI Translations Banner)
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
