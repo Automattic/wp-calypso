@@ -15,6 +15,21 @@ import { getSite } from 'calypso/state/sites/selectors';
 import RemovePlugin from '../remove-plugin';
 import { site, plugin } from './utils/constants';
 
+const HEADING_TEXT = 'Heading';
+const MESSAGE_TEXT = 'Message';
+const CONFIRM_TEXT = 'OK';
+const CANCEL_TEXT = 'Cancel';
+jest.mock( '../../hooks/use-get-dialog-text', () =>
+	jest.fn().mockReturnValue( () => ( {
+		heading: HEADING_TEXT,
+		message: MESSAGE_TEXT,
+		cta: {
+			confirm: CONFIRM_TEXT,
+			cancel: CANCEL_TEXT,
+		},
+	} ) )
+);
+
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
@@ -88,16 +103,22 @@ describe( '<RemovePlugin>', () => {
 
 		expect( removeButton.textContent ).toEqual( 'Remove' );
 		// Test to check if modal is open
-		expect( document.getElementsByClassName( 'button is-primary' )[ 0 ] ).toBeFalsy();
+		expect(
+			document.getElementsByClassName( 'components-button is-scary is-primary' )[ 0 ]
+		).toBeFalsy();
 		// Simulate click which opens up a modal
 		await userEvent.click( removeButton );
 		// Test to check if modal is open and has `Remove Button`
-		const [ removeButtonOnModal ] = document.getElementsByClassName( 'button is-primary' );
+		const [ removeButtonOnModal ] = document.getElementsByClassName(
+			'components-button is-scary is-primary'
+		);
 		expect( removeButtonOnModal ).toBeInTheDocument();
-		expect( removeButtonOnModal.textContent ).toEqual( `Deactivate and remove ${ plugin.name }` );
+		expect( removeButtonOnModal.textContent ).toEqual( CONFIRM_TEXT );
 		// Simulate click which triggers API call to remove plugin
 		await userEvent.click( removeButtonOnModal );
 		// Test to check if modal is closed after the API is triggered
-		expect( document.getElementsByClassName( 'button is-primary' )[ 0 ] ).toBeFalsy();
+		expect(
+			document.getElementsByClassName( 'components-button is-scary is-primary' )[ 0 ]
+		).toBeFalsy();
 	} );
 } );
