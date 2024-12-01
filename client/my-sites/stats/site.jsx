@@ -75,6 +75,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsell from './stats-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -567,141 +568,147 @@ class StatsSite extends Component {
 						) }
 					</>
 
-					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
+					{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
+						<>
+							{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-					<div className={ moduleListClasses }>
-						<StatsModuleTopPosts
-							moduleStrings={ moduleStrings.posts }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'posts', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-						<StatsModuleReferrers
-							moduleStrings={ moduleStrings.referrers }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'referrers', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						<StatsModuleCountries
-							moduleStrings={ moduleStrings.countries }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'countryviews', query ) }
-							className={ clsx( 'stats__flexible-grid-item--full' ) }
-						/>
-
-						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
-						{ supportsUTMStats && ! isOldJetpack && (
-							<StatsModuleUTM
-								siteId={ siteId }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'utm', query ) }
-								summary={ false }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{ supportsUTMStats && isOldJetpack && (
-							<StatsModuleUTMOverlay
-								siteId={ siteId }
-								className={ halfWidthModuleClasses }
-								overlay={
-									<StatsCardUpdateJetpackVersion
-										className="stats-module__upsell stats-module__upgrade"
-										siteId={ siteId }
-										statType="utm"
-									/>
-								}
-							/>
-						) }
-
-						<StatsModuleClicks
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'clicks', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						{ ! this.isModuleHidden( 'authors' ) && (
-							<StatsModuleAuthors
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'authors', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ ! isNewDateFilteringEnabled && supportsEmailStats && (
-							<StatsModuleEmails
-								period={ this.props.period }
-								moduleStrings={ moduleStrings.emails }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'emails', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						<StatsModuleSearch
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'searchterms', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						{ ! this.isModuleHidden( 'videos' ) && (
-							<StatsModuleVideos
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'videoplays', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{
-							// File downloads are not yet supported in Jetpack environment
-							! isJetpack && (
-								<StatsModuleDownloads
-									moduleStrings={ moduleStrings.filedownloads }
+							<div className={ moduleListClasses }>
+								<StatsModuleTopPosts
+									moduleStrings={ moduleStrings.posts }
 									period={ this.props.period }
 									query={ query }
-									summaryUrl={ this.getStatHref( 'filedownloads', query ) }
+									summaryUrl={ this.getStatHref( 'posts', query ) }
 									className={ halfWidthModuleClasses }
 								/>
-							)
-						}
+								<StatsModuleReferrers
+									moduleStrings={ moduleStrings.referrers }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'referrers', query ) }
+									className={ halfWidthModuleClasses }
+								/>
 
-						{ supportsDevicesStats && ! isOldJetpack && (
-							<StatsModuleDevices
-								siteId={ siteId }
-								period={ this.props.period }
-								query={ query }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
+								<StatsModuleCountries
+									moduleStrings={ moduleStrings.countries }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'countryviews', query ) }
+									className={ clsx( 'stats__flexible-grid-item--full' ) }
+								/>
 
-						{ supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeDevicesOverlay
-								className={ halfWidthModuleClasses }
-								siteId={ siteId }
-								overlay={
-									<StatsCardUpdateJetpackVersion
-										className="stats-module__upsell stats-module__upgrade"
+								{ /* If UTM if supported display the module or update Jetpack plugin card */ }
+								{ supportsUTMStats && ! isOldJetpack && (
+									<StatsModuleUTM
 										siteId={ siteId }
-										statType="devices"
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'utm', query ) }
+										summary={ false }
+										className={ halfWidthModuleClasses }
 									/>
+								) }
+
+								{ supportsUTMStats && isOldJetpack && (
+									<StatsModuleUTMOverlay
+										siteId={ siteId }
+										className={ halfWidthModuleClasses }
+										overlay={
+											<StatsCardUpdateJetpackVersion
+												className="stats-module__upsell stats-module__upgrade"
+												siteId={ siteId }
+												statType="utm"
+											/>
+										}
+									/>
+								) }
+
+								<StatsModuleClicks
+									moduleStrings={ moduleStrings.clicks }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'clicks', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+
+								{ ! this.isModuleHidden( 'authors' ) && (
+									<StatsModuleAuthors
+										moduleStrings={ moduleStrings.authors }
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'authors', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+								{ ! isNewDateFilteringEnabled && supportsEmailStats && (
+									<StatsModuleEmails
+										period={ this.props.period }
+										moduleStrings={ moduleStrings.emails }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'emails', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								<StatsModuleSearch
+									moduleStrings={ moduleStrings.search }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'searchterms', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+
+								{ ! this.isModuleHidden( 'videos' ) && (
+									<StatsModuleVideos
+										moduleStrings={ moduleStrings.videoplays }
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'videoplays', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{
+									// File downloads are not yet supported in Jetpack environment
+									! isJetpack && (
+										<StatsModuleDownloads
+											moduleStrings={ moduleStrings.filedownloads }
+											period={ this.props.period }
+											query={ query }
+											summaryUrl={ this.getStatHref( 'filedownloads', query ) }
+											className={ halfWidthModuleClasses }
+										/>
+									)
 								}
-							/>
-						) }
-					</div>
+
+								{ supportsDevicesStats && ! isOldJetpack && (
+									<StatsModuleDevices
+										siteId={ siteId }
+										period={ this.props.period }
+										query={ query }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{ supportsDevicesStats && isOldJetpack && (
+									<StatsModuleUpgradeDevicesOverlay
+										className={ halfWidthModuleClasses }
+										siteId={ siteId }
+										overlay={
+											<StatsCardUpdateJetpackVersion
+												className="stats-module__upsell stats-module__upgrade"
+												siteId={ siteId }
+												statType="devices"
+											/>
+										}
+									/>
+								) }
+							</div>
+						</>
+					) }
+
+					{ config.isEnabled( 'stats/paid-wpcom-v3' ) && <StatsUpsell siteId={ siteId } /> }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
@@ -709,7 +716,9 @@ class StatsSite extends Component {
 				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
+					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				) }
 				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
