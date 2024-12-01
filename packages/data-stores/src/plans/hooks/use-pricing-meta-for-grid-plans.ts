@@ -4,9 +4,9 @@ import {
 	getTermFromDuration,
 	calculateMonthlyPrice,
 } from '@automattic/calypso-products';
-import { AddOns } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
+import * as AddOns from '../../add-ons';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
 import { COST_OVERRIDE_REASONS } from '../constants';
