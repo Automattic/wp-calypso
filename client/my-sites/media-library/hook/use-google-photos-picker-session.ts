@@ -20,7 +20,7 @@ export default function useGooglePhotosPickerSession() {
 	const isSessionExpired =
 		session?.expireTime && moment( session.expireTime ).isBefore( new Date() );
 
-	const { mutate: createSession, isPending } = useCreateGooglePhotosPickerSessionMutation();
+	const { createSession, isPending } = useCreateGooglePhotosPickerSessionMutation();
 	const { data: sessionData, refetch } = useGooglePhotosPickerSessionQuery( session?.id );
 
 	// Create a new session if there is no session or the current session is expired

@@ -492,6 +492,7 @@ export class MediaLibraryContent extends Component {
 					photosPickerSession={ this.props.photosPickerSession }
 					createPhotosPickerSession={ this.props.createPhotosPickerSession }
 					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
+					isCreatingPhotosPickerSession={ this.props.isCreatingPhotosPickerSession }
 				/>
 			);
 		}

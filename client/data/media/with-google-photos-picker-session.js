@@ -21,7 +21,7 @@ export const withGooglePhotosPickerSession = createHigherOrderComponent( ( Wrapp
 		const photosPickerSession = useSelector( ( state ) => getGooglePhotosPickerSession( state ) );
 
 		const { data: cachedSession } = useGooglePhotosPickerSessionQuery( cachedSessionId );
-		const { mutate: createPickerSession } = useCreateGooglePhotosPickerSessionMutation();
+		const { createSession, isPending } = useCreateGooglePhotosPickerSessionMutation();
 		const { mutate: deletePickerSession } = useDeleteGooglePhotosPickerSessionMutation();
 
 		useEffect( () => {
@@ -34,7 +34,8 @@ export const withGooglePhotosPickerSession = createHigherOrderComponent( ( Wrapp
 				photosPickerApiEnabled={ photosPickerApiEnabled }
 				photosPickerSession={ photosPickerSession }
 				deletePhotosPickerSession={ deletePickerSession }
-				createPhotosPickerSession={ createPickerSession }
+				createPhotosPickerSession={ createSession }
+				isCreatingPhotosPickerSession={ isPending }
 			/>
 		);
 	};
