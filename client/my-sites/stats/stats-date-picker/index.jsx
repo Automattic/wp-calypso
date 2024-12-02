@@ -188,7 +188,6 @@ class StatsDatePicker extends Component {
 		const { selectedShortcut } = getShortcuts(
 			reduxState,
 			dateRange,
-			undefined,
 			translate,
 			isNewDateFilteringEnabled
 		);
