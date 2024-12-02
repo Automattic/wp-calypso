@@ -32,8 +32,21 @@
 			padding: 0;
 			align-items: center;
 
+			@media (max-width: $break-large) {
+				margin: 0;
+			}
+
 			@media (max-width: $break-medium) {
-				padding: 0 16px;
+				padding: 0;
+				justify-content: flex-end;
+			}
+
+			@media (max-width: 660px) {
+				margin-bottom: 24px;
+			}
+
+			@media (max-width: $break-mobile) {
+				margin: 24px 0;
 			}
 		}
 	}

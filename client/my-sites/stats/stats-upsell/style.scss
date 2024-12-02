@@ -1,0 +1,114 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.stats-upsell {
+	max-width: 375px;
+	margin: auto;
+	background: var(--studio-gray-0);
+	@include break-medium {
+		max-width: 700px;
+	}
+	.components-modal__content {
+		padding: 0;
+	}
+
+	.stats-upsell__close-button {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+	}
+
+	.stats-upsell__content {
+		display: flex;
+		align-items: flex-start;
+
+		flex-direction: column;
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+	.stats-upsell__left,
+	.stats-upsell__right {
+		display: flex;
+		padding: 40px;
+		flex-direction: column;
+		align-self: stretch;
+		align-items: flex-start;
+
+		min-width: 279px;
+	}
+
+	.stats-upsell__left {
+		background: var(--studio-white);
+		gap: 24px;
+		@include break-medium {
+			flex: 1;
+		}
+	}
+
+	.stats-upsell__right {
+
+		gap: 8px;
+		@include break-medium {
+			flex: 1;
+		}
+	}
+
+	.stats-upsell__title {
+		@extend .wp-brand-font;
+		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
+		font-size: 28px;
+		line-height: 34px; /* 125% */
+		@include break-medium {
+			font-size: $font-title-large;
+			line-height: 40px; /* 125% */
+		}
+	}
+
+	.stats-upsell__text {
+		font-size: $font-body;
+	}
+
+	.stats-upsell__plan {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+	.stats-upsell__price-amount {
+		display: flex;
+		align-items: center;
+		font-size: $font-title-large;
+		font-weight: 500;
+
+		abbr {
+			font-size: $font-title-small;
+			line-height: $font-title-large;
+			font-weight: 400;
+		}
+	}
+	.stats-upsell__price-per-month {
+		font-size: $font-body-extra-small;
+		color: var(--color-neutral);
+	}
+
+	.stats-upsell__features {
+		padding-top: 7px;
+		font-size: $font-body-small;
+		display: flex;
+		flex-direction: column;
+		row-gap: 8px;
+
+		svg {
+			color: #0675c4;
+		}
+
+		.stats-upsell__feature {
+			display: flex;
+			column-gap: 8px;
+
+			.stats-upsell__feature-text {
+				flex: 1;
+			}
+		}
+	}
+}

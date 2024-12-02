@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -55,16 +56,22 @@ export default function () {
 		return page.redirect( redirectPath );
 	} );
 
-	page(
-		'/settings/delete-site/:site_id',
-		siteSelection,
-		redirectIfCantDeleteSite,
-		navigation,
-		setScroll,
-		deleteSite,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/settings/delete-site/:site', ( context ) => {
+			page.redirect( `/sites/settings/administration/${ context.params.site }/delete-site` );
+		} );
+	} else {
+		page(
+			'/settings/delete-site/:site_id',
+			siteSelection,
+			redirectIfCantDeleteSite,
+			navigation,
+			setScroll,
+			deleteSite,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		`/settings/disconnect-site/:site_id`,
@@ -84,37 +91,55 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/settings/start-over/:site_id',
-		siteSelection,
-		redirectIfCantDeleteSite,
-		navigation,
-		setScroll,
-		startOver,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/settings/start-over/:site', ( context ) => {
+			page.redirect( `/sites/settings/administration/${ context.params.site }/reset-site` );
+		} );
+	} else {
+		page(
+			'/settings/start-over/:site_id',
+			siteSelection,
+			redirectIfCantDeleteSite,
+			navigation,
+			setScroll,
+			startOver,
+			makeLayout,
+			clientRender
+		);
+	}
 
-	page(
-		'/settings/manage-connection/:site_id',
-		siteSelection,
-		navigation,
-		setScroll,
-		manageConnection,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/settings/manage-connection/:site', ( context ) => {
+			page.redirect( `/sites/settings/administration/${ context.params.site }/manage-connection` );
+		} );
+	} else {
+		page(
+			'/settings/manage-connection/:site_id',
+			siteSelection,
+			navigation,
+			setScroll,
+			manageConnection,
+			makeLayout,
+			clientRender
+		);
+	}
 
-	page(
-		'/settings/start-site-transfer/:site_id',
-		siteSelection,
-		redirectIfCantStartSiteOwnerTransfer,
-		navigation,
-		setScroll,
-		startSiteOwnerTransfer,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/settings/start-site-transfer/:site', ( context ) => {
+			page.redirect( `/sites/settings/administration/${ context.params.site }/transfer-site` );
+		} );
+	} else {
+		page(
+			'/settings/start-site-transfer/:site_id',
+			siteSelection,
+			redirectIfCantStartSiteOwnerTransfer,
+			navigation,
+			setScroll,
+			startSiteOwnerTransfer,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/settings/site-transferred/:site_id',

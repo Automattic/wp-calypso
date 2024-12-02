@@ -1,8 +1,10 @@
 import BulkAllDomains from 'calypso/my-sites/domains/domain-management/list/bulk-all-domains';
 import BulkSiteDomains from 'calypso/my-sites/domains/domain-management/list/bulk-site-domains';
+import DomainDashboardLayout from './components/domain-dashboard-layout';
 import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
 import DomainConnectMapping from './domain-connect-mapping';
+import DomainOverviewPane from './domain-overview-pane';
 import EditContactInfoPage from './edit-contact-info-page';
 import BulkEditContactInfoPage from './edit-contact-info-page/bulk-edit-contact-info-page';
 import ManageConsent from './manage-consent';
@@ -32,4 +34,6 @@ export default {
 	TransferDomainToAnyUser,
 	BulkAllDomains,
 	BulkSiteDomains,
+	DomainDashboardLayout,
+	DomainOverviewPane,
 };

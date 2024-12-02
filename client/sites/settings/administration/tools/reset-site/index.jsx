@@ -298,6 +298,7 @@ function SiteResetCard( {
 	return (
 		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
+			<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(
@@ -310,7 +311,6 @@ function SiteResetCard( {
 				) }
 			/>
 			<PageViewTracker path="/settings/start-reset/:site" title="Settings > Site Reset" />
-			<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
 			{ renderBody() }
 			<DIFMUpsell
 				site={ site }
