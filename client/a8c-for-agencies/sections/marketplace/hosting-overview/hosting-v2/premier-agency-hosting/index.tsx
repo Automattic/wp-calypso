@@ -8,10 +8,15 @@ import {
 	BackgroundType2,
 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
-import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
-import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
+import useGetPressablePlanByProductId from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-by-product-id';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -36,18 +41,29 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const isPressableReferralsEnabled = isEnabled( 'a4a-pressable-referrals' );
 	const showReferralMode = isPressableReferralsEnabled && isReferMode;
 
-	const { pressablePlans } = useProductAndPlans( {
-		selectedSite: null,
-		productSearchQuery: '',
-	} );
+	const { data } = useFetchLicenses(
+		LicenseFilter.NotRevoked,
+		'pressable',
+		LicenseSortField.IssuedAt,
+		LicenseSortDirection.Descending,
+		1,
+		100
+	);
 
-	const { existingPlan, isReady: isExistingPlanFetched } = useExistingPressablePlan( {
-		plans: pressablePlans,
+	const licenses = data?.items;
+
+	// Find the first occurrence for of Pressable license with its referral as null
+	const agencyPressableLicense = licenses?.find(
+		( license ) => license.licenseKey.startsWith( 'pressable' ) && ! license.referral
+	);
+
+	const agencyPressablePlan = useGetPressablePlanByProductId( {
+		product_id: agencyPressableLicense ? agencyPressableLicense.productId : 0,
 	} );
 
 	return (
 		<div className="premier-agency-hosting">
-			{ isExistingPlanFetched && existingPlan && ! showReferralMode && (
+			{ agencyPressablePlan && ! showReferralMode && (
 				<section className="pressable-overview-plan-existing">
 					<div className="pressable-overview-plan-existing__details-card">
 						<div className="pressable-overview-plan-existing__header">
@@ -57,13 +73,13 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 							<div className="pressable-overview-plan-existing__name">
 								{ translate( '%(plan_name)s plan', {
 									args: {
-										plan_name: existingPlan.name,
+										plan_name: agencyPressablePlan.name,
 									},
 									comment: '%(plan_name)s is the plan name.',
 								} ) }
 							</div>
 						</div>
-						<PressableUsageDetails existingPlan={ existingPlan } />
+						<PressableUsageDetails existingPlan={ agencyPressablePlan } />
 					</div>
 				</section>
 			) }

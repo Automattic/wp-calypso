@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
     display: flex;
     flex-direction: column;
@@ -6,9 +9,12 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
 	.navigation-header {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
+    
+        @media (max-width: 430px) {
+            padding-inline: 24px;
+        }
 
         .navigation-header__main {
-            max-width: 1400px;
             margin: auto;
         }
 	}
@@ -17,7 +23,6 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
 body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
 .is-section-jetpack-cloud-plugin-management .plugin-management-wrapper.is-bulk-plugin-management {
     .dataviews-wrapper {
-        max-width: 1500px;
         margin: auto;
 
         .dataviews-view-table {

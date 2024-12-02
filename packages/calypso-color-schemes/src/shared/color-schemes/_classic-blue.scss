@@ -101,8 +101,9 @@
 	--color-navredesign-sidebar-submenu-hover-text: var(--color-sidebar-submenu-hover-text);
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-text);
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--studio-orange-50);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 
 	/* Collapse Menu Button */
 	--color-collapse-menu-text: var(--color-sidebar-text-alternative);

@@ -82,7 +82,12 @@ const SubscriberDetails = ( {
 				/>
 			</div>
 			{ config.isEnabled( 'individual-subscriber-stats' ) && (
-				<SubscriberStats siteId={ siteId } subscriptionId={ subscriptionId } userId={ userId } />
+				<SubscriberStats
+					siteId={ siteId }
+					subscriptionId={ subscriptionId }
+					userId={ userId }
+					dateSubscribed={ new Date( date_subscribed ) }
+				/>
 			) }
 			<div className="subscriber-details__content">
 				<h3 className="subscriber-details__content-title">

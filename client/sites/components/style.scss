@@ -301,10 +301,9 @@
 				max-height: calc(100vh - var(--masterbar-height));
 			}
 			.preview-pane__navigation {
-				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
-				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
+				box-shadow: none;
+				border-bottom: 1px solid var(--color-border-subtle);
 				padding-top: 1px;
-				clip-path: inset(2px 0 -1px 0);
 			}
 		}
 
