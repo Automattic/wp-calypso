@@ -479,14 +479,16 @@ export default function CampaignItemDetails( props: Props ) {
 				{ ! isLoading && status && (
 					<div className="campaign-item-details__support-buttons-container">
 						<div className="campaign-item-details__support-buttons">
-							{ status && canGetCampaignStats( status ) && (
-								<CampaignDownloadStats
-									siteId={ siteId }
-									campaign={ campaign }
-									isLoading={ isLoading }
-									setStatsError={ () => setShowReportErrorDialog( true ) }
-								/>
-							) }
+							{ status &&
+								canGetCampaignStats( status ) &&
+								campaign?.campaign_stats?.impressions_total > 0 && (
+									<CampaignDownloadStats
+										siteId={ siteId }
+										campaign={ campaign }
+										isLoading={ isLoading }
+										setStatsError={ () => setShowReportErrorDialog( true ) }
+									/>
+								) }
 							{ ! isLoading && status ? (
 								<>
 									{ canPromoteAgainCampaign( status ) && (
