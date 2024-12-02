@@ -92,10 +92,6 @@ const useCheckPlanAvailabilityForPurchase = () => {
 };
 
 describe( 'usePricingMetaForGridPlans', () => {
-	// beforeAll( () => {
-	// 	AddOns.useStorageAddOns.mockImplementation( () => STORAGE_ADD_ONS_MOCK );
-	// } );
-
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
