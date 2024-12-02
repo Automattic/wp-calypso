@@ -45,13 +45,13 @@ export const shouldBasePlansOnSegment = (
 
 export const buildUpgradeFunction = (
 	planProps: {
-		stepSectionName: UnifiedPlansStepProps[ 'stepSectionName' ];
-		launchSite: UnifiedPlansStepProps[ 'launchSite' ];
-		themeSlugWithRepo: UnifiedPlansStepProps[ 'themeSlugWithRepo' ];
+		stepSectionName?: UnifiedPlansStepProps[ 'stepSectionName' ];
+		launchSite?: UnifiedPlansStepProps[ 'launchSite' ];
+		themeSlugWithRepo?: UnifiedPlansStepProps[ 'themeSlugWithRepo' ];
 		flowName: UnifiedPlansStepProps[ 'flowName' ];
 		stepName: UnifiedPlansStepProps[ 'stepName' ];
-		selectedSite: UnifiedPlansStepProps[ 'selectedSite' ] | null;
-		additionalStepData: UnifiedPlansStepProps[ 'additionalStepData' ];
+		selectedSite?: UnifiedPlansStepProps[ 'selectedSite' ] | null;
+		additionalStepData?: UnifiedPlansStepProps[ 'additionalStepData' ];
 		goToNextStep: NonNullable< UnifiedPlansStepProps[ 'goToNextStep' ] >;
 		submitSignupStep: NonNullable< UnifiedPlansStepProps[ 'submitSignupStep' ] >;
 	},
