@@ -170,8 +170,8 @@
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
 		"woocommerce/core-profiler-passwordless-auth": true,
-		"login/magic-login": true,
-		"woocommerce/rebrand-2-0": false
+		"woocommerce/rebrand-2-0": false,
+		"login/magic-login": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
