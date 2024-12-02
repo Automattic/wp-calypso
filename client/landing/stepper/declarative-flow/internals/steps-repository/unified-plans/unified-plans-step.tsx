@@ -43,7 +43,7 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './unified-plans-step-styles.scss';
 
-interface Props {
+export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
 	hidePersonalPlan?: boolean;
 	hidePremiumPlan?: boolean;
@@ -210,7 +210,7 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
-}: Props ) {
+}: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = useDispatch();
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
