@@ -217,6 +217,7 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'image-placeholder'
 	| 'list'
 	| 'location'
 	| 'template';
