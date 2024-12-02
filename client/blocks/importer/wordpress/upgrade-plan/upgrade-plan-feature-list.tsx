@@ -72,21 +72,25 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						</li>
 					) ) }
 
-					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
-						<JetpackLogo size={ 16 } />
-					</li>
-					{ jetpackFeatures?.map( ( feature, i ) => (
-						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
-							<Plans2023Tooltip
-								id={ `jetpack-feature-${ i }` }
-								text={ feature?.getDescription?.() }
-								setActiveTooltipId={ setActiveTooltipId }
-								activeTooltipId={ activeTooltipId }
-							>
-								<span>{ feature?.getTitle() }</span>
-							</Plans2023Tooltip>
-						</li>
-					) ) }
+					{ jetpackFeatures && jetpackFeatures.length > 0 && (
+						<>
+							<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
+								<JetpackLogo size={ 16 } />
+							</li>
+							{ jetpackFeatures?.map( ( feature, i ) => (
+								<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
+									<Plans2023Tooltip
+										id={ `jetpack-feature-${ i }` }
+										text={ feature?.getDescription?.() }
+										setActiveTooltipId={ setActiveTooltipId }
+										activeTooltipId={ activeTooltipId }
+									>
+										<span>{ feature?.getTitle() }</span>
+									</Plans2023Tooltip>
+								</li>
+							) ) }
+						</>
+					) }
 					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>
