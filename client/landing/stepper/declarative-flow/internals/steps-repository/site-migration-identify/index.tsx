@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
@@ -52,27 +51,7 @@ interface Props {
 
 export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- title.
-	const titleInUse = hasEnTranslation( 'Let’s find your site' )
-		? translate( 'Let’s find your site' )
-		: translate( 'Let’s import your content' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- subtitle.
-	const subtitleInUse = hasEnTranslation(
-		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-	)
-		? translate(
-				"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-		  )
-		: translate( 'Drop your current site address below to get started.' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- CTA text.
-	const nextLabelText = hasEnTranslation( 'Check my site' ) ? translate( 'Check my site' ) : false;
-	const nextLabelProp = nextLabelText ? { nextLabelText } : {}; // If we don't pass anything, the default label 'Continue' will be used.
-
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -90,46 +69,36 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		return <ScanningStep />;
 	}
 
-	// TODO: Remove extra steps and properties for non-English locales once we have translations -- hosting details.
 	const hostingDetailItems = {
 		'unmatched-uptime': {
 			title: translate( 'Unmatched Reliability and Uptime' ),
-			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
 			description: translate(
 				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
 			),
-			descriptionString:
-				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
 		},
 		'effortless-customization': {
 			title: translate( 'Effortless Customization' ),
-			titleString: 'Effortless Customization',
 			description: translate(
 				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
 			),
-			descriptionString:
-				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
 		},
 		'blazing-fast-speed': {
 			title: translate( 'Blazing Fast Page Speed' ),
-			titleString: 'Blazing Fast Page Speed',
 			description: translate(
 				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
 			),
-			descriptionString:
-				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
 		},
 	};
-
-	const hasTranslationsForAllItems = Object.values( hostingDetailItems ).every(
-		( item ) => hasEnTranslation( item.titleString ) && hasEnTranslation( item.descriptionString )
-	);
 
 	return (
 		<div className="import__capture-wrapper">
 			<div className="import__heading import__heading-center">
-				<Title>{ titleInUse }</Title>
-				<SubTitle>{ subtitleInUse }</SubTitle>
+				<Title>{ translate( 'Let’s find your site' ) }</Title>
+				<SubTitle>
+					{ translate(
+						"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+					) }
+				</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
@@ -144,12 +113,10 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 						'Or <button>pick your current platform from a list</button>'
 					) }
 					hideImporterListLink={ hideImporterListLink }
-					{ ...nextLabelProp }
+					nextLabelText={ translate( 'Check my site' ) }
 				/>
 			</div>
-			{ hasTranslationsForAllItems && (
-				<HostingDetails items={ Object.values( hostingDetailItems ) } />
-			) }
+			<HostingDetails items={ Object.values( hostingDetailItems ) } />
 		</div>
 	);
 };
