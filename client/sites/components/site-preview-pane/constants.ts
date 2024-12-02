@@ -29,8 +29,6 @@ export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
 export const SETTINGS_ADMINISTRATION_TRANSFER_SITE = 'settings-administration-transfer-site';
 export const SETTINGS_ADMINISTRATION_DELETE_SITE = 'settings-administration-delete-site';
-export const SETTINGS_ADMINISTRATION_MANAGE_CONNECTION =
-	'settings-administration-manage-connection';
 export const SETTINGS_AGENCY = 'settings-agency';
 export const SETTINGS_CACHING = 'settings-caching';
 export const SETTINGS_WEB_SERVER = 'settings-web-server';
@@ -64,8 +62,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ SETTINGS_ADMINISTRATION ]: 'sites/settings/administration/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/administration/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/administration/:site/transfer-site',
-	[ SETTINGS_ADMINISTRATION_MANAGE_CONNECTION ]:
-		'sites/settings/administration/:site/manage-connection',
 	[ SETTINGS_ADMINISTRATION_DELETE_SITE ]: 'sites/settings/administration/:site/delete-site',
 	[ SETTINGS_AGENCY ]: 'sites/settings/agency/:site',
 	[ SETTINGS_CACHING ]: 'sites/settings/caching/:site',

@@ -73,7 +73,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { resolveDomainStatus } from 'calypso/lib/domains';
+import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDomainRegistrationAgreementUrl,
@@ -133,7 +133,11 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
-import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
+import {
+	hasLoadedSiteDomains,
+	getAllDomains,
+	getDomainsBySiteId,
+} from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
@@ -692,6 +696,10 @@ class ManagePurchase extends Component<
 		if ( isPlanPurchase ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
+			// 100-year domains cannot be removed by the user
+			if ( this.isHundredYearDomain( purchase ) ) {
+				return null;
+			}
 			text = translate( 'Remove domain' );
 		}
 
@@ -1664,6 +1672,10 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
 	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 	const currentRoute = getCurrentRoute( state );
+	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
+	const selectedDomainName = purchase && getName( purchase );
+	const selectedDomain =
+		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
 	return {
 		currentRoute,
@@ -1696,6 +1708,7 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		purchases,
 		relatedMonthlyPlanSlug,
 		renewableSitePurchases,
+		selectedDomain,
 		selectedSiteId,
 		site,
 		siteId,

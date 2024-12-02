@@ -5,6 +5,7 @@ import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/const
 export const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
 export const SESSION_STORAGE_SOURCE = 'jetpack_connect_source';
 export const GOOGLE_PHOTOS_PICKER_SESSION = 'google_photos_picker_session';
+export const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Utilities for storing jetpack connect state that needs to persist across
@@ -73,7 +74,11 @@ export const retrieveSource = () => {
 };
 
 export const persistGooglePhotosPickerSessionCookie = ( sessionId ) => {
-	const options = { path: '/' };
+	const options = {
+		path: '/',
+		expires: new Date( Date.now() + SEVEN_DAYS_MS ),
+		domain: '.' + document.location.hostname.split( '.' ).slice( -2 ).join( '.' ),
+	};
 
 	document.cookie = cookie.serialize( GOOGLE_PHOTOS_PICKER_SESSION, sessionId, options );
 };

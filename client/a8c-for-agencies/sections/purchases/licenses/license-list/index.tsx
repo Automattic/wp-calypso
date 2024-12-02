@@ -84,15 +84,8 @@ export default function LicenseList() {
 					licenses.map( ( license ) => (
 						<LicenseTransition key={ license.licenseKey }>
 							<LicensePreview
-								parentLicenseId={ license.licenseId }
-								licenseKey={ license.licenseKey }
-								product={ getProductName( license.product ) }
-								blogId={ license.blogId }
-								siteUrl={ license.siteUrl }
-								hasDownloads={ license.hasDownloads }
-								issuedAt={ license.issuedAt }
-								attachedAt={ license.attachedAt }
-								revokedAt={ license.revokedAt }
+								license={ license }
+								productName={ getProductName( license.product ) }
 								licenseType={
 									license.ownerType === LicenseType.Standard
 										? LicenseType.Standard

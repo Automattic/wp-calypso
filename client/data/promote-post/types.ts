@@ -111,3 +111,12 @@ export type CampaignQueryResult = {
 	};
 	warnings?: PromotePostWarning[];
 };
+export type CampaignReportRequestBody = {
+	start_date: string;
+	end_date?: string;
+	tz: string;
+};
+
+export type CampaignReportResult = {
+	report_id: string;
+};

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight, pick } from 'lodash';
@@ -20,7 +21,7 @@ const ApiCache = ( {
 	}
 
 	return (
-		<div>
+		<CompactCard>
 			<ToggleControl
 				checked={ !! fields.api_cache }
 				disabled={ isRequestingSettings || isSavingSettings }
@@ -32,7 +33,7 @@ const ApiCache = ( {
 					</>
 				}
 			/>
-		</div>
+		</CompactCard>
 	);
 };
 

@@ -117,10 +117,6 @@
 			font-size: $font-body-extra-small;
 			text-align: start;
 			margin: 16px 0;
-
-			.components-external-link {
-				margin-left: 6px;
-			}
 		}
 	}
 
@@ -228,6 +224,12 @@
 		p {
 			color: var(--studio-gray-80);
 			line-height: 20px;
+		}
+
+		&.odie-introduction-message-content__conversation_feedback {
+			flex-direction: column;
+			align-items: baseline;
+			padding: 0;
 		}
 	}
 
