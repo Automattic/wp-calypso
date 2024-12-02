@@ -173,10 +173,25 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange, reduxState } =
-			this.props;
+		const {
+			summary,
+			translate,
+			query,
+			showQueryDate,
+			isActivity,
+			isShort,
+			dateRange,
+			reduxState,
+			isNewDateFilteringEnabled,
+		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
-		const { selectedShortcut } = getShortcuts( reduxState, dateRange, undefined, translate );
+		const { selectedShortcut } = getShortcuts(
+			reduxState,
+			dateRange,
+			undefined,
+			translate,
+			isNewDateFilteringEnabled
+		);
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
