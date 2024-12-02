@@ -98,7 +98,9 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		'unmatched-uptime': {
 			title: translate( 'Unmatched Reliability and Uptime' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
-			description: translate( 'Uninterrupted service throughout the entire migration experience.' ),
+			description: translate(
+				'Blazing fast speeds with lighting-fast load times for a seamless experience.'
+			),
 			descriptionString:
 				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
 		},
