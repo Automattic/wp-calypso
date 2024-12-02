@@ -28,6 +28,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
+	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STAT_TYPE_REFERRERS,
 } from 'calypso/my-sites/stats/constants';
@@ -177,7 +178,7 @@ class StatsSite extends Component {
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( period === 'week' ? 'isoWeek' : period )
-			.format( 'YYYY-MM-DD' );
+			.format( DATE_FORMAT );
 
 		// Limit navigation within the currently selected range.
 		const currentChartStart = this.props.context.query?.chartStart;
@@ -283,7 +284,7 @@ class StatsSite extends Component {
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
 		} else {
-			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+			url += `?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
 		}
 
 		return url;
@@ -324,7 +325,7 @@ class StatsSite extends Component {
 			defaultPeriod = PAST_THIRTY_DAYS;
 		}
 
-		const queryDate = date.format( 'YYYY-MM-DD' );
+		const queryDate = date.format( DATE_FORMAT );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
@@ -338,7 +339,9 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
+			customChartRange = {
+				chartEnd: momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT ),
+			};
 		}
 
 		// Find the quantity of bars for the chart.
@@ -356,7 +359,7 @@ class StatsSite extends Component {
 			customChartRange.chartStart = momentSiteZone
 				.clone()
 				.subtract( daysInRange - 1, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.format( DATE_FORMAT );
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -392,16 +395,16 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
 			customChartRange.chartStart = momentSiteZone
 				.clone()
 				.subtract( customChartRange.daysInRange - 1, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.format( DATE_FORMAT );
 		}
 
 		const query = isNewDateFilteringEnabled
 			? chartRangeToQuery( customChartRange )
-			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+			: memoizedQuery( period, endOf.format( DATE_FORMAT ) );
 
 		// For period option links
 		const traffic = {

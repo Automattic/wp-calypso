@@ -38,8 +38,10 @@ interface DateControlPickerShortcutsProps {
 interface DateControlPickerShortcut {
 	id: string;
 	label: string;
-	offset: number;
-	range: number;
+	offset?: number;
+	range?: number;
+	startDate?: string;
+	endDate?: string;
 	period: string;
 	statType?: string;
 	isGated?: boolean;

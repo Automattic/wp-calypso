@@ -72,3 +72,5 @@ export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
 // other
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';
+
+export const DATE_FORMAT = 'YYYY-MM-DD';

@@ -3,7 +3,7 @@ import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
-import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
 import { useShortcuts } from './use-shortcuts';
 
 type MomentOrNull = Moment | null;
@@ -26,8 +26,6 @@ const DateRangePickerShortcuts = ( {
 	endDate?: MomentOrNull;
 	isNewDateFilteringEnabled?: boolean;
 } ) => {
-	const siteToday = useMomentSiteZone();
-
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
 	};
@@ -38,21 +36,24 @@ const DateRangePickerShortcuts = ( {
 
 	const { supportedShortcutList: shortcutList, selectedShortcut } = useShortcuts(
 		{
-			chartStart: normalizedStartDate?.format( 'YYYY-MM-DD' ) ?? '',
-			chartEnd: normalizedEndDate?.format( 'YYYY-MM-DD' ) ?? '',
+			chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
+			chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
 			daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
 		},
 		undefined,
 		isNewDateFilteringEnabled
 	);
 
-	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		const newToDate = siteToday.clone().startOf( 'day' ).subtract( offset, 'days' );
-		const newFromDate = siteToday
-			.clone()
-			.startOf( 'day' )
-			.subtract( offset + range, 'days' );
-		onClick( newFromDate, newToDate, id || '' );
+	const handleClick = ( {
+		id,
+		startDate,
+		endDate,
+	}: {
+		id?: string;
+		startDate: string;
+		endDate: string;
+	} ) => {
+		onClick( moment( startDate ), moment( endDate ), id || '' );
 
 		// Call the onShortcutClick if provided
 		if ( onShortcutClick && id ) {
