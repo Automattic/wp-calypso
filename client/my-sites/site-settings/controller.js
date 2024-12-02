@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
-import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import DeleteSite from 'calypso/sites/settings/administration/tools/delete-site';
 import ManageConnection from 'calypso/sites/settings/administration/tools/manage-connection';
 import StartOver from 'calypso/sites/settings/administration/tools/reset-site';
@@ -18,11 +17,6 @@ import ConfirmDisconnection from './disconnect-site/confirm';
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function wpcomSiteTools( context, next ) {
-	context.primary = <WpcomSiteTools />;
 	next();
 }
 
