@@ -8,7 +8,7 @@ import { CredentialsForm } from './components/credentials-form';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationSecureCredentials: Step = function ( { navigation } ) {
+const SiteMigrationFallbackCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteURL = useQuery().get( 'from' ) || '';
 
@@ -54,4 +54,4 @@ const SiteMigrationSecureCredentials: Step = function ( { navigation } ) {
 	);
 };
 
-export default SiteMigrationSecureCredentials;
+export default SiteMigrationFallbackCredentials;
