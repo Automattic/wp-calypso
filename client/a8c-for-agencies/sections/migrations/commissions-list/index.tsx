@@ -5,11 +5,18 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
+import CommissionListActions from './commission-list-actions';
 import MigrationsCommissionsListMobileView from './mobile-view';
 import type { TaggedSite } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
-export default function MigrationsCommissionsList( { items }: { items: TaggedSite[] } ) {
+export default function MigrationsCommissionsList( {
+	items,
+	fetchMigratedSites,
+}: {
+	items: TaggedSite[];
+	fetchMigratedSites: () => void;
+} ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
@@ -51,8 +58,17 @@ export default function MigrationsCommissionsList( { items }: { items: TaggedSit
 				enableHiding: false,
 				enableSorting: false,
 			},
+			{
+				id: 'remove',
+				label: translate( 'Actions' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item }: { item: TaggedSite } ) => (
+					<CommissionListActions fetchMigratedSites={ fetchMigratedSites } site={ item } />
+				),
+				enableSorting: false,
+			},
 		],
-		[ translate ]
+		[ translate, fetchMigratedSites ]
 	);
 
 	if ( ! isDesktop ) {

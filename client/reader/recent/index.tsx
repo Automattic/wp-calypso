@@ -219,7 +219,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					) }
 				</div>
 			</div>
-			{ hasSubscriptions && (
+			{ hasSubscriptions ? (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 					{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 						<RecentPostSkeleton />
@@ -245,7 +245,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						</>
 					) }
 				</div>
-			) }
+			) : null }
 		</div>
 	);
 };

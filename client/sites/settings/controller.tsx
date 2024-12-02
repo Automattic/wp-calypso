@@ -5,7 +5,6 @@ import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-side
 import AdministrationSettings from './administration';
 import useIsAdministrationSettingSupported from './administration/hooks/use-is-administration-setting-supported';
 import DeleteSite from './administration/tools/delete-site';
-import ManageConnection from './administration/tools/manage-connection';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
 import CachingSettings from './caching';
@@ -80,16 +79,6 @@ export function administrationToolDeleteSite( context: PageJSContext, next: () =
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<DeleteSite />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function administrationToolManageConnection( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<SettingsSidebar />
-			<ManageConnection />
 		</PanelWithSidebar>
 	);
 	next();

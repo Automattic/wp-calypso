@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
-import { PanelHeading } from 'calypso/components/panel';
+import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
@@ -46,7 +46,9 @@ const SiteTransferComplete = () => {
 	);
 	return (
 		<>
-			{ isUntangled && <PanelHeading>{ translate( 'Confirmation email sent' ) }</PanelHeading> }
+			{ isUntangled && (
+				<PanelCardHeading>{ translate( 'Confirmation email sent' ) }</PanelCardHeading>
+			) }
 			{ message }
 		</>
 	);

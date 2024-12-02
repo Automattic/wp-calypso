@@ -41,8 +41,9 @@ interface DateControlPickerShortcut {
 	offset: number;
 	range: number;
 	period: string;
-	statType: string;
-	isGated: boolean;
+	statType?: string;
+	isGated?: boolean;
+	shortcutId?: string;
 }
 
 interface DateControlPickerDateProps {

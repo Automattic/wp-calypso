@@ -13,6 +13,7 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
@@ -56,6 +57,7 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -151,6 +153,7 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
+			hasVideoPress,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -221,7 +224,19 @@ class StatsNavigation extends Component {
 					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 					! hideModuleSettings && (
 						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
+							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map(
+								( toggleItem ) => {
+									// disable the "videos" toggle on sites that do not have VideoPress enabled
+									// the toggle will be disabled (grayed out and non interactive)
+									const shouldDisableVideoToggle = ! hasVideoPress && toggleItem.key === 'videos';
+
+									return {
+										...toggleItem,
+										disabled: shouldDisableVideoToggle,
+										defaultValue: shouldDisableVideoToggle === false,
+									};
+								}
+							) }
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
@@ -267,6 +282,7 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),

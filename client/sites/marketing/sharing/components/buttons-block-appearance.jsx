@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
-import { PanelSection } from 'calypso/components/panel';
+import { PanelCard } from 'calypso/components/panel';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import SharingButtonsPreviewButtons from '../preview-buttons';
@@ -25,7 +25,7 @@ const ButtonsBlockAppearance = ( { isJetpack, translate, siteId } ) => {
 	);
 
 	return (
-		<PanelSection>
+		<PanelCard>
 			<p className="sharing-buttons-appearance__description">
 				{ translate(
 					'Allow readers to easily share your posts with others by adding a sharing buttons block anywhere in one of your site’s templates.'
@@ -42,7 +42,7 @@ const ButtonsBlockAppearance = ( { isJetpack, translate, siteId } ) => {
 			</div>
 			<p className="sharing-buttons__example-text">{ translate( 'Sharing Buttons example:' ) }</p>
 			<SharingButtonsPreviewButtons buttons={ buttons } style="icon-text" />
-		</PanelSection>
+		</PanelCard>
 	);
 };
 
