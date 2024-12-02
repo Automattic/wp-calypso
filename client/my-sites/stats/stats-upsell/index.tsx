@@ -7,6 +7,7 @@ import { Plans } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features.png';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
@@ -131,7 +132,7 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 					</Button>
 				</div>
 				<div className="stats-upsell__right">
-					<img src="/calypso/images/jetpack/stats-features.png?v=20241202" alt="Features" />
+					<img src={ statsFeaturesPNG } alt={ translate( 'Features' ) } />
 				</div>
 			</div>
 		</div>
