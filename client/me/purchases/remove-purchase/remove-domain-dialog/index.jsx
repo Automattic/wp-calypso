@@ -63,6 +63,7 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
+				<p>{ translate( 'Do you still want to continue with deleting your domain?' ) }</p>
 			</Fragment>
 		);
 	}
@@ -224,7 +225,7 @@ class RemoveDomainDialog extends Component {
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
-				label: this.state.step === 3 ? translate( 'Nevermind' ) : translate( 'Cancel' ),
+				label: this.state.step === 3 ? translate( 'Never mind' ) : translate( 'Cancel' ),
 			},
 			{
 				action: 'remove',
