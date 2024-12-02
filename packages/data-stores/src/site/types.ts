@@ -164,6 +164,7 @@ export interface SiteDetails {
 
 	// Migration
 	site_migration?: SourceSiteMigrationBase;
+	migration_source_site_domain?: string;
 }
 
 export enum SiteCapabilities {
