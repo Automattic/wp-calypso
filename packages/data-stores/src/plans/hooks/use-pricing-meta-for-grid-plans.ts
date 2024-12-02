@@ -86,7 +86,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
 	withProratedDiscounts,
-	reflectStorageSelectionInPlanPrices = true,
+	reflectStorageSelectionInPlanPrices = false,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
