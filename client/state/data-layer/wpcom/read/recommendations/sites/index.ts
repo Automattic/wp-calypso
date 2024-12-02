@@ -25,7 +25,7 @@ export const requestRecommendedSites = ( action: RecommendedSitesRequestAction )
 	} );
 };
 
-interface RecommendedSitesBody {
+export interface RecommendedSitesBody {
 	algorithm: string;
 	sites: RecommendedSiteResponse[];
 	meta: {
@@ -60,7 +60,7 @@ export interface RecommendedSite {
 	url: string;
 }
 
-const mapResponseToRecommendedSites = ( {
+export const mapResponseToRecommendedSites = ( {
 	algorithm,
 	sites,
 }: RecommendedSitesBody ): RecommendedSite[] =>
