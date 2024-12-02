@@ -163,6 +163,18 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const hasKeys = data && data.length > 0;
 	const redirectToHosting =
 		queryParams.source && queryParams.source === 'hosting-config' && queryParams.siteSlug;
+	const redirectToTools =
+		queryParams.source && queryParams.source === 'sites/tools/sftp-ssh' && queryParams.siteSlug;
+
+	let backText = __( 'Back' );
+	let backHref = '/me/security';
+	if ( redirectToHosting ) {
+		backText = __( 'Back to Hosting Configuration' );
+		backHref = `/${ queryParams.source }/${ queryParams.siteSlug }`;
+	} else if ( redirectToTools ) {
+		backText = __( 'Back to Advanced Tools' );
+		backHref = `/${ queryParams.source }/${ queryParams.siteSlug }`;
+	}
 
 	const closeDialog = () => setShowDialog( false );
 
@@ -173,12 +185,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 
 			<NavigationHeader navigationItems={ [] } title={ __( 'Security' ) } />
 
-			<HeaderCake
-				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
-				backHref={
-					redirectToHosting ? `/${ queryParams.source }/${ queryParams.siteSlug }` : '/me/security'
-				}
-			>
+			<HeaderCake backText={ backText } backHref={ backHref }>
 				{ __( 'SSH Key' ) }
 			</HeaderCake>
 
