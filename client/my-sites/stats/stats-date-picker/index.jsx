@@ -173,9 +173,10 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange } = this.props;
+		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange, reduxState } =
+			this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
-		const { selectedShortcut } = getShortcuts( this.props.state, dateRange, undefined, translate );
+		const { selectedShortcut } = getShortcuts( reduxState, dateRange, undefined, translate );
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
@@ -241,7 +242,7 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 		requesting: showQueryDate
 			? isRequestingSiteStatsForQuery( state, siteId, statsType, query )
 			: false,
-		state,
+		reduxState: state,
 	};
 } );
 
