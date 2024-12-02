@@ -109,11 +109,12 @@
 			width: 36px;
 			height: 36px;
 			border-radius: 4px;
-			line-height: 38px;
 			background-color: var(--studio-gray-5);
-			margin-right: .5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 0.5rem;
 			flex-shrink: 0;
-			text-align: center;
 		}
 
 		&-item {

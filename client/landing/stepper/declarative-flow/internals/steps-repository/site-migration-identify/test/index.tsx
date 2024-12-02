@@ -159,9 +159,11 @@ describe( 'SiteMigrationIdentify', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		expect( screen.getByText( /Here's what else you're getting/ ) ).toBeVisible();
+		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
 		expect(
-			screen.getByText( /Uninterrupted service throughout the entire migration experience./ )
+			screen.getByText(
+				/Blazing fast speeds with lighting-fast load times for a seamless experience./
+			)
 		).toBeVisible();
 	} );
 } );

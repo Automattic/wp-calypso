@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -17,9 +17,8 @@ import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
-
 interface HostingDetailsProps {
-	items: { title: string; description: string }[];
+	items: { title: string; description: string; icon: Icon }[];
 }
 
 const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
@@ -28,13 +27,13 @@ const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
 	return (
 		<div className="import__site-identify-hosting-details">
 			<p className="import__site-identify-hosting-details--title">
-				{ translate( "Here's what else you're getting" ) }
+				{ translate( 'Why should you host with us?' ) }
 			</p>
 			<div className="import__site-identify-hosting-details--list">
 				{ items.map( ( item, index ) => (
 					<div key={ index } className="import__site-identify-hosting-details--list-item">
 						<div className="import__site-identify-hosting-details--list-item-icon">
-							<Gridicon size={ 16 } icon="checkmark" />
+							<Icon size={ 20 } icon={ item.icon } />
 						</div>
 						<p className="import__site-identify-hosting-details--list-item-description">
 							{ item.description }
@@ -95,28 +94,31 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 
 	// TODO: Remove extra steps and properties for non-English locales once we have translations -- hosting details.
 	const hostingDetailItems = {
-		'unmatched-uptime': {
-			title: translate( 'Unmatched Reliability and Uptime' ),
+		'blazing-fast-speeds': {
+			title: translate( 'Blazing fast speeds' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
 			description: translate(
 				'Blazing fast speeds with lighting-fast load times for a seamless experience.'
 			),
 			descriptionString:
 				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
+			icon: next,
 		},
-		'effortless-customization': {
-			title: translate( 'Effortless Customization' ),
+		'unmatched-reliability': {
+			title: translate( 'Unmatched reliability' ),
 			titleString: 'Effortless Customization',
 			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
 			descriptionString:
 				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
+			icon: published,
 		},
-		'blazing-fast-speed': {
-			title: translate( 'Blazing Fast Page Speed' ),
+		'security-monitoring': {
+			title: translate( 'Round-the-clock security monitoring' ),
 			titleString: 'Blazing Fast Page Speed',
 			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
 			descriptionString:
 				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
+			icon: shield,
 		},
 	};
 
