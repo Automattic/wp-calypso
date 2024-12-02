@@ -171,6 +171,13 @@ export interface UnifiedPlansStepProps {
 	isCustomDomainAllowedOnFreePlan?: boolean;
 }
 
+/**
+ * This is a "unified" plans step component that is utilised by both Start (old framework) and Stepper (new framework).
+ * It contains the latest logic/conditioning, properties, etc. that apply to the latest main iterations of the plans step.
+ *
+ * Important: The component is used in the main onboarding flows (/start/onboarding, /start/onboarding-pm, /setup/onboarding),
+ * so care should be taken when making changes to it. Always test `/start/onboarding` and `/setup/onboarding` after making changes.
+ */
 function UnifiedPlansStep( {
 	hideFreePlan,
 	hideEcommercePlan,

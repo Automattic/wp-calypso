@@ -57,6 +57,9 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
+/**
+ * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
+ */
 const PlansWrapper: React.FC< Props > = ( props ) => {
 	const {
 		hideFreePlan: reduxHideFreePlan,
