@@ -28,6 +28,7 @@ function FollowingStream( { ...props } ) {
 					{ ...props }
 					className="following"
 					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+					showDefaultEmptyContentIfMissing={ false }
 				>
 					<BloganuaryHeader />
 					<NavigationHeader
