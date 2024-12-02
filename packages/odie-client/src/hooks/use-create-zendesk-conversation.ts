@@ -28,7 +28,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
 	const createConversation = async () => {
-		if ( ! chatId || isSubmittingZendeskUserFields || chat.conversationId ) {
+		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
 			return;
 		}
 
@@ -44,15 +44,15 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		await submitUserFields( {
 			messaging_initial_message: '',
 			messaging_site_id: selectedSiteId || null,
-			messaging_ai_chat_id: chatId,
+			messaging_ai_chat_id: chatId || undefined,
 			messaging_url: selectedSiteURL || null,
 		} );
 
 		const conversation = await Smooch.createConversation( {
 			metadata: {
-				odieChatId: chatId,
 				createdAt: Date.now(),
 				supportInteractionId: currentSupportInteraction!.uuid,
+				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
 		setHelpCenterZendeskConversationStarted();

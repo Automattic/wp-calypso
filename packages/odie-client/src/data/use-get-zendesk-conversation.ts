@@ -22,19 +22,21 @@ export const getZendeskConversation = ( {
 	chatId,
 	conversationId,
 }: {
-	chatId: number | string | null | undefined;
-	conversationId?: string | null | undefined;
+	chatId?: number | string | null;
+	conversationId?: string;
 } ) => {
-	if ( ! chatId ) {
+	if ( ! chatId && ! conversationId ) {
 		return null;
 	}
 
 	const conversation = Smooch.getConversations().find( ( conversation ) => {
 		if ( conversationId ) {
 			return conversation.id === conversationId;
+		} else if ( chatId ) {
+			return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
 		}
 
-		return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
+		return false;
 	} );
 
 	if ( ! conversation ) {
@@ -42,7 +44,7 @@ export const getZendeskConversation = ( {
 	}
 
 	// We need to ensure that more than one message is loaded
-	return Smooch.getConversationById( conversation.id )
+	return Smooch.getConversationById( conversation.id || conversationId )
 		.then( ( conversation ) => {
 			Smooch.markAllAsRead( conversation.id );
 			return parseResponse( conversation );

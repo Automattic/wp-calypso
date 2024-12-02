@@ -2,12 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
@@ -41,7 +39,6 @@ const HelpCenterFeedbackForm = ( {
 	const plan = getPlan( productSlug );
 	const productId = plan?.getProductId();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -110,10 +107,6 @@ const HelpCenterFeedbackForm = ( {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
 			await resetSupportInteraction();
-			startNewInteraction( {
-				event_source: 'help-center',
-				event_external_id: uuidv4(),
-			} );
 			navigate( '/odie' );
 		}
 	};
