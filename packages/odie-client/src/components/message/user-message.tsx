@@ -133,11 +133,9 @@ export const UserMessage = ( {
 				<Markdown
 					urlTransform={ uriTransformer }
 					components={ {
-						...( message.type !== 'image' && {
-							a: ( props: React.ComponentProps< 'a' > ) => (
-								<CustomALink { ...props } target="_blank" />
-							),
-						} ),
+						a: ( props: React.ComponentProps< 'a' > ) => (
+							<CustomALink { ...props } target="_blank" />
+						),
 					} }
 				>
 					{ isRequestingHumanSupport ? displayMessage : message.content }
