@@ -8,8 +8,10 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
+import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
@@ -112,9 +114,13 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const { gatedInsightsPage, isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } =
+			this.props;
 
 		switch ( item ) {
+			case 'insights':
+				return ! gatedInsightsPage;
+
 			case 'wordads':
 				return isWordAds;
 
@@ -288,6 +294,7 @@ export default connect(
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
+			gatedInsightsPage: shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
