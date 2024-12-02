@@ -17,6 +17,7 @@ import {
 } from '../utils';
 import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import DesignPickerTierFilter from './design-picker-tier-filter';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
@@ -254,6 +255,7 @@ interface DesignPickerProps {
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
+	isTierFilterEnabled?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -271,6 +273,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
+	isTierFilterEnabled = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -306,6 +309,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						{ assemblerCtaData.title }
 					</Button>
 				) }
+				{ isTierFilterEnabled && <DesignPickerTierFilter /> }
 			</div>
 
 			<div className="design-picker__grid">
@@ -355,6 +359,7 @@ export interface UnifiedDesignPickerProps {
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
+	isTierFilterEnabled?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -374,6 +379,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
+	isTierFilterEnabled = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -410,6 +416,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
+					isTierFilterEnabled={ isTierFilterEnabled }
 				/>
 				{ bottomAnchorContent }
 			</div>
