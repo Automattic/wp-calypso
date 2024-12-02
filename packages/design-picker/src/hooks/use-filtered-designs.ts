@@ -8,13 +8,14 @@ import type { Design } from '../types';
 // Designs with `showFirst` are always included regardless of the selected features and subjects.
 export function filterDesigns(
 	designs: Design[],
-	categorySlug: string | null,
-	selectedDesignTier?: string
+	categorySlug: string | null | undefined,
+	selectedDesignTier: string = ''
 ): Design[] {
 	return designs.filter(
 		( design ) =>
 			( design.showFirst ||
 				isBlankCanvasDesign( design ) ||
+				! categorySlug ||
 				design.categories.find( ( { slug } ) => slug === categorySlug ) ) &&
 			( ! selectedDesignTier || design.design_tier === selectedDesignTier )
 	);
@@ -23,11 +24,11 @@ export function filterDesigns(
 export const useFilteredDesigns = ( designs: Design[], categorization?: Categorization ) => {
 	const [ searchParams ] = useSearchParams();
 
-	const selectedDesignTier = searchParams.get( 'tier' );
+	const selectedDesignTier = searchParams.get( 'tier' ) ?? '';
 
 	const filteredDesigns = useMemo( () => {
 		if ( categorization?.selection || selectedDesignTier ) {
-			return filterDesigns( designs, categorization.selection, selectedDesignTier );
+			return filterDesigns( designs, categorization?.selection, selectedDesignTier );
 		}
 
 		return designs;
