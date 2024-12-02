@@ -1,17 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import HostingActivationButton from './hosting-activation-button';
 
 export default function HostingActivation( { redirectUrl }: { redirectUrl: string } ) {
 	const translate = useTranslate();
 
 	return (
-		<PanelSection>
-			<PanelHeading>{ translate( 'Activate hosting features' ) }</PanelHeading>
-			<PanelDescription>
+		<PanelCard>
+			<PanelCardHeading>{ translate( 'Activate hosting features' ) }</PanelCardHeading>
+			<PanelCardDescription>
 				{ translate( 'Activate now to start using this hosting feature.' ) }
-			</PanelDescription>
+			</PanelCardDescription>
 			<HostingActivationButton redirectUrl={ redirectUrl } />
-		</PanelSection>
+		</PanelCard>
 	);
 }
