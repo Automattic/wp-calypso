@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
-import WooLogo2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -41,7 +41,7 @@ const WooOauthMasterbar = () => {
 	const logo = isRebrand20Enabled ? (
 		<SVGIcon
 			name="woocommerce-logo"
-			icon={ WooLogo2 }
+			icon={ WooLogoRebrand2 }
 			classes="masterbar__woo-client-logo"
 			width="60"
 			height="24"
