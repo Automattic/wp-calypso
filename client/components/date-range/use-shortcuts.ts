@@ -110,6 +110,7 @@ export function getShortcuts(
 			}
 			return null;
 		} );
+
 		return shortcut;
 	};
 

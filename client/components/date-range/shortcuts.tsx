@@ -40,7 +40,7 @@ const DateRangePickerShortcuts = ( {
 		{
 			chartStart: normalizedStartDate?.format( 'YYYY-MM-DD' ) ?? '',
 			chartEnd: normalizedEndDate?.format( 'YYYY-MM-DD' ) ?? '',
-			daysInRange: normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0,
+			daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
 		},
 		undefined,
 		isNewDateFilteringEnabled
