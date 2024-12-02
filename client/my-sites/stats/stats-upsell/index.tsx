@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -32,9 +31,6 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	const isSimpleClassic = useSelector( ( state ) =>
-		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
-	);
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
@@ -42,11 +38,10 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_submit`, {
 			stat_type: statType,
 		} );
-		if ( isSimpleClassic ) {
+		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
 				`https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PREMIUM }`
 			);
-			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
 			window.open( checkoutProductUrl, '_self' );
 		} else {
 			page( `/checkout/${ siteSlug }/${ plan?.pathSlug ?? 'premium' }` );
