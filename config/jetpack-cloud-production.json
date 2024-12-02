@@ -80,7 +80,8 @@
 		"site-indicator": false,
 		"upgrades/redirect-payments": false,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": false,
+		"bulk-plugin-management": true
 	},
 	"enable_all_sections": false,
 	"sections": {

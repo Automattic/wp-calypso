@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -7,7 +7,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
-	UrlFriendlyTermType,
+	type UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
 	isWooExpressPlan,
@@ -16,6 +16,7 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -52,6 +53,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
@@ -69,6 +71,7 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
+import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
@@ -240,6 +243,8 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		flowName,
@@ -281,6 +286,13 @@ const PlansFeaturesMain = ( {
 		!! getPlan( selectedPlan ) &&
 		! isPersonalPlan( selectedPlan ) &&
 		( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) );
+
+	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+		productSlug: currentPlan?.productSlug,
+		displayedIntervals,
+		flowName,
+		paidDomainName,
+	} );
 
 	const term = usePlanBillingPeriod( {
 		intervalType,
@@ -330,6 +342,19 @@ const PlansFeaturesMain = ( {
 	const isTargetedSignupFlow = isInSignup && flowName === 'onboarding';
 	const isTargetedAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
 	const showSimplifiedFeatures = isTargetedSignupFlow || isTargetedAdminIntent;
+
+	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
+		useExperiment( 'calypso_pricing_grid_hide_lower_tier_plans', {
+			/**
+			 * Eligible for the experiment only if the user is on the /plans page and
+			 * the user is on a paid plan.
+			 */
+			isEligible:
+				! isInSignup &&
+				intent === 'plans-default-wpcom' &&
+				currentPlan &&
+				! isFreePlan( currentPlan.planSlug ),
+		} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -426,13 +451,20 @@ const PlansFeaturesMain = ( {
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo(
 		() =>
-			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
+			gridPlansForFeaturesGridRaw?.filter( ( { planSlug, availableForPurchase, current } ) => {
 				if ( deemphasizeFreePlan ) {
 					return planSlug !== PLAN_FREE;
 				}
+				if ( 'treatment' === hideLowerTierPlansExperimentAssignment?.variationName ) {
+					return current || availableForPurchase || isWpcomEnterpriseGridPlan( planSlug );
+				}
 				return true;
 			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+		[
+			gridPlansForFeaturesGridRaw,
+			deemphasizeFreePlan,
+			hideLowerTierPlansExperimentAssignment?.variationName,
+		]
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
@@ -456,13 +488,6 @@ const PlansFeaturesMain = ( {
 	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
 		_customerType = 'business';
 	}
-
-	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
-		productSlug: currentPlan?.productSlug,
-		displayedIntervals,
-		flowName,
-		paidDomainName,
-	} );
 
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
@@ -632,7 +657,9 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+			! gridPlansForComparisonGrid ||
+			longerPlanTermDefaultExperiment.isLoadingExperiment ||
+			isLoadingHideLowerTierPlansExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -811,7 +838,12 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
-										gridPlanForSpotlight={ gridPlanForSpotlight }
+										gridPlanForSpotlight={
+											gridPlansForFeaturesGrid.length >= 4 ||
+											hideLowerTierPlansExperimentAssignment?.variationName !== 'treatment'
+												? gridPlanForSpotlight
+												: undefined
+										}
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
 										intent={ intent }
@@ -838,6 +870,11 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
+										enableTermSavingsPriceDisplay={
+											( isEnabled( 'plans/term-savings-price-display' ) ||
+												longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+											isInSignup
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -897,6 +934,11 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
+													enableTermSavingsPriceDisplay={
+														( isEnabled( 'plans/term-savings-price-display' ) ||
+															longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
+														isInSignup
+													}
 												/>
 											) }
 											<ComparisonGridToggle

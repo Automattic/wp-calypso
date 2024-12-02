@@ -7,9 +7,9 @@ import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -220,19 +220,19 @@ const LaunchSite = () => {
 					<LaunchCard>{ renderContent() }</LaunchCard>
 				</>
 			) : (
-				<PanelSection>
-					<PanelHeading>{ translate( 'Launch site' ) }</PanelHeading>
+				<PanelCard>
+					<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
 					{ renderContent() }
-				</PanelSection>
+				</PanelCard>
 			) }
 			{ showPreviewLink &&
 				( ! isUntangled ? (
 					<Card>{ renderPreviewLinks() }</Card>
 				) : (
-					<PanelSection>
-						<PanelHeading>{ translate( 'Coming soon' ) }</PanelHeading>
+					<PanelCard>
+						<PanelCardHeading>{ translate( 'Coming soon' ) }</PanelCardHeading>
 						{ renderPreviewLinks() }
-					</PanelSection>
+					</PanelCard>
 				) ) }
 			{ querySiteDomainsComponent }
 		</>

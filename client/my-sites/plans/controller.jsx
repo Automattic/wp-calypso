@@ -4,7 +4,7 @@ import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Plans from './plans';
+import Plans from './main';
 
 function showJetpackPlans( context ) {
 	const state = context.store.getState();

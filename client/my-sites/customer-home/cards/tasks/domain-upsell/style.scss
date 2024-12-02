@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $illustration-top: 32px;
 $illustration-layer-offset: 16px;
 $illustration-height: 139px;
@@ -7,9 +10,12 @@ $illustration-width: 214px;
 	&.task__domain-upsell {
 		.task__illustration {
 			display: flex;
-			width: calc(45% + 32px);
-			margin-bottom: -32px !important;
-			margin-right: -32px !important;
+			
+			@include break-small {
+				width: calc(45% + 32px);
+				margin-bottom: -32px !important;
+				margin-right: -32px !important;
+			}
 		}
 	}
 	.task__domain-upsell-illustration {

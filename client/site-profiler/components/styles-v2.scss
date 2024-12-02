@@ -78,21 +78,10 @@
 
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
-		color: #fff;
-		background: var(--color-button);
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
 		padding: 1.5rem;
-		text-decoration: none;
-
-		&:hover {
-			color: #fff !important;
-		}
-
-		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--color-button) 28%, var(--color-button-60) 28%, var(--color-button-60) 72%, var(--color-button) 72%);
-		}
 	}
 
 	.result-list {

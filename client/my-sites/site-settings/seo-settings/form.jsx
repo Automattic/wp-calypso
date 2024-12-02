@@ -21,6 +21,7 @@ import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import SupportInfo from 'calypso/components/support-info';
@@ -28,7 +29,6 @@ import WebPreview from 'calypso/components/web-preview';
 import { protectForm } from 'calypso/lib/protect-form';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
@@ -335,8 +335,8 @@ export class SiteSettingsFormSEO extends Component {
 					aria-label="SEO Site Settings"
 				>
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
-						<PanelSection>
-							<PanelHeading>
+						<PanelCard>
+							<PanelCardHeading>
 								{ translate( 'Page Title Structure' ) }
 								{ siteIsJetpack && (
 									<SupportInfo
@@ -348,7 +348,7 @@ export class SiteSettingsFormSEO extends Component {
 										link=" https://wordpress.com/support/seo-tools/#page-title-structure"
 									/>
 								) }
-							</PanelHeading>
+							</PanelCardHeading>
 							<div compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
@@ -378,13 +378,13 @@ export class SiteSettingsFormSEO extends Component {
 							>
 								{ translate( 'Save' ) }
 							</Button>
-						</PanelSection>
+						</PanelCard>
 					) }
 
 					{ ! conflictedSeoPlugin &&
 						( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
-							<PanelSection>
-								<PanelHeading>{ translate( 'Website Meta' ) }</PanelHeading>
+							<PanelCard>
+								<PanelCardHeading>{ translate( 'Website Meta' ) }</PanelCardHeading>
 								<div>
 									<p>
 										{ translate(
@@ -430,7 +430,7 @@ export class SiteSettingsFormSEO extends Component {
 								>
 									{ translate( 'Save' ) }
 								</Button>
-							</PanelSection>
+							</PanelCard>
 						) }
 				</form>
 				<WebPreview

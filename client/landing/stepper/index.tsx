@@ -86,6 +86,11 @@ const getFlowFromURL = () => {
 	return fromPath || fromQuery;
 };
 
+const getSiteIdFromURL = () => {
+	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
+	return siteId ? Number( siteId ) : null;
+};
+
 const HOTJAR_ENABLED_FLOWS = [
 	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
@@ -108,6 +113,7 @@ window.AppBoot = async () => {
 	}
 
 	const flowName = getFlowFromURL();
+	const siteId = getSiteIdFromURL();
 
 	if ( ! flowName ) {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
@@ -150,8 +156,7 @@ window.AppBoot = async () => {
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
-	// Reset the selected site ID when the stepper is loaded.
-	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
+	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
 	await geolocateCurrencySymbol();
 

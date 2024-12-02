@@ -27,6 +27,7 @@ import './style.scss';
 interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
+	sidebarMode?: boolean;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -37,7 +38,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		html {
 			overflow-y: auto;
 		}
-		body.is-section-domains {
+		body.is-bulk-all-domains-page {
 			background: var( --studio-gray-0 );
 
 			&.rtl .layout__content {
@@ -265,6 +266,15 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						}
 					}
 				}
+				.domains-overview__list .domains-table {
+					table {
+						grid-template-columns: 4fr auto;
+
+						.domains-table__domain-name {
+							overflow-wrap: anywhere;
+						}
+					}
+				}
 				.is-global-sidebar-visible header.navigation-header {
 					padding-inline: 26px;
 				}
@@ -361,12 +371,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
-					bodyClass={ [
-						'edit__body-white',
-						'is-bulk-domains-page',
-						'is-bulk-all-domains-page',
-						...( isDomainsEmpty ? [ 'is-bulk-all-domains-page--is-empty' ] : [] ),
-					] }
+					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
 				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
@@ -383,9 +388,14 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						createBulkAction={ createBulkAction }
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
+						sidebarMode={ props.sidebarMode }
 					/>
 				) : (
-					<EmptyState />
+					<div className="bulk-domains-empty-state">
+						<div className="bulk-domains-empty-state__main">
+							<EmptyState />
+						</div>
+					</div>
 				) }
 			</Main>
 		</>

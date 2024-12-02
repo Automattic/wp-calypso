@@ -225,6 +225,12 @@ export function site( context, next ) {
 	next();
 }
 
+export function redirectToDaySummary( context ) {
+	page.redirect(
+		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`
+	);
+}
+
 export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );

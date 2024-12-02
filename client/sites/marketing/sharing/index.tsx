@@ -3,7 +3,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import { Panel } from 'calypso/sites/components/panel';
+import { Panel } from 'calypso/components/panel';
 import { useSelector } from 'calypso/state';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import {
@@ -36,7 +36,7 @@ export default function MarketingSharing() {
 	};
 
 	return (
-		<Panel className="marketing-sharing">
+		<Panel wide className="marketing-sharing">
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<NavigationHeader
 				title={ translate( 'Sharing' ) }

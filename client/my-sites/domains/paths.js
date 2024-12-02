@@ -82,6 +82,10 @@ export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
 
+export function allDomainManagementRoot() {
+	return '/domains/all/manage';
+}
+
 export function domainManagementRoot() {
 	return '/domains/manage';
 }

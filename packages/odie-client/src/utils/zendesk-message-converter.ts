@@ -6,13 +6,20 @@ function prepareMarkdownImage( imgUrl: string ): string {
 	return `![Image](${ imgUrl })`;
 }
 
-// Format markdown to support links inside text
 function convertUrlsToMarkdown( text: string ): string {
-	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w-]+\.[\w.-]+[^\s]*)/g;
+	const urlRegex = /\b((https?:\/\/)?(www\.)?[\w.-]+\.[a-z]{2,}(\.[a-z]{2,})*(\/[^\s]*)?)/gi;
 
-	return text.replace( urlRegex, ( url ) => {
-		const fullUrl = url.startsWith( 'http' ) ? url : `https://${ url }`;
-		return `[${ url }](${ fullUrl })`;
+	return text.replace( urlRegex, ( match ) => {
+		let url = match;
+		if ( ! /^https?:\/\//i.test( url ) ) {
+			url = `https://${ url }`;
+		}
+		try {
+			const validUrl = new URL( url );
+			return `[${ match }](${ validUrl.href })`;
+		} catch {
+			return match;
+		}
 	} );
 }
 
@@ -49,11 +56,20 @@ function getContentMessage( message: ZendeskMessage ): string {
 }
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
+	let type = message.type as MessageType;
+	let feedbackUrl;
+
+	if ( message.source.type === 'zd:surveys' && message?.actions?.length ) {
+		type = 'conversation-feedback';
+		feedbackUrl = message?.actions[ 0 ].uri;
+	}
+
 	return {
+		...( feedbackUrl ? { meta: { feedbackUrl } } : undefined ),
 		content: getContentMessage( message ),
 		role: ( [ 'user', 'business' ].includes( message.role )
 			? message.role
 			: 'user' ) as MessageRole,
-		type: message.type as MessageType,
+		type,
 	};
 };

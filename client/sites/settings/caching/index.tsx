@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { Panel } from 'calypso/sites/components/panel';
+import { Panel } from 'calypso/components/panel';
 import HostingActivation from 'calypso/sites/hosting-features/components/hosting-activation';
 import {
 	useAreHostingFeaturesSupported,
@@ -44,7 +44,7 @@ export default function CachingSettings() {
 		return (
 			<UpsellNudge
 				title={ translate(
-					'Upgrade to the %(businessPlanName)s plan to manage your site’s server-side caching and get access to all {{a}}advanced tools{{/a}}.',
+					'Upgrade to the %(businessPlanName)s plan to get access to this feature and all {{a}}advanced tools{{/a}}.',
 					{
 						components: { a: <a href={ `/sites/tools/${ siteSlug }` } /> },
 						args: { businessPlanName: getPlanBusinessTitle() },

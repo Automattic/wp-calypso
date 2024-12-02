@@ -8,6 +8,8 @@ export const DOTCOM_HOSTING_FEATURES = 'dotcom-hosting-features';
 export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
 export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
 
+export const OVERVIEW = 'overview';
+
 export const MARKETING_TOOLS = 'marketing-tools';
 export const MARKETING_CONNECTIONS = 'marketing-connections';
 export const MARKETING_TRAFFIC = 'marketing-traffic';
@@ -20,14 +22,13 @@ export const TOOLS_LOGS_PHP = 'tools-logs-php';
 export const TOOLS_LOGS_WEB = 'tools-logs-web';
 export const TOOLS_SFTP_SSH = 'tools-sftp-ssh';
 export const TOOLS_DATABASE = 'tools-database';
+export const TOOLS = 'tools';
 
 export const SETTINGS_SITE = 'settings-site';
 export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
 export const SETTINGS_ADMINISTRATION_TRANSFER_SITE = 'settings-administration-transfer-site';
 export const SETTINGS_ADMINISTRATION_DELETE_SITE = 'settings-administration-delete-site';
-export const SETTINGS_ADMINISTRATION_MANAGE_CONNECTION =
-	'settings-administration-manage-connection';
 export const SETTINGS_AGENCY = 'settings-agency';
 export const SETTINGS_CACHING = 'settings-caching';
 export const SETTINGS_WEB_SERVER = 'settings-web-server';
@@ -44,6 +45,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_SITE_PERFORMANCE ]: 'sites/performance/:site',
 
 	// New Information Architecture
+	[ OVERVIEW ]: 'sites/overview/:site',
 	[ MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
 	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
 	[ MARKETING_TRAFFIC ]: 'sites/marketing/traffic/:site',
@@ -55,12 +57,11 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ TOOLS_LOGS_WEB ]: 'sites/tools/logs/:site/web',
 	[ TOOLS_SFTP_SSH ]: 'sites/tools/sftp-ssh/:site',
 	[ TOOLS_DATABASE ]: 'sites/tools/database/:site',
+	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION ]: 'sites/settings/administration/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/administration/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/administration/:site/transfer-site',
-	[ SETTINGS_ADMINISTRATION_MANAGE_CONNECTION ]:
-		'sites/settings/administration/:site/manage-connection',
 	[ SETTINGS_ADMINISTRATION_DELETE_SITE ]: 'sites/settings/administration/:site/delete-site',
 	[ SETTINGS_AGENCY ]: 'sites/settings/agency/:site',
 	[ SETTINGS_CACHING ]: 'sites/settings/caching/:site',

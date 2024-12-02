@@ -1,11 +1,12 @@
+import { Panel } from 'calypso/components/panel';
 import StagingSiteWrapper from './components/staging-site';
 
 import './style.scss';
 
 export default function StagingSite() {
 	return (
-		<div className="tools-staging-site">
+		<Panel className="tools-staging-site">
 			<StagingSiteWrapper />
-		</div>
+		</Panel>
 	);
 }

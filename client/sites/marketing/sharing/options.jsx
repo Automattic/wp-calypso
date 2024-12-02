@@ -10,8 +10,8 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
+import { PanelCard } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
-import { PanelSection } from 'calypso/sites/components/panel';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostTypes } from 'calypso/state/post-types/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -260,7 +260,7 @@ class SharingButtonsOptions extends Component {
 
 		return (
 			<Fragment>
-				<PanelSection className="sharing-buttons__panel">
+				<PanelCard className="sharing-buttons__panel">
 					{ siteId && <QueryPostTypes siteId={ siteId } /> }
 					<div className="sharing-buttons__fieldset-group">
 						{ this.getSharingShowOptionsElement() }
@@ -275,7 +275,7 @@ class SharingButtonsOptions extends Component {
 					>
 						{ saving ? translate( 'Saving…' ) : translate( 'Save changes' ) }
 					</button>
-				</PanelSection>
+				</PanelCard>
 			</Fragment>
 		);
 	}

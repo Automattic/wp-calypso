@@ -1,8 +1,7 @@
 import { SiteExcerptData } from '@automattic/sites';
-import { usePrevious } from '@wordpress/compose';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useMemo, useRef, useLayoutEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -10,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
+import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
@@ -58,34 +58,6 @@ const DotcomSitesDataViews = ( {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
-	// Scroll to selected site in the list when in list view.
-	const scrollContainerRef = useRef< HTMLElement >();
-	const previousDataViewsState = usePrevious( dataViewsState );
-	const previousSelectedItem = usePrevious( selectedItem );
-	useLayoutEffect( () => {
-		if ( ! scrollContainerRef.current || previousDataViewsState?.type !== dataViewsState.type ) {
-			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
-		}
-
-		if ( ! previousSelectedItem && selectedItem && dataViewsState.type === 'list' ) {
-			window.setTimeout(
-				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
-				300
-			);
-			return;
-		}
-
-		if ( previousDataViewsState?.page !== dataViewsState.page ) {
-			scrollContainerRef.current?.scrollTo( 0, 0 );
-		}
-	}, [
-		dataViewsState.type,
-		dataViewsState.page,
-		selectedItem,
-		previousDataViewsState,
-		previousSelectedItem,
-	] );
-
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
 	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
@@ -102,7 +74,7 @@ const DotcomSitesDataViews = ( {
 				return;
 			}
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
-			if ( site ) {
+			if ( site && ! site.is_deleted ) {
 				openSitePreviewPane( site, 'list_row_click' );
 			}
 		},
@@ -119,10 +91,24 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
-				id: 'site',
-				label: __( 'Site' ),
-				header: <span>{ __( 'Site' ) }</span>,
-				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
+				id: 'icon',
+				render: ( { item }: { item: SiteExcerptData } ) => {
+					return (
+						<SiteIcon
+							site={ item }
+							openSitePreviewPane={ openSitePreviewPane }
+							viewType={ dataViewsState.type }
+						/>
+					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+				enableGlobalSearch: false,
+			},
+			{
+				id: 'site-title',
+				label: __( 'Site Title' ),
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
@@ -132,7 +118,6 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'plan',
 				label: __( 'Plan' ),
-				header: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => (
 					<SitePlan site={ item } userId={ userId } />
 				),
@@ -153,7 +138,6 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'last-publish',
 				label: __( 'Last Published' ),
-				header: <span>{ __( 'Last Published' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -165,7 +149,7 @@ const DotcomSitesDataViews = ( {
 				header: (
 					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
-						<span>{ __( 'Stats' ) }</span>
+						{ __( 'Stats' ) }
 					</span>
 				),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
@@ -181,10 +165,13 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, siteStatusGroups ]
+		[ __, siteStatusGroups, openSitePreviewPane, dataViewsState.type, userId ]
 	);
 
-	const actions = useActions( { openSitePreviewPane, selectedItem } );
+	const actions = useActions( {
+		openSitePreviewPane,
+		viewType: dataViewsState.type,
+	} );
 
 	return (
 		<div className="sites-dataviews">

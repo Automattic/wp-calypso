@@ -6,10 +6,10 @@ import {
 import { CompactCard, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -93,11 +93,11 @@ export default function FooterCredit( { site, siteIsJetpack } ) {
 					{ renderUpsellNudge() }
 				</div>
 			) : (
-				<PanelSection className="settings-site__footer-credit">
-					<PanelHeading>{ translate( 'Footer credit' ) }</PanelHeading>
+				<PanelCard className="settings-site__footer-credit">
+					<PanelCardHeading>{ translate( 'Footer credit' ) }</PanelCardHeading>
 					{ renderContent() }
 					{ renderUpsellNudge() }
-				</PanelSection>
+				</PanelCard>
 			) }
 		</>
 	);

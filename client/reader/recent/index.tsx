@@ -7,9 +7,10 @@ import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'reac
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -17,13 +18,16 @@ import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
-import RecentSeenField from './recent-seen-field';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
-const Recent = () => {
+interface RecentProps {
+	viewToggle?: React.ReactNode;
+}
+
+const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -32,9 +36,13 @@ const Recent = () => {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		search: '',
-		fields: [ 'seen', 'post' ],
+		fields: [ 'icon', 'post' ],
 		perPage: 10,
 		page: 1,
+		layout: {
+			primaryField: 'post',
+			mediaField: 'icon',
+		},
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
@@ -75,10 +83,12 @@ const Recent = () => {
 	const fields = useMemo(
 		() => [
 			{
-				id: 'seen',
-				label: translate( 'Seen' ),
+				id: 'icon',
+				label: translate( 'Icon' ),
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentSeenField post={ getPostFromItem( item ) } />;
+					const post = getPostFromItem( item );
+					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
+					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -110,14 +120,14 @@ const Recent = () => {
 		);
 	}, [ dispatch, view, streamKey ] );
 
-	const paginationInfo = useMemo( () => {
+	const defaultPaginationInfo = useMemo( () => {
 		return {
 			totalItems: data?.pagination?.totalItems ?? 0,
 			totalPages: data?.pagination?.totalPages ?? 0,
 		};
 	}, [ data?.pagination ] );
 
-	const { data: shownData } = useMemo( () => {
+	const { data: shownData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
 	}, [ data?.items, view, fields ] );
 
@@ -126,12 +136,15 @@ const Recent = () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Set the first item as selected if no item is selected and screen is wide.
+	// Set the first item as selected on the current page.
 	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 && ! selectedItem ) {
-			setSelectedItem( data.items[ 0 ] );
+		if ( isWide && data?.items?.length > 0 ) {
+			if ( view.page && view.perPage ) {
+				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
+				setSelectedItem( selectedPost || null );
+			}
 		}
-	}, [ isWide, data?.items, selectedItem ] );
+	}, [ isWide, data?.items, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
@@ -157,7 +170,7 @@ const Recent = () => {
 				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
 			>
 				<div className="recent-feed__list-column-header">
-					<FormattedHeader align="left" headerText={ translate( 'Recent' ) } />
+					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<div className="recent-feed__list-column-content">
 					{ ! hasSubscriptions ? (
@@ -192,7 +205,7 @@ const Recent = () => {
 									search: newView.search,
 								} )
 							}
-							paginationInfo={ paginationInfo }
+							paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 							defaultLayouts={ { list: {} } }
 							isLoading={ isLoading }
 							selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
@@ -206,7 +219,7 @@ const Recent = () => {
 					) }
 				</div>
 			</div>
-			{ hasSubscriptions && (
+			{ hasSubscriptions ? (
 				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
 					{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 						<RecentPostSkeleton />
@@ -232,7 +245,7 @@ const Recent = () => {
 						</>
 					) }
 				</div>
-			) }
+			) : null }
 		</div>
 	);
 };

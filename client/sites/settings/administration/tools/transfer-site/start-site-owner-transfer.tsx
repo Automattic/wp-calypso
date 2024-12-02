@@ -7,9 +7,9 @@ import { localize, useTranslate } from 'i18n-calypso';
 import { useState, FormEvent } from 'react';
 import { connect, useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { PanelHeading } from 'calypso/sites/components/panel';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
@@ -347,7 +347,9 @@ const StartSiteOwnerTransfer = ( {
 	return (
 		<>
 			<>
-				{ isUntangled && <PanelHeading>{ translate( 'Confirm site transfer' ) }</PanelHeading> }
+				{ isUntangled && (
+					<PanelCardHeading>{ translate( 'Confirm site transfer' ) }</PanelCardHeading>
+				) }
 				<Notice status="is-info" showDismiss={ false }>
 					{ translate(
 						'Please read the following actions that will take place when you transfer this site'

@@ -275,6 +275,16 @@ export class PluginsList extends Component {
 			[ PluginActions.DISABLE_AUTOUPDATES ]: this.unsetAutoupdateSelected,
 		};
 
+		if ( actionName === PluginActions.UPDATE ) {
+			//filter out sites that don't have an update available
+			selectedPlugins = selectedPlugins.map( ( plugin ) => {
+				const filteredSites = Object.fromEntries(
+					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
+				);
+				return { ...plugin, sites: filteredSites };
+			} );
+		}
+
 		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName ];
 		showPluginActionDialog( actionName, selectedPlugins, allSites, selectedActionCallback );
 	};
@@ -408,17 +418,7 @@ export class PluginsList extends Component {
 				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
 				{
 					components: {
-						link: (
-							<a
-								href={
-									config.isEnabled( 'untangling/hosting-menu' )
-										? '/sites/settings/administration/' +
-										  this.props.selectedSiteSlug +
-										  '/manage-connection'
-										: '/settings/manage-connection/' + this.props.selectedSiteSlug
-								}
-							/>
-						),
+						link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
 					},
 				}
 			)

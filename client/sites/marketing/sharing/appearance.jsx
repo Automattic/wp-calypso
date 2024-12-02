@@ -6,8 +6,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { PanelCard } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
-import { PanelSection } from 'calypso/sites/components/panel';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -158,7 +158,7 @@ class SharingButtonsAppearance extends Component {
 		// Disable classname namespace because `sharing-buttons` makes the most sense here
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<PanelSection className="sharing-buttons-appearance">
+			<PanelCard className="sharing-buttons-appearance">
 				<p className="sharing-buttons-appearance__description">
 					{ this.props.translate(
 						'Allow readers to easily share your posts with others by adding sharing buttons throughout your site.'
@@ -185,7 +185,7 @@ class SharingButtonsAppearance extends Component {
 						? this.props.translate( 'Saving…' )
 						: this.props.translate( 'Save changes' ) }
 				</button>
-			</PanelSection>
+			</PanelCard>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

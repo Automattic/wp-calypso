@@ -3,8 +3,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { PanelHeading, PanelSection } from 'calypso/sites/components/panel';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -22,8 +22,8 @@ export const SeoSettingsHelpCard = ( {
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
-		<PanelSection>
-			<PanelHeading>{ translate( 'Search engine optimization' ) }</PanelHeading>
+		<PanelCard>
+			<PanelCardHeading>{ translate( 'Search engine optimization' ) }</PanelCardHeading>
 			{ hasAdvancedSEOFeature && (
 				<>
 					<p>
@@ -51,7 +51,7 @@ export const SeoSettingsHelpCard = ( {
 					) }
 				</>
 			) }
-		</PanelSection>
+		</PanelCard>
 	);
 };
 
