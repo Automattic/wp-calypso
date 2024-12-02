@@ -294,7 +294,9 @@ export default connect(
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
-			gatedInsightsPage: shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
+			gatedInsightsPage:
+				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
