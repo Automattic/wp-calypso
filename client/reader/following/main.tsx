@@ -84,7 +84,7 @@ function ReaderStreamSidebar(): JSX.Element | null {
 				return {
 					blogId: s.blogId,
 					feed_ID: s.feedId,
-					feed_URL: s.feed_url,
+					feed_URL: s.feedUrl,
 					site_name: s.title,
 					site_description: s.description,
 					site_icon: s.icon,

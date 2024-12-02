@@ -56,14 +56,14 @@ export interface RecommendedSite {
 	blogId: number;
 	description: string;
 	feedId: number;
-	feed_url: string;
+	feedUrl: string;
 	icon: string;
 	railcar: Railcar;
 	title: string;
 	url: string;
 }
 
-const mapResponseToRecommendedSites = ( {
+export const mapResponseToRecommendedSites = ( {
 	algorithm,
 	sites,
 }: RecommendedSitesBody ): RecommendedSite[] =>
@@ -73,7 +73,7 @@ const mapResponseToRecommendedSites = ( {
 			blogId: site.blog_id,
 			description: site.description,
 			feedId: site.feed_id,
-			feed_url: site.feed_url,
+			feedUrl: site.feed_url,
 			icon: site.icon?.img,
 			railcar: site.railcar,
 			title: decodeEntities( site.blog_title ?? site.name ),
