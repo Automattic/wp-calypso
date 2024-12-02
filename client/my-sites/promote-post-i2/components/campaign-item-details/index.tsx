@@ -136,7 +136,7 @@ export default function CampaignItemDetails( props: Props ) {
 		ChartSourceOptions.Clicks
 	);
 	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
-		ChartSourceDateRanges.WHOLE_CAMPAIGN
+		ChartSourceDateRanges.LAST_7_DAYS
 	);
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -147,6 +147,15 @@ export default function CampaignItemDetails( props: Props ) {
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const [ showReportErrorDialog, setShowReportErrorDialog ] = useState( false );
+
+	const getEffectiveEndDate = () => {
+		const endDate = campaign?.end_date ? new Date( campaign.end_date ) : null;
+		const today = new Date();
+
+		// If the campaign has already finished, fetch data relative to the end date (we can't fetch data after that point)
+		const effectiveEndDate = endDate && endDate < today ? endDate : today;
+		return effectiveEndDate;
+	};
 
 	const {
 		audience_list,
@@ -185,11 +194,7 @@ export default function CampaignItemDetails( props: Props ) {
 	} = campaign_stats || {};
 
 	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
-		const endDate = campaign?.end_date ? new Date( campaign.end_date ) : null;
-		const today = new Date();
-
-		// If the campaign has already finished, fetch data relative to the end date (we can't fetch data after that point)
-		const effectiveEndDate = endDate && endDate < today ? endDate : today;
+		const effectiveEndDate = getEffectiveEndDate();
 		let startDate = new Date( effectiveEndDate );
 
 		switch ( dateRange ) {
@@ -216,7 +221,8 @@ export default function CampaignItemDetails( props: Props ) {
 	};
 
 	const [ chartParams, setChartParams ] = useState( {
-		startDate: getChartStartDate( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+		startDate: getChartStartDate( ChartSourceDateRanges.LAST_7_DAYS ),
+		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
 		resolution: ChartResolution.Day,
 	} );
 
@@ -233,6 +239,7 @@ export default function CampaignItemDetails( props: Props ) {
 		// Update the params for the chart here, which will trigger the refetch
 		setChartParams( {
 			startDate: newStartDate,
+			endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
 			resolution: newResolution,
 		} );
 		setSelectedDateRange( newDateRange );

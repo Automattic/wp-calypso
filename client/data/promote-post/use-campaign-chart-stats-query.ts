@@ -45,7 +45,7 @@ export enum ChartResolution {
 export const useCampaignChartStatsQuery = (
 	siteId: number,
 	campaignId: number,
-	chartParams: { startDate: string; resolution: ChartResolution },
+	chartParams: { startDate: string; endDate: string; resolution: ChartResolution },
 	hasStats: boolean
 ) => {
 	return useQuery( {
@@ -56,8 +56,9 @@ export const useCampaignChartStatsQuery = (
 				`/stats/${ campaignId }`,
 				'GET',
 				{
-					tz: 'UTC',
+					tz: Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone ?? 'UTC',
 					start_date: chartParams.startDate,
+					end_date: chartParams.endDate,
 					resolution: chartParams.resolution,
 				},
 				'1.1'
