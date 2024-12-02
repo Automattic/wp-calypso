@@ -17,7 +17,7 @@ const WasThisHelpfulButtons = ( {
 		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
 
-	const liked = message.rating_value?.toString() === '1' || message.liked;
+	const liked = message.rating_value?.toString() === '1' || message.liked || false;
 	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
 	const rated =
 		( message.rating_value !== null && message.rating_value !== undefined ) ||
