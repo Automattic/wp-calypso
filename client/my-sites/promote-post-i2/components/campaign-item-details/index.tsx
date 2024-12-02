@@ -5,7 +5,7 @@ import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, chevronLeft, chevronDown } from '@wordpress/icons';
+import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import React, { useState } from 'react';
@@ -135,9 +135,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ chartSource, setChartSource ] = useState< ChartSourceOptions >(
 		ChartSourceOptions.Clicks
 	);
-	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
-		ChartSourceDateRanges.LAST_7_DAYS
-	);
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
@@ -153,8 +150,7 @@ export default function CampaignItemDetails( props: Props ) {
 		const today = new Date();
 
 		// If the campaign has already finished, fetch data relative to the end date (we can't fetch data after that point)
-		const effectiveEndDate = endDate && endDate < today ? endDate : today;
-		return effectiveEndDate;
+		return endDate && endDate < today ? endDate : today;
 	};
 
 	const {
@@ -193,99 +189,10 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
-		const effectiveEndDate = getEffectiveEndDate();
-		let startDate = new Date( effectiveEndDate );
-
-		switch ( dateRange ) {
-			case ChartSourceDateRanges.YESTERDAY:
-				startDate.setDate( effectiveEndDate.getDate() - 1 );
-				break;
-			case ChartSourceDateRanges.LAST_7_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 7 );
-				break;
-			case ChartSourceDateRanges.LAST_14_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 14 );
-				break;
-			case ChartSourceDateRanges.LAST_30_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 30 );
-				break;
-			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
-				if ( campaign?.start_date ) {
-					startDate = new Date( campaign.start_date );
-				}
-				break;
-		}
-
-		return startDate.toISOString().split( 'T' )[ 0 ];
-	};
-
-	const [ chartParams, setChartParams ] = useState( {
-		startDate: getChartStartDate( ChartSourceDateRanges.LAST_7_DAYS ),
-		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
-		resolution: ChartResolution.Day,
-	} );
-
-	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
-		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
-		const newResolution = [ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
-			newDateRange
-		)
-			? ChartResolution.Hour
-			: ChartResolution.Day;
-
-		const newStartDate = getChartStartDate( newDateRange );
-
-		// Update the params for the chart here, which will trigger the refetch
-		setChartParams( {
-			startDate: newStartDate,
-			endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
-			resolution: newResolution,
-		} );
-		setSelectedDateRange( newDateRange );
-	};
-
-	const campaignStatsQuery = useCampaignChartStatsQuery(
-		siteId,
-		campaignId,
-		chartParams,
-		!! impressions_total
-	);
-	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
-	const { data: campaignStats } = campaignStatsQuery;
-
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
-
-	const getCampaignStatsChart = (
-		data: CampaignChartSeriesData[],
-		source: ChartSourceOptions,
-		isLoading = false
-	) => {
-		if ( isLoading ) {
-			return (
-				<div className="campaign-item-details__graph-stats-loader">
-					<div>
-						<Spinner />
-					</div>
-				</div>
-			);
-		}
-
-		if ( ! data ) {
-			return null;
-		}
-
-		return (
-			<CampaignStatsLineChart
-				data={ data }
-				source={ source }
-				resolution={ chartParams.resolution }
-			/>
-		);
-	};
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
@@ -370,6 +277,99 @@ export default function CampaignItemDetails( props: Props ) {
 		: '-';
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
+
+	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
+		activeDays >= 7 ? ChartSourceDateRanges.LAST_7_DAYS : ChartSourceDateRanges.WHOLE_CAMPAIGN
+	);
+
+	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
+		const effectiveEndDate = getEffectiveEndDate();
+		let startDate = new Date( effectiveEndDate );
+
+		switch ( dateRange ) {
+			case ChartSourceDateRanges.YESTERDAY:
+				startDate.setDate( effectiveEndDate.getDate() - 1 );
+				break;
+			case ChartSourceDateRanges.LAST_7_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 7 );
+				break;
+			case ChartSourceDateRanges.LAST_14_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 14 );
+				break;
+			case ChartSourceDateRanges.LAST_30_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 30 );
+				break;
+			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
+				if ( campaign?.start_date ) {
+					startDate = new Date( campaign.start_date );
+				}
+				break;
+		}
+
+		return startDate.toISOString().split( 'T' )[ 0 ];
+	};
+
+	const [ chartParams, setChartParams ] = useState( {
+		startDate: getChartStartDate( ChartSourceDateRanges.LAST_7_DAYS ),
+		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
+		resolution: ChartResolution.Day,
+	} );
+
+	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
+		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
+		const newResolution = [ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
+			newDateRange
+		)
+			? ChartResolution.Hour
+			: ChartResolution.Day;
+
+		const newStartDate = getChartStartDate( newDateRange );
+
+		// Update the params for the chart here, which will trigger the refetch
+		setChartParams( {
+			startDate: newStartDate,
+			endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
+			resolution: newResolution,
+		} );
+		setSelectedDateRange( newDateRange );
+	};
+
+	const campaignStatsQuery = useCampaignChartStatsQuery(
+		siteId,
+		campaignId,
+		chartParams,
+		!! impressions_total
+	);
+	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
+	const { data: campaignStats } = campaignStatsQuery;
+	const getCampaignStatsChart = (
+		data: CampaignChartSeriesData[],
+		source: ChartSourceOptions,
+		isLoading = false
+	) => {
+		if ( isLoading ) {
+			return (
+				<div className="campaign-item-details__graph-stats-loader">
+					<div>
+						<Spinner />
+					</div>
+				</div>
+			);
+		}
+
+		if ( ! data ) {
+			return null;
+		}
+
+		return (
+			<CampaignStatsLineChart
+				data={ data }
+				source={ source }
+				resolution={ chartParams.resolution }
+			/>
+		);
+	};
+
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
 			? `$${ formatCents( total_budget - total_budget_used, 2 ) }`
