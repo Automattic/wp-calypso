@@ -607,6 +607,10 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
 					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
 				}
+
+				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+				}
 			}
 		};
 
