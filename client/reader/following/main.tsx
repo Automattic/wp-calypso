@@ -44,7 +44,7 @@ function FollowingStream( { ...props } ) {
 	return (
 		<>
 			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent viewToggle={ viewToggle } hasSubscriptions={ hasSubscriptions } />
+				<Recent viewToggle={ viewToggle } />
 			) : (
 				<ReaderStream
 					{ ...props }

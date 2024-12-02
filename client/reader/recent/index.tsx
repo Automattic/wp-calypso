@@ -23,10 +23,9 @@ import './style.scss';
 
 interface RecentProps {
 	viewToggle?: React.ReactNode;
-	hasSubscriptions: boolean;
 }
 
-const Recent = ( { viewToggle, hasSubscriptions }: RecentProps ) => {
+const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -160,11 +159,7 @@ const Recent = ( { viewToggle, hasSubscriptions }: RecentProps ) => {
 
 	return (
 		<div className="recent-feed">
-			<div
-				className={ `recent-feed__list-column ${
-					selectedItem && hasSubscriptions ? 'has-overlay' : ''
-				}` }
-			>
+			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
