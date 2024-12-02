@@ -57,7 +57,7 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
-		isVideoPress: PropTypes.bool,
+		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -153,7 +153,7 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
-			isVideoPress,
+			hasVideoPress,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -228,7 +228,7 @@ class StatsNavigation extends Component {
 								( toggleItem ) => {
 									// disable the "videos" toggle on sites that do not have VideoPress enabled
 									// the toggle will be disabled (grayed out and non interactive)
-									const shouldDisableVideoToggle = ! isVideoPress && toggleItem.key === 'videos';
+									const shouldDisableVideoToggle = ! hasVideoPress && toggleItem.key === 'videos';
 
 									return {
 										...toggleItem,
@@ -282,7 +282,7 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
-			isVideoPress: siteHasFeature( state, siteId, 'videopress' ),
+			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
