@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { Message, MessageRole, MessageType, ZendeskMessage } from '../types';
 
-// Format markdown to support images attachments
+// Format markdown to support images attachments that open in a new tab
 function prepareMarkdownImage( imgUrl: string ): string {
-	return `![Image](${ imgUrl })`;
+	return `[![Image](${ imgUrl })](${ imgUrl })`;
 }
 
 function convertUrlsToMarkdown( text: string ): string {
