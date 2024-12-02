@@ -15,11 +15,6 @@
 		min-height: 2.25rem;
 	}
 
-	.components-button.is-primary.is-busy {
-		background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
-		background-size: 100px 100%;
-	}
-
 	.components-text {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;

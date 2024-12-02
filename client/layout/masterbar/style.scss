@@ -544,7 +544,7 @@ body.is-mobile-app-view {
 		padding: 0;
 
 		&:not(.masterbar__item--always-show-content) {
-			width: 52px;
+			width: 46px;
 		}
 		// Show gravatar content
 		&:not(.masterbar__item-howdy) .masterbar__item-content {
@@ -609,10 +609,6 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
-
-		&:not(.masterbar__item--always-show-content) {
-			width: 46px;
-		}
 
 		.masterbar__item-content {
 			display: none;

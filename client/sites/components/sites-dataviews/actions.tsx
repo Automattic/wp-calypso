@@ -1,13 +1,13 @@
-import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
+import { FEATURE_SFTP, getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import {
-	SiteExcerptData,
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
+	SiteExcerptData,
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
-import { drawerLeft, wordpress, external } from '@wordpress/icons';
+import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -20,10 +20,10 @@ import {
 	getSiteAdminUrl,
 	getSiteMonitoringUrl,
 	isCustomDomain,
+	isDisconnectedJetpackAndNotAtomic,
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
-	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -454,6 +454,7 @@ export function useActions( {
 					page(
 						addQueryArgs( `/setup/copy-site`, {
 							sourceSlug: site.slug,
+							plan: getPlanPath( site.plan?.product_slug ?? 'business' ),
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );

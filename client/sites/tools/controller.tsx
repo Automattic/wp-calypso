@@ -1,8 +1,10 @@
+import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import { areHostingFeaturesSupported } from '../hosting-features/features';
 import Database from './database/page';
 import {
 	DeploymentCreation,
@@ -16,7 +18,6 @@ import Monitoring from './monitoring';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SftpSsh from './sftp-ssh/page';
 import StagingSite from './staging-site';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
@@ -40,6 +41,14 @@ export function ToolsSidebar() {
 }
 
 export function tools( context: PageJSContext, next: () => void ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	if ( areHostingFeaturesSupported( site ) ) {
+		// Redirect to the first subtab
+		return page.redirect( `/sites/tools/staging-site/${ site?.slug }` );
+	}
+
 	context.primary = <HostingFeatures showAsTools />;
 	next();
 }

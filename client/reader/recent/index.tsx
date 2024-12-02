@@ -120,14 +120,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		);
 	}, [ dispatch, view, streamKey ] );
 
-	const paginationInfo = useMemo( () => {
+	const defaultPaginationInfo = useMemo( () => {
 		return {
 			totalItems: data?.pagination?.totalItems ?? 0,
 			totalPages: data?.pagination?.totalPages ?? 0,
 		};
 	}, [ data?.pagination ] );
 
-	const { data: shownData } = useMemo( () => {
+	const { data: shownData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
 	}, [ data?.items, view, fields ] );
 
@@ -205,7 +205,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 									search: newView.search,
 								} )
 							}
-							paginationInfo={ paginationInfo }
+							paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 							defaultLayouts={ { list: {} } }
 							isLoading={ isLoading }
 							selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
