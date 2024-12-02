@@ -27,7 +27,10 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import {
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STAT_TYPE_REFERRERS,
+} from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	recordGoogleEvent,
@@ -304,6 +307,7 @@ class StatsSite extends Component {
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
 			momentSiteZone,
+			wpcomShowUpsell,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -568,7 +572,7 @@ class StatsSite extends Component {
 						) }
 					</>
 
-					{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
+					{ ! wpcomShowUpsell && (
 						<>
 							{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
@@ -708,7 +712,7 @@ class StatsSite extends Component {
 						</>
 					) }
 
-					{ config.isEnabled( 'stats/paid-wpcom-v3' ) && <StatsUpsell siteId={ siteId } /> }
+					{ wpcomShowUpsell && <StatsUpsell siteId={ siteId } /> }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
@@ -869,6 +873,9 @@ export default connect(
 			siteId,
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
+		const wpcomShowUpsell =
+			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+			shouldGateStats( state, siteId, STAT_TYPE_REFERRERS );
 
 		return {
 			canUserViewStats,
@@ -892,6 +899,7 @@ export default connect(
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
+			wpcomShowUpsell,
 		};
 	},
 	{
