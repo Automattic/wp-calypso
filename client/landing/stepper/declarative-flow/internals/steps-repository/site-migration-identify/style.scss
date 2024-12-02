@@ -83,14 +83,9 @@
 }
 
 .import__site-identify-hosting-details {
-	background-color: #f6f7f7;
-	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	margin: 20px auto 0;
-	max-width: 368px;
-	padding: 1.5rem;
 
 	&--title {
 		color: var(--studio-gray-100);
@@ -101,9 +96,14 @@
 	}
 
 	&--list {
+		background-color: #f6f7f7;
+		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
+		margin: 0 auto;
+		max-width: 368px;
+		padding: 1.5rem;
 
 		&-item-icon {
 			width: 36px;

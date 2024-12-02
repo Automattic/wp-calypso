@@ -26,25 +26,23 @@ const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
 	const translate = useTranslate();
 
 	return (
-		<>
+		<div className="import__site-identify-hosting-details">
 			<p className="import__site-identify-hosting-details--title">
 				{ translate( "Here's what else you're getting" ) }
 			</p>
-			<div className="import__site-identify-hosting-details">
-				<div className="import__site-identify-hosting-details--list">
-					{ items.map( ( item, index ) => (
-						<div key={ index } className="import__site-identify-hosting-details--list-item">
-							<div className="import__site-identify-hosting-details--list-item-icon">
-								<Gridicon size={ 16 } icon="checkmark" />
-							</div>
-							<p className="import__site-identify-hosting-details--list-item-description">
-								{ item.description }
-							</p>
+			<div className="import__site-identify-hosting-details--list">
+				{ items.map( ( item, index ) => (
+					<div key={ index } className="import__site-identify-hosting-details--list-item">
+						<div className="import__site-identify-hosting-details--list-item-icon">
+							<Gridicon size={ 16 } icon="checkmark" />
 						</div>
-					) ) }
-				</div>
+						<p className="import__site-identify-hosting-details--list-item-description">
+							{ item.description }
+						</p>
+					</div>
+				) ) }
 			</div>
-		</>
+		</div>
 	);
 };
 
