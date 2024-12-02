@@ -131,7 +131,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		<div className="migration-message__cta-wrapper">
 			<Button
 				className="migration-message__cta"
-				href="/sites"
+				href={ '/sites/overview/' + siteSlug }
 				variant="primary"
 				onClick={ () =>
 					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
