@@ -14,14 +14,8 @@ import type {
 	CartKey,
 } from '../../src/types';
 
-export function ProductList( {
-	initialProducts,
-	cartKey,
-}: {
-	initialProducts?: RequestCartProduct[];
-	cartKey?: CartKey;
-} ) {
-	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart( cartKey );
+export function ProductList( { initialProducts }: { initialProducts?: RequestCartProduct[] } ) {
+	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart( undefined );
 	useEffect( () => {
 		initialProducts && addProductsToCart( initialProducts );
 	}, [ addProductsToCart, initialProducts ] );
@@ -75,11 +69,6 @@ export function ProductListWithoutHook( {
 			<button onClick={ onClick }>Click me</button>
 		</ul>
 	);
-}
-
-export function MockProviderWithDefaultGetterSetter( { children } ) {
-	const managerClient = createShoppingCartManagerClient();
-	return <ShoppingCartProvider managerClient={ managerClient }>{ children }</ShoppingCartProvider>;
 }
 
 export function MockProvider( {

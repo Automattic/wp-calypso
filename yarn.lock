@@ -1614,7 +1614,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/shopping-cart": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@testing-library/react": "npm:^15.0.7"
@@ -1851,7 +1850,6 @@ __metadata:
     "@testing-library/react": "npm:^15.0.7"
     debug: "npm:^4.3.3"
     typescript: "npm:^5.3.3"
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
