@@ -958,7 +958,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
-			isTierFilterEnabled={ ! isGoalsHoldout }
+			isTierFilterEnabled={ isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout }
 		/>
 	);
 

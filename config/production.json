@@ -47,6 +47,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
+		"design-picker/goal-centric": false,
 		"desktop-promo": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
