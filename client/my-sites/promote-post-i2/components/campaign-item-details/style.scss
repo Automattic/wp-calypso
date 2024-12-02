@@ -729,6 +729,22 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
+		.campaign-item-details__stats-button{
+			border: none;
+			color: var(--color-accent);
+			box-shadow: none;
+			margin-right: 10px;
+			outline: none;
+			height: 40px;
+
+			&:hover {
+				text-decoration: underline;
+				color: var(--color-accent);
+				box-shadow: none;
+			}
+
+		}
+
 		.cancel-campaign-button {
 			display: inline-flex;
 			background: var(--color-surface);
@@ -810,6 +826,22 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__support-buttons {
+			display: flex;
+			@media (max-width: ($break-medium + 425)) {
+				flex-direction: row-reverse;
+				justify-content: start;
+			}
+
+			.stats-downloading {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 20px;
+
+				.components-spinner {
+					margin-top: 0;
+				}
+			}
 
 			button,
 			a {
@@ -817,7 +849,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: inline-flex;
 				line-height: unset;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 
 			button:not(:last-child),

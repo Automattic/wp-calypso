@@ -19,7 +19,7 @@ export default function HostingIntro() {
 					) }
 				</p>
 				<p>{ translate( 'Bring your WordPress site to WordPress.com and get it all.' ) }</p>
-				<Button onClick={ onLearnMoreClick } className="button-action">
+				<Button variant="primary" onClick={ onLearnMoreClick } className="button-action">
 					{ translate( 'Learn more' ) }
 				</Button>
 			</div>

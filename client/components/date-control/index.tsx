@@ -51,16 +51,25 @@ const DateControl = ( {
 		if ( shortcut ) {
 			return shortcut.label;
 		}
-		// Generate a full date range for the label.
-		const startDate = moment( dateRange.chartStart ).format( 'LL' );
-		const endDate = moment( dateRange.chartEnd ).format( 'LL' );
 
-		// If start and end are the same, then just show one date.
-		if ( startDate === endDate ) {
-			return startDate;
+		// Generate a full date range for the label.
+		const localizedStartDate = moment( dateRange.chartStart );
+		const localizedEndDate = moment( dateRange.chartEnd );
+
+		// If it's the same day, show single date.
+		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
+			return localizedStartDate.isSame( moment(), 'year' )
+				? localizedStartDate.format( 'MMM D' )
+				: localizedStartDate.format( 'll' );
 		}
 
-		return `${ startDate } - ${ endDate }`;
+		if ( localizedStartDate.year() === localizedEndDate.year() ) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format( `MMM D` ) }${
+				localizedStartDate.isSame( moment(), 'year' ) ? '' : localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
+			}`;
+		}
+
+		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	};
 
 	return (

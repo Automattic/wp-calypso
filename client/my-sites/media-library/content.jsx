@@ -355,7 +355,7 @@ export class MediaLibraryContent extends Component {
 			<div className="media-library__connect-message">
 				<p>
 					<img
-						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						src="/calypso/images/sharing/google-photos-logo-text.svg?v=20241124"
 						width="400"
 						alt={ translate( 'Google Photos' ) }
 					/>
@@ -469,6 +469,11 @@ export class MediaLibraryContent extends Component {
 				return null;
 			}
 
+			const hasRefreshButton =
+				'pexels' !== this.props.source &&
+				'openverse' !== this.props.source &&
+				! this.props.photosPickerApiEnabled;
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
@@ -481,12 +486,13 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
+					hasRefreshButton={ hasRefreshButton }
 					mediaScale={ this.props.mediaScale }
 					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
 					photosPickerSession={ this.props.photosPickerSession }
 					createPhotosPickerSession={ this.props.createPhotosPickerSession }
 					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
+					isCreatingPhotosPickerSession={ this.props.isCreatingPhotosPickerSession }
 				/>
 			);
 		}

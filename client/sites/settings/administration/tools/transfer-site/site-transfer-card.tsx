@@ -19,6 +19,7 @@ export function SiteTransferCard( {
 		: translate( 'Site Transfer' );
 	return (
 		<Panel className="settings-administration__transfer-site">
+			<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(
@@ -35,7 +36,6 @@ export function SiteTransferCard( {
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"
 			/>
-			<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
 			<PanelSection>{ children }</PanelSection>
 		</Panel>
 	);
