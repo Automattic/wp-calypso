@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -25,21 +26,25 @@ const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="import__site-identify-hosting-details">
+		<>
 			<p className="import__site-identify-hosting-details--title">
-				{ translate( 'Why should you host with us?' ) }
+				{ translate( "Here's what else you're getting" ) }
 			</p>
-			<div className="import__site-identify-hosting-details--list">
-				{ items.map( ( item, index ) => (
-					<div key={ index } className="import__site-identify-hosting-details--list-item">
-						<p className="import__site-identify-hosting-details--list-item-title">{ item.title }</p>
-						<p className="import__site-identify-hosting-details--list-item-description">
-							{ item.description }
-						</p>
-					</div>
-				) ) }
+			<div className="import__site-identify-hosting-details">
+				<div className="import__site-identify-hosting-details--list">
+					{ items.map( ( item, index ) => (
+						<div key={ index } className="import__site-identify-hosting-details--list-item">
+							<div className="import__site-identify-hosting-details--list-item-icon">
+								<Gridicon size={ 16 } icon="checkmark" />
+							</div>
+							<p className="import__site-identify-hosting-details--list-item-description">
+								{ item.description }
+							</p>
+						</div>
+					) ) }
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
@@ -95,27 +100,21 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		'unmatched-uptime': {
 			title: translate( 'Unmatched Reliability and Uptime' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
-			description: translate(
-				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
-			),
+			description: translate( 'Uninterrupted service throughout the entire migration experience.' ),
 			descriptionString:
 				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
 		},
 		'effortless-customization': {
 			title: translate( 'Effortless Customization' ),
 			titleString: 'Effortless Customization',
-			description: translate(
-				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
-			),
+			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
 			descriptionString:
 				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
 		},
 		'blazing-fast-speed': {
 			title: translate( 'Blazing Fast Page Speed' ),
 			titleString: 'Blazing Fast Page Speed',
-			description: translate(
-				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
-			),
+			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
 			descriptionString:
 				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
 		},

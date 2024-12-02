@@ -88,7 +88,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	margin: 40px auto 0 auto;
+	margin: 20px auto 0;
 	max-width: 368px;
 	padding: 1.5rem;
 
@@ -96,6 +96,8 @@
 		color: var(--studio-gray-100);
 		font-size: 1.25rem;
 		font-weight: 500;
+		margin-top: 40px;
+		text-align: center;
 	}
 
 	&--list {
@@ -103,9 +105,20 @@
 		flex-direction: column;
 		gap: 1.25rem;
 
+		&-item-icon {
+			width: 36px;
+			height: 36px;
+			border-radius: 4px;
+			line-height: 38px;
+			background-color: var(--studio-gray-5);
+			margin-right: .5rem;
+			flex-shrink: 0;
+			text-align: center;
+		}
+
 		&-item {
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			gap: 0.25rem;
 
 			&-description {
