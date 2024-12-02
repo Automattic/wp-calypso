@@ -37,8 +37,8 @@ const WooOauthMasterbar = () => {
 		}
 	}
 
-	const isRebrand20Enabled = config.isEnabled( 'woocommerce/rebrand-2-0' );
-	const logo = isRebrand20Enabled ? (
+	const isWooRebrand20 = config.isEnabled( 'woocommerce/rebrand-2-0' );
+	const logo = isWooRebrand20 ? (
 		<SVGIcon
 			name="woocommerce-logo"
 			icon={ WooLogoRebrand2 }
