@@ -4,16 +4,16 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import photon from 'photon';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
+import { useFilteredDesigns } from '../hooks/use-filtered-designs';
 import {
 	getAssemblerDesign,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
-	filterDesignsByCategory,
 } from '../utils';
 import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
@@ -276,13 +276,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isTierFilterEnabled = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
-	const filteredDesigns = useMemo( () => {
-		if ( categorization?.selection ) {
-			return filterDesignsByCategory( designs, categorization.selection );
-		}
-
-		return designs;
-	}, [ designs, categorization?.selection ] );
+	const filteredDesigns = useFilteredDesigns( designs, categorization );
 
 	// Pick design
 
