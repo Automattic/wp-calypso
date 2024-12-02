@@ -16,7 +16,6 @@ const DateControl = ( {
 	onDateControlClick,
 	tooltip,
 	dateRange,
-	shortcutList,
 	overlay,
 	// Temporary prop to enable new date filtering UI.
 	isNewDateFilteringEnabled = false,
@@ -24,49 +23,23 @@ const DateControl = ( {
 	const moment = useLocalizedMoment();
 	const siteToday = useMomentSiteZone();
 
-	const getShortcutForRange = () => {
-		// Search the shortcut array for something matching the current date range.
-		// Returns shortcut or null;
-		const today = siteToday.format( 'YYYY-MM-DD' );
-		const yesterday = siteToday.clone().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
-		const shortcut = shortcutList.find( ( element ) => {
-			if (
-				yesterday === dateRange.chartEnd &&
-				dateRange.daysInRange === element.range + 1 &&
-				element.id === 'yesterday'
-			) {
-				return element;
-			}
-			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
-				return element;
-			}
-			return null;
-		} );
-		return shortcut;
-	};
-
 	const getButtonLabel = () => {
-		// Test for a shortcut match.
-		const shortcut = getShortcutForRange();
-		if ( shortcut ) {
-			return shortcut.label;
-		}
-
-		// Generate a full date range for the label.
 		const localizedStartDate = moment( dateRange.chartStart );
 		const localizedEndDate = moment( dateRange.chartEnd );
 
 		// If it's the same day, show single date.
 		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
-			return localizedStartDate.isSame( moment(), 'year' )
-				? localizedStartDate.format( 'MMM D' )
-				: localizedStartDate.format( 'll' );
+			return localizedStartDate.format( 'LL' );
 		}
 
-		if ( localizedStartDate.year() === localizedEndDate.year() ) {
-			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format( `MMM D` ) }${
-				localizedStartDate.isSame( moment(), 'year' ) ? '' : localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
-			}`;
+		// Only show year for the second date.
+		if (
+			localizedStartDate.year() === localizedEndDate.year() &&
+			localizedStartDate.isSame( moment(), 'year' )
+		) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
+				`MMM D, YYYY`
+			) }`;
 		}
 
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
