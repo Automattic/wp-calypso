@@ -413,7 +413,7 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from } = providedDependencies as {
+					const { action, from, authorizationUrl } = providedDependencies as {
 						action:
 							| 'skip'
 							| 'submit'
@@ -422,6 +422,7 @@ const siteMigration: Flow = {
 							| 'already-wpcom'
 							| 'site-is-not-using-wordpress';
 						from: string;
+						authorizationUrl: string;
 					};
 
 					if ( action === 'skip' ) {
@@ -459,7 +460,12 @@ const siteMigration: Flow = {
 					if ( action === 'application-passwords-approval' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
+								{
+									siteId,
+									from: from || fromQueryParam,
+									siteSlug,
+									authorizationUrl,
+								},
 								STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL.slug
 							)
 						);
