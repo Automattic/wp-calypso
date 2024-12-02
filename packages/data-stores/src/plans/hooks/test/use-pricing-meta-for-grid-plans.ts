@@ -126,7 +126,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			reflectStorageSelectionInPlanPrices: false,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -160,7 +159,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			reflectStorageSelectionInPlanPrices: false,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -228,7 +226,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			reflectStorageSelectionInPlanPrices: false,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -276,7 +273,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			reflectStorageSelectionInPlanPrices: false,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -322,7 +318,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			reflectStorageSelectionInPlanPrices: false,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,

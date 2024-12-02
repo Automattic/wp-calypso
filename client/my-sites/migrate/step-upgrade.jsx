@@ -166,7 +166,6 @@ const WrappedStepUpgrade = ( props ) => {
 		planSlugs: [ planSlug ],
 		coupon: undefined,
 		siteId: targetSite.ID,
-		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 

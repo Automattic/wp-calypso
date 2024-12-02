@@ -36,7 +36,6 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
-		reflectStorageSelectionInPlanPrices: false,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod

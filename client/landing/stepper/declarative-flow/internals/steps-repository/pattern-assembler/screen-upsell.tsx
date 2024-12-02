@@ -28,7 +28,6 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		reflectStorageSelectionInPlanPrices: false,
 	} );
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
 	const isPricingLoaded =

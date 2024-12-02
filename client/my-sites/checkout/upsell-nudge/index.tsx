@@ -523,7 +523,6 @@ const WrappedUpsellNudge = (
 		siteId: selectedSiteId,
 		useCheckPlanAvailabilityForPurchase,
 		coupon: undefined,
-		reflectStorageSelectionInPlanPrices: false,
 		withProratedDiscounts: true,
 	} );
 

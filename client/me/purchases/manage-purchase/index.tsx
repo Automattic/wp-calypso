@@ -1659,7 +1659,6 @@ const WrappedManagePurchase = (
 		planSlugs: [ relatedMonthlyPlanSlug as PlanSlug ],
 		siteId,
 		coupon: undefined,
-		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 

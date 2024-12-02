@@ -54,7 +54,6 @@ const useEntrepreneurPlanPrices = () => {
 		],
 		coupon: undefined,
 		siteId: null,
-		reflectStorageSelectionInPlanPrices: false,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
