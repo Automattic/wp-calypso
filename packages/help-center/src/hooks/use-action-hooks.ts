@@ -1,8 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useCreateZendeskConversation } from '@automattic/odie-client/src/hooks';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { useResetSupportInteraction } from './use-reset-support-interaction';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
@@ -10,8 +8,6 @@ import { useResetSupportInteraction } from './use-reset-support-interaction';
 export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDispatch( 'automattic/help-center' );
-	const resetSupportInteraction = useResetSupportInteraction();
-	const newConversation = useCreateZendeskConversation();
 	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [
@@ -63,10 +59,8 @@ export const useActionHooks = () => {
 			condition() {
 				return queryParams.get( 'help-center' ) === 'happiness-engineer';
 			},
-			async action() {
-				await resetSupportInteraction();
-				setNavigateToRoute( '/odie' );
-				await newConversation();
+			action() {
+				setNavigateToRoute( '/odie?provider=zendesk' );
 				setShowHelpCenter( true );
 			},
 		},

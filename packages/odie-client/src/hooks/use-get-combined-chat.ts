@@ -44,8 +44,14 @@ export const useGetCombinedChat = (
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		if ( ! odieId && ! conversationId ) {
-			return;
+		if ( ! odieId && ! conversationId && currentSupportInteraction ) {
+			setMainChatState( ( prevChat ) => ( {
+				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
+					? emptyChat
+					: prevChat ),
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: 'loaded',
+			} ) );
 		}
 
 		/**

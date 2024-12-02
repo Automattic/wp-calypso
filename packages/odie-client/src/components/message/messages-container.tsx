@@ -1,9 +1,15 @@
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
-import { useAutoScroll, useZendeskMessageListener } from '../../hooks';
+import {
+	useAutoScroll,
+	useCreateZendeskConversation,
+	useZendeskMessageListener,
+} from '../../hooks';
 import { getOdieInitialMessage } from '../../utils';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
@@ -18,6 +24,7 @@ const DislikeThumb = () => {
 		</div>
 	);
 };
+
 const LoadingChatSpinner = () => {
 	return (
 		<div className="chatbox-loading-chat__spinner">
@@ -38,14 +45,37 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, shouldUseHelpCenterExperience, botNameSlug } = useOdieAssistantContext();
+	const { chat, shouldUseHelpCenterExperience, botNameSlug, isChatLoaded } =
+		useOdieAssistantContext();
+	const createZendeskConversation = useCreateZendeskConversation();
+	const resetSupportInteraction = useResetSupportInteraction();
+	const [ searchParams ] = useSearchParams();
+	const isForwardingToZendesk =
+		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const [ chatMessagesLoaded, setChatLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
+
 	useEffect( () => {
-		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatLoaded( true );
-	}, [ chat ] );
+		( chat?.status === 'loaded' || chat?.status === 'closed' ) &&
+			setChatLoaded( ! isForwardingToZendesk );
+	}, [ chat, isForwardingToZendesk ] );
+
+	/**
+	 * Handle the case where we are forwarding to Zendesk.
+	 */
+	useEffect( () => {
+		if ( isForwardingToZendesk && ! chat.conversationId ) {
+			resetSupportInteraction().then( () => {
+				if ( isChatLoaded ) {
+					createZendeskConversation().then( () => {
+						setChatLoaded( true );
+					} );
+				}
+			} );
+		}
+	}, [ isForwardingToZendesk, isChatLoaded ] );
 
 	const shouldLoadChat: boolean =
 		! shouldUseHelpCenterExperience || ( shouldUseHelpCenterExperience && chatMessagesLoaded );
@@ -63,13 +93,15 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					<LoadingChatSpinner />
 				) : (
 					<>
-						<ChatMessage
-							message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
-							key={ 0 }
-							currentUser={ currentUser }
-							isNextMessageFromSameSender={ false }
-							displayChatWithSupportLabel={ false }
-						/>
+						{ ( chat.odieId || chat.provider === 'odie' ) && (
+							<ChatMessage
+								message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
+								key={ 0 }
+								currentUser={ currentUser }
+								isNextMessageFromSameSender={ false }
+								displayChatWithSupportLabel={ false }
+							/>
+						) }
 						{ chat.messages.map( ( message, index ) => (
 							<ChatMessage
 								message={ message }

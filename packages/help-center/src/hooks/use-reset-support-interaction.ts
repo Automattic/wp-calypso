@@ -15,18 +15,18 @@ export const useResetSupportInteraction = () => {
 	const { startNewInteraction, resolveInteraction } = useManageSupportInteraction();
 	const queryClient = useQueryClient();
 
-	const reset = async () => {
+	return async () => {
 		if ( currentSupportInteraction ) {
 			resolveInteraction( { interactionId: currentSupportInteraction.uuid } );
+
 			await queryClient.invalidateQueries( {
 				queryKey: [ 'support-interactions', 'get-interactions', 'help-center' ],
 			} );
-			startNewInteraction( {
+
+			await startNewInteraction( {
 				event_source: 'help-center',
 				event_external_id: uuidv4(),
 			} );
 		}
 	};
-
-	return reset;
 };
