@@ -54,17 +54,13 @@ export interface UnifiedPlansStepProps {
 	stepName: string;
 
 	// Upgrade Handler - START
+
 	goToNextStep: () => void;
 	additionalStepData?: object;
 	stepSectionName?: string;
 	launchSite?: boolean;
 	themeSlugWithRepo?: string;
-	// Upgrade Handler - END
-
-	/**
-	 * Make required once Start is removed
-	 */
-	saveSignupStep?: ( step: { stepName: string } ) => void;
+	selectedSite?: SiteDetails;
 
 	/**
 	 * Make required once Start is removed
@@ -77,11 +73,15 @@ export interface UnifiedPlansStepProps {
 			stepSectionName?: string;
 			siteUrl?: string;
 		},
-		domainInfo: {
-			domainItem?: { meta?: string };
-			signupDomainOrigin?: string;
-		}
+		domainInfo: object
 	) => void;
+
+	// Upgrade Handler - END
+
+	/**
+	 * Make required once Start is removed
+	 */
+	saveSignupStep?: ( step: { stepName: string } ) => void;
 
 	signupDependencies: {
 		siteId?: number | null;
@@ -115,7 +115,6 @@ export interface UnifiedPlansStepProps {
 	};
 
 	shouldHideNavButtons?: boolean;
-	selectedSite?: SiteDetails;
 	intent?: PlansIntent;
 	isLaunchPage?: boolean;
 	intervalType?: string;
@@ -379,20 +378,17 @@ function UnifiedPlansStep( {
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
-					buildUpgradeFunction(
-						{
-							additionalStepData,
-							flowName,
-							launchSite,
-							selectedSite,
-							stepName,
-							stepSectionName,
-							themeSlugWithRepo,
-							goToNextStep,
-							submitSignupStep: effectiveSubmitSignupStep,
-						},
-						null
-					)
+					buildUpgradeFunction( {
+						additionalStepData,
+						flowName,
+						launchSite,
+						selectedSite,
+						stepName,
+						stepSectionName,
+						themeSlugWithRepo,
+						goToNextStep,
+						submitSignupStep: effectiveSubmitSignupStep,
+					} )
 				}
 				borderless
 			/>

@@ -9,7 +9,7 @@ jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { renderStep } from '../../test/helpers';
-import PlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
+import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 
 const noop = () => {};
 
@@ -31,7 +31,7 @@ const props = {
 };
 
 const _render = ( props: UnifiedPlansStepProps ) => {
-	return renderStep( <PlansStep { ...props } /> );
+	return renderStep( <UnifiedPlansStep { ...props } /> );
 };
 
 describe( 'Plans basic tests', () => {
