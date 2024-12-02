@@ -148,33 +148,6 @@
 				padding: $recent-feed-spacing;
 			}
 		}
-
-		&.recent-feed--no-subscriptions {
-			max-width: none;
-
-			.recent-feed__list-column-header {
-				max-width: none;
-				margin: 0;
-				padding: 16px 24px;
-				border-bottom: 1px solid var( --studio-gray-0 );
-
-				header.navigation-header {
-					max-width: $break-medium;
-					margin: 0 auto;
-					padding: 0;
-				}
-			}
-
-			.recent-feed__list-column-content {
-				max-width: $break-medium;
-				margin: 0 auto;
-				padding: 24px 24px 0;
-			}
-
-			@media ( min-width: $break-wide ) {
-				max-width: none;
-			}
-		}
 	}
 
 	&__post-column {

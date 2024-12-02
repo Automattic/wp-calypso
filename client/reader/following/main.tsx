@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { SubscriptionManager } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
@@ -16,13 +17,24 @@ import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
+	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
+	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
 
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
+
+	if ( ! hasSubscriptions ) {
+		return (
+			<div className="following-stream--no-subscriptions">
+				<NavigationHeader title={ translate( 'Recent' ) } />
+				<ReaderOnboarding forceShow />
+			</div>
+		);
+	}
 
 	return (
 		<>
 			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent viewToggle={ viewToggle } />
+				<Recent viewToggle={ viewToggle } hasSubscriptions={ hasSubscriptions } />
 			) : (
 				<ReaderStream
 					{ ...props }
