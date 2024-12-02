@@ -393,7 +393,7 @@ class StatsSite extends Component {
 			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( 7, 'days' )
+				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
 
