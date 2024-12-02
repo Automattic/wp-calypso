@@ -53,6 +53,7 @@ export interface DomainData {
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
 	is_gravatar_domain: boolean;
+	is_hundred_year_domain: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;
 	is_subdomain: boolean;

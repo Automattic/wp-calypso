@@ -2,12 +2,12 @@ import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { connect } from 'react-redux';
-import JetpackSyncPanel from 'calypso/my-sites/site-settings/jetpack-sync-panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ApiCache from './api-cache';
+import JetpackSyncPanel from './jetpack-sync-panel';
 
 const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	if ( ! siteIsJetpack ) {

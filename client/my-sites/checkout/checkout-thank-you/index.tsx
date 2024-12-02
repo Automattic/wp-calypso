@@ -496,7 +496,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, receiptId, selectedFeature } = this.props;
+		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
@@ -548,11 +548,11 @@ export class CheckoutThankYou extends Component<
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
-			} else if ( isOnlyDomainPurchases( purchases ) ) {
+			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				pageContent = (
 					<DomainOnlyThankYou
 						purchases={ purchases }
-						receiptId={ receiptId }
+						receipt={ this.props.receipt.data }
 						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
 					/>
 				);

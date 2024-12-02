@@ -66,7 +66,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( '{{link}}Latest emails sent{{/link}} and their performance.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: <a href={ localizeUrl( supportUrl ) } />,
+									link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 								},
 								context: 'Stats: Header popower information when the Emails module has data.',
 							} ) }
@@ -101,7 +101,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Emails module is empty',
 								}

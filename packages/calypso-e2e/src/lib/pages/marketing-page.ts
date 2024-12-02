@@ -37,9 +37,10 @@ export class MarketingPage {
 	 * Navigates directly to the Marketing page for the site.
 	 *
 	 * @param {string} siteSlug Site slug.
+	 * @param {string} tabSlug tab slug.
 	 */
-	async visit( siteSlug: string ) {
-		await this.page.goto( getCalypsoURL( `marketing/tools/${ siteSlug }` ) );
+	async visitTab( siteSlug: string, tabSlug: string ) {
+		await this.page.goto( getCalypsoURL( `sites/marketing/${ tabSlug }/${ siteSlug }` ) );
 	}
 
 	/**
@@ -66,7 +67,7 @@ export class MarketingPage {
 	 *
 	 */
 	async saveSettings() {
-		await this.page.getByRole( 'button', { name: 'Save settings' } ).first().click();
+		await this.page.getByRole( 'button', { name: 'Save' } ).first().click();
 
 		await this.page.waitForResponse( /settings/ );
 	}

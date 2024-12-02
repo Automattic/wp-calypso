@@ -108,9 +108,12 @@ export default function usePlanBillingDescription( {
 	 *   2. We only expose month & year based intervals for now (so no need to introduce more translations just yet)
 	 */
 	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
+		const discountedPriceFull =
+			typeof discountedPrice?.full === 'number' ? discountedPrice.full : introOffer?.rawPrice?.full;
+
 		const introOfferFullTermText =
-			currencyCode && introOffer.rawPrice
-				? formatCurrency( introOffer.rawPrice.full, currencyCode, {
+			currencyCode && typeof discountedPriceFull === 'number'
+				? formatCurrency( discountedPriceFull, currencyCode, {
 						stripZeros: true,
 						isSmallestUnit: true,
 				  } )

@@ -1,6 +1,6 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { SiteMonitoring } from 'calypso/sites/tools/monitoring/components/site-monitoring';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteMonitoring } from './components/site-monitoring';
 import type { Context as PageJSContext, Callback } from '@automattic/calypso-router';
 
 export function siteMonitoring( context: PageJSContext, next: () => void ) {

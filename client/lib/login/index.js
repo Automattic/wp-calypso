@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
+import { getLocaleSlug } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
@@ -78,6 +79,18 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
 			includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
 		) {
+			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
+			const pluginName = get( currentQuery, 'plugin_name' );
+			try {
+				const urlObj = new URL( currentQuery.redirect_to );
+				if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
+					urlObj.searchParams.set( 'plugin_name', pluginName );
+					return urlObj.toString();
+				}
+			} catch ( e ) {
+				return '/jetpack/connect';
+			}
+
 			/**
 			 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
 			 * this case, the redirect_to will handle signups as part of the flow. Use the
@@ -236,13 +249,32 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate ) => {
-	const pluginNames = {
+export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
-		'woocommerce-payments': translate( 'Jetpack and WooPayments' ),
-		'order-attribution': translate( 'Jetpack and Order Attribution' ),
-		default: translate( 'Jetpack' ),
+		'woocommerce-payments': translate( 'WooPayments' ),
+		'order-attribution': translate( 'Order Attribution' ),
 	};
 
-	return pluginNames[ pluginName ] || pluginNames.default;
+	const listFormatter = new Intl.ListFormat( langSlug, {
+		style: 'long',
+		type: 'conjunction',
+	} );
+
+	const defaultTitle = listFormatter.format( Object.values( allowedPluginNames ) );
+
+	if ( ! pluginName ) {
+		// Handle null, undefined, or empty strings
+		return defaultTitle;
+	}
+
+	// Handle multiple plugin names separated by commas
+	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
+
+	if ( uniqueTitles.length === 0 ) {
+		return defaultTitle;
+	}
+
+	return listFormatter.format( uniqueTitles );
 };

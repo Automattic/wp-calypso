@@ -1,0 +1,48 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-commissions {
+	&:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
+		max-width: 900px;
+	}
+
+	.a4a-text-placeholder {
+		height: 100px;
+		margin: 16px;
+
+		&:nth-child(2) {
+			height: 200px;
+		}
+
+		@include break-large {
+			margin: 16px 64px 48px;
+		}
+	}
+
+	.step-section-item__content {
+		max-width: none;
+
+		ul {
+			color: var(--color-text-black);
+			list-style: decimal;
+			margin: 8px 0 16px 16px;
+
+			li a {
+				color: var(--color-text-black);
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.migrations-commissions__content {
+		.consolidated-commissions {
+			padding: 16px;
+
+			@include break-large {
+				padding: 16px 64px 48px;
+				flex-direction: row;
+			}
+		}
+	}
+}
+

@@ -3,12 +3,14 @@ import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
+	READER_STREAMS_PAGINATED_REQUEST,
 	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
+	READER_STREAMS_CLEAR,
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
@@ -84,7 +86,6 @@ export const items = ( state = [], action ) => {
 
 			// Filter out duplicate x-posts
 			return combineXPosts( newState );
-
 		case READER_STREAMS_SHOW_UPDATES:
 			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
@@ -99,6 +100,8 @@ export const items = ( state = [], action ) => {
 			updatedState[ indexToRemove ] = updatedState.pop(); // set the dismissed post location to the last item from the recs stream
 			return updatedState;
 		}
+		case READER_STREAMS_CLEAR:
+			return [];
 	}
 	return state;
 };
@@ -170,6 +173,8 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			return { lastUpdated: maxDate, items: newItems };
 		case READER_STREAMS_SHOW_UPDATES:
 			return { ...state, items: [] };
+		case READER_STREAMS_CLEAR:
+			return PENDING_ITEMS_DEFAULT;
 	}
 	return state;
 };
@@ -207,6 +212,7 @@ export const isRequesting = ( state = false, action ) => {
 	// placeholders at the bottom of the stream
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_REQUEST:
+		case READER_STREAMS_PAGINATED_REQUEST:
 			return state || ( ! action.payload.isPoll && ! action.payload.isGap );
 		case READER_STREAMS_PAGE_RECEIVE:
 			return false;
@@ -242,6 +248,20 @@ export const pageHandle = ( state = null, action ) => {
 	return state;
 };
 
+export const pagination = ( state = { totalItems: 0, totalPages: 0 }, action ) => {
+	switch ( action.type ) {
+		case READER_STREAMS_PAGE_RECEIVE:
+			return {
+				totalItems: action.payload.totalItems,
+				totalPages: action.payload.totalPages,
+			};
+		case READER_STREAMS_CLEAR:
+			return { totalItems: 0, totalPages: 0 };
+		default:
+			return state;
+	}
+};
+
 const streamReducer = combineReducers( {
 	items,
 	pendingItems,
@@ -249,6 +269,7 @@ const streamReducer = combineReducers( {
 	lastPage,
 	isRequesting,
 	pageHandle,
+	pagination,
 } );
 
 export default keyedReducer( 'payload.streamKey', streamReducer );

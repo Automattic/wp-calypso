@@ -74,6 +74,7 @@ export function DomainFormControl( {
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
+	let shouldQuerySubdomains: boolean = true;
 
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
@@ -102,10 +103,12 @@ export function DomainFormControl( {
 
 	if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
 		includeWordPressDotCom = false;
+		shouldQuerySubdomains = false;
 	}
 
 	if ( flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
 		includeWordPressDotCom = false;
+		shouldQuerySubdomains = false;
 	}
 
 	const domainsWithPlansOnly = true;
@@ -145,12 +148,6 @@ export function DomainFormControl( {
 				{ useYourDomain }
 			</div>
 		);
-	};
-
-	const getUseYourDomainUrl = () => {
-		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
-		//it always throws window.AppBoot is not a function
-		return '/setup/domains?flow=link-in-bio&section=use-your-domain';
 	};
 
 	const getOtherManagedSubdomains = () => {
@@ -258,7 +255,6 @@ export function DomainFormControl( {
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
-					mapDomainUrl={ getUseYourDomainUrl() }
 					offerUnavailableOption
 					otherManagedSubdomains={ getOtherManagedSubdomains() }
 					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
@@ -272,8 +268,8 @@ export function DomainFormControl( {
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
+					shouldQuerySubdomains={ shouldQuerySubdomains }
 					suggestion={ initialQuery }
-					transferDomainUrl={ getUseYourDomainUrl() }
 					handleClickUseYourDomain={ onUseYourDomainClick }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,

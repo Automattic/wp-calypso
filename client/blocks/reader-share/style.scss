@@ -1,6 +1,7 @@
 .reader-share {
 	.reader-share__button.button {
 		color: var(--color-text-subtle);
+		fill: var(--color-text-subtle);
 		display: flex;
 		align-items: center;
 		padding: 0;
@@ -12,6 +13,7 @@
 		&:hover,
 		&:active {
 			color: var(--color-primary);
+			fill: var(--color-primary);
 		}
 
 		&:focus {
@@ -195,7 +197,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		@include long-content-fade();
 		border-radius: 50%;
 	}
 }

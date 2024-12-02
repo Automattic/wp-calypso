@@ -14,13 +14,14 @@ import type { ZendeskConfigName } from './types';
 export function useLoadZendeskMessaging(
 	keyConfigName: ZendeskConfigName,
 	enabled = true,
-	tryAuthenticating = true
+	tryAuthenticating = true,
+	shouldUseHelpCenterExperience = false
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 	const zendeskKey: string = config( keyConfigName );
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isMessagingScriptLoaded && tryAuthenticating,
-		config.isEnabled( 'help-center-experience' ) ? 'messenger' : 'zendesk'
+		shouldUseHelpCenterExperience ? 'messenger' : 'zendesk'
 	);
 	useEffect( () => {
 		if ( ! enabled || isMessagingScriptLoaded ) {

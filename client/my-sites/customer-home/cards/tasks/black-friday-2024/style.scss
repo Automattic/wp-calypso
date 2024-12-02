@@ -1,0 +1,47 @@
+.task {
+	&.task__black-friday-2024 {
+		margin-bottom: 0 !important;
+		margin-right: 0 !important;
+		padding-bottom: 32px;
+		.task__text {
+			margin-top: 32px;
+			padding-right: 0;
+			width: 250px;
+			display: block;
+		}
+		.task__title {
+			display: inline;
+		}
+
+		.task__description {
+			margin: 16px 0 !important;
+		}
+
+		.task__actions {
+			flex-direction: column;
+			display: inline-flex;
+		}
+		.task__skip {
+			text-align: left;
+		}
+		.task__illustration {
+			display: flex;
+			width: calc(75% + 32px);
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			border-bottom-right-radius: 3px;
+			overflow: hidden;
+			z-index: -1;
+
+			img {
+				transform: translateX(14%);
+
+				[dir="rtl"] & {
+					transform: translateX(20%);
+				}
+
+			}
+		}
+	}
+}

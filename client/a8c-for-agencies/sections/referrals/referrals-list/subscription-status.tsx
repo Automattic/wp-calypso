@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import StatusBadge from '../common/step-section-item/status-badge';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import type { Referral } from '../types';
 
 export default function SubscriptionStatus( { item }: { item: Referral } ): ReactNode {

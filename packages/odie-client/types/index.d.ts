@@ -38,7 +38,7 @@ declare module 'calypso/state/current-user/selectors' {
 }
 
 declare module 'calypso/components/async-load' {
-	import { FC, ReactNode, ComponentType } from 'react';
+	import { FC, ReactNode, ComponentType, FC } from 'react';
 
 	interface AsyncLoadProps {
 		placeholder?: ReactNode;

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .plugins-navigation-header.navigation-header {
-	padding-inline: 16px;
+	padding-inline: 48px;
 
 	.navigation-header__main {
 		align-items: center;
@@ -12,17 +12,17 @@
 		border-block-end: 1px solid var(--color-border-secondary);
 	}
 
-	@include break-huge {
-		padding-inline: 64px;
+	@media (max-width: $break-medium) {
+		padding-inline: 2rem;
+	}
+
+	@media (max-width: $break-small) {
+		padding-inline: 16px;	
 	}
 
 	@include break-xhuge {
-		max-width: 100%;
-
 		.navigation-header__main {
-			max-width: 1400px;
 			margin: 0 auto;
-			padding-inline: 64px;
 		}
 	}
 

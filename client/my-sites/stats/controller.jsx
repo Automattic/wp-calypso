@@ -22,6 +22,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	let numPeriodAgo;
 
 	switch ( period ) {
+		case 'hour':
+			numPeriodAgo = durationAgo.asHours();
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
 			break;
@@ -108,6 +110,12 @@ export function overview( context, next ) {
 	const filters = function () {
 		return [
 			{
+				title: i18n.translate( 'Hours' ),
+				path: '/stats/hour',
+				id: 'stats-hour',
+				period: 'hour',
+			},
+			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
 				id: 'stats-day',
@@ -185,6 +193,7 @@ export function site( context, next ) {
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
+	// startDate is the date the user clicked on the chart, which is basically the start of the period, i.e. Monday of weeks, 1st of months, or the selected date.
 	const date = isValidStartDate
 		? moment( queryOptions.startDate ).locale( 'en' )
 		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
@@ -214,6 +223,12 @@ export function site( context, next ) {
 	);
 
 	next();
+}
+
+export function redirectToDaySummary( context ) {
+	page.redirect(
+		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`
+	);
 }
 
 export function summary( context, next ) {
@@ -274,6 +289,14 @@ export function summary( context, next ) {
 		: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 	const period = rangeOfPeriod( activeFilter.period, date );
 
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? moment( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
@@ -293,6 +316,7 @@ export function summary( context, next ) {
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
 				date={ date }
+				dateRange={ dateRange }
 				context={ context }
 				period={ period }
 				{ ...extraProps }

@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -13,13 +13,15 @@ import WapuuAvatarSquared from '../../assets/wapuu-squared-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
 import { MessageContent } from './message-content';
-import type { CurrentUser, Message } from '../../types/';
-
+import type { CurrentUser, Message } from '../../types';
 import './style.scss';
+import './style_redesign.scss';
 
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
+	displayChatWithSupportLabel?: boolean;
+	isNextMessageFromSameSender: boolean;
 };
 
 export type MessageIndicators = {
@@ -48,22 +50,28 @@ const MessageAvatarHeader = ( {
 	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>
-				<WapuuAvatar className={ wapuuAvatarClasses } />
+				<WapuuAvatar />
 				<strong className="message-header-name"></strong>
 
-				<div className="message-header-buttons">
-					{ message.content?.length > 600 && ! isMobile && (
-						<Button compact borderless onClick={ handleFullscreenToggle }>
-							<img
-								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-							/>
-						</Button>
-					) }
-				</div>
+				{ ! shouldUseHelpCenterExperience && (
+					<div className="message-header-buttons">
+						{ message.content?.length > 600 && ! isMobile && (
+							<Button compact borderless onClick={ handleFullscreenToggle }>
+								<img
+									src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+									alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+								/>
+							</Button>
+						) }
+					</div>
+				) }
 			</>
 		) : (
-			<>{ message.role === 'business' && <HumanAvatar /> }</>
+			<>
+				{ message.role === 'business' && (
+					<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
+				) }
+			</>
 		);
 	}
 
@@ -84,16 +92,18 @@ const MessageAvatarHeader = ( {
 				className={ wapuuAvatarClasses }
 			/>
 			<strong className="message-header-name">{ botName }</strong>
-			<div className="message-header-buttons">
-				{ message.content?.length > 600 && ! isMobile && (
-					<Button compact borderless onClick={ handleFullscreenToggle }>
-						<img
-							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-							alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-						/>
-					</Button>
-				) }
-			</div>
+			{ ! shouldUseHelpCenterExperience && (
+				<div className="message-header-buttons">
+					{ message.content?.length > 600 && ! isMobile && (
+						<Button compact borderless onClick={ handleFullscreenToggle }>
+							<img
+								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+							/>
+						</Button>
+					) }
+				</div>
+			) }
 		</>
 	);
 };
@@ -101,14 +111,13 @@ const MessageAvatarHeader = ( {
 const ChatMessage = ( {
 	message,
 	currentUser,
-	...messageIndicators
-}: ChatMessageProps & MessageIndicators ) => {
+	displayChatWithSupportLabel,
+	isNextMessageFromSameSender,
+}: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
-
-	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -143,15 +152,15 @@ const ChatMessage = ( {
 	);
 
 	const fullscreenContent = (
-		<div className="odie-fullscreen" onClick={ handleBackdropClick }>
-			<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
-				<MessageContent
-					message={ message }
-					messageHeader={ messageHeader }
-					ref={ fullscreenRef }
-					isDisliked={ isDisliked }
-					{ ...messageIndicators }
-				/>
+		<div className="help-center-experience-disabled">
+			<div className="odie-fullscreen" onClick={ handleBackdropClick }>
+				<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
+					<MessageContent
+						message={ message }
+						messageHeader={ messageHeader }
+						isDisliked={ isDisliked }
+					/>
+				</div>
 			</div>
 		</div>
 	);
@@ -161,9 +170,9 @@ const ChatMessage = ( {
 			<MessageContent
 				message={ message }
 				messageHeader={ messageHeader }
-				ref={ fullscreenRef }
 				isDisliked={ isDisliked }
-				{ ...messageIndicators }
+				displayChatWithSupportLabel={ displayChatWithSupportLabel }
+				isNextMessageFromSameSender={ isNextMessageFromSameSender }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>

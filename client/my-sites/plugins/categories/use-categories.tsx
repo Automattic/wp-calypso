@@ -74,6 +74,7 @@ export const ALLOWED_CATEGORIES = [
 	'javascript',
 	'community',
 	'captcha',
+	'wpbeginner',
 ];
 
 export const getCategories: () => Record< string, Category > = () => ( {
@@ -339,7 +340,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
-				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
+				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.gif',
 				short_description: __( 'Optimize your site for search engines' ),
 			},
 			{
@@ -369,7 +370,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'elementor',
 				name: __( 'Elementor' ),
-				icon: 'https://ps.w.org/elementor/assets/icon.svg',
+				icon: 'https://ps.w.org/elementor/assets/icon-256x256.gif?rev=3111597',
 				short_description: __( 'Drag and drop page builder' ),
 			},
 		],
@@ -384,12 +385,12 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
-				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
+				icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.gif',
 				short_description: __( 'Optimize your site for search engines' ),
 			},
 			{
 				slug: 'woocommerce-bookings',
-				name: __( 'WooCommerce Bookings ' ),
+				name: __( 'WooCommerce Bookings' ),
 				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-bookings.png',
 				short_description: __( 'Allow customers to book appointments' ),
 			},
@@ -750,6 +751,15 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		slug: 'captcha',
 		tags: [ 'captcha', 'invisible captcha', 'nocaptcha', 'CAPTCHA Code', 'anti-spam' ],
 		preview: [],
+	},
+	wpbeginner: {
+		menu: __( 'WPBeginner' ),
+		title: __( 'Must-have plugins from WPBeginner' ),
+		description: __( 'Add the best-loved plugins on WordPress.com' ),
+		slug: 'wpbeginner',
+		tags: [ 'wpbeginner', 'Awesome Motive' ],
+		preview: [],
+		showOnlyActive: true,
 	},
 } );
 

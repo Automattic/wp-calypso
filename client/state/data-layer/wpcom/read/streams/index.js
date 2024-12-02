@@ -8,7 +8,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
+import {
+	READER_STREAMS_PAGE_REQUEST,
+	READER_STREAMS_PAGINATED_REQUEST,
+} from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
@@ -191,6 +194,20 @@ const streamApis = {
 		path: () => '/read/following',
 		dateProperty: 'date',
 	},
+	recent: {
+		path: () => '/read/streams/following',
+		dateProperty: 'date',
+		apiNamespace: 'wpcom/v2',
+		query: ( extras, { streamKey } ) => {
+			const feedId = streamKeySuffix( streamKey );
+			const queryParams = { ...extras };
+			if ( feedId !== 'recent' ) {
+				// 'recent' without a suffix means don't filter by feedId
+				queryParams.feed_id = feedId;
+			}
+			return getQueryString( queryParams );
+		},
+	},
 	search: {
 		path: () => '/read/search',
 		dateProperty: 'date',
@@ -335,7 +352,7 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug },
+		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
 	const api = streamApis[ streamType ];
 
@@ -357,7 +374,12 @@ export function requestPage( action ) {
 
 	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
 	// eslint-disable-next-line no-extra-boolean-cast
-	const number = !! gap ? PER_GAP : fetchCount;
+	let number;
+	if ( page ) {
+		number = perPage;
+	} else {
+		number = gap ? PER_GAP : fetchCount;
+	}
 
 	// Set lang to the localeSlug if it is provided, otherwise use the default locale
 	// There is a race condition in switchLocale when retrieving the language file
@@ -371,7 +393,7 @@ export function requestPage( action ) {
 		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
-			: query( { ...pageHandle, ...algorithm, number, lang }, action.payload ),
+			: query( { ...pageHandle, ...algorithm, number, lang, page }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -452,6 +474,10 @@ export function handlePage( action, data ) {
 			);
 		}
 
+		const totalItems = data.total_cards || data.found || streamItems.length;
+		const totalPages =
+			data.total_pages || Math.ceil( totalItems / ( action.payload.perPage || PER_FETCH ) );
+
 		// The first request when going to wordpress.com/discover does not include tags in the streamKey
 		// because it is still waiting for the user's interests to be fetched.
 		// Given that the user interests will be retrieved in the response from /read/streams/discover we
@@ -461,7 +487,17 @@ export function handlePage( action, data ) {
 		if ( streamKey === 'discover:recommended' && data.user_interests ) {
 			newStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
 		}
-		actions.push( receivePage( { streamKey: newStreamKey, query, streamItems, pageHandle, gap } ) );
+		actions.push(
+			receivePage( {
+				streamKey: newStreamKey,
+				query,
+				streamItems,
+				pageHandle,
+				gap,
+				totalItems,
+				totalPages,
+			} )
+		);
 	}
 
 	return actions;
@@ -469,6 +505,13 @@ export function handlePage( action, data ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/streams/index.js', {
 	[ READER_STREAMS_PAGE_REQUEST ]: [
+		dispatchRequest( {
+			fetch: requestPage,
+			onSuccess: handlePage,
+			onError: noop,
+		} ),
+	],
+	[ READER_STREAMS_PAGINATED_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestPage,
 			onSuccess: handlePage,

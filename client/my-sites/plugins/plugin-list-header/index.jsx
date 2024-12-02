@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -108,7 +108,6 @@ export class PluginsListHeader extends PureComponent {
 		const {
 			hasManagePluginsFeature,
 			isWpComAtomic,
-			translate,
 			siteId,
 			isJetpackCloud,
 			isBulkManagementActive,
@@ -280,7 +279,7 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionDropdown() {
-		const { translate, selected, isBulkManagementActive } = this.props;
+		const { selected, isBulkManagementActive } = this.props;
 		if ( ! isBulkManagementActive ) {
 			return null;
 		}
@@ -350,7 +349,7 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	render() {
-		const { label, selected, plugins, isBulkManagementActive, translate } = this.props;
+		const { label, selected, plugins, isBulkManagementActive } = this.props;
 		const sectionClasses = clsx( 'plugin-list-header plugin-list-header-new', {
 			'is-bulk-editing': isBulkManagementActive,
 			'is-action-bar-visible': this.state.actionBarVisible,

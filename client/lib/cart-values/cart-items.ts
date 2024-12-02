@@ -317,10 +317,12 @@ export function domainRegistration( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct & { is_domain_registration: boolean } {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		is_domain_registration: true,
+		...( properties.volume ? { volume: properties.volume } : {} ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
 	};
 }

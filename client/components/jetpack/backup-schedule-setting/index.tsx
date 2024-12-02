@@ -7,6 +7,7 @@ import useScheduledTimeMutation from 'calypso/data/jetpack-backup/use-scheduled-
 import useScheduledTimeQuery from 'calypso/data/jetpack-backup/use-scheduled-time-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -53,12 +54,20 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	const { isFetching: isScheduledTimeQueryFetching, data } = useScheduledTimeQuery( siteId );
 	const { isPending: isScheduledTimeMutationLoading, mutate: scheduledTimeMutate } =
 		useScheduledTimeMutation( {
-			onSuccess: () => {
+			onSuccess: ( data, variables ) => {
+				const { scheduledHour } = variables;
+
 				queryClient.invalidateQueries( { queryKey: [ 'jetpack-backup-scheduled-time', siteId ] } );
 				dispatch(
 					successNotice( translate( 'Daily backup time successfully changed.' ), {
 						duration: 5000,
 						isPersistent: true,
+					} )
+				);
+
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_schedule_update', {
+						scheduled_hour: scheduledHour,
 					} )
 				);
 			},
@@ -82,12 +91,21 @@ const BackupScheduleSetting: FunctionComponent = () => {
 		const hour = data?.scheduledHour || 0;
 		const range = convertHourToRange( moment, hour, true );
 
-		if ( ! data || ! data.scheduledBy ) {
-			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
-		}
-		return `${ translate( 'Time set by %(scheduledBy)s', {
-			args: { scheduledBy: data.scheduledBy },
-		} ) }. UTC: ${ range }`;
+		const scheduledBy =
+			! data || ! data.scheduledBy
+				? translate( 'Currently using default time.' )
+				: translate( 'Time set by %(scheduledBy)s.', {
+						args: { scheduledBy: data.scheduledBy },
+				  } );
+
+		const utcInfo = translate( 'UTC (%(timeRange)s) is used as the base timezone.', {
+			args: {
+				timeRange: range,
+			},
+			comment: '%(timeRange)s is a time range, such as 10:00-10:59.',
+		} );
+
+		return `${ scheduledBy } ${ utcInfo }`;
 	};
 
 	return (

@@ -60,7 +60,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  */
 export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 	keyPath: PropertyPath,
-	reducer: SerializableReducer< TState, KeyedReducerAction< TAction > >
+	reducer: SerializableReducer< TState, Action >
 ): SerializableReducer< Record< string | number, TState >, TAction > => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {

@@ -33,6 +33,10 @@
 				border-color: var(--studio-gray-20);
 				border-right: unset;
 			}
+
+			&.is-selected + .segmented-control__item .segmented-control__link {
+				border-left-color: var(--studio-gray-20);
+			}
 		}
 	}
 }

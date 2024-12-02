@@ -205,11 +205,11 @@
 			background: none;
 			border-bottom: 1px solid var(--studio-gray-5);
 			border-top: 1px solid #fff;
-			padding: 16px 20px;
 			margin-bottom: 0;
+			padding: 16px 0;
 
-			@include break-mobile {
-				padding: 16px 5px;
+			@include break-small {
+				padding: 16px 20px;
 			}
 
 			&:hover {
@@ -448,133 +448,50 @@
 	margin-top: -60px;
 }
 
+// Hundred year plan flow
+.hundred-year-plan.domains,
 .hundred-year-domain.domains {
 	.step-container {
 		margin: 0;
 	}
 
 	.step-container__header {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: rem(32px);
-				@include break-small {
-					font-size: rem(44px);
-				}
-			}
-			@include break-small {
-				margin-top: 60px;
-				margin-bottom: 0;
-			}
-			margin: 32px 0 16px;
-		}
-
-		margin-bottom: 32px;
-
 		@include break-small {
 			margin-bottom: 40px;
 		}
-	}
 
-	.domains__content {
-		width: 100%;
-		@include break-small {
-			max-width: 960px;
-		}
-
-		.domains__step-content {
-			padding: 0 16px;
-			@include break-small {
-				padding: 0 48px 0 32px;
-			}
-		}
-		// Change button styles
-		.button.is-primary {
-			@include primary-button-black-theme;
-		}
-
-		.domain-suggestion__content {
-			align-items: start;
-			gap: 0;
-
-			@include break-small {
-				align-items: center;
-				gap: 16px;
-			}
-
-			.domain-product-price {
-				margin-top: 0;
-				margin-bottom: 16px;
-
-				@include break-small {
-					align-items: flex-end;
-					align-self: center;
-					margin-bottom: 0;
-				}
-			}
-		}
-
-		.domain-suggestion.card.featured-domain-suggestion {
-			padding: 16px 0;
-
-			@include break-mobile {
-				padding: 16px 20px;
-			}
-
-			.domain-suggestion__content {
-				@include break-small {
-					flex-direction: row;
-				}
-			}
-
-			.domain-registration-suggestion__title-info {
-				width: auto;
-				margin-bottom: 4px;
-
-				@include break-small {
-					max-width: 55%;
-					margin-bottom: auto;
-				}
-			}
-		}
-
-		.domain-suggestion:not(.featured-domain-suggestion) {
-			padding: 16px 0;
-
-			@include break-small {
-				padding: 16px 20px;
-			}
-		}
-	}
-}
-
-// Hundred year plan flow
-.hundred-year-plan.domains {
-	.step-container {
-		margin: 0;
-	}
-
-	.step-container__header {
 		.formatted-header {
-			.formatted-header__title {
-				font-size: rem(32px);
-				@include break-small {
-					font-size: rem(44px);
-				}
-			}
-			@include break-small {
-				margin-top: 60px;
-				margin-bottom: 0;
-			}
 			margin: 32px 16px;
-		}
 
-		@include break-small {
-			margin-bottom: 40px;
+			@include break-small {
+				margin-top: 60px;
+				margin-bottom: 0;
+			}
+			
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			
+			.formatted-header__subtitle {
+				margin-top: 0;
+			}
 		}
+	}
+
+	.search-component {
+		overflow: hidden;
+	}
+
+	.token-field__suggestion.is-selected {
+		background: var(--studio-gray-100);
 	}
 
 	.domains__content {
 		width: 100%;
+
 		@include break-small {
 			max-width: 780px;
 		}
@@ -585,6 +502,7 @@
 				padding: 0 48px 0 32px;
 			}
 		}
+
 		// Hide domain prices
 		.domain-product-price {
 			display: none;
@@ -598,6 +516,10 @@
 			@include primary-button-black-theme;
 		}
 
+		.domain-search-results__domain-suggestions {
+			margin: 0;
+		}
+
 		// Reset styles for the featured domain suggestion
 		.domain-suggestion.card.featured-domain-suggestion {
 			box-shadow: none;
@@ -605,18 +527,18 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			border-radius: 0;
 			margin-bottom: 0;
-			padding: 16px 20px;
+			padding: 16px 0;
+			background: transparent;
+			border-left: 0 !important;
+			border-right: 0 !important;
+
 			@include break-mobile {
-				padding: 16px 5px;
+				padding: 16px 20px;
 			}
 
 			&:hover {
 				border-bottom: 1px solid var(--studio-gray-50);
 				border-top: 1px solid var(--studio-gray-50);
-			}
-
-			.domain-suggestion__content {
-				min-height: 54px;
 			}
 
 			.domain-registration-suggestion__title-wrapper {
@@ -639,9 +561,72 @@
 			}
 		}
 
+		.featured-domain-suggestion--is-placeholder {
+			background: transparent !important;
+			margin-bottom: 0 !important;
+			box-shadow: none;
+			min-height: unset;
+			border-bottom: 1px solid var(--studio-gray-5) !important;
+			border-radius: 0 !important;
+			padding: 20px !important;
+			align-items: unset !important;
+
+			.domain-suggestion__content {
+				display: none;
+			}
+
+			.domain-suggestion__action-container {
+				margin-bottom: 0;
+			}
+		}
+
+		.domain-registration-suggestion__title-info {
+			width: auto;
+			display: flex;
+			align-items: center;
+		}
+
+		.domain-suggestion__content {
+			min-height: unset;
+			gap: 0;
+		}
+
+		.domain-suggestion__action-container {
+			margin-top: 16px;
+
+			@include break-small {
+				margin-top: 0;
+			}
+		}
+
+		.domain-search-results__domain-available-notice {
+			background: transparent;
+
+			/* hide transfer link */
+			a {
+				display: none;
+			}
+		}
+
 		// Hide the domain explanation image
-		.register-domain-step__domain-side-content-container-domain-explanation-image {
+		.register-domain-step__domain-side-content-container-domain-explanation-image,
+		.domains__domain-side-content-container {
 			display: none;
 		}
+	}
+}
+
+.hundred-year-domain.domains {
+	.domains__content {
+		.domain-product-price {
+			display: block;
+			margin-top: 0;
+			
+			@include break-small {
+				align-items: flex-end;
+				align-self: center;
+				margin-right: 16px;
+			}
+		}		
 	}
 }

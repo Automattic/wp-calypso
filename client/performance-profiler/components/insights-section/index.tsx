@@ -1,7 +1,4 @@
 import { SelectDropdown } from '@automattic/components';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import styled from '@emotion/styled';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import {
@@ -10,7 +7,12 @@ import {
 } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import {
+	filterRecommendations,
+	metricsNames,
+	highImpactAudits,
+} from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 
@@ -24,47 +26,18 @@ type InsightsSectionProps = {
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
-const AIBadge = styled.span`
-	padding: 0 8px;
-	margin-left: 8px;
-	width: fit-content;
-	border-radius: 4px;
-	float: right;
-	font-size: 12px;
-	line-height: 20px;
-	color: var( --studio-gray-100 );
-	background: linear-gradient(
-			0deg,
-			rgba( 255, 255, 255, 0.95 ) 0%,
-			rgba( 255, 255, 255, 0.95 ) 100%
-		),
-		linear-gradient( 90deg, #4458e4 0%, #069e08 100% );
-
-	&.is-mobile {
-		float: none;
-		display: block;
-		margin-left: 0;
-		margin-top: 8px;
-	}
-`;
-
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const isMobile = ! useDesktopBreakpoint();
 		const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
 			props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
-		const sumMetricSavings = ( key: string ) =>
-			Object.values( audits[ key ].metricSavings ?? {} ).reduce( ( acc, val ) => acc + val, 0 );
-
-		const sortInsightKeys = ( a: string, b: string ) =>
-			sumMetricSavings( b ) - sumMetricSavings( a );
-
+		const sortHighImpactAudits = ( a: string, b: string ) =>
+			highImpactAudits.indexOf( b ) - highImpactAudits.indexOf( a );
 		const filteredAudits = Object.keys( audits )
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
-			.sort( sortInsightKeys );
+			.sort( sortHighImpactAudits );
 		const onFilter = useCallback(
 			( option: { label: string; value: string } ) => {
 				recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
@@ -90,12 +63,7 @@ export const InsightsSection = forwardRef(
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<div className="header">
 					<div>
-						<h2 className="title">
-							{ translate( 'Personalized Recommendations' ) }
-							<AIBadge className={ clsx( { 'is-mobile': isMobile } ) }>
-								{ translate( 'Generated with AI' ) }
-							</AIBadge>
-						</h2>
+						<h2 className="title">{ translate( 'Personalized Recommendations' ) }</h2>
 						<p className="subtitle">
 							{ getSubtitleText( selectedFilter, filteredAudits.length, translate ) }
 						</p>
@@ -139,6 +107,7 @@ export const InsightsSection = forwardRef(
 							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
 								url: props.url,
 								key,
+								version: profilerVersion(),
 							} )
 						}
 					/>

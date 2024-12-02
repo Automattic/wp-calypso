@@ -13,19 +13,16 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import Main from 'calypso/components/main';
 import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { Panel } from 'calypso/components/panel';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
-import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
-import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
-import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card';
-import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
+import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/card';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -33,6 +30,9 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
+import CacheCard from 'calypso/sites/settings/caching/form';
+import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
+import WebServerSettingsCard from 'calypso/sites/settings/web-server/server-configuration-form';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -285,16 +285,18 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	};
 
 	/* We want to show the upsell banner for the following cases:
-	 *  1. The site does not have the Atomic feature.
-	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * 1. The site is on an eCommerce trial.
+	 * 2. The site does not have the Atomic feature.
+	 * 3. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
 	const shouldShowUpgradeBanner =
-		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+		( ! isLoadingSftpData || isECommerceTrial ) &&
+		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main wideLayout className="page-server-settings">
+		<Panel wide className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -340,7 +342,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				/>
 			) }
 			<QueryReaderTeams />
-		</Main>
+		</Panel>
 	);
 };
 

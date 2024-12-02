@@ -8,7 +8,17 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	margin: 16px 0;
+	margin-top: 32px;
+	padding: 0;
+
+	.stats-content & {
+		margin: 16px 0;
+	}
+
+	.is-sticky & {
+		margin-top: 0;
+		padding: 0 32px;
+	}
 
 	.period {
 		font-family: $brand-serif;
@@ -16,6 +26,29 @@
 
 	.stats-period-navigation {
 		@include section-header-with-siblings;
+
+	 // this new selector removes padding only for the date filtering design
+		&.stats-period-navigation__is-with-new-date-filtering {
+			padding: 0;
+			align-items: center;
+
+			@media (max-width: $break-large) {
+				margin: 0;
+			}
+
+			@media (max-width: $break-medium) {
+				padding: 0;
+				justify-content: flex-end;
+			}
+
+			@media (max-width: 660px) {
+				margin-bottom: 24px;
+			}
+
+			@media (max-width: $break-mobile) {
+				margin: 24px 0;
+			}
+		}
 	}
 
 	@include navigation-segment-control-buttons;

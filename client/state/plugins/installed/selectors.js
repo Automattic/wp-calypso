@@ -6,8 +6,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-
 import 'calypso/state/plugins/init';
+import { PLUGINS_STATUS } from './status/constants';
 
 // TODO: Much of the functionality in this file is duplicated with selectors.js
 // which needs to be removed when this file is complete.
@@ -37,6 +37,20 @@ const _filters = {
 		return (
 			some( plugin.sites, function ( site ) {
 				return site.update && ! site.update.recentlyUpdated;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
+	autoupdates: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.autoupdate;
+			} ) || plugin.statusRecentlyChanged
+		);
+	},
+	autoupdates_disabled: function ( plugin ) {
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.autoupdate;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
@@ -110,14 +124,60 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 
 export const getPlugins = createSelector(
 	getPluginsSelector,
-	( state, siteIds ) => [
-		state.plugins.installed.plugins,
-		isRequestingForAllSites( state ),
-		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
-	],
+	( state ) => state.plugins.installed.plugins,
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
+);
+
+export const getPluginsWithUpdateStatuses = createSelector(
+	( state, allPlugins ) => {
+		const active = filter( allPlugins, _filters.active );
+		const inactive = filter( allPlugins, _filters.inactive );
+		const withUpdate = filter( allPlugins, _filters.updates );
+		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
+		const withAutoUpdateDisabled = filter( allPlugins, _filters.autoupdates_disabled );
+
+		return allPlugins.reduce( ( memo, plugin ) => {
+			const status = [];
+			plugin.allStatuses = [];
+
+			Object.entries( state.plugins.installed.status ).map( ( [ siteId, siteStatuses ] ) => {
+				Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+					if ( plugin.id === pluginId ) {
+						plugin.allStatuses.push( {
+							...pluginStatus,
+							siteId,
+							pluginId,
+						} );
+					}
+				} );
+			} );
+
+			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.UPDATE );
+			}
+
+			if ( find( inactive, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.INACTIVE );
+			}
+
+			if ( find( active, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.ACTIVE );
+			}
+
+			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
+			}
+
+			if ( find( withAutoUpdateDisabled, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
+			}
+
+			return [ ...memo, { ...plugin, status } ];
+		}, [] );
+	},
+	( plugins, pluginsUpdate ) => [ plugins, pluginsUpdate ]
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {
@@ -128,17 +188,17 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state, plugins ) {
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
+	getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) )
+);
+
+export const getPluginsOnSites = createSelector( ( state, plugins ) => {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
 		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
 		return acc;
 	}, {} );
-}
-
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );

@@ -1,11 +1,11 @@
 import {
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	ECOMMERCE_FLOW,
 	WOOEXPRESS_FLOW,
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
+	isHundredYearPlanFlow,
 	isHundredYearDomainFlow,
 } from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -45,7 +45,6 @@ interface DomainSuggestionsVendorOptions {
 	isPremium?: boolean;
 	flowName?:
 		| typeof NEWSLETTER_FLOW
-		| typeof LINK_IN_BIO_FLOW
 		| typeof LINK_IN_BIO_TLD_FLOW
 		| typeof ECOMMERCE_FLOW
 		| typeof WOOEXPRESS_FLOW
@@ -68,11 +67,8 @@ export function getDomainSuggestionsVendor(
 	if ( isDomainForGravatarFlow( options.flowName ) ) {
 		return 'gravatar';
 	}
-	if ( isHundredYearDomainFlow( options.flowName ) ) {
+	if ( isHundredYearPlanFlow( options.flowName ) || isHundredYearDomainFlow( options.flowName ) ) {
 		return '100-year-domains';
-	}
-	if ( options.flowName === LINK_IN_BIO_FLOW ) {
-		return 'link-in-bio';
 	}
 	if ( options.flowName === LINK_IN_BIO_TLD_FLOW ) {
 		return 'link-in-bio-tld';

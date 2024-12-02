@@ -1,0 +1,10 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-features__content-spinner {
+	margin-top: 16px;
+	& + h1 {
+		margin-top: 0;
+	}
+}

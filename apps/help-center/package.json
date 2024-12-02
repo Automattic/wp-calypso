@@ -41,6 +41,7 @@
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/plugins": "^7.8.0",
 		"@wordpress/private-apis": "^1.8.0",
+		"@wordpress/router": "^1.8.0",
 		"postcss-prefix-selector": "^1.16.1"
 	},
 	"devDependencies": {
@@ -48,11 +49,11 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "5.9.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "3.0.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "6.11.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "3.11.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"typescript": "^5.3.3",
-		"webpack": "^5.94.0"
+		"webpack": "^5.95.0"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
@@ -61,7 +62,7 @@
 		"postcss": "*",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"private": true
 }

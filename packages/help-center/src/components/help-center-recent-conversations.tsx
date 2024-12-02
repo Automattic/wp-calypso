@@ -1,11 +1,16 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useSmooch } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import {
+	calculateUnread,
+	getConversationsFromSupportInteractions,
+	getZendeskConversations,
+} from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
@@ -19,44 +24,47 @@ const GetSectionName = ( unreadCount: number ) => {
 	return __( 'Recent Conversation', __i18n_text_domain__ );
 };
 
-const calculateUnread = ( conversations: ZendeskConversation[] ) => {
-	let unreadConversations = 0;
-	let unreadMessages = 0;
-
-	conversations.forEach( ( conversation ) => {
-		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
-
-		if ( unreadCount > 0 ) {
-			unreadConversations++;
-			unreadMessages += unreadCount;
-		}
-	} );
-
-	return { unreadConversations, unreadMessages };
-};
-
 const HelpCenterRecentConversations: React.FC = () => {
 	const { __ } = useI18n();
-	const { getConversations } = useSmooch();
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
+	const { data: supportInteractionsResolved } = useGetSupportInteractions(
+		'zendesk',
+		100,
+		'resolved'
+	);
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 100, 'open' );
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 	const sectionName = GetSectionName( unreadConversationsCount );
+	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		if ( isChatLoaded && getConversations ) {
-			const conversations = getConversations() as ZendeskConversation[];
+		if (
+			isChatLoaded &&
+			getZendeskConversations &&
+			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
+				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
+		) {
+			const allConversations = getZendeskConversations();
+			const supportInteractions = [
+				...( supportInteractionsResolved || [] ),
+				...( supportInteractionsOpen || [] ),
+			];
+			const conversations = getConversationsFromSupportInteractions(
+				allConversations,
+				supportInteractions
+			);
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
-
 			setUnreadConversationsCount( unreadConversations );
 			setUnreadMessagesCount( unreadMessages );
 			setConversations( conversations );
+			setUnreadCount( unreadConversations );
 		}
-	}, [ isChatLoaded, getConversations ] );
+	}, [ isChatLoaded, setUnreadCount, supportInteractionsResolved, supportInteractionsOpen ] );
 
 	if ( ! conversations.length ) {
 		return null;
@@ -67,6 +75,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 	);
 	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
+	const navigateTo = unreadConversationsCount === 1 ? '/odie' : '/chat-history';
 
 	const chatMessage = {
 		...lastMessage,
@@ -90,12 +99,13 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
+					sectionName="recent_conversations"
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
-					avatarSize={ 38 }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
-					navigateTo="/chat-history"
+					navigateTo={ navigateTo }
+					supportInteractionId={ lastConversation.metadata?.supportInteractionId }
 				/>
 			) : null }
 		</div>

@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AppPromo from 'calypso/blocks/app-promo';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -46,6 +47,7 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	getRedirectToSanitized,
+	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
 import {
 	infoNotice,
@@ -65,10 +67,10 @@ import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginEmailForm from './request-login-email-form';
-
 import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
@@ -105,6 +107,7 @@ class MagicLogin extends Component {
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
+		isWooPasswordlessJPC: PropTypes.bool,
 	};
 
 	state = {
@@ -1211,13 +1214,11 @@ class MagicLogin extends Component {
 			query,
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
+			isWooPasswordlessJPC,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
 
-		if (
-			query?.from === 'woocommerce-core-profiler' &&
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-		) {
+		if ( isWooPasswordlessJPC ) {
 			return (
 				<Main className="magic-login magic-login__request-link is-white-login">
 					{ this.renderLocaleSuggestions() }
@@ -1292,8 +1293,13 @@ class MagicLogin extends Component {
 
 		return (
 			<Main className="magic-login magic-login__request-link is-white-login">
-				{ this.props.isJetpackLogin && <JetpackHeader /> }
+				{ this.props.isJetpackLogin && ! this.props.isFromAutomatticForAgenciesPlugin && (
+					<JetpackHeader />
+				) }
 				{ this.renderGutenboardingLogo() }
+				{ this.props.isFromAutomatticForAgenciesPlugin && (
+					<A4ALogo fullA4A size={ 58 } className="magic-login__a4a-logo" />
+				) }
 
 				{ this.renderLocaleSuggestions() }
 
@@ -1327,6 +1333,10 @@ const mapState = ( state ) => ( {
 	twoFactorEnabled: isTwoFactorEnabled( state ),
 	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	redirectToSanitized: getRedirectToSanitized( state ),
+	isFromAutomatticForAgenciesPlugin:
+		'automattic-for-agencies-client' ===
+		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+	isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 } );
 
 const mapDispatch = {

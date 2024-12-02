@@ -5,8 +5,8 @@ import {
 	A4A_OVERVIEW_LINK,
 	A4A_TEAM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StepSection from 'calypso/a8c-for-agencies/sections/referrals/common/step-section';
-import StepSectionItem from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item';
+import StepSection from 'calypso/a8c-for-agencies/components/step-section';
+import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import { useDispatch } from 'calypso/state';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

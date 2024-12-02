@@ -1,4 +1,4 @@
-import { AnyAction, Reducer } from 'redux';
+import { AnyAction, Reducer, UnknownAction } from 'redux';
 import { maskField } from 'calypso/lib/checkout';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -22,45 +22,58 @@ type FieldsAction =
 	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
 	| { type: 'TOUCH_ALL_FIELDS' };
 
+function isFieldValueSetAction(
+	action: FieldsAction | UnknownAction
+): action is Extract< FieldsAction, { type: 'FIELD_VALUE_SET' } > {
+	return action.type === 'FIELD_VALUE_SET';
+}
+
+function isFieldErrorSetAction(
+	action: FieldsAction | UnknownAction
+): action is Extract< FieldsAction, { type: 'FIELD_ERROR_SET' } > {
+	return action.type === 'FIELD_ERROR_SET';
+}
+
 export function fields(
 	state: FieldsState = initialState.fields,
-	action: FieldsAction
+	action: FieldsAction | UnknownAction
 ): FieldsState {
-	switch ( action?.type ) {
-		case 'FIELD_VALUE_SET':
-			return {
-				...state,
-				[ action.payload.key ]: {
-					value: maskField(
-						action.payload.key,
-						state[ action.payload.key ]?.value ?? '',
-						action.payload.value
-					),
-					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
-					errors: [],
-				},
-			};
-		case 'FIELD_ERROR_SET': {
-			return {
-				...state,
-				[ action.payload.key ]: {
-					...( state[ action.payload.key ] ?? { value: '', isTouched: true } ),
-					errors: [ action.payload.message ],
-				},
-			};
-		}
-		case 'TOUCH_ALL_FIELDS': {
-			return Object.entries( state ).reduce( ( obj: FieldsState, [ key, value ] ) => {
-				obj[ key ] = {
-					...( value ?? { value: '', errors: [] } ),
-					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
-				};
-				return obj;
-			}, {} );
-		}
-		default:
-			return state;
+	if ( isFieldValueSetAction( action ) ) {
+		return {
+			...state,
+			[ action.payload.key ]: {
+				value: maskField(
+					action.payload.key,
+					state[ action.payload.key ]?.value ?? '',
+					action.payload.value
+				),
+				isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
+				errors: [],
+			},
+		};
 	}
+
+	if ( isFieldErrorSetAction( action ) ) {
+		return {
+			...state,
+			[ action.payload.key ]: {
+				...( state[ action.payload.key ] ?? { value: '', isTouched: true } ),
+				errors: [ action.payload.message ],
+			},
+		};
+	}
+
+	if ( action.type === 'TOUCH_ALL_FIELDS' ) {
+		return Object.entries( state ).reduce( ( obj: FieldsState, [ key, value ] ) => {
+			obj[ key ] = {
+				...( value ?? { value: '', errors: [] } ),
+				isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
+			};
+			return obj;
+		}, {} );
+	}
+
+	return state;
 }
 
 export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > = (

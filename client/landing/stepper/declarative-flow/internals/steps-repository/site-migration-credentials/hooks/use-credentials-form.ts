@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { isEnabled } from '@automattic/calypso-config';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import { CredentialsFormData } from '../types';
+import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
@@ -28,7 +29,10 @@ const isWPCOM = ( siteInfo?: UrlData ) => {
 	return !! siteInfo?.platform_data?.is_wpcom;
 };
 
-export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) => {
+export const useCredentialsForm = (
+	onSubmit: ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => void
+) => {
+	const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 	const siteSlug = useSiteSlugParam();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
@@ -75,22 +79,47 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 	const canBypassVerification = isLoginFailed || isWPCOM( siteInfo ) || isNotWordPress( siteInfo );
 	const shouldAnalyzeUrl = ! isLoginFailed && accessMethod === 'credentials';
 
+	const requestAutomatedMigrationAndSubmit = useCallback(
+		async ( data: CredentialsFormData, siteInfoResult?: UrlData ) => {
+			try {
+				const payload = {
+					...data,
+					bypassVerification: canBypassVerification,
+				};
+				await requestAutomatedMigration( payload );
+				recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+				onSubmit( siteInfoResult );
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+			}
+		},
+		[ canBypassVerification, onSubmit, requestAutomatedMigration ]
+	);
+
+	const submitWithApplicationPassword = useCallback(
+		( siteInfoResult: UrlData ) => {
+			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
+				onSubmit( siteInfoResult );
+			} else {
+				const applicationPasswordsInfo = {
+					isAvailable: true,
+				};
+				onSubmit( siteInfoResult, applicationPasswordsInfo );
+			}
+		},
+		[ onSubmit ]
+	);
+
 	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {
 		clearErrors();
 
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
 
-		try {
-			const payload = {
-				...data,
-				bypassVerification: canBypassVerification,
-			};
-			await requestAutomatedMigration( payload );
-			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
-			onSubmit( siteInfoResult );
-		} catch ( error ) {
-			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' && siteInfoResult ) {
+			await submitWithApplicationPassword( siteInfoResult );
+		} else {
+			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );
 		}
 	} );
 

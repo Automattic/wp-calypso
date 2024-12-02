@@ -22,7 +22,8 @@ export class InstagramBlockFlow implements BlockFlow {
 
 	blockSidebarName = 'Instagram Embed';
 	blockTestFallBackName = 'Instagram';
-	blockEditorSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
+	blockEditorSelector =
+		'[aria-label="Block: Embed"]:has-text("Instagram Embed URL"), [aria-label="Block: Embed"]:has-text("Instagram URL")';
 	noSearch = false;
 
 	/**

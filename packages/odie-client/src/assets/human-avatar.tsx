@@ -1,4 +1,4 @@
-export const HumanAvatar = () => (
+export const HumanAvatar = ( { title }: { title: string } ) => (
 	<svg
 		width="38"
 		height="38"
@@ -7,6 +7,7 @@ export const HumanAvatar = () => (
 		xmlns="http://www.w3.org/2000/svg"
 		xmlnsXlink="http://www.w3.org/1999/xlink"
 	>
+		<title id="svgTitle">{ title }</title>
 		<g clipPath="url(#clip0_351_8437)">
 			<rect width="38" height="38" rx="8" fill="url(#pattern0_351_8437)" />
 		</g>

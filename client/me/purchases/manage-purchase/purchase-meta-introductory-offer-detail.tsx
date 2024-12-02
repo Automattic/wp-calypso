@@ -127,7 +127,7 @@ function PurchaseMetaIntroductoryOfferDetail( {
 function RenewalSubtext( { text }: { text: ReactNode } ): JSX.Element {
 	return (
 		<>
-			<br /> <br /> <small> { text } </small>{ ' ' }
+			<br /> <br /> <small className="manage-purchase__renewal-text"> { text } </small>{ ' ' }
 		</>
 	);
 }

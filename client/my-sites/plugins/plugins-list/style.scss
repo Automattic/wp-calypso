@@ -1,56 +1,117 @@
-.plugins-list {
-	margin-bottom: 16px;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+	.navigation-header {
+		border-block-end: 1px solid var(--color-border-secondary);
+		padding-inline: 48px;
+    
+        @media (max-width: 430px) {
+            padding-inline: 24px;
+        }
+
+        .navigation-header__main {
+            margin: auto;
+        }
+	}
 }
 
-.plugins-list .plugin-item {
-	@include breakpoint-deprecated( "<1040px" ) {
-		width: 100%;
+body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
+.is-section-jetpack-cloud-plugin-management .plugin-management-wrapper.is-bulk-plugin-management {
+    .dataviews-wrapper {
+        margin: auto;
 
-		&:nth-last-child(n + 2) {
-			border-bottom-width: 1px;
-		}
-	}
+        .dataviews-view-table {
+            .dataviews-view-table__row {
+                .plugin-icon {
+                    max-width: 35px;
+                    max-height: 35px;
+                }
 
-	@include breakpoint-deprecated( ">1040px" ) {
+                td:nth-child(2) {
+                    white-space: break-spaces;
+                }
+            }
+        }
+    }
+
+    .dataviews-pagination {
+        padding: 12px 16px 12px 16px;
+    }
+
+    .plugin-name-button {
+        padding: 0;
+		text-align: start;
+		height: auto;
+    }
+}
+
+.is-section-jetpack-cloud-plugin-management {
+    --wp-admin-theme-color: var(--studio-jetpack-green-50);
+    height: 100%;
+    overflow: hidden;
+
+    .plugin-management-wrapper {
+        height: calc(100vh - 50px);
+		display: flex;
 		flex-direction: column;
-		width: 33.33%;
-		border-right-width: 1px;
+		min-height: calc(100vh - 64px);
+	}
 
-		&:nth-last-child(n + 4) {
-			border-bottom-width: 1px;
-		}
+    .select-partner-key {
+        padding: 0 40px;
+    }
 
-		// Provider proper bottom borders in the second-last row when the number
-		// of items is not multiple of 3.
-		&:nth-child(3n) {
-			border-right-width: 0;
-			&:nth-last-child(3),
-			&:nth-last-child(2) {
-				border-bottom-width: 1px;
-			}
-		}
+    .dataviews-wrapper {
+        button {
+            border: none;
+            background-color: transparent;
 
-		&:nth-child(3n - 1):nth-last-child(3) {
-			border-bottom-width: 1px;
-		}
+            &:hover {
+                background-color: var(--color-background-alt);
+            }
+        }
 
-		.plugin-item__count,
-		.plugin-item__actions {
-			align-self: flex-end;
-			flex-direction: column;
-			margin-top: -6px;
-			padding-top: 0;
-			text-align: right;
-		}
+        thead .dataviews-view-table__row button {
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
 
-		.plugin-item__count {
-			flex-direction: row;
+    .layout__primary,
+    .plugins-overview__container {
+        height: 100%;
+    }
+
+    .layout__content {
+        height: 100%;
+    }
+
+	.plugins__top-container-jc,
+	.plugins__main-content-jc {
+		margin-inline: -32px;
+	}
+
+	.plugin-management-wrapper.is-bulk-plugin-management {
+		.plugins__page-title-container {
+			padding-inline: 48px;
 		}
 	}
 }
 
-.plugins-list__elements {
-	display: flex;
-	flex-flow: row wrap;
-	padding: 0;
+.sites-manage-plugin-status-button {
+    padding: 0;
+    display: contents;
+}
+
+.sites-manage-plugin-button {
+    margin-left: -12px;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
 }

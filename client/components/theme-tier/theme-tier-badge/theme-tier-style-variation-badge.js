@@ -1,4 +1,5 @@
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -9,7 +10,10 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierStyleVariationBadge() {
 	const translate = useTranslate();
 
-	const premiumPlan = getPlan( PLAN_PREMIUM );
+	// @TODO Cleanup once the test phase is over.
+	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+		? getPlan( PLAN_PERSONAL )
+		: getPlan( PLAN_PREMIUM );
 
 	const tooltipContent = (
 		<>
@@ -17,12 +21,12 @@ export default function ThemeTierStyleVariationBadge() {
 			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header" />
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
-					// Translators: %(premiumPlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
+					// Translators: %(upgradePlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
 					translate(
-						'Unlock this style, and tons of other features, by upgrading to a <Link>%(premiumPlanName)s plan</Link>.',
-						{ args: { premiumPlanName: premiumPlan?.getTitle() } }
+						'Unlock this style, and tons of other features, by upgrading to a <Link>%(upgradePlanName)s plan</Link>.',
+						{ args: { upgradePlanName: upgradeToPlan?.getTitle() } }
 					),
-					{ Link: <ThemeTierBadgeCheckoutLink plan={ premiumPlan?.getPathSlug() } /> }
+					{ Link: <ThemeTierBadgeCheckoutLink plan={ upgradeToPlan?.getPathSlug() } /> }
 				) }
 			</div>
 		</>

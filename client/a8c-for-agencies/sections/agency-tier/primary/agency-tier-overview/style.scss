@@ -55,6 +55,8 @@ $light-green: #53dc81;
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 400px;
+		background-color: $color-pink;
+		min-height: 150px;
 
 		@include break-large {
 			max-width: unset;
@@ -68,7 +70,7 @@ $light-green: #53dc81;
 			content: "";
 			display: inline-block;
 			position: absolute;
-			right: -30%;
+			right: -25%;
 			top: 15px;
 			width: 100%;
 			height: 100%;
@@ -85,7 +87,7 @@ $light-green: #53dc81;
 			}
 
 			@include break-wide {
-				right: -20%;
+				right: -15%;
 			}
 
 			@include break-huge {
@@ -94,28 +96,22 @@ $light-green: #53dc81;
 		}
 
 		.agency-tier-overview__current-agency-tier {
-			width: 175px;
-
-			@include break-large {
-				width: 190px;
-			}
+			width: 65%;
 
 			@include break-xlarge {
-				width: 265px;
-			}
-
-			@include break-xlarge {
-				width: 200px;
+				width: 50%;
 			}
 
 			@include break-huge {
-				width: unset;
+				width: 55%;
 			}
 		}
 
 		.agency-tier-overview__current-agency-tier-label {
 			@include a4a-font-body-sm($font-weight: 600);
 			text-transform: uppercase;
+			opacity: 0.7;
+			text-wrap: balance;
 
 			@include break-xlarge {
 				@include a4a-font-heading-md($font-weight: 600);
@@ -130,9 +126,29 @@ $light-green: #53dc81;
 			}
 		}
 
-		&.emerging-partner {
-			background-color: $color-pink;
+		&.is-default {
+			.agency-tier-overview__current-agency-tier-title {
+				@include a4a-font-body-sm($font-weight: 800);
+				text-transform: uppercase;
 
+				@include break-xlarge {
+					@include a4a-font-heading-md($font-weight: 800);
+				}
+				opacity: 0.7;
+			}
+
+			&::before {
+				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/no-tier-logo.svg) no-repeat center/contain;
+				right: -20%;
+				top: 15px;
+
+				@include break-large {
+					top: 0;
+				}
+			}
+		}
+
+		&.emerging-partner {
 			&::before {
 				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo.svg) no-repeat center/contain;
 			}
@@ -143,8 +159,13 @@ $light-green: #53dc81;
 
 			&::before {
 				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo.svg) no-repeat center/contain;
-				right: -120px;
-				top: 3px;
+				right: -70px;
+				top: 15px;
+
+				@include break-large {
+					right: -95px;
+					top: 5px;
+				}
 			}
 		}
 

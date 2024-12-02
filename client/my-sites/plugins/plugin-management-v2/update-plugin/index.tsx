@@ -23,21 +23,13 @@ interface Props {
 	siteCount?: number;
 }
 
-export default function UpdatePlugin( {
-	plugin,
-	selectedSite,
-	className,
-	updatePlugin,
-	siteCount,
-}: Props ) {
+export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
 	const state = useSelector( ( state ) => state );
 	const [ displayConfirmModal, setDisplayConfirmModal ] = useState( false );
 
-	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
-		plugin,
-		selectedSite?.ID
-	);
+	const { currentVersionsRange, updatedVersions, hasUpdate, updateableSites } =
+		usePluginVersionInfo( plugin, selectedSite?.ID );
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
 
@@ -125,11 +117,11 @@ export default function UpdatePlugin( {
 						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d site. ',
 						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d sites. ',
 						{
-							count: siteCount ?? 1,
+							count: updateableSites ?? 1,
 							args: {
 								version: updatedVersions[ 0 ],
 								plugin: plugin.name ?? plugin.slug,
-								siteCount: String( siteCount ),
+								siteCount: String( updateableSites ),
 							},
 						}
 					) }

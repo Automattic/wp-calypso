@@ -104,6 +104,7 @@ export default function Content( {
 						target="_blank"
 						rel="noreferrer noopener"
 						icon={ external }
+						iconPosition="right"
 						variant="primary"
 					>
 						{ __( 'Open Substack settings' ) }

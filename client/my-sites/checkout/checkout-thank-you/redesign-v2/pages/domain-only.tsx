@@ -1,73 +1,28 @@
-import { Button, SelectControl } from '@wordpress/components';
+import { domainProductSlugs } from '@automattic/calypso-products';
+import { css, Global } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
-import { ThankYouUpsellProps } from 'calypso/components/thank-you-v2/upsell';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
+import HundredYearThankYou from 'calypso/my-sites/checkout/checkout-thank-you/hundred-year-thank-you';
+import { PlaceholderThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/pages/placeholder';
 import { useSelector } from 'calypso/state';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getDomainPurchaseTypeAndPredicate } from '../../utils';
 import ThankYouDomainProduct from '../products/domain-product';
 import getDomainFooterDetails from './content/get-domain-footer-details';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
-
-function UpsellActions( {
-	domainNames,
-	receiptId,
-	siteSlug,
-}: {
-	domainNames: string[];
-	receiptId: number;
-	siteSlug?: string;
-} ) {
-	const translate = useTranslate();
-	const [ selectedDomainName, setSelectedDomainName ] = useState( domainNames[ 0 ] );
-
-	const domainNameOptions = domainNames.map( ( domainName ) => ( {
-		label: domainName,
-		value: domainName,
-	} ) );
-
-	const addEmailButtonHref =
-		siteSlug && getProfessionalEmailCheckoutUpsellPath( siteSlug, selectedDomainName, receiptId );
-	const addEmailButtonProps = addEmailButtonHref
-		? { href: addEmailButtonHref }
-		: { disabled: true };
-
-	return (
-		<>
-			{ domainNames.length > 1 ? (
-				<SelectControl
-					value={ selectedDomainName }
-					options={ domainNameOptions }
-					onChange={ ( value ) => setSelectedDomainName( value ) }
-				/>
-			) : null }
-
-			<Button
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_only_thank_you_professional_email_click' )
-				}
-				{ ...addEmailButtonProps }
-			>
-				{ translate( 'Add email' ) }
-			</Button>
-		</>
-	);
-}
+import type { ReceiptData, ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
-	receiptId: number;
+	receipt: ReceiptData;
 	isGravatarDomain: boolean;
 }
 
 export default function DomainOnlyThankYou( {
 	purchases,
-	receiptId,
+	receipt,
 	isGravatarDomain,
 }: DomainOnlyThankYouProps ) {
 	const translate = useTranslate();
@@ -75,29 +30,59 @@ export default function DomainOnlyThankYou( {
 	const domainPurchases = purchases.filter( predicate );
 	const domainNames = domainPurchases.map( ( purchase ) => purchase?.meta );
 	const domainOnlySite = useSelector( ( state ) => getSite( state, domainPurchases[ 0 ]?.blogId ) );
+	const siteDomains = useSelector( ( state ) =>
+		getDomainsBySiteId( state, domainPurchases[ 0 ]?.blogId )
+	);
 
-	const upsellProps: ThankYouUpsellProps = {
-		title: translate( 'Professional email' ),
-		description: (
+	if ( ! siteDomains.length ) {
+		return (
 			<>
-				{ translate(
-					'Establish credibility and build trust by using a custom email address.{{br /}}Studies show that 85% of people trust custom domain email addresses more than generic ones.',
-					{
-						comment: 'Upsell for Professional Email on checkout thank you page',
-						components: { br: <br /> },
-					}
-				) }
+				<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
+				<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
+				<PlaceholderThankYou />
 			</>
-		),
-		image: emailImage,
-		actions: (
-			<UpsellActions
-				domainNames={ domainNames }
-				receiptId={ receiptId }
-				siteSlug={ domainOnlySite?.slug }
-			/>
-		),
-	};
+		);
+	}
+
+	if ( domainPurchases.length === 1 ) {
+		const purchasedDomain = domainPurchases[ 0 ];
+		const domain = siteDomains.find( ( siteDomain ) => siteDomain.name === purchasedDomain.meta );
+
+		if ( domain.isHundredYearDomain ) {
+			return (
+				<>
+					<Global
+						styles={ css`
+							main.checkout-thank-you {
+								&.is-redesign-v2 {
+									&.main {
+										max-width: unset;
+									}
+								}
+							}
+
+							body.is-section-checkout,
+							body.is-section-checkout .layout__content,
+							body.is-section-checkout-thank-you,
+							body.is-section-checkout-thank-you .layout__content {
+								background: linear-gradient(
+									233deg,
+									#06101c 2.17%,
+									#050c16 41.26%,
+									#02080f 88.44%
+								);
+							}
+						` }
+					/>
+					<HundredYearThankYou
+						siteSlug={ String( purchasedDomain.blogId ) }
+						receiptId={ Number( receipt.receiptId ) }
+						productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
+					/>
+				</>
+			);
+		}
+	}
 
 	const products = domainPurchases.map( ( purchase ) => {
 		return (
@@ -126,7 +111,6 @@ export default function DomainOnlyThankYou( {
 				) }
 				products={ products }
 				footerDetails={ getDomainFooterDetails( 'domain-only' ) }
-				upsellProps={ upsellProps }
 				isGravatarDomain={ isGravatarDomain }
 			/>
 		</>

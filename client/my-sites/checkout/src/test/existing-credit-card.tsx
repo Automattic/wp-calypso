@@ -84,7 +84,14 @@ describe( 'Existing credit card payment methods', () => {
 	it( 'renders an existing card option for a stored card', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();
-		render( <TestWrapper paymentMethods={ [ existingCard ] }></TestWrapper> );
+		render(
+			<TestWrapper
+				paymentMethods={ [ existingCard ] }
+				paymentProcessors={ {
+					[ existingCard.paymentProcessorId ]: () => makeSuccessResponse( 'ok' ),
+				} }
+			></TestWrapper>
+		);
 		await waitFor( () => {
 			expect( screen.queryByText( cardholderName ) ).toBeInTheDocument();
 		} );
@@ -93,7 +100,14 @@ describe( 'Existing credit card payment methods', () => {
 	it( 'renders an existing card button when an existing card is selected', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();
-		render( <TestWrapper paymentMethods={ [ existingCard ] }></TestWrapper> );
+		render(
+			<TestWrapper
+				paymentMethods={ [ existingCard ] }
+				paymentProcessors={ {
+					[ existingCard.paymentProcessorId ]: () => makeSuccessResponse( 'ok' ),
+				} }
+			></TestWrapper>
+		);
 		await waitFor( () => {
 			expect( screen.queryByText( activePayButtonText ) ).toBeInTheDocument();
 		} );

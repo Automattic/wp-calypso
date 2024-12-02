@@ -102,6 +102,7 @@ export { isJetpackSearchFree } from './is-jetpack-search-free';
 export { isJetpackSocialSlug } from './is-jetpack-social-slug';
 export { isJetpackSocialAdvancedSlug } from './is-jetpack-social-advanced-slug';
 export { isJetpackSocialBasicSlug } from './is-jetpack-social-basic-slug';
+export { isJetpackSocialV1Slug } from './is-jetpack-social-v1-slug';
 export { isJetpackStatsSlug } from './is-jetpack-stats-slug';
 export { isJetpackStatsPaidProductSlug } from './is-jetpack-stats-paid-product-slug';
 export { isJetpackStatsFreeProductSlug } from './is-jetpack-stats-free-product-slug';

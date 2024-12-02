@@ -1,0 +1,30 @@
+.sftp-card__wrapper {
+	width: 100%;
+}
+
+.sftp-card__questions-container {
+	margin-bottom: 1.5em;
+}
+
+.sftp-card__password-explainer {
+	margin-bottom: 8px;
+}
+
+.sftp-card__ssh-label {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.sftp-card__enable-warning {
+	color: var(--color-text-subtle);
+}
+
+.sftp-card__input {
+	display: block;
+	margin-bottom: 16px;
+}
+
+.sftp-card__ssh-field .sftp-card__input {
+	margin-top: 16px;
+}

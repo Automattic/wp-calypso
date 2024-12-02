@@ -401,11 +401,6 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		subscribe: {
-			stepName: 'subscribe',
-			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
-			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
-		},
 		mailbox: {
 			stepName: 'mailbox',
 			dependencies: [ 'domainItem', 'siteSlug' ],

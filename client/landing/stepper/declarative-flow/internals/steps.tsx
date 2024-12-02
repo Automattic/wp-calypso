@@ -55,11 +55,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
 	},
 
-	FREE_SETUP: {
-		slug: 'freeSetup',
-		asyncComponent: () => import( './steps-repository/free-setup' ),
-	},
-
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
 	GENERATE_CONTENT: {
@@ -250,6 +245,12 @@ export const STEPS = {
 	SITE_MIGRATION_CREDENTIALS: {
 		slug: 'site-migration-credentials',
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
+	},
+
+	SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL: {
+		slug: 'application-passwords-approval',
+		asyncComponent: () =>
+			import( './steps-repository/site-migration-application-passwords-approval' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {

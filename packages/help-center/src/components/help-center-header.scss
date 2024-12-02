@@ -13,6 +13,16 @@
 		height: $head-foot-height;
 		padding: 16px;
 
+		&.has-unread {
+			background: #3858E9;
+			color: var(--studio-white);
+			border-radius: 0;
+
+			button {
+				color: var(--studio-white);
+			}
+		}
+
 		>div {
 			display: flex;
 			align-items: center;
@@ -47,7 +57,7 @@
 			svg:not(.help-center__drag-icon) {
 				cursor: pointer;
 			}
-			
+
 			:focus{
 				outline: none;
 			}
@@ -63,11 +73,55 @@
 				display: inline-block;
 				margin-left: 8px;
 				padding: 2px 8px;
-				background: var(--color-masterbar-unread-dot-background);
-				border-radius: 50%;
+				background: var(--studio-white);
+				border-radius: 45%;
 				font-size: $font-body-extra-small;
-				color: #fff;
+				color: #3858E9;
 			}
+		}
+
+		.ellipsis-menu {
+			.ellipsis-menu__toggle {
+				width: 36px;
+				height: 36px;
+				padding: 6px;
+			}
+		}
+	}
+}
+
+.clear-conversation__wrapper {
+	padding: 4px 0;
+    text-align: center;
+
+	svg {
+		fill: var(--studio-gray-70);
+	}
+
+	:hover, :focus {
+		background-color: $help-center-blue;
+		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+	
+	button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		padding: 8px;
+		cursor: pointer;
+		gap: 4px;
+		color: var(--studio-gray-70);
+		border: none;
+		background: unset;
+
+		div {
+			margin-bottom: 2px;
+			font-size: 0.875rem;
 		}
 	}
 }

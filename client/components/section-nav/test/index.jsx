@@ -14,6 +14,16 @@ jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
 } ) );
 
+window.IntersectionObserver = jest.fn( () => ( {
+	observe: jest.fn(),
+	disconnect: jest.fn(),
+	root: null,
+	rootMargin: '',
+	thresholds: [],
+	takeRecords: jest.fn(),
+	unobserve: jest.fn(),
+} ) );
+
 function createComponent( component, props, children ) {
 	const renderer = new ShallowRenderer();
 

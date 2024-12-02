@@ -64,3 +64,11 @@
 		background-color: var(--color-accent-5);
 	}
 }
+
+// Mimic the style of Button component.
+.stats-interval-display {
+	font-family: $font-sf-pro-text;
+	font-size: 13px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 36px;
+}

@@ -1,9 +1,10 @@
 import { Icon, check } from '@wordpress/icons';
-import HostingSection, { HostingSectionProps } from '../hosting-section';
+import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 
 import './style.scss';
 
-type Props = Omit< HostingSectionProps, 'children' > & {
+type Props = Omit< PageSectionProps, 'children' > & {
+	className?: string;
 	items: {
 		title: string;
 		description: string;
@@ -12,6 +13,7 @@ type Props = Omit< HostingSectionProps, 'children' > & {
 };
 
 export default function HostingBenefitsSection( {
+	className,
 	icon,
 	heading,
 	subheading,
@@ -20,7 +22,8 @@ export default function HostingBenefitsSection( {
 	items,
 }: Props ) {
 	return (
-		<HostingSection
+		<PageSection
+			className={ className }
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
@@ -46,6 +49,6 @@ export default function HostingBenefitsSection( {
 					</div>
 				) ) }
 			</div>
-		</HostingSection>
+		</PageSection>
 	);
 }

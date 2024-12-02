@@ -1,14 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wp from 'calypso/lib/wp';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
@@ -21,6 +24,7 @@ jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 jest.mock( '../site-preview' );
 jest.mock( 'calypso/lib/analytics/tracks' );
+jest.mock( 'calypso/lib/wp' );
 
 const mockGetQuery = ( from ) => {
 	( useQuery as jest.Mock ).mockReturnValue( {
@@ -130,24 +134,24 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should navigate to the next step when clicking on Next', async () => {
-		const { getByRole } = render();
+		const { getByRole, queryByText } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect(
-			getByRole( 'link', { name: /Migrate to WordPress.com plugin screen on your source site/ } )
+			queryByText( /Migrate to WordPress.com plugin screen on your source site/ )
 		).toBeInTheDocument();
 	} );
 
 	it( 'should be able to navigate back to the first step when it was completed', async () => {
-		const { queryByText, getByRole } = render();
+		const { getByRole } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 		await userEvent.click(
 			getByRole( 'button', { name: /Install the Migrate to WordPress.com plugin/ } )
 		);
 
-		expect( queryByText( 'Migrate to WordPress.com plugin' ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Install plugin/ } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should navigate to the next step when the steps are completed', async () => {
@@ -169,13 +173,13 @@ describe( 'SiteMigrationInstructions', () => {
 			error: null,
 		} );
 
-		const { getByRole } = render();
+		const { getByRole, queryByText } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect(
-			getByRole( 'link', { name: /Migrate to WordPress.com page on the new WordPress.com site/ } )
+			queryByText( /Migrate to WordPress.com page on the new WordPress.com site/ )
 		).toBeInTheDocument();
 	} );
 
@@ -213,5 +217,18 @@ describe( 'SiteMigrationInstructions', () => {
 		const skeleton = container.querySelector( '.migration-key-skeleton' );
 
 		expect( skeleton!.classList.contains( 'migration-key-skeleton--animate' ) ).toBeFalsy();
+	} );
+
+	it( 'sets a migration as pending automatically', async () => {
+		render();
+
+		await waitFor( () => {
+			expect( wp.req.post ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					path: '/sites/123/site-migration-status-sticker',
+					body: { status_sticker: MigrationStatus.PENDING_DIY },
+				} )
+			);
+		} );
 	} );
 } );

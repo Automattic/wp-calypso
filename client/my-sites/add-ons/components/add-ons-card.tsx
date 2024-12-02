@@ -1,7 +1,7 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
+import { Badge, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
+import { Card, CardBody, CardFooter, CardHeader, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -43,8 +43,8 @@ const Container = styled.div`
 			width: 100%;
 			display: flex;
 			flex-direction: column;
-			padding: 18px 10px; // Card sections have 16x24 inner padding
 			box-sizing: border-box;
+			padding: 8px 0;
 		}
 	}
 
@@ -60,7 +60,7 @@ const Container = styled.div`
 		.add-ons-card__name-and-billing {
 			.add-ons-card__billing {
 				color: var( --studio-gray-60 );
-				font-weight: 500;
+				font-size: 0.75rem;
 			}
 
 			.add-ons-card__name-tag {
@@ -75,14 +75,28 @@ const Container = styled.div`
 
 				.add-ons-card__featured-badge {
 					border-radius: 4px;
+					font-size: 0.75rem;
+					font-weight: 500;
 				}
 			}
 		}
 	}
 
+	.add-ons-card__body {
+		font-size: 0.875rem;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
 	.add-ons-card__footer {
 		display: flex;
 		margin-top: auto;
+
+		.add-ons-card__action-button {
+			font-weight: 600;
+			text-decoration: none;
+			padding: 0;
+		}
 
 		.add-ons-card__selected-tag {
 			display: flex;
@@ -154,7 +168,9 @@ const AddOnCard = ( {
 					{ shouldRenderSecondaryAction && (
 						<>
 							{ actionSecondary && (
-								<Button onClick={ onActionSecondary }>{ actionSecondary.text }</Button>
+								<Button onClick={ onActionSecondary } variant="secondary">
+									{ actionSecondary.text }
+								</Button>
 							) }
 							{ availabilityStatus?.text && (
 								<div className="add-ons-card__selected-tag">
@@ -165,7 +181,14 @@ const AddOnCard = ( {
 						</>
 					) }
 					{ shouldRenderPrimaryAction && actionPrimary && (
-						<Button onClick={ onActionPrimary } primary>
+						<Button
+							className="add-ons-card__action-button"
+							onClick={ onActionPrimary }
+							variant="link"
+							icon={ <Gridicon icon="chevron-right" /> }
+							iconPosition="right"
+							iconSize={ 16 }
+						>
 							{ actionPrimary.text }
 						</Button>
 					) }

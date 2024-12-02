@@ -73,7 +73,7 @@ function renderTemplate( template, props ) {
 }
 
 function getEventHandlers( props, dispatch ) {
-	const { jitm, currentSite, messagePath, searchQuery, onClick } = props;
+	const { jitm, currentSite, searchQuery, onClick } = props;
 	const tracks = jitm.tracks || {};
 	const eventProps = {
 		id: jitm.id,
@@ -98,7 +98,7 @@ function getEventHandlers( props, dispatch ) {
 				recordTracksEvent( tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps } )
 			);
 		}
-		dispatch( dismissJITM( currentSite.ID, messagePath, jitm.featureClass ) );
+		dispatch( dismissJITM( currentSite.ID, jitm.id, jitm.featureClass ) );
 	};
 
 	handlers.onClick = () => {

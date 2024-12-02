@@ -1,11 +1,11 @@
-export default function ReaderA8cConversationsIcon() {
+export default function ReaderA8cConversationsIcon( { size = 20, viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-a8c-conversations"
 			fill="none"
-			height="20"
-			viewBox="0 0 20 20"
-			width="20"
+			height={ size }
+			viewBox={ viewBox }
+			width={ size }
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<g stroke="#a2aab2" strokeWidth="1.5">

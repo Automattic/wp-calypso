@@ -131,7 +131,6 @@ class SiteOwnership extends Component {
 		if ( ! currentUser ) {
 			return;
 		}
-
 		return (
 			<div className="manage-connection__user-dropdown">
 				<AuthorSelector

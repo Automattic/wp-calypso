@@ -1,0 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
+
+.sites-dataviews {
+	table.dataviews-view-table .dataviews-view-table__row td {
+		// dataviews-override: We combine the icon and site title fields to form the horizontal "site" field.
+		// Without this rule the combined field receives justify-content: space-between but we want the icon to be aligned with the text.
+		// TODO: This can be removed when https://github.com/WordPress/gutenberg/pull/67226 / Gutenberg 19.8 lands in calypso.
+		// See https://github.com/Automattic/wp-calypso/pull/96657#discussion_r1853690792
+		.components-h-stack {
+			&:has(.sites-dataviews__site) {
+				justify-content: flex-start;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard {
+	.a4a-layout__top-wrapper,
+	.a4a-layout__body {
+		> * {
+			// dataviews-override: To align with Core's hard-coded device width.
+			// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84
+			// TODO: Remove when Core changes to use one of the predefined breakpoints.
+			@media (max-width: 430px) {
+				padding-inline: 24px;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+	.sites-banner-container {
+		// dataviews-override: To align with Core's hard-coded device width.
+		// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84
+		// TODO: Remove when Core changes to use one of the predefined breakpoints.
+		@media (max-width: 430px) {
+			padding-inline: 24px;
+		}
+	}
+}

@@ -7,7 +7,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { convertHourToRange } from './utils';
 
-const useNextBackupSchedule = () => {
+export const useNextBackupSchedule = () => {
 	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -60,5 +60,3 @@ const useNextBackupSchedule = () => {
 		timeRange: timeRange,
 	};
 };
-
-export default useNextBackupSchedule;

@@ -24,6 +24,7 @@ function EducationalContent( {
 	cardName,
 	width,
 	height,
+	className,
 } ) {
 	const dispatch = useDispatch();
 
@@ -82,7 +83,7 @@ function EducationalContent( {
 				</div>
 			</div>
 			{ isDesktop() && illustration && (
-				<div className="educational-content__illustration">
+				<div className={ `educational-content__illustration ${ className || '' }` }>
 					<img src={ illustration } alt="" width={ width } height={ height } />
 				</div>
 			) }
@@ -112,6 +113,7 @@ EducationalContent.propTypes = {
 	modalLinks: PropTypes.array,
 	illustration: PropTypes.string,
 	cardName: PropTypes.string,
+	className: PropTypes.string,
 	width: propTypeHasIllustration,
 	height: propTypeHasIllustration,
 };

@@ -60,6 +60,11 @@
 			color: var(--color-link-dark, --studio-blue-70);
 			border-color: inherit;
 		}
+		// Remove the default focus outline on the Recent Conversations nav tabs
+		&.section-nav-tab__link:focus {
+			box-shadow: none;
+			outline: none;
+		}
 	}
 
 	.help-center__section-title {
@@ -88,6 +93,20 @@
 		}
 	}
 
+	&.is-minimized {
+		.help-center__container-header {
+			cursor: pointer;
+		}
+
+		.help-center__container-content {
+			display: none;
+		}
+
+		.help-center-header__text {
+			cursor: pointer;
+		}
+	}
+
 	/**
 	 * Desktop
 	 */
@@ -104,18 +123,6 @@
 			top: unset;
 			right: 50px;
 			bottom: calc(#{$header-height} + 16px);
-
-			.help-center__container-header {
-				cursor: pointer;
-			}
-
-			.help-center__container-content {
-				display: none;
-			}
-			
-			.help-center-header__text {
-				cursor: pointer;
-			}
 		}
 	}
 

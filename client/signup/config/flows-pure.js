@@ -506,7 +506,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			enablePresales: false,
-			enableHotjar: true,
 		},
 
 		{
@@ -518,7 +517,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
-			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -616,23 +614,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
-		},
-		{
-			name: 'email-subscription',
-			steps: [ 'subscribe' ],
-			destination: ( dependencies ) => `${ dependencies.redirect }`,
-			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
-			lastModified: '2024-06-17',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [
-				'user_email',
-				'redirect_to',
-				'mailing_list',
-				'from',
-				'first_name',
-			],
-			optionalDependenciesInQuery: [ 'last_name' ],
-			hideProgressIndicator: true,
 		},
 	];
 

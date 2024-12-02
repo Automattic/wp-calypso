@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+$blueberry-color: #3858e9;
 
 .odie-send-message-input-container {
 	display: flex;
@@ -17,6 +18,21 @@
 		min-height: 40px !important;
 		height: 40px;
 		max-height: 210px;
+	}
+
+	.components-form-file-upload {
+		border-radius: 2px;
+		border: 1px solid var(--Gray-Gray-10, #C3C4C7);
+		background: var(--black-white-white, #FFF);
+		width: 40px;
+		height: 38px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		button {
+			padding: 0;
+		}
 	}
 }
 
@@ -47,6 +63,9 @@
 
 }
 
+.odie-send-message-inner-button__flag {
+	background-color: $blueberry-color !important;
+}
 .odie-send-message-input-container .odie-send-message-inner-button {
 	background: none;
 	border: none;
@@ -57,7 +76,7 @@
 
 
 	&[disabled] {
-		background-color: var(--color-neutral-20);
+		background-color: var(--color-neutral-20) !important;
 		border-color: var(--color-neutral-5);
 		cursor: default;
 

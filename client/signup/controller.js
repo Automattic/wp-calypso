@@ -67,14 +67,6 @@ export const addVideoPressSignupClassName = () => {
 	document.body.classList.add( 'is-videopress-signup' );
 };
 
-export const addVideoPressTvSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-tv-signup' );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -111,10 +103,6 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.query.flow === 'videopress-tv' ) {
-			addVideoPressTvSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'videopress' ) ) {

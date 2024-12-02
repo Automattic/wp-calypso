@@ -1,10 +1,12 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -18,6 +20,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
+	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 
 	const options = [
 		{
@@ -47,19 +50,18 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
-	const canInstallPlugins = site?.plan?.features?.active.find(
-		( feature ) => feature === 'install-plugins'
-	)
-		? true
-		: false;
+	const siteCanInstallPlugins = canInstallPlugins( site );
 
 	const handleClick = ( destination: string ) => {
-		if ( destination === 'migrate' && ! canInstallPlugins ) {
+		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
 		}
 
 		if ( destination === 'import' && site && site.ID ) {
+			//TODO: This is a temporary solution to delete the migration sticker and the migration flow.
+			// We should refactor this to use a single endpoint to handle both operations.
 			deleteMigrationSticker( site.ID );
+			cancelMigration();
 		}
 
 		return navigation.submit?.( { destination } );

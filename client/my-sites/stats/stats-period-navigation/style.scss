@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
 .stats-period-navigation {
 	display: flex;
 	flex-flow: row wrap;
@@ -16,6 +19,10 @@
 		line-height: 40px;
 		color: var(--studio-gray-100);
 		text-align: left;
+
+		@media (max-width: $break-mobile) {
+			font-size: $font-title-medium;
+		}
 	}
 
 	.stats-date-picker__refresh-status {
@@ -44,6 +51,20 @@
 	.chart__legend {
 		margin-bottom: initial;
 	}
+}
+
+// Styling specific to the new Date Filtering traffic page project
+.stats-period-navigation.stats-period-navigation__is-with-new-date-filtering {
+
+	.stats-navigation-arrows {
+		justify-content: flex-end;
+	}
+
+	.stats-period-navigation__date-range-control {
+		display:flex;
+		flex-direction: row;
+		gap: 20px;
+	  }
 }
 
 .stats-period-navigation.stats-period-navigation__is-with-new-date-control {

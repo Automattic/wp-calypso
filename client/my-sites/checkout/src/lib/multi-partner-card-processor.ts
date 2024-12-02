@@ -308,8 +308,8 @@ export default async function multiPartnerCardProcessor(
 				stripeConfiguration: dataForProcessor.stripeConfiguration,
 				cardNumberElement: submitData.cardNumberElement,
 				reduxDispatch: dataForProcessor.reduxDispatch,
-				isCheckout: true,
 				eventSource: '/checkout',
+				cartKey: dataForProcessor.responseCart.cart_key,
 			},
 			submitDataWithContactInfo
 		);

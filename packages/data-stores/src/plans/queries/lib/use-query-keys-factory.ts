@@ -1,5 +1,9 @@
 const useQueryKeysFactory = () => ( {
-	sitePlans: ( siteId?: string | number | null ) => [ 'site-plans', siteId ],
+	sitePlans: ( coupon?: string, siteId?: string | number | null ) => [
+		'site-plans',
+		siteId,
+		coupon,
+	],
 	plans: ( coupon?: string ) => [ 'plans', coupon ],
 } );
 

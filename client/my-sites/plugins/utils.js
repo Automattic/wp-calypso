@@ -1,13 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isMagnificentLocale } from '@automattic/i18n-utils';
+import { createSelector } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-export function siteObjectsToSiteIds( sites ) {
-	return sites?.map( ( site ) => site.ID ) ?? [];
-}
+export const siteObjectsToSiteIds = createSelector(
+	( sites ) => sites?.map( ( site ) => site.ID ) ?? []
+);
 
 export function getVisibleSites( sites ) {
 	return sites?.filter( ( site ) => site.visible );

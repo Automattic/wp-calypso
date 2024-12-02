@@ -22,7 +22,7 @@ const PressableOffering = () => {
 		translate( 'Lightning-fast performance.' ),
 		translate( '100% uptime SLA.' ),
 		translate( 'Smart, managed plugin updates.' ),
-		translate( 'Comprehensive WP security with Jetpack.' ),
+		translate( 'Comprehensive WP security & performance with Jetpack Complete included.' ),
 		translate( '24/7 support from WordPress experts.' ),
 	];
 

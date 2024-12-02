@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { useLocale } from '@automattic/i18n-utils';
+import languages from '@automattic/languages';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -74,6 +76,8 @@ const useLogoGenerator = () => {
 		setLogoUpdateError,
 	} = useRequestErrors();
 
+	const locale = useLocale();
+
 	const { ID = null, name = null, description = null } = siteDetails || {};
 	const siteId = ID ? String( ID ) : null;
 
@@ -90,7 +94,10 @@ const useLogoGenerator = () => {
 
 			debug( 'Generating first prompt for site', siteId );
 
-			const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description, keeping the same language.
+			const langName =
+				languages.find( ( language ) => language.langSlug === locale )?.name ?? 'English';
+
+			const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description. The prompt should be in ${ langName } (${ locale }).
 Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration with a clean and modern aesthetic that is sleek and sophisticated.
 Another example, now for a site called "El observatorio de aves", described as "Un sitio dedicado a nuestros compañeros y compañeras entusiastas de la observación de aves.": Un logo para un sitio web dedicado a la observación de aves,  capturando la esencia de la naturaleza y la pasión por la avifauna en un diseño elegante y representativo, reflejando una estética natural y apasionada por la vida silvestre.
 

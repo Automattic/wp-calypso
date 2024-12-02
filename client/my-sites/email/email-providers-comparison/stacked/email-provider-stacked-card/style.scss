@@ -135,6 +135,7 @@ $width-left-panel-card: 55%;
 
 		.action-panel__body {
 			color: var(--color-text);
+			overflow: visible;
 
 			p {
 				margin-bottom: 0;

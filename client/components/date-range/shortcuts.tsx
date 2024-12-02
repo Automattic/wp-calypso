@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
+import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 
 const DATERANGE_PERIOD = {
 	DAY: 'day',
@@ -20,6 +21,8 @@ const DateRangePickerShortcuts = ( {
 	locked = false,
 	startDate,
 	endDate,
+	// Temporary prop to enable new date filtering UI.
+	isNewDateFilteringEnabled = false,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
@@ -27,8 +30,10 @@ const DateRangePickerShortcuts = ( {
 	locked?: boolean;
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
+	isNewDateFilteringEnabled?: boolean;
 } ) => {
 	const translate = useTranslate();
+	const siteToday = useMomentSiteZone();
 
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
@@ -38,6 +43,7 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
+	// TODO: Receive this list from the parent component.
 	const shortcutList = [
 		{
 			id: 'last_7_days',
@@ -81,16 +87,40 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
+	if ( isNewDateFilteringEnabled ) {
+		shortcutList.unshift(
+			{
+				id: 'today',
+				label: translate( 'Today' ),
+				offset: 0,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'today',
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				offset: 1,
+				range: 0,
+				period: DATERANGE_PERIOD.DAY,
+				shortcutId: 'yesterday',
+			}
+		);
+	}
+
 	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
 		if ( ! startDate || ! endDate ) {
 			return null;
 		}
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
-		const today = moment().startOf( 'day' );
+		const today = siteToday.clone().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
 		const shortcut = shortcutList.find( ( element ) => {
-			if ( endDate.isSame( today ) && daysInRange === element.range ) {
+			if (
+				( endDate.isSame( today, 'day' ) || element.offset === 1 ) &&
+				daysInRange === element.range
+			) {
 				return element;
 			}
 			return null;
@@ -99,8 +129,9 @@ const DateRangePickerShortcuts = ( {
 	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		const newToDate = moment().startOf( 'day' ).subtract( offset, 'days' );
-		const newFromDate = moment()
+		const newToDate = siteToday.clone().startOf( 'day' ).subtract( offset, 'days' );
+		const newFromDate = siteToday
+			.clone()
 			.startOf( 'day' )
 			.subtract( offset + range, 'days' );
 		onClick( newFromDate, newToDate, id || '' );

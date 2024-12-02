@@ -126,14 +126,14 @@ function CompleteCreditCardFields() {
 
 describe( 'Credit card payment method', () => {
 	it( 'renders a credit card option', async () => {
-		render( <TestWrapper /> );
+		render( <TestWrapper paymentProcessors={ { card: () => makeSuccessResponse( 'ok' ) } } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Credit or debit card' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	it( 'renders submit button when credit card is selected', async () => {
-		render( <TestWrapper /> );
+		render( <TestWrapper paymentProcessors={ { card: () => makeSuccessResponse( 'ok' ) } } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( activePayButtonText ) ).toBeInTheDocument();
 		} );

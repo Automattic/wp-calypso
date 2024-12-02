@@ -85,7 +85,6 @@ button {
 .domains,
 .patterns,
 .link-in-bio-post-setup,
-.link-in-bio,
 .anchor-fm,
 .subscribers,
 .ecommerce,
@@ -240,7 +239,6 @@ button {
  * Tailored flow stylings
  */
 .newsletter:not(.domains),
-.link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
@@ -287,7 +285,6 @@ button {
 
 .store-profiler__form,
 .newsletter,
-.link-in-bio,
 .link-in-bio-tld,
 .setup-form__form {
 	button {

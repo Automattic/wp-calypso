@@ -1,0 +1,92 @@
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "~@automattic/color-studio/dist/color-variables";
+@import "~@automattic/typography/styles/variables";
+
+.panel-with-sidebar {
+	display: flex;
+	gap: 20px;
+	flex-direction: column;
+
+	.navigation-header {
+		margin-bottom: 16px;
+	}
+
+	.header-cake__back {
+		font-size: 0.875rem;
+	}
+
+	> div:not(:first-child),
+	> main:not(:first-child) {
+		width: 100%;
+	}
+
+	.form-text-input, .form-select {
+		font-size: 0.875rem !important;
+	}
+
+	@include break-small {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+}
+
+.panel-sidebar {
+	position: sticky;
+	top: -24px;
+	flex-shrink: 0;
+	padding: 24px 24px 20px;
+	margin: -23px -24px -19px;
+	list-style: none;
+	background: #fff;
+	z-index: 99;
+
+	@include break-small {
+		top: 0;
+		min-width: 160px;
+		padding: 0;
+		margin: 0;
+	}
+}
+
+.components-button.panel-sidebar-tab {
+	border-radius: 4px;
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 2px;
+	height: 40px;
+	color: var(--studio-gray-100);
+	white-space: nowrap;
+	font-size: $font-body-small;
+
+	&:visited, &:hover:not(:disabled):not([aria-disabled="true"]) {
+		color: var(--studio-gray-100);
+	}
+
+	&:active, &:focus {
+		outline: none;
+		box-shadow: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px var(--color-primary-light) !important;
+		}
+	}
+
+	&:hover {
+		background-color: #f7f7f7;
+		border-radius: 4px;
+	}
+
+	&--active {
+		background-color: #f0f0f0;
+		font-weight: 600;
+		border-radius: 4px;
+	}
+}
+
+.panel-sidebar-dropdown {
+	.select-dropdown__container {
+		display: block;
+	}
+}

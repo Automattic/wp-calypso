@@ -3,7 +3,12 @@ import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/
 import wp from 'calypso/lib/wp';
 
 function mapResult( response: WPComSupportQueryResponse ) {
-	return response.messages?.[ 0 ]?.content ?? '';
+	const messages = response.messages?.[ 0 ]?.content ?? '';
+	const chatId = response.chat_id;
+	return {
+		messages,
+		chatId,
+	};
 }
 
 export const useSupportChatLLMQuery = (
@@ -37,6 +42,7 @@ export const useSupportChatLLMQuery = (
 };
 
 type WPComSupportQueryResponse = {
+	chat_id: number;
 	messages: Array< WPComSupportMessageQueryResponse >;
 };
 

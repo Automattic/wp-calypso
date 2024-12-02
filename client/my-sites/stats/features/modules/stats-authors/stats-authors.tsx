@@ -69,7 +69,13 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#authors` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#authors` ) }
+											/>
+										),
 									},
 									context:
 										'Stats: Link in a popover for the Posts & Pages when the module has data',
@@ -102,7 +108,13 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#authors` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#authors` ) }
+											/>
+										),
 									},
 									context: 'Stats: Info box label when the Authors module is empty',
 								}

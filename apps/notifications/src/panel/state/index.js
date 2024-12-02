@@ -1,5 +1,5 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; // eslint-disable-line no-restricted-imports
-import thunkMiddleware from 'redux-thunk';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import actionMiddleware from './action-middleware';
 import { createListenerMiddleware } from './create-listener-middleware';
 import notes from './notes/reducer';

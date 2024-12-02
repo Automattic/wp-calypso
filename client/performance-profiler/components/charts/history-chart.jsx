@@ -79,7 +79,7 @@ const drawGrid = ( svg, yScale, width, margin ) => {
 		.attr( 'y1', yScale )
 		.attr( 'y2', yScale )
 		.attr( 'stroke', '#F6F7F7' )
-		.attr( 'stroke-width', 2 );
+		.attr( 'stroke-width', 1 );
 };
 
 // Draw line with gradient

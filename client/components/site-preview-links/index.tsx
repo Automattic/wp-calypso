@@ -113,7 +113,7 @@ export default function SitePreviewLinks( {
 	}
 
 	return (
-		<div>
+		<>
 			<p>{ description }</p>
 			{ isFirstLoading && <InputPlaceholder /> }
 			{ ! isFirstLoading && (
@@ -135,6 +135,6 @@ export default function SitePreviewLinks( {
 						) ) }
 				</>
 			) }
-		</div>
+		</>
 	);
 }

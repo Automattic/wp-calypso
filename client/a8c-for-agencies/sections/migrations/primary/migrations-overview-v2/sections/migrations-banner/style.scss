@@ -1,0 +1,61 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migrations-banner {
+	padding: 24px 32px;
+}
+
+.migrations-banner__icon {
+	display: none;
+
+	@include break-large {
+		width: 32px;
+		height: 32px;
+		background-color: var(--studio-automattic-blue-50);
+		border-radius: 50%;
+		padding: 6px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.migrations-banner__main {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.migrations-banner__title {
+	@include a4a-font-heading-lg;
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+	align-items: center;
+}
+
+.migration-banner__content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 16px;
+
+	.simple-list {
+		gap: 10px;
+	}
+
+	@include break-large {
+		flex-direction: row;
+		margin-inline-start: 64px;
+
+		.simple-list {
+			max-width: 700px;
+		}
+	}
+}
+
+.migrations-banner__cta-button {
+	@include break-large {
+		margin: 20px 48px;
+	}
+}

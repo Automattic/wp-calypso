@@ -254,7 +254,8 @@ export function parseChartData( payload, nullAttributes = [] ) {
 		if ( dataRecord.period ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
 			const localeSlug = getLocaleSlug();
-			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			// The period could be a full time format.
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD HH:mm:ss' ).locale( localeSlug );
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;
@@ -473,7 +474,11 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
+			[]
+		);
 
 		return videoPlaysData.map( ( item ) => {
 			const detailPage = site
@@ -645,7 +650,8 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
+		const authorsData = get( data, dataPath, [] );
 
 		return authorsData.map( ( item ) => {
 			const record = {
@@ -936,7 +942,8 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'files' ] : [ 'days', startOf, 'files' ];
+		const statsData = get( data, dataPath, [] );
 
 		return statsData.map( ( item ) => {
 			return {

@@ -6,7 +6,7 @@ import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { SftpCard } from '..';
+import { SftpCard } from '../card';
 
 jest.mock( '@automattic/components/src/spinner', () => ( {
 	__esModule: true,

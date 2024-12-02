@@ -1,0 +1,133 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sites-dataviews {
+	flex-grow: 1;
+	margin-top: 0;
+	overflow: hidden;
+	padding-bottom: 0;
+
+	.sites-dataviews__site {
+		display: flex;
+		flex-direction: row;
+		padding: 0;
+		overflow: hidden;
+		cursor: pointer;
+
+		&:not(:disabled) {
+			&:hover,
+			&:focus {
+				.sites-dataviews__site-title {
+					color: var(--color-accent);
+				}
+				.sites-dataviews__site-url {
+					color: var(--color-accent);
+				}
+			}
+		}
+
+		&:disabled {
+			cursor: default;
+			.sites-dataviews__site-title {
+				color: var(--color-neutral-30);
+			}
+			.sites-dataviews__site-url {
+				color: var(--color-neutral-30);
+			}
+		}
+
+		.list-tile {
+			margin-right: 0;
+		}
+
+		.button {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.sites-dataviews__site-name {
+		display: inline-block;
+		text-align: left;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding: 0 8px;
+		white-space: nowrap;
+		font-weight: 500;
+		font-size: rem(14px);
+	}
+
+	.sites-dataviews__site-urls {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		line-height: 18px;
+	}
+
+	.sites-dataviews__site-url {
+		color: var(--color-neutral-70);
+		font-size: rem(14px);
+		font-weight: 400;
+	}
+
+	.sites-dataviews__site-icon {
+		cursor: pointer;
+		padding: 0;
+	}
+
+	.site-sort__clickable {
+		cursor: pointer;
+		// Inline block to ensure focus outline is rectangular.
+		display: inline-block;
+		// 5px right padding so focus border doesnt overlap icon.
+		padding-right: 5px;
+		border-radius: 2px;
+		.accessible-focus &:focus {
+			outline-style: solid;
+			outline-color: var(--color-primary-light);
+			outline-width: 2px;
+			outline-offset: 2px;
+		}
+	}
+
+	// Style the Stats label that includes the Jetpack logo
+	.sites-dataviews__stats-label {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.sites-dataviews__migration-pending-status {
+		display: inline-block;
+		padding: 0 10px;
+		font-size: rem(12px);
+		border-radius: 4px;
+		background-color: var(--color-warning-20);
+		line-height: 20px;
+		color: var(--color-warning-80);
+	}
+
+	.stats-sparkline {
+		padding-top: 0;
+	}
+}
+
+.is-section-a8c-for-agencies-sites {
+	a.site-actions__menu-item {
+		&:hover,
+		&:focus {
+			background: var(--wp-components-color-accent);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	.components-dropdown-menu {
+		padding: 8px;
+		border-radius: 4px;
+
+		[role="menuitem"],
+		[role="menuitemradio"] {
+			border-radius: 4px;
+		}
+	}
+}

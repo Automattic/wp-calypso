@@ -45,6 +45,7 @@ import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
@@ -522,7 +523,9 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
-			paypal: () => payPalProcessor( dataForProcessor ),
+			'paypal-express': () => payPalProcessor( dataForProcessor ),
+			'paypal-js': ( transactionData: unknown ) =>
+				payPalJsProcessor( transactionData, dataForProcessor ),
 			razorpay: ( transactionData: unknown ) =>
 				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),

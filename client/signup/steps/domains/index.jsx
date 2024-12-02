@@ -2,7 +2,6 @@ import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import {
-	VIDEOPRESS_FLOW,
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
@@ -1131,24 +1130,6 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( VIDEOPRESS_FLOW === flowName ) {
-			const components = {
-				span: (
-					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
-					<span
-						role="button"
-						className="tailored-flow-subtitle__cta-text"
-						onClick={ () => this.handleSkip() }
-					/>
-				),
-			};
-
-			return translate(
-				'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
-				{ components }
-			);
-		}
-
 		if ( this.isHostingFlow() ) {
 			const components = {
 				span: (
@@ -1216,14 +1197,6 @@ export class RenderDomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	isTailoredFlow() {
-		return VIDEOPRESS_FLOW === this.props.flowName;
-	}
-
-	shouldHideNavButtons() {
-		return this.isTailoredFlow();
-	}
-
 	renderContent() {
 		let content;
 		let sideContent;
@@ -1236,7 +1209,7 @@ export class RenderDomainsStep extends Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned && ! this.isTailoredFlow() ) {
+		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -1415,7 +1388,7 @@ export class RenderDomainsStep extends Component {
 					stepName={ stepName }
 					backUrl={ backUrl }
 					isExternalBackUrl={ isExternalBackUrl }
-					shouldHideNavButtons={ this.shouldHideNavButtons() }
+					shouldHideNavButtons={ false }
 					stepContent={
 						<div>
 							<QueryProductsList type="domains" />
@@ -1452,7 +1425,7 @@ export class RenderDomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				shouldHideNavButtons={ this.shouldHideNavButtons() }
+				shouldHideNavButtons={ false }
 				stepContent={
 					<div>
 						<QueryProductsList type="domains" />

@@ -13,3 +13,22 @@
 	vertical-align: middle;
 	margin: 0;
 }
+
+.pending-content__info-text-container {
+	display: inline-block;
+    font-size: 1rem;
+    text-align: left;
+    border: 1px solid var( --studio-gray-5 );
+    padding: 1rem;
+	@extend .wp-brand-font;
+    border-radius: 4px;
+    background-color: var( --studio-gray-0 );
+
+	.pending-content__info-text {
+		> span {
+			font-family: var( --p2-font-inter );
+			font-size: var( --p2-font-size-form-xxs );
+			color: var( --studio-gray-60 );
+		}
+	}
+}

@@ -388,7 +388,6 @@ export default function AgencyDetailsForm( {
 							/>
 						</FormFieldset>
 						<FormFieldset>
-							<FormLabel>{ translate( 'Country' ) }</FormLabel>
 							{ showCountryFields && (
 								<SearchableDropdown
 									value={ countryValue }
@@ -398,6 +397,7 @@ export default function AgencyDetailsForm( {
 									} }
 									options={ countryOptions }
 									disabled={ isLoading }
+									label={ translate( 'Country' ) }
 								/>
 							) }
 
@@ -413,13 +413,13 @@ export default function AgencyDetailsForm( {
 						</FormFieldset>
 						{ showCountryFields && stateOptions && (
 							<FormFieldset>
-								<FormLabel>{ translate( 'State' ) }</FormLabel>
 								<SearchableDropdown
 									value={ addressState }
 									onChange={ ( value ) => setAddressState( value ?? '' ) }
 									options={ stateOptions }
 									disabled={ isLoading }
 									allowReset={ false }
+									label={ translate( 'State' ) }
 								/>
 							</FormFieldset>
 						) }
@@ -494,9 +494,7 @@ export default function AgencyDetailsForm( {
 
 						{ noCountryList && <QuerySmsCountries /> }
 						<FormFieldset>
-							<FormLabel optional htmlFor="postalCode">
-								{ translate( 'Phone number' ) }
-							</FormLabel>
+							<FormLabel optional>{ translate( 'Phone number' ) }</FormLabel>
 							<FormPhoneInput
 								countrySelectProps={ {
 									'data-testid': 'a4a-signup-country-code-select',

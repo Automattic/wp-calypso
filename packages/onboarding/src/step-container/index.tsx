@@ -3,9 +3,7 @@ import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
-import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
-import VideoPressLogo from '../videopress-logo';
 import './style.scss';
 
 interface Props {
@@ -37,6 +35,7 @@ interface Props {
 	isFullLayout?: boolean;
 	isHorizontalLayout?: boolean;
 	goBack?: () => void;
+	onSkip?: () => void;
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
@@ -45,8 +44,6 @@ interface Props {
 	showJetpackPowered?: boolean;
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
-	showSenseiPowered?: boolean;
-	showVideoPressPowered?: boolean;
 	backUrl?: string;
 }
 
@@ -78,6 +75,7 @@ const StepContainer: React.FC< Props > = ( {
 	customizedActionButtons,
 	backUrl,
 	goBack,
+	onSkip,
 	goNext,
 	flowName,
 	intent,
@@ -86,8 +84,6 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderJetpackPowered,
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
-	showSenseiPowered,
-	showVideoPressPowered,
 	showFooterWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
@@ -128,7 +124,9 @@ const StepContainer: React.FC< Props > = ( {
 	}
 
 	function SkipButton() {
-		if ( shouldHideNavButtons || ! goNext ) {
+		const skipAction = onSkip ?? goNext;
+
+		if ( shouldHideNavButtons || ! skipAction ) {
 			return null;
 		}
 
@@ -139,7 +137,7 @@ const StepContainer: React.FC< Props > = ( {
 				) }
 				<StepNavigationLink
 					direction="forward"
-					handleClick={ goNext }
+					handleClick={ skipAction }
 					label={ skipLabelText }
 					cssClass={ clsx( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
@@ -233,18 +231,6 @@ const StepContainer: React.FC< Props > = ( {
 			{ showFooterWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
 					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
-				</div>
-			) }
-
-			{ showSenseiPowered && (
-				<div className="step-container__sensei-powered">
-					<SenseiLogo /> <span>{ translate( 'Powered by Sensei' ) }</span>
-				</div>
-			) }
-
-			{ showVideoPressPowered && (
-				<div className="step-container__videopress-powered">
-					<VideoPressLogo size={ 24 } /> <span>{ translate( 'Powered by VideoPress' ) }</span>
 				</div>
 			) }
 		</div>

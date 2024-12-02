@@ -35,6 +35,11 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_MIGRATIONS_OVERVIEW_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
+	A4A_MIGRATIONS_COMMISSIONS_LINK,
+	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 	A4A_TEAM_INVITE_LINK,
 	A4A_AGENCY_TIER_LINK,
 } from '../components/sidebar-menu/lib/constants';
@@ -77,6 +82,11 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_ADD_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_MIGRATIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_OVERVIEW_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_COMMISSIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_PAYMENT_SETTINGS ]: [ 'a4a_read_migrations' ],
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
 };
@@ -138,8 +148,24 @@ export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) 
 		return false;
 	}
 
+	// featureConditions is used to check if the user has access to a specific feature
+	// Add the feature name and the condition to enable it according to MEMBER_TIER_ACCESSIBLE_PATHS
+	const featureConditions = {
+		a4a_feature_partner_directory: agency?.partner_directory.allowed,
+	};
+
+	const featuresSet = new Set( agency?.tier?.features || [] );
+
+	// Check if the user has extra capabilities
+	for ( const [ feature, condition ] of Object.entries( featureConditions ) ) {
+		if ( condition ) {
+			featuresSet.add( feature );
+		}
+	}
+
+	const features = Array.from( featuresSet );
+
 	// Check if the user has the required capability to access the current path
-	const features = agency?.tier?.features;
 	if ( features ) {
 		const permissions = MEMBER_TIER_ACCESSIBLE_PATHS?.[ pathname ];
 		if ( permissions ) {

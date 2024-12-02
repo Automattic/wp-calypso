@@ -52,6 +52,19 @@ describe( 'useJetpackFreeButtonProps', () => {
 		expect( result.current.href ).toEqual( `/pricing/jetpack-free/welcome` );
 	} );
 
+	it( 'should link back to redirect_to, for Jetpack Cloud while unlinked and coming from My Jetpack', () => {
+		isJetpackCloud.mockReturnValue( true );
+		const { result } = renderHook( () =>
+			useJetpackFreeButtonProps( undefined, {
+				unlinked: '1',
+				source: 'my-jetpack',
+				redirect_to: adminUrl,
+			} )
+		);
+
+		expect( result.current.href ).toEqual( adminUrl );
+	} );
+
 	it( 'should link to the Jetpack section in the site admin, when site in state', () => {
 		getSelectedSite.mockReturnValue( {
 			options: { admin_url: adminUrl },

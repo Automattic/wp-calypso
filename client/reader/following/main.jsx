@@ -9,33 +9,44 @@ import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
-import FollowingIntro from './intro';
+import Recent from '../recent';
+import { useFollowingView } from './view-preference';
+import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const { currentView, setView } = useFollowingView();
+
+	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+		<ViewToggle currentView={ currentView } onChange={ setView } />
+	) : null;
+
 	return (
 		<>
-			<Stream
-				{ ...props }
-				className="following"
-				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
-			>
-				<BloganuaryHeader />
-				<NavigationHeader
-					title={ translate( 'Recent' ) }
-					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
-					className={ clsx( 'following-stream-header', {
-						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-					} ) }
-				/>
-				{ ! config.isEnabled( 'reader/onboarding' ) && <FollowingIntro /> }
-				{ config.isEnabled( 'reader/onboarding' ) && <ReaderOnboarding /> }
-			</Stream>
+			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
+				<Recent viewToggle={ viewToggle } />
+			) : (
+				<Stream
+					{ ...props }
+					className="following"
+					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+				>
+					<BloganuaryHeader />
+					<NavigationHeader
+						title={ translate( 'Recent' ) }
+						subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+						className={ clsx( 'following-stream-header', {
+							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+						} ) }
+					>
+						{ viewToggle }
+					</NavigationHeader>
+					<ReaderOnboarding />
+				</Stream>
+			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default SuggestionProvider( withDimensions( FollowingStream ) );

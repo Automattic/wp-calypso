@@ -1,10 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
@@ -12,7 +13,19 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
 import ReaderSocialShareSelection from './social';
+
 import './style.scss';
+
+// Global event system used to close Reader share/reblog popovers from any component.
+const createShareMenuEvent = () => {
+	const subscribers = new Set();
+	return {
+		subscribe: ( callback ) => subscribers.add( callback ),
+		unsubscribe: ( callback ) => subscribers.delete( callback ),
+		trigger: () => subscribers.forEach( ( callback ) => callback() ),
+	};
+};
+export const READER_SHARE_MENU_CLOSE = createShareMenuEvent();
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -36,6 +49,7 @@ class ReaderShare extends Component {
 
 	componentDidMount() {
 		this.mounted = true;
+		READER_SHARE_MENU_CLOSE.subscribe( this.closeMenu );
 	}
 
 	componentWillUnmount() {
@@ -44,6 +58,7 @@ class ReaderShare extends Component {
 			this.closeHandle = null;
 		}
 		this.mounted = false;
+		READER_SHARE_MENU_CLOSE.unsubscribe( this.closeMenu );
 	}
 
 	deferMenuChange = ( showing ) => {
@@ -97,7 +112,7 @@ class ReaderShare extends Component {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-			tooltip: this.props.isReblogSelection,
+			tooltip: true,
 		} );
 
 		const popoverProps = {
@@ -122,24 +137,27 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
-					data-tooltip={ this.props.isReblogSelection && translate( 'Repost with your thoughts' ) }
-					title={ ! this.props.isReblogSelection && translate( 'Share' ) }
+					data-tooltip={
+						this.props.isReblogSelection
+							? translate( 'Repost with your thoughts' )
+							: translate( 'Share' )
+					}
 				>
 					{ ! this.props.isReblogSelection ? (
 						<>
 							{ ReaderShareIcon( {
 								iconSize: this.props.iconSize,
+								viewBox: '0 -2 24 24',
 							} ) }
 							<span className="reader-share__label">{ translate( 'Share' ) }</span>
 						</>
 					) : (
 						<>
-							<Gridicon
-								icon="reblog"
-								size={ this.props.iconSize }
-								style={ { height: this.props.iconSize, width: this.props.iconSize } }
-							/>
-							<span className="reader-share__label">{ translate( 'Repost' ) }</span>
+							{ ReaderRepostIcon( {
+								iconSize: this.props.iconSize,
+								viewBox: '0 -1 20 20',
+							} ) }
+							<span className="repost__label">{ translate( 'Repost' ) }</span>
 						</>
 					) }
 				</Button>

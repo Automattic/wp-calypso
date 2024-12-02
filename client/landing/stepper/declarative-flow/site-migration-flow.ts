@@ -52,6 +52,7 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
+			STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
@@ -79,24 +80,8 @@ const siteMigration: Flow = {
 			}
 		}, [ isAdmin ] );
 
-		useEffect( () => {
-			// We don't need to do anything if the user isn't logged in.
-			if ( ! userIsLoggedIn ) {
-				return;
-			}
-
-			if ( siteSlug || siteId ) {
-				return;
-			}
-
-			if ( isHostedSiteMigrationFlow( flowPath ) ) {
-				return;
-			}
-
-			window.location.assign( '/start' );
-		}, [ flowPath, siteId, siteSlug, userIsLoggedIn, isAdmin ] );
-
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+			window.location.assign( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration does not have the site slug or site id.',
@@ -428,7 +413,12 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
 					const { action, from } = providedDependencies as {
-						action: 'skip' | 'submit' | 'already-wpcom' | 'site-is-not-using-wordpress';
+						action:
+							| 'skip'
+							| 'submit'
+							| 'application-passwords-approval'
+							| 'already-wpcom'
+							| 'site-is-not-using-wordpress';
 						from: string;
 					};
 
@@ -460,6 +450,15 @@ const siteMigration: Flow = {
 									platform: providedDependencies.platform as string,
 								},
 								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
+							)
+						);
+					}
+
+					if ( action === 'application-passwords-approval' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL.slug
 							)
 						);
 					}

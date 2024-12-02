@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { withGooglePhotosPickerSession } from 'calypso/data/media/with-google-photos-picker-session';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +21,8 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
+import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
+import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
@@ -84,6 +86,12 @@ export class MediaLibraryContent extends Component {
 		onAddMedia: noop,
 		source: '',
 	};
+
+	componentDidMount() {
+		if ( this.props.photosPickerApiEnabled ) {
+			! this.props?.photosPickerSession && this.props?.createPhotosPickerSession();
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
@@ -347,7 +355,7 @@ export class MediaLibraryContent extends Component {
 			<div className="media-library__connect-message">
 				<p>
 					<img
-						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						src="/calypso/images/sharing/google-photos-logo-text.svg?v=20241124"
 						width="400"
 						alt={ translate( 'Google Photos' ) }
 					/>
@@ -405,6 +413,14 @@ export class MediaLibraryContent extends Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		if (
+			this.props.photosPickerApiEnabled &&
+			'google_photos' === this.props.source &&
+			! this.props.photosPickerSession?.mediaItemsSet
+		) {
+			return <GooglePhotosPickerButton />;
+		}
+
 		const listKey = [
 			'list',
 			this.props.site.ID,
@@ -444,6 +460,20 @@ export class MediaLibraryContent extends Component {
 		}
 
 		if ( this.props.source !== '' ) {
+			// Hide the header until we have the media items set from Google Photos
+			if (
+				'google_photos' === this.props.source &&
+				this.props.photosPickerApiEnabled &&
+				! this.props.photosPickerSession?.mediaItemsSet
+			) {
+				return null;
+			}
+
+			const hasRefreshButton =
+				'pexels' !== this.props.source &&
+				'openverse' !== this.props.source &&
+				! this.props.photosPickerApiEnabled;
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
@@ -456,8 +486,13 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
+					hasRefreshButton={ hasRefreshButton }
 					mediaScale={ this.props.mediaScale }
+					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
+					photosPickerSession={ this.props.photosPickerSession }
+					createPhotosPickerSession={ this.props.createPhotosPickerSession }
+					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
+					isCreatingPhotosPickerSession={ this.props.isCreatingPhotosPickerSession }
 				/>
 			);
 		}
@@ -527,5 +562,5 @@ export default withMobileBreakpoint(
 			clearMediaErrors,
 			changeMediaSource,
 		}
-	)( localize( MediaLibraryContent ) )
+	)( withGooglePhotosPickerSession( localize( MediaLibraryContent ) ) )
 );

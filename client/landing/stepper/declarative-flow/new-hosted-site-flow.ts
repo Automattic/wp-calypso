@@ -1,9 +1,10 @@
-import { isFreeHostingTrial } from '@automattic/calypso-products';
+import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -22,11 +23,25 @@ import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
+function useShowDomainStep(): boolean {
+	const query = useQuery();
+	return query.has( 'showDomainStep' );
+}
+
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	isSignupFlow: true,
 	useSteps() {
+		const showDomainStep = useShowDomainStep();
 		return [
+			...( showDomainStep
+				? [
+						{
+							slug: 'domains',
+							asyncComponent: () => import( './internals/steps-repository/domains' ),
+						},
+				  ]
+				: [] ),
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
@@ -55,10 +70,15 @@ const hosting: Flow = {
 
 		const query = useQuery();
 		const queryParams = Object.fromEntries( query );
+		const plan = queryParams.plan;
 		const flowName = this.name;
+		const showDomainStep = useShowDomainStep();
 
 		const goBack = () => {
 			if ( _currentStepSlug === 'plans' ) {
+				if ( showDomainStep ) {
+					return navigate( 'domains' );
+				}
 				return window.location.assign( '/sites?hosting-flow=true' );
 			}
 			if ( _currentStepSlug === 'trialAcknowledge' ) {
@@ -72,6 +92,16 @@ const hosting: Flow = {
 			}
 
 			switch ( _currentStepSlug ) {
+				case 'domains': {
+					// If the plan is already supplied as a query param, add it to cart, and skip plans step
+					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
+						setPlanCartItem( {
+							product_slug: plan,
+						} );
+						return navigate( 'createSite' );
+					}
+					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
@@ -101,10 +131,18 @@ const hosting: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const hasStudioSyncSiteId = queryParams.studioSiteId;
+					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+					const destinationParams: Record< string, string > = {
+						siteId,
+					};
+					if ( hasStudioSyncSiteId ) {
+						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+							studioSiteId: queryParams.studioSiteId,
+						} );
+					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
-					} );
+					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
@@ -171,6 +209,16 @@ const hosting: Flow = {
 				window.location.assign( urlWithQueryParams );
 			}
 		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, logInUrl ] );
+
+		useEffect( () => {
+			if ( queryParams.studioSiteId ) {
+				recordTracksEvent( 'calypso_studio_sync_step', {
+					flow: NEW_HOSTED_SITE_FLOW,
+					step: currentStepSlug,
+				} );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ currentStepSlug ] );
 
 		useEffect(
 			() => {

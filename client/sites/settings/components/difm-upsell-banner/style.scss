@@ -1,0 +1,21 @@
+.settings-site,
+.settings-administration__reset-site {
+	.settings__built-by-upsell {
+		width: 100%;
+		margin-bottom: 0;
+
+		.banner__icon-no-circle {
+			.wordpress-logo {
+				fill: var(--color-neutral-100);
+				margin: 0;
+			}
+		}
+		.banner__action {
+			margin-inline-end: 0;
+		}
+		.wordpress-logo {
+			fill: var(--color-text);
+			margin: 0;
+		}
+	}
+}

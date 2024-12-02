@@ -1,9 +1,10 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import {
 	makeRedirectResponse,
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
+import { CartKey } from '@automattic/shopping-cart';
 import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
@@ -21,10 +22,23 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
-async function fetchStripeSetupIntentId( source: string ): Promise< StripeSetupIntentId > {
-	const configuration = await wp.req.get( '/me/stripe-configuration', {
-		needs_intent: true,
-		source,
+/**
+ * Call our endpoint to create the Stripe Setup Intent to later be confirmed by
+ * `confirmStripeSetupIntentAndAttachCard()`.
+ *
+ * NOTE: if countryCode is not provided, geolocation will be used to determine
+ * which Stripe account to use to create the Payment Method.
+ * The cartKey is optional and is only used in the Checkout flow to create
+ * the SetupIntent using information from the cart - for special cases like
+ * Indian Payments Methods with e-mandates.
+ */
+async function createStripeSetupIntent(
+	countryCode?: string,
+	cartKey?: CartKey
+): Promise< StripeSetupIntentId > {
+	const configuration = await wp.req.post( '/me/stripe-setup-intent', {
+		country: countryCode,
+		cart_key: cartKey,
 	} );
 	const intentId: string | undefined =
 		configuration?.setup_intent_id && typeof configuration.setup_intent_id === 'string'
@@ -84,7 +98,7 @@ export async function assignNewCardProcessor(
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
-		isCheckout,
+		cartKey,
 	}: {
 		purchase: Purchase | undefined;
 		translate: LocalizeProps[ 'translate' ];
@@ -93,7 +107,7 @@ export async function assignNewCardProcessor(
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
-		isCheckout?: boolean;
+		cartKey?: CartKey;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -170,15 +184,17 @@ export async function assignNewCardProcessor(
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
-		const stripeSetupIntentId = await fetchStripeSetupIntentId(
-			isCheckout ? 'checkout' : 'not-checkout'
-		);
+		// @todo: we should pass the countryCode to createStripeSetupIntent,
+		// but since `prepareAndConfirmStripeSetupIntent()` uses the `stripe`
+		// object created by `StripeHookProvider`, that object must also be
+		// created with the same countryCode, and right now it is not.
+		const stripeSetupIntentId = await createStripeSetupIntent( undefined, cartKey );
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',
 			name: name ?? '',
 		};
-		const tokenResponse = await createStripeSetupIntentAsync(
+		const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 			formFieldValues,
 			stripe,
 			cardNumberElement,
@@ -226,7 +242,7 @@ export async function assignNewCardProcessor(
 	}
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 		country,
@@ -247,7 +263,7 @@ async function createStripeSetupIntentAsync(
 			postal_code,
 		},
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardNumberElement,
 		setupIntentId,

@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getNextPluginsListPage,
+	getPlugin,
 	isFetching,
 	isFetchingPluginsList,
 } from 'calypso/state/plugins/wporg/selectors';
@@ -28,6 +29,10 @@ const PLUGINS_LIST_DEFAULT_SIZE = 24;
 
 export function fetchPluginData( pluginSlug, locale = '' ) {
 	return async ( dispatch, getState ) => {
+		if ( getPlugin( getState(), pluginSlug ) ) {
+			return;
+		}
+
 		if ( isFetching( getState(), pluginSlug ) ) {
 			return;
 		}

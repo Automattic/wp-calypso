@@ -16,7 +16,7 @@ import {
 	WPCOM_DIFM_LITE,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -1628,7 +1628,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
-			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, VIDEOPRESS_FLOW ].forEach( ( flowName ) => {
+			[ NEWSLETTER_FLOW ].forEach( ( flowName ) => {
 				const getUrlFromCookie = jest.fn( () => '/cookie' );
 
 				// set a tailored flow name
@@ -1778,7 +1778,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID' as any,
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
 
 			expect( url ).toBe(
 				addQueryArgs(
@@ -1818,7 +1818,7 @@ describe( 'getThankYouPageUrl', () => {
 				redirectTo: 'https://foo.bar/some-path?with-args=yes',
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
 
 			expect( url ).toBe(
 				addQueryArgs(

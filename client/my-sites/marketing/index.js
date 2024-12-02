@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -8,7 +9,7 @@ import {
 	redirectConnections,
 	redirectDefaultConnectionsDomain,
 	redirectMarketingTools,
-	marketingBusinessTools,
+	redirectMarketingBusinessTools,
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
@@ -31,7 +32,6 @@ export default function () {
 		'/marketing/traffic',
 		'/sharing',
 		'/sharing/buttons',
-		'/marketing/business-tools',
 	];
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
@@ -42,54 +42,60 @@ export default function () {
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
 
 	page( '/marketing/:domain', redirectMarketingTools );
+	page( '/marketing/business-tools/:domain', redirectMarketingBusinessTools );
 
-	page(
-		'/marketing/connections/:domain',
-		siteSelection,
-		navigation,
-		connections,
-		layout,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/marketing/tools/:site', ( context ) => {
+			page.redirect( `/sites/marketing/tools/${ context.params.site }` );
+		} );
+		page( '/marketing/connections/:site', ( context ) => {
+			page.redirect( `/sites/marketing/connections/${ context.params.site }` );
+		} );
+		page( '/marketing/traffic/:site', ( context ) => {
+			page.redirect( `/sites/marketing/traffic/${ context.params.site }` );
+		} );
+		page( '/marketing/sharing-buttons/:site', ( context ) => {
+			page.redirect( `/sites/marketing/sharing-buttons/${ context.params.site }` );
+		} );
+	} else {
+		page(
+			'/marketing/connections/:domain',
+			siteSelection,
+			navigation,
+			connections,
+			layout,
+			makeLayout,
+			clientRender
+		);
 
-	page(
-		'/marketing/traffic/:domain',
-		siteSelection,
-		navigation,
-		traffic,
-		layout,
-		makeLayout,
-		clientRender
-	);
+		page(
+			'/marketing/traffic/:domain',
+			siteSelection,
+			navigation,
+			traffic,
+			layout,
+			makeLayout,
+			clientRender
+		);
 
-	page(
-		'/marketing/sharing-buttons/:domain',
-		siteSelection,
-		navigation,
-		sharingButtons,
-		layout,
-		makeLayout,
-		clientRender
-	);
+		page(
+			'/marketing/sharing-buttons/:domain',
+			siteSelection,
+			navigation,
+			sharingButtons,
+			layout,
+			makeLayout,
+			clientRender
+		);
 
-	page(
-		'/marketing/tools/:domain',
-		siteSelection,
-		navigation,
-		marketingTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/business-tools/:domain',
-		siteSelection,
-		navigation,
-		marketingBusinessTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
+		page(
+			'/marketing/tools/:domain',
+			siteSelection,
+			navigation,
+			marketingTools,
+			layout,
+			makeLayout,
+			clientRender
+		);
+	}
 }

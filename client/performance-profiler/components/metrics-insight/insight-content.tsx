@@ -9,6 +9,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { ThumbsUpIcon, ThumbsDownIcon } from 'calypso/performance-profiler/icons/thumbs';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { InsightDetailedContent } from './insight-detailed-content';
 
 interface InsightContentProps {
@@ -17,20 +18,26 @@ interface InsightContentProps {
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
 	AIGenerated: boolean;
+	hash: string;
+	url?: string;
+	chatId?: number;
 }
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, fullPageScreenshot, isLoading, AIGenerated } = props;
+	const { data, fullPageScreenshot, isLoading, AIGenerated, hash, url, chatId } = props;
 	const { description = '' } = data ?? {};
 	const [ feedbackSent, setFeedbackSent ] = useState( false );
 	const [ feedbackOpen, setFeedbackOpen ] = useState( false );
 	const [ userFeedback, setUserFeedback ] = useState( '' );
 	const onSurveyClick = ( rating: string ) => {
 		recordTracksEvent( 'calypso_performance_profiler_llm_survey_click', {
+			hash,
+			url,
+			chat_id: chatId,
 			rating,
-			description,
 			...( userFeedback && { user_feedback: userFeedback } ),
+			version: profilerVersion(),
 		} );
 
 		setFeedbackSent( true );

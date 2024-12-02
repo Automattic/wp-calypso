@@ -4,11 +4,13 @@ import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -138,9 +140,9 @@ export const SitePerformance = () => {
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
-
-	const isSitePublic =
-		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+	const { getSiteSetting } = useSiteSettings( site?.slug );
+	const blog_public = getSiteSetting( 'blog_public' );
+	const isSitePublic = site && blog_public === 1;
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -226,6 +228,7 @@ export const SitePerformance = () => {
 		if ( performanceReport.isBasicMetricsFetched && performanceReport.url ) {
 			recordTracksEvent( 'calypso_performance_profiler_test_started', {
 				url: performanceReport.url,
+				version: profilerVersion(),
 			} );
 		}
 	}, [ performanceReport.isBasicMetricsFetched, performanceReport.url ] );
@@ -249,10 +252,12 @@ export const SitePerformance = () => {
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
+			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
 			page( `/settings/general/${ site.slug }` );
 			return;
 		}
 		dispatch( launchSite( siteId! ) );
+		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -296,11 +301,20 @@ export const SitePerformance = () => {
 				setNoPagesFound( { query: value, found: false } );
 			} }
 			allowReset={ false }
+			onBlur={ () => {
+				// if no pages found, reset so that the previous selected page is shown
+				if ( ! noPagesFound.found ) {
+					setNoPagesFound( { query: '', found: true } );
+				}
+			} }
 			options={ options }
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
-
+				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
+					is_home: page_id === '0',
+					version: profilerVersion(),
+				} );
 				if ( page_id ) {
 					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
 					url.searchParams.set( 'page_id', page_id );

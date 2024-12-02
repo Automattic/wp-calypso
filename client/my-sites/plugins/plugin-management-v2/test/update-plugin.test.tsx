@@ -168,6 +168,11 @@ describe( '<UpdatePlugin>', () => {
 
 	test( 'should render correctly and show auto-managed', () => {
 		site.jetpack = false;
+		const updatedInitialState = {
+			...initialState,
+		};
+
+		const store = mockStore( updatedInitialState );
 		const { getAllByText } = render(
 			<Provider store={ store }>
 				<UpdatePlugin { ...props } />
