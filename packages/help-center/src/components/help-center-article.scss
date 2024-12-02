@@ -455,10 +455,70 @@
 				}
 			}
 
-			// Hide the tablist for the WP Support 3 tab component
-			// Context: https://github.com/Automattic/wp-calypso/issues/87340#issuecomment-1937424710
-			.wpsupport3-tab__tablist {
+			// Originally hidden with context: https://github.com/Automattic/wp-calypso/issues/87340#issuecomment-1937424710
+			// New CSS changes: Show the tab component for the WP Support 3 tab component
+
+			.wp-block-wpsupport3-tabs {
+
+				.aligncenter {
+					margin-left: auto;
+					margin-right: auto;
+				}
+				
+				.wpsupport3-tab__tablist {
+					display: flex;
+					align-items: center;
+					gap: 24px;
+					white-space: nowrap;
+					overflow-x: auto;
+					border-bottom: 1px solid var( --wp--preset--color--border-light-gray, #eee );
+
+					.wpsupport3-tab__title {
+						padding: 8px 0;
+			
+						color: var( --blue-blue-50, #0675c4 );
+						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+						font-size: 16px;
+						line-height: 24px;
+						border: none;
+						background: none;
+						border-bottom: 1px solid transparent;
+						transition: border-bottom 0.3s;
+
+						&:focus {
+							outline: none;
+						}
+
+						&:hover {
+							text-decoration: none;
+						}
+			
+						&[aria-selected='true'] {
+							color: var( --gray-gray-100, #101517 );
+							border-bottom: 1px solid var( --gray-gray-100, #101517 );
+						}
+					}
+				}
+			}
+			
+			.wp-block-wpsupport3-tab {
+				margin-top: 32px;
 				display: none;
+				
+				&:not( [aria-hidden='true'] ) {
+					display: block;
+					animation: fadeIn 0.5s;
+				}
+			
+				@keyframes fadeIn {
+					from {
+						opacity: 0;
+					}
+			
+					to {
+						opacity: 1;
+					}
+				}
 			}
 		}
 	}
