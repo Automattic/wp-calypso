@@ -17,6 +17,11 @@
 		vertical-align: middle;
 	}
 }
+.remove-domain-dialog {
+	&.dialog.card {
+		max-width: 565px;
+	}
+}
 .dialog__button--domains-remove {
 	> .dialog__button-label {
 		display: flex;
