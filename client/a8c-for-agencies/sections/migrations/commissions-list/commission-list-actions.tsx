@@ -5,6 +5,8 @@ import { useCallback, useRef, useState } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
 import { TaggedSite } from '../types';
@@ -16,6 +18,8 @@ type Props = {
 
 const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
@@ -31,7 +35,7 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 
 	const onRemoveSite = useCallback( () => {
 		closeDropdown();
-		//Remove=ing the A4A_MIGRATED_SITE_TAG tag only
+		// Removing the A4A_MIGRATED_SITE_TAG tag only
 		const newTags = site.tags.reduce( ( acc, tag ) => {
 			if ( tag.name === A4A_MIGRATED_SITE_TAG ) {
 				return acc;
@@ -44,10 +48,28 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 			{
 				onSuccess: () => {
 					fetchMigratedSites();
+					setShowRemoveSiteDialog( false );
+					dispatch(
+						successNotice(
+							translate( 'Successfully untagged {{strong}}%(siteUrl)s{{/strong}}.', {
+								components: { strong: <strong /> },
+								args: { siteUrl: site.url },
+							} ),
+							{ id: 'a4a-commission-list-untag-success', duration: 5000 }
+						)
+					);
 				},
 			}
 		);
-	}, [ fetchMigratedSites, mutate, site, closeDropdown ] );
+	}, [
+		fetchMigratedSites,
+		mutate,
+		site,
+		closeDropdown,
+		setShowRemoveSiteDialog,
+		dispatch,
+		translate,
+	] );
 
 	return (
 		<div>
