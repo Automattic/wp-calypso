@@ -8,6 +8,17 @@ import { useShortcuts } from './use-shortcuts';
 
 type MomentOrNull = Moment | null;
 
+export interface DateControlPickerShortcut {
+	id: string;
+	label: string;
+	startDate: string;
+	endDate: string;
+	period: string;
+	statType?: string;
+	isGated?: boolean;
+	shortcutId?: string;
+}
+
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
@@ -43,15 +54,7 @@ const DateRangePickerShortcuts = ( {
 		isNewDateFilteringEnabled
 	);
 
-	const handleClick = ( {
-		id,
-		startDate,
-		endDate,
-	}: {
-		id?: string;
-		startDate: string;
-		endDate: string;
-	} ) => {
+	const handleClick = ( { id, startDate, endDate }: Partial< DateControlPickerShortcut > ) => {
 		onClick( moment( startDate ), moment( endDate ), id || '' );
 
 		// Call the onShortcutClick if provided

@@ -35,17 +35,6 @@ interface DateControlPickerShortcutsProps {
 	onClick: ( shortcut: DateControlPickerShortcut ) => void;
 }
 
-interface DateControlPickerShortcut {
-	id: string;
-	label: string;
-	startDate?: string;
-	endDate?: string;
-	period: string;
-	statType?: string;
-	isGated?: boolean;
-	shortcutId?: string;
-}
-
 interface DateControlPickerDateProps {
 	startDate?: string;
 	endDate?: string;
@@ -59,7 +48,6 @@ interface DateControlPickerDateProps {
 export {
 	DateControlProps,
 	DateControlPickerProps,
-	DateControlPickerShortcut,
 	DateControlPickerShortcutsProps,
 	DateControlPickerDateProps,
 };

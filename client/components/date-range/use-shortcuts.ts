@@ -4,7 +4,7 @@ import { memoize } from 'lodash';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { DateControlPickerShortcut } from '../date-control/types';
+import { DateControlPickerShortcut } from './shortcuts';
 
 export const DATERANGE_PERIOD = {
 	HOUR: 'hour',
