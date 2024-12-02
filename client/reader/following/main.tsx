@@ -26,6 +26,16 @@ function FollowingStream( { ...props } ) {
 		return (
 			<div className="following-stream--no-subscriptions">
 				<NavigationHeader title={ translate( 'Recent' ) } />
+				<p>
+					{ translate(
+						'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
 				<ReaderOnboarding forceShow />
 			</div>
 		);

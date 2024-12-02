@@ -198,4 +198,8 @@
 	max-width: $break-medium;
 	margin: 0 auto;
 	padding: 16px 24px;
+
+	.navigation-header {
+		padding-bottom: 0;
+	}
 }
