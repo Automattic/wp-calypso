@@ -54,8 +54,8 @@ const getSiteFromItem = ( item: PopularSiteItemProp ): ReaderPopularSite | null 
 const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 	const { followSource, items } = props;
 	const sites = items
-		.map( ( item ) => getSiteFromItem( item ) )
-		.filter( ( site ) => site !== null );
+		.map( ( item ): ReaderPopularSite | null => getSiteFromItem( item ) )
+		.filter( ( site ): site is ReaderPopularSite => site !== null );
 
 	const popularSitesLinks = sites.map( ( site ) => (
 		<ConnectedReaderSubscriptionListItem
