@@ -8,6 +8,10 @@
 .tools-staging-site__site-url {
     word-wrap: break-word;
 
+    &.is-link {
+        text-decoration: none;
+    }
+
     svg {
         vertical-align: middle;
     }
