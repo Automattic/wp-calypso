@@ -18,14 +18,23 @@ import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
-	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
-	const { data: siteSubscriptions } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const { data: subscriptionsCount, isLoading: isLoadingCount } =
+		SubscriptionManager.useSubscriptionsCountQuery();
+	const { data: siteSubscriptions, isLoading: isLoadingSiteSubscriptions } =
+		SubscriptionManager.useSiteSubscriptionsQuery();
+
+	const isLoading = isLoadingCount || isLoadingSiteSubscriptions;
+
 	const hasNonSelfSubscriptions = useMemo( () => {
+		if ( isLoading ) {
+			return true;
+		}
+
 		if ( ! subscriptionsCount?.blogs || subscriptionsCount.blogs === 0 ) {
 			return false;
 		}
 
-		// If we have site subscriptions data, filter out self-owned blogs
+		// If we have site subscriptions data, filter out self-owned blogs.
 		if ( siteSubscriptions?.subscriptions ) {
 			const nonSelfSubscriptions = siteSubscriptions.subscriptions.filter(
 				( sub ) => ! sub.is_owner
@@ -34,11 +43,11 @@ function FollowingStream( { ...props } ) {
 		}
 
 		return subscriptionsCount.blogs > 0;
-	}, [ subscriptionsCount?.blogs, siteSubscriptions ] );
+	}, [ subscriptionsCount?.blogs, siteSubscriptions, isLoading ] );
 
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
-	if ( ! hasNonSelfSubscriptions ) {
+	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
 			<div className="following-stream--no-subscriptions">
 				<NavigationHeader title={ translate( 'Recent' ) } />
