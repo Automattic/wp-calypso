@@ -26,11 +26,7 @@ function FollowingStream( { ...props } ) {
 	const isLoading = isLoadingCount || isLoadingSiteSubscriptions;
 
 	const hasNonSelfSubscriptions = useMemo( () => {
-		if ( isLoading ) {
-			return true;
-		}
-
-		if ( ! subscriptionsCount?.blogs || subscriptionsCount.blogs === 0 ) {
+		if ( ! subscriptionsCount?.blogs || subscriptionsCount?.blogs === 0 ) {
 			return false;
 		}
 
@@ -43,7 +39,7 @@ function FollowingStream( { ...props } ) {
 		}
 
 		return subscriptionsCount.blogs > 0;
-	}, [ subscriptionsCount?.blogs, siteSubscriptions, isLoading ] );
+	}, [ subscriptionsCount, siteSubscriptions ] );
 
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
