@@ -272,7 +272,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			<span className="transfer-page__transfer-lock-label">
 				{ isDomainLocked ? (
 					<>
-						<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" />
+						<Icon icon={ lock } size={ 16 } viewBox="0 0 22 22" />
 						{ enabledLockLabel }
 					</>
 				) : (
