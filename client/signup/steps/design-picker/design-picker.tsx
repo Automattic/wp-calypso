@@ -88,7 +88,7 @@ const DesignButton: FC< DesignButtonProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
+	const blankCanvasTitle = __( 'Blank Canvas' );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	const isPremiumDesign = design?.design_tier !== 'free';
@@ -165,7 +165,7 @@ const DesignButton: FC< DesignButtonProps > = ( {
 			>
 				{ isBlankCanvas ? (
 					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Start from scratch', __i18n_text_domain__ ) }
+						{ __( 'Start from scratch' ) }
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
@@ -219,14 +219,14 @@ const DesignButtonCover: FC< DesignButtonCoverProps > = ( {
 					onClick={ () => ( shouldUpgrade ? onUpgrade?.( design ) : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
-						? __( 'Upgrade Plan', __i18n_text_domain__ )
+						? __( 'Upgrade Plan' )
 						: // translators: %s is the title of design with currency. Eg: Alves
-						  sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title ) }
+						  sprintf( __( 'Start with %s' ), design.title ) }
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Preview %s', __i18n_text_domain__ ), design.title )
+						sprintf( __( 'Preview %s' ), design.title )
 					}
 				</Button>
 			</div>
