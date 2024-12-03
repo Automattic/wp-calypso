@@ -399,86 +399,6 @@
 	}
 }
 
-.design-picker.design-picker__unified {
-	display: block;
-	padding-bottom: 200px;
-
-	.design-picker__grid {
-		@supports ( display: grid ) {
-			row-gap: 32px;
-
-			@include break-medium {
-				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 24px;
-			}
-		}
-
-		@include break-xlarge {
-			.pattern-assembler-cta-wrapper {
-				flex-direction: row-reverse;
-
-				.pattern-assembler-cta__content {
-					align-items: flex-start;
-				}
-			}
-		}
-	}
-
-	.unified-design-picker__title {
-		font-size: $font-title-small;
-		font-weight: 600;
-		margin-top: 40px;
-		margin-bottom: 5px;
-	}
-
-	.theme-card {
-		display: block;
-		margin: 0;
-
-		.mshots-image__loader,
-		.theme-card__image-container {
-			padding-top: 65%;
-		}
-
-		.mshots-image__loader {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var(--studio-gray-10);
-		}
-
-		.theme-card__image::after {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			box-sizing: border-box;
-			background-color: transparent;
-			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
-		}
-	}
-
-	.design-picker__design-option > button {
-		cursor: pointer;
-	}
-
-	.components-button:focus::before {
-		box-shadow: none;
-	}
-
-	.components-button:focus-visible::before {
-		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
-	}
-
-	.components-button.is-pressed:active:hover {
-		color: var(--theme-base-color);
-	}
-
-	.unified-design-picker__designs {
-		min-height: 100vh;
-	}
-}
-
 // layout with categories
 .design-picker--has-categories {
 	.responsive-toolbar-group__swipe {
@@ -529,6 +449,21 @@
 			@include break-large {
 				width: calc(50% - 24px);
 			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override
 		}
 	}
 }

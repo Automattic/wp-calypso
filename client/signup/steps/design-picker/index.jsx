@@ -3,11 +3,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
-import DesignPicker, {
-	isBlankCanvasDesign,
-	useCategorization,
-	useThemeDesignsQuery,
-} from '@automattic/design-picker';
+import { isBlankCanvasDesign, useThemeDesignsQuery } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import clsx from 'clsx';
@@ -25,7 +21,9 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import DesignPicker from './design-picker';
 import LetUsChoose from './let-us-choose';
+import { useCategorization } from './use-categorization';
 import './style.scss';
 
 export default function DesignPickerStep( props ) {
