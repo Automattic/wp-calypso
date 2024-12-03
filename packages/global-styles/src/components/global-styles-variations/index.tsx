@@ -106,7 +106,6 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	splitDefaultVariation = true;
 	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
 		? PLAN_PERSONAL
 		: PLAN_PREMIUM;
