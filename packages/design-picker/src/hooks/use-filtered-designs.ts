@@ -14,10 +14,10 @@ export function filterDesigns(
 	return designs.filter(
 		( design ) =>
 			( design.showFirst ||
-				isBlankCanvasDesign( design ) ||
 				! categorySlug ||
 				design.categories.find( ( { slug } ) => slug === categorySlug ) ) &&
-			( ! selectedDesignTier || design.design_tier === selectedDesignTier )
+			( ! selectedDesignTier || design.design_tier === selectedDesignTier ) &&
+			! isBlankCanvasDesign( design )
 	);
 }
 

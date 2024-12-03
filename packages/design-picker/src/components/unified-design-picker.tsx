@@ -12,12 +12,12 @@ import {
 	getAssemblerDesign,
 	getDesignPreviewUrl,
 	getMShotOptions,
-	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 } from '../utils';
 import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import DesignPickerTierFilter from './design-picker-tier-filter';
+import NoResults from './no-results';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
@@ -308,10 +308,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design, index ) => {
-					if ( isBlankCanvasDesign( design ) ) {
-						return null;
-					}
-
 					return (
 						<DesignCard
 							key={ design.recipe?.slug ?? design.slug ?? index }
@@ -328,6 +324,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
+				{ filteredDesigns.length === 0 && <NoResults /> }
 				{ isSiteAssemblerEnabled && (
 					<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
 				) }
