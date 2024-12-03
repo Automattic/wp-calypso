@@ -55,37 +55,6 @@ export function useCategorization(
 	};
 }
 
-export function useCategorizationFromApi(
-	categoryMap: Record< string, Category >,
-	{ defaultSelection, sort }: UseCategorizationOptions
-): Categorization {
-	const categories = useMemo( () => {
-		const categoryMapKeys = Object.keys( categoryMap ) || [];
-		const result = categoryMapKeys.map( ( slug ) => ( {
-			...categoryMap[ slug ],
-			slug,
-		} ) );
-
-		return result.sort( sort );
-	}, [ categoryMap ] );
-
-	const [ selection, onSelect ] = useState< string | null >(
-		chooseDefaultSelection( categories, defaultSelection )
-	);
-
-	useEffect( () => {
-		if ( shouldSetToDefaultSelection( categories, selection ) ) {
-			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
-		}
-	}, [ categories, defaultSelection, selection ] );
-
-	return {
-		categories,
-		selection,
-		onSelect,
-	};
-}
-
 /**
  *	Check that the current selection still matches one of the category slugs,
  *	and if it doesn't reset the current selection to the default selection.
