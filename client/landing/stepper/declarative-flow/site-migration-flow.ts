@@ -52,7 +52,6 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
-			STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
@@ -467,7 +466,7 @@ const siteMigration: Flow = {
 									siteSlug,
 									authorizationUrl,
 								},
-								STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL.slug
+								STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
 							)
 						);
 					}
@@ -568,10 +567,17 @@ const siteMigration: Flow = {
 					}
 
 					if ( action === 'fallback-credentials' ) {
-						return navigate( STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug, {
-							siteId,
-							siteSlug,
-						} );
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									siteSlug,
+									authorizationUrl,
+									backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+								},
+								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
+							)
+						);
 					}
 
 					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {

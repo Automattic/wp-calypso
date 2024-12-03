@@ -18,7 +18,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 	const siteSlug = useSiteSlugParam();
 
 	const source = useQuery().get( 'site_url' ) ?? '';
-	const authorizationUrl = useQuery().get( 'authorization_url' ) ?? undefined;
+	const authorizationUrl = useQuery().get( 'authorizationUrl' ) ?? undefined;
 	const isAuthorizationRejected = useQuery().get( 'success' ) === 'false';
 	const applicationPassword = useQuery().get( 'password' );
 	const username = useQuery().get( 'user_login' );
@@ -54,7 +54,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 	}, [ isStoreApplicationPasswordSuccess, navigation ] );
 
 	const navigateToFallbackCredentials = () => {
-		navigation?.submit?.( { action: 'fallback-credentials' } );
+		navigation?.submit?.( { action: 'fallback-credentials', authorizationUrl } );
 	};
 
 	const startAuthorization = () => {
