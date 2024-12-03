@@ -568,7 +568,10 @@ const siteMigration: Flow = {
 					}
 
 					if ( action === 'fallback-credentials' ) {
-						// TODO: Implement fallback credentials step.
+						return navigate( STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug, {
+							siteId,
+							siteSlug,
+						} );
 					}
 
 					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
