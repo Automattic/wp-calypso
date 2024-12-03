@@ -23,21 +23,16 @@
 		flex-direction: column;
 
 		.help-center-article-content__header {
-			h1.help-center-article-content__header-title {
-				margin: 0;
 
-				> a {
-					text-decoration: none;
-					clear: none;
-					color: var(--color-neutral-70);
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-					font-size: $font-title-medium;
-					font-weight: 600;
-					line-height: 32px;
-					margin: 56px 0 0;
-					max-width: 750px;
-				}
+			.help-center-article-content__header-link {
+				color: var(--color-neutral-70);
+			}
+
+			h1.help-center-article-content__header-title {
+				margin: 8px 0 0 0;
+				color: var(--color-neutral-70);
+				font-size: $font-title-medium;
+				font-weight: 600;
 			}
 		}
 
