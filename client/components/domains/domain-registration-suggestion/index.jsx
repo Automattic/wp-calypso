@@ -102,6 +102,8 @@ class DomainRegistrationSuggestion extends Component {
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
+				tld: getTld( this.props.suggestion.domain_name ),
+				flow_name: this.props.flowName,
 			} );
 		}
 	}
