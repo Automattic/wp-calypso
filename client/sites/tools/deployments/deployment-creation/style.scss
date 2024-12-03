@@ -1,15 +1,22 @@
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+@import 'node_modules/@wordpress/base-styles/mixins';
+
 .repository-selection-dialog {
-	width: 622px;
 	height: 515px;
 	display: flex;
 	flex-direction: column;
 	padding: 32px;
+
+	@include break-small {
+		width: 622px;
+	}
 
 	h1 {
 		margin-bottom: 8px !important;
 	}
 
 	.formatted-header {
+		margin: 0;
 		margin-bottom: 24px !important;
 	}
 

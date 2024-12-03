@@ -73,9 +73,7 @@ class SiteTools extends Component {
 			? `/sites/settings/administration/${ siteSlug }/delete-site`
 			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
 
-		const manageConnectionLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/manage-connection`
-			: `/settings/manage-connection/${ siteSlug }?source=${ source }`;
+		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
 

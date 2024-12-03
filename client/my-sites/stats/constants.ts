@@ -60,6 +60,8 @@ export const STATS_FEATURE_INTERVAL_DROPDOWN_WEEK = `StatsIntervalDropdown/${ ST
 export const STATS_FEATURE_INTERVAL_DROPDOWN_MONTH = `StatsIntervalDropdown/${ STATS_PERIOD.MONTH }`;
 export const STATS_FEATURE_INTERVAL_DROPDOWN_YEAR = `StatsIntervalDropdown/${ STATS_PERIOD.YEAR }`;
 export const STATS_FEATURE_DOWNLOAD_CSV = 'StatsDownloadCsv';
+export const STATS_FEATURE_PAGE_TRAFFIC = 'StatsPageTraffic';
+export const STATS_FEATURE_PAGE_INSIGHTS = 'StatsPageInsights';
 export const STATS_FEATURE_SUMMARY_LINKS = 'StatsModuleSummaryLinks';
 export const STATS_FEATURE_SUMMARY_LINKS_DAY = 'StatsModuleSummaryLinks/day';
 export const STATS_FEATURE_SUMMARY_LINKS_7_DAYS = 'StatsModuleSummaryLinks/7_days';
@@ -72,3 +74,5 @@ export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
 // other
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';
+
+export const DATE_FORMAT = 'YYYY-MM-DD';

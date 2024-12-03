@@ -39,8 +39,8 @@ const initSmooch = ( {
 	} );
 };
 
-const HelpCenterSmooch: React.FC = () => {
-	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
+	const { data: authData } = useAuthenticateZendeskMessaging( enableAuth, 'messenger' );
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { isHelpCenterShown, isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -54,7 +54,7 @@ const HelpCenterSmooch: React.FC = () => {
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isHelpCenterShown && isEligibleForChat,
-		isEligibleForChat,
+		isEligibleForChat && enableAuth,
 		true
 	);
 	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =

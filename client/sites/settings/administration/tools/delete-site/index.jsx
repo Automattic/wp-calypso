@@ -12,7 +12,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { Panel, PanelHeading, PanelSection } from 'calypso/components/panel';
+import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
@@ -254,6 +254,7 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
+				<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
@@ -271,18 +272,17 @@ class DeleteSite extends Component {
 					) }
 				></NavigationHeader>
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<HeaderCakeBack onClick={ this._goBack } />
 				{ canDeleteSite ? (
-					<PanelSection>
+					<PanelCard>
 						<>
 							{ isUntangled && (
-								<PanelHeading>{ translate( 'Confirm site deletion' ) }</PanelHeading>
+								<PanelCardHeading>{ translate( 'Confirm site deletion' ) }</PanelCardHeading>
 							) }
 							{ this.renderNotice() }
 							{ this.renderBody() }
 						</>
 						{ this.renderDeleteSiteCTA() }
-					</PanelSection>
+					</PanelCard>
 				) : (
 					<DeleteSiteWarnings
 						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }

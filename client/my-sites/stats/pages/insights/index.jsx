@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -9,10 +10,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -42,6 +45,13 @@ const StatsInsights = ( props ) => {
 			} );
 		}
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
+
+	// Redirect to the traffic page if the site is gated for insights
+	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
+	if ( config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights ) {
+		page.redirect( `/stats/day/${ siteSlug }` );
+		return;
+	}
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',

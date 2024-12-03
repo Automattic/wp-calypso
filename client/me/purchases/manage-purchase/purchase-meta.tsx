@@ -168,6 +168,9 @@ function renderRenewsOrExpiresOnLabel( {
 } ): string | null {
 	if ( isExpiring( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
+			if ( domainDetails?.isHundredYearDomain ) {
+				return translate( 'Paid until' );
+			}
 			return translate( 'Domain expires on' );
 		}
 

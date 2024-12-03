@@ -61,7 +61,7 @@ export const MigrationBanner = ( props: { url: string; onClick: () => void } ) =
 							<Button
 								variant="secondary"
 								className="outlined-button"
-								href="https://wordpress.com/hosting/"
+								href="https://wordpress.com/move/?ref=performance-profiler-lp"
 								target="_blank"
 							>
 								{ translate( 'Learn More' ) }

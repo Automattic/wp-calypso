@@ -9,7 +9,7 @@ import {
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
-	GeneralSettingsPage,
+	SiteSettingsPage,
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
@@ -188,9 +188,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Start site launch', async function () {
-			const generalSettingsPage = new GeneralSettingsPage( page );
-			await generalSettingsPage.visit( newSiteDetails.blog_details.site_slug );
-			await generalSettingsPage.launchSite();
+			const siteSettingsPage = new SiteSettingsPage( page );
+			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug );
+			await siteSettingsPage.launchSite();
 		} );
 
 		it( 'Skip domain purchase', async function () {

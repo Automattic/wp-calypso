@@ -371,4 +371,15 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		paths.allDomainManagementRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementV2,
+		domainManagementController.domainManagementPaneView( 'domain-overview' ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
 }

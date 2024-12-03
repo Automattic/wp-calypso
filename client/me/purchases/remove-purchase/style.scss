@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .remove-purchase__card,
 .auto-renew-toggle__card {
 	margin: 10px auto;
@@ -17,10 +20,20 @@
 		vertical-align: middle;
 	}
 }
+.remove-domain-dialog {
+	&.dialog.card {
+		max-width: 90%;
+
+		@include break-small {
+			max-width: 565px;
+		}
+	}
+}
 .dialog__button--domains-remove {
 	> .dialog__button-label {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		column-gap: 7px;
 
 		> svg {
