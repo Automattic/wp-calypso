@@ -25,7 +25,7 @@ export function useCategorizationFromApi(
 		} ) );
 
 		return result.sort( sort );
-	}, [ categoryMap ] );
+	}, [ categoryMap, sort ] );
 
 	const [ selections, setSelections ] = useState< string[] | null >(
 		chooseDefaultSelections( categories, defaultSelections )
@@ -33,20 +33,19 @@ export function useCategorizationFromApi(
 
 	const onSelect = useCallback(
 		( value: string ) => {
-			setSelections( ( currentSelections: string[] ) => {
-				if ( ! isMultiSelection ) {
+			setSelections( ( currentSelections: string[] | null ) => {
+				if ( ! currentSelections || ! isMultiSelection ) {
 					return [ value ];
 				}
 
 				const index = currentSelections.findIndex( ( selection ) => selection === value );
-				if ( index !== -1 ) {
-					return [
-						...currentSelections.slice( 0, index ),
-						...currentSelections.slice( index + 1 ),
-					];
+				if ( index === -1 ) {
+					return [ ...currentSelections, value ];
 				}
 
-				return [ ...currentSelections, value ];
+				return currentSelections.length > 1
+					? [ ...currentSelections.slice( 0, index ), ...currentSelections.slice( index + 1 ) ]
+					: currentSelections;
 			} );
 		},
 		[ isMultiSelection, setSelections ]

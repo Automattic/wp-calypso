@@ -7,14 +7,16 @@ interface Props {
 	className: string;
 	categories: Category[];
 	selectedSlugs: string[] | null;
+	isMultiSelection?: boolean;
 	onSelect: ( selectedSlug: string | null ) => void;
 }
 
 export default function DesignPickerCategoryFilter( {
 	className,
 	categories,
-	onSelect,
 	selectedSlugs,
+	isMultiSelection,
+	onSelect,
 }: Props ) {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
@@ -28,10 +30,15 @@ export default function DesignPickerCategoryFilter( {
 
 	const selectedSlugsSet = new Set( selectedSlugs );
 	const initialActiveIndex = categories.findIndex( ( { slug } ) => selectedSlugsSet.has( slug ) );
+	const initialActiveIndexes = categories
+		.map( ( { slug }, index ) => ( selectedSlugsSet.has( slug ) ? index : -1 ) )
+		.filter( ( index ) => index >= 0 );
 	return (
 		<ResponsiveToolbarGroup
 			className={ className }
 			initialActiveIndex={ initialActiveIndex !== -1 ? initialActiveIndex : 0 }
+			initialActiveIndexes={ initialActiveIndexes }
+			isMultiSelection={ isMultiSelection }
 			onClick={ onClick }
 		>
 			{ categories.map( ( category ) => (

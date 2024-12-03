@@ -961,6 +961,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
 			isTierFilterEnabled={ isGoalCentricFeature }
+			isMultiFilterEnabled={ isGoalCentricFeature }
 		/>
 	);
 

@@ -24,6 +24,7 @@ function makeSortCategoryToTop( slugs: string[] ) {
 		} else if ( slugsSet.has( b.slug ) ) {
 			return 1;
 		}
+
 		return 0;
 	};
 }
@@ -93,23 +94,20 @@ function getCategorizationFromGoals( goals: Onboard.SiteGoal[] ) {
 		CATEGORY_AUTHORS_WRITERS,
 	];
 
-	const defaultSelections =
-		goals
-			.flatMap( getGoalsPreferredCategory )
-			.sort( ( a, b ) => {
-				let aIndex = mostConsequentialDesignCategories.indexOf( a );
-				let bIndex = mostConsequentialDesignCategories.indexOf( b );
+	const defaultSelections = goals.flatMap( getGoalsPreferredCategory ).sort( ( a, b ) => {
+		let aIndex = mostConsequentialDesignCategories.indexOf( a );
+		let bIndex = mostConsequentialDesignCategories.indexOf( b );
 
-				// If the category is not in the list, it should be sorted to the end.
-				if ( aIndex === -1 ) {
-					aIndex = mostConsequentialDesignCategories.length;
-				}
-				if ( bIndex === -1 ) {
-					bIndex = mostConsequentialDesignCategories.length;
-				}
+		// If the category is not in the list, it should be sorted to the end.
+		if ( aIndex === -1 ) {
+			aIndex = mostConsequentialDesignCategories.length;
+		}
+		if ( bIndex === -1 ) {
+			bIndex = mostConsequentialDesignCategories.length;
+		}
 
-				return aIndex - bIndex;
-			} ) ?? [ CATEGORY_BUSINESS ];
+		return aIndex - bIndex;
+	} ) ?? [ CATEGORY_BUSINESS ];
 
 	return {
 		defaultSelections,
