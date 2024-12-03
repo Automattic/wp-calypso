@@ -80,7 +80,7 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 
 	return (
 		<>
-			{ title ? <h2 className="reader-tag-sidebar-title">{ title }</h2> : null }
+			{ title && <h2 className="reader-tag-sidebar-title">{ title }</h2> }
 			<div className="reader-tag-sidebar-recommended-sites">{ popularSitesLinks }</div>
 		</>
 	);
