@@ -15,7 +15,7 @@ const EVENT_NAMES = {
 interface MigrationAssistanceModalProps {
 	navigateBack: ( () => void ) | undefined;
 	migrateFrom: string | null;
-	onConfirm: ( () => void ) | undefined;
+	onConfirm: ( ( planSlug: string ) => void ) | undefined;
 }
 export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssistanceModalProps > = (
 	props: MigrationAssistanceModalProps
@@ -39,7 +39,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 		const acceptedDeal = true;
 		setMigrationAssistanceAccepted();
 		logEvent( acceptedDeal );
-		props.onConfirm?.();
+		props.onConfirm?.( PLAN_BUSINESS );
 	};
 
 	useEffect( () => {

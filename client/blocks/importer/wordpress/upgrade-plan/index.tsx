@@ -1,6 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -35,6 +40,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		trackingEventsProps,
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
 		visiblePlan = PLAN_BUSINESS,
+		showVariants = false,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
@@ -47,7 +53,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
-		planSlugs: [ visiblePlan ],
+		planSlugs: [ visiblePlan, PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS_MONTHLY ],
 		siteId: site.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
@@ -55,6 +61,16 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 	const pricing =
 		pricingMeta && pricingMeta[ visiblePlan ] ? pricingMeta[ visiblePlan ] : undefined;
+
+	const pricing2Years =
+		pricingMeta && pricingMeta[ PLAN_BUSINESS_2_YEARS ]
+			? pricingMeta[ PLAN_BUSINESS_2_YEARS ]
+			: undefined;
+
+	const pricingMonthly =
+		pricingMeta && pricingMeta[ PLAN_BUSINESS_MONTHLY ]
+			? pricingMeta[ PLAN_BUSINESS_MONTHLY ]
+			: undefined;
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
@@ -155,7 +171,13 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		  );
 
 	if ( isFetchingHostingDetails || ! pricing ) {
-		return <Skeleton />;
+		return (
+			<div className="import__upgrade-plan">
+				{ showVariants && <Skeleton showVariants={ showVariants } /> }
+				<Skeleton showVariants={ showVariants } />
+				{ showVariants && <Skeleton showVariants={ showVariants } /> }
+			</div>
+		);
 	}
 
 	return (
@@ -194,11 +216,14 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			) }
 
 			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
-
 			<UpgradePlanDetails
 				pricing={ pricing }
+				pricing2Years={ pricing2Years }
+				pricingMonthly={ pricingMonthly }
 				introOfferAvailable={ !! introOfferAvailable }
 				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+				showVariants={ showVariants }
+				onCtaClick={ onCtaClick }
 			>
 				{ renderCTAs() }
 			</UpgradePlanDetails>
