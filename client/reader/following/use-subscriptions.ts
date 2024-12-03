@@ -13,17 +13,21 @@ export function useSubscriptions() {
 	const isLoading = isLoadingCount || isLoadingSiteSubscriptions;
 	const blogCount = subscriptionsCount?.blogs ?? 0;
 
-	const nonSelfSubscriptions = useMemo(
-		() => siteSubscriptions?.subscriptions?.filter( ( sub ) => ! sub.is_owner ) ?? [],
-		[ siteSubscriptions.subscriptions ]
-	);
-
 	const hasNonSelfSubscriptions = useMemo( () => {
 		if ( blogCount === 0 ) {
 			return false;
 		}
-		return siteSubscriptions?.subscriptions ? nonSelfSubscriptions.length > 0 : blogCount > 0;
-	}, [ blogCount, siteSubscriptions.subscriptions, nonSelfSubscriptions ] );
+
+		// If we have site subscriptions data, filter out self-owned blogs.
+		if ( siteSubscriptions?.subscriptions ) {
+			const nonSelfSubscriptions = siteSubscriptions.subscriptions.filter(
+				( sub ) => ! sub.is_owner
+			);
+			return nonSelfSubscriptions.length > 0;
+		}
+
+		return blogCount > 0;
+	}, [ blogCount, siteSubscriptions ] );
 
 	useEffect( () => {
 		if ( blogCount > 0 ) {
@@ -34,7 +38,5 @@ export function useSubscriptions() {
 	return {
 		isLoading,
 		hasNonSelfSubscriptions,
-		nonSelfSubscriptions,
-		blogCount,
 	};
 }
