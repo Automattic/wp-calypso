@@ -11,7 +11,7 @@ export default function StepDone( { cardData, nextStepUrl }: SubscribersStepProp
 
 	return (
 		<Card>
-			<h2>{ __( 'Import your subscribers to WordPress.com' ) }</h2>
+			<h2>{ __( 'Import your subscribers' ) }</h2>
 			<Notice status="success" className="importer__notice" isDismissible={ false }>
 				{ sprintf(
 					// Translators: %d is number of subscribers.

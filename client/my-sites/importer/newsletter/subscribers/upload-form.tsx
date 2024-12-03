@@ -1,7 +1,7 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ProgressBar } from '@wordpress/components';
+import { ProgressBar, ExternalLink } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -11,7 +11,9 @@ import { useCallback, useState, FormEvent, useEffect } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import ImportSubscribersError from './import-subscribers-error';
@@ -53,6 +55,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		},
 		[ selectedFile, importCsvSubscribers, siteId ]
 	);
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	const onFileSelect = useCallback( ( files: Array< File > ) => {
 		const file = files[ 0 ];
@@ -125,11 +128,14 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 							'By clicking "Continue," you represent that you\'ve obtained the appropriate consent to email each person. <learnMoreLink>Learn more</learnMoreLink>.'
 						),
 						{
-							learnMoreLink: (
+							learnMoreLink: isJetpack ? (
+								// @ts-expect-error Used in createInterpolateElement doesn't need children.
+								<ExternalLink href="https://jetpack.com/support/newsletter/import-subscribers/" />
+							) : (
 								<InlineSupportLink
 									showIcon={ false }
 									supportLink={ localizeUrl(
-										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+										'https://wordpress.com/support/import-subscribers-to-a-newsletter/'
 									) }
 									supportPostId={ 220199 }
 								/>

@@ -172,7 +172,11 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							<FlowQuestion
 								icon={ reusableBlock }
 								title={ translate( 'Import from Substack' ) }
-								text={ translate( 'Quickly bring your subscribers (and even your content!).' ) }
+								text={
+									isJetpack
+										? translate( 'Quickly bring your free and paid subscribers.' )
+										: translate( 'Quickly bring your subscribers (and even your content!).' )
+								}
 								onClick={ importFromSubstack }
 							/>
 						) }

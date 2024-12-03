@@ -65,7 +65,7 @@ export default function StepInitial( {
 				{ __( 'Open Substack subscribers' ) }
 			</Button>
 			<hr />
-			<h2>{ __( 'Step 2: Import your subscribers to WordPress.com' ) }</h2>
+			<h2>{ __( 'Step 2: Import your subscribers' ) }</h2>
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }
