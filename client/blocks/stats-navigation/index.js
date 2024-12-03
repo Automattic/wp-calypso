@@ -83,11 +83,29 @@ class StatsNavigation extends Component {
 				};
 			} )
 		),
+		availableModuleToggles: [],
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
-			return { pageModules: nextProps.pageModuleToggles };
+		const availableModuleToggles = AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ].map(
+			( toggleItem ) => {
+				// disable the "videos" toggle on sites that do not have VideoPress enabled
+				// the toggle will be disabled (grayed out and non interactive)
+				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
+
+				return {
+					...toggleItem,
+					disabled: shouldDisableVideoToggle,
+					defaultValue: shouldDisableVideoToggle === false,
+				};
+			}
+		);
+
+		if (
+			prevState.pageModules !== nextProps.pageModuleToggles ||
+			prevState.availableModuleToggles !== nextProps.availableModuleToggles
+		) {
+			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
 		}
 
 		return null;
@@ -159,9 +177,8 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
-			hasVideoPress,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
+		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -230,19 +247,7 @@ class StatsNavigation extends Component {
 					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 					! hideModuleSettings && (
 						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map(
-								( toggleItem ) => {
-									// disable the "videos" toggle on sites that do not have VideoPress enabled
-									// the toggle will be disabled (grayed out and non interactive)
-									const shouldDisableVideoToggle = ! hasVideoPress && toggleItem.key === 'videos';
-
-									return {
-										...toggleItem,
-										disabled: shouldDisableVideoToggle,
-										defaultValue: shouldDisableVideoToggle === false,
-									};
-								}
-							) }
+							availableModuleToggles={ availableModuleToggles }
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
