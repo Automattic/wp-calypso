@@ -18,7 +18,7 @@ import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
 interface HostingDetailsProps {
-	items: { title: string; description: string; icon: typeof Icon }[];
+	items: { title: string; description: string; icon: JSX.Element }[];
 }
 
 const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
