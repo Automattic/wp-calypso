@@ -255,7 +255,7 @@ export const STEPS = {
 	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION: {
 		slug: 'site-migration-application-password-authorization',
 		asyncComponent: () =>
-			import( './steps-repository/site-migration-application-password-approval' ),
+			import( './steps-repository/site-migration-application-password-authorization' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {

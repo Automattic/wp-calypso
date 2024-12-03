@@ -554,6 +554,28 @@ const siteMigration: Flow = {
 						)
 					);
 				}
+
+				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
+					const { action, authorizationUrl } = providedDependencies as {
+						action: string;
+						authorizationUrl: string;
+					};
+
+					if ( action === 'authorization' ) {
+						const successUrl = window.location.href;
+						window.location.href = authorizationUrl + `?success_url=${ successUrl }`;
+						return;
+					}
+
+					if ( action === 'fallback-credentials' ) {
+						// TODO: Implement fallback credentials step.
+					}
+
+					// return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+					// 	siteId,
+					// 	siteSlug,
+					// } );
+				}
 			}
 		}
 
