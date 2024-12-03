@@ -1,6 +1,9 @@
+import { FormLabel } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import IconBad from './icons/bad.svg';
 import IconGood from './icons/good.svg';
 import IconNeutral from './icons/neutral.svg';
@@ -12,11 +15,19 @@ export type Props = {
 	title: string;
 	description: string;
 	questionDetails: string;
+	ctaText: string;
 	onSubmit: ( data: FeedbackQueryData ) => void;
 	onSkip: () => void;
 };
 
-export function A4AFeedback( { title, description, questionDetails, onSubmit, onSkip }: Props ) {
+export function A4AFeedback( {
+	title,
+	description,
+	questionDetails,
+	ctaText,
+	onSubmit,
+	onSkip,
+}: Props ) {
 	const translate = useTranslate();
 	const [ experience, setExperience ] = useState< string >( 'good' );
 	const [ comments, setComments ] = useState< string >( '' );
@@ -25,11 +36,11 @@ export function A4AFeedback( { title, description, questionDetails, onSubmit, on
 		<div className="a4a-feedback__wrapper">
 			<div className="a4a-feedback__content">
 				<h1 className="a4a-feedback__title">{ title }</h1>
-				<p className="a4a-feedback__description">{ description }</p>
+				<div className="a4a-feedback__description">{ description }</div>
 				<div className="a4a-feedback__questions">
-					<p className="a4a-feedback__question-details">{ questionDetails }</p>
+					<div className="a4a-feedback__question-details">{ questionDetails }</div>
 					<div className="a4a-feedback__experience-selector">
-						<p className="a4a-feedback__experience-label">{ translate( 'Overall experience' ) }</p>
+						<div className="a4a-feedback__experience-label">{ translate( 'Overall' ) }</div>
 						<div className="a4a-feedback__experience-selector-buttons">
 							<Button
 								variant={ experience === 'good' ? 'primary' : 'secondary' }
@@ -51,21 +62,34 @@ export function A4AFeedback( { title, description, questionDetails, onSubmit, on
 							</Button>
 						</div>
 					</div>
-					<p>{ translate( 'Additional feedback about this experience (Optional)' ) }</p>
-					<textarea
-						className="a4a-feedback__comments"
-						value={ comments }
-						onChange={ ( e ) => setComments( e.target.value ) }
-					/>
-					<div className="modal-footer">
+					<FormFieldset>
+						<FormLabel className="a4a-feedback__comments-label" htmlFor="comments">
+							{ translate(
+								'Additional feedback about this experience {{span}}(Optional){{/span}}',
+								{ components: { span: <span></span> } }
+							) }
+						</FormLabel>
+						<FormTextarea
+							className="a4a-feedback__comments"
+							name="comments"
+							id="comments"
+							value={ comments }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setComments( event.target.value )
+							}
+						/>
+					</FormFieldset>
+					<div className="a4a-feedback__cta">
 						<Button
 							variant="primary"
 							onClick={ () => onSubmit( { experience, comments } ) }
 							disabled={ ! experience }
 						>
-							{ translate( 'Submit and continue' ) }
+							{ ctaText }
 						</Button>
-						<Button onClick={ onSkip }>{ translate( 'Skip feedback' ) }</Button>
+						<Button className="a8c-blue-link" onClick={ onSkip }>
+							{ translate( 'Skip feedback' ) }
+						</Button>
 					</div>
 				</div>
 			</div>
