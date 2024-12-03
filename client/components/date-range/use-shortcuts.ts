@@ -69,6 +69,8 @@ export function getShortcuts(
 				{
 					id: 'custom_date_range',
 					label: translateFunction( 'Custom Range' ),
+					startDate: '',
+					endDate: '',
 					period: DATERANGE_PERIOD.DAY,
 					shortcutId: 'custom_date_range',
 				},

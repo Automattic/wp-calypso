@@ -6,7 +6,7 @@ import qs from 'qs';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControl from '../date-control';
-import { DateControlPickerShortcut } from '../date-control/types';
+import { DateControlPickerShortcut } from '../date-range/shortcuts';
 
 type DateRange = {
 	chartStart: string;
