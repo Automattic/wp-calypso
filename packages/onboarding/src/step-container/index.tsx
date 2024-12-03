@@ -21,7 +21,6 @@ interface Props {
 	backLabelText?: TranslateResult;
 	skipLabelText?: TranslateResult;
 	nextLabelText?: TranslateResult;
-	showNotice?: boolean;
 	notice?: ReactElement;
 	formattedHeader?: ReactElement;
 	hideFormattedHeader?: boolean;
@@ -63,7 +62,6 @@ const StepContainer: React.FC< Props > = ( {
 	skipHeadingText,
 	hideNext = true,
 	nextLabelText,
-	showNotice = false,
 	notice,
 	formattedHeader,
 	headerImageUrl,
@@ -198,7 +196,7 @@ const StepContainer: React.FC< Props > = ( {
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
 				<div className="step-container__header">
-					{ showNotice && notice }
+					{ notice }
 					{ formattedHeader }
 					{ headerImageUrl && (
 						<div className="step-container__header-image">
