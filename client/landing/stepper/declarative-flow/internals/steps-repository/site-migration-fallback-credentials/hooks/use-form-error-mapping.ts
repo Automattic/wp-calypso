@@ -47,7 +47,7 @@ export const useFormErrorMapping = (
 		( error: ApiError ) => {
 			const { code, message, data } = error;
 
-			if ( code === 'rest_missing_callback_param' || ! code ) {
+			if ( 'rest_missing_callback_param' === code || ! code ) {
 				return {
 					root: {
 						type: 'manual',
@@ -56,7 +56,7 @@ export const useFormErrorMapping = (
 				};
 			}
 
-			if ( code === 'automated_migration_tools_login_and_get_cookies_test_failed' ) {
+			if ( 'automated_migration_tools_login_and_get_cookies_test_failed' === code ) {
 				return {
 					root: {
 						type: 'special',
@@ -68,7 +68,7 @@ export const useFormErrorMapping = (
 				};
 			}
 
-			if ( code !== 'rest_invalid_param' || ! data?.params ) {
+			if ( 'rest_invalid_param' !== code || ! data?.params ) {
 				return { root: { type: 'manual', message } };
 			}
 

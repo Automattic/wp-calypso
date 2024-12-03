@@ -232,7 +232,7 @@ describe( 'SiteMigrationCredentials', () => {
 			await userEvent.click( continueButton() );
 
 			await waitFor( () => {
-				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+				expect( continueButton( /Continue anyway/ ) ).toBeVisible();
 				expect(
 					getByText(
 						'We could not verify your credentials. Can you double check your account information and try again?'

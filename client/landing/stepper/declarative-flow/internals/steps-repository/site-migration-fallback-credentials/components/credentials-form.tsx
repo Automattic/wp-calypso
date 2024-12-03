@@ -35,7 +35,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 			return translate( 'Verifying credentials' );
 		}
 		if ( canBypassVerification ) {
-			return translate( 'Continue anyways' );
+			return translate( 'Continue anyway' );
 		}
 
 		return translate( 'Continue' );
