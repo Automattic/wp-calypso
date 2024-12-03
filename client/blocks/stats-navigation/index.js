@@ -8,7 +8,10 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
-import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
+import {
+	STATS_FEATURE_PAGE_INSIGHTS,
+	STATS_FEATURE_PAGE_TRAFFIC,
+} from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -182,6 +185,7 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
+			gatedTrafficPage,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -196,6 +200,13 @@ class StatsNavigation extends Component {
 		const isModuleSettingsSupported =
 			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
+		const shouldRenderModuleToggler =
+			! isLegacy &&
+			isModuleSettingsSupported &&
+			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+			! hideModuleSettings &&
+			! gatedTrafficPage;
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
@@ -247,22 +258,17 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ ! isLegacy &&
-					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
-					! hideModuleSettings && (
-						<PageModuleToggler
-							availableModuleToggles={ availableModuleToggles }
-							pageModules={ pageModules }
-							onToggleModule={ this.onToggleModule }
-							isTooltipShown={
-								showSettingsTooltip &&
-								! isPageSettingsTooltipDismissed &&
-								! delayTooltipPresentation
-							}
-							onTooltipDismiss={ this.onTooltipDismiss }
-						/>
-					) }
+				{ shouldRenderModuleToggler && (
+					<PageModuleToggler
+						availableModuleToggles={ availableModuleToggles }
+						pageModules={ pageModules }
+						onToggleModule={ this.onToggleModule }
+						isTooltipShown={
+							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
+						}
+						onTooltipDismiss={ this.onTooltipDismiss }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -304,6 +310,9 @@ export default connect(
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
+			gatedTrafficPage:
+				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 			gatedInsightsPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
