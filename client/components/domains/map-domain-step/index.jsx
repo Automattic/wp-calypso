@@ -193,7 +193,8 @@ class MapDomainStep extends Component {
 	registerSuggestedDomain = () => {
 		this.props.recordAddDomainButtonClickInMapDomain(
 			this.state.suggestion.domain_name,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		return this.props.onRegisterDomain( this.state.suggestion );
