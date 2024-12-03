@@ -310,7 +310,7 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
-			isVideoPress,
+			hasVideoPress,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -670,7 +670,7 @@ class StatsSite extends Component {
 									className={ halfWidthModuleClasses }
 								/>
 
-								{ isVideoPress && ! this.isModuleHidden( 'videos' ) && (
+								{ hasVideoPress && ! this.isModuleHidden( 'videos' ) && (
 									<StatsModuleVideos
 										moduleStrings={ moduleStrings.videoplays }
 										period={ this.props.period }
@@ -845,7 +845,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		const isVideoPress = siteHasFeature( state, siteId, 'videopress' );
+		const hasVideoPress = siteHasFeature( state, siteId, 'videopress' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -908,7 +908,7 @@ export default connect(
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
-			isVideoPress,
+			hasVideoPress,
 		};
 	},
 	{
