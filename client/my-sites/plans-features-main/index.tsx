@@ -17,6 +17,8 @@ import {
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	isWpcomEnterpriseGridPlan,
+	getPlanSlugForTermVariant,
+	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -445,22 +447,21 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		term,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo(
 		() =>
-			gridPlansForFeaturesGridRaw[ term ]?.filter(
-				( { planSlug, availableForPurchase, current } ) => {
-					if ( deemphasizeFreePlan ) {
-						return planSlug !== PLAN_FREE;
-					}
-					if ( 'treatment' === hideLowerTierPlansExperimentAssignment?.variationName ) {
-						return current || availableForPurchase || isWpcomEnterpriseGridPlan( planSlug );
-					}
-					return true;
+			gridPlansForFeaturesGridRaw?.filter( ( { planSlug, availableForPurchase, current } ) => {
+				if ( deemphasizeFreePlan ) {
+					return planSlug !== PLAN_FREE;
 				}
-			) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
+				if ( 'treatment' === hideLowerTierPlansExperimentAssignment?.variationName ) {
+					return current || availableForPurchase || isWpcomEnterpriseGridPlan( planSlug );
+				}
+				return true;
+			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
 		[
 			gridPlansForFeaturesGridRaw,
 			deemphasizeFreePlan,
@@ -470,7 +471,7 @@ const PlansFeaturesMain = ( {
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
-	const offeringFreePlan = gridPlansForFeaturesGridRaw[ term ]?.some(
+	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
@@ -756,12 +757,32 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
+	const usePlanSlugsForAllDisplayedIntervals = () => {
+		const currentPlanSlugs = gridPlansForFeaturesGrid?.map( ( { planSlug } ) => planSlug );
+
+		return currentPlanSlugs?.flatMap( ( planSlug ) =>
+			filteredDisplayedIntervals
+				.map( ( term ) =>
+					getPlanSlugForTermVariant( planSlug, URL_FRIENDLY_TERMS_MAPPING[ term ] )
+				)
+				.filter( ( planSlug ) => planSlug !== undefined )
+		);
+	};
+
+	const pricingForAllDisplayedIntervals = Plans.usePricingMetaForGridPlans( {
+		planSlugs: usePlanSlugsForAllDisplayedIntervals() ?? [],
+		storageAddOns,
+		coupon,
+		siteId,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
 	const enableTermSavingsPriceDisplay = useMemo( () => {
-		const isAnyGridPlanDiscounted = Object.values( gridPlansForFeaturesGridRaw ).reduce(
-			( isDiscounted, gridPlans ) => {
-				const hasDiscount = gridPlans?.some( ( { pricing: { discountedPrice, introOffer } } ) => {
-					return discountedPrice.monthly || ( introOffer && ! introOffer.isOfferComplete );
-				} );
+		const isAnyGridPlanDiscounted = Object.values( pricingForAllDisplayedIntervals ?? {} ).reduce(
+			( isDiscounted, { discountedPrice, introOffer } ) => {
+				const hasDiscount =
+					'number' === typeof discountedPrice.monthly ||
+					( introOffer && ! introOffer.isOfferComplete );
 				return isDiscounted || !! hasDiscount;
 			},
 			false
@@ -777,7 +798,7 @@ const PlansFeaturesMain = ( {
 			isInSignup
 		);
 	}, [
-		gridPlansForFeaturesGridRaw,
+		pricingForAllDisplayedIntervals,
 		longerPlanTermDefaultExperiment.isEligibleForTermSavings,
 		isInSignup,
 	] );
