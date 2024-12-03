@@ -218,7 +218,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						className="design-picker__category-filter"
 						categories={ categorization.categories }
 						onSelect={ categorization.onSelect }
-						selectedSlug={ categorization.selection }
+						selectedSlugs={ categorization.selections }
 					/>
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
@@ -239,7 +239,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					return (
 						<DesignCard
 							key={ design.recipe?.slug ?? design.slug ?? index }
-							category={ categorization?.selection }
+							category={ categorization?.selections.join( ',' ) }
 							design={ design }
 							locale={ locale }
 							isPremiumThemeAvailable={ isPremiumThemeAvailable }

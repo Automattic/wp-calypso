@@ -14,22 +14,23 @@ const CATEGORY_ENTERTAINMENT = 'entertainment';
  * Ensures the category appears at the top of the design category list
  * (directly below the Show All filter).
  */
-function makeSortCategoryToTop( slug: string ) {
+function makeSortCategoryToTop( slugs: string[] ) {
+	const slugsSet = new Set( slugs );
 	return ( a: Category, b: Category ) => {
 		if ( a.slug === b.slug ) {
 			return 0;
-		} else if ( a.slug === slug ) {
+		} else if ( slugsSet.has( a.slug ) ) {
 			return -1;
-		} else if ( b.slug === slug ) {
+		} else if ( slugsSet.has( b.slug ) ) {
 			return 1;
 		}
 		return 0;
 	};
 }
 
-const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
-const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
-const sortBusinessToTop = makeSortCategoryToTop( CATEGORY_BUSINESS );
+const sortBlogToTop = makeSortCategoryToTop( [ CATEGORY_BLOG ] );
+const sortStoreToTop = makeSortCategoryToTop( [ CATEGORY_STORE ] );
+const sortBusinessToTop = makeSortCategoryToTop( [ CATEGORY_BUSINESS ] );
 
 export function getCategorizationOptions(
 	intent: string,
@@ -44,9 +45,9 @@ export function getCategorizationOptions(
 
 function getCategorizationFromIntent( intent: string ) {
 	const result = {
-		defaultSelection: null,
+		defaultSelections: null,
 	} as {
-		defaultSelection: string | null;
+		defaultSelections: string[] | null;
 		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
 	};
 
@@ -54,19 +55,19 @@ function getCategorizationFromIntent( intent: string ) {
 		case 'write':
 			return {
 				...result,
-				defaultSelection: CATEGORY_BLOG,
+				defaultSelections: [ CATEGORY_BLOG ],
 				sort: sortBlogToTop,
 			};
 		case 'sell':
 			return {
 				...result,
-				defaultSelection: CATEGORY_STORE,
+				defaultSelections: [ CATEGORY_STORE ],
 				sort: sortStoreToTop,
 			};
 		case 'build':
 			return {
 				...result,
-				defaultSelection: CATEGORY_BUSINESS,
+				defaultSelections: [ CATEGORY_BUSINESS ],
 				sort: sortBusinessToTop,
 			};
 		default:
@@ -92,9 +93,9 @@ function getCategorizationFromGoals( goals: Onboard.SiteGoal[] ) {
 		CATEGORY_AUTHORS_WRITERS,
 	];
 
-	const defaultSelection =
+	const defaultSelections =
 		goals
-			.map( getGoalsPreferredCategory )
+			.flatMap( getGoalsPreferredCategory )
 			.sort( ( a, b ) => {
 				let aIndex = mostConsequentialDesignCategories.indexOf( a );
 				let bIndex = mostConsequentialDesignCategories.indexOf( b );
@@ -108,42 +109,41 @@ function getCategorizationFromGoals( goals: Onboard.SiteGoal[] ) {
 				}
 
 				return aIndex - bIndex;
-			} )
-			.shift() ?? CATEGORY_BUSINESS;
+			} ) ?? [ CATEGORY_BUSINESS ];
 
 	return {
-		defaultSelection,
-		sort: makeSortCategoryToTop( defaultSelection ),
+		defaultSelections,
+		sort: makeSortCategoryToTop( defaultSelections ),
 	};
 }
 
-function getGoalsPreferredCategory( goal: Onboard.SiteGoal ): string {
+function getGoalsPreferredCategory( goal: Onboard.SiteGoal ): string[] {
 	switch ( goal ) {
 		case Onboard.SiteGoal.Write:
-			return CATEGORY_BLOG;
+			return [ CATEGORY_BLOG ];
 
 		case Onboard.SiteGoal.CollectDonations:
 		case Onboard.SiteGoal.BuildNonprofit:
-			return CATEGORY_COMMUNITY_NON_PROFIT;
+			return [ CATEGORY_COMMUNITY_NON_PROFIT ];
 
 		case Onboard.SiteGoal.Porfolio:
-			return CATEGORY_PORTFOLIO;
+			return [ CATEGORY_PORTFOLIO ];
 
 		case Onboard.SiteGoal.Newsletter:
 		case Onboard.SiteGoal.PaidSubscribers:
-			return CATEGORY_AUTHORS_WRITERS;
+			return [ CATEGORY_AUTHORS_WRITERS ];
 
 		case Onboard.SiteGoal.SellDigital:
 		case Onboard.SiteGoal.SellPhysical:
 		case Onboard.SiteGoal.Sell:
-			return CATEGORY_STORE;
+			return [ CATEGORY_STORE ];
 
 		case Onboard.SiteGoal.Courses:
-			return CATEGORY_EDUCATION;
+			return [ CATEGORY_EDUCATION ];
 
 		case Onboard.SiteGoal.Videos:
 		case Onboard.SiteGoal.AnnounceEvents:
-			return CATEGORY_ENTERTAINMENT;
+			return [ CATEGORY_ENTERTAINMENT ];
 
 		case Onboard.SiteGoal.Engagement:
 		case Onboard.SiteGoal.Promote:
@@ -152,6 +152,8 @@ function getGoalsPreferredCategory( goal: Onboard.SiteGoal ): string {
 		case Onboard.SiteGoal.ImportSubscribers:
 		case Onboard.SiteGoal.Other:
 		case Onboard.SiteGoal.DIFM:
-			return CATEGORY_BUSINESS;
+			return [ CATEGORY_BUSINESS ];
+		default:
+			return [];
 	}
 }

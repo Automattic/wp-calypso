@@ -6,7 +6,7 @@ import './style.scss';
 interface Props {
 	className: string;
 	categories: Category[];
-	selectedSlug: string | null;
+	selectedSlugs: string[] | null;
 	onSelect: ( selectedSlug: string | null ) => void;
 }
 
@@ -14,7 +14,7 @@ export default function DesignPickerCategoryFilter( {
 	className,
 	categories,
 	onSelect,
-	selectedSlug,
+	selectedSlugs,
 }: Props ) {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
@@ -25,7 +25,9 @@ export default function DesignPickerCategoryFilter( {
 
 		onSelect( category?.slug );
 	};
-	const initialActiveIndex = categories.findIndex( ( { slug } ) => slug === selectedSlug );
+
+	const selectedSlugsSet = new Set( selectedSlugs );
+	const initialActiveIndex = categories.findIndex( ( { slug } ) => selectedSlugsSet.has( slug ) );
 	return (
 		<ResponsiveToolbarGroup
 			className={ className }
