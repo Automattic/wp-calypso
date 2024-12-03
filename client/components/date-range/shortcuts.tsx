@@ -1,16 +1,10 @@
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
 import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-
-const DATERANGE_PERIOD = {
-	DAY: 'day',
-	WEEK: 'week',
-	MONTH: 'month',
-};
+import { useShortcuts } from './use-shortcuts';
 
 type MomentOrNull = Moment | null;
 
@@ -32,7 +26,6 @@ const DateRangePickerShortcuts = ( {
 	endDate?: MomentOrNull;
 	isNewDateFilteringEnabled?: boolean;
 } ) => {
-	const translate = useTranslate();
 	const siteToday = useMomentSiteZone();
 
 	const normalizeDate = ( date: MomentOrNull ) => {
@@ -43,90 +36,15 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
-	// TODO: Receive this list from the parent component.
-	const shortcutList = [
+	const { supportedShortcutList: shortcutList, selectedShortcut } = useShortcuts(
 		{
-			id: 'last_7_days',
-			label: translate( 'Last 7 Days' ),
-			offset: 0,
-			range: 6,
-			period: DATERANGE_PERIOD.DAY,
-			shortcutId: 'last_7_days',
+			chartStart: normalizedStartDate?.format( 'YYYY-MM-DD' ) ?? '',
+			chartEnd: normalizedEndDate?.format( 'YYYY-MM-DD' ) ?? '',
+			daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
 		},
-		{
-			id: 'last_30_days',
-			label: translate( 'Last 30 Days' ),
-			offset: 0,
-			range: 29,
-			period: DATERANGE_PERIOD.DAY,
-			shortcutId: 'last_30_days',
-		},
-		{
-			id: 'last_3_months',
-			label: translate( 'Last 90 Days' ),
-			offset: 0,
-			range: 89,
-			period: DATERANGE_PERIOD.WEEK,
-			shortcutId: 'last_3_months',
-		},
-		{
-			id: 'last_year',
-			label: translate( 'Last Year' ),
-			offset: 0,
-			range: 364, // ranges are zero based!
-			period: DATERANGE_PERIOD.MONTH,
-			shortcutId: 'last_year',
-		},
-		{
-			id: 'custom_date_range',
-			label: translate( 'Custom Range' ),
-			offset: 0,
-			range: 0,
-			period: DATERANGE_PERIOD.DAY,
-			shortcutId: 'custom_date_range',
-		},
-	];
-
-	if ( isNewDateFilteringEnabled ) {
-		shortcutList.unshift(
-			{
-				id: 'today',
-				label: translate( 'Today' ),
-				offset: 0,
-				range: 0,
-				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'today',
-			},
-			{
-				id: 'yesterday',
-				label: translate( 'Yesterday' ),
-				offset: 1,
-				range: 0,
-				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'yesterday',
-			}
-		);
-	}
-
-	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
-		if ( ! startDate || ! endDate ) {
-			return null;
-		}
-		// Search the shortcut array for something matching the current date range.
-		// Returns shortcut or null;
-		const today = siteToday.clone().startOf( 'day' );
-		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
-		const shortcut = shortcutList.find( ( element ) => {
-			if (
-				( endDate.isSame( today, 'day' ) || element.offset === 1 ) &&
-				daysInRange === element.range
-			) {
-				return element;
-			}
-			return null;
-		} );
-		return shortcut;
-	};
+		undefined,
+		isNewDateFilteringEnabled
+	);
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
 		const newToDate = siteToday.clone().startOf( 'day' ).subtract( offset, 'days' );
@@ -142,10 +60,7 @@ const DateRangePickerShortcuts = ( {
 		}
 	};
 
-	currentShortcut =
-		currentShortcut ||
-		getShortcutForRange( normalizedStartDate, normalizedEndDate )?.id ||
-		'custom_date_range';
+	currentShortcut = currentShortcut || selectedShortcut?.id || 'custom_date_range';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">

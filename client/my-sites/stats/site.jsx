@@ -395,7 +395,7 @@ class StatsSite extends Component {
 			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( 7, 'days' )
+				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( 'YYYY-MM-DD' );
 		}
 
@@ -497,6 +497,7 @@ class StatsSite extends Component {
 									showQueryDate
 									isShort
 									dateRange={ customChartRange }
+									isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								/>
 							</StatsPeriodNavigation>
 						</StatsPeriodHeader>
@@ -530,6 +531,7 @@ class StatsSite extends Component {
 										statsType="statsTopPosts"
 										showQueryDate
 										isShort
+										isNewDateFilteringEnabled={ false }
 									/>
 								</StatsPeriodNavigation>
 							</StatsPeriodHeader>
