@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -18,11 +19,26 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
-	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
+	const { data: siteSubscriptions } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const hasNonSelfSubscriptions = useMemo( () => {
+		if ( ! subscriptionsCount?.blogs || subscriptionsCount.blogs === 0 ) {
+			return false;
+		}
+
+		// If we have site subscriptions data, filter out self-owned blogs
+		if ( siteSubscriptions?.subscriptions ) {
+			const nonSelfSubscriptions = siteSubscriptions.subscriptions.filter(
+				( sub ) => ! sub.is_owner
+			);
+			return nonSelfSubscriptions.length > 0;
+		}
+
+		return subscriptionsCount.blogs > 0;
+	}, [ subscriptionsCount?.blogs, siteSubscriptions ] );
 
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
-	if ( ! hasSubscriptions ) {
+	if ( ! hasNonSelfSubscriptions ) {
 		return (
 			<div className="following-stream--no-subscriptions">
 				<NavigationHeader title={ translate( 'Recent' ) } />
@@ -50,7 +66,6 @@ function FollowingStream( { ...props } ) {
 					{ ...props }
 					className="following"
 					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
-					showDefaultEmptyContentIfMissing={ false }
 				>
 					<BloganuaryHeader />
 					<NavigationHeader
