@@ -28,8 +28,9 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
+	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-	STAT_TYPE_REFERRERS,
+	STATS_FEATURE_PAGE_TRAFFIC,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -43,6 +44,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
@@ -176,7 +178,7 @@ class StatsSite extends Component {
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( period === 'week' ? 'isoWeek' : period )
-			.format( 'YYYY-MM-DD' );
+			.format( DATE_FORMAT );
 
 		// Limit navigation within the currently selected range.
 		const currentChartStart = this.props.context.query?.chartStart;
@@ -282,7 +284,7 @@ class StatsSite extends Component {
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
 		} else {
-			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+			url += `?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
 		}
 
 		return url;
@@ -308,6 +310,7 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
+			isVideoPress,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -322,7 +325,7 @@ class StatsSite extends Component {
 			defaultPeriod = PAST_THIRTY_DAYS;
 		}
 
-		const queryDate = date.format( 'YYYY-MM-DD' );
+		const queryDate = date.format( DATE_FORMAT );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
@@ -336,7 +339,9 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
+			customChartRange = {
+				chartEnd: momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT ),
+			};
 		}
 
 		// Find the quantity of bars for the chart.
@@ -353,8 +358,8 @@ class StatsSite extends Component {
 			// (e.g. months defaulting to 30 days and showing one point)
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( daysInRange - 1, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.subtract( daysInRange, 'days' )
+				.format( DATE_FORMAT );
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -390,16 +395,16 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( 7, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.subtract( customChartRange.daysInRange - 1, 'days' )
+				.format( DATE_FORMAT );
 		}
 
 		const query = isNewDateFilteringEnabled
 			? chartRangeToQuery( customChartRange )
-			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+			: memoizedQuery( period, endOf.format( DATE_FORMAT ) );
 
 		// For period option links
 		const traffic = {
@@ -495,6 +500,7 @@ class StatsSite extends Component {
 									showQueryDate
 									isShort
 									dateRange={ customChartRange }
+									isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								/>
 							</StatsPeriodNavigation>
 						</StatsPeriodHeader>
@@ -528,6 +534,7 @@ class StatsSite extends Component {
 										statsType="statsTopPosts"
 										showQueryDate
 										isShort
+										isNewDateFilteringEnabled={ false }
 									/>
 								</StatsPeriodNavigation>
 							</StatsPeriodHeader>
@@ -663,7 +670,7 @@ class StatsSite extends Component {
 									className={ halfWidthModuleClasses }
 								/>
 
-								{ ! this.isModuleHidden( 'videos' ) && (
+								{ isVideoPress && ! this.isModuleHidden( 'videos' ) && (
 									<StatsModuleVideos
 										moduleStrings={ moduleStrings.videoplays }
 										period={ this.props.period }
@@ -838,6 +845,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isVideoPress = siteHasFeature( state, siteId, 'videopress' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -875,7 +883,7 @@ export default connect(
 		);
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STAT_TYPE_REFERRERS );
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
 		return {
 			canUserViewStats,
@@ -900,6 +908,7 @@ export default connect(
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
+			isVideoPress,
 		};
 	},
 	{

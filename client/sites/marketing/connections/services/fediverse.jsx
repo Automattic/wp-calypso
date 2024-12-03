@@ -1,14 +1,23 @@
 import { Badge, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryPlugins from 'calypso/components/data/query-plugins';
 import SocialLogo from 'calypso/components/social-logo';
-import { FediverseServiceSection } from 'calypso/my-sites/site-settings/fediverse-settings';
+import { WpcomFediverseSettingsSection } from 'calypso/my-sites/site-settings/fediverse-settings/WpcomFediverseSettingsSection';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const FediverseServiceSection = () => {
+	const siteId = useSelector( getSelectedSiteId );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
+	if ( isJetpack ) {
+		return null;
+	}
+
+	return <WpcomFediverseSettingsSection siteId={ siteId } />;
+};
 
 function FediverseHeader() {
 	const translate = useTranslate();
@@ -28,26 +37,9 @@ function FediverseHeader() {
 	);
 }
 
-function JetpackFediverseStatus( { siteId } ) {
-	const translate = useTranslate();
-	const plugin = useSelector( ( state ) => getPluginOnSite( state, siteId, 'activitypub' ) );
-	const pluginIsActive = plugin?.active;
-	const pluginIsInstalledAndInactive = plugin && ! pluginIsActive;
-	return (
-		<>
-			<QueryPlugins siteId={ siteId } />
-			{ ( ! plugin || pluginIsInstalledAndInactive ) && (
-				<Badge type="info">{ translate( 'Inactive' ) }</Badge>
-			) }
-			{ pluginIsActive && <Badge type="info-blue">{ translate( 'Enabled' ) }</Badge> }
-		</>
-	);
-}
-
 function FediverseStatus() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const isPrivate = site?.is_private || site?.is_coming_soon;
 	const { isEnabled, isLoading, isError } = useActivityPubStatus( siteId );
@@ -55,10 +47,6 @@ function FediverseStatus() {
 
 	if ( isPrivate || disabled ) {
 		return null;
-	}
-
-	if ( isJetpack ) {
-		return <JetpackFediverseStatus siteId={ siteId } />;
 	}
 
 	return isEnabled ? (
@@ -69,6 +57,11 @@ function FediverseStatus() {
 }
 
 export default function Fediverse() {
+	const siteId = useSelector( getSelectedSiteId );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	if ( isJetpack ) {
+		return null;
+	}
 	return (
 		<li>
 			<FoldableCard
@@ -79,7 +72,7 @@ export default function Fediverse() {
 				clickableHeader
 				compact
 			>
-				<FediverseServiceSection needsBorders={ false } />
+				<FediverseServiceSection />
 			</FoldableCard>
 		</li>
 	);

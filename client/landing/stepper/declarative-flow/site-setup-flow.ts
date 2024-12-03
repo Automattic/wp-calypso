@@ -8,13 +8,13 @@ import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useExperiment } from 'calypso/lib/explat';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
+import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
@@ -96,11 +96,7 @@ const siteSetupFlow: Flow = {
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const [ , experimentAssignment ] = useExperiment( 'calypso_onboarding_goals_holdout_20241126', {
-			// Hold off assigning user to group until it's absolutely necessary
-			isEligible: [ 'goals', 'designSetup' ].includes( currentStep ),
-		} );
-		const isGoalsHoldout = experimentAssignment?.variationName === 'holdout';
+		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
 
 		const stepData = useSelect(
 			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),

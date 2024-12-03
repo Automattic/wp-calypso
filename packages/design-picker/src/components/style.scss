@@ -25,6 +25,9 @@
 	.design-picker__filters {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
+		gap: 10px;
+		margin-bottom: 24px;
 
 		.design-picker__design-your-own-button {
 			flex-shrink: 0;
@@ -41,10 +44,15 @@
 
 		.design-picker__category-filter.responsive-toolbar-group__dropdown {
 			width: 100%;
+			padding-bottom: 0;
 
 			.responsive-toolbar-group__grouped-list {
 				justify-content: flex-start;
 			}
+		}
+
+		@include break-small {
+			flex-direction: row;
 		}
 	}
 
@@ -475,7 +483,7 @@
 .design-picker--has-categories {
 	.responsive-toolbar-group__swipe {
 		.responsive-toolbar-group__swipe-list {
-			padding: 0 0 24px;
+			padding: 0;
 
 			>div:first-of-type {
 				button {

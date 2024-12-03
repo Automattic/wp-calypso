@@ -6,7 +6,7 @@ interface DateControlProps {
 		chartEnd: string;
 		daysInRange: number;
 	};
-	shortcutList: DateControlPickerShortcut[];
+	shortcutList: DateRangePickerShortcut[];
 	onShortcutClick: ( shortcutId: string ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
@@ -17,9 +17,9 @@ interface DateControlProps {
 interface DateControlPickerProps {
 	buttonLabel: string;
 	dateRange: any;
-	shortcutList: DateControlPickerShortcut[];
+	shortcutList: DateRangePickerShortcut[];
 	selectedShortcut: string | undefined;
-	onShortcut: ( shortcut: DateControlPickerShortcut ) => void;
+	onShortcut: ( shortcut: DateRangePickerShortcut ) => void;
 	onApply: ( startDate: string, endDate: string ) => void;
 	overlay?: JSX.Element;
 	onGatedHandler: (
@@ -30,19 +30,9 @@ interface DateControlPickerProps {
 }
 
 interface DateControlPickerShortcutsProps {
-	shortcutList: DateControlPickerShortcut[];
+	shortcutList: DateRangePickerShortcut[];
 	currentShortcut: string | undefined;
-	onClick: ( shortcut: DateControlPickerShortcut ) => void;
-}
-
-interface DateControlPickerShortcut {
-	id: string;
-	label: string;
-	offset: number;
-	range: number;
-	period: string;
-	statType: string;
-	isGated: boolean;
+	onClick: ( shortcut: DateRangePickerShortcut ) => void;
 }
 
 interface DateControlPickerDateProps {
@@ -58,7 +48,6 @@ interface DateControlPickerDateProps {
 export {
 	DateControlProps,
 	DateControlPickerProps,
-	DateControlPickerShortcut,
 	DateControlPickerShortcutsProps,
 	DateControlPickerDateProps,
 };

@@ -3,35 +3,74 @@ import {
 	requestRecommendedSites as requestRecommendedSitesAction,
 	receiveRecommendedSites,
 } from 'calypso/state/reader/recommended-sites/actions';
-import { requestRecommendedSites, addRecommendedSites, fromApi } from '../';
+import {
+	requestRecommendedSites,
+	addRecommendedSites,
+	mapResponseToRecommendedSites,
+	RecommendedSitesBody,
+	RecommendedSite,
+} from '../index';
 
 const algorithm = 'chicken-recs/es1';
 const seed = 42;
-const response = {
+const response: RecommendedSitesBody = {
 	algorithm,
 	sites: [
 		{
 			blog_id: 19096129,
-			feed_id: 185124,
 			blog_title: 'Bente Haarstad Photography&amp;',
 			blog_url: 'http://bentehaarstad.wordpress.com',
+			description: 'Description 1',
+			feed_id: 185124,
+			feed_url: 'http://bentehaarstad.wordpress.com/feed/',
+			icon: {
+				ico: 'http://bentehaarstad.wordpress.com/favicon.ico',
+				img: 'http://bentehaarstad.wordpress.com/favicon.ico',
+				media_id: '12345',
+			},
+			ID: 12345,
+			name: 'Bente Haarstad Photography&amp;',
 			railcar: {},
+			URL: 'http://bentehaarstad.wordpress.com',
 		},
 		{
 			blog_id: 38492359,
-			feed_id: 42081376,
 			blog_title: 'The Renegade Press',
 			blog_url: 'http://chrisnicholaswrites.wordpress.com',
+			description: 'Description 2',
+			feed_id: 42081376,
+			feed_url: 'http://chrisnicholaswrites.wordpress.com/feed/',
+			icon: {
+				ico: 'http://chrisnicholaswrites.wordpress.com/favicon.ico',
+				img: 'http://chrisnicholaswrites.wordpress.com/favicon.ico',
+				media_id: '12345',
+			},
+			ID: 12345,
+			name: 'The Renegade Press',
 			railcar: {},
+			URL: 'http://chrisnicholaswrites.wordpress.com',
 		},
 		{
 			blog_id: 30436600,
-			feed_id: 1098976,
 			blog_title: 'Make Something Mondays!',
 			blog_url: 'http://makesomethingmondays.wordpress.com',
+			description: 'Description 3',
+			feed_id: 1098976,
+			feed_url: 'http://makesomethingmondays.wordpress.com/feed/',
+			icon: {
+				ico: 'http://makesomethingmondays.wordpress.com/favicon.ico',
+				img: 'http://makesomethingmondays.wordpress.com/favicon.ico',
+				media_id: '12345',
+			},
+			ID: 12345,
+			name: 'Make Something Mondays!',
 			railcar: {},
+			URL: 'http://makesomethingmondays.wordpress.com',
 		},
 	],
+	meta: {
+		next_page: 'next_page',
+	},
 };
 
 describe( 'recommended sites', () => {
@@ -55,10 +94,11 @@ describe( 'recommended sites', () => {
 	describe( '#receiveRecommendedSites', () => {
 		test( 'should dispatch action with sites if successful', () => {
 			const action = requestRecommendedSitesAction( { seed } );
-			const result = addRecommendedSites( action, response );
+			const recommendedSites = mapResponseToRecommendedSites( response );
+			const result = addRecommendedSites( action, recommendedSites );
 			expect( result ).toEqual(
 				receiveRecommendedSites( {
-					sites: response,
+					sites: recommendedSites,
 					seed,
 					offset: 0,
 				} )
@@ -66,9 +106,9 @@ describe( 'recommended sites', () => {
 		} );
 	} );
 
-	describe( '#fromApi', () => {
+	describe( '#mapResponseToRecommendedSites', () => {
 		test( 'should extract only what we care about from the api response. and decode entities', () => {
-			const expected = [
+			const expected: RecommendedSite[] = [
 				{
 					algorithm,
 					railcar: {},
@@ -95,7 +135,7 @@ describe( 'recommended sites', () => {
 				},
 			];
 
-			expect( fromApi( response ) ).toEqual( expected );
+			expect( mapResponseToRecommendedSites( response ) ).toEqual( expected );
 		} );
 	} );
 } );
