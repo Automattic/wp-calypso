@@ -22,7 +22,7 @@ export function domainManagementLink(
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
 	if ( isAllDomainManagementEnabled && isAllSitesView ) {
-		return `${ allDomainManagementRoot() }/${ domain }/${ siteSlug }`;
+		return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
 	}
 
 	if ( isAllSitesView ) {
