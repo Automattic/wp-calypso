@@ -218,6 +218,10 @@ body.is-reader-full-post {
 			transition: opacity 0.2s ease-in-out;
 			opacity: 1;
 
+			@media ( max-width: $break-medium ) {
+				bottom: 0;
+			}
+
 			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
 				margin-right: 24px;
 			}
