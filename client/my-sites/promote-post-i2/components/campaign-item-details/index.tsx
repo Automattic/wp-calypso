@@ -371,7 +371,7 @@ export default function CampaignItemDetails( props: Props ) {
 	};
 
 	const budgetRemainingFormatted =
-		total_budget && total_budget_used
+		total_budget && total_budget_used !== undefined
 			? `$${ formatCents( total_budget - total_budget_used, 2 ) }`
 			: '';
 	const overallSpendingFormatted = activeDays
@@ -956,13 +956,15 @@ export default function CampaignItemDetails( props: Props ) {
 													<span className="campaign-item-details__text wp-brand-font">
 														{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
 													</span>
-													<span className="campaign-item-details__details">
-														{ ! isLoading ? (
-															`${ budgetRemainingFormatted } remaining`
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</span>
+													{ budgetRemainingFormatted !== '' && (
+														<span className="campaign-item-details__details">
+															{ ! isLoading ? (
+																`${ budgetRemainingFormatted } remaining`
+															) : (
+																<FlexibleSkeleton />
+															) }
+														</span>
+													) }
 												</div>
 											) }
 										</>
