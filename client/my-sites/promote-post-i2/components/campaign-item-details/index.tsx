@@ -993,17 +993,19 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-									<div>
-										<div className="campaign-item-page__graph">
-											{ getCampaignStatsChart(
-												campaignStats?.series.spend ?? [],
-												ChartSourceOptions.Spend,
-												campaignsStatsIsLoading
-											) }
+								{ campaign?.campaign_stats?.impressions_total > 0 && (
+									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+										<div>
+											<div className="campaign-item-page__graph">
+												{ getCampaignStatsChart(
+													campaignStats?.series.spend ?? [],
+													ChartSourceOptions.Spend,
+													campaignsStatsIsLoading
+												) }
+											</div>
 										</div>
 									</div>
-								</div>
+								) }
 							</div>
 						</div>
 
