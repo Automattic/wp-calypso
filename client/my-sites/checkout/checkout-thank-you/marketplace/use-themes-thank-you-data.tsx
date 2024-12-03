@@ -137,10 +137,19 @@ export function useThemesThankYouData(
 	);
 
 	useEffect( () => {
-		if ( ! hasExternallyManagedThemesSubscribed && hasExternallyManagedThemes ) {
+		if (
+			! isRequestingSitePurchases &&
+			! hasExternallyManagedThemesSubscribed &&
+			hasExternallyManagedThemes
+		) {
 			page( `/home/${ siteSlug }` );
 		}
-	}, [ hasExternallyManagedThemes, hasExternallyManagedThemesSubscribed, siteSlug ] );
+	}, [
+		hasExternallyManagedThemes,
+		hasExternallyManagedThemesSubscribed,
+		isRequestingSitePurchases,
+		siteSlug,
+	] );
 
 	const isAtomicNeeded =
 		hasDotOrgThemes ||
@@ -189,6 +198,6 @@ export function useThemesThankYouData(
 		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
 		// - Redirect to the Theme Details page after the atomic transfer if it's required.
 		// - Redirect to the /home page if the user removed the externally managed theme from checkout.
-		! ( continueWithPluginBundle || isAtomicNeeded || ( ! isAtomicNeeded && allThemesFetched ) ),
+		! ( continueWithPluginBundle || isAtomicNeeded || ! isRequestingSitePurchases ),
 	];
 }
