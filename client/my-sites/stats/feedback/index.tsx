@@ -244,7 +244,20 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	);
 }
 
+function logFeedbackPresentationStatus( key: string, value: boolean ) {
+	const isCalypsoLive = window.location.host === 'calypso.live';
+	const isCalypsoLocalhost = window.location.host.startsWith( 'calypso.localhost' );
+	if ( isCalypsoLive || isCalypsoLocalhost ) {
+		localStorage.setItem( key, value ? 'true' : 'false' );
+	}
+}
+
 const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 10000;
+
+function getHighTrafficThreshold() {
+	const value = Number( localStorage.getItem( 'StatsHighTrafficThreshold' ) );
+	return value !== 0 ? value : FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD;
+}
 
 interface FeedbackPresentorProps {
 	siteId: number;
@@ -255,7 +268,8 @@ function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const { data, isSuccess } = useFetchTrafficHook( siteId );
 
 	const visitors = data?.past_thirty_days.visitors ?? 0;
-	const isHighTrafficSite = isSuccess && visitors > FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD;
+	const isHighTrafficSite = isSuccess && visitors > getHighTrafficThreshold();
+	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const presentForHighTrafficSite = isOdysseyStats && isHighTrafficSite;
