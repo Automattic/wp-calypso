@@ -61,11 +61,22 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 		navigation?.submit?.( { action: 'authorization', authorizationUrl } );
 	};
 
+	const contactMe = () => {
+		navigation?.submit?.( { action: 'contact-me' } );
+	};
+
 	let notice = undefined;
 	if ( isStoreApplicationPasswordError ) {
 		notice = (
 			<Notice status="is-error" showDismiss={ false }>
 				{ translate( "We couldn't complete the authorization." ) }
+				<button
+					className="button navigation-link step-container__navigation-link has-underline is-borderless site-migration-application-password-authorization__contact-me-button"
+					type="button"
+					onClick={ contactMe }
+				>
+					{ translate( 'Please contact me.' ) }
+				</button>
 			</Notice>
 		);
 	} else if ( isAuthorizationRejected ) {
@@ -78,14 +89,24 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 		);
 	}
 
+	const sourceDomain = new URL( source ).hostname;
+
+	// translators: %(sourceDomain)s is the source domain that is being migrated.
+	const subHeaderText = translate(
+		"We're ready to migrate %(sourceDomain)s to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
+		{
+			args: {
+				sourceDomain,
+			},
+		}
+	);
+
 	const formattedHeader = ! isLoading ? (
 		<FormattedHeader
 			id="site-migration-credentials-header"
 			headerText={ translate( 'Get ready for blazing fast speeds' ) }
 			subHeaderAlign="center"
-			subHeaderText={ translate(
-				"We're ready to migrate longdomainname.com to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin."
-			) }
+			subHeaderText={ subHeaderText }
 			align="center"
 		/>
 	) : undefined;

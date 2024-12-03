@@ -571,10 +571,10 @@ const siteMigration: Flow = {
 						// TODO: Implement fallback credentials step.
 					}
 
-					// return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
-					// 	siteId,
-					// 	siteSlug,
-					// } );
+					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+						siteId,
+						siteSlug,
+					} );
 				}
 			}
 		}
