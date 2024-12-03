@@ -44,7 +44,6 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
@@ -310,7 +309,6 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
-			hasVideoPress,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -670,7 +668,7 @@ class StatsSite extends Component {
 									className={ halfWidthModuleClasses }
 								/>
 
-								{ hasVideoPress && ! this.isModuleHidden( 'videos' ) && (
+								{ ! this.isModuleHidden( 'videos' ) && (
 									<StatsModuleVideos
 										moduleStrings={ moduleStrings.videoplays }
 										period={ this.props.period }
@@ -845,7 +843,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		const hasVideoPress = siteHasFeature( state, siteId, 'videopress' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -908,7 +905,6 @@ export default connect(
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
-			hasVideoPress,
 		};
 	},
 	{

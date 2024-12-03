@@ -87,7 +87,7 @@ class StatsNavigation extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ].map(
+		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
 			( toggleItem ) => {
 				// disable the "videos" toggle on sites that do not have VideoPress enabled
 				// the toggle will be disabled (grayed out and non interactive)
@@ -100,6 +100,11 @@ class StatsNavigation extends Component {
 				};
 			}
 		);
+
+		// toggle the visibility of video module itself
+		if ( ! nextProps.hasVideoPress ) {
+			nextProps.pageModuleToggles.videos = false;
+		}
 
 		if (
 			prevState.pageModules !== nextProps.pageModuleToggles ||
