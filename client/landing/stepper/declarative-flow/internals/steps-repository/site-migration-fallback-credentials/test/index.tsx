@@ -24,12 +24,6 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 ( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
 
-// jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-// 	useQuery: () => ( {
-// 		get: jest.fn( () => 'site-url.com' ),
-// 	} ),
-// } ) );
-
 const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
 	return renderStep( <SiteMigrationCredentials { ...combinedProps } />, renderOptions );

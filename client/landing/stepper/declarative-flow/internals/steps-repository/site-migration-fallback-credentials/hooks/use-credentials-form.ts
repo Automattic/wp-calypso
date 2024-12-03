@@ -7,7 +7,7 @@ import { CredentialsFormData } from '../../site-migration-credentials/types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
-export const useCredentialsForm = ( onSubmit: ( from?: string ) => void ) => {
+export const useFallbackCredentialsForm = ( onSubmit: ( from?: string ) => void ) => {
 	const siteSlug = useSiteSlugParam();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const [ isBusy, setIsBusy ] = useState( false );

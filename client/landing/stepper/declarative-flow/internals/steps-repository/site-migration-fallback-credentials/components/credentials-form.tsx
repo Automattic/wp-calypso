@@ -7,7 +7,7 @@ import { ErrorMessage } from '../../site-migration-credentials/components/error-
 import { PasswordField } from '../../site-migration-credentials/components/password-field';
 import { SpecialInstructions } from '../../site-migration-credentials/components/special-instructions';
 import { UsernameField } from '../../site-migration-credentials/components/username-field';
-import { useCredentialsForm } from '../hooks/use-credentials-form';
+import { useFallbackCredentialsForm } from '../hooks/use-credentials-form';
 
 interface CredentialsFormProps {
 	onSubmit: ( from?: string ) => void;
@@ -17,7 +17,7 @@ interface CredentialsFormProps {
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
 	const { control, errors, isBusy, submitHandler, canBypassVerification } =
-		useCredentialsForm( onSubmit );
+		useFallbackCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
