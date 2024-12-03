@@ -29,7 +29,7 @@ import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-	STAT_TYPE_REFERRERS,
+	STATS_FEATURE_PAGE_TRAFFIC,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -880,7 +880,7 @@ export default connect(
 		);
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STAT_TYPE_REFERRERS );
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
 		return {
 			canUserViewStats,
