@@ -30,7 +30,6 @@ body.is-reader-full-post {
 
 		@extend %column-shared;
 		flex: 1;
-		height: fit-content;
 		overflow: hidden;
 		width: 100%;
 
@@ -64,9 +63,17 @@ body.is-reader-full-post {
 			}
 		}
 
+		.dataviews-loading {
+			margin-top: 200px;
+		}
+
+		.components-spinner {
+			height: 24px;
+			width: 24px;
+		}
+
 		.dataviews-view-list {
-			height: fit-content;
-			max-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height - $feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom ) );
+			height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height - $feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom ) );
 			overflow-y: auto;
 			@include custom-scrollbars-on-hover( transparent, $gray-600 );
 			scrollbar-gutter: auto;
