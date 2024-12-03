@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/dataviews/build-style/style.css";
@@ -66,7 +67,9 @@ body.is-reader-full-post {
 		.dataviews-view-list {
 			height: fit-content;
 			max-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height - $feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom ) );
-    	overflow: auto;
+			overflow: auto;
+			scrollbar-gutter: stable;
+			@include custom-scrollbars-on-hover( transparent, $gray-600 );
 		}
 
 		.dataviews__view-actions {
@@ -194,8 +197,8 @@ body.is-reader-full-post {
 		@extend %column-shared;
 		display: none;
 		max-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - var( --content-padding-bottom ) );
-    height: fit-content;
-    overflow-y: auto;
+		height: fit-content;
+		overflow-y: auto;
 
 		&.overlay {
 			display: block;
