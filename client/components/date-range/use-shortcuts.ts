@@ -4,7 +4,7 @@ import { memoize } from 'lodash';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { DateControlPickerShortcut } from './shortcuts';
+import { DateRangePickerShortcut } from './shortcuts';
 
 export const DATERANGE_PERIOD = {
 	HOUR: 'hour',
@@ -33,7 +33,7 @@ export function getShortcuts(
 
 	return memoize(
 		() => {
-			const supportedShortcutList: DateControlPickerShortcut[] = [
+			const supportedShortcutList: DateRangePickerShortcut[] = [
 				{
 					id: 'last_7_days',
 					label: translateFunction( 'Last 7 Days' ),
