@@ -968,7 +968,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const bigSkyButtonEventProperties = {
 		is_big_sky_eligible: isBigSkyEligible,
-		// other props
+		// is_filter_included_with_plan_enabled: true/false,
+		// preselected_filters: ??,
+		// selected_filters: ??,
+		// {filter} ??
 	};
 	const bigSkyButtons = (
 		<>
