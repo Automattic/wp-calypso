@@ -138,7 +138,7 @@ export const getShortcuts = createSelector(
 			siteId,
 			siteToday.format( DATE_FORMAT ),
 			dateRange?.chartStart,
-			dateRange.chartEnd,
+			dateRange?.chartEnd,
 			isNewDateFilteringEnabled,
 		];
 	}
