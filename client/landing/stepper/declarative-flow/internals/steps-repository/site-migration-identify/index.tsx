@@ -33,7 +33,7 @@ const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
 				{ items.map( ( item, index ) => (
 					<div key={ index } className="import__site-identify-hosting-details--list-item">
 						<div className="import__site-identify-hosting-details--list-item-icon">
-							<Icon size={ 20 } icon={ item.icon } />
+							{ item.icon }
 						</div>
 						<p className="import__site-identify-hosting-details--list-item-description">
 							{ item.description }
@@ -102,7 +102,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			),
 			descriptionString:
 				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
-			icon: next,
+			icon: <Icon size={ 20 } icon={ next } />,
 		},
 		'unmatched-reliability': {
 			title: translate( 'Unmatched reliability' ),
@@ -110,7 +110,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
 			descriptionString:
 				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
-			icon: published,
+			icon: <Icon size={ 20 } icon={ published } />,
 		},
 		'security-monitoring': {
 			title: translate( 'Round-the-clock security monitoring' ),
@@ -118,7 +118,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
 			descriptionString:
 				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
-			icon: shield,
+			icon: <Icon size={ 20 } icon={ shield } />,
 		},
 	};
 
