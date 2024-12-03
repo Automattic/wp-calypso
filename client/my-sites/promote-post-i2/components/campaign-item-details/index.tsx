@@ -356,8 +356,7 @@ export default function CampaignItemDetails( props: Props ) {
 				</div>
 			);
 		}
-
-		if ( ! data ) {
+		if ( ! data || data.length === 0 ) {
 			return null;
 		}
 
