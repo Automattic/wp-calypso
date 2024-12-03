@@ -201,5 +201,9 @@
 
 	.navigation-header {
 		padding-bottom: 0;
+
+		@media (max-width: $break-medium) {
+			padding: 0 0 16px 0;
+		}
 	}
 }
