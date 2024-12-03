@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -11,6 +12,7 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
+import useFetchTrafficHook from './use-fetch-traffic-hook';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'animate.css';
@@ -188,19 +190,17 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
-	const { supportCommercialUse } = useStatsPurchases( siteId );
-
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
 
 	useEffect( () => {
-		if ( ! isPending && ! isError && shouldShowFeedbackPanel && supportCommercialUse ) {
+		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
 				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel, supportCommercialUse ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
@@ -228,10 +228,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		setIsFeedbackModalOpen( false );
 	};
 
-	if ( ! supportCommercialUse ) {
-		return null;
-	}
-
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
@@ -248,4 +244,27 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	);
 }
 
-export default StatsFeedbackController;
+const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 10000;
+
+interface FeedbackPresentorProps {
+	siteId: number;
+}
+
+function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
+	const { supportCommercialUse } = useStatsPurchases( siteId );
+	const { data, isSuccess } = useFetchTrafficHook( siteId );
+
+	const visitors = data?.past_thirty_days.visitors ?? 0;
+	const isHighTrafficSite = isSuccess && visitors > FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD;
+
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const presentForHighTrafficSite = isOdysseyStats && isHighTrafficSite;
+
+	if ( ! supportCommercialUse && ! presentForHighTrafficSite ) {
+		return null;
+	}
+
+	return <StatsFeedbackController siteId={ siteId } />;
+}
+
+export default StatsFeedbackPresentor;

@@ -64,7 +64,7 @@ import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
-import StatsFeedbackController from './feedback';
+import StatsFeedbackPresentor from './feedback';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -431,6 +431,10 @@ class StatsSite extends Component {
 			'stats__flexible-grid-item--full--medium'
 		);
 
+		// Temporarily move the feedback card to the top of the page.
+		const feedbackOnTop = true;
+		const feedbackOnBottom = false;
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -463,6 +467,7 @@ class StatsSite extends Component {
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
+				{ feedbackOnTop && <StatsFeedbackPresentor siteId={ siteId } /> }
 				{ ! isNewDateFilteringEnabled && (
 					// @TODO: remove highlight section completely once flag is released
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
@@ -727,7 +732,7 @@ class StatsSite extends Component {
 				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
 					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				) }
-				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
+				{ feedbackOnBottom && supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
