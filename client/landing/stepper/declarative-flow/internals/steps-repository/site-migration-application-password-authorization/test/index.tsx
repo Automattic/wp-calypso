@@ -105,7 +105,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }`;
 		render( { navigation: { submit } }, { initialEntry } );
 
-		await userEvent.click( getByRole( 'button', { name: 'Authorize' } ) );
+		await userEvent.click( getByRole( 'button', { name: 'Authorize access' } ) );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'authorization', authorizationUrl } );
 	} );
