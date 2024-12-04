@@ -6,6 +6,35 @@ export const Skeleton: FC< { showVariants: boolean } > = ( { showVariants } ) =>
 		<div className="import__upgrade-plan">
 			<div className="import__upgrade-plan-details import__upgrade-plan-details--loading">
 				<div className="import__upgrade-plan-container">
+					{ showVariants && (
+						<div className="import__upgrade-plan-features-container">
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-gray"
+								style={ { width: '173px', height: '32px', marginBottom: '20px' } }
+							/>
+							<div className="import-upgrade-plan-skeleton" style={ { width: '277px' } } />
+							<div
+								className="import-upgrade-plan-skeleton"
+								style={ { width: '195px', marginBottom: '40px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-gray"
+								style={ { width: '173px', height: '32px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton"
+								style={ { width: '103px', marginBottom: '40px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-highlight"
+								style={ { width: '305px', height: '32px', borderRadius: '4px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-highlight"
+								style={ { width: '103px', margin: '0 auto' } }
+							/>
+						</div>
+					) }
 					<div className="import__upgrade-plan-features-container">
 						<div
 							className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-gray"
@@ -85,6 +114,35 @@ export const Skeleton: FC< { showVariants: boolean } > = ( { showVariants } ) =>
 									<div className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--circles-item" />
 								</div>
 							</div>
+						</div>
+					) }
+					{ showVariants && (
+						<div className="import__upgrade-plan-features-container">
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-gray"
+								style={ { width: '173px', height: '32px', marginBottom: '20px' } }
+							/>
+							<div className="import-upgrade-plan-skeleton" style={ { width: '277px' } } />
+							<div
+								className="import-upgrade-plan-skeleton"
+								style={ { width: '195px', marginBottom: '40px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-gray"
+								style={ { width: '173px', height: '32px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton"
+								style={ { width: '103px', marginBottom: '40px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-highlight"
+								style={ { width: '305px', height: '32px', borderRadius: '4px' } }
+							/>
+							<div
+								className="import-upgrade-plan-skeleton import-upgrade-plan-skeleton--dark-highlight"
+								style={ { width: '103px', margin: '0 auto' } }
+							/>
 						</div>
 					) }
 				</div>

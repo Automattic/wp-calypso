@@ -1,4 +1,15 @@
 .is-step-site-migration-upgrade-plan-with-variants {
+    .import-upgrade-plan-skeleton {
+        &.import-upgrade-plan-skeleton--light-highlight {
+            background-color: var(--studio-wordpress-blue-50);
+            opacity: 0.2;
+        }
+
+        &.import-upgrade-plan-skeleton--dark-highlight {
+            background-color: var(--studio-wordpress-blue-50);
+            opacity: 0.5;
+        }
+    }
     .import__upgrade-plan-variants-badge {
         background-color: var(--studio-gray-100);
         color: var(--color-text-inverted);

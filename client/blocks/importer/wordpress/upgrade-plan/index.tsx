@@ -171,13 +171,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		  );
 
 	if ( isFetchingHostingDetails || ! pricing ) {
-		return (
-			<div className="import__upgrade-plan">
-				{ showVariants && <Skeleton showVariants={ showVariants } /> }
-				<Skeleton showVariants={ showVariants } />
-				{ showVariants && <Skeleton showVariants={ showVariants } /> }
-			</div>
-		);
+		return <Skeleton showVariants={ showVariants } />;
 	}
 
 	return (
