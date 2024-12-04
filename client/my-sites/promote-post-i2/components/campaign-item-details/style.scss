@@ -1294,3 +1294,36 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 .location-chart__show-more-button {
 	cursor: pointer;
 }
+
+.campaign-item-details {
+
+	&__uplot-chart {
+		.u-over {
+			cursor: none;
+		}
+	}
+
+	&__chart-tooltip-date {
+		color: var(--studio-gray-20);
+		font-size: 0.875rem;
+		font-style: normal;
+		font-weight: 400;
+		letter-spacing: -0.15px;
+	}
+
+	&__chart-tooltip-data {
+		color: var(--color-text-white);
+		font-size: 1.25rem;
+		font-style: normal;
+		font-weight: 500;
+		letter-spacing: -0.15px;
+	}
+
+	&__chart-tooltip-divider {
+		background: var(--studio-gray-90);
+		height: 1px;
+		width: 100%;
+		display: block;
+		margin: 4px 0;
+	}
+}

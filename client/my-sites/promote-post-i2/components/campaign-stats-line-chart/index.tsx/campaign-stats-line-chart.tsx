@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import {
@@ -26,6 +26,7 @@ type GraphProps = {
 const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 	const hourly = resolution === ChartResolution.Hour;
+	const tooltipRef = useRef< HTMLDivElement | null >( null );
 
 	const accentColour = getComputedStyle( document.body )
 		.getPropertyValue( '--color-accent' )
@@ -68,9 +69,72 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 		return new Intl.DateTimeFormat( locale, options ).format( date );
 	};
 
+	const tooltipPlugin = {
+		hooks: {
+			init: ( u: uPlot ) => {
+				if ( ! tooltipRef.current ) {
+					tooltipRef.current = document.createElement( 'div' );
+					tooltipRef.current.className = 'campaign-item-details__chart-tooltip';
+					tooltipRef.current.style.position = 'absolute';
+					tooltipRef.current.style.pointerEvents = 'none';
+					tooltipRef.current.style.background = 'black';
+					tooltipRef.current.style.color = 'white';
+					tooltipRef.current.style.padding = '8px 10px';
+					tooltipRef.current.style.borderRadius = '4px';
+					tooltipRef.current.style.display = 'none';
+					u.over.parentNode?.appendChild( tooltipRef.current );
+				}
+
+				u.over.addEventListener( 'mousemove', ( e ) => {
+					if ( ! tooltipRef.current ) {
+						return;
+					}
+					const { left, top } = u.over.getBoundingClientRect();
+					const mouseLeft = e.clientX - left;
+					const mouseTop = e.clientY - top;
+
+					const idx = u.posToIdx( mouseLeft );
+					if ( idx >= 0 && idx < u.data[ 0 ].length ) {
+						const date = u.data[ 0 ][ idx ];
+						const value = u.data[ 1 ][ idx ];
+						if ( value != null ) {
+							tooltipRef.current.style.display = 'block';
+							tooltipRef.current.style.left = mouseLeft + 'px';
+							tooltipRef.current.style.top = mouseTop - 40 + 'px';
+							tooltipRef.current.innerHTML = `
+								<div class="campaign-item-details__chart-tooltip-date"><strong>${ formatDate(
+									new Date( date * 1000 ),
+									hourly
+								) }</strong></div>
+								<div class="campaign-item-details__chart-tooltip-divider"></div>
+								<div class="campaign-item-details__chart-tooltip-data">${ value.toLocaleString() }</div>
+							`;
+						} else {
+							tooltipRef.current.style.display = 'none';
+						}
+					} else {
+						tooltipRef.current.style.display = 'none';
+					}
+				} );
+
+				u.over.addEventListener( 'mouseleave', () => {
+					if ( tooltipRef.current ) {
+						tooltipRef.current.style.display = 'none';
+					}
+				} );
+			},
+			destroy: () => {
+				if ( tooltipRef.current && tooltipRef.current.parentNode ) {
+					tooltipRef.current.parentNode.removeChild( tooltipRef.current );
+					tooltipRef.current = null;
+				}
+			},
+		},
+	};
+
 	const options = useMemo( () => {
 		return {
-			class: 'blaze-stats-line-chart',
+			class: 'campaign-item-details__uplot-chart',
 			width: width,
 			height: DEFAULT_DIMENSIONS.height,
 			tzDate: ( ts: number ) => new Date( ts * 1000 ),
@@ -161,6 +225,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					},
 				},
 			],
+			plugins: [ tooltipPlugin ],
 		};
 	}, [ width, source, accentColour, formatDate, hourly, primaryRGB ] );
 
