@@ -24,7 +24,6 @@ const useGridPlansForFeaturesGrid = ( {
 	useFreeTrialPlanSlugs,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -45,7 +44,6 @@ const useGridPlansForFeaturesGrid = ( {
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
 		isDomainOnlySite,
-		reflectStorageSelectionInPlanPrices,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

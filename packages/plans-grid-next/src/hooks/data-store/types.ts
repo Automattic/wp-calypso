@@ -30,7 +30,6 @@ export interface UseGridPlansParams {
 	 * Used to hide the "Your Plan" label for domain-only sites
 	 */
 	isDomainOnlySite?: boolean;
-	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export type UseGridPlansType = (

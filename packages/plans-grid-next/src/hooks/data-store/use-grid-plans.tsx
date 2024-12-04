@@ -25,6 +25,7 @@ import {
 	isPersonalPlan,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { usePlansGridContext } from '../../grid-context';
 import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
@@ -234,7 +235,6 @@ const useGridPlans: UseGridPlansType = ( {
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	reflectStorageSelectionInPlanPrices,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -262,6 +262,7 @@ const useGridPlans: UseGridPlansType = ( {
 		term,
 		intent,
 	} );
+	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
 
 	const { planSlug: sitePlanSlug, purchaseId } = Plans.useCurrentPlan( { siteId } ) || {};
 
