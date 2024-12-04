@@ -28,10 +28,10 @@ export const getShortcuts = createSelector(
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
-		const siteYesterday = siteToday.clone().subtract( 1, 'days' );
-		const yesterdayStr = isNewDateFilteringEnabled
-			? siteYesterday.format( DATE_FORMAT )
-			: siteTodayStr;
+		const siteYesterday = isNewDateFilteringEnabled
+			? siteToday.clone().subtract( 1, 'days' )
+			: siteToday.clone();
+		const yesterdayStr = siteYesterday.format( DATE_FORMAT );
 
 		const supportedShortcutList = [
 			{
