@@ -338,7 +338,9 @@ class StatsSite extends Component {
 			customChartRange = { chartEnd };
 		} else {
 			customChartRange = {
-				chartEnd: momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT ),
+				chartEnd: isNewDateFilteringEnabled
+					? momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT )
+					: momentSiteZone.format( DATE_FORMAT ),
 			};
 		}
 
