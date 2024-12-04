@@ -37,6 +37,10 @@
         color: var(--color-text-subtle);
     }
 
+    .import__upgrade-plan .import__upgrade-plan-header .plan-title {
+        margin-bottom: -0.5rem;
+    }
+
     .import__upgrade-plan .import__upgrade-plan-details {
         @media ( min-width: 1040px ) {
             display: flex;
