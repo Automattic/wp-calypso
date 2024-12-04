@@ -232,25 +232,58 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		onCtaClick,
 	} = props;
 
-	const plan = getPlan( selectedPlan );
-	const planMonthly = getPlan( PLAN_BUSINESS_MONTHLY );
-	const plan2Years = getPlan( PLAN_BUSINESS_2_YEARS );
+	const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_2_YEARS ];
+	const visiblePlan = getPlan( selectedPlan );
 
-	const planPriceOfferProps = preparePlanPriceOfferProps(
-		introOfferAvailable,
-		plan,
-		pricing?.[ selectedPlan ]
+	const planPriceOfferPropsList = plans.reduce(
+		( acc, planSlug ) => ( {
+			...acc,
+			[ planSlug ]: preparePlanPriceOfferProps(
+				introOfferAvailable,
+				getPlan( planSlug ),
+				pricing?.[ planSlug ]
+			),
+		} ),
+		{} as Record< string, PlanPriceOfferProps >
 	);
-	const planPriceOfferPropsMonthly = preparePlanPriceOfferProps(
-		introOfferAvailable,
-		planMonthly,
-		pricing?.[ PLAN_BUSINESS_MONTHLY ]
-	);
-	const planPriceOfferProps2Years = preparePlanPriceOfferProps(
-		introOfferAvailable,
-		plan2Years,
-		pricing?.[ PLAN_BUSINESS_2_YEARS ]
-	);
+
+	const planVariant = ( planSlug: string ) => {
+		return (
+			<div className="import__upgrade-plan-container">
+				<div className="import__upgrade-plan-features-container">
+					<div className="import__upgrade-plan-header">
+						<Title className="plan-title" tagName="h2">
+							{ planSlug === PLAN_BUSINESS_MONTHLY
+								? translate( 'Monthly' )
+								: translate( 'Biennially' ) }
+						</Title>
+					</div>
+
+					<PlanPriceOffer { ...planPriceOfferPropsList[ planSlug ] } />
+
+					<div>
+						<div className="import__upgrade-plan-cta">
+							<NextButton variant="secondary" onClick={ () => onCtaClick?.( planSlug ) }>
+								{ translate( 'Get Monthly' ) }
+							</NextButton>
+						</div>
+						<div className="import__upgrade-plan-refund-sub-text">
+							{ PLAN_BUSINESS_MONTHLY === planSlug
+								? translate( 'Refundable within 7 days. No questions asked.' )
+								: translate( 'Refundable within 14 days. No questions asked.' ) }
+						</div>
+					</div>
+					<div className="import__upgrade-plan-features-list">
+						<UpgradePlanFeatureList
+							plan={ getPlan( planSlug ) }
+							showFeatures={ showFeatures }
+							setShowFeatures={ setShowFeatures }
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	};
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
@@ -259,8 +292,8 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	}, [] );
 
 	useEffect( () => {
-		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
-	}, [ plan ] );
+		visiblePlan && visiblePlan.getPathSlug && setSelectedPlanSlug( visiblePlan.getPathSlug() );
+	}, [ visiblePlan ] );
 
 	return (
 		<div className="import__upgrade-plan-details">
@@ -272,41 +305,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 				/>
 			) }
 
-			{ showVariants && (
-				<div className="import__upgrade-plan-container">
-					<div className="import__upgrade-plan-features-container">
-						<div className="import__upgrade-plan-header">
-							<Title className="plan-title" tagName="h2">
-								{ translate( 'Monthly' ) }
-							</Title>
-						</div>
-
-						<PlanPriceOffer { ...planPriceOfferPropsMonthly } />
-
-						<div>
-							<div className="import__upgrade-plan-cta">
-								<NextButton
-									variant="secondary"
-									onClick={ () => onCtaClick?.( PLAN_BUSINESS_MONTHLY ) }
-								>
-									{ translate( 'Get Monthly' ) }
-								</NextButton>
-							</div>
-							<div className="import__upgrade-plan-refund-sub-text">
-								{ translate( 'Refundable within 7 days. No questions asked.' ) }
-							</div>
-						</div>
-						<div className="import__upgrade-plan-features-list">
-							<UpgradePlanFeatureList
-								plan={ planMonthly }
-								showFeatures={ showFeatures }
-								setShowFeatures={ setShowFeatures }
-							/>
-						</div>
-					</div>
-				</div>
-			) }
-
+			{ showVariants && planVariant( PLAN_BUSINESS_MONTHLY ) }
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">
 					<div className="import__upgrade-plan-header">
@@ -327,14 +326,14 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							</Plans2023Tooltip>
 						) }
 						<Title className="plan-title" tagName="h2">
-							{ showVariants ? translate( 'Yearly' ) : plan?.getTitle() }
+							{ showVariants ? translate( 'Yearly' ) : visiblePlan?.getTitle() }
 						</Title>
 						{ ! showVariants && (
 							<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 						) }
 					</div>
 
-					<PlanPriceOffer { ...planPriceOfferProps } />
+					<PlanPriceOffer { ...planPriceOfferPropsList[ selectedPlan ] } />
 
 					<div>
 						<div className="import__upgrade-plan-cta">
@@ -347,14 +346,14 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							) }
 						</div>
 						<div className="import__upgrade-plan-refund-sub-text">
-							{ plan && ! isMonthly( plan.getStoreSlug() )
+							{ visiblePlan && ! isMonthly( visiblePlan.getStoreSlug() )
 								? translate( 'Refundable within 14 days. No questions asked.' )
 								: translate( 'Refundable within 7 days. No questions asked.' ) }
 						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
-							plan={ plan }
+							plan={ visiblePlan }
 							showFeatures={ showFeatures }
 							setShowFeatures={ setShowFeatures }
 						/>
@@ -366,41 +365,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					/>
 				) }
 			</div>
-
-			{ showVariants && (
-				<div className="import__upgrade-plan-container">
-					<div className="import__upgrade-plan-features-container">
-						<div className="import__upgrade-plan-header">
-							<Title className="plan-title" tagName="h2">
-								{ translate( 'Biennially' ) }
-							</Title>
-						</div>
-
-						<PlanPriceOffer { ...planPriceOfferProps2Years } />
-
-						<div>
-							<div className="import__upgrade-plan-cta">
-								<NextButton
-									variant="secondary"
-									onClick={ () => onCtaClick?.( PLAN_BUSINESS_2_YEARS ) }
-								>
-									{ translate( 'Get Biennial' ) }
-								</NextButton>
-							</div>
-							<div className="import__upgrade-plan-refund-sub-text">
-								{ translate( 'Refundable within 14 days. No questions asked.' ) }
-							</div>
-						</div>
-						<div className="import__upgrade-plan-features-list">
-							<UpgradePlanFeatureList
-								plan={ plan2Years }
-								showFeatures={ showFeatures }
-								setShowFeatures={ setShowFeatures }
-							/>
-						</div>
-					</div>
-				</div>
-			) }
+			{ showVariants && planVariant( PLAN_BUSINESS_2_YEARS ) }
 		</div>
 	);
 };
