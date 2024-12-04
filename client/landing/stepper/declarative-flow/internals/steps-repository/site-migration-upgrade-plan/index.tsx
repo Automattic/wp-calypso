@@ -62,7 +62,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	const showMigrationModal = queryParams.get( 'showModal' );
 
 	const goToMigrationAssistanceCheckout = ( planSlug: string, userAcceptedDeal = false ) => {
-		const plan = getPlanByPathSlug( planSlug );
+		const plan = getPlan( planSlug );
 		navigation?.submit?.( {
 			goToCheckout: true,
 			plan: plan?.getPathSlug ? plan.getPathSlug() : '',

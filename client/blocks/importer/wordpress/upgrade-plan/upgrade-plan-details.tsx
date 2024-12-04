@@ -109,7 +109,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		);
 	}
 
-	const billingTimeFrame = hasEnTranslation(
+	let billingTimeFrame = hasEnTranslation(
 		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes'
 	)
 		? translate(
@@ -144,6 +144,27 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					comment: 'excl. taxes is short for excluding taxes',
 				}
 		  );
+
+	if ( PLAN_BUSINESS_2_YEARS === plan?.getStoreSlug() ) {
+		billingTimeFrame = translate(
+			'per month, %(discountedPrice)s for the first two years,{{br/}}' +
+				'then %(rawPrice)s billed biennially, excl. taxes',
+			{
+				args: {
+					discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+					rawPrice: formatCurrency( originalFullPrice, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
+				components: { br: <br /> },
+				comment: 'excl. taxes is short for excluding taxes',
+			}
+		);
+	}
 
 	const badgeText = hasEnTranslation( '50% off your first year' )
 		? translate( '50% off your first year' )

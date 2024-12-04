@@ -21,6 +21,7 @@ import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
+import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 
 export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
@@ -114,7 +115,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 		if ( hideFreeMigrationTrial ) {
 			return (
-				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+				<NextButton isBusy={ isBusy } onClick={ () => onCtaClick( visiblePlan ) }>
 					{ cta }
 				</NextButton>
 			);
@@ -124,7 +125,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			return (
 				<>
 					<NextButton onClick={ onFreeTrialClick }>{ trialText }</NextButton>
-					<Button busy={ isBusy } transparent onClick={ onCtaClick }>
+					<Button busy={ isBusy } transparent onClick={ () => onCtaClick( visiblePlan ) }>
 						{ cta }
 					</Button>
 				</>
@@ -133,7 +134,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 		return (
 			<>
-				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+				<NextButton isBusy={ isBusy } onClick={ () => onCtaClick( visiblePlan ) }>
 					{ cta }
 				</NextButton>
 				<Button disabled transparent>
@@ -205,7 +206,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
 			<UpgradePlanDetails
-				pricing={ pricing }
+				pricing={ pricing as { [ key: string ]: PricingMetaForGridPlan } }
 				introOfferAvailable={ !! introOfferAvailable }
 				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
 				showVariants={ showVariants }

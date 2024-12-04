@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import './style.scss';
 
-export const Skeleton: FC< { showVariants: boolean } > = ( { showVariants } ) => {
+export const Skeleton: FC< { showVariants?: boolean } > = ( { showVariants = false } ) => {
 	return (
 		<div className="import__upgrade-plan">
 			<div className="import__upgrade-plan-details import__upgrade-plan-details--loading">
