@@ -5,7 +5,10 @@ import { useEffect, useMemo } from 'react';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
@@ -52,6 +55,7 @@ export function useThemesThankYouData(
 
 	useQuerySitePurchases( siteId );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
+	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
@@ -139,6 +143,7 @@ export function useThemesThankYouData(
 	useEffect( () => {
 		if (
 			! isRequestingSitePurchases &&
+			hasLoadedSitePurchases &&
 			! hasExternallyManagedThemesSubscribed &&
 			hasExternallyManagedThemes
 		) {
