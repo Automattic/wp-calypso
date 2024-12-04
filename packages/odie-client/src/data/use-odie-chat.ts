@@ -34,8 +34,8 @@ export const useOdieChat = ( chatId: number | null ) => {
 			) as ReturnedChat;
 
 			return {
-				messages: data.messages,
-				odieId: Number( data.chat_id ),
+				messages: data.messages || [],
+				odieId: Number( data.chat_id ) || chatId,
 				wpcomUserId: data.wpcom_user_id,
 			};
 		},
