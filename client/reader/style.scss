@@ -23,6 +23,9 @@ body.is-section-reader {
 
 	@media only screen and (max-width: 781px) {
 		div.layout.is-global-sidebar-visible {
+			.main {
+				padding: 0;
+			}
 			.layout__primary {
 				overflow-x: auto;
 			}
