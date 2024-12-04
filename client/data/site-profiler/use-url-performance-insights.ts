@@ -6,7 +6,11 @@ function mapResult( response: UrlPerformanceInsightsQueryResponse ) {
 	return response.pagespeed;
 }
 
-export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string, locale?: string ) => {
+export const useUrlPerformanceInsightsQuery = (
+	url?: string,
+	hash?: string,
+	locale?: string | null
+) => {
 	return useQuery( {
 		queryKey: [ 'url', 'performance', url, hash, locale ],
 		queryFn: () =>
