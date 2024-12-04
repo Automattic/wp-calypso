@@ -1,7 +1,15 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo, useEffect } from 'react';
 
-export function useSubscriptions() {
+/**
+ * Custom hook to manage site subscriptions data.
+ * Fetches and tracks subscription counts and site subscription details,
+ * filtering out self-owned blogs to determine if the user has any external subscriptions.
+ * @returns {Object} An object containing:
+ *   - isLoading: boolean indicating if subscription data is being loaded
+ *   - hasNonSelfSubscriptions: boolean indicating if user has any subscriptions to non-self-owned blogs
+ */
+export function useSiteSubscriptions() {
 	const { data: subscriptionsCount, isLoading: isLoadingCount } =
 		SubscriptionManager.useSubscriptionsCountQuery();
 	const {
@@ -26,7 +34,7 @@ export function useSubscriptions() {
 			return nonSelfSubscriptions.length > 0;
 		}
 
-		return blogCount > 0;
+		return true;
 	}, [ blogCount, siteSubscriptions ] );
 
 	useEffect( () => {

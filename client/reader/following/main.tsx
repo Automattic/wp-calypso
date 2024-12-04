@@ -10,14 +10,14 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import Recent from '../recent';
 import ReaderStreamSidebar from './reader-stream-sidebar';
-import { useSubscriptions } from './use-subscriptions';
+import { useSiteSubscriptions } from './use-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
-	const { isLoading, hasNonSelfSubscriptions } = useSubscriptions();
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
