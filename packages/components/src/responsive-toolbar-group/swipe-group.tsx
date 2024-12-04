@@ -31,7 +31,7 @@ export default function SwipeGroup( {
 
 	const defaultActiveIndexes = useMemo( () => {
 		if ( isMultiSelection ) {
-			return initialActiveIndexes;
+			return initialActiveIndexes || [];
 		}
 
 		return initialActiveIndex !== -1 ? [ initialActiveIndex ] : [];

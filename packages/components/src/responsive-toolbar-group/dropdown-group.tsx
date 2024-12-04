@@ -43,7 +43,7 @@ export default function DropdownGroup( {
 
 	const defaultActiveIndexes = useMemo( () => {
 		if ( isMultiSelection ) {
-			return initialActiveIndexes;
+			return initialActiveIndexes || [];
 		}
 
 		return initialActiveIndex !== -1 ? [ initialActiveIndex ] : [];
@@ -253,10 +253,10 @@ export default function DropdownGroup( {
 				{ maybeRenderMore( true ) }
 			</ToolbarGroup>
 			<ToolbarGroup
-				className={ clsx(
-					'responsive-toolbar-group__grouped-list',
-					calculatedOnce ? 'is-visible' : ''
-				) }
+				className={ clsx( 'responsive-toolbar-group__grouped-list', {
+					'is-visible': calculatedOnce,
+					'is-multi': isMultiSelection,
+				} ) }
 			>
 				{ renderChildren() }
 				{ maybeRenderMore() }
