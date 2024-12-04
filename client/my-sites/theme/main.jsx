@@ -864,17 +864,31 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { isPremium, isFreePlan, isThemePurchased, shouldLimitGlobalStyles, styleVariations } =
-			this.props;
+		const {
+			isPremium,
+			isFreePlan,
+			isThemePurchased,
+			themeTier,
+			shouldLimitGlobalStyles,
+			styleVariations,
+			isExternallyManagedTheme,
+			isBundledSoftwareSet,
+		} = this.props;
 
-		const splitDefaultVariation =
-			! this.props.isExternallyManagedTheme &&
-			! this.props.isBundledSoftwareSet &&
+		const isGlobalStylesEnabled = isEnabled( 'global-styles/on-personal-plan' );
+
+		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
+		const hasLimitedFeatures =
+			! isExternallyManagedTheme &&
+			! isBundledSoftwareSet &&
 			! isThemePurchased &&
+			! isGlobalStylesEnabled &&
 			! isPremium &&
 			shouldLimitGlobalStyles;
 
-		const needsUpgrade = isEnabled( 'global-styles/on-personal-plan' )
+		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
+
+		const needsUpgrade = isGlobalStylesEnabled
 			? isFreePlan
 			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
@@ -882,7 +896,7 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitDefaultVariation={ splitDefaultVariation }
+					splitDefaultVariation={ shouldSplitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }
