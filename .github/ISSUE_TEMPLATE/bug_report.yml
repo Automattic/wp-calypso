@@ -1,6 +1,7 @@
 name: Bug Report
 description: Help us improve our product!
 labels: "Needs triage"
+type: 'Bug'
 body:
   - type: markdown
     attributes:
