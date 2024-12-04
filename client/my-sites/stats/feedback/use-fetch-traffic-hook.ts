@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-// TODO: Update stale time before release.
-// Probably good enough to call this one per 24 hours.
-const FETCH_TRAFFIC_STALE_TIME = 24 * 60 * 60 * 1000; // 24 hours
+// Limit this lookup to once per 24 hours.
+const FETCH_TRAFFIC_STALE_TIME = 24 * 60 * 60 * 1000;
 
 async function fetchHighlights( siteId: number ) {
 	const response = await wpcom.req.get(
@@ -28,7 +27,7 @@ function useHighlightsQuery( siteId: number ) {
 	return response;
 }
 
-// Wrapping this for the sake of readatbility at the call site.
+// Wrapping this for the sake of readability at the call site.
 function useFetchTrafficHook( siteId: number ) {
 	return useHighlightsQuery( siteId );
 }
