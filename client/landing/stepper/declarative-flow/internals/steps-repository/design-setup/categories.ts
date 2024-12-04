@@ -46,9 +46,9 @@ export function getCategorizationOptions(
 
 function getCategorizationFromIntent( intent: string ) {
 	const result = {
-		defaultSelections: null,
+		defaultSelections: [] as string[],
 	} as {
-		defaultSelections: string[] | null;
+		defaultSelections: string[];
 		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
 	};
 

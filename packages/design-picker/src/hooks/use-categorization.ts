@@ -2,18 +2,18 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Category } from '../types';
 
 export interface Categorization {
-	selections: string[] | null;
-	onSelect: ( selectedSlug: string | null ) => void;
+	selections: string[];
+	onSelect: ( selectedSlug: string ) => void;
 	categories: Category[];
 }
 
 interface UseCategorizationOptions {
-	defaultSelections: string[] | null;
+	defaultSelections: string[];
 	isMultiSelection?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
 }
 
-export function useCategorizationFromApi(
+export function useCategorization(
 	categoryMap: Record< string, Category >,
 	{ defaultSelections, isMultiSelection, sort }: UseCategorizationOptions
 ): Categorization {
@@ -27,14 +27,14 @@ export function useCategorizationFromApi(
 		return result.sort( sort );
 	}, [ categoryMap, sort ] );
 
-	const [ selections, setSelections ] = useState< string[] | null >(
+	const [ selections, setSelections ] = useState< string[] >(
 		chooseDefaultSelections( categories, defaultSelections )
 	);
 
 	const onSelect = useCallback(
 		( value: string ) => {
-			setSelections( ( currentSelections: string[] | null ) => {
-				if ( ! currentSelections || ! isMultiSelection ) {
+			setSelections( ( currentSelections: string[] ) => {
+				if ( ! isMultiSelection ) {
 					return [ value ];
 				}
 
@@ -43,6 +43,7 @@ export function useCategorizationFromApi(
 					return [ ...currentSelections, value ];
 				}
 
+				// The selections should at least have one.
 				return currentSelections.length > 1
 					? [ ...currentSelections.slice( 0, index ), ...currentSelections.slice( index + 1 ) ]
 					: currentSelections;
@@ -73,10 +74,10 @@ export function useCategorizationFromApi(
  */
 function shouldSetToDefaultSelections(
 	categories: Category[],
-	currentSelections: string[] | null
+	currentSelections: string[]
 ): boolean {
-	// For an empty list, `null` selection is the only correct one.
-	if ( categories.length === 0 && currentSelections === null ) {
+	// For an empty list, the empty selections is the only correct one.
+	if ( categories.length === 0 && currentSelections.length === 0 ) {
 		return false;
 	}
 
@@ -92,14 +93,11 @@ function shouldSetToDefaultSelections(
  * @param defaultSelections use this category as the default selections if possible
  * @returns the default category or null if none is available
  */
-function chooseDefaultSelections(
-	categories: Category[],
-	defaultSelections: string[] | null
-): string[] | null {
+function chooseDefaultSelections( categories: Category[], defaultSelections: string[] ): string[] {
 	const defaultSelectionsSet = new Set( defaultSelections );
 	if ( defaultSelections && categories.find( ( { slug } ) => defaultSelectionsSet.has( slug ) ) ) {
 		return defaultSelections;
 	}
 
-	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : null;
+	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : [];
 }

@@ -6,9 +6,9 @@ import './style.scss';
 interface Props {
 	className: string;
 	categories: Category[];
-	selectedSlugs: string[] | null;
+	selectedSlugs: string[];
 	isMultiSelection?: boolean;
-	onSelect: ( selectedSlug: string | null ) => void;
+	onSelect: ( selectedSlug: string ) => void;
 }
 
 export default function DesignPickerCategoryFilter( {
@@ -20,12 +20,13 @@ export default function DesignPickerCategoryFilter( {
 }: Props ) {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
+		if ( category?.slug ) {
+			recordTracksEvent( 'calypso_signup_unified_design_select_category', {
+				category: category?.slug,
+			} );
 
-		recordTracksEvent( 'calypso_signup_unified_design_select_category', {
-			category: category?.slug,
-		} );
-
-		onSelect( category?.slug );
+			onSelect( category.slug );
+		}
 	};
 
 	const selectedSlugsSet = new Set( selectedSlugs );

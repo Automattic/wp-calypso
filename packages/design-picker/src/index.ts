@@ -33,5 +33,5 @@ export type {
 	StyleVariationPreviewColorPalette,
 	StyleVariationStylesColor,
 } from './types';
-export { useCategorizationFromApi } from './hooks/use-categorization';
+export { useCategorization } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
