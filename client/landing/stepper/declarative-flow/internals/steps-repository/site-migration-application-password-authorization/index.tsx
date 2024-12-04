@@ -89,7 +89,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 		);
 	}
 
-	const sourceDomain = new URL( source ).host;
+	const sourceDomain = new URL( source || '' ).host;
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
