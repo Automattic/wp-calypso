@@ -22,6 +22,7 @@ import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
+import type { PlanSlug } from '@automattic/calypso-products';
 import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 
 export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
@@ -56,19 +57,22 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 	const planMonthly = PLAN_BUSINESS_MONTHLY;
 	const planBiennial = PLAN_BUSINESS_2_YEARS;
 
+	const planSlugs: PlanSlug[] = [ visiblePlan, planMonthly, planBiennial ];
+
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
-		planSlugs: [ visiblePlan, planMonthly, planBiennial ],
+		planSlugs: planSlugs,
 		siteId: site.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
-
-	const pricing = {
-		[ visiblePlan ]: pricingMeta?.[ visiblePlan ],
-		[ planBiennial ]: pricingMeta?.[ planBiennial ],
-		[ planMonthly ]: pricingMeta?.[ planMonthly ],
-	};
+	const pricing = planSlugs.reduce(
+		( acc, planSlug: string ) => {
+			acc[ planSlug ] = pricingMeta?.[ planSlug ];
+			return acc;
+		},
+		{} as Record< string, PricingMetaForGridPlan | undefined >
+	);
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
