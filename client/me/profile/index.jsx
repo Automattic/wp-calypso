@@ -19,7 +19,6 @@ import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import DomainUpsell from 'calypso/me/domain-upsell';
 import withFormBase from 'calypso/me/form-base/with-form-base';
-import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -172,8 +171,6 @@ class Profile extends Component {
 				</Card>
 
 				<DomainUpsell context="profile" />
-
-				<ProfileLinks />
 			</Main>
 		);
 	}
