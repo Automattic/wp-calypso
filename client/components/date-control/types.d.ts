@@ -9,7 +9,7 @@ interface DateControlProps {
 		daysInRange: number;
 	};
 	shortcutList: DateRangePickerShortcut[];
-	onShortcutClick: ( shortcutId: DateRangePickerShortcut ) => void;
+	onShortcutClick: ( shortcut: DateRangePickerShortcut ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
 	// Temporary prop to enable new date filtering UI.

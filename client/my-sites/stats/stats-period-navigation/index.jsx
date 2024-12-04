@@ -348,12 +348,8 @@ class StatsPeriodNavigation extends PureComponent {
 
 const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
 	...shortcut,
-	isGated: shouldGateStats(
-		state,
-		siteId,
-		`${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.shortcutId }`
-	),
-	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.shortcutId }`,
+	isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
+	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,
 } );
 
 const connectComponent = connect(

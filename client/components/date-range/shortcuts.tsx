@@ -16,7 +16,6 @@ export interface DateRangePickerShortcut {
 	period: string;
 	statType?: string;
 	isGated?: boolean;
-	shortcutId?: string;
 }
 
 const DateRangePickerShortcuts = ( {

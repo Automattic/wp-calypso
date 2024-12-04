@@ -159,7 +159,7 @@ const StatsDateControl = ( {
 		if ( shortcut.isGated ) {
 			onGatedHandler &&
 				onGatedHandler(
-					[ { name: eventNames[ event_from ][ shortcut.shortcutId as EventNameKey ] } ],
+					[ { name: eventNames[ event_from ][ shortcut.id as EventNameKey ] } ],
 					event_from,
 					shortcut.statType ?? shortcut.id
 				);
