@@ -1,11 +1,11 @@
-name: IPSM Bug Report v2
+name: Bug Report
 description: Help us improve our product!
 labels: "Needs triage"
 body:
   - type: markdown
     attributes:
       value: |
-        
+
         > [!IMPORTANT]
         > **Thanks for contributing!**
         >
@@ -16,14 +16,14 @@ body:
         >
         > Automattician? Ask any questions about this process in: `#dotcom-triage-alerts`.
         >
-        
+
   - type: markdown
     attributes:
       value: |
-        <br>        
+        <br>
 
         ## Core Information
-        
+
   - type: textarea
     id: context
     attributes:
@@ -46,12 +46,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        <br>   
-        
+        <br>
+
         ## Impact
         Please help us understand more about the impact of this issue to help determine next steps.
         If you are unsure about anything, please use your judgment to make an educated guess.
-        <br>   
+        <br>
 
   - type: dropdown
     id: impact
@@ -68,7 +68,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        <br>   
+        <br>
 
   - type: dropdown
     id: severity
@@ -83,14 +83,14 @@ body:
         - Critical
         - Major
         - Moderate
-        - Minor     
+        - Minor
     validations:
       required: true
 
   - type: markdown
     attributes:
       value: |
-        <br>   
+        <br>
 
   - type: dropdown
     id: additional-impact
@@ -108,9 +108,9 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ## Optional Information
-        
+
   - type: textarea
     id: workaround
     attributes:
@@ -136,7 +136,7 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ## Next steps
 
         Feel free to add any `[Feature]` labels you feel fit. Once you submit this issue, we'll process it, add additional labels, set a priority, and add it to our new issue queue for triage.
