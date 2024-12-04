@@ -172,7 +172,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
-				<div className="recent-feed__list-column-content">
+				<aside className="recent-feed__list-column-content">
 					<DataViews
 						getItemId={ ( item: ReaderPost, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
@@ -205,7 +205,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							}, 0 );
 						} }
 					/>
-				</div>
+				</aside>
 			</div>
 			<section
 				aria-labelledby={ selectedItem ? `post-${ selectedItem.postId }` : undefined }
