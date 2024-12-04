@@ -5,6 +5,7 @@ const JETPACK_BUNDLES = [
 	'jetpack-security-t1',
 	'jetpack-security-t2',
 	'jetpack-starter',
+	'jetpack-growth',
 ];
 
 export default function isJetpackBundle( product: APIProductFamilyProduct | string ) {

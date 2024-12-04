@@ -1335,7 +1335,7 @@ class SignupForm extends Component {
 				case this.props.isWoo:
 					formProps = {
 						inputPlaceholder: null,
-						submitButtonLabel: this.props.translate( 'Continue with email' ),
+						submitButtonLabel: this.props.translate( 'Continue' ),
 						submitButtonLoadingLabel: <Spinner />,
 					};
 			}

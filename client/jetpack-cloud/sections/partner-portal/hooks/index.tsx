@@ -149,6 +149,10 @@ export function useProductDescription( productSlug: string ): {
 					translate( 'Akismet Anti-spam*' )
 				);
 				break;
+			case 'jetpack-growth':
+				description = translate( 'Grow your audience effortlessly.' );
+				features.push( translate( 'Stats' ), translate( 'Social' ) );
+				break;
 			case 'jetpack-starter':
 				description = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
 				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );

@@ -34,6 +34,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
+		"design-picker/goal-centric": false,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"external-media": true,
@@ -170,6 +171,7 @@
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
 		"woocommerce/core-profiler-passwordless-auth": true,
+		"woocommerce/rebrand-2-0": false,
 		"login/magic-login": true
 	},
 	"siftscience_key": "a4f69f6759",

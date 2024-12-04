@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { Message, MessageRole, MessageType, ZendeskMessage } from '../types';
 
-// Format markdown to support images attachments
-function prepareMarkdownImage( imgUrl: string ): string {
-	return `![Image](${ imgUrl })`;
+// Format markdown to support images attachments that open in a new tab.
+function prepareMarkdownImage( imgUrl: string, isPlaceholder: boolean ): string {
+	return isPlaceholder ? `![Image](${ imgUrl })` : `[![Image](${ imgUrl })](${ imgUrl })`;
 }
 
 function convertUrlsToMarkdown( text: string ): string {
@@ -33,8 +33,12 @@ function getContentMessage( message: ZendeskMessage ): string {
 	let messageContent = '';
 	switch ( message.type ) {
 		case 'image':
+		case 'image-placeholder':
 			if ( message.mediaUrl ) {
-				messageContent = prepareMarkdownImage( message.mediaUrl );
+				messageContent = prepareMarkdownImage(
+					message.mediaUrl,
+					message.type === 'image-placeholder' ? true : false
+				);
 			}
 			break;
 		case 'text':
@@ -59,7 +63,7 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 	let type = message.type as MessageType;
 	let feedbackUrl;
 
-	if ( message.source.type === 'zd:surveys' && message?.actions?.length ) {
+	if ( message?.source?.type === 'zd:surveys' && message?.actions?.length ) {
 		type = 'conversation-feedback';
 		feedbackUrl = message?.actions[ 0 ].uri;
 	}

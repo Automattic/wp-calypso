@@ -15,6 +15,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomainAndPath } from 'calypso/lib/url';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -160,7 +161,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 									),
 									{
 										email: user?.email,
-										webSite: fromUrl,
+										// Strip protocol and trailing slash.
+										webSite: urlToDomainAndPath( fromUrl ),
 									}
 								),
 								{

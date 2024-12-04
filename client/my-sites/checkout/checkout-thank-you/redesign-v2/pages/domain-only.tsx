@@ -48,7 +48,7 @@ export default function DomainOnlyThankYou( {
 		const purchasedDomain = domainPurchases[ 0 ];
 		const domain = siteDomains.find( ( siteDomain ) => siteDomain.name === purchasedDomain.meta );
 
-		if ( domain.isHundredYearDomain ) {
+		if ( domain?.isHundredYearDomain ) {
 			return (
 				<>
 					<Global

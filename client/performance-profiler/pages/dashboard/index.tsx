@@ -28,7 +28,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const translate = useTranslate();
 	const { url, tab, hash, filter } = props;
 	const isSavedReport = useRef( !! hash );
-	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const {
 		data: basicMetrics,
@@ -49,11 +48,11 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const siteUrl = new URL( url );
 
 	if ( isFetched && finalUrl ) {
+		performance.mark( 'test-started' );
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
 			version: profilerVersion(),
 		} );
-		testStartTime.current = Date.now();
 	}
 
 	// Append hash to the URL if it's not there to avoid losing it on page reload
@@ -80,16 +79,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		activeTab === TabType.mobile
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
-
-	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
-		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
-			url: siteUrl.href,
-			duration: Date.now() - testStartTime.current,
-			mobile_score: mobileReport?.overall_score,
-			desktop_score: desktopReport?.overall_score,
-			version: profilerVersion(),
-		} );
-	}
 
 	return (
 		<div className="peformance-profiler-dashboard-container">

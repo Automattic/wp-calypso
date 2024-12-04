@@ -42,8 +42,10 @@ import './style.scss';
 
 export default function ReferralsOverview( {
 	isAutomatedReferral = false,
+	isArchiveView = false,
 }: {
 	isAutomatedReferral?: boolean;
+	isArchiveView?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -76,8 +78,11 @@ export default function ReferralsOverview( {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } =
-		useFetchReferrals( isAutomatedReferral );
+	const {
+		data: referrals,
+		isFetching: isFetchingReferrals,
+		refetch: refetchReferrals,
+	} = useFetchReferrals( isAutomatedReferral );
 
 	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
 		useFetchReferralInvoices( isAutomatedReferral );
@@ -179,6 +184,8 @@ export default function ReferralsOverview( {
 						setDataViewsState={ setDataViewsState }
 						referralInvoices={ referralInvoices ?? [] }
 						isFetchingInvoices={ isFetchingReferralInvoices }
+						isArchiveView={ isArchiveView }
+						onReferralRefetch={ refetchReferrals }
 					/>
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
@@ -188,6 +195,7 @@ export default function ReferralsOverview( {
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
 						referralInvoices={ referralInvoices ?? [] }
+						isArchiveView={ isArchiveView }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
 								...dataViewsState,

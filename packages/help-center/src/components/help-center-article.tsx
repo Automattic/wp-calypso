@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
+import { useHelpCenterArticleTabComponent } from '../hooks/use-help-center-article-tab-component';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
@@ -12,11 +13,11 @@ import './help-center-article.scss';
 export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();
-
 	const postUrl = searchParams.get( 'link' ) || '';
 	const query = searchParams.get( 'query' );
 
 	const { data: post, isLoading, error } = usePostByUrl( postUrl );
+	useHelpCenterArticleTabComponent( post?.content );
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!

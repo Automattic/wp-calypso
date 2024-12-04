@@ -68,6 +68,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
+import { useIsGoalsHoldout } from '../../../../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -115,6 +116,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const [ isAddedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
 		'calypso_onboarding_goals_step_added_goals'
 	);
+
+	const isGoalsHoldout = useIsGoalsHoldout( stepName );
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -955,6 +958,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
+			isTierFilterEnabled={ isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout }
 		/>
 	);
 

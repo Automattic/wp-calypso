@@ -315,6 +315,7 @@ class Layout extends Component {
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
 				'woocommerce/core-profiler-passwordless-auth'
 			),
+			'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
 		} );
 
 		const optionalBodyProps = () => {

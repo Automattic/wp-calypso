@@ -57,6 +57,7 @@ export class HelpCenterComponent {
 			await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
 		}
 
+		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
 		await this.popup.waitFor( { state: 'visible' } );
 	}
 

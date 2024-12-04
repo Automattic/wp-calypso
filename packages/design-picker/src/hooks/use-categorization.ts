@@ -1,8 +1,5 @@
-import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useMemo, useState } from 'react';
-import { SHOW_ALL_SLUG } from '../constants';
-import { Category, Design } from '../types';
-import { gatherCategories } from '../utils';
+import { Category } from '../types';
 
 export interface Categorization {
 	selection: string | null;
@@ -14,45 +11,6 @@ interface UseCategorizationOptions {
 	defaultSelection: string | null;
 	showAllFilter?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
-}
-
-export function useCategorization(
-	designs: Design[],
-	{ defaultSelection, showAllFilter, sort }: UseCategorizationOptions
-): Categorization {
-	const { __ } = useI18n();
-
-	const categories = useMemo( () => {
-		const result = gatherCategories( designs );
-		if ( sort ) {
-			result.sort( sort );
-		}
-
-		if ( showAllFilter && designs.length ) {
-			result.unshift( {
-				name: __( 'Show All', __i18n_text_domain__ ),
-				slug: SHOW_ALL_SLUG,
-			} );
-		}
-
-		return result;
-	}, [ designs, showAllFilter, sort, __ ] );
-
-	const [ selection, onSelect ] = useState< string | null >(
-		chooseDefaultSelection( categories, defaultSelection )
-	);
-
-	useEffect( () => {
-		if ( shouldSetToDefaultSelection( categories, selection ) ) {
-			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
-		}
-	}, [ categories, defaultSelection, selection ] );
-
-	return {
-		categories,
-		selection,
-		onSelect,
-	};
 }
 
 export function useCategorizationFromApi(

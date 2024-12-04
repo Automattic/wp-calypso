@@ -129,6 +129,10 @@
 		display: flex;
 	}
 }
+.sharing-service--fediverse .notice.is-compact {
+	margin-left: 0;
+	margin-right: 0;
+}
 
 .buttons__sharing-settings,
 .connections__sharing-settings {

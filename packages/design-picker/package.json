@@ -42,6 +42,7 @@
 		"@wordpress/url": "^4.8.0",
 		"clsx": "^2.1.1",
 		"react-intersection-observer": "^9.4.3",
+		"react-router-dom": "^6.23.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0"
 	},

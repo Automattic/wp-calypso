@@ -636,6 +636,33 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
+		case 'jetpack_growth_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2021,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_growth_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2023,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_growth_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2022,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_scan_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
