@@ -145,7 +145,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 
 	if ( PLAN_BUSINESS_2_YEARS === plan?.getStoreSlug() ) {
 		billingTimeFrame = translate(
-			'per month, %(discountedPrice)s for the first two years,{{br/}}' +
+			'per month, %(discountedPrice)s for the first 2 years,{{br/}}' +
 				'then %(rawPrice)s billed biennially, excl. taxes',
 			{
 				args: {
@@ -194,8 +194,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 const preparePlanPriceOfferProps = (
 	introOfferAvailable: boolean,
 	plan?: Plan,
-	pricing?: PricingMetaForGridPlan,
-	showVariants?: boolean
+	pricing?: PricingMetaForGridPlan
 ): PlanPriceOfferProps => {
 	const currencyCode = pricing?.currencyCode;
 	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;
@@ -213,7 +212,6 @@ const preparePlanPriceOfferProps = (
 		originalFullPrice,
 		introOfferFullPrice,
 		introOfferAvailable,
-		showVariants,
 	};
 };
 
