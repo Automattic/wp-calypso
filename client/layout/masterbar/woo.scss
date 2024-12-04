@@ -349,6 +349,12 @@ $breakpoint-mobile: 660px;
 		@media (max-width: $break-mobile) {
 			text-align: left;
 		}
+
+		@media (min-width: $break-large) {
+			br.hide-on-desktop {
+				display: none;
+			}
+		}
 	}
 
 	.magic-login__form-action {
@@ -2123,6 +2129,7 @@ $breakpoint-mobile: 660px;
 
 .woo.feature-flag-woocommerce-rebrand-2-0,
 .woo.feature-flag-woocommerce-rebrand-2-0.is-woo-passwordless {
+	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
@@ -2169,7 +2176,8 @@ $breakpoint-mobile: 660px;
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		background-color: var(--woo-purple-40);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--woo-purple-60);
 		}
 	}
@@ -2180,7 +2188,8 @@ $breakpoint-mobile: 660px;
 		text-decoration: underline;
 		text-underline-offset: 4px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--woo-purple-60);
 		}
 	}
@@ -2190,7 +2199,8 @@ $breakpoint-mobile: 660px;
 		text-decoration: underline;
 		text-underline-offset: 4px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--woo-purple-60);
 		}
 	}
@@ -2198,7 +2208,8 @@ $breakpoint-mobile: 660px;
 	.continue-as-user__change-user-link {
 		color: var(--woo-purple-50);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--woo-purple-70);
 		}
 	}
@@ -2206,12 +2217,24 @@ $breakpoint-mobile: 660px;
 	.magic-login__footer a {
 		color: var(--woo-purple-50);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--woo-purple-40);
 		}
 	}
 
 	.auth-form__social-buttons-tos a {
 		text-underline-offset: 2px;
+	}
+
+	.login__lost-password-link {
+		color: var(--woo-purple-40);
+		padding: 12px 24px;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		&:hover,
+		&:focus {
+			color: var(--woo-purple-60);
+			background-color: var(--woo-purple-0);
+		}
 	}
 }
