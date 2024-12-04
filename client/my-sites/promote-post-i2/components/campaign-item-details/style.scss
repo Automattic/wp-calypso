@@ -1305,16 +1305,14 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 	&__chart-tooltip-date {
 		color: var(--studio-gray-20);
-		font-size: 0.875rem;
+		font-size: 0.75rem;
 		font-style: normal;
-		font-weight: 400;
 		letter-spacing: -0.15px;
 	}
 
 	&__chart-tooltip-data {
 		color: var(--color-text-white);
-		font-size: 1.25rem;
-		font-style: normal;
+		font-size: 0.875rem;
 		font-weight: 500;
 		letter-spacing: -0.15px;
 	}

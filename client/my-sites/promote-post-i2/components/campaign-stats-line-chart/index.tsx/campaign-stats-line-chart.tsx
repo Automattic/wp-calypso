@@ -27,6 +27,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 	const hourly = resolution === ChartResolution.Hour;
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
+	const lineRef = useRef< HTMLDivElement | null >( null );
 
 	const accentColour = getComputedStyle( document.body )
 		.getPropertyValue( '--color-accent' )
@@ -85,8 +86,20 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					u.over.parentNode?.appendChild( tooltipRef.current );
 				}
 
+				if ( ! lineRef.current ) {
+					lineRef.current = document.createElement( 'div' );
+					lineRef.current.className = 'campaign-item-details__chart-tooltip-line';
+					lineRef.current.style.position = 'absolute';
+					lineRef.current.style.width = '2px';
+					lineRef.current.style.background = 'rgba(0, 0, 0, 0.12)';
+					lineRef.current.style.top = '0';
+					lineRef.current.style.bottom = '0';
+					lineRef.current.style.display = 'none';
+					u.over.parentNode?.appendChild( lineRef.current );
+				}
+
 				u.over.addEventListener( 'mousemove', ( e ) => {
-					if ( ! tooltipRef.current ) {
+					if ( ! tooltipRef.current || ! lineRef.current ) {
 						return;
 					}
 					const { left, top } = u.over.getBoundingClientRect();
@@ -109,11 +122,18 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 								<div class="campaign-item-details__chart-tooltip-divider"></div>
 								<div class="campaign-item-details__chart-tooltip-data">${ value.toLocaleString() }</div>
 							`;
+
+							lineRef.current.style.display = 'block';
+
+							lineRef.current.style.left = mouseLeft + tooltipRef.current.offsetWidth / 2 + 'px';
+							lineRef.current.style.top = mouseTop - 20 + 'px';
 						} else {
 							tooltipRef.current.style.display = 'none';
+							lineRef.current.style.display = 'none';
 						}
 					} else {
 						tooltipRef.current.style.display = 'none';
+						lineRef.current.style.display = 'none';
 					}
 				} );
 
@@ -121,12 +141,19 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					if ( tooltipRef.current ) {
 						tooltipRef.current.style.display = 'none';
 					}
+					if ( lineRef.current ) {
+						lineRef.current.style.display = 'none';
+					}
 				} );
 			},
 			destroy: () => {
 				if ( tooltipRef.current && tooltipRef.current.parentNode ) {
 					tooltipRef.current.parentNode.removeChild( tooltipRef.current );
 					tooltipRef.current = null;
+				}
+				if ( lineRef.current && lineRef.current.parentNode ) {
+					lineRef.current.parentNode.removeChild( lineRef.current );
+					lineRef.current = null;
 				}
 			},
 		},
