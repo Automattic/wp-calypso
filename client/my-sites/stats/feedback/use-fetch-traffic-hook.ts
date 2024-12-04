@@ -3,7 +3,7 @@ import wpcom from 'calypso/lib/wp';
 
 // TODO: Update stale time before release.
 // Probably good enough to call this one per 24 hours.
-const FETCH_TRAFFIC_STALE_TIME = 5 * 1000; // 5 seconds
+const FETCH_TRAFFIC_STALE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
 async function fetchHighlights( siteId: number ) {
 	const response = await wpcom.req.get(
