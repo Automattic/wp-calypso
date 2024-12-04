@@ -644,7 +644,9 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( { application_passwords_enabled: false } );
+		( wp.req.post as jest.Mock ).mockRejectedValueOnce( {
+			code: 'failed_to_get_authorization_path',
+		} );
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
@@ -659,7 +661,7 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( {
+		( wp.req.post as jest.Mock ).mockResolvedValueOnce( {
 			application_passwords_enabled: true,
 			authorization_url: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
 		} );

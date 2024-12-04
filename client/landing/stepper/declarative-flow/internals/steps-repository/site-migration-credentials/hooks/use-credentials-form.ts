@@ -7,7 +7,7 @@ import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param'
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
+import { CredentialsFormData, ApplicationPasswordsInfo, ApiError } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
@@ -27,14 +27,19 @@ export const getApplicationPasswordsInfo = async (
 	from: string
 ): Promise< ApplicationPasswordsInfo | undefined > => {
 	try {
-		return await wp.req.get( {
-			path:
-				`/sites/${ siteId }/automated-migration/application-passwords/authorization-url?source=${ encodeURIComponent(
-					from
-				) }` + encodeURIComponent( from ),
+		return await wp.req.post( {
+			path: `/sites/${ siteId }/automated-migration/application-passwords/setup`,
 			apiNamespace: 'wpcom/v2',
+			body: {
+				source: from,
+			},
 		} );
 	} catch ( error ) {
+		if ( ( error as ApiError )?.code === 'failed_to_get_authorization_path' ) {
+			return {
+				application_passwords_enabled: false,
+			};
+		}
 		return undefined;
 	}
 };
