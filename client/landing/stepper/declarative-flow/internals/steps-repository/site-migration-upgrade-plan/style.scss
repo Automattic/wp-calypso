@@ -28,6 +28,9 @@
         font-size: 0.75rem;
         margin-bottom: 1rem;
     }
+    .import__upgrade-plan-price-badge {
+        display: none;
+    }
     .import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
         background-color: var(--studio-wordpress-blue-50) !important;
         border-color: var(--studio-wordpress-blue-50);

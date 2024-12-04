@@ -80,7 +80,6 @@ interface PlanPriceOfferProps {
 	originalFullPrice?: number;
 	introOfferFullPrice?: number;
 	introOfferAvailable: boolean;
-	showVariants?: boolean;
 }
 
 const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
@@ -95,7 +94,6 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		introOfferMonthlyPrice,
 		originalMonthlyPrice,
 		currencyCode,
-		showVariants,
 	} = props;
 
 	const showOriginalPrice =
@@ -172,11 +170,9 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 
 	return (
 		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>
-			{ ! showVariants && (
-				<Badge type="info-purple" className="import__upgrade-plan-price-badge">
-					{ badgeText }
-				</Badge>
-			) }
+			<Badge type="info-purple" className="import__upgrade-plan-price-badge">
+				{ badgeText }
+			</Badge>
 			<div className="import__upgrade-plan-price-group">
 				<PlanPrice
 					rawPrice={ originalMonthlyPrice }
@@ -245,20 +241,17 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const planPriceOfferProps = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		plan,
-		pricing?.[ selectedPlan ],
-		showVariants
+		pricing?.[ selectedPlan ]
 	);
 	const planPriceOfferPropsMonthly = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		planMonthly,
-		pricing?.[ PLAN_BUSINESS_MONTHLY ],
-		showVariants
+		pricing?.[ PLAN_BUSINESS_MONTHLY ]
 	);
 	const planPriceOfferProps2Years = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		plan2Years,
-		pricing?.[ PLAN_BUSINESS_2_YEARS ],
-		showVariants
+		pricing?.[ PLAN_BUSINESS_2_YEARS ]
 	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
