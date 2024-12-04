@@ -23,7 +23,6 @@ interface UsePlanBillingDescriptionProps {
 	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export default function usePlanBillingDescription( {
@@ -34,7 +33,6 @@ export default function usePlanBillingDescription( {
 	isMonthlyPlan,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-	reflectStorageSelectionInPlanPrices,
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
