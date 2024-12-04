@@ -341,7 +341,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					<div>
 						<div className="import__upgrade-plan-cta">
 							{ showVariants ? (
-								<NextButton onClick={ () => onCtaClick?.( PLAN_BUSINESS ) }>
+								<NextButton onClick={ () => onCtaClick?.( selectedPlan ) }>
 									{ translate( 'Get Yearly' ) }
 								</NextButton>
 							) : (
