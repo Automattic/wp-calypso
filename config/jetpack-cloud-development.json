@@ -80,10 +80,12 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"subscriber-csv-upload": true,
+		"newsletter-categories": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": false,
+		"individual-subscriber-stats": true
 	},
 	"enable_all_sections": false,
 	"sections": {
