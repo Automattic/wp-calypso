@@ -52,11 +52,11 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
-			STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+			STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -466,7 +466,7 @@ const siteMigration: Flow = {
 									siteSlug,
 									authorizationUrl,
 								},
-								STEPS.SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL.slug
+								STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
 							)
 						);
 					}
@@ -553,6 +553,40 @@ const siteMigration: Flow = {
 						)
 					);
 				}
+
+				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
+					const { action, authorizationUrl } = providedDependencies as {
+						action: string;
+						authorizationUrl: string;
+					};
+
+					if ( action === 'authorization' ) {
+						const currentUrl = window.location.href;
+						const successUrl = encodeURIComponent( currentUrl );
+						window.location.href = authorizationUrl + `&success_url=${ successUrl }`;
+						return;
+					}
+
+					if ( action === 'fallback-credentials' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									siteSlug,
+									authorizationUrl,
+									backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+									from: fromQueryParam,
+								},
+								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
+							)
+						);
+					}
+
+					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+						siteId,
+						siteSlug,
+					} );
+				}
 			}
 		}
 
@@ -615,6 +649,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
 					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
 				}
 			}

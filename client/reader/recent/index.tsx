@@ -2,7 +2,7 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -30,6 +30,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const postColumnRef = useRef< HTMLDivElement | null >( null );
+	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -97,7 +99,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				getValue: ( { item }: { item: ReaderPost } ) =>
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentPostField post={ getPostFromItem( item ) } />;
+					return (
+						<RecentPostField
+							ref={ ( el ) => {
+								itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+							} }
+							post={ getPostFromItem( item ) }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -163,7 +172,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
-				<div className="recent-feed__list-column-content">
+				<aside className="recent-feed__list-column-content">
 					<DataViews
 						getItemId={ ( item: ReaderPost, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
@@ -190,11 +199,20 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
+							// Focus the post column after a short delay to ensure DOM updates.
+							setTimeout( () => {
+								postColumnRef.current?.focus();
+							}, 0 );
 						} }
 					/>
-				</div>
+				</aside>
 			</div>
-			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
+			<section
+				aria-labelledby={ selectedItem ? `post-${ selectedItem.postId }` : undefined }
+				ref={ postColumnRef }
+				className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }
+				tabIndex={ -1 }
+			>
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
@@ -212,13 +230,21 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							require="calypso/blocks/reader-full-post"
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
-							onClose={ () => setSelectedItem( null ) }
+							onClose={ () => {
+								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								if ( ! isWide ) {
+									setSelectedItem( null );
+								}
+								requestAnimationFrame( () => {
+									focusItem?.focus();
+								} );
+							} }
 							layout="recent"
 						/>
 						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
 					</>
 				) }
-			</div>
+			</section>
 		</div>
 	);
 };

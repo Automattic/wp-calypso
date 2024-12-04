@@ -27,7 +27,7 @@ export function SiteLogsHeader( { logType }: { logType: string } ) {
 			<NavigationHeader
 				title={ translate( 'Logs' ) }
 				subtitle={ translate(
-					'View and download various server logs. {{link}}Learn more.{{/link}}',
+					'View and download various server logs. {{link}}Learn more{{/link}}',
 					{
 						components: {
 							link: <InlineSupportLink supportContext="site-monitoring-logs" showIcon={ false } />,

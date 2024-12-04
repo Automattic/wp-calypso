@@ -252,10 +252,10 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-fallback-credentials' ),
 	},
 
-	SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL: {
-		slug: 'application-passwords-approval',
+	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION: {
+		slug: 'site-migration-application-password-authorization',
 		asyncComponent: () =>
-			import( './steps-repository/site-migration-application-passwords-approval' ),
+			import( './steps-repository/site-migration-application-password-authorization' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {

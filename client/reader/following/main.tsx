@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
-import { SubscriptionManager } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -12,35 +10,14 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import Recent from '../recent';
 import ReaderStreamSidebar from './reader-stream-sidebar';
+import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
-	const { data: subscriptionsCount, isLoading: isLoadingCount } =
-		SubscriptionManager.useSubscriptionsCountQuery();
-	const { data: siteSubscriptions, isLoading: isLoadingSiteSubscriptions } =
-		SubscriptionManager.useSiteSubscriptionsQuery();
-
-	const isLoading = isLoadingCount || isLoadingSiteSubscriptions;
-
-	const hasNonSelfSubscriptions = useMemo( () => {
-		if ( ! subscriptionsCount?.blogs || subscriptionsCount?.blogs === 0 ) {
-			return false;
-		}
-
-		// If we have site subscriptions data, filter out self-owned blogs.
-		if ( siteSubscriptions?.subscriptions ) {
-			const nonSelfSubscriptions = siteSubscriptions.subscriptions.filter(
-				( sub ) => ! sub.is_owner
-			);
-			return nonSelfSubscriptions.length > 0;
-		}
-
-		return subscriptionsCount.blogs > 0;
-	}, [ subscriptionsCount, siteSubscriptions ] );
-
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {

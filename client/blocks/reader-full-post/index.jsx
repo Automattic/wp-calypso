@@ -492,7 +492,10 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-					<BackButton onClick={ this.handleBack } />
+					<BackButton
+						onClick={ this.handleBack }
+						aria-label={ translate( 'Return to the list of posts.' ) }
+					/>
 					<div className="reader-full-post__visit-site-container">
 						<ExternalLink
 							icon

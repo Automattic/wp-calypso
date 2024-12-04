@@ -22,10 +22,14 @@ body.is-section-reader {
 	}
 
 	@media only screen and (max-width: 781px) {
-		div.layout.is-global-sidebar-visible {
-			.layout__primary {
-				overflow-x: auto;
-			}
+		div.layout.is-global-sidebar-visible .layout__primary {
+			overflow-x: auto;
+		}
+	}
+
+	@media only screen and (max-width: 600px) {
+		div.layout.is-global-sidebar-visible .main {
+			padding: 24px 0;
 		}
 	}
 }

@@ -569,7 +569,7 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 							{ dateRange }
 						</>
 					}
-					subtitle={ translate( 'Monitor your site’s performance. {{link}}Learn more.{{/link}}', {
+					subtitle={ translate( 'Monitor your site’s performance. {{link}}Learn more{{/link}}', {
 						components: {
 							link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
 						},
