@@ -465,7 +465,6 @@ const PlansFeaturesMain = ( {
 			gridPlansForFeaturesGridRaw,
 			deemphasizeFreePlan,
 			hideLowerTierPlansExperimentAssignment?.variationName,
-			term,
 		]
 	);
 
