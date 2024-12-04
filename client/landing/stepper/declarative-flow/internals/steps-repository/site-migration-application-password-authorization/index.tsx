@@ -93,10 +93,13 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
-		"We're ready to migrate %(sourceDomain)s to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
+		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
 		{
 			args: {
 				sourceDomain,
+			},
+			components: {
+				strong: <strong />,
 			},
 		}
 	);

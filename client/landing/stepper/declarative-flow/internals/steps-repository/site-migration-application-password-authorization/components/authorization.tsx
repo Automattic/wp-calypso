@@ -30,7 +30,9 @@ const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: Autho
 	return (
 		<div className="site-migration-application-password-authorization__authorization">
 			<div>
-				<NextButton onClick={ onAuthorizationClick }>{ translate( 'Authorize' ) }</NextButton>
+				<NextButton onClick={ onAuthorizationClick }>
+					{ translate( 'Authorize access' ) }
+				</NextButton>
 			</div>
 			<div>
 				<button

@@ -11,10 +11,11 @@
 	.site-migration-application-password-authorization__benefits-container {
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
 		align-items: center;
+		margin-top: 1em;
 		h3 {
 			font-size: $font-title-small;
+			margin-bottom: 0.75em;
 		}
 	}
 	.site-migration-application-password-authorization__benefits {
