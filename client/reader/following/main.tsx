@@ -10,7 +10,7 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import Recent from '../recent';
 import ReaderStreamSidebar from './reader-stream-sidebar';
-import { useSiteSubscriptions } from './use-subscriptions';
+import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
