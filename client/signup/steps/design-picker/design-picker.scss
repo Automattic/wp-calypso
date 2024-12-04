@@ -1,0 +1,469 @@
+@use "sass:math";
+
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
+
+.design-picker {
+	@include break-small {
+		display: flex;
+		align-items: flex-start;
+		flex-direction: row;
+	}
+
+	.design-picker__header {
+		@include onboarding-heading-padding;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.design-picker__heading {
+		flex-grow: 1;
+	}
+
+	.design-picker__filters {
+		display: flex;
+		justify-content: space-between;
+		flex-direction: column;
+		gap: 10px;
+		margin-bottom: 24px;
+
+		.design-picker__design-your-own-button {
+			flex-shrink: 0;
+			height: 32px;
+			line-height: 14px;
+			margin-top: 9px;
+			margin-left: 10px;
+		}
+
+		.design-picker__design-your-own-button-without-categories {
+			margin-left: auto;
+			margin-top: -60px;
+		}
+
+		.design-picker__category-filter.responsive-toolbar-group__dropdown {
+			width: 100%;
+			padding-bottom: 0;
+
+			.responsive-toolbar-group__grouped-list {
+				justify-content: flex-start;
+			}
+		}
+
+		@include break-small {
+			flex-direction: row;
+		}
+	}
+
+	.design-picker__grid,
+	.design-picker__grid-minimal {
+		flex: 5;
+	}
+
+	.design-picker__grid {
+		margin: 0 -12px 30px;
+	}
+
+	.design-picker__grid-minimal {
+		margin: 0 -12px 30px;
+	}
+
+	.design-button-container {
+		width: calc(100% - 24px);
+		margin: 0 12px 24px; // only applies in IE
+
+		@include break-medium {
+			width: calc(50% - 24px);
+			margin-bottom: 40px;
+		}
+	}
+
+	.design-picker__design-option {
+		font-family: inherit;
+	}
+
+	.design-picker__design-option > button {
+		width: 100%;
+		padding: 0;
+	}
+
+	.design-picker__design-option-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		max-width: 100%;
+		height: 22px;
+		border: 1px solid rgba(0, 0, 0, 0.12);
+		border-radius: 4px 4px 0 0;
+		margin: 0 auto;
+		box-sizing: border-box;
+		transition: border-color 0.15s ease-in-out;
+
+		svg {
+			position: absolute;
+			left: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			fill: rgba(0, 0, 0, 0.12);
+		}
+	}
+
+	@supports ( display: grid ) {
+		.design-picker__grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 32px;
+			margin: 0 0 30px;
+
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 24px;
+				row-gap: 28px;
+			}
+		}
+
+		.design-picker__grid-minimal {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 36px;
+			margin: 0 0 30px;
+
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-xlarge {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 32px;
+			}
+		}
+
+		.design-button-container {
+			width: auto;
+			margin: 0;
+
+			@include break-xlarge {
+				width: auto;
+			}
+		}
+	}
+
+	.design-picker__image-frame {
+		display: block;
+		width: 100%;
+		height: 0;
+		box-sizing: border-box;
+		position: relative;
+		overflow: hidden;
+
+		&:not(.design-picker__image-frame-no-header) {
+			border-radius: 0 0 4px 4px;
+		}
+
+		&.design-picker__image-frame-no-header {
+			border-radius: 0;
+		}
+
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 100%;
+			height: auto;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border: 1px solid;
+			box-sizing: border-box;
+			background-color: transparent;
+			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+		}
+
+		&:not(.design-picker__image-frame-no-header)::after {
+			border-top-width: 0;
+			border-radius: 0 0 4px 4px;
+		}
+
+		&.design-picker__image-frame-no-header::after {
+			border-radius: 0;
+		}
+
+	}
+
+	// The Aspect ratio trick: padding % is relative to width, so we use
+	// padding-top to set the size of the element and then reposition content
+	// over the padding
+	.design-picker__image-frame-landscape {
+		padding-top: 100%; // Aspect ratio for the picker
+
+		@include break-small {
+			padding-top: 65%;
+		}
+	}
+
+	.design-picker__image-frame-blank {
+		background: var(--studio-white);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 32.5%; // 65% Aspect ratio for the picker divided by two
+		padding-bottom: 32.5%; // 65% Aspect ratio for the picker divided by two
+	}
+
+	.design-picker__image-frame-blank-canvas__title {
+		color: var(--studio-gray-80);
+		font-weight: 500;
+		font-size: $font-title-small;
+	}
+
+	.design-picker__image-frame-inside {
+		// Reposition frame content over padding used to maintain aspect ratio
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.design-picker__option-meta {
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
+		margin-top: 3px;
+		flex: 1;
+
+		> * {
+			// This is to create space between Tooltip component and other elements
+			min-height: 2em;
+		}
+	}
+
+	.design-picker__option-overlay {
+		display: flex;
+		align-items: center;
+	}
+
+	.design-picker__option-name {
+		align-items: center;
+		display: inline-flex;
+		font-size: $font-body;
+		font-weight: 500;
+		margin-top: -0.1em;
+	}
+
+	.design-picker__pricing-description {
+		align-items: flex-start;
+		color: #50575e;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		line-height: 20px;
+		justify-content: flex-start;
+
+		.premium-badge {
+			margin: 0;
+		}
+	}
+	.design-picker__override-premium-badge .premium-badge {
+		background: var(--studio-black);
+		padding: 0 10px 0 9px;
+	}
+
+	.design-picker__button-link.components-button.is-link {
+		text-decoration: none;
+	}
+}
+
+.design-picker.design-picker--theme-light {
+	.design-picker__option-name {
+		color: var(--studio-gray-80);
+	}
+
+	.design-picker__design-option {
+		.design-picker__image-frame {
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+		}
+
+		.design-picker__design-option-header,
+		.design-picker__image-frame::after {
+			border-color: rgba(0, 0, 0, 0.12);
+		}
+
+		&:hover,
+		&:focus {
+			.design-picker__design-option-header,
+			.design-picker__image-frame::after {
+				border-color: var(--studio-blue-20);
+			}
+		}
+	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option-header,
+		.design-picker__image-frame::after {
+			border-color: #a7aaad;
+		}
+	}
+
+	.theme-card {
+		.theme-card--is-active {
+			&:hover,
+			&:focus-within {
+				.theme-card__image-container {
+					border-color: #a7aaad;
+				}
+			}
+		}
+	}
+
+	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after,
+	.theme-card--is-actionable .theme-card__image:hover::after {
+		background-color: rgba(255, 255, 255, 0.72);
+	}
+}
+
+.design-button-container {
+	position: relative;
+	display: flex;
+	font-size: $font-body-small;
+
+	.design-picker__design-option {
+		flex: 1;
+	}
+
+	.design-button-cover {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+		opacity: 0;
+		transition: opacity 0.15s ease-in-out;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	.design-button-cover__button-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+		z-index: -1;
+	}
+
+	.design-button-cover__button-groups {
+		display: flex;
+		flex-direction: column;
+
+		.design-button-cover__button:not(:first-child) {
+			margin-top: 8px;
+		}
+	}
+
+	.design-button-cover__button {
+		justify-content: center;
+		border-radius: 4px;
+		font-size: inherit;
+		font-weight: 500;
+		line-height: 20px;
+
+		&:not(.is-primary) {
+			border: 1px solid #c3c4c7;
+			background: #fff;
+		}
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-button-cover {
+			opacity: 1;
+		}
+	}
+}
+
+// layout with categories
+.design-picker--has-categories {
+	.responsive-toolbar-group__swipe {
+		.responsive-toolbar-group__swipe-list {
+			padding: 0;
+
+			>div:first-of-type {
+				button {
+					padding-left: 8px;
+
+					&::before {
+						left: 0;
+					}
+				}
+			}
+
+			>div:last-of-type {
+				button {
+					padding-right: 8px;
+
+					&::before {
+						right: 0;
+					}
+				}
+			}
+		}
+	}
+
+	@supports ( display: grid ) {
+		.design-picker__grid {
+			@include break-medium {
+				grid-template-columns: 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
+
+	@supports not ( display: grid ) {
+		.design-button-container {
+			@include break-medium {
+				width: calc(100% - 24px);
+			}
+
+			@include break-large {
+				width: calc(50% - 24px);
+			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override
+		}
+	}
+}

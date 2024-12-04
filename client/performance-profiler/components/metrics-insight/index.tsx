@@ -134,6 +134,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 			smooth
 			iconSize={ 18 }
 			onClick={ () => setRetrieveInsight( true ) }
+			expanded={ retrieveInsight }
 		>
 			<Content>
 				<InsightContent

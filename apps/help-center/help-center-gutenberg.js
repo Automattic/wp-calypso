@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState, useReducer } from '@wordpress/element
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
+import { getEditorType } from './utils';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ function HelpCenterContent() {
 			force_site_id: true,
 			location: 'help-center',
 			section: 'gutenberg-editor',
+			editor_type: getEditorType(),
 			canvas_mode: canvasMode,
 		} );
 

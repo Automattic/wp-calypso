@@ -639,17 +639,37 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'submits application-passwords-approval action when using password application', async () => {
+	it( 'submits credentials-required action when using password application and application_passwords_enabled is disabled', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		await fillAddressField();
-		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
+		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
+		( wp.req.get as jest.Mock ).mockResolvedValueOnce( { application_passwords_enabled: false } );
+		await userEvent.click( continueButton() );
+
+		expect( submit ).toHaveBeenCalledWith( {
+			action: 'credentials-required',
+			from: 'https://site-url.wordpress.com',
+			platform: 'wordpress',
+		} );
+	} );
+
+	it( 'submits application-passwords-approval action when using password application and application_passwords_enabled is enabled', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		await fillAddressField();
+		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
+		( wp.req.get as jest.Mock ).mockResolvedValueOnce( {
+			application_passwords_enabled: true,
+			authorization_url: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
+		} );
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'application-passwords-approval',
 			from: 'https://site-url.wordpress.com',
 			platform: 'wordpress',
+			authorizationUrl: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
 		} );
 	} );
 

@@ -59,7 +59,7 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 	let type = message.type as MessageType;
 	let feedbackUrl;
 
-	if ( message.source.type === 'zd:surveys' && message?.actions?.length ) {
+	if ( message?.source?.type === 'zd:surveys' && message?.actions?.length ) {
 		type = 'conversation-feedback';
 		feedbackUrl = message?.actions[ 0 ].uri;
 	}

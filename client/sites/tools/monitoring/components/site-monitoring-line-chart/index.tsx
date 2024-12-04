@@ -37,6 +37,7 @@ interface SeriesProp {
 	scale?: string;
 	unit?: string;
 	showInLegend?: boolean;
+	showInTooltip?: boolean;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -104,7 +105,7 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 			{
 				scale: serie.scale,
 				side: 1,
-				size: 70,
+				size: 60,
 				grid: {
 					show: false,
 				},
@@ -183,7 +184,7 @@ export const SiteMonitoringLineChart = ( {
 					// y-axis
 					gap: 8,
 					space: 40,
-					size: 50,
+					size: 40,
 					stroke: '#787C82',
 					grid: {
 						stroke: '#DCDCDE',

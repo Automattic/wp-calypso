@@ -27,23 +27,11 @@ export function getStepsProgress(
 	paidNewsletterData?: PaidNewsletterData
 ) {
 	const summaryStatus = getImporterStatus(
-		paidNewsletterData?.steps.content.status,
+		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps.subscribers.status
 	);
 
 	const result: ClickHandler[] = [
-		{
-			message: __( 'Content' ),
-			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-			indicator: getStepProgressIndicator( paidNewsletterData?.steps.content.status ),
-		},
 		{
 			message: __( 'Subscribers' ),
 			onClick: () => {
@@ -70,13 +58,37 @@ export function getStepsProgress(
 		},
 	];
 
+	// Content step as first only when it's available (not available for Jetpack sites)
+	if ( paidNewsletterData?.steps?.content ) {
+		result.unshift( {
+			message: __( 'Content' ),
+			onClick: () => {
+				navigate(
+					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: 'onComplete',
+			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.content?.status ),
+		} );
+	}
+
 	return result;
 }
 
+/*
+ * Gather entire engine's status by combining "content" and "subscribers" steps status
+ */
 export function getImporterStatus(
 	contentStepStatus?: StepStatus,
 	subscribersStepStatus?: StepStatus
 ): StepStatus {
+	// When content step is hidden for Jetpack sites, we can rely on subscriber status for entire engine's status
+	if ( ! contentStepStatus ) {
+		return subscribersStepStatus || 'initial';
+	}
+
 	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
 		return 'done';
 	}

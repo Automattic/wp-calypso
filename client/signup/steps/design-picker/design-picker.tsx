@@ -1,5 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import {
+	BadgeContainer,
+	isBlankCanvasDesign,
+	getDesignPreviewUrl,
+	getMShotOptions,
+} from '@automattic/design-picker';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -8,18 +14,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { noop } from 'lodash';
 import { useMemo } from 'react';
-import {
-	getDesignPreviewUrl,
-	getMShotOptions,
-	isBlankCanvasDesign,
-	filterDesignsByCategory,
-	sortDesigns,
-} from '../utils';
-import BadgeContainer from './badge-container';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
-import type { Categorization } from '../hooks/use-categorization';
-import type { Design } from '../types';
-import './style.scss';
+import { filterDesignsByCategory, sortDesigns } from './utils';
+import type { Categorization } from './use-categorization';
+import type { Design } from '@automattic/design-picker';
+import type { FC, ReactNode } from 'react';
+import './design-picker.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
@@ -34,7 +34,7 @@ interface DesignPreviewImageProps {
 	highRes: boolean;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
+const DesignPreviewImage: FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
 	const scrollable = design.preview !== 'static';
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -56,7 +56,7 @@ interface DesignButtonProps {
 	design: Design;
 	locale: string;
 	onSelect: ( design: Design ) => void;
-	premiumBadge?: React.ReactNode;
+	premiumBadge?: ReactNode;
 	highRes: boolean;
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
@@ -69,7 +69,7 @@ interface DesignButtonProps {
 	onCheckout?: any;
 }
 
-const DesignButton: React.FC< DesignButtonProps > = ( {
+const DesignButton: FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
@@ -88,7 +88,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
+	const blankCanvasTitle = __( 'Blank Canvas' );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	const isPremiumDesign = design?.design_tier !== 'free';
@@ -165,7 +165,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			>
 				{ isBlankCanvas ? (
 					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Start from scratch', __i18n_text_domain__ ) }
+						{ __( 'Start from scratch' ) }
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
@@ -194,7 +194,7 @@ interface DesignButtonCoverProps {
 	onUpgrade?: ( design: Design ) => void;
 }
 
-const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
+const DesignButtonCover: FC< DesignButtonCoverProps > = ( {
 	design,
 	isPremiumThemeAvailable = false,
 	onSelect,
@@ -219,14 +219,14 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 					onClick={ () => ( shouldUpgrade ? onUpgrade?.( design ) : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
-						? __( 'Upgrade Plan', __i18n_text_domain__ )
+						? __( 'Upgrade Plan' )
 						: // translators: %s is the title of design with currency. Eg: Alves
-						  sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title ) }
+						  sprintf( __( 'Start with %s' ), design.title ) }
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Preview %s', __i18n_text_domain__ ), design.title )
+						sprintf( __( 'Preview %s' ), design.title )
 					}
 				</Button>
 			</div>
@@ -242,7 +242,7 @@ interface DesignButtonContainerProps extends DesignButtonProps {
 	previewOnly?: boolean;
 }
 
-const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
+const DesignButtonContainer: FC< DesignButtonContainerProps > = ( {
 	isPremiumThemeAvailable,
 	onPreview,
 	onUpgrade,
@@ -297,15 +297,15 @@ export interface DesignPickerProps {
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
-	premiumBadge?: React.ReactNode;
+	premiumBadge?: ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
 	className?: string;
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
-	categoriesHeading?: React.ReactNode;
-	anchorHeading?: React.ReactNode;
-	categoriesFooter?: React.ReactNode;
+	categoriesHeading?: ReactNode;
+	anchorHeading?: ReactNode;
+	categoriesFooter?: ReactNode;
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
@@ -317,7 +317,8 @@ export interface DesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 }
-const DesignPicker: React.FC< DesignPickerProps > = ( {
+
+const DesignPicker: FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
@@ -397,4 +398,4 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 };
 
-export { DesignPicker as default, DesignPreviewImage };
+export default DesignPicker;

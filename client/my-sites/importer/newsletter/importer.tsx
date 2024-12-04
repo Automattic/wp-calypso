@@ -71,6 +71,7 @@ export default function NewsletterImporter( {
 	if ( step === 'reset' ) {
 		step = 'content';
 	}
+
 	const { data: paidNewsletterData } = usePaidNewsletterQuery(
 		engine,
 		step,
@@ -162,7 +163,7 @@ export default function NewsletterImporter( {
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const importerStatus = getImporterStatus(
-		paidNewsletterData?.steps?.content.status,
+		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps?.subscribers.status
 	);
 

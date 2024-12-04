@@ -40,7 +40,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 	return (
 		<div className={ wrapperClassName }>
-			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			{ heading && <h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2> }
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
@@ -109,6 +109,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
+								isVertical
 								moreInfoLink={ moreInfoLink }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }

@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import { PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
@@ -111,12 +111,12 @@ export default function EnhancedOwnershipForm( {
 	}
 
 	return (
-		<PanelSection>
-			<PanelHeading>{ translate( 'Control your legacy' ) }</PanelHeading>
+		<PanelCard>
+			<PanelCardHeading>{ translate( 'Control your legacy' ) }</PanelCardHeading>
 			{ renderForm() }
 			<Button busy={ isSaving } disabled={ disabled } onClick={ onSave }>
 				{ translate( 'Save' ) }
 			</Button>
-		</PanelSection>
+		</PanelCard>
 	);
 }

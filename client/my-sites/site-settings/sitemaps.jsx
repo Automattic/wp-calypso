@@ -8,7 +8,7 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
@@ -188,10 +188,10 @@ class Sitemaps extends Component {
 		const { siteId, siteIsJetpack, translate } = this.props;
 
 		return (
-			<PanelSection>
+			<PanelCard>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
-				<PanelHeading>
+				<PanelCardHeading>
 					{ translate( 'Sitemaps' ) }
 					{ siteIsJetpack
 						? this.renderInfoLink( 'https://jetpack.com/support/sitemaps/' )
@@ -199,10 +199,10 @@ class Sitemaps extends Component {
 								localizeUrl( 'https://wordpress.com/support/sitemaps/' ),
 								false
 						  ) }
-				</PanelHeading>
+				</PanelCardHeading>
 
 				{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
-			</PanelSection>
+			</PanelCard>
 		);
 	}
 }

@@ -73,6 +73,7 @@ Plan or product slug. Can be one of the following:
 - `jetpack_backup_t2_monthly`
 - `jetpack_boost`
 - `jetpack_boost_monthly`
+- `jetpack_growth`
 - `jetpack_scan`
 - `jetpack_scan_monthly`
 - `jetpack_scan_v2`

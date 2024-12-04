@@ -33,6 +33,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 		alsoIncluded,
 		benefits,
 		benefitsComingSoon,
+		iconSlug,
 		lightboxDescription,
 		faqs,
 		disclaimer,
@@ -47,6 +48,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	const iconStyles = clsx( {
 		'jetpack-product-info__product-icon': true,
 		'jetpack-product-info__product-icon-woocommerce': isWooCommerceProduct( productSlug ),
+		[ iconSlug ]: !! iconSlug,
 	} );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );

@@ -414,9 +414,6 @@ import {
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
-	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
-	PRODUCT_JETPACK_CREATOR_YEARLY,
-	PRODUCT_JETPACK_CREATOR_MONTHLY,
 	FEATURE_SENSEI_SUPPORT,
 	FEATURE_SENSEI_UNLIMITED,
 	FEATURE_SENSEI_INTERACTIVE,
@@ -436,8 +433,9 @@ import {
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
+	JETPACK_TAG_FOR_BLOGGERS,
 } from './constants';
-import { FEATURE_CONNECT_ANALYTICS } from './constants/features';
+import { FEATURE_CONNECT_ANALYTICS, FEATURE_JETPACK_SOCIAL_V1_MONTHLY } from './constants/features';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -2078,9 +2076,10 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}VaultPress Backup (10GB){{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam (10k API calls/mo){{/li}}{{/ul}}',
+			'Comprehensive site security made simple.{{br}}{{/br}}{{br}}{{/br}}This bundle includes:{{ul}}{{li}}VaultPress Backup (10GB){{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam (10k API calls/mo){{/li}}{{/ul}}',
 			{
 				components: {
+					br: <br />,
 					ul: <ul />,
 					li: <li />,
 				},
@@ -2326,10 +2325,60 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_GROWTH,
 	getTitle: () => translate( 'Growth', { context: 'Jetpack product name' } ),
 	getDescription: () => translate( 'Grow your audience effortlessly.' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce Stores' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGGERS, label: translate( 'Bloggers' ) },
+	],
+	getFeaturedDescription: () =>
+		translate(
+			'Grow your audience effortlessly.{{br}}{{/br}}{{br}}{{/br}}This bundle includes:{{ul}}{{li}}Stats (10k site views - upgradeable){{/li}}{{li}}Social{{/li}}{{li}}Newsletter and monetization tools{{/li}}{{/ul}}',
+			{
+				components: {
+					br: <br />,
+					ul: <ul />,
+					li: <li />,
+				},
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
+			}
+		),
+	getTagline: () =>
+		translate(
+			'Essential tools to help you grow your audience, track visitor engagement, and turn leads into loyal customers and advocates.'
+		),
+	getLightboxDescription: () =>
+		translate(
+			'Essential tools to help you grow your audience, track visitor engagement, and turn leads into loyal customers and advocates.'
+		),
+	getPlanCardFeatures: () => [ FEATURE_JETPACK_SOCIAL_V1_MONTHLY, FEATURE_STATS_PAID ],
+	getIncludedFeatures: () => [
+		FEATURE_EARN_AD,
+		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_SIMPLE_PAYMENTS,
+	],
+	getWhatIsIncluded: () => [
+		translate( '40+ Jetpack blocks' ),
+		translate( 'Display ads with WordAds' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Paid content gating' ),
+		translate( 'Paywall access' ),
+		translate( 'Newsletter' ),
+		translate( 'Priority support' ),
+	],
+	getBenefits: () => [
+		translate( 'Quickly create content that stands out' ),
+		translate( 'Grow your subscribers with simple subscribe forms' ),
+		translate( 'Create content for paid subscribers' ),
+		translate( 'Sell access to premium content' ),
+		translate( 'Easily accept tips and donations' ),
+	],
 } );
 
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
@@ -3051,7 +3100,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_CRM,
-			PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
@@ -3087,7 +3135,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SEARCH,
 			PRODUCT_JETPACK_STATS_YEARLY,
 			PRODUCT_JETPACK_CRM,
-			PRODUCT_JETPACK_CREATOR_YEARLY,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
@@ -3123,7 +3170,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SEARCH_MONTHLY,
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_CRM_MONTHLY,
-			PRODUCT_JETPACK_CREATOR_MONTHLY,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
@@ -3312,11 +3358,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2021,
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
 		getPathSlug: () => 'growth-monthly',
-		getProductsIncluded: () => [
-			PRODUCT_JETPACK_STATS_MONTHLY,
-			PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
-			PRODUCT_JETPACK_CREATOR_MONTHLY,
-		],
+		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_MONTHLY, PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ],
 	},
 
 	[ PLAN_JETPACK_GROWTH_YEARLY ]: {
@@ -3326,11 +3368,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_YEARLY,
 		getPathSlug: () => 'growth-yearly',
 		getMonthlySlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
-		getProductsIncluded: () => [
-			PRODUCT_JETPACK_STATS_YEARLY,
-			PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
-			PRODUCT_JETPACK_CREATOR_YEARLY,
-		],
+		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_YEARLY, PRODUCT_JETPACK_SOCIAL_V1_YEARLY ],
 	},
 
 	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: {
@@ -3342,7 +3380,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
-			PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 		],
 	},
 

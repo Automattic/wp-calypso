@@ -1,5 +1,5 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Card, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -19,15 +19,7 @@ import {
 	getSitePlanSlug,
 } from 'calypso/state/sites/selectors';
 
-function Wrapper( { children, needsCard } ) {
-	return needsCard ? (
-		<Card className="site-settings__card">{ children }</Card>
-	) : (
-		<p className="fediverse-settings-wrapper">{ children }</p>
-	);
-}
-
-const DomainUpsellCard = ( { siteId, needsCard } ) => {
+const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const linkUrl = addQueryArgs( domainAddNew( domain ), {
 		domainAndPlanPackage: 'true',
@@ -40,7 +32,7 @@ const DomainUpsellCard = ( { siteId, needsCard } ) => {
 		recordTracksEvent( 'calypso_activitypub_domain_upsell_click', { route: currentRoute } );
 	};
 	return (
-		<Wrapper needsCard={ needsCard }>
+		<div>
 			<p>
 				{ translate(
 					'Unlock the full power of the fediverse with a memorable custom domain. Your domain also means that you can take your followers with you, using self-hosted WordPress with the ActivityPub plugin, or any other ActivityPub software.'
@@ -49,7 +41,7 @@ const DomainUpsellCard = ( { siteId, needsCard } ) => {
 			<Button primary href={ linkUrl } onClick={ recordClick }>
 				{ translate( 'Add a custom domain' ) }
 			</Button>
-		</Wrapper>
+		</div>
 	);
 };
 
@@ -96,7 +88,7 @@ const DomainPendingWarning = ( { siteId, domains } ) => {
 	);
 };
 
-const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
+const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
 	// If the user is already on Atomic, we'll be in `JetpackFediverseSettingsSection` instead.
 	// But they could have purchased the upgrade and not have transferred yet.
@@ -113,7 +105,7 @@ const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
 	if ( isBusinessPlan ) {
 		// show a card that links to the plugin page to install the ActivityPub plugin
 		return (
-			<Wrapper needsCard={ needsCard }>
+			<div>
 				<p>
 					{ translate(
 						'Install the ActivityPub plugin to unlock per-author profiles, fine-grained controls, and more.'
@@ -122,11 +114,11 @@ const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
 				<Button primary href={ `/plugins/activitypub/${ domain }` }>
 					{ translate( 'Install ActivityPub plugin' ) }
 				</Button>
-			</Wrapper>
+			</div>
 		);
 	}
 	return (
-		<Wrapper needsCard={ needsCard }>
+		<div>
 			<p>
 				{ translate(
 					// Translators: %(planName)s is the name of a plan, eg "Business" or "Creator"
@@ -137,7 +129,7 @@ const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
 			<Button primary href={ linkUrl } onClick={ recordClick }>
 				{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 			</Button>
-		</Wrapper>
+		</div>
 	);
 };
 
@@ -152,7 +144,7 @@ const hasPendingDomain = ( domains ) => {
 	return pendingDomain;
 };
 
-const EnabledSettingsSection = ( { data, siteId, needsCard } ) => {
+const EnabledSettingsSection = ( { data, siteId } ) => {
 	const translate = useTranslate();
 	const domains = useSiteDomains( siteId );
 	const { blogIdentifier = '' } = data;
@@ -162,8 +154,8 @@ const EnabledSettingsSection = ( { data, siteId, needsCard } ) => {
 
 	return (
 		<>
-			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } needsCard={ needsCard } /> }
-			<Wrapper needsCard={ needsCard }>
+			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } /> }
+			<div className="fediverse-settings-wrapper">
 				<p>
 					{ translate(
 						'People on the Fediverse (such as on Mastodon) can follow your site using this identifier:'
@@ -173,10 +165,8 @@ const EnabledSettingsSection = ( { data, siteId, needsCard } ) => {
 				<p>
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
-			</Wrapper>
-			{ hasDomain && ! isDomainPending && (
-				<BusinessPlanUpsellCard siteId={ siteId } needsCard={ needsCard } />
-			) }
+			</div>
+			{ hasDomain && ! isDomainPending && <BusinessPlanUpsellCard siteId={ siteId } /> }
 		</>
 	);
 };
@@ -186,7 +176,7 @@ function useDispatchSuccessNotice() {
 	return ( message ) => dispatch( successNotice( message, { duration: 3333 } ) );
 }
 
-export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } ) => {
+export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const translate = useTranslate();
 	const dispatchSuccessNotice = useDispatchSuccessNotice();
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
@@ -214,7 +204,7 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 		: baseSettingsLink;
 	return (
 		<>
-			<Wrapper needsCard={ needsBorders }>
+			<div className="fediverse-settings-wrapper">
 				<p>
 					{ translate(
 						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms like {{b}}Mastodon{{/b}}.',
@@ -240,10 +230,8 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 						} ) }
 					</Notice>
 				) }
-			</Wrapper>
-			{ isEnabled && (
-				<EnabledSettingsSection data={ data } siteId={ siteId } needsCard={ needsBorders } />
-			) }
+			</div>
+			{ isEnabled && <EnabledSettingsSection data={ data } siteId={ siteId } /> }
 		</>
 	);
 };
