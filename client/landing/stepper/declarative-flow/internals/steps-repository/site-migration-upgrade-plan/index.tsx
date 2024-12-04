@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -20,7 +21,6 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { StepProps } from '../../types';
-
 import './style.scss';
 
 type StepContainerProps = React.ComponentProps< typeof StepContainer >;
@@ -39,7 +39,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	customizedActionButtons,
 	...props
 } ) => {
-	const showVariants = true; // TODO: replace this with the flag.
+	const showVariants = config.isEnabled( 'migration-flow/experiment' );
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
