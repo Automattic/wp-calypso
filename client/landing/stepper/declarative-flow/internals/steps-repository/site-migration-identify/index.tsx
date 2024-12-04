@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,12 +19,19 @@ import type { UrlData } from 'calypso/blocks/import/types';
 import './style.scss';
 
 interface HostingDetailsProps {
-	items: { title?: string; icon?: ReactElement; description: string }[];
+	items: { title: string; description: string }[];
+}
+
+interface HostingDetailsWithIconsProps {
+	items: {
+		icon: ReactElement;
+		description: string;
+	}[];
 }
 
 const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
 
-const HostingDetailsWithIcons: FC< HostingDetailsProps > = ( { items } ) => {
+const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
 	const translate = useTranslate();
 
 	return (
