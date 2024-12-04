@@ -561,7 +561,7 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'authorization' ) {
-						const successUrl = window.location.href;
+						const successUrl = encodeURIComponent( window.location.href );
 						window.location.href = authorizationUrl + `?success_url=${ successUrl }`;
 						return;
 					}
