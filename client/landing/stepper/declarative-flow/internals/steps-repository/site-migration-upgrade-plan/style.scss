@@ -1,4 +1,15 @@
 .is-step-site-migration-upgrade-plan-with-variants {
+    &.step-container .step-container__header {
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        @media ( min-width: 720px ) {
+            max-width: 720px;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
     .import-upgrade-plan-skeleton {
         &.import-upgrade-plan-skeleton--light-highlight {
             background-color: var(--studio-wordpress-blue-50);

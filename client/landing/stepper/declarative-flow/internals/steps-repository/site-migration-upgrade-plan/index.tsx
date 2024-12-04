@@ -38,7 +38,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	customizedActionButtons,
 	...props
 } ) => {
-	const showVariants = true;
+	const showVariants = true; // TODO: replace this with the flag.
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
