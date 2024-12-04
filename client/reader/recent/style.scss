@@ -10,6 +10,9 @@ body.is-reader-full-post {
 .is-section-reader .recent-feed {
 	$recent-feed-spacing: 12px;
 	$feed-card-border-radius: 8px; /* stylelint-disable-line scales/radii */
+	$feed-content-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - var( --content-padding-bottom ) );
+
+	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
 
 	@media ( min-width: $break-wide ) {
 		display: flex;
@@ -176,8 +179,6 @@ body.is-reader-full-post {
 	&__post-column {
 		@extend %column-shared;
 		display: none;
-		max-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - var( --content-padding-bottom ) );
-		height: fit-content;
 		overflow-y: auto;
 
 		&.overlay {
