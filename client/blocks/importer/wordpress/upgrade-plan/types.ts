@@ -18,7 +18,8 @@ export type UpgradePlanDetailsProps = {
 	pricing?: { [ key: string ]: PricingMetaForGridPlan };
 	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
 	showVariants?: boolean;
-	onCtaClick?: ( planSlug: string ) => void;
+	onCtaClick?: ( planSlug: PlanSlug ) => void;
+	planSlugs: Array< PlanSlug >;
 };
 
 export type UpgradePlanProps = {
@@ -29,7 +30,7 @@ export type UpgradePlanProps = {
 	hideTitleAndSubTitle?: boolean;
 	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;
-	onCtaClick: ( planSlug: string ) => void;
+	onCtaClick: ( planSlug: PlanSlug ) => void;
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;

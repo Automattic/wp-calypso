@@ -1,6 +1,7 @@
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PlanSlug,
 	getPlan,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
@@ -61,7 +62,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
-	const goToMigrationAssistanceCheckout = ( planSlug: string, userAcceptedDeal = false ) => {
+	const goToMigrationAssistanceCheckout = ( planSlug: PlanSlug, userAcceptedDeal = false ) => {
 		const plan = getPlan( planSlug );
 		navigation?.submit?.( {
 			goToCheckout: true,
@@ -79,7 +80,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ ( planSlug: string ) => {
+					onConfirm={ ( planSlug: PlanSlug ) => {
 						const userAcceptedDeal = true;
 						goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
 					} }
@@ -93,7 +94,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle
-				onCtaClick={ ( planSlug: string ) => {
+				onCtaClick={ ( planSlug: PlanSlug ) => {
 					const userAcceptedDeal = false;
 					goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
 				} }

@@ -21,6 +21,7 @@ import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-sel
 import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 interface SwitcherProps {
 	selectedPlan: string;
@@ -230,12 +231,12 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		upgradePlanHostingDetailsList,
 		showVariants,
 		onCtaClick,
+		planSlugs,
 	} = props;
 
-	const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_2_YEARS ];
 	const plan = getPlan( selectedPlan );
 
-	const planPriceOfferPropsList = plans.reduce(
+	const planPriceOfferPropsList = planSlugs.reduce(
 		( acc, planSlug ) => ( {
 			...acc,
 			[ planSlug ]: preparePlanPriceOfferProps(
@@ -247,7 +248,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		{} as Record< string, PlanPriceOfferProps >
 	);
 
-	const planVariant = ( planSlug: string ) => {
+	const planVariant = ( planSlug: PlanSlug ) => {
 		return (
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">

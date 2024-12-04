@@ -217,6 +217,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
 			<UpgradePlanDetails
+				planSlugs={ planSlugs }
 				pricing={ pricing as { [ key: string ]: PricingMetaForGridPlan } }
 				introOfferAvailable={ !! introOfferAvailable }
 				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
