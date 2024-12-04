@@ -24,6 +24,12 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 const { getByRole, getByTestId, findByText } = screen;
 
+const authorizationUrl = 'https://example.com/authorization.php?appId=123&appName=My%20App';
+const encodedAuthorizationUrl = encodeURIComponent(
+	'https://example.com/authorization.php?appId=123&appName=My%20App'
+);
+const sourceUrl = encodeURIComponent( 'https://example.com' );
+
 describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
@@ -35,7 +41,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	it( 'renders the loading state when the authorization is successful and the application password is not yet stored', async () => {
 		( wpcomRequest as jest.Mock ).mockImplementation( () => new Promise( () => {} ) );
 
-		const initialEntry = '/step?authorizationUrl=https://example.com&user_login=test&password=test';
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 		render( {}, { initialEntry } );
 
 		await waitFor( () => {
@@ -45,8 +51,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 
 	it( 'redirects to the next step when the application password is stored', async () => {
 		const submit = jest.fn();
-		const authorizationUrl = encodeURIComponent( 'https://example.com' );
-		const initialEntry = `/step?authorizationUrl=${ authorizationUrl }&user_login=test&password=test`;
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
@@ -71,7 +76,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 			},
 		} );
 
-		const initialEntry = '/step?authorizationUrl=https://example.com&user_login=test&password=test';
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 		render( {}, { initialEntry } );
 
 		const errorMessage = await findByText( /We couldn't complete the authorization./ );
@@ -83,7 +88,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 
 	it( 'renders the alert notice when the authorization is rejected', async () => {
 		const submit = jest.fn();
-		const initialEntry = '/step?authorizationUrl=https://example.com&success=false';
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&success=false`;
 		render( { navigation: { submit } }, { initialEntry } );
 
 		const errorMessage = await findByText(
@@ -97,8 +102,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 
 	it( 'the authorization button redirects to the source URL when clicked', async () => {
 		const submit = jest.fn();
-		const authorizationUrl = 'https://example.com/authorization.php';
-		const initialEntry = `/step?authorizationUrl=${ authorizationUrl }`;
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }`;
 		render( { navigation: { submit } }, { initialEntry } );
 
 		await userEvent.click( getByRole( 'button', { name: 'Authorize' } ) );
@@ -108,11 +112,11 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 
 	it( 'the share credentials button redirects to the fallback credentials step', async () => {
 		const submit = jest.fn();
-		const initialEntry = '/step?authorizationUrl=https://example.com';
+		const initialEntry = `/step?site_url=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }`;
 		render( { navigation: { submit } }, { initialEntry } );
 
 		await userEvent.click( getByRole( 'button', { name: 'Share credentials instead' } ) );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'fallback-credentials' } );
+		expect( submit ).toHaveBeenCalledWith( { action: 'fallback-credentials', authorizationUrl } );
 	} );
 } );
