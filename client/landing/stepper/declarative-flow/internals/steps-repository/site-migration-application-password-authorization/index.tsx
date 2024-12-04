@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -68,15 +69,14 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 	let notice = undefined;
 	if ( isStoreApplicationPasswordError ) {
 		notice = (
-			<Notice status="is-error" showDismiss={ false }>
-				{ translate( "We couldn't complete the authorization." ) }
-				<button
-					className="button navigation-link step-container__navigation-link has-underline is-borderless site-migration-application-password-authorization__contact-me-button"
-					type="button"
-					onClick={ contactMe }
-				>
-					{ translate( 'Please contact me.' ) }
-				</button>
+			<Notice
+				status="is-warning"
+				showDismiss={ false }
+				text={ translate(
+					'We ran into a problem connecting to your site. Please try again or let us know so we can help you out.'
+				) }
+			>
+				<NoticeAction onClick={ contactMe }>{ translate( 'Get help' ) }</NoticeAction>
 			</Notice>
 		);
 	} else if ( isAuthorizationRejected ) {
