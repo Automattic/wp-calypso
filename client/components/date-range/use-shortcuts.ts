@@ -22,9 +22,10 @@ export const getShortcuts = createSelector(
 			chartStart: string;
 			chartEnd: string;
 		},
-		translateFunction = translate,
+		translateFunction,
 		isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' )
 	) => {
+		translateFunction = translateFunction ?? translate;
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );

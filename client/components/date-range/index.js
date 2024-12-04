@@ -57,6 +57,7 @@ export class DateRange extends Component {
 		// Temporary prop to enable new date filtering UI.
 		isNewDateFilteringEnabled: PropTypes.bool,
 		trackExternalDateChanges: PropTypes.bool,
+		shortcutList: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -490,6 +491,7 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
+								shortcutList={ this.props.shortcutList }
 								onClick={ this.handleDateRangeChange }
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
