@@ -460,7 +460,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
 
-	const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+	const { isEligible } = useIsBigSkyEligible();
+	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
+	const isBigSkyEligible = isEligible && isGoalCentricFeature;
 
 	const hasEligibilityMessages =
 		! isAtomic &&
