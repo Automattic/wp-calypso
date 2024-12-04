@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
@@ -53,13 +53,15 @@ const usePerformanceReport = (
 
 	const [ retestState, setRetestState ] = useState( 'idle' );
 
+	const localeSlug = getLocaleSlug();
+
 	const {
 		data: basicMetrics,
 		isError: isBasicMetricsError,
 		isFetched: isBasicMetricsFetched,
 		isLoading: isLoadingBasicMetrics,
 		refetch: requeueAdvancedMetrics,
-	} = useUrlBasicMetricsQuery( url, hash, true );
+	} = useUrlBasicMetricsQuery( url, hash, true, localeSlug );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	useEffect( () => {
 		if ( token && finalUrl ) {
@@ -80,7 +82,7 @@ const usePerformanceReport = (
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
-	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
+	} = useUrlPerformanceInsightsQuery( url, token ?? hash, localeSlug );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
