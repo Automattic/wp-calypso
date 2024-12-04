@@ -8,10 +8,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
-import {
-	STATS_FEATURE_PAGE_INSIGHTS,
-	STATS_FEATURE_PAGE_TRAFFIC,
-} from 'calypso/my-sites/stats/constants';
+import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -140,13 +137,9 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { gatedInsightsPage, isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } =
-			this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
-			case 'insights':
-				return ! gatedInsightsPage;
-
 			case 'wordads':
 				return isWordAds;
 
@@ -313,9 +306,6 @@ export default connect(
 			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
-			gatedInsightsPage:
-				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
