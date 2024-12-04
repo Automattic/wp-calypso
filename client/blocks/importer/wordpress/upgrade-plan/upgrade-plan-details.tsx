@@ -233,7 +233,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	} = props;
 
 	const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_2_YEARS ];
-	const visiblePlan = getPlan( selectedPlan );
+	const plan = getPlan( selectedPlan );
 
 	const planPriceOfferPropsList = plans.reduce(
 		( acc, planSlug ) => ( {
@@ -294,8 +294,8 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	}, [] );
 
 	useEffect( () => {
-		visiblePlan && visiblePlan.getPathSlug && setSelectedPlanSlug( visiblePlan.getPathSlug() );
-	}, [ visiblePlan ] );
+		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
+	}, [ plan ] );
 
 	return (
 		<div className="import__upgrade-plan-details">
@@ -328,7 +328,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							</Plans2023Tooltip>
 						) }
 						<Title className="plan-title" tagName="h2">
-							{ showVariants ? translate( 'Yearly' ) : visiblePlan?.getTitle() }
+							{ showVariants ? translate( 'Yearly' ) : plan?.getTitle() }
 						</Title>
 						{ ! showVariants && (
 							<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
@@ -348,14 +348,14 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							) }
 						</div>
 						<div className="import__upgrade-plan-refund-sub-text">
-							{ visiblePlan && ! isMonthly( visiblePlan.getStoreSlug() )
+							{ plan && ! isMonthly( plan.getStoreSlug() )
 								? translate( 'Refundable within 14 days. No questions asked.' )
 								: translate( 'Refundable within 7 days. No questions asked.' ) }
 						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
-							plan={ visiblePlan }
+							plan={ plan }
 							showFeatures={ showVariants ? true : showFeatures }
 							setShowFeatures={ setShowFeatures }
 						/>
