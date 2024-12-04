@@ -74,9 +74,7 @@ export const Table: React.FC = () => {
 								<span className="more-info-link">{ translate( 'Basic Jetpack features' ) }</span>
 							) : (
 								/* removing until the PR to add the lightbox for Growth is merged */
-								id !== 'GROWTH' && (
-									<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
-								)
+								<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
 							) }
 						</div>
 					</th>
