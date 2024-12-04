@@ -25,6 +25,7 @@ import PostingActivity from '../../sections/posting-activity-section';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import StatsUpsell from '../../stats-upsell';
 
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
@@ -79,7 +80,9 @@ const StatsInsights = ( props ) => {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
-					<p>Upsell here</p>
+					<div id="my-stats-content" class="stats-content">
+						<StatsUpsell />
+					</div>
 				) : (
 					<>
 						<AnnualHighlightsSection siteId={ siteId } />
