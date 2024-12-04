@@ -42,6 +42,7 @@ import {
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -126,10 +127,15 @@ class ReaderStream extends Component {
 		this.setState( { selectedTab: 'sites' } );
 	};
 
-	componentDidUpdate( { selectedPostKey, streamKey } ) {
+	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
 			this.props.viewStream( streamKey, window.location.pathname );
+			this.fetchNextPage( {} );
+		}
+
+		if ( selectedFeedId !== this.props.selectedFeedId ) {
+			this.props.resetCardExpansions();
 			this.fetchNextPage( {} );
 		}
 
@@ -146,6 +152,7 @@ class ReaderStream extends Component {
 
 		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
+				feedId: this.props.selectedFeedId,
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
 				localeSlug: this.props.localeSlug,
@@ -447,8 +454,13 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey, localeSlug } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true, localeSlug: localeSlug } );
+		const { streamKey, localeSlug, selectedFeedId } = this.props;
+		this.props.requestPage( {
+			streamKey,
+			isPoll: true,
+			localeSlug: localeSlug,
+			feedId: selectedFeedId,
+		} );
 	};
 
 	getPageHandle = ( pageHandle, startDate ) => {
@@ -461,7 +473,7 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate, localeSlug } = props;
+		const { streamKey, stream, startDate, localeSlug, selectedFeedId } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -469,7 +481,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
-		props.requestPage( { streamKey, pageHandle, localeSlug } );
+		props.requestPage( { streamKey, pageHandle, localeSlug, feedId: selectedFeedId } );
 	};
 
 	showUpdates = () => {
@@ -745,6 +757,7 @@ export default connect(
 			notificationsOpen: isNotificationsOpen( state ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
+			selectedFeedId: getSelectedFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
 			lastPage: stream.lastPage,

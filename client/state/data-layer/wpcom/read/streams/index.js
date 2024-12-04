@@ -352,7 +352,7 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug, page, perPage },
+		payload: { feedId, streamKey, streamType, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
 	const api = streamApis[ streamType ];
 
@@ -393,7 +393,10 @@ export function requestPage( action ) {
 		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
-			: query( { ...pageHandle, ...algorithm, number, lang, page }, action.payload ),
+			: query(
+					{ ...pageHandle, ...algorithm, number, lang, page, feed_id: feedId },
+					action.payload
+			  ),
 		onSuccess: action,
 		onFailure: action,
 	} );
