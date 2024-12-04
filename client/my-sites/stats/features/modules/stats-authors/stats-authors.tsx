@@ -12,6 +12,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
@@ -44,6 +45,14 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
+
+	// toggle the module if it's going to show just a single author
+	const isSingleAuthor = data?.length === 1;
+
+	useSelector( ( state ) => {
+		const pageModuleToggles = getModuleToggles( state, siteId, [ 'traffic' ] );
+		pageModuleToggles.authors = ! isSingleAuthor;
+	} );
 
 	return (
 		<>
