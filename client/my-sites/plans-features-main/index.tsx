@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -17,8 +17,6 @@ import {
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	isWpcomEnterpriseGridPlan,
-	getPlanSlugForTermVariant,
-	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -76,6 +74,7 @@ import PlansPageSubheader from './components/plans-page-subheader';
 import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
+import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -757,51 +756,14 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
-	const usePlanSlugsForAllDisplayedIntervals = () => {
-		const currentPlanSlugs = gridPlansForFeaturesGrid?.map( ( { planSlug } ) => planSlug );
-
-		return currentPlanSlugs?.flatMap( ( planSlug ) =>
-			filteredDisplayedIntervals
-				.map( ( term ) =>
-					getPlanSlugForTermVariant( planSlug, URL_FRIENDLY_TERMS_MAPPING[ term ] )
-				)
-				.filter( ( planSlug ) => planSlug !== undefined )
-		);
-	};
-
-	const pricingForAllDisplayedIntervals = Plans.usePricingMetaForGridPlans( {
-		planSlugs: usePlanSlugsForAllDisplayedIntervals() ?? [],
+	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
+		gridPlans: gridPlansForFeaturesGrid ?? [],
+		displayedIntervals: filteredDisplayedIntervals,
 		storageAddOns,
 		coupon,
 		siteId,
-		useCheckPlanAvailabilityForPurchase,
-	} );
-
-	const enableTermSavingsPriceDisplay = useMemo( () => {
-		const isAnyGridPlanDiscounted = Object.values( pricingForAllDisplayedIntervals ?? {} ).reduce(
-			( isDiscounted, { discountedPrice, introOffer } ) => {
-				const hasDiscount =
-					'number' === typeof discountedPrice.monthly ||
-					( introOffer && ! introOffer.isOfferComplete );
-				return isDiscounted || !! hasDiscount;
-			},
-			false
-		);
-
-		if ( isAnyGridPlanDiscounted ) {
-			return false;
-		}
-
-		return (
-			( isEnabled( 'plans/term-savings-price-display' ) ||
-				longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-			isInSignup
-		);
-	}, [
-		pricingForAllDisplayedIntervals,
-		longerPlanTermDefaultExperiment.isEligibleForTermSavings,
 		isInSignup,
-	] );
+	} );
 
 	return (
 		<>
