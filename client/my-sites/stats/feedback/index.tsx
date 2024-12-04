@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import {
@@ -268,7 +268,9 @@ function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const { data, isSuccess } = useFetchTrafficHook( siteId );
 
 	const visitors = data?.past_thirty_days.visitors ?? 0;
-	const isHighTrafficSite = isSuccess && visitors > getHighTrafficThreshold();
+	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
+
+	const isHighTrafficSite = isSuccess && visitors > highTrafficThreshold;
 	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
