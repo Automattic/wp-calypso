@@ -22,12 +22,16 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
-( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
-
 const { getByRole, getByTestId, findByText } = screen;
 
 describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	beforeAll( () => nock.disableNetConnect() );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( useSiteSlugParam as jest.Mock ).mockReturnValue( 'site-url.wordpress.com' );
+	} );
+
 	it( 'renders the loading state when the authorization is successful and the application password is not yet stored', async () => {
 		( wpcomRequest as jest.Mock ).mockImplementation( () => new Promise( () => {} ) );
 
@@ -41,7 +45,8 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 
 	it( 'redirects to the next step when the application password is stored', async () => {
 		const submit = jest.fn();
-		const initialEntry = '/step?authorizationUrl=https://example.com&user_login=test&password=test';
+		const authorizationUrl = encodeURIComponent( 'https://example.com' );
+		const initialEntry = `/step?authorizationUrl=${ authorizationUrl }&user_login=test&password=test`;
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
