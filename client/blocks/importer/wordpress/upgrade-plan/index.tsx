@@ -17,6 +17,7 @@ import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/compon
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
+import { VariantsSkeleton } from './skeleton/variants-skeleton';
 import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
@@ -26,7 +27,6 @@ import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const plan = getPlan( PLAN_BUSINESS );
 	const hasEnTranslation = useHasEnTranslation();
 	const {
 		site,
@@ -51,10 +51,14 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
 		useUpgradePlanHostingDetailsList();
+	const plan = getPlan( visiblePlan );
+
+	const planMonthly = PLAN_BUSINESS_MONTHLY;
+	const planBiennial = PLAN_BUSINESS_2_YEARS;
 
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
-		planSlugs: [ visiblePlan, PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS_MONTHLY ],
+		planSlugs: [ visiblePlan, planMonthly, planBiennial ],
 		siteId: site.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
@@ -62,8 +66,8 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 	const pricing = {
 		[ visiblePlan ]: pricingMeta?.[ visiblePlan ],
-		[ PLAN_BUSINESS_2_YEARS ]: pricingMeta?.[ PLAN_BUSINESS_2_YEARS ],
-		[ PLAN_BUSINESS_MONTHLY ]: pricingMeta?.[ PLAN_BUSINESS_MONTHLY ],
+		[ planBiennial ]: pricingMeta?.[ planBiennial ],
+		[ planMonthly ]: pricingMeta?.[ planMonthly ],
 	};
 
 	const introOfferAvailable =
@@ -166,7 +170,10 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		  );
 
 	if ( isFetchingHostingDetails || ! pricing[ visiblePlan ] ) {
-		return <Skeleton showVariants={ showVariants } />;
+		if ( ! showVariants ) {
+			return <Skeleton />;
+		}
+		return <VariantsSkeleton />;
 	}
 
 	return (

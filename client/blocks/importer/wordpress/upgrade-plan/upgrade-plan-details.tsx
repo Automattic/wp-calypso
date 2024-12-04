@@ -253,7 +253,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 				<div className="import__upgrade-plan-features-container">
 					<div className="import__upgrade-plan-header">
 						<Title className="plan-title" tagName="h2">
-							{ planSlug === PLAN_BUSINESS_MONTHLY
+							{ PLAN_BUSINESS_MONTHLY === planSlug
 								? translate( 'Monthly' )
 								: translate( 'Biennially' ) }
 						</Title>
@@ -264,7 +264,9 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					<div>
 						<div className="import__upgrade-plan-cta">
 							<NextButton variant="secondary" onClick={ () => onCtaClick?.( planSlug ) }>
-								{ translate( 'Get Monthly' ) }
+								{ PLAN_BUSINESS_MONTHLY === planSlug
+									? translate( 'Get Monthly' )
+									: translate( 'Get Biennial' ) }
 							</NextButton>
 						</div>
 						<div className="import__upgrade-plan-refund-sub-text">
@@ -276,7 +278,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
 							plan={ getPlan( planSlug ) }
-							showFeatures={ showFeatures }
+							showFeatures
 							setShowFeatures={ setShowFeatures }
 						/>
 					</div>
@@ -354,7 +356,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
 							plan={ visiblePlan }
-							showFeatures={ showFeatures }
+							showFeatures={ showVariants ? true : showFeatures }
 							setShowFeatures={ setShowFeatures }
 						/>
 					</div>
