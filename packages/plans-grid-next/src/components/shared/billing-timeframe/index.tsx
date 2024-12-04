@@ -52,7 +52,7 @@ interface Props {
 
 const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	const translate = useTranslate();
-	const { helpers, gridPlansIndex, coupon, siteId, enableTermSavingsPriceDisplay } =
+	const { helpers, gridPlansIndex, coupon, siteId, reflectStorageSelectionInPlanPrices } =
 		usePlansGridContext();
 	const { isMonthlyPlan, billingTimeframe, pricing } = gridPlansIndex[ planSlug ];
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -66,7 +66,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		storageAddOnsForPlan: storageAddOns,
 		coupon,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
-		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices,
 	} );
 	const description = planBillingDescription || billingTimeframe;
 

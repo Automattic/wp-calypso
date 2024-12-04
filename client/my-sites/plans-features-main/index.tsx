@@ -869,6 +869,7 @@ const PlansFeaturesMain = ( {
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
 										recordTracksEvent={ recordTracksEvent }
+										reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
 										showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -934,6 +935,7 @@ const PlansFeaturesMain = ( {
 															: undefined
 													}
 													recordTracksEvent={ recordTracksEvent }
+													reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }
 													showUpgradeableStorage={ showUpgradeableStorage }
