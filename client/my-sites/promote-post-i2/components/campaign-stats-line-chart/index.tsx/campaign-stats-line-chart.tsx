@@ -93,7 +93,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					lineRef.current.style.width = '2px';
 					lineRef.current.style.background = 'rgba(0, 0, 0, 0.12)';
 					lineRef.current.style.top = '0';
-					lineRef.current.style.bottom = '0';
+					lineRef.current.style.bottom = '50px';
 					lineRef.current.style.display = 'none';
 					u.over.parentNode?.appendChild( lineRef.current );
 				}
@@ -113,20 +113,20 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						if ( value != null ) {
 							tooltipRef.current.style.display = 'block';
 							tooltipRef.current.style.left = mouseLeft + 'px';
-							tooltipRef.current.style.top = mouseTop - 40 + 'px';
+							tooltipRef.current.style.top = mouseTop + 'px';
 							tooltipRef.current.innerHTML = `
 								<div class="campaign-item-details__chart-tooltip-date"><strong>${ formatDate(
 									new Date( date * 1000 ),
 									hourly
 								) }</strong></div>
 								<div class="campaign-item-details__chart-tooltip-divider"></div>
-								<div class="campaign-item-details__chart-tooltip-data">${ value.toLocaleString() }</div>
+								<div class="campaign-item-details__chart-tooltip-data">${ formatValue( value ) }</div>
 							`;
 
 							lineRef.current.style.display = 'block';
 
 							lineRef.current.style.left = mouseLeft + tooltipRef.current.offsetWidth / 2 + 'px';
-							lineRef.current.style.top = mouseTop - 20 + 'px';
+							lineRef.current.style.top = mouseTop + 50 + 'px';
 						} else {
 							tooltipRef.current.style.display = 'none';
 							lineRef.current.style.display = 'none';
@@ -158,6 +158,18 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			},
 		},
 	};
+
+	function formatValue( rawValue: number ) {
+		if ( rawValue == null ) {
+			return '-';
+		}
+
+		if ( source === ChartSourceOptions.Spend ) {
+			return `$${ formatCents( rawValue, 2 ) }`;
+		}
+
+		return rawValue.toLocaleString();
+	}
 
 	const options = useMemo( () => {
 		return {
@@ -240,15 +252,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						show: false,
 					},
 					value: ( self: uPlot, rawValue: number ) => {
-						if ( rawValue == null ) {
-							return '-';
-						}
-
-						if ( source === ChartSourceOptions.Spend ) {
-							return `$${ formatCents( rawValue, 2 ) }`;
-						}
-
-						return rawValue.toLocaleString();
+						return formatValue( rawValue );
 					},
 				},
 			],
