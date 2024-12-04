@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -26,6 +25,7 @@ import PostingActivity from '../../sections/posting-activity-section';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import StatsUpsell from '../../stats-upsell';
 
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
@@ -46,12 +46,8 @@ const StatsInsights = ( props ) => {
 		}
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
-	// Redirect to the traffic page if the site is gated for insights
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
-	if ( config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights ) {
-		page.redirect( `/stats/day/${ siteSlug }` );
-		return;
-	}
+	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
@@ -83,63 +79,71 @@ const StatsInsights = ( props ) => {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
-				<PostingActivity siteId={ siteId } />
-				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-				<div className={ statsModuleListClass }>
-					{ isEmptyStateV2 && (
-						<StatsModuleTags
-							moduleStrings={ moduleStrings.tags }
-							hideSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--half': isJetpack,
-									'stats__flexible-grid-item--full--large': isJetpack,
-								},
-								{
-									'stats__flexible-grid-item--full': ! isJetpack,
-								}
+				{ shouldRendeUpsell ? (
+					<div id="my-stats-content" class="stats-content">
+						<StatsUpsell />
+					</div>
+				) : (
+					<>
+						<AnnualHighlightsSection siteId={ siteId } />
+						<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+						<PostingActivity siteId={ siteId } />
+						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
+						<div className={ statsModuleListClass }>
+							{ isEmptyStateV2 && (
+								<StatsModuleTags
+									moduleStrings={ moduleStrings.tags }
+									hideSummaryLink
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': isJetpack,
+											'stats__flexible-grid-item--full--large': isJetpack,
+										},
+										{
+											'stats__flexible-grid-item--full': ! isJetpack,
+										}
+									) }
+								/>
 							) }
-						/>
-					) }
-					{ ! isEmptyStateV2 && (
-						<StatsModule
-							path="tags-categories"
-							moduleStrings={ moduleStrings.tags }
-							statType="statsTags"
-							hideSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--half': isJetpack,
-									'stats__flexible-grid-item--full--large': isJetpack,
-								},
-								{
-									'stats__flexible-grid-item--full': ! isJetpack,
-								}
+							{ ! isEmptyStateV2 && (
+								<StatsModule
+									path="tags-categories"
+									moduleStrings={ moduleStrings.tags }
+									statType="statsTags"
+									hideSummaryLink
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': isJetpack,
+											'stats__flexible-grid-item--full--large': isJetpack,
+										},
+										{
+											'stats__flexible-grid-item--full': ! isJetpack,
+										}
+									) }
+								/>
 							) }
-						/>
-					) }
 
-					<StatsModuleComments
-						className={ clsx(
-							'stats__flexible-grid-item--half',
-							'stats__flexible-grid-item--full--large'
-						) }
-					/>
+							<StatsModuleComments
+								className={ clsx(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+							/>
 
-					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-					{ ! isJetpack && (
-						<StatShares
-							siteId={ siteId }
-							className={ clsx(
-								'stats__flexible-grid-item--half',
-								'stats__flexible-grid-item--full--large'
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+							{ ! isJetpack && (
+								<StatShares
+									siteId={ siteId }
+									className={ clsx(
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large'
+									) }
+								/>
 							) }
-						/>
-					) }
-				</div>
-				<JetpackColophon />
+						</div>
+						<JetpackColophon />
+					</>
+				) }
 			</div>
 		</Main>
 	);

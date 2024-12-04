@@ -587,6 +587,8 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 						fill: colorToAlpha( 'WordPress Blue 50', 0.1 ),
 						label: __( 'Requests per minute' ),
 						stroke: colorStudio.colors[ 'WordPress Blue 50' ],
+						showInLegend: true,
+						showInTooltip: true,
 					},
 					{
 						fill: colorToAlpha( 'Yellow 30', 0.2 ),
@@ -594,6 +596,8 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 						stroke: colorStudio.colors[ 'Yellow 30' ],
 						scale: 'average-response-time',
 						unit: 'ms',
+						showInLegend: true,
+						showInTooltip: true,
 					},
 				] }
 				isLoading={ isLoadingLineChart }

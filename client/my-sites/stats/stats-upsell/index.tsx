@@ -3,9 +3,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { Plans } from '@automattic/data-stores';
+import { Plans, HelpCenter } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features.png';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -15,6 +17,8 @@ import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/se
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 export default function StatsUpsell( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
@@ -33,6 +37,8 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const localizeUrl = useLocalizeUrl();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
@@ -47,6 +53,18 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 		} else {
 			page( `/checkout/${ siteSlug }/${ plan?.pathSlug ?? 'premium' }` );
 		}
+	};
+
+	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
+
+	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		event.preventDefault();
+		setShowHelpCenter( true );
+		setShowSupportDoc( learnMoreLink );
+
+		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
+			stat_type: statType,
+		} );
 	};
 
 	return (
@@ -118,18 +136,27 @@ export default function StatsUpsell( { siteId }: { siteId: number } ) {
 							</div>
 						</div>
 					</div>
-					<Button
-						variant="primary"
-						className="stats-upsell__button"
-						onClick={ onClick }
-						disabled={ isLoading }
-					>
-						{ ! plan?.productNameShort
-							? translate( 'Upgrade plan' )
-							: translate( 'Upgrade to %(planName)s', {
-									args: { planName: plan.productNameShort },
-							  } ) }
-					</Button>
+					<div className="stats-upsell__buttons">
+						<Button
+							variant="primary"
+							className="stats-upsell__button"
+							onClick={ onClick }
+							disabled={ isLoading }
+						>
+							{ ! plan?.productNameShort
+								? translate( 'Upgrade plan' )
+								: translate( 'Upgrade to %(planName)s', {
+										args: { planName: plan.productNameShort },
+								  } ) }
+						</Button>
+						<Button
+							variant="secondary"
+							className="stats-upsell__button"
+							onClick={ onLearnMoreClick }
+						>
+							{ translate( 'Learn more' ) }
+						</Button>
+					</div>
 				</div>
 				<div className="stats-upsell__right">
 					<img src={ statsFeaturesPNG } alt={ translate( 'Features' ) } />

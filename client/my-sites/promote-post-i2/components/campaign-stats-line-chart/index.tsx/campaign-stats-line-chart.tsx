@@ -27,10 +27,10 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 	const hourly = resolution === ChartResolution.Hour;
 
-	const primaryColor = getComputedStyle( document.body )
-		.getPropertyValue( '--color-primary' )
+	const accentColour = getComputedStyle( document.body )
+		.getPropertyValue( '--color-accent' )
 		.trim();
-	const primaryRGB = hexToRgb( primaryColor );
+	const primaryRGB = hexToRgb( accentColour );
 
 	const updateWidth = () => {
 		const wrapperElement = document.querySelector(
@@ -124,7 +124,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 				},
 				{
 					label: _.capitalize( source ),
-					stroke: primaryColor,
+					stroke: accentColour,
 					width: 3,
 					fill: ( self: uPlot ) => {
 						const { r, g, b } = primaryRGB;
@@ -162,7 +162,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 				},
 			],
 		};
-	}, [ width, source, primaryColor, formatDate, hourly, primaryRGB ] );
+	}, [ width, source, accentColour, formatDate, hourly, primaryRGB ] );
 
 	return (
 		<div style={ { position: 'relative' } }>

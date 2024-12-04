@@ -37,6 +37,7 @@ interface SeriesProp {
 	scale?: string;
 	unit?: string;
 	showInLegend?: boolean;
+	showInTooltip?: boolean;
 }
 
 export function formatChartHour( date: Date ): string {

@@ -1,4 +1,3 @@
-import { SubscriptionManager } from '@automattic/data-stores';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
@@ -14,7 +13,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
-import ReaderOnboarding from '../onboarding';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
@@ -159,93 +157,68 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		setIsLoading( data?.isRequesting );
 	}, [ data?.isRequesting ] );
 
-	const { data: subscriptionsCount } = SubscriptionManager.useSubscriptionsCountQuery();
-	const hasSubscriptions = subscriptionsCount?.blogs && subscriptionsCount.blogs > 0;
-
 	return (
 		<div className="recent-feed">
-			<div
-				className={ `recent-feed__list-column ${
-					selectedItem && hasSubscriptions ? 'has-overlay' : ''
-				} ${ ! hasSubscriptions ? 'recent-feed--no-subscriptions' : '' }` }
-			>
+			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<div className="recent-feed__list-column-content">
-					{ ! hasSubscriptions ? (
-						<>
-							<p>
-								{ translate(
-									'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
-									{
-										components: {
-											strong: <strong />,
-										},
-									}
-								) }
-							</p>
-							<ReaderOnboarding forceShow />
-						</>
-					) : (
-						<DataViews
-							getItemId={ ( item: ReaderPost, index = 0 ) =>
-								item.postId?.toString() ?? `item-${ index }`
-							}
-							view={ view as View }
-							fields={ fields }
-							data={ shownData }
-							onChangeView={ ( newView: View ) =>
-								setView( {
-									type: newView.type,
-									fields: newView.fields ?? [],
-									layout: view.layout,
-									perPage: newView.perPage,
-									page: newView.page,
-									search: newView.search,
-								} )
-							}
-							paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
-							defaultLayouts={ { list: {} } }
-							isLoading={ isLoading }
-							selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
-							onChangeSelection={ ( newSelection: string[] ) => {
-								const selectedPost = data?.items?.find(
-									( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
-								);
-								setSelectedItem( selectedPost || null );
-							} }
-						/>
-					) }
+					<DataViews
+						getItemId={ ( item: ReaderPost, index = 0 ) =>
+							item.postId?.toString() ?? `item-${ index }`
+						}
+						view={ view as View }
+						fields={ fields }
+						data={ shownData }
+						onChangeView={ ( newView: View ) =>
+							setView( {
+								type: newView.type,
+								fields: newView.fields ?? [],
+								layout: view.layout,
+								perPage: newView.perPage,
+								page: newView.page,
+								search: newView.search,
+							} )
+						}
+						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
+						defaultLayouts={ { list: {} } }
+						isLoading={ isLoading }
+						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+						onChangeSelection={ ( newSelection: string[] ) => {
+							const selectedPost = data?.items?.find(
+								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+							);
+							setSelectedItem( selectedPost || null );
+						} }
+					/>
 				</div>
 			</div>
-			{ hasSubscriptions ? (
-				<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
-					{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
-						<RecentPostSkeleton />
-					) }
-					{ ! isLoading && data?.items.length === 0 && (
-						<EmptyContent
-							title={ translate( 'Nothing Posted Yet' ) }
-							line={ translate( 'This feed is currently empty.' ) }
-							illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-							illustrationWidth={ 400 }
+			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
+				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
+					<RecentPostSkeleton />
+				) }
+				{ ! isLoading && data?.items.length === 0 && (
+					<EmptyContent
+						title={ translate( 'Nothing Posted Yet' ) }
+						line={ translate( 'This feed is currently empty.' ) }
+						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+						illustrationWidth={ 400 }
+					/>
+				) }
+				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+					<>
+						<AsyncLoad
+							require="calypso/blocks/reader-full-post"
+							feedId={ selectedItem.feedId }
+							postId={ selectedItem.postId }
+							onClose={ () => setSelectedItem( null ) }
+							layout="recent"
 						/>
-					) }
-					{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
-						<>
-							<AsyncLoad
-								require="calypso/blocks/reader-full-post"
-								feedId={ selectedItem.feedId }
-								postId={ selectedItem.postId }
-								onClose={ () => setSelectedItem( null ) }
-								layout="recent"
-							/>
-							<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
-						</>
-					) }
-				</div>
-			) : null }
+						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+					</>
+				) }
+			</div>
 		</div>
 	);
 };

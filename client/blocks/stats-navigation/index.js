@@ -8,7 +8,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
-import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
+import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -83,11 +83,34 @@ class StatsNavigation extends Component {
 				};
 			} )
 		),
+		availableModuleToggles: [],
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
-			return { pageModules: nextProps.pageModuleToggles };
+		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
+			( toggleItem ) => {
+				// disable the "videos" toggle on sites that do not have VideoPress enabled
+				// the toggle will be disabled (grayed out and non interactive)
+				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
+
+				return {
+					...toggleItem,
+					disabled: shouldDisableVideoToggle,
+					defaultValue: shouldDisableVideoToggle === false,
+				};
+			}
+		);
+
+		// toggle the visibility of video module itself
+		if ( ! nextProps.hasVideoPress ) {
+			nextProps.pageModuleToggles.videos = false;
+		}
+
+		if (
+			prevState.pageModules !== nextProps.pageModuleToggles ||
+			prevState.availableModuleToggles !== nextProps.availableModuleToggles
+		) {
+			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
 		}
 
 		return null;
@@ -114,13 +137,9 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { gatedInsightsPage, isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } =
-			this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
-			case 'insights':
-				return ! gatedInsightsPage;
-
 			case 'wordads':
 				return isWordAds;
 
@@ -159,9 +178,9 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
-			hasVideoPress,
+			gatedTrafficPage,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
+		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -174,6 +193,13 @@ class StatsNavigation extends Component {
 		const isModuleSettingsSupported =
 			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
+		const shouldRenderModuleToggler =
+			! isLegacy &&
+			isModuleSettingsSupported &&
+			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+			! hideModuleSettings &&
+			! gatedTrafficPage;
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
@@ -225,34 +251,17 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ ! isLegacy &&
-					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
-					! hideModuleSettings && (
-						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ].map(
-								( toggleItem ) => {
-									// disable the "videos" toggle on sites that do not have VideoPress enabled
-									// the toggle will be disabled (grayed out and non interactive)
-									const shouldDisableVideoToggle = ! hasVideoPress && toggleItem.key === 'videos';
-
-									return {
-										...toggleItem,
-										disabled: shouldDisableVideoToggle,
-										defaultValue: shouldDisableVideoToggle === false,
-									};
-								}
-							) }
-							pageModules={ pageModules }
-							onToggleModule={ this.onToggleModule }
-							isTooltipShown={
-								showSettingsTooltip &&
-								! isPageSettingsTooltipDismissed &&
-								! delayTooltipPresentation
-							}
-							onTooltipDismiss={ this.onTooltipDismiss }
-						/>
-					) }
+				{ shouldRenderModuleToggler && (
+					<PageModuleToggler
+						availableModuleToggles={ availableModuleToggles }
+						pageModules={ pageModules }
+						onToggleModule={ this.onToggleModule }
+						isTooltipShown={
+							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
+						}
+						onTooltipDismiss={ this.onTooltipDismiss }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -294,9 +303,9 @@ export default connect(
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
-			gatedInsightsPage:
+			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_INSIGHTS ),
+				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

@@ -248,6 +248,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true
+		"woocommerce/core-profiler-passwordless-auth": true,
+		"woocommerce/rebrand-2-0": false
 	}
 }

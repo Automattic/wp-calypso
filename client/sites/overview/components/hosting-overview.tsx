@@ -1,7 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -30,7 +29,6 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
-			<PageViewTracker path="/overview/:site" title="Site Overview" />
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }

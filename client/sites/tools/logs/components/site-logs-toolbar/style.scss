@@ -36,6 +36,8 @@
 		}
 
 		input[type="datetime-local"] {
+			display: flex;
+			justify-content: center;
 			cursor: text;
 			&::-webkit-calendar-picker-indicator {
 				cursor: pointer;

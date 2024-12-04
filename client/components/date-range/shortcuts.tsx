@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
@@ -16,7 +16,6 @@ export interface DateRangePickerShortcut {
 	period: string;
 	statType?: string;
 	isGated?: boolean;
-	shortcutId?: string;
 }
 
 const DateRangePickerShortcuts = ( {
@@ -26,15 +25,17 @@ const DateRangePickerShortcuts = ( {
 	locked = false,
 	startDate,
 	endDate,
+	shortcutList,
 	// Temporary prop to enable new date filtering UI.
 	isNewDateFilteringEnabled = false,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
-	onShortcutClick?: ( shortcutId: string ) => void;
+	onShortcutClick?: ( shortcut: DateRangePickerShortcut ) => void;
 	locked?: boolean;
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
+	shortcutList?: DateRangePickerShortcut[];
 	isNewDateFilteringEnabled?: boolean;
 } ) => {
 	const normalizeDate = ( date: MomentOrNull ) => {
@@ -45,7 +46,7 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
-	const { supportedShortcutList: shortcutList, selectedShortcut } = useShortcuts(
+	const { supportedShortcutList: defaultShortcutList, selectedShortcut } = useShortcuts(
 		{
 			chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
 			chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
@@ -54,13 +55,14 @@ const DateRangePickerShortcuts = ( {
 		isNewDateFilteringEnabled
 	);
 
-	const handleClick = ( { id, startDate, endDate }: Partial< DateRangePickerShortcut > ) => {
-		onClick( moment( startDate ), moment( endDate ), id || '' );
+	shortcutList = shortcutList || defaultShortcutList;
+
+	const handleClick = ( shortcut: DateRangePickerShortcut ) => {
+		! locked &&
+			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ), shortcut.id || '' );
 
 		// Call the onShortcutClick if provided
-		if ( onShortcutClick && id ) {
-			onShortcutClick( id );
-		}
+		onShortcutClick && onShortcutClick( shortcut );
 	};
 
 	currentShortcut = currentShortcut || selectedShortcut?.id || 'custom_date_range';
@@ -75,9 +77,10 @@ const DateRangePickerShortcuts = ( {
 						} ) }
 						key={ shortcut.id || idx }
 					>
-						<Button onClick={ () => ! locked && handleClick( shortcut ) }>
+						<Button onClick={ () => handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
 							{ shortcut.id === currentShortcut && <Icon icon={ check } /> }
+							{ shortcut.isGated && <Icon icon={ lock } /> }
 						</Button>
 					</li>
 				) ) }

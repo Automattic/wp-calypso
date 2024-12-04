@@ -1,22 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { MShotsImage } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import photon from 'photon';
 import { useCallback, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesigns } from '../hooks/use-filtered-designs';
-import {
-	getAssemblerDesign,
-	getDesignPreviewUrl,
-	getMShotOptions,
-	isDefaultGlobalStylesVariationSlug,
-} from '../utils';
+import { getAssemblerDesign, isDefaultGlobalStylesVariationSlug } from '../utils';
 import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
-import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPickerTierFilter from './design-picker-tier-filter';
+import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
@@ -24,71 +17,6 @@ import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
 import type { RefCallback } from 'react';
 import './style.scss';
-
-const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
-
-interface DesignPreviewImageProps {
-	design: Design;
-	imageOptimizationExperiment?: boolean;
-	locale?: string;
-	styleVariation?: StyleVariation;
-	oldHighResImageLoading?: boolean; // Temporary for A/B test.
-}
-
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
-	design,
-	locale,
-	styleVariation,
-	oldHighResImageLoading,
-} ) => {
-	const isMobile = useViewportMatch( 'small', '<' );
-
-	if ( design?.design_tier === 'partner' && design.screenshot ) {
-		const fit = '479,360';
-		// We're stubbing out the high res version here as part of a size reduction experiment.
-		// See #88786 and TODO for discussion / info.
-		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
-		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
-
-		if ( oldHighResImageLoading ) {
-			return (
-				<img
-					src={ themeImgSrc }
-					srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-					alt={ design.description }
-				/>
-			);
-		}
-
-		return (
-			<img
-				loading="lazy"
-				src={ themeImgSrc }
-				srcSet={ `${ themeImgSrc }` }
-				alt={ design.description }
-			/>
-		);
-	}
-
-	return (
-		<MShotsImage
-			url={ getDesignPreviewUrl( design, {
-				use_screenshot_overrides: true,
-				style_variation: styleVariation,
-				...( locale && { language: locale } ),
-			} ) }
-			aria-labelledby={ makeOptionId( design ) }
-			alt=""
-			options={ getMShotOptions( {
-				scrollable: false,
-				highRes: ! isMobile,
-				isMobile,
-				oldHighResImageLoading,
-			} ) }
-			scrollable={ false }
-		/>
-	);
-};
 
 interface TrackDesignViewProps {
 	category?: string | null;
@@ -286,7 +214,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		<div>
 			<div className="design-picker__filters">
 				{ categorization && hasCategories && (
-					<UnifiedDesignPickerCategoryFilter
+					<DesignPickerCategoryFilter
 						className="design-picker__category-filter"
 						categories={ categorization.categories }
 						onSelect={ categorization.onSelect }
@@ -415,4 +343,4 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	);
 };
 
-export { UnifiedDesignPicker as default, DesignPreviewImage };
+export { UnifiedDesignPicker as default };

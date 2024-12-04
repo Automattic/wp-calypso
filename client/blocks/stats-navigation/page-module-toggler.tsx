@@ -6,7 +6,7 @@ import { useState, useRef, useCallback } from 'react';
 import { ModuleToggleItem } from './constants';
 
 type PageModuleTogglerProps = {
-	availableModules: ModuleToggleItem[];
+	availableModuleToggles: ModuleToggleItem[];
 	pageModules: { [ name: string ]: boolean };
 	onToggleModule: ( module: string, isShow: boolean ) => void;
 	isTooltipShown: boolean;
@@ -14,7 +14,7 @@ type PageModuleTogglerProps = {
 };
 
 export default function PageModuleToggler( {
-	availableModules,
+	availableModuleToggles,
 	pageModules,
 	onToggleModule,
 	isTooltipShown,
@@ -73,7 +73,7 @@ export default function PageModuleToggler( {
 			>
 				<div>{ translate( 'Modules visibility' ) }</div>
 				<div className="page-modules-settings-toggle-wrapper">
-					{ availableModules.map( ( toggleItem: ModuleToggleItem ) => {
+					{ availableModuleToggles.map( ( toggleItem: ModuleToggleItem ) => {
 						return (
 							<div key={ toggleItem.key } className="page-modules-settings-toggle">
 								<Icon className="gridicon" icon={ toggleItem.icon } />

@@ -36,4 +36,7 @@ export const jetpackProductsToShow: JetpackProducts = {
 	'jetpack-complete': {
 		description: translate( 'The full Jetpack suite.' ),
 	},
+	'jetpack-growth': {
+		description: translate( 'Grow your audience effortlessly.' ),
+	},
 };

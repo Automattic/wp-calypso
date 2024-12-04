@@ -19,8 +19,12 @@ const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPa
 		return 'submit';
 	}
 
-	if ( applicationPasswordsInfo?.isAvailable ) {
+	if ( applicationPasswordsInfo?.application_passwords_enabled ) {
 		return 'application-passwords-approval';
+	}
+
+	if ( applicationPasswordsInfo?.application_passwords_enabled === false ) {
+		return 'credentials-required';
 	}
 
 	if ( siteInfo?.platform_data?.is_wpcom ) {
@@ -45,7 +49,12 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
 		const action = getAction( siteInfo, applicationPasswordsInfo );
-		return navigation.submit?.( { action, from: siteInfo?.url, platform: siteInfo?.platform } );
+		return navigation.submit?.( {
+			action,
+			from: siteInfo?.url,
+			platform: siteInfo?.platform,
+			authorizationUrl: applicationPasswordsInfo?.authorization_url,
+		} );
 	};
 
 	const handleSkip = () => {
