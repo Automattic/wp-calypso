@@ -236,17 +236,19 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	const plan = getPlan( selectedPlan );
 
-	const planPriceOfferPropsList = planSlugs.reduce(
-		( acc, planSlug ) => ( {
-			...acc,
-			[ planSlug ]: preparePlanPriceOfferProps(
-				introOfferAvailable,
-				getPlan( planSlug ),
-				pricing?.[ planSlug ]
-			),
-		} ),
-		{} as Record< string, PlanPriceOfferProps >
-	);
+	const planPriceOfferPropsList =
+		planSlugs &&
+		planSlugs.reduce(
+			( acc, planSlug ) => ( {
+				...acc,
+				[ planSlug ]: preparePlanPriceOfferProps(
+					introOfferAvailable,
+					getPlan( planSlug ),
+					pricing?.[ planSlug ]
+				),
+			} ),
+			{} as Record< string, PlanPriceOfferProps >
+		);
 
 	const planVariant = ( planSlug: PlanSlug ) => {
 		return (
