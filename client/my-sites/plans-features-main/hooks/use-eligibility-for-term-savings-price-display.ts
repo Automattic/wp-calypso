@@ -26,13 +26,15 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 } ) => {
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	const planSlugs = gridPlans.map( ( { planSlug } ) => planSlug );
-	const planSlugsForAllDisplayedIntervals = planSlugs.flatMap( ( planSlug ) =>
-		displayedIntervals
-			.map( ( term ) => getPlanSlugForTermVariant( planSlug, URL_FRIENDLY_TERMS_MAPPING[ term ] ) )
-			.filter( ( planSlug ) => planSlug !== undefined )
-	);
+	const planSlugsForAllDisplayedIntervals = planSlugs
+		.flatMap( ( planSlug ) =>
+			displayedIntervals.map( ( term ) =>
+				getPlanSlugForTermVariant( planSlug, URL_FRIENDLY_TERMS_MAPPING[ term ] )
+			)
+		)
+		.filter( ( planSlug ) => planSlug !== undefined );
 	const pricingForAllDisplayedIntervals = Plans.usePricingMetaForGridPlans( {
-		planSlugs: planSlugsForAllDisplayedIntervals ?? [],
+		planSlugs: planSlugsForAllDisplayedIntervals,
 		storageAddOns,
 		coupon,
 		siteId,
