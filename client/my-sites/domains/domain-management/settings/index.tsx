@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
@@ -107,6 +107,8 @@ const Settings = ( {
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
+
+	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const renderHeader = () => {
 		const previousPath = domainManagementList(
@@ -572,6 +574,9 @@ const Settings = ( {
 						: `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }`
 				}
 				isDisabled={ domain.isMoveToNewSitePending }
+				expanded={ isExpanded }
+				onOpen={ () => setIsExpanded( true ) }
+				onClose={ () => setIsExpanded( false ) }
 			>
 				{ getContactsPrivacyInfo() }
 			</Accordion>
