@@ -395,9 +395,10 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
-			customChartRange.chartStart = momentSiteZone
-				.clone()
+			customChartRange.chartEnd = isNewDateFilteringEnabled
+				? momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT )
+				: momentSiteZone.format( DATE_FORMAT );
+			customChartRange.chartStart = moment( customChartRange.chartEnd )
 				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}
