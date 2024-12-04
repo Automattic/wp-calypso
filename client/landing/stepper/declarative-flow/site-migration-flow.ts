@@ -574,6 +574,7 @@ const siteMigration: Flow = {
 									siteSlug,
 									authorizationUrl,
 									backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+									from: fromQueryParam,
 								},
 								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
 							)

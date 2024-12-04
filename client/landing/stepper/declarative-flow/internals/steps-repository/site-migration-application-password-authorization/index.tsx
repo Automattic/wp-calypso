@@ -17,7 +17,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 
-	const source = useQuery().get( 'site_url' ) ?? '';
+	const source = useQuery().get( 'from' ) ?? '';
 	const authorizationUrl = useQuery().get( 'authorizationUrl' ) ?? undefined;
 	const isAuthorizationRejected = useQuery().get( 'success' ) === 'false';
 	const applicationPassword = useQuery().get( 'password' );
