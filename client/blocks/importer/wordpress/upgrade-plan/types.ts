@@ -15,12 +15,10 @@ export type HostingDetails = {
 export type UpgradePlanDetailsProps = {
 	children: React.ReactNode;
 	introOfferAvailable: boolean;
-	pricing?: PricingMetaForGridPlan;
+	pricing?: [ PricingMetaForGridPlan ];
 	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
 	showVariants?: boolean;
 	onCtaClick?: ( planSlug: string ) => void;
-	pricing2Years?: PricingMetaForGridPlan;
-	pricingMonthly?: PricingMetaForGridPlan;
 };
 
 export type UpgradePlanProps = {

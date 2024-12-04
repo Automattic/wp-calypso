@@ -59,27 +59,21 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
-	const pricing =
-		pricingMeta && pricingMeta[ visiblePlan ] ? pricingMeta[ visiblePlan ] : undefined;
-
-	const pricing2Years =
-		pricingMeta && pricingMeta[ PLAN_BUSINESS_2_YEARS ]
-			? pricingMeta[ PLAN_BUSINESS_2_YEARS ]
-			: undefined;
-
-	const pricingMonthly =
-		pricingMeta && pricingMeta[ PLAN_BUSINESS_MONTHLY ]
-			? pricingMeta[ PLAN_BUSINESS_MONTHLY ]
-			: undefined;
+	const pricing = {
+		[ visiblePlan ]: pricingMeta?.[ visiblePlan ],
+		[ PLAN_BUSINESS_2_YEARS ]: pricingMeta?.[ PLAN_BUSINESS_2_YEARS ],
+		[ PLAN_BUSINESS_MONTHLY ]: pricingMeta?.[ PLAN_BUSINESS_MONTHLY ],
+	};
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
-		pricing?.introOffer &&
-		pricing.introOffer.rawPrice &&
-		! pricing.introOffer.isOfferComplete &&
-		pricing.originalPrice.monthly &&
-		pricing.originalPrice.full &&
-		pricing.currencyCode;
+		pricing[ visiblePlan ]?.introOffer &&
+		pricing[ visiblePlan ]?.introOffer.rawPrice &&
+		! pricing[ visiblePlan ]?.introOffer.isOfferComplete &&
+		pricing[ visiblePlan ]?.originalPrice &&
+		pricing[ visiblePlan ]?.originalPrice.monthly &&
+		pricing[ visiblePlan ]?.originalPrice.full &&
+		pricing[ visiblePlan ]?.currencyCode;
 
 	const hideFreeMigrationTrial =
 		introOfferAvailable ||
@@ -170,7 +164,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 		  );
 
-	if ( isFetchingHostingDetails || ! pricing ) {
+	if ( isFetchingHostingDetails || ! pricing[ visiblePlan ] ) {
 		return <Skeleton showVariants={ showVariants } />;
 	}
 
@@ -212,8 +206,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
 			<UpgradePlanDetails
 				pricing={ pricing }
-				pricing2Years={ pricing2Years }
-				pricingMonthly={ pricingMonthly }
 				introOfferAvailable={ !! introOfferAvailable }
 				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
 				showVariants={ showVariants }

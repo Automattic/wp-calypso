@@ -211,8 +211,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const {
 		children,
 		pricing,
-		pricing2Years,
-		pricingMonthly,
 		introOfferAvailable,
 		upgradePlanHostingDetailsList,
 		showVariants,
@@ -226,19 +224,19 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const planPriceOfferProps = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		plan,
-		pricing,
+		pricing?.[ selectedPlan ],
 		showVariants
 	);
 	const planPriceOfferPropsMonthly = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		planMonthly,
-		pricingMonthly,
+		pricing?.[ PLAN_BUSINESS_MONTHLY ],
 		showVariants
 	);
 	const planPriceOfferProps2Years = preparePlanPriceOfferProps(
 		introOfferAvailable,
 		plan2Years,
-		pricing2Years,
+		pricing?.[ PLAN_BUSINESS_2_YEARS ],
 		showVariants
 	);
 
