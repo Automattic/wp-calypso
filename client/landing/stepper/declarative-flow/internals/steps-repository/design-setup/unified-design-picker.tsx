@@ -51,6 +51,7 @@ import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-b
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -979,8 +980,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		<>
 			{ isBigSkyEligible && (
 				<Button
-					href={ `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }` }
 					onClick={ () => {
+						navigate(
+							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
+						);
 						recordTracksEvent(
 							'calypso_design_picker_big_sky_button_click',
 							bigSkyButtonEventProperties
