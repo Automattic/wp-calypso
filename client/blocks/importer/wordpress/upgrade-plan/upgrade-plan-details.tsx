@@ -145,8 +145,8 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 
 	if ( PLAN_BUSINESS_2_YEARS === plan?.getStoreSlug() ) {
 		billingTimeFrame = translate(
-			'per month, %(discountedPrice)s for the first 2 years,{{br/}}' +
-				'then %(rawPrice)s billed biennially, excl. taxes',
+			'per month, %(discountedPrice)s billed biennially for the first 2 years,{{br/}}' +
+				'then %(rawPrice)s every 2 years afterwards, excl. taxes',
 			{
 				args: {
 					discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
