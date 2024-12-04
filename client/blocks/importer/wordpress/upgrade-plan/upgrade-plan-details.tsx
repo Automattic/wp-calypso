@@ -302,7 +302,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			{ ! introOfferAvailable && ! showVariants && (
+			{ ! introOfferAvailable && (
 				<UpgradePlanPeriodSwitcher
 					selectedPlan={ selectedPlan }
 					onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
