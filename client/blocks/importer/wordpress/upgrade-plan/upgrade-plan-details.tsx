@@ -269,7 +269,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							<Title className="plan-title" tagName="h2">
 								{ translate( 'Monthly' ) }
 							</Title>
-							<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 						</div>
 
 						<PlanPriceOffer { ...planPriceOfferPropsMonthly } />
@@ -320,7 +319,9 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						<Title className="plan-title" tagName="h2">
 							{ showVariants ? translate( 'Yearly' ) : plan?.getTitle() }
 						</Title>
-						<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
+						{ ! showVariants && (
+							<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
+						) }
 					</div>
 
 					<PlanPriceOffer { ...planPriceOfferProps } />
@@ -363,7 +364,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							<Title className="plan-title" tagName="h2">
 								{ translate( 'Biennially' ) }
 							</Title>
-							<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 						</div>
 
 						<PlanPriceOffer { ...planPriceOfferProps2Years } />
