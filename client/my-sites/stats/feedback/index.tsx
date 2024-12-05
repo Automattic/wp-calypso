@@ -19,6 +19,7 @@ import 'animate.css';
 
 import './style.scss';
 
+const TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD = 'stats_feedback_action_present_persistent_section';
 const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
@@ -167,6 +168,10 @@ interface FeedbackCardProps {
 }
 
 function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+	useEffect( () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
+	}, [] );
+
 	const handleLeaveReviewFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
 		onLeaveReview();
