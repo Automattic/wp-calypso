@@ -87,7 +87,6 @@ const SitePreview = ( {
 	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
 
 	return (
-		// TODO: Add the new classes only when on the home page.
 		<div className="home-site-preview customer-home__card is-full-width">
 			<ThumbnailWrapper showEditSite={ shouldShowEditSite } editSiteURL={ editSiteURL }>
 				{ shouldShowEditSite && (
