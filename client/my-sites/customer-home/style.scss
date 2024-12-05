@@ -115,6 +115,7 @@ body.is-section-home.theme-default.color-scheme {
 	.customer-home__card {
 		@include break-xlarge {
 			padding: 16px 0;
+			margin: 0;
 			box-shadow: none;
 		}
 
@@ -231,7 +232,6 @@ body.is-section-home.theme-default.color-scheme {
 		padding-top: 0;
 
 		@include break-xlarge {
-			padding: 0;
 			box-shadow: none;
 		}
 	}
