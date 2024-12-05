@@ -11,7 +11,7 @@ export function formatDate( date, period ) {
 	const momentizedDate = moment( date );
 	switch ( period ) {
 		case 'hour':
-			return momentizedDate.format( 'HH:mm' );
+			return momentizedDate.format( 'MMM D' );
 		case 'day':
 			return momentizedDate.format( 'LL' );
 		default:
@@ -57,10 +57,13 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];
 	const label = ( () => {
+		const formatedDate = formatDate( item.data.period, period );
+
 		if ( 'hour' === period ) {
-			return item.label;
+			return `${ formatedDate } ${ item.label }`;
 		}
-		return formatDate( item.data.period, period );
+
+		return formatedDate;
 	} )();
 
 	tooltipData.push( {
