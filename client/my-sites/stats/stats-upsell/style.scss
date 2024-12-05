@@ -34,7 +34,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-
 		min-width: 279px;
 	}
 
@@ -43,7 +42,7 @@
 		flex: 1;
 		.stats-upsell__left-inner {
 			padding: 31px;
-			gap: 24px;
+			gap: 34px;
 			@include break-wide {
 				padding: 48px;
 			}
@@ -69,7 +68,6 @@
 		line-height: 34px; /* 125% */
 		@include break-wide {
 			font-size: $font-title-large;
-			line-height: 40px; /* 125% */
 		}
 	}
 
@@ -102,7 +100,6 @@
 	}
 
 	.stats-upsell__features {
-		padding-top: 7px;
 		font-size: $font-body-small;
 		display: flex;
 		flex-direction: column;
