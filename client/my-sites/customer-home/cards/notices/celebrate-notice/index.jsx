@@ -55,7 +55,11 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<div className={ clsx( 'celebrate-notice', 'task', { 'is-loading': isLoading } ) }>
+		<div
+			className={ clsx( 'celebrate-notice', 'task', 'customer-home__card', {
+				'is-loading': isLoading,
+			} ) }
+		>
 			{ isLoading && <Spinner /> }
 			<div className="celebrate-notice__text task__text">
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>
