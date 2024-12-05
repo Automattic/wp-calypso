@@ -272,10 +272,10 @@ function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const { supportCommercialUse } = useStatsPurchases( siteId );
 	const { data, isSuccess } = useFetchTrafficHook( siteId );
 
-	const visitors = data?.past_thirty_days.visitors ?? 0;
+	const views = data?.past_thirty_days.views ?? 0;
 	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
 
-	const isHighTrafficSite = isSuccess && visitors > highTrafficThreshold;
+	const isHighTrafficSite = isSuccess && views > highTrafficThreshold;
 	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
