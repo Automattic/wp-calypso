@@ -5,7 +5,7 @@
 
 .stats-upsell {
 	margin: auto;
-	background: var(--studio-gray-0);
+	background: var(--studio-white);
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 	font-family: $font-sf-pro-text;
@@ -45,6 +45,7 @@
 		gap: 24px;
 		@include break-wide {
 			flex: 1;
+			padding-right: 0;
 		}
 	}
 
@@ -64,8 +65,6 @@
 		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
 		font-size: 28px;
 		line-height: 34px; /* 125% */
-		text-wrap: balance;
-		margin-bottom: 8px;
 		@include break-wide {
 			font-size: $font-title-large;
 			line-height: 40px; /* 125% */
@@ -74,7 +73,9 @@
 
 	.stats-upsell__text {
 		font-size: $font-body;
-		text-wrap: balance;
+		@include break-wide {
+			max-width: 400px;
+		}
 	}
 
 	.stats-upsell__plan {
@@ -115,7 +116,6 @@
 
 			.stats-upsell__feature-text {
 				flex: 1;
-				text-wrap: balance;
 			}
 		}
 	}

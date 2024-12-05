@@ -8,6 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -85,6 +86,7 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 			/>
 			<div className="stats-upsell__content">
 				<div className="stats-upsell__left">
+					<Icon icon={ lock } size="40" />
 					<h1 className="stats-upsell__title">{ title }</h1>
 					<div className="stats-upsell__text">
 						{ ! pricing
