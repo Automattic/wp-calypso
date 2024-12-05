@@ -113,8 +113,12 @@
 				}
 			}
 		}
-		.import__upgrade-plan-feature.logo svg {
-			fill: var(--studio-jetpack-green-40);
+		.import__upgrade-plan-feature.logo {
+			margin-top: .75rem;
+
+			svg {
+				fill: var(--studio-jetpack-green-40);
+			}
 		}
 	}
 
