@@ -1375,7 +1375,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Facebook' ),
 		translate( 'Instagram' ),
 		translate( 'Threads' ),
-		translate( 'BlueSky' ),
+		translate( 'Bluesky' ),
 		translate( 'LinkedIn' ),
 		translate( 'Mastodon' ),
 		translate( 'Tumblr' ),

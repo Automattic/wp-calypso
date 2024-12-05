@@ -130,7 +130,7 @@ function getFeatureStrings(
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
 				translate(
-					'Sharing to Facebook, Instagram, Threads, BlueSky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
 				),
 				translate( 'Content recycling' ),
 			];
@@ -141,7 +141,7 @@ function getFeatureStrings(
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
 				translate(
-					'Sharing to Facebook, Instagram, Threads, BlueSky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
 				),
 				translate( 'Content recycling' ),
 			];
