@@ -19,32 +19,35 @@ const businessFeatures = [
 	__( 'SFTP/SSH, WP-CLI, Git tools' ),
 ];
 
-export const migrationPlanFeatures: Record< PlanSlug, string[] > = {
-	[ PLAN_BUSINESS ]: [
-		__( '50% off your first year' ),
-		__( '39% annual savings' ),
-		__( 'Free domain for a year' ),
-		__( 'Free migration service' ),
-		__( 'Refundable within 14 days' ),
-		...businessFeatures,
-		...jetpackFeatures,
-	],
-	[ PLAN_BUSINESS_MONTHLY ]: [
-		__( 'No first year discount' ),
-		__( 'No annual savings' ),
-		__( 'No free domain' ),
-		__( 'Free migration service' ),
-		__( 'Refundable within 7 days' ),
-		...businessFeatures,
-		...jetpackFeatures,
-	],
-	[ PLAN_BUSINESS_2_YEARS ]: [
-		__( '50% off your first two years' ),
-		__( '52% annual savings' ),
-		__( 'Free domain for a year' ),
-		__( 'Free migration service' ),
-		__( 'Refundable within 14 days' ),
-		...businessFeatures,
-		...jetpackFeatures,
-	],
+export const migrationPlanFeatures: {
+	wpcomFeatures: Partial< Record< PlanSlug, string[] > >;
+	jetpackFeatures: string[];
+} = {
+	wpcomFeatures: {
+		[ PLAN_BUSINESS ]: [
+			__( '50% off your first year' ),
+			__( '39% annual savings' ),
+			__( 'Free domain for a year' ),
+			__( 'Free migration service' ),
+			__( 'Refundable within 14 days' ),
+			...businessFeatures,
+		],
+		[ PLAN_BUSINESS_MONTHLY ]: [
+			__( 'No first year discount' ),
+			__( 'No annual savings' ),
+			__( 'No free domain' ),
+			__( 'Free migration service' ),
+			__( 'Refundable within 7 days' ),
+			...businessFeatures,
+		],
+		[ PLAN_BUSINESS_2_YEARS ]: [
+			__( '50% off your first two years' ),
+			__( '52% annual savings' ),
+			__( 'Free domain for a year' ),
+			__( 'Free migration service' ),
+			__( 'Refundable within 14 days' ),
+			...businessFeatures,
+		],
+	},
+	jetpackFeatures: [ ...jetpackFeatures ],
 };
