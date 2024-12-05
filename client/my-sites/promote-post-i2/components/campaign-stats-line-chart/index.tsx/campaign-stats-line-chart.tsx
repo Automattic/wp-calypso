@@ -63,7 +63,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 
 	const formatDate = ( date: Date, hourly: boolean ) => {
 		const options: Intl.DateTimeFormatOptions = hourly
-			? { hour: 'numeric', minute: 'numeric' }
+			? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
 			: { month: 'short', day: 'numeric' };
 		return new Intl.DateTimeFormat( locale, options ).format( date );
 	};
