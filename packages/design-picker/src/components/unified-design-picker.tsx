@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
-import { useCallback, useRef, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesigns } from '../hooks/use-filtered-designs';
@@ -14,7 +15,7 @@ import NoResults from './no-results';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
-import type { Design, StyleVariation } from '../types';
+import type { Category, Design, StyleVariation } from '../types';
 import type { RefCallback } from 'react';
 import './style.scss';
 
@@ -168,6 +169,25 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
+interface DesignPickerFilterGroupProps {
+	title?: string;
+	grow?: boolean;
+	children: React.ReactNode;
+}
+
+const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
+	title,
+	grow,
+	children,
+} ) => {
+	return (
+		<div className={ clsx( 'design-picker__category-group', { grow } ) }>
+			<div className="design-picker__category-group-label">{ title }</div>
+			{ children }
+		</div>
+	);
+};
+
 interface DesignPickerProps {
 	locale: string;
 	onDesignYourOwn: ( design: Design ) => void;
@@ -207,34 +227,72 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
-
-	// Pick design
+	const features = [ 'blog', 'magazine', 'portfolio', 'podcast', 'store' ];
+	const [ featureCategories, setFeatureCategories ] = useState< Category[] >( [] );
+	const [ subjectCategories, setSubjectCategories ] = useState< Category[] >( [] );
 
 	const assemblerCtaData = usePatternAssemblerCtaData();
+
+	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( ! categorization?.categories?.length ) {
+			return;
+		}
+		setFeatureCategories(
+			categorization.categories.filter( ( { slug } ) => features.includes( slug ) )
+		);
+		setSubjectCategories(
+			categorization.categories.filter( ( { slug } ) => ! features.includes( slug ) )
+		);
+	}, [ categorization?.categories ] );
 
 	return (
 		<div>
 			<div className="design-picker__filters">
-				{ categorization && hasCategories && (
-					<DesignPickerCategoryFilter
-						className="design-picker__category-filter"
-						categories={ categorization.categories }
-						onSelect={ categorization.onSelect }
-						selectedSlugs={ categorization.selections }
-						isMultiSelection={ isMultiFilterEnabled }
-					/>
+				{ categorization && featureCategories.length && isMultiFilterEnabled && (
+					<DesignPickerFilterGroup title={ translate( 'Features' ) }>
+						<DesignPickerCategoryFilter
+							className="design-picker__category-filter"
+							categories={ featureCategories }
+							onSelect={ categorization.onSelect }
+							selectedSlugs={ categorization.selections }
+							isMultiSelection={ isMultiFilterEnabled }
+							forceSwipe
+						/>
+					</DesignPickerFilterGroup>
+				) }
+				{ categorization && subjectCategories.length && (
+					<DesignPickerFilterGroup
+						title={ isMultiFilterEnabled ? translate( 'Subjects' ) : '' }
+						grow
+					>
+						<DesignPickerCategoryFilter
+							className="design-picker__category-filter"
+							categories={ isMultiFilterEnabled ? subjectCategories : categorization.categories }
+							onSelect={ categorization.onSelect }
+							selectedSlugs={ categorization.selections }
+							isMultiSelection={ isMultiFilterEnabled }
+						/>
+					</DesignPickerFilterGroup>
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
-					<Button
-						className={ clsx( 'design-picker__design-your-own-button', {
-							'design-picker__design-your-own-button-without-categories': ! hasCategories,
-						} ) }
-						onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
-					>
-						{ assemblerCtaData.title }
-					</Button>
+					<DesignPickerFilterGroup>
+						<Button
+							className={ clsx( 'design-picker__design-your-own-button', {
+								'design-picker__design-your-own-button-without-categories': ! hasCategories,
+							} ) }
+							onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
+						>
+							{ assemblerCtaData.title }
+						</Button>
+					</DesignPickerFilterGroup>
 				) }
-				{ isTierFilterEnabled && <DesignPickerTierFilter /> }
+				{ isTierFilterEnabled && (
+					<DesignPickerFilterGroup>
+						<DesignPickerTierFilter />
+					</DesignPickerFilterGroup>
+				) }
 			</div>
 
 			<div className="design-picker__grid">

@@ -29,12 +29,36 @@
 		gap: 10px;
 		margin-bottom: 24px;
 
+		@include break-small {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 30px;
+		}
+
+		.design-picker__category-group {
+			display: flex;
+			flex-direction: column;
+			&.grow {
+				flex-grow: 1;
+			}
+		}
+
+		.design-picker__category-group-label {
+			text-transform: uppercase;
+			font-size: rem(13px);
+			font-weight: 500;
+		}
+
 		.design-picker__design-your-own-button {
 			flex-shrink: 0;
 			height: 32px;
 			line-height: 14px;
-			margin-top: 9px;
-			margin-left: 10px;
+			margin-top: 8px;
+			margin-bottom: 8px;
+		}
+
+		.design-picker__tier-filter {
+			height: 48px; // match button height
 		}
 
 		.design-picker__design-your-own-button-without-categories {
@@ -49,10 +73,6 @@
 			.responsive-toolbar-group__grouped-list {
 				justify-content: flex-start;
 			}
-		}
-
-		@include break-small {
-			flex-direction: row;
 		}
 	}
 
