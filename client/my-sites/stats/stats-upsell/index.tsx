@@ -87,7 +87,7 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 			<div className="stats-upsell__content">
 				<div className="stats-upsell__left">
 					<div className="stats-upsell__left-inner">
-						<Icon icon={ lock } size="40" />
+						<Icon icon={ lock } size={ 40 } />
 						<h1 className="stats-upsell__title">{ title }</h1>
 						<div className="stats-upsell__text">
 							{ ! pricing
