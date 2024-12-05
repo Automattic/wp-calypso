@@ -5,23 +5,26 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import wpcom from 'calypso/lib/wp';
 import useSubscribedNewsletterCategories from '../use-subscribed-newsletter-categories-query';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	default: {
-		req: {
-			get: jest.fn(),
+const mockGet = jest.fn();
+jest.mock( 'calypso/lib/wp', () => {
+	return {
+		__esModule: true,
+		default: {
+			req: {
+				get: ( ...args: unknown[] ) => mockGet( ...args ),
+			},
 		},
-	},
-} ) );
+	};
+} );
 
 describe( 'useSubscribedNewsletterCategories', () => {
 	let queryClient: QueryClient;
 	let wrapper: any;
 
 	beforeEach( () => {
-		( wpcom.req.get as jest.Mock ).mockReset();
+		mockGet.mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -41,7 +44,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+		mockGet.mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [
 				{
@@ -93,7 +96,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should handle empty response', async () => {
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+		mockGet.mockResolvedValue( {
 			enabled: false,
 			newsletter_categories: [],
 		} );
@@ -108,7 +111,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	it( 'should call request with correct arguments', async () => {
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+		mockGet.mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [],
 		} );
@@ -117,16 +120,16 @@ describe( 'useSubscribedNewsletterCategories', () => {
 			wrapper,
 		} );
 
-		await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalled() );
+		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+		expect( mockGet ).toHaveBeenCalledWith( {
 			path: `/sites/123/newsletter-categories/subscriptions`,
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );
 
 	it( 'should include the subscriptionId when being called with one', async () => {
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+		mockGet.mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [],
 		} );
@@ -135,16 +138,16 @@ describe( 'useSubscribedNewsletterCategories', () => {
 			wrapper,
 		} );
 
-		await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalled() );
+		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+		expect( mockGet ).toHaveBeenCalledWith( {
 			path: `/sites/123/newsletter-categories/subscriptions/456`,
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );
 
 	it( 'should call with ?type=wpcom when being passed a user id', async () => {
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+		mockGet.mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [],
 		} );
@@ -153,9 +156,9 @@ describe( 'useSubscribedNewsletterCategories', () => {
 			wrapper,
 		} );
 
-		await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalled() );
+		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+		expect( mockGet ).toHaveBeenCalledWith( {
 			path: `/sites/123/newsletter-categories/subscriptions/456?type=wpcom`,
 			apiNamespace: 'wpcom/v2',
 		} );
