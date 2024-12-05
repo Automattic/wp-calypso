@@ -10,7 +10,7 @@ export const MigrationPlanFeatureList = ( { planSlug }: { planSlug: PlanSlug } )
 				</li>
 			) ) }
 			<li className="import__upgrade-plan-feature logo">
-				<JetpackLogo size={ 16 } />
+				<JetpackLogo size={ 24 } />
 			</li>
 			{ migrationPlanFeatures[ 'jetpackFeatures' ].map( ( feature: string ) => (
 				<li className="import__upgrade-plan-feature" key={ feature }>
