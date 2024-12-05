@@ -15,10 +15,8 @@ module.exports = {
 		'node_modules',
 		'public',
 		'results',
+		'static',
 		'test',
-		'tools',
-		'typings',
-		'vendor',
 	],
 	/*
 	 * Filter out any non-component React elements and consider only imports of
