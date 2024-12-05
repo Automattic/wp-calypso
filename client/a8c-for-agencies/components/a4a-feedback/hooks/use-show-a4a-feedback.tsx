@@ -24,26 +24,16 @@ const redirectToDefaultUrl = ( redirectUrl?: string ) => {
 	page.redirect( removeQueryArgs( window.location.pathname + window.location.search, 'args' ) );
 };
 
-interface FeedbackTimestamp {
-	lastSubmittedAt?: number;
-	lastSkippedAt?: number;
-	allStatus?: Record< string, Record< string, number > >;
-}
-
 const getUpdatedPreference = (
-	feedbackTimestamp: FeedbackTimestamp | undefined,
+	feedbackTimestamp: Record< string, Record< string, number > > | undefined,
 	type: FeedbackType,
 	paramType: string
 ) => {
 	return {
 		...( feedbackTimestamp ?? {} ),
-		[ paramType ]: Date.now(),
-		allStatus: {
-			...( feedbackTimestamp?.allStatus ?? {} ),
-			[ type ]: {
-				...feedbackTimestamp?.allStatus?.[ type ],
-				[ paramType ]: Date.now(),
-			},
+		[ type ]: {
+			...feedbackTimestamp?.[ type ],
+			[ paramType ]: Date.now(),
 		},
 	};
 };
@@ -63,8 +53,8 @@ const useShowFeedbackModal = ( type: FeedbackType ) => {
 	// We are storing the timestamp when last feedback for given preference was submitted or skipped
 	const feedbackTimestamp = useSelector( ( state ) => getPreference( state, FEEDBACK_PREFERENCE ) );
 
-	const feedbackSubmitTimestamp = feedbackTimestamp?.lastSubmittedAt;
-	const feedbackSkipTimestamp = feedbackTimestamp?.lastSkippedAt;
+	const feedbackSubmitTimestamp = feedbackTimestamp?.[ type ]?.lastSubmittedAt;
+	const feedbackSkipTimestamp = feedbackTimestamp?.[ type ]?.lastSkippedAt;
 
 	// Checking if it was more than NO_OF_DAYS ago since last feedback was submitted or skipped
 	const showFeedback = useMemo( () => {
