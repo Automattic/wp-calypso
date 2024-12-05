@@ -1,0 +1,10 @@
+.hosting-v3-hero-section {
+	max-width: 1500px;
+	margin-inline: auto !important;
+	padding: 32px 64px;
+}
+
+.hosting-v3-hero-section__heading {
+	@include a4a-font-heading-xxl;
+	color: var( --color-text-inverted );
+}

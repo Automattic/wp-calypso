@@ -1,0 +1,39 @@
+$background-color: #05374A;
+
+.hosting-overview-v3.main.a4a-layout {
+	background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
+
+	.a4a-layout__body {
+		padding: 0;
+
+		& > * {
+			max-width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	.a4a-layout__top-wrapper {
+        border-block-end: none;
+    }
+
+	.a4a-layout__header-breadcrumb {
+		color: var(--color-neutral-40);
+		fill: var(--color-neutral-40);
+
+		a {
+			color: var(--color-primary-5);
+		}
+	}
+
+	.a4a-layout__header-actions {
+		background-color: var(--color-surface);
+		border-radius: 8px; /* stylelint-disable-line */
+		padding: 8px 16px;
+
+		.shopping-cart {
+			margin: 0;
+		}
+	}
+}
+
