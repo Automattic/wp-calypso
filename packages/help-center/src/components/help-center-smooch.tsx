@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
@@ -14,7 +15,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { calculateUnread, getClientId, getZendeskConversations } from './utils';
+import { getClientId, getZendeskConversations } from './utils';
 
 const destroy = () => {
 	Smooch.destroy();
@@ -57,8 +58,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		isEligibleForChat && enableAuth,
 		true
 	);
-	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =
-		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
 		( message: unknown, data: { conversation: { id: string } } ) => {
@@ -66,12 +67,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				return;
 			}
 
-			Smooch.getConversationById( data?.conversation?.id ).then( () => {
-				const { unreadConversations } = calculateUnread( getZendeskConversations() );
-				setUnreadCount( unreadConversations );
-			} );
+			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, setUnreadCount ]
+		[ isHelpCenterShown ]
 	);
 
 	// Initialize Smooch which communicates with Zendesk
@@ -107,8 +105,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {
 			const allConversations = getZendeskConversations();
-			const { unreadConversations } = calculateUnread( allConversations );
-			setUnreadCount( unreadConversations );
+			getUnreadNotifications( allConversations );
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 		}
@@ -118,7 +115,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			const unsubscribe = typeof Smooch?.off === 'function' ? Smooch?.off : () => {};
 			unsubscribe( 'message:received', getUnreadListener );
 		};
-	}, [ isChatLoaded, setUnreadCount, setZendeskClientId ] );
+	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };
