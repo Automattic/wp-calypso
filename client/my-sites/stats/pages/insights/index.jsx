@@ -80,7 +80,7 @@ const StatsInsights = ( props ) => {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
-					<div id="my-stats-content" class="stats-content">
+					<div id="my-stats-content" className="stats-content">
 						<StatsUpsell />
 					</div>
 				) : (
