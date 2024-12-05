@@ -19,10 +19,12 @@ import {
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralToggle from '../common/referral-toggle';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
+import { HostingContent } from './hosting-content';
 
 import './style.scss';
 
@@ -36,8 +38,35 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 
 	const isNarrowView = useBreakpoint( '<660px' );
 
-	const { selectedCartItems, onRemoveCartItem, showCart, setShowCart, toggleCart } =
-		useShoppingCart();
+	const {
+		selectedCartItems,
+		onRemoveCartItem,
+		showCart,
+		setShowCart,
+		toggleCart,
+		setSelectedCartItems,
+	} = useShoppingCart();
+
+	const onAddToCart = useCallback(
+		( plan: APIProductFamilyProduct, quantity: number ) => {
+			if ( plan ) {
+				const items =
+					plan.family_slug === 'wpcom-hosting' || plan.family_slug === 'pressable-hosting'
+						? selectedCartItems?.filter( ( cartItem ) => cartItem.family_slug !== plan.family_slug )
+						: selectedCartItems;
+
+				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
+				setShowCart( true );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+						quantity,
+						item: plan.family_slug,
+					} )
+				);
+			}
+		},
+		[ dispatch, selectedCartItems, setSelectedCartItems, setShowCart ]
+	);
 
 	const handleSectionChange = useCallback(
 		( tab: string ) => {
@@ -89,6 +118,8 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 				<QueryProductsList currency="USD" />
 
 				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
+
+				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }
 			</LayoutBody>
 		</Layout>
 	);

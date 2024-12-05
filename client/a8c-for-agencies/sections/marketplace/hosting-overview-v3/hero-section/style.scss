@@ -8,7 +8,7 @@ $tab-background-selected: var(--color-surface);
 .hosting-v3-hero-section {
 	max-width: 1500px;
 	margin-inline: auto !important;
-	padding: 32px 64px;
+	padding: 32px 64px 0;
 }
 
 .hosting-v3-hero-section__heading {
@@ -28,9 +28,20 @@ $tab-background-selected: var(--color-surface);
 	> li {
 		flex-grow: 1;
 	}
+
+
+	li:first-child .hosting-v3-hero-section__tab.section-nav-tab {
+		border-start-start-radius: 4px;
+	}
+
+	li:last-child .hosting-v3-hero-section__tab.section-nav-tab {
+		border-start-end-radius: 4px;
+	}
 }
 
 .hosting-v3-hero-section__tab.section-nav-tab {
+	border-bottom: none;
+
 	&,
 	&:hover {
 		background: $tab-background;
@@ -38,7 +49,6 @@ $tab-background-selected: var(--color-surface);
 
 	&.is-selected {
 		background: var(--color-surface);
-		border-bottom-color: var(--color-surface);
 	}
 }
 
