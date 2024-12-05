@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
+import { isUseHelpCenterExperienceEnabled } from '@automattic/help-center/src/components/utils';
 import { useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -150,7 +151,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
-	const shouldUseHelpCenterExperience = user?.ID ? user.ID % 100 < 75 : false;
+	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled( user?.ID );
 
 	if ( ! loadHelpCenter ) {
 		return null;

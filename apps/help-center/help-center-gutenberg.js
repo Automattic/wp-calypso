@@ -2,6 +2,7 @@
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { isUseHelpCenterExperienceEnabled } from '@automattic/help-center/src/components/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -20,6 +21,8 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+	const userId = helpCenterData?.currentUser?.ID;
+	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled( userId );
 
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
@@ -85,6 +88,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience }
 			/>
 		</>
 	);
