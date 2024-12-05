@@ -279,7 +279,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const activeDays = getCampaignActiveDays( start_date, end_date );
 
 	const initialRange =
-		activeDays < 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
+		activeDays <= 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
 	const initialResolution = activeDays < 3 ? ChartResolution.Hour : ChartResolution.Day;
 
 	const [ selectedDateRange, setSelectedDateRange ] =
