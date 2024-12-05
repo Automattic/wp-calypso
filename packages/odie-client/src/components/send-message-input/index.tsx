@@ -15,6 +15,7 @@ import './style.scss';
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
+	const attachmentButtonRef = useRef< HTMLElement >( null );
 	const { trackEvent, chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
@@ -42,7 +43,11 @@ export const OdieSendMessageButton = () => {
 			return;
 		}
 		const messageString = inputRef.current?.value;
-		inputRef.current!.value = '';
+		// TODO: double check logic here
+		// Shouldn't have to clear message if talking to bot
+		if ( ! shouldUseHelpCenterExperience ) {
+			inputRef.current!.value = '';
+		}
 
 		try {
 			trackEvent( 'chat_message_action_send' );
@@ -56,6 +61,10 @@ export const OdieSendMessageButton = () => {
 			setSubmitDisabled( true );
 
 			await sendMessage( message );
+			// TODO: double check logic here
+			if ( shouldUseHelpCenterExperience ) {
+				inputRef.current!.value = '';
+			}
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
@@ -68,7 +77,12 @@ export const OdieSendMessageButton = () => {
 		}
 	}, [ sendMessage, isChatBusy, shouldUseHelpCenterExperience, trackEvent ] );
 
-	const classes = clsx(
+	const inputContainerClasses = clsx(
+		'odie-chat-message-input-container',
+		attachmentButtonRef?.current && 'odie-chat-message-input-container__attachment-button-visible'
+	);
+
+	const buttonClasses = clsx(
 		'odie-send-message-inner-button',
 		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
 	);
@@ -79,7 +93,7 @@ export const OdieSendMessageButton = () => {
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
 			) }
-			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
+			<div className={ inputContainerClasses } ref={ divContainerRef }>
 				<form
 					onSubmit={ ( event ) => {
 						event.preventDefault();
@@ -96,8 +110,10 @@ export const OdieSendMessageButton = () => {
 						keyUpHandle={ onKeyUp }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					{ shouldUseHelpCenterExperience && <AttachmentButton /> }
-					<button type="submit" className={ classes } disabled={ submitDisabled }>
+					{ shouldUseHelpCenterExperience && (
+						<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
+					) }
+					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						{ shouldUseHelpCenterExperience ? (
 							<SendMessageIcon />
 						) : (
