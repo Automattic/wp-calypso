@@ -1290,3 +1290,7 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 		color: var( --theme-base-color );
 	}
 }
+
+.location-chart__show-more-button {
+	cursor: pointer;
+}
