@@ -42,7 +42,7 @@
 		flex: 1;
 		.stats-upsell__left-inner {
 			padding: 31px;
-			gap: 34px;
+			gap: 24px;
 			@include break-wide {
 				padding: 48px;
 			}
@@ -123,6 +123,7 @@
 	}
 
 	.stats-upsell__buttons {
+		padding-top: 8px;
 		display: flex;
 		gap: 16px;
 	}
