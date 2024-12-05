@@ -81,6 +81,7 @@ interface PlanPriceOfferProps {
 	originalFullPrice?: number;
 	introOfferFullPrice?: number;
 	introOfferAvailable: boolean;
+	showVariants?: boolean;
 }
 
 const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
@@ -95,6 +96,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		introOfferMonthlyPrice,
 		originalMonthlyPrice,
 		currencyCode,
+		showVariants,
 	} = props;
 
 	const showOriginalPrice =
@@ -144,10 +146,27 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 				}
 		  );
 
+	if ( showVariants ) {
+		billingTimeFrame = translate(
+			'per month, %(discountedPrice)s for your first year. %(originalPrice)s after.',
+			{
+				args: {
+					discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ),
+					originalPrice: formatCurrency( originalFullPrice, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
+			}
+		);
+	}
+
 	if ( PLAN_BUSINESS_2_YEARS === plan?.getStoreSlug() ) {
 		billingTimeFrame = translate(
-			'per month, %(discountedPrice)s billed biennially for the first 2 years,{{br/}}' +
-				'then %(rawPrice)s every 2 years afterwards, excl. taxes',
+			'per month, %(discountedPrice)s for first 2 years. %(rawPrice)s after.',
 			{
 				args: {
 					discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
@@ -159,8 +178,6 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 						stripZeros: true,
 					} ),
 				},
-				components: { br: <br /> },
-				comment: 'excl. taxes is short for excluding taxes',
 			}
 		);
 	}
@@ -272,11 +289,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 									: translate( 'Get Biennial' ) }
 							</NextButton>
 						</div>
-						<div className="import__upgrade-plan-refund-sub-text">
-							{ PLAN_BUSINESS_MONTHLY === planSlug
-								? translate( 'Refundable within 7 days. No questions asked.' )
-								: translate( 'Refundable within 14 days. No questions asked.' ) }
-						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
@@ -338,7 +350,10 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						) }
 					</div>
 
-					<PlanPriceOffer { ...planPriceOfferPropsList[ selectedPlan ] } />
+					<PlanPriceOffer
+						showVariants={ showVariants }
+						{ ...planPriceOfferPropsList[ selectedPlan ] }
+					/>
 
 					<div>
 						<div className="import__upgrade-plan-cta">
@@ -350,11 +365,13 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 								children
 							) }
 						</div>
-						<div className="import__upgrade-plan-refund-sub-text">
-							{ plan && ! isMonthly( plan.getStoreSlug() )
-								? translate( 'Refundable within 14 days. No questions asked.' )
-								: translate( 'Refundable within 7 days. No questions asked.' ) }
-						</div>
+						{ ! showVariants && (
+							<div className="import__upgrade-plan-refund-sub-text">
+								{ plan && ! isMonthly( plan.getStoreSlug() )
+									? translate( 'Refundable within 14 days. No questions asked.' )
+									: translate( 'Refundable within 7 days. No questions asked.' ) }
+							</div>
+						) }
 					</div>
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList

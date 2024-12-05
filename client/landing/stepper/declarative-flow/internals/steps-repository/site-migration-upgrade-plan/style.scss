@@ -1,4 +1,10 @@
 .is-step-site-migration-upgrade-plan-with-variants {
+	padding-bottom: 5rem;
+
+	@media ( min-width: 1040px ) {
+		padding-bottom: 3rem;
+	}
+
 	&.step-container .step-container__header {
 		margin-left: auto;
 		margin-right: auto;
@@ -45,6 +51,8 @@
 	}
 
 	.import__upgrade-plan .import__upgrade-plan-details {
+		margin-bottom: 0;
+
 		@media ( min-width: 1040px ) {
 			display: flex;
 			flex-direction: row;
@@ -82,5 +90,14 @@
 				}
 			}
 		}
+	}
+
+	.import__upgrade-plan-refund-sub-text {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.3rem;
+		font-size: 0.75rem;
+		margin-top: 0;
 	}
 }

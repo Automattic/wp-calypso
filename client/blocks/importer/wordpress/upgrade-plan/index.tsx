@@ -10,6 +10,7 @@ import { Button } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -226,6 +227,12 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			>
 				{ renderCTAs() }
 			</UpgradePlanDetails>
+			{ showVariants && (
+				<div className="import__upgrade-plan-refund-sub-text">
+					<Icon icon={ reusableBlock } />
+					{ translate( 'Fully refundable. No questions asked.' ) }
+				</div>
+			) }
 		</div>
 	);
 };
