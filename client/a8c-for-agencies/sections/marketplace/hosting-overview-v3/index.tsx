@@ -112,12 +112,12 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
 			</LayoutTop>
 
 			<LayoutBody className="hosting-overview-v3__body">
 				<QueryProductsList currency="USD" />
-
-				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
 
 				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }
 			</LayoutBody>

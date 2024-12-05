@@ -2,8 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .hosting-v3__content {
-	background-color: var(--color-surface);
 	padding-block-start: 32px;
+	overflow: auto;
 }
 
 

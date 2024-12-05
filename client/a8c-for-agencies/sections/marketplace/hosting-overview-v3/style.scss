@@ -1,9 +1,6 @@
 $background-color: #05374A;
 
 .hosting-overview-v3.main.a4a-layout {
-	background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
-	background-attachment: local;
-
 	.a4a-layout__body {
 		padding: 0;
 
@@ -15,7 +12,9 @@ $background-color: #05374A;
 	}
 
 	.a4a-layout__top-wrapper {
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
         border-block-end: none;
+		padding-block-end: 0;
     }
 
 	.a4a-layout__header-breadcrumb {
