@@ -217,7 +217,7 @@ export default {
 
 		const isOnboardingFlow = flowName === 'onboarding';
 		if ( isOnboardingFlow ) {
-			await loadExperimentAssignment( 'calypso_onboarding_aa_test' );
+			loadExperimentAssignment( 'calypso_onboarding_aa_test' );
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_stepper_flow_2'
 			);
