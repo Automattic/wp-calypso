@@ -37,6 +37,9 @@
 	.import__upgrade-plan-price-badge {
 		display: none;
 	}
+	.import__upgrade-plan .import__upgrade-plan-cta button.button {
+		box-shadow: none;
+	}
 	.import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
 		background-color: var(--studio-wordpress-blue-50) !important;
 		border-color: var(--studio-wordpress-blue-50);
