@@ -98,7 +98,7 @@
 				&:first-of-type .import__upgrade-plan-features-container,
 				&:last-of-type .import__upgrade-plan-features-container {
 					margin-bottom: 1.5rem;
-					margin-top: 2.6rem;
+					margin-top: calc( 2.6rem - 2px );
 				}
 			}
 		}
