@@ -3,6 +3,8 @@ module.exports = {
 	crawlFrom: './',
 	// Needed for properly reporting components with dot notation
 	includeSubComponents: true,
+	// Exclude usage in tests, stories, and React Native files.
+	globs: [ '**/!(test|stories)/!(*stories).@(js|ts)?(x)' ],
 	// Exclude any vendor or docs directories
 	exclude: [
 		'bin',
