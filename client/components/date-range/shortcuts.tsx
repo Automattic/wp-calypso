@@ -30,7 +30,7 @@ const DateRangePickerShortcuts = ( {
 	isNewDateFilteringEnabled = false,
 }: {
 	currentShortcut?: string;
-	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
+	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment ) => void;
 	onShortcutClick?: ( shortcut: DateRangePickerShortcut ) => void;
 	locked?: boolean;
 	startDate?: MomentOrNull;
@@ -59,7 +59,9 @@ const DateRangePickerShortcuts = ( {
 
 	const handleClick = ( shortcut: DateRangePickerShortcut ) => {
 		! locked &&
-			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ), shortcut.id || '' );
+			shortcut.startDate &&
+			shortcut.endDate &&
+			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ) );
 
 		// Call the onShortcutClick if provided
 		onShortcutClick && onShortcutClick( shortcut );
