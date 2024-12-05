@@ -245,10 +245,6 @@ const PlansFeaturesMain = ( {
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
-	const reflectStorageSelectionInPlanPrices =
-		( isEnabled( 'plans/term-savings-price-display' ) ||
-			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-		isInSignup;
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -429,7 +425,6 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
-		reflectStorageSelectionInPlanPrices,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -452,7 +447,6 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		term,
-		reflectStorageSelectionInPlanPrices,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
