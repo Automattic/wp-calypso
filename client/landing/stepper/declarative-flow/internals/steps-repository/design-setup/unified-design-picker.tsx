@@ -229,11 +229,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}, [ hasTrackedView, designs ] );
 
-	const categorizationOptions = getCategorizationOptions(
-		intent,
-		goals,
-		addedGoalsExpAssignment?.variationName === 'treatment'
-	);
+	const categorizationOptions = getCategorizationOptions( intent, goals, {
+		useGoals: addedGoalsExpAssignment?.variationName === 'treatment',
+		isMultiSelection: isGoalCentricFeature,
+	} );
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
