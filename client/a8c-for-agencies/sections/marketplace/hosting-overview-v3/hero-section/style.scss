@@ -46,12 +46,16 @@ $tab-background-selected: var(--color-surface);
 	border-bottom: none;
 
 	&,
-	&:hover {
+	&:hover:not(.is-selected) {
 		background: $tab-background;
 	}
 
 	&.is-selected {
 		background: var(--color-surface);
+
+		.section-nav-tab__link:hover {
+			background: none
+		}
 	}
 }
 
