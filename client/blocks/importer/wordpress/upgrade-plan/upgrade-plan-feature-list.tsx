@@ -11,6 +11,7 @@ import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
@@ -23,6 +24,7 @@ interface Props {
 
 export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { plan, showFeatures, setShowFeatures, showVariants } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
@@ -47,11 +49,19 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		? getFeatureByKey( storageFeature )?.getTitle()
 		: undefined;
 
-	const renderRefund = () => {
+	const renderRefundTooltip = () => {
 		const title =
 			PLAN_BUSINESS_MONTHLY === plan?.getStoreSlug()
-				? __( 'Refundable within 7 days' )
-				: __( 'Refundable within 14 days' );
+				? translate( 'Refundable within {{strong}}7 days{{/strong}}', {
+						components: {
+							strong: <strong />,
+						},
+				  } )
+				: translate( 'Refundable within {{strong}}14 days{{/strong}}', {
+						components: {
+							strong: <strong />,
+						},
+				  } );
 
 		const description =
 			PLAN_BUSINESS_MONTHLY === plan?.getStoreSlug()
@@ -98,7 +108,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						</li>
 					) ) }
 
-					{ showVariants && renderRefund() }
+					{ showVariants && renderRefundTooltip() }
 
 					{ jetpackFeatures && jetpackFeatures.length > 0 && (
 						<>
