@@ -31,7 +31,7 @@
 			flex-direction: row;
 		}
 	}
-	.stats-upsell__left,
+	.stats-upsell__left-inner,
 	.stats-upsell__right {
 		display: flex;
 		flex-direction: column;
@@ -42,12 +42,14 @@
 	}
 
 	.stats-upsell__left {
-		padding: 32px;
 		background: var(--studio-white);
-		gap: 24px;
-		@include break-wide {
-			flex: 1;
-			padding: 48px 0 48px 48px;
+		flex: 1;
+		.stats-upsell__left-inner {
+			padding: 32px;
+			gap: 24px;
+			@include break-wide {
+				padding: 48px;
+			}
 		}
 	}
 
@@ -66,6 +68,7 @@
 		@extend .wp-brand-font;
 		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
 		font-size: 28px;
+		text-wrap: wrap;
 		line-height: 34px; /* 125% */
 		@include break-wide {
 			font-size: $font-title-large;
