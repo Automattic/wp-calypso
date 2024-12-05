@@ -29,6 +29,7 @@ import { getReaderOrganizations } from 'calypso/state/reader/organizations/selec
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
+	clearStream,
 	requestPage,
 	selectItem,
 	selectNextItem,
@@ -135,8 +136,9 @@ class ReaderStream extends Component {
 		}
 
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
-			this.props.resetCardExpansions();
-			this.fetchNextPage( {} );
+			this.scrollFeedListToTop();
+			this.props.clearStream( { streamKey } );
+			this.fetchNextPage( {}, { ...this.props, stream: null } ); // Stream as null to start fresh pagination.
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -456,10 +458,10 @@ class ReaderStream extends Component {
 	poll = () => {
 		const { streamKey, localeSlug, selectedFeedId } = this.props;
 		this.props.requestPage( {
+			feedId: selectedFeedId,
 			streamKey,
 			isPoll: true,
 			localeSlug: localeSlug,
-			feedId: selectedFeedId,
 		} );
 	};
 
@@ -480,21 +482,23 @@ class ReaderStream extends Component {
 
 			props.trackScrollPage( pageId );
 		}
-		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
-		props.requestPage( { streamKey, pageHandle, localeSlug, feedId: selectedFeedId } );
+		const pageHandle = stream ? this.getPageHandle( stream.pageHandle, startDate ) : null;
+		props.requestPage( { feedId: selectedFeedId, streamKey, pageHandle, localeSlug } );
 	};
 
 	showUpdates = () => {
 		const { streamKey } = this.props;
 		this.props.onUpdatesShown();
 		this.props.showUpdates( { streamKey } );
-		// @todo: do we need to shuffle?
-		// if ( this.props.recommendationsStore ) {
-		// 	shufflePosts( this.props.recommendationsStore.id );
-		// }
-		if ( this.listRef.current ) {
-			this.listRef.current.scrollToTop();
+		this.scrollFeedListToTop();
+	};
+
+	scrollFeedListToTop = () => {
+		if ( ! this.listRef.current ) {
+			return;
 		}
+
+		this.listRef.current.scrollToTop();
 	};
 
 	renderLoadingPlaceholders = () => {
@@ -770,6 +774,7 @@ export default connect(
 		};
 	},
 	{
+		clearStream,
 		resetCardExpansions,
 		likePost,
 		unlikePost,
