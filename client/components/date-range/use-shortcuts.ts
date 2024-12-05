@@ -22,9 +22,10 @@ export const getShortcuts = createSelector(
 			chartStart: string;
 			chartEnd: string;
 		},
-		translateFunction = translate,
+		translateFunction,
 		isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' )
 	) => {
+		translateFunction = translateFunction ?? translate;
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
@@ -40,7 +41,6 @@ export const getShortcuts = createSelector(
 				startDate: siteYesterday.clone().subtract( 6, 'days' ).format( DATE_FORMAT ),
 				endDate: yesterdayStr,
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'last_7_days',
 			},
 			{
 				id: 'last_30_days',
@@ -48,7 +48,6 @@ export const getShortcuts = createSelector(
 				startDate: siteYesterday.clone().subtract( 29, 'days' ).format( DATE_FORMAT ),
 				endDate: yesterdayStr,
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'last_30_days',
 			},
 			{
 				id: 'last_3_months',
@@ -56,7 +55,6 @@ export const getShortcuts = createSelector(
 				startDate: siteYesterday.clone().subtract( 89, 'days' ).format( DATE_FORMAT ),
 				endDate: yesterdayStr,
 				period: DATERANGE_PERIOD.WEEK,
-				shortcutId: 'last_3_months',
 			},
 			{
 				id: 'last_year',
@@ -64,7 +62,6 @@ export const getShortcuts = createSelector(
 				startDate: siteYesterday.clone().subtract( 364, 'days' ).format( DATE_FORMAT ),
 				endDate: yesterdayStr,
 				period: DATERANGE_PERIOD.MONTH,
-				shortcutId: 'last_year',
 			},
 			{
 				id: 'custom_date_range',
@@ -72,7 +69,6 @@ export const getShortcuts = createSelector(
 				startDate: '',
 				endDate: '',
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'custom_date_range',
 			},
 		];
 
@@ -84,7 +80,6 @@ export const getShortcuts = createSelector(
 					startDate: siteTodayStr,
 					endDate: siteTodayStr,
 					period: DATERANGE_PERIOD.DAY,
-					shortcutId: 'today',
 				},
 				{
 					id: 'yesterday',
@@ -92,7 +87,6 @@ export const getShortcuts = createSelector(
 					startDate: yesterdayStr,
 					endDate: yesterdayStr,
 					period: DATERANGE_PERIOD.DAY,
-					shortcutId: 'yesterday',
 				}
 			);
 		}

@@ -32,6 +32,7 @@ export const UserMessage = ( {
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
+	const isConnectedToZendesk = chat?.provider === 'zendesk';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
@@ -64,7 +65,9 @@ export const UserMessage = ( {
 
 	const renderDisclaimers = () => (
 		<>
-			<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			{ ! isConnectedToZendesk && (
+				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			) }
 
 			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 

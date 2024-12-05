@@ -54,7 +54,10 @@ interface RecommendedSiteResponse {
 export interface RecommendedSite {
 	algorithm: string;
 	blogId: number;
+	description: string;
 	feedId: number;
+	feedUrl: string;
+	icon: string;
 	railcar: Railcar;
 	title: string;
 	url: string;
@@ -68,9 +71,12 @@ export const mapResponseToRecommendedSites = ( {
 		( site: RecommendedSiteResponse ): RecommendedSite => ( {
 			algorithm,
 			blogId: site.blog_id,
+			description: site.description,
 			feedId: site.feed_id,
+			feedUrl: site.feed_url,
+			icon: site.icon?.img,
 			railcar: site.railcar,
-			title: decodeEntities( site.blog_title ?? '' ),
+			title: decodeEntities( site.blog_title ?? site.name ),
 			url: site.blog_url ?? site.URL,
 		} )
 	);

@@ -79,7 +79,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
-import StatsUpsell from './stats-upsell';
+import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -395,9 +395,10 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
-			customChartRange.chartStart = momentSiteZone
-				.clone()
+			customChartRange.chartEnd = isNewDateFilteringEnabled
+				? momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT )
+				: momentSiteZone.format( DATE_FORMAT );
+			customChartRange.chartStart = moment( customChartRange.chartEnd )
 				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}

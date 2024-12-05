@@ -79,6 +79,7 @@ const StatsDateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
+	onGatedHandler,
 	isNewDateFilteringEnabled = false,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
@@ -153,9 +154,16 @@ const StatsDateControl = ( {
 	};
 
 	// handler for shortcut clicks
-	const onShortcutClickHandler = ( shortcutId: string ) => {
+	const onShortcutClickHandler = ( shortcut: DateRangePickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( eventNames[ event_from ][ shortcutId as EventNameKey ] );
+		if ( shortcut.isGated ) {
+			onGatedHandler &&
+				onGatedHandler(
+					[ { name: eventNames[ event_from ][ shortcut.id as EventNameKey ] } ],
+					event_from,
+					shortcut.statType ?? shortcut.id
+				);
+		}
 	};
 
 	return (

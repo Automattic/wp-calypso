@@ -152,6 +152,7 @@
 		"me/vat-details": true,
 		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/enable-white-labeled-plugin": true,
+		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
@@ -248,6 +249,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true
+		"woocommerce/core-profiler-passwordless-auth": true,
+		"woocommerce/rebrand-2-0": false
 	}
 }

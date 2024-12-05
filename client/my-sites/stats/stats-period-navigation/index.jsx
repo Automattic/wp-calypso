@@ -8,15 +8,12 @@ import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsDateControl from 'calypso/components/stats-date-control';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
 import {
 	STATS_FEATURE_DATE_CONTROL,
-	STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
-	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
-	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 	STATS_FEATURE_INTERVAL_DROPDOWN,
 	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
@@ -349,6 +346,12 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
+const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
+	...shortcut,
+	isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
+	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,
+} );
+
 const connectComponent = connect(
 	( state, { period, isNewDateFilteringEnabled } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -361,62 +364,14 @@ const connectComponent = connect(
 		const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
 			treatAtomicAsJetpackSite: false,
 		} );
-		const shortcutList = [
-			{
-				id: 'last_7_days',
-				label: translate( 'Last 7 Days' ),
-				offset: 0,
-				range: 6,
-				period: STATS_PERIOD.DAY,
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS ),
-				statType: STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
-			},
-			{
-				id: 'last_30_days',
-				label: translate( 'Last 30 Days' ),
-				offset: 0,
-				range: 29,
-				period: STATS_PERIOD.DAY,
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ),
-				statType: STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-			},
-			{
-				id: 'last_3_months',
-				label: translate( 'Last 90 Days' ),
-				offset: 0,
-				range: 89,
-				period: STATS_PERIOD.WEEK,
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS ),
-				statType: STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
-			},
-			{
-				id: 'last_year',
-				label: translate( 'Last Year' ),
-				offset: 0,
-				range: 364, // ranges are zero based!
-				period: STATS_PERIOD.MONTH,
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_YEAR ),
-				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
-			},
-		];
-		if ( isNewDateFilteringEnabled ) {
-			shortcutList.unshift(
-				{
-					id: 'today',
-					label: translate( 'Today' ),
-					offset: 0,
-					range: 0,
-					period: STATS_PERIOD.DAY,
-				},
-				{
-					id: 'yesterday',
-					label: translate( 'Yesterday' ),
-					offset: 1,
-					range: 0,
-					period: STATS_PERIOD.DAY,
-				}
-			);
-		}
+
+		const { supportedShortcutList } = getShortcuts(
+			state,
+			{},
+			undefined,
+			isNewDateFilteringEnabled
+		);
+		const shortcutList = supportedShortcutList.map( addIsGatedFor( state, siteId ) );
 		const intervals = {
 			[ STATS_PERIOD.DAY ]: {
 				id: STATS_PERIOD.DAY,
