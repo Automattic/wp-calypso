@@ -56,6 +56,10 @@
 	.import__upgrade-plan .import__upgrade-plan-details {
 		margin-bottom: 0;
 
+		.import__details-list li {
+			margin-bottom: 8px;
+		}
+
 		@media ( min-width: 1040px ) {
 			display: flex;
 			flex-direction: row;

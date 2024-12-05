@@ -17,11 +17,12 @@ interface Props {
 	plan: Plan | JetpackPlan | WPComPlan | undefined;
 	showFeatures: boolean;
 	setShowFeatures: ( showFeatures: boolean ) => void;
+	showVariants?: boolean;
 }
 
 export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { __ } = useI18n();
-	const { plan, showFeatures, setShowFeatures } = props;
+	const { plan, showFeatures, setShowFeatures, showVariants } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
 	const isMonthlyPlan = plan ? isMonthly( plan.getStoreSlug() ) : false;
@@ -91,12 +92,16 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							) ) }
 						</>
 					) }
-					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
-						<strong>{ __( 'Storage' ) }</strong>
-					</li>
-					<li className={ clsx( 'import__upgrade-plan-feature' ) }>
-						<Badge type="info">{ storageFeatureTitle }</Badge>
-					</li>
+					{ ! showVariants && (
+						<>
+							<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
+								<strong>{ __( 'Storage' ) }</strong>
+							</li>
+							<li className={ clsx( 'import__upgrade-plan-feature' ) }>
+								<Badge type="info">{ storageFeatureTitle }</Badge>
+							</li>
+						</>
+					) }
 				</>
 			) }
 		</ul>

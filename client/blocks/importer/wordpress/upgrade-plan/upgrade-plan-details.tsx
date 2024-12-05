@@ -295,6 +295,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							plan={ getPlan( planSlug ) }
 							showFeatures
 							setShowFeatures={ setShowFeatures }
+							showVariants={ showVariants }
 						/>
 					</div>
 				</div>
@@ -378,6 +379,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							plan={ plan }
 							showFeatures={ showVariants ? true : showFeatures }
 							setShowFeatures={ setShowFeatures }
+							showVariants={ showVariants }
 						/>
 					</div>
 				</div>
