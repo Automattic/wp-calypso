@@ -215,6 +215,9 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					fill: '#fff',
 				},
 			},
+			legend: {
+				show: false, // This will hide the legend
+			},
 			series: [
 				{
 					label: 'Date',
