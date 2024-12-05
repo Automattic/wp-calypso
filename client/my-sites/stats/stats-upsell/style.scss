@@ -7,10 +7,8 @@
 	margin: auto;
 	background: var(--studio-white);
 	border-radius: 4px;
+	border: 1px solid var(--studio-gray-5);
 	font-family: $font-sf-pro-text;
-	@include break-wide {
-		border: 1px solid var(--studio-gray-5);
-	}
 
 	.components-modal__content {
 		padding: 0;
@@ -35,7 +33,6 @@
 	.stats-upsell__right {
 		display: flex;
 		flex-direction: column;
-		align-self: stretch;
 		align-items: flex-start;
 
 		min-width: 279px;
@@ -45,7 +42,7 @@
 		background: var(--studio-white);
 		flex: 1;
 		.stats-upsell__left-inner {
-			padding: 32px;
+			padding: 31px;
 			gap: 24px;
 			@include break-wide {
 				padding: 48px;
