@@ -79,7 +79,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 		render( {}, { initialEntry } );
 
-		const errorMessage = await findByText( /We couldn't complete the authorization./ );
+		const errorMessage = await findByText( /Get help/ );
 
 		await waitFor( () => {
 			expect( errorMessage ).toBeVisible();
