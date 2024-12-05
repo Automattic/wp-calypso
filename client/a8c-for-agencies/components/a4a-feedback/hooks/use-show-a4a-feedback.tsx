@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
+import useSaveFeedbackMutation from './use-save-feedback-mutation';
 import type { Props as A4AFeedbackProps } from '../index';
 import type { FeedbackQueryData, FeedbackType, FeedbackProps } from '../types';
 
@@ -42,6 +43,8 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	const [ feedbackInteracted, setFeedbackInteracted ] = useState( false );
 
+	const { mutate: saveFeeback, isPending } = useSaveFeedbackMutation();
+
 	// Let's use hash #feedback if we want to show the feedback
 	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
 
@@ -67,15 +70,22 @@ const useShowFeedback = ( type: FeedbackType ) => {
 	// Do the action when submitting feedback
 	const onSubmitFeedback = useCallback(
 		( data: FeedbackQueryData ) => {
-			dispatch( recordTracksEvent( 'calypso_a4a_feedback_submit', { type } ) );
-			if ( data ) {
-				// TODO: Send feedback data to the backend
+			if ( ! data ) {
+				return;
 			}
+			const { experience, comments } = data;
+			const params = {
+				feedback_name: type,
+				feedback_rating: experience,
+				feedback_comment: comments,
+			};
+			dispatch( recordTracksEvent( 'calypso_a4a_feedback_submit', params ) );
+			saveFeeback( { params } );
 			setFeedbackInteracted( true );
 			const updatedPreference = getUpdatedPreference( feedbackTimestamp, type, 'lastSubmittedAt' );
 			dispatch( savePreference( FEEDBACK_PREFERENCE, updatedPreference ) );
 		},
-		[ dispatch, feedbackTimestamp, type ]
+		[ dispatch, feedbackTimestamp, saveFeeback, type ]
 	);
 
 	// Do action when skipping feedback
@@ -106,6 +116,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		isFeedbackShown: ! showFeedback,
 		showFeedback: feedbackFormHash && showFeedback,
 		feedbackProps: updatedFeedbackProps,
+		isSubmitting: isPending,
 	};
 };
 

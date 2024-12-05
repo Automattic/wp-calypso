@@ -16,3 +16,11 @@ export type FeedbackProps = {
 	ctaText: string;
 	redirectUrl?: string;
 };
+
+export interface MutationSaveFeedbackVariables {
+	params: {
+		feedback_name: FeedbackType;
+		feedback_rating: string;
+		feedback_comment: string;
+	};
+}
