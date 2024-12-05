@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import { AppState } from 'calypso/types';
@@ -74,6 +76,17 @@ const ReaderSidebarRecent = ( {
 		dispatch( selectSidebarRecentSite( { feedId } ) );
 		if ( ! RECENT_PATH_REGEX.test( path ) ) {
 			page( '/read' );
+		}
+
+		// Analytics.
+		if ( feedId ) {
+			recordAction( 'clicked_reader_sidebar_followed_single_site' );
+			recordGaEvent( 'Clicked Reader Sidebar Followed Single Site' );
+			recordReaderTracksEvent( 'calypso_reader_sidebar_followed_single_site_clicked' );
+		} else {
+			recordAction( 'clicked_reader_sidebar_followed_sites' );
+			recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
+			recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
 		}
 	};
 
