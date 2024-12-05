@@ -58,13 +58,19 @@ const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
  * (directly below the Show All filter).
  */
 function makeSortCategoryToTop( slugs: string[] ) {
-	const slugsSet = new Set( slugs );
+	const slugsMap: { [ key: string ]: number } = slugs.reduce(
+		( result, slug, index ) => ( {
+			...result,
+			[ slug ]: index + 1,
+		} ),
+		{}
+	);
 	return ( a: Category, b: Category ) => {
-		if ( a.slug === b.slug ) {
-			return 0;
-		} else if ( slugsSet.has( a.slug ) ) {
+		if ( slugsMap[ a.slug ] && slugsMap[ b.slug ] ) {
+			return slugsMap[ a.slug ] - slugsMap[ b.slug ];
+		} else if ( slugsMap[ a.slug ] ) {
 			return -1;
-		} else if ( slugsSet.has( b.slug ) ) {
+		} else if ( slugsMap[ b.slug ] ) {
 			return 1;
 		}
 
@@ -129,27 +135,33 @@ function getCategorizationFromGoals(
 	goals: Onboard.SiteGoal[],
 	isMultiSelection: boolean = false
 ) {
-	// Sorted according to which theme category makes the most consequential impact
-	// on the user's site e.g. if you want a store, then choosing a Woo compatible
-	// theme is more important than choosing a theme that is good for blogging.
-	// Missing categories are treated as equally inconsequential.
-	const mostConsequentialDesignCategories = [
-		CATEGORIES.STORE,
-		CATEGORIES.EDUCATION,
-		CATEGORIES.COMMUNITY_NON_PROFIT,
-		CATEGORIES.ENTERTAINMENT,
-		CATEGORIES.PORTFOLIO,
-		CATEGORIES.BLOG,
-		CATEGORIES.AUTHORS_WRITERS,
-	];
+	const defaultSelections = Array.from(
+		new Set(
+			goals
+				.map( ( goal ) => {
+					const preferredCategories = getGoalsPreferredCategories( goal );
+					return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
+				} )
+				.flat() ?? [ CATEGORIES.BUSINESS ]
+		)
+	);
 
-	const defaultSelections = goals
-		.map( ( goal ) => {
-			const preferredCategories = getGoalsPreferredCategories( goal );
-			return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
-		} )
-		.flat()
-		.sort( ( a, b ) => {
+	if ( ! isMultiSelection ) {
+		// Sorted according to which theme category makes the most consequential impact
+		// on the user's site e.g. if you want a store, then choosing a Woo compatible
+		// theme is more important than choosing a theme that is good for blogging.
+		// Missing categories are treated as equally inconsequential.
+		const mostConsequentialDesignCategories = [
+			CATEGORIES.STORE,
+			CATEGORIES.EDUCATION,
+			CATEGORIES.COMMUNITY_NON_PROFIT,
+			CATEGORIES.ENTERTAINMENT,
+			CATEGORIES.PORTFOLIO,
+			CATEGORIES.BLOG,
+			CATEGORIES.AUTHORS_WRITERS,
+		];
+
+		defaultSelections.sort( ( a, b ) => {
 			let aIndex = mostConsequentialDesignCategories.indexOf( a );
 			let bIndex = mostConsequentialDesignCategories.indexOf( b );
 
@@ -162,7 +174,8 @@ function getCategorizationFromGoals(
 			}
 
 			return aIndex - bIndex;
-		} ) ?? [ CATEGORIES.BUSINESS ];
+		} );
+	}
 
 	return {
 		defaultSelections,

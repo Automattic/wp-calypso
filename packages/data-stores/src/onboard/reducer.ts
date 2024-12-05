@@ -353,7 +353,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
-		return action.goals;
+		return [ ...action.goals ];
 	}
 	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.Import );
