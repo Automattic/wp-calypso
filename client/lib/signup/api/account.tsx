@@ -127,7 +127,6 @@ export async function createAccount( {
 		isNewAccountCreated = false;
 	} else {
 		const username = response?.signup_sandbox_username || response?.username;
-
 		recordNewAccountCreation( {
 			response,
 			flowName,

@@ -132,3 +132,8 @@ export const clearSignupIsNewUser = ( username ) =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.removeItem( `wpcom_signup_is_new_user_${ username }` )
 	);
+export const getSignupIsNewUserAndClear = ( username ) => {
+	const value = getSignupIsNewUser( username );
+	clearSignupIsNewUser( username );
+	return value;
+};
