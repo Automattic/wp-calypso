@@ -14,8 +14,6 @@ import type { FeedbackQueryData, FeedbackType, FeedbackProps } from '../types';
 const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
 
-const NO_OF_DAYS = 30;
-
 const redirectToDefaultUrl = ( redirectUrl?: string ) => {
 	if ( redirectUrl ) {
 		page.redirect( redirectUrl );
@@ -38,7 +36,7 @@ const getUpdatedPreference = (
 	};
 };
 
-const useShowFeedbackModal = ( type: FeedbackType ) => {
+const useShowFeedback = ( type: FeedbackType ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -56,13 +54,9 @@ const useShowFeedbackModal = ( type: FeedbackType ) => {
 	const feedbackSubmitTimestamp = feedbackTimestamp?.[ type ]?.lastSubmittedAt;
 	const feedbackSkipTimestamp = feedbackTimestamp?.[ type ]?.lastSkippedAt;
 
-	// Checking if it was more than NO_OF_DAYS ago since last feedback was submitted or skipped
+	// Checking if the feedback was submitted or skipped
 	const showFeedback = useMemo( () => {
-		const daysAgo = Date.now() - NO_OF_DAYS * 24 * 60 * 60 * 1000;
-		return (
-			( ! feedbackSubmitTimestamp || feedbackSubmitTimestamp < daysAgo ) &&
-			( ! feedbackSkipTimestamp || feedbackSkipTimestamp < daysAgo )
-		);
+		return ! feedbackSubmitTimestamp && ! feedbackSkipTimestamp;
 	}, [ feedbackSubmitTimestamp, feedbackSkipTimestamp ] );
 
 	const feedbackProps: FeedbackProps = useMemo(
@@ -115,4 +109,4 @@ const useShowFeedbackModal = ( type: FeedbackType ) => {
 	};
 };
 
-export default useShowFeedbackModal;
+export default useShowFeedback;
