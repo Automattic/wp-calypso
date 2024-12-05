@@ -35,10 +35,12 @@
 		flex-direction: column;
 		align-items: flex-start;
 		min-width: 279px;
+		img {
+			border-radius: 4px;
+		}
 	}
 
 	.stats-upsell__left {
-		background: var(--studio-white);
 		flex: 1;
 		.stats-upsell__left-inner {
 			padding: 31px;
