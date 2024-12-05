@@ -18,6 +18,7 @@ import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import { MigrationPlanFeatureList } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-upgrade-plan/migration-plan-feature-list';
 import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
@@ -291,12 +292,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">
-						<UpgradePlanFeatureList
-							plan={ getPlan( planSlug ) }
-							showFeatures
-							setShowFeatures={ setShowFeatures }
-							showVariants={ showVariants }
-						/>
+						<MigrationPlanFeatureList planSlug={ planSlug } />
 					</div>
 				</div>
 			</div>
@@ -375,12 +371,16 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						) }
 					</div>
 					<div className="import__upgrade-plan-features-list">
-						<UpgradePlanFeatureList
-							plan={ plan }
-							showFeatures={ showVariants ? true : showFeatures }
-							setShowFeatures={ setShowFeatures }
-							showVariants={ showVariants }
-						/>
+						{ ! showVariants ? (
+							<UpgradePlanFeatureList
+								plan={ plan }
+								showFeatures={ showVariants ? true : showFeatures }
+								setShowFeatures={ setShowFeatures }
+								showVariants={ showVariants }
+							/>
+						) : (
+							<MigrationPlanFeatureList planSlug={ selectedPlan } />
+						) }
 					</div>
 				</div>
 				{ ! showVariants && (
