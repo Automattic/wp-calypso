@@ -82,11 +82,11 @@ const ReaderSidebarRecent = ( {
 		if ( feedId ) {
 			recordAction( 'clicked_reader_sidebar_followed_single_site' );
 			recordGaEvent( 'Clicked Reader Sidebar Followed Single Site' );
-			recordReaderTracksEvent( 'calypso_reader_sidebar_followed_single_site_clicked' );
+			dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_followed_single_site_clicked' ) );
 		} else {
 			recordAction( 'clicked_reader_sidebar_followed_sites' );
 			recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-			recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
+			dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' ) );
 		}
 	};
 
