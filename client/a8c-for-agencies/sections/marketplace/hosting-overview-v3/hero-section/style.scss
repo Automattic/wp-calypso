@@ -7,8 +7,11 @@ $tab-background-selected: var(--color-surface);
 
 .hosting-v3-hero-section {
 	max-width: 1500px;
-	margin-inline: auto !important;
+	margin-inline: auto;
 	padding: 32px 64px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 39px;
 }
 
 .hosting-v3-hero-section__heading {
