@@ -615,8 +615,15 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
-			this.props;
+		const {
+			translate,
+			forcePlaceholders,
+			lastPage,
+			streamHeader,
+			streamKey,
+			selectedPostKey,
+			selectedFeedId,
+		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const isReaderCouncilStream = false; // Disabling banner. Original condition: ( this.props.isDiscoverStream || this.props.streamKey === 'following' );
 		let { items, isRequesting } = this.props;
@@ -627,6 +634,18 @@ class ReaderStream extends Component {
 		if ( forcePlaceholders ) {
 			items = [];
 			isRequesting = true;
+		}
+
+		// Due to infinite scrolling or fast selection, API call responses may include items from previously selected feeds.
+		// To temporarily address this issue, filtering out items that don't belong to the currently selected feed.
+		//
+		// The proper fix here is to cancel the pending API calls after the feed selection is changed.
+		if ( selectedFeedId ) {
+			items = items.filter( ( item ) => item.feed_ID === selectedFeedId );
+
+			if ( items.length === 0 ) {
+				isRequesting = true;
+			}
 		}
 
 		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
