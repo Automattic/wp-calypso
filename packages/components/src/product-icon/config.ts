@@ -27,6 +27,7 @@ export const paths = {
 	'jetpack-boost': jetpackBoost,
 	'jetpack-complete': jetpackBundles,
 	'jetpack-crm': jetpackCrm,
+	'jetpack-growth': jetpackBundles,
 	'jetpack-free': jetpackFree,
 	'jetpack-personal': jetpackBundles,
 	'jetpack-premium': jetpackBundles,
@@ -82,6 +83,9 @@ export type SupportedSlugs =
 	| 'jetpack_complete_v2'
 	| 'jetpack_complete_monthly_v2'
 	| 'jetpack_golden_token_lifetime'
+	| 'jetpack_growth_monthly'
+	| 'jetpack_growth_yearly'
+	| 'jetpack_growth_bi_yearly'
 	| 'jetpack_crm'
 	| 'jetpack_crm_monthly'
 	| 'jetpack_backup_daily'
@@ -267,5 +271,10 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_creator_monthly',
 		'jetpack_creator_yearly',
 		'jetpack_creator_bi_yearly',
+	],
+	'jetpack-growth': [
+		'jetpack_growth_monthly',
+		'jetpack_growth_yearly',
+		'jetpack_growth_bi_yearly',
 	],
 } as const;

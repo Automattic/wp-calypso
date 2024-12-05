@@ -142,8 +142,8 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						return gradient;
 					},
 					paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
-						const { spline } = uPlot.paths;
-						return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						const { linear } = uPlot.paths;
+						return linear?.()( u, seriesIdx, idx0, idx1 ) || null;
 					},
 					points: {
 						show: false,

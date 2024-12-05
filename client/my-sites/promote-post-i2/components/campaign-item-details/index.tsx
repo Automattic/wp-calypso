@@ -467,7 +467,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 7,
+			condition: activeDays > 7,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_7_DAYS ),
@@ -477,7 +477,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 14,
+			condition: activeDays > 14,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_14_DAYS ),
@@ -487,7 +487,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 30,
+			condition: activeDays > 30,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_30_DAYS ),

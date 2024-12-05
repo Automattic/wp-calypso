@@ -96,7 +96,7 @@ export const InsightsSection = forwardRef(
 				</div>
 				{ filteredAudits.map( ( key, index ) => (
 					<MetricsInsight
-						key={ `insight-${ index }` }
+						key={ key }
 						insight={ { ...audits[ key ], id: key } }
 						fullPageScreenshot={ fullPageScreenshot }
 						index={ index }

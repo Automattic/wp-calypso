@@ -44,7 +44,6 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
@@ -80,7 +79,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
-import StatsUpsell from './stats-upsell';
+import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -310,7 +309,6 @@ class StatsSite extends Component {
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
-			isVideoPress,
 		} = this.props;
 		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -340,7 +338,7 @@ class StatsSite extends Component {
 			customChartRange = { chartEnd };
 		} else {
 			customChartRange = {
-				chartEnd: momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT ),
+				chartEnd: momentSiteZone.format( DATE_FORMAT ),
 			};
 		}
 
@@ -358,7 +356,7 @@ class StatsSite extends Component {
 			// (e.g. months defaulting to 30 days and showing one point)
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( daysInRange, 'days' )
+				.subtract( daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}
 
@@ -396,8 +394,7 @@ class StatsSite extends Component {
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
 			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
-			customChartRange.chartStart = momentSiteZone
-				.clone()
+			customChartRange.chartStart = moment( customChartRange.chartEnd )
 				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}
@@ -472,7 +469,7 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StickyPanel>
+					<StickyPanel headerId={ isOdysseyStats ? 'wpadminbar' : 'header' }>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
@@ -670,7 +667,7 @@ class StatsSite extends Component {
 									className={ halfWidthModuleClasses }
 								/>
 
-								{ isVideoPress && ! this.isModuleHidden( 'videos' ) && (
+								{ ! this.isModuleHidden( 'videos' ) && (
 									<StatsModuleVideos
 										moduleStrings={ moduleStrings.videoplays }
 										period={ this.props.period }
@@ -845,7 +842,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		const isVideoPress = siteHasFeature( state, siteId, 'videopress' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -908,7 +904,6 @@ export default connect(
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
-			isVideoPress,
 		};
 	},
 	{

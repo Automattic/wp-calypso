@@ -68,7 +68,9 @@ export const MessageContent = ( {
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( [ 'message', 'image', 'file', 'text' ].includes( message.type ) ||
+					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
+						message.type
+					) ||
 						! message.type ) && (
 						<UserMessage
 							message={ markdownMessageContent }
