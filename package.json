@@ -315,7 +315,7 @@
 		"stacktrace-gps": "^3.0.3",
 		"stylelint": "^16.8.2",
 		"tslib": "^2.3.0",
-		"typescript": "^5.3.3",
+		"typescript": "5.3.3",
 		"webpack": "^5.95.0",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"webpack-cli": "^4.10.0",
@@ -415,7 +415,8 @@
 		"@wordpress/viewport": "6.8.0",
 		"@wordpress/warning": "3.8.0",
 		"@wordpress/widgets": "4.8.0",
-		"@wordpress/wordcount": "4.8.0"
+		"@wordpress/wordcount": "4.8.0",
+		"typescript": "5.3.3"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
