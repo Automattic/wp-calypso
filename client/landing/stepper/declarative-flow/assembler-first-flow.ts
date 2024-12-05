@@ -23,6 +23,8 @@ import {
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -90,7 +92,7 @@ const assemblerFirstFlow: Flow = {
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
-			const selectedSiteId = providedDependencies?.siteId as string;
+			const selectedSiteId = providedDependencies?.siteId as number;
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.AssemblerFirst );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
