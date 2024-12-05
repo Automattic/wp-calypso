@@ -6,9 +6,11 @@
 .stats-upsell {
 	margin: auto;
 	background: var(--studio-white);
-	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 	font-family: $font-sf-pro-text;
+	@include break-wide {
+		border: 1px solid var(--studio-gray-5);
+	}
 
 	.components-modal__content {
 		padding: 0;
@@ -40,12 +42,12 @@
 	}
 
 	.stats-upsell__left {
-		padding: 48px;
+		padding: 32px;
 		background: var(--studio-white);
 		gap: 24px;
 		@include break-wide {
 			flex: 1;
-			padding-right: 0;
+			padding-right: 48px 0 48px 48px;
 		}
 	}
 
@@ -112,7 +114,10 @@
 
 		.stats-upsell__feature {
 			display: flex;
-			column-gap: 8px;
+			column-gap: 7px;
+			@include break-wide {
+				column-gap: 8px;
+			}
 
 			.stats-upsell__feature-text {
 				flex: 1;
