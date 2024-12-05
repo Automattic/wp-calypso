@@ -356,7 +356,7 @@ class StatsSite extends Component {
 			// (e.g. months defaulting to 30 days and showing one point)
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( daysInRange, 'days' )
+				.subtract( daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}
 
