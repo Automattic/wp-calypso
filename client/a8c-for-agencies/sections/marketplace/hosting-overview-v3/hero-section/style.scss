@@ -1,3 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$tab-background: linear-gradient( #EBF4FA, #DAE9F3);
+$tab-background-selected: var(--color-surface);
+
+
 .hosting-v3-hero-section {
 	max-width: 1500px;
 	margin-inline: auto !important;
@@ -7,4 +14,40 @@
 .hosting-v3-hero-section__heading {
 	@include a4a-font-heading-xxl;
 	color: var( --color-text-inverted );
+}
+
+.hosting-v3-hero-section__tabs {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	> li {
+		flex-grow: 1;
+	}
+}
+
+.hosting-v3-hero-section__tab.section-nav-tab {
+	&,
+	&:hover {
+		background: $tab-background;
+	}
+
+	&.is-selected {
+		background: var(--color-surface);
+		border-bottom-color: var(--color-surface);
+	}
+}
+
+.hosting-v3__nav-item-label {
+	@include a4a-font-heading-lg;
+	color: var( --color-text );
+}
+
+.hosting-v3__nav-item-subtitle {
+	@include a4a-font-body-md;
+	color: var( --color-text );
 }

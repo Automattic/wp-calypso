@@ -2,7 +2,6 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import { SectionProps } from '..';
 
 import './style.scss';
@@ -22,7 +21,6 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 				key: 'wpcom',
 				label: isLargeScreen ? translate( 'Standard Agency Hosting' ) : translate( 'Standard' ),
 				subtitle: isLargeScreen && translate( 'Optimized and hassle-free hosting' ),
-				visible: true,
 				selected: section === 'wpcom',
 				onClick: () => {
 					onSectionChange( 'wpcom' );
@@ -32,7 +30,6 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 				key: 'pressable',
 				label: isLargeScreen ? translate( 'Premier Agency Hosting' ) : translate( 'Premier' ),
 				subtitle: isLargeScreen && translate( 'Best for large-scale businesses' ),
-				visible: true,
 				selected: section === 'pressable',
 				onClick: () => {
 					onSectionChange( 'pressable' );
@@ -42,7 +39,6 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 				key: 'vip',
 				label: translate( 'Enterprise' ),
 				subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
-				visible: true,
 				selected: section === 'vip',
 				onClick: () => {
 					onSectionChange( 'vip' );
@@ -53,11 +49,9 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {
-		if ( ! featureTab.visible ) {
-			return null;
-		}
 		return (
 			<NavItem
+				className="hosting-v3-hero-section__tab"
 				key={ featureTab.key }
 				selected={ featureTab.selected }
 				onClick={ featureTab.onClick }
@@ -84,7 +78,12 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 					}
 				) }
 			</div>
-			<NavTabs enforceTabsView>{ navItems }</NavTabs>
+
+			<ul className="hosting-v3-hero-section__tabs">
+				{ navItems.map( ( item ) => {
+					return <li key={ item.key }>{ item }</li>;
+				} ) }
+			</ul>
 		</div>
 	);
 }
