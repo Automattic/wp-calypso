@@ -2,6 +2,7 @@ import {
 	FEATURE_STATS_FREE,
 	FEATURE_STATS_PAID,
 	FEATURE_STATS_COMMERCIAL,
+	FEATURE_STATS_BASIC,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -106,6 +107,17 @@ const paidStats = [
 // wpcom: Gate UTM and device stats for sites with STATS_FREE feature, this is the feature applied to legacy sites.
 const freeStats = [ STATS_FEATURE_UTM_STATS, STATS_TYPE_DEVICE_STATS ];
 
+// wpcom: Gate UTM and device stats for sites with STATS_BASIC feature, this is the feature applied to legacy sites.
+const basicStats = [
+	STATS_FEATURE_UTM_STATS,
+	STATS_TYPE_DEVICE_STATS,
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_REFERRERS,
+	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
+];
+
 // wpcom: All stats are gated for WPCOM sites without the STATS_PAID or STATS_COMMERCIAL feature.
 const gatedStats = [
 	STAT_TYPE_REFERRERS,
@@ -200,6 +212,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteHasCommercialStats = siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL );
 	const siteHasFreeStats = siteHasFeature( state, siteId, FEATURE_STATS_FREE );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
+	const siteHasBasicStats = siteHasFeature( state, siteId, FEATURE_STATS_BASIC );
 
 	// Check if the site features have loaded.
 	if ( ! siteFeatures ) {
@@ -211,14 +224,22 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		return false;
 	}
 
+	// Legacy free stats given to all sites before 2024-01-09.
 	if ( siteHasFreeStats ) {
 		return [ ...freeStats ].includes( statType );
 	}
 
+	// Paid stats given to personal and higher plans
 	if ( siteHasPaidStats ) {
 		return [ ...paidStats ].includes( statType );
 	}
 
+	// Basic stats given to free sites before 2024-12-06.
+	if ( siteHasBasicStats ) {
+		return [ ...basicStats ].includes( statType );
+	}
+
+	// All other sites get gated to 7 days + paywall upsell
 	return [ ...gatedStats ].includes( statType );
 };
 
