@@ -10,7 +10,7 @@ import {
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from '@automattic/zendesk-client/src/constants';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
@@ -60,6 +60,20 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { setIsChatLoaded, setUnreadCount, setZendeskClientId } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
+	const getUnreadListener = useCallback(
+		( message: unknown, data: { conversation: { id: string } } ) => {
+			if ( isHelpCenterShown ) {
+				return;
+			}
+
+			Smooch.getConversationById( data?.conversation?.id ).then( () => {
+				const { unreadConversations } = calculateUnread( getZendeskConversations() );
+				setUnreadCount( unreadConversations );
+			} );
+		},
+		[ isHelpCenterShown, setUnreadCount ]
+	);
+
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
 		if ( isMessagingScriptLoaded && authData?.isLoggedIn ) {
@@ -96,7 +110,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			const { unreadConversations } = calculateUnread( allConversations );
 			setUnreadCount( unreadConversations );
 			setZendeskClientId( getClientId( allConversations ) );
+			Smooch.on( 'message:received', getUnreadListener );
 		}
+
+		return () => {
+			// @ts-expect-error -- 'off' is not part of the def.
+			const unsubscribe = typeof Smooch?.off === 'function' ? Smooch?.off : () => {};
+			unsubscribe( 'message:received', getUnreadListener );
+		};
 	}, [ isChatLoaded, setUnreadCount, setZendeskClientId ] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
