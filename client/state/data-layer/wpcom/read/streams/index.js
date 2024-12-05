@@ -352,7 +352,7 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { feedId, streamKey, streamType, pageHandle, isPoll, gap, localeSlug, page, perPage },
+		payload: { streamKey, streamType, feedId, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
 	const api = streamApis[ streamType ];
 

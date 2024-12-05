@@ -154,8 +154,8 @@ class ReaderStream extends Component {
 
 		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
-				feedId: this.props.selectedFeedId,
 				streamKey: this.props.recsStreamKey,
+				feedId: this.props.selectedFeedId,
 				pageHandle: this.props.recsStream.pageHandle,
 				localeSlug: this.props.localeSlug,
 			} );
@@ -458,8 +458,8 @@ class ReaderStream extends Component {
 	poll = () => {
 		const { streamKey, localeSlug, selectedFeedId } = this.props;
 		this.props.requestPage( {
-			feedId: selectedFeedId,
 			streamKey,
+			feedId: selectedFeedId,
 			isPoll: true,
 			localeSlug: localeSlug,
 		} );

@@ -25,11 +25,11 @@ import 'calypso/state/reader/init';
  */
 export function requestPage( {
 	streamKey,
+	feedId,
 	pageHandle,
 	isPoll = false,
 	gap = null,
 	localeSlug = null,
-	feedId = null,
 } ) {
 	const streamType = getStreamType( streamKey );
 
