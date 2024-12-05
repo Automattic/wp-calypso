@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { Skeleton } from './skeleton';
+import { VariantsSkeleton } from './skeleton/variants-skeleton';
 import type { UpgradePlanProps } from './types';
 import type { FC } from 'react';
 
@@ -9,7 +10,7 @@ const isIntroductoryOfferEnabled = config.isEnabled( 'migration-flow/introductor
 
 const withMigrationSticker =
 	( WrappedComponent: FC< UpgradePlanProps > ) => ( props: UpgradePlanProps ) => {
-		const { site } = props;
+		const { site, showVariants } = props;
 		const siteId = site.ID;
 
 		const {
@@ -35,7 +36,11 @@ const withMigrationSticker =
 		}, [ addMigrationSticker, deleteMigrationSticker, siteId ] );
 
 		if ( isIntroductoryOfferEnabled && ( isIdle || isPending ) ) {
-			return <Skeleton />;
+			if ( ! showVariants ) {
+				return <Skeleton />;
+			}
+
+			return <VariantsSkeleton />;
 		}
 
 		return <WrappedComponent { ...props } />;
