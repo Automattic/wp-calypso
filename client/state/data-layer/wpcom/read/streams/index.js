@@ -394,7 +394,7 @@ export function requestPage( action ) {
 		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], commonQueryParams )
-			: query( { ...commonQueryParams, ...pageHandle, number, lang, page } ),
+			: query( { ...commonQueryParams, ...pageHandle, number, lang, page }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
