@@ -155,7 +155,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				isProductFeedbackEnabled && ! isFeedbackShown
 					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
 							args: { email },
-							[ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email,
 					  } ) + '#feedback'
 					: addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
 			);
