@@ -67,8 +67,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 							>
-								{ i === 0 && <strong>{ feature?.getTitle() }</strong> }
-								{ i > 0 && <span>{ feature?.getTitle() }</span> }
+								<span>{ feature?.getTitle() }</span>
 							</Plans2023Tooltip>
 						</li>
 					) ) }

@@ -248,6 +248,12 @@ $business-plan-color: #7f54b3;
 
 		ul {
 			margin: 0;
+
+			li {
+				&:first-child {
+					font-weight: bold;
+				}
+			}
 		}
 
 		.import__upgrade-plan-feature.logo {
