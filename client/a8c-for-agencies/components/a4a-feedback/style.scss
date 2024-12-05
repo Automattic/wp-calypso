@@ -46,7 +46,7 @@ $highlight-color: #3858E9;
 	@include a4a-font-heading-lg($font-weight: 500);
 }
 
-.a4a-feedback__experience-label {
+.a4a-feedback__experience-selector-label {
 	@include a4a-font-label-button;
 	padding-block-end: 8px;
 }

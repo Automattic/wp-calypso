@@ -2,11 +2,11 @@ import { FormLabel } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState } from 'react';
+import IconBad from 'calypso/assets/images/a8c-for-agencies/feedback/bad.svg';
+import IconGood from 'calypso/assets/images/a8c-for-agencies/feedback/good.svg';
+import IconNeutral from 'calypso/assets/images/a8c-for-agencies/feedback/neutral.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import IconBad from './icons/bad.svg';
-import IconGood from './icons/good.svg';
-import IconNeutral from './icons/neutral.svg';
 import { FeedbackQueryData } from './types';
 
 import './style.scss';
@@ -40,7 +40,9 @@ export function A4AFeedback( {
 				<div className="a4a-feedback__questions">
 					<div className="a4a-feedback__question-details">{ questionDetails }</div>
 					<div className="a4a-feedback__experience-selector">
-						<div className="a4a-feedback__experience-label">{ translate( 'Overall' ) }</div>
+						<div className="a4a-feedback__experience-selector-label">
+							{ translate( 'Overall' ) }
+						</div>
 						<div className="a4a-feedback__experience-selector-buttons">
 							<Button
 								variant={ experience === 'good' ? 'primary' : 'secondary' }
