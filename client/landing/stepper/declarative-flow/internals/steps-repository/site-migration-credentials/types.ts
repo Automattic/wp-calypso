@@ -45,5 +45,6 @@ export interface MigrationError {
 }
 
 export interface ApplicationPasswordsInfo {
-	isAvailable: boolean;
+	application_passwords_enabled: boolean;
+	authorization_url: string;
 }

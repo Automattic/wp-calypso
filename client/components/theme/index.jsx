@@ -204,6 +204,7 @@ export class Theme extends Component {
 
 		return (
 			<img
+				loading="lazy"
 				alt={ isScreenshotLoaded ? decodeEntities( description ) : '' }
 				className="theme__img"
 				src={ themeImgSrc }

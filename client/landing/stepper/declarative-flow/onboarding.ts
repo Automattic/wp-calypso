@@ -159,7 +159,7 @@ const onboarding: Flow = {
 						}
 					}
 					setSignupCompleteFlowName( flowName );
-					return navigate( 'create-site', undefined, true );
+					return navigate( 'create-site', undefined, false );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );

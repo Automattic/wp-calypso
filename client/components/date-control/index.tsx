@@ -17,6 +17,7 @@ const DateControl = ( {
 	tooltip,
 	dateRange,
 	overlay,
+	shortcutList,
 	// Temporary prop to enable new date filtering UI.
 	isNewDateFilteringEnabled = false,
 }: DateControlProps ) => {
@@ -83,6 +84,7 @@ const DateControl = ( {
 				useArrowNavigation
 				customTitle="Date Range"
 				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+				shortcutList={ shortcutList }
 				onShortcutClick={ onShortcutClick }
 				isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 				trackExternalDateChanges

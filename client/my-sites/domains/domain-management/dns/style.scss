@@ -35,6 +35,9 @@ body.dns__body-white {
 		@include break-mobile {
 			max-width: 677px;
 		}
+		@include break-small {
+			margin: 0;
+		}
 	}
 
 	.dns-records-list-header {

@@ -3,7 +3,7 @@ import {
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
 	isJetpackCompleteSlug,
-	isJetpackGrowthPlan,
+	isJetpackGrowthSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecurityT1Slug,
@@ -96,7 +96,6 @@ function getFeatureStrings(
 				translate( 'Stats (Up to 100K site views, upgradeable)' ),
 			];
 		case 'growth':
-			// JetPack Creator features
 			return [
 				translate( 'Stats (10K site views, upgradeable)' ),
 				translate( 'Social' ),
@@ -107,7 +106,6 @@ function getFeatureStrings(
 				translate( 'Paid content gating' ),
 				translate( 'Paywall access' ),
 				translate( 'Newsletter' ),
-				translate( 'Priority support' ),
 				translate( '2% transaction fees' ),
 			];
 		case 'scan':
@@ -230,7 +228,7 @@ export default function getJetpackProductFeatures(
 		];
 	}
 
-	if ( isJetpackGrowthPlan( product.product_slug ) ) {
+	if ( isJetpackGrowthSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'growth', translate ),
 			...getFeatureStrings( 'support', translate ),

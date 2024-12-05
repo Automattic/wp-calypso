@@ -81,7 +81,8 @@
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false,
-		"bulk-plugin-management": true
+		"bulk-plugin-management": true,
+		"importers/newsletter": true
 	},
 	"enable_all_sections": false,
 	"sections": {

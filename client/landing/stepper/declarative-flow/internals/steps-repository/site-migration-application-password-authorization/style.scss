@@ -1,0 +1,56 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-migration-application-password-authorization {
+	.site-migration-application-password-authorization__authorization {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		align-items: center;
+	}
+	.site-migration-application-password-authorization__benefits-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 1em;
+		h3 {
+			font-size: $font-title-small;
+			margin-bottom: 0.75em;
+		}
+	}
+	.site-migration-application-password-authorization__benefits {
+		padding: 2em;
+		background-color: var(--color-border-shadow);
+		border-radius: 4px;
+		width: 100%;
+		@include break-small {
+			width: 350px;
+		}
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+	.site-migration-application-password-authorization__benefits-item {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5em;
+		font-size: $font-body-small;
+		.site-migration-application-password-authorization__benefits-item-icon {
+			width: 42px;
+			height: 42px;
+			background-color: var(--studio-wordpress-blue-10);
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			svg {
+				fill: var(--studio-wordpress-blue-50);
+			}
+		}
+	}
+	.site-migration-application-password-authorization__contact-me-button {
+		color: var(--color-text-inverted) !important;
+		margin-left: 0.25em;
+	}
+}

@@ -22,9 +22,10 @@ export const getShortcuts = createSelector(
 			chartStart: string;
 			chartEnd: string;
 		},
-		translateFunction = translate,
+		translateFunction,
 		isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' )
 	) => {
+		translateFunction = translateFunction ?? translate;
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
@@ -35,34 +36,30 @@ export const getShortcuts = createSelector(
 			{
 				id: 'last_7_days',
 				label: translateFunction( 'Last 7 Days' ),
-				startDate: siteYesterday.clone().subtract( 6, 'days' ).format( DATE_FORMAT ),
-				endDate: yesterdayStr,
+				startDate: siteToday.clone().subtract( 6, 'days' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'last_7_days',
 			},
 			{
 				id: 'last_30_days',
 				label: translateFunction( 'Last 30 Days' ),
-				startDate: siteYesterday.clone().subtract( 29, 'days' ).format( DATE_FORMAT ),
-				endDate: yesterdayStr,
+				startDate: siteToday.clone().subtract( 29, 'days' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'last_30_days',
 			},
 			{
 				id: 'last_3_months',
 				label: translateFunction( 'Last 90 Days' ),
-				startDate: siteYesterday.clone().subtract( 89, 'days' ).format( DATE_FORMAT ),
-				endDate: yesterdayStr,
+				startDate: siteToday.clone().subtract( 89, 'days' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.WEEK,
-				shortcutId: 'last_3_months',
 			},
 			{
 				id: 'last_year',
 				label: translateFunction( 'Last Year' ),
-				startDate: siteYesterday.clone().subtract( 364, 'days' ).format( DATE_FORMAT ),
-				endDate: yesterdayStr,
+				startDate: siteToday.clone().subtract( 364, 'days' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.MONTH,
-				shortcutId: 'last_year',
 			},
 			{
 				id: 'custom_date_range',
@@ -70,7 +67,6 @@ export const getShortcuts = createSelector(
 				startDate: '',
 				endDate: '',
 				period: DATERANGE_PERIOD.DAY,
-				shortcutId: 'custom_date_range',
 			},
 		];
 
@@ -82,7 +78,6 @@ export const getShortcuts = createSelector(
 					startDate: siteTodayStr,
 					endDate: siteTodayStr,
 					period: DATERANGE_PERIOD.DAY,
-					shortcutId: 'today',
 				},
 				{
 					id: 'yesterday',
@@ -90,7 +85,6 @@ export const getShortcuts = createSelector(
 					startDate: yesterdayStr,
 					endDate: yesterdayStr,
 					period: DATERANGE_PERIOD.DAY,
-					shortcutId: 'yesterday',
 				}
 			);
 		}

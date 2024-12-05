@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
@@ -25,14 +25,16 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const plan = plans?.data?.[ PLAN_PREMIUM ];
+	const planKey = isEnabled( 'stats/paid-wpcom-v3' ) ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const plan = plans?.data?.[ planKey ];
 	const pricing = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ PLAN_PREMIUM ],
+		planSlugs: [ planKey ],
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
-	} )?.[ PLAN_PREMIUM ];
+	} )?.[ planKey ];
+	const planSlug = plan?.pathSlug ?? planKey;
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -53,12 +55,12 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		} );
 		if ( isSimpleClassic ) {
 			const checkoutProductUrl = new URL(
-				`https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PREMIUM }`
+				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
 			);
 			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ plan?.pathSlug ?? 'premium' }` );
+			page( `/checkout/${ siteSlug }/${ planSlug }` );
 		}
 	};
 

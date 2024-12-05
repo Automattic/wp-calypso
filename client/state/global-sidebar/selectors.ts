@@ -25,8 +25,8 @@ const SITE_DASHBOARD_ROUTES = {
 	'site-settings': '/sites/settings',
 
 	// Domain Management
-	'all-domain-management': '/domains/all/manage',
-	'all-email-management': '/domains/all/email',
+	'all-domain-management': '/domains/manage/all/overview',
+	'all-email-management': '/domains/manage/all/email',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {
