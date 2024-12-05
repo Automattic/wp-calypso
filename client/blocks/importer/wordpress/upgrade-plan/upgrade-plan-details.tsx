@@ -376,7 +376,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 								plan={ plan }
 								showFeatures={ showVariants ? true : showFeatures }
 								setShowFeatures={ setShowFeatures }
-								showVariants={ showVariants }
 							/>
 						) : (
 							<MigrationPlanFeatureList planSlug={ selectedPlan } />
