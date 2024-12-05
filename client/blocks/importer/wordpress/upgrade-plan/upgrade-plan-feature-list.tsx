@@ -4,6 +4,7 @@ import {
 	type WPComPlan,
 	getFeatureByKey,
 	isMonthly,
+	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
 import { Plans2023Tooltip } from '@automattic/plans-grid-next';
@@ -46,6 +47,31 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		? getFeatureByKey( storageFeature )?.getTitle()
 		: undefined;
 
+	const renderRefund = () => {
+		const title =
+			PLAN_BUSINESS_MONTHLY === plan?.getStoreSlug()
+				? __( 'Refundable within 7 days' )
+				: __( 'Refundable within 14 days' );
+
+		const description =
+			PLAN_BUSINESS_MONTHLY === plan?.getStoreSlug()
+				? __( 'Fully refundable within 7 days. No questions asked.' )
+				: __( 'Fully refundable within 14 days. No questions asked.' );
+
+		return (
+			<li className={ clsx( 'import__upgrade-plan-feature' ) }>
+				<Plans2023Tooltip
+					id="feature-refund"
+					text={ description }
+					setActiveTooltipId={ setActiveTooltipId }
+					activeTooltipId={ activeTooltipId }
+				>
+					<span>{ title }</span>
+				</Plans2023Tooltip>
+			</li>
+		);
+	};
+
 	return (
 		<ul className={ clsx( 'import__details-list' ) }>
 			{ ! showFeatures && (
@@ -71,6 +97,8 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							</Plans2023Tooltip>
 						</li>
 					) ) }
+
+					{ showVariants && renderRefund() }
 
 					{ jetpackFeatures && jetpackFeatures.length > 0 && (
 						<>
