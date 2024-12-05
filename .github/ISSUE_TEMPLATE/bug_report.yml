@@ -76,10 +76,10 @@ body:
     attributes:
       label: Severity
       description: What is the severity of this issue? Please take a look at the descriptions below for further context.<br>
-        <br> - **Critical:** Prevents core functionality or has severe business impact.
-        <br> - **Major:** Significantly impairs important features or has notable business impact.
-        <br> - **Moderate:** Affects non-critical features or has limited business impact.
-        <br> - **Minor:** Causes inconvenience or has minimal impact on functionality. <br><br>
+        <br> - **Critical:** Prevents core functionality or has severe impact on the website/platform.
+        <br> - **Major:** Significantly impairs important features or has notable impact on the website/platform.
+        <br> - **Moderate:** Affects non-critical features or has limited impact on the website/platform.
+        <br> - **Minor:** Causes inconvenience or has minimal impact on functionality.<br><br>
       options:
         - Critical
         - Major
