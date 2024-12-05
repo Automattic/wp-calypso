@@ -104,6 +104,20 @@
 		}
 	}
 
+	.import__upgrade-plan-features-list {
+		flex-direction: column;
+
+		ul {
+			margin: 0;
+
+			li {
+				&:first-child {
+					font-weight: normal;
+				}
+			}
+		}
+	}
+
 	.import__upgrade-plan-refund-sub-text {
 		display: flex;
 		align-items: center;
