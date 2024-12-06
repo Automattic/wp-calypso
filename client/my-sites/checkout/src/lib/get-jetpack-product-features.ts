@@ -129,7 +129,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'social-v1':
@@ -138,7 +140,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'stats-free':

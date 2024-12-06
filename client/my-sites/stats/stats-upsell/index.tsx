@@ -9,6 +9,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
@@ -21,7 +22,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	title: string;
-	features: string[];
+	features: ReactNode[];
 	image: string;
 	statType: string;
 }
