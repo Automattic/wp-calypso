@@ -25,7 +25,6 @@ import {
 	isPersonalPlan,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { usePlansGridContext } from '../../grid-context';
 import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
@@ -92,7 +91,8 @@ const isGridPlanVisible = ( {
 	return isVisible;
 };
 
-const usePlanTypesWithIntent = ( {
+// TODO: Revisit these export conventions if we continue with this approach
+export const usePlanTypesWithIntent = ( {
 	intent,
 	selectedPlan,
 	siteId,
@@ -235,6 +235,7 @@ const useGridPlans: UseGridPlansType = ( {
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
 	isDomainOnlySite,
+	reflectStorageSelectionInPlanPrices,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -262,7 +263,6 @@ const useGridPlans: UseGridPlansType = ( {
 		term,
 		intent,
 	} );
-	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
 
 	const { planSlug: sitePlanSlug, purchaseId } = Plans.useCurrentPlan( { siteId } ) || {};
 

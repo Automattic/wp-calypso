@@ -5,7 +5,8 @@ import PlanTypeSelector from './components/plan-type-selector';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import { EFFECTIVE_TERMS_LIST } from './constants';
 import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
-import useGridPlans from './hooks/data-store/use-grid-plans';
+// TODO: Revisit this convention. Is there a better way to export usePlanTypesWithIntent?
+import useGridPlans, { usePlanTypesWithIntent } from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
 import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
@@ -34,6 +35,7 @@ export {
 	useGridPlanForSpotlight,
 	usePlanBillingDescription,
 	usePlanFeaturesForGridPlans,
+	usePlanTypesWithIntent,
 	useRestructuredPlanFeaturesForComparisonGrid,
 };
 
