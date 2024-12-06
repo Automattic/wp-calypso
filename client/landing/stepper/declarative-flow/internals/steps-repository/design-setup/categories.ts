@@ -58,19 +58,14 @@ const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
  * (directly below the Show All filter).
  */
 function makeSortCategoryToTop( slugs: string[] ) {
-	const slugsMap: { [ key: string ]: number } = slugs.reduce(
-		( result, slug, index ) => ( {
-			...result,
-			[ slug ]: index + 1,
-		} ),
-		{}
-	);
+	const slugsSet = new Set( slugs );
+
 	return ( a: Category, b: Category ) => {
-		if ( slugsMap[ a.slug ] && slugsMap[ b.slug ] ) {
-			return slugsMap[ a.slug ] - slugsMap[ b.slug ];
-		} else if ( slugsMap[ a.slug ] ) {
+		if ( slugsSet.has( a.slug ) && slugsSet.has( b.slug ) ) {
+			return 0;
+		} else if ( slugsSet.has( a.slug ) ) {
 			return -1;
-		} else if ( slugsMap[ b.slug ] ) {
+		} else if ( slugsSet.has( b.slug ) ) {
 			return 1;
 		}
 
@@ -145,37 +140,6 @@ function getCategorizationFromGoals(
 				.flat() ?? [ CATEGORIES.BUSINESS ]
 		)
 	);
-
-	if ( ! isMultiSelection ) {
-		// Sorted according to which theme category makes the most consequential impact
-		// on the user's site e.g. if you want a store, then choosing a Woo compatible
-		// theme is more important than choosing a theme that is good for blogging.
-		// Missing categories are treated as equally inconsequential.
-		const mostConsequentialDesignCategories = [
-			CATEGORIES.STORE,
-			CATEGORIES.EDUCATION,
-			CATEGORIES.COMMUNITY_NON_PROFIT,
-			CATEGORIES.ENTERTAINMENT,
-			CATEGORIES.PORTFOLIO,
-			CATEGORIES.BLOG,
-			CATEGORIES.AUTHORS_WRITERS,
-		];
-
-		defaultSelections.sort( ( a, b ) => {
-			let aIndex = mostConsequentialDesignCategories.indexOf( a );
-			let bIndex = mostConsequentialDesignCategories.indexOf( b );
-
-			// If the category is not in the list, it should be sorted to the end.
-			if ( aIndex === -1 ) {
-				aIndex = mostConsequentialDesignCategories.length;
-			}
-			if ( bIndex === -1 ) {
-				bIndex = mostConsequentialDesignCategories.length;
-			}
-
-			return aIndex - bIndex;
-		} );
-	}
 
 	return {
 		defaultSelections,
