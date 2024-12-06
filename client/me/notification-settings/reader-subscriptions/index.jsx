@@ -250,7 +250,7 @@ class NotificationSubscriptions extends Component {
 										name="p2_disable_autofollow_on_comment"
 										onChange={ this.props.toggleSetting }
 										onClick={ this.handleCheckboxEvent(
-											'Enable auto-follow P2 Upon Comment',
+											'Enable auto-follow P2 upon comment',
 											true
 										) }
 									/>
