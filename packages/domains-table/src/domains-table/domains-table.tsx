@@ -68,6 +68,7 @@ interface BaseDomainsTableProps {
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
 	currentUserCanBulkUpdateContactInfo?: boolean;
+	sidebarMode?: boolean;
 }
 
 export type DomainsTableProps =
@@ -144,6 +145,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		userCanSetPrimaryDomains,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
+		sidebarMode = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -240,6 +242,19 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		domainsTableColumns = removeColumns( domainsTableColumns, 'owner' );
 	}
 
+	if ( sidebarMode ) {
+		// Remove all columns except for domain and action.
+		domainsTableColumns = removeColumns(
+			domainsTableColumns,
+			'site',
+			'owner',
+			'ssl',
+			'expire_renew',
+			'status',
+			'status_action'
+		);
+	}
+
 	const sortedDomains = useMemo( () => {
 		if ( ! domains ) {
 			return;
@@ -305,7 +320,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
-	const canSelectAnyDomains = selectableDomains.length > 1;
+	const canSelectAnyDomains = selectableDomains.length > 1 && ! sidebarMode;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {

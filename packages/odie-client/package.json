@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/api-fetch": "7.8.0",
@@ -44,12 +45,14 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-markdown": "^9.0.1",
 		"react-redux": "^9.1.2",
+		"smooch": "5.6.0",
 		"wpcom-proxy-request": "^7.0.5"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/autosize": "^4.0.3",
 		"@types/react": "^18.2.6",
+		"@types/smooch": "^5.3.7",
 		"typescript": "^5.3.3"
 	}
 }

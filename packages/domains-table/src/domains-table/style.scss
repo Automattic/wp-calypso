@@ -284,6 +284,7 @@
 .domains-table-mobile-cards {
 	overflow-y: auto;
 	max-height: calc(100vh - 326px);
+	padding-inline: 5px;
 
 	.domains-table-mobile-cards-select-all {
 		display: flex;

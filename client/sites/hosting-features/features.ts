@@ -39,3 +39,13 @@ export function useAreAdvancedHostingFeaturesSupported() {
 	}
 	return areHostingFeaturesSupported( site ) && hasSftpFeature;
 }
+
+export function useAreAdvancedHostingFeaturesSupportedAfterActivation() {
+	const features = useSelectedSiteSelector( getSiteFeatures );
+	const hasSftpFeature = useSelectedSiteSelector( siteHasFeature, FEATURE_SFTP );
+
+	if ( ! features ) {
+		return null;
+	}
+	return hasSftpFeature;
+}

@@ -42,6 +42,9 @@ function createReduxStoreWithPurchase( purchase ) {
 			},
 			sites: {
 				requestingAll: false,
+				domains: {
+					items: [],
+				},
 			},
 			currentUser: {
 				id: 1,

@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
@@ -20,6 +21,11 @@ export const getLastMessage = ( { conversation }: { conversation: ZendeskConvers
 	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
 		? conversation.messages[ conversation.messages.length - 1 ]
 		: null;
+};
+
+export const getZendeskConversations = () => {
+	const conversations = Smooch.getConversations();
+	return conversations as unknown as ZendeskConversation[];
 };
 
 export const getSortedRecentAndArchivedConversations = ( {
@@ -103,7 +109,7 @@ export const calculateUnread = ( conversations: ZendeskConversation[] ) => {
 export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source.type === 'web' && message.source.id )?.source.id || '';
+		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
 export const getConversationsFromSupportInteractions = (
 	conversations: ZendeskConversation[],
@@ -132,4 +138,11 @@ export const matchSupportInteractionId = (
 
 		return foundMatch;
 	}
+};
+
+export const isUseHelpCenterExperienceEnabled = ( userId: number ): boolean => {
+	if ( ! userId || userId % 100 > 50 ) {
+		return false;
+	}
+	return true;
 };

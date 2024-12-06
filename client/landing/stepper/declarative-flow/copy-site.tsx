@@ -129,8 +129,9 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
+					const plan = urlQueryParams.get( 'plan' );
 					return window.location.assign(
-						`/checkout/business/${ encodeURIComponent(
+						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);

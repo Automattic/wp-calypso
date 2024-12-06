@@ -23,6 +23,7 @@ export interface Referral {
 	purchases: ReferralPurchase[];
 	purchaseStatuses: string[];
 	referralStatuses: string[];
+	referralId: number;
 }
 
 export interface ReferralAPIResponse {

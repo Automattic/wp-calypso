@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
@@ -145,11 +145,13 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 					} ) }
 				</HostingCardDescription>
 			</>
-			<PanelSection isBorderless={ ! isUntangled }>
-				<PanelHeading asFormLabel={ ! isUntangled }>{ translate( 'All caches' ) }</PanelHeading>
-				<PanelDescription>
+			<PanelCard isBorderless={ ! isUntangled }>
+				<PanelCardHeading asFormLabel={ ! isUntangled }>
+					{ translate( 'All caches' ) }
+				</PanelCardHeading>
+				<PanelCardDescription>
 					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-				</PanelDescription>
+				</PanelCardDescription>
 				<Tooltip
 					placement="top"
 					text={
@@ -175,20 +177,20 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 						</Button>
 					</div>
 				</Tooltip>
-			</PanelSection>
+			</PanelCard>
 
 			{ ! isUntangled && <div className="cache-card__hr" /> }
 
-			<PanelSection isBorderless={ ! isUntangled }>
+			<PanelCard isBorderless={ ! isUntangled }>
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<PanelHeading asFormLabel={ ! isUntangled }>
+						<PanelCardHeading asFormLabel={ ! isUntangled }>
 							{ translate( 'Global edge cache', {
 								comment: 'Edge cache is a type of CDN that stores generated HTML pages',
 							} ) }
-						</PanelHeading>
+						</PanelCardHeading>
 						<ToggleControl
 							__nextHasNoMarginBottom
 							className="cache-card__edge-cache-toggle"
@@ -245,16 +247,16 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 							) }
 					</>
 				) }
-			</PanelSection>
+			</PanelCard>
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-				<PanelSection isBorderless={ ! isUntangled }>
-					<PanelHeading asFormLabel={ ! isUntangled }>
+				<PanelCard isBorderless={ ! isUntangled }>
+					<PanelCardHeading asFormLabel={ ! isUntangled }>
 						{ translate( 'Object cache', {
 							comment: 'Object cache stores database lookups and some network requests',
 						} ) }
-					</PanelHeading>
-					<PanelDescription>
+					</PanelCardHeading>
+					<PanelCardDescription>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}',
 							{
@@ -264,7 +266,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 								},
 							}
 						) }
-					</PanelDescription>
+					</PanelCardDescription>
 
 					<Tooltip
 						placement="top"
@@ -288,7 +290,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 							</Button>
 						</div>
 					</Tooltip>
-				</PanelSection>
+				</PanelCard>
 			) }
 		</HostingCard>
 	);

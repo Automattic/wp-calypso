@@ -48,6 +48,10 @@ const Bundle: FC< BundleType > = ( { bundle } ) => {
 			return [ <BackupIcon />, <AntispamIcon />, <ScanIcon /> ];
 		}
 
+		if ( bundle.includes( 'growth' ) ) {
+			return [ <SocialIcon /> ];
+		}
+
 		return [];
 	};
 

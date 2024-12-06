@@ -23,6 +23,10 @@ const SITE_DASHBOARD_ROUTES = {
 	'site-marketing': '/sites/marketing',
 	'site-tools': '/sites/tools',
 	'site-settings': '/sites/settings',
+
+	// Domain Management
+	'all-domain-management': '/domains/manage/all/overview',
+	'all-email-management': '/domains/manage/all/email',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {

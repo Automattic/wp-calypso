@@ -156,6 +156,7 @@ Used studio-blue for the primary+accent.
 	/* Collapse Menu Button */
 	--color-collapse-menu-text: var(--theme-icon-color);
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--theme-highlight-color);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

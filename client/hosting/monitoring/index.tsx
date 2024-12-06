@@ -1,4 +1,5 @@
-import page from '@automattic/calypso-router';
+import { isEnabled } from '@automattic/calypso-config';
+import page, { type Context } from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
@@ -12,15 +13,21 @@ import { redirectHomeIfIneligible, siteMonitoring } from './controller';
 export default function () {
 	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );
 
-	page(
-		'/site-monitoring/:site',
-		siteSelection,
-		redirectToHostingPromoIfNotAtomic,
-		redirectHomeIfIneligible,
-		navigation,
-		siteMonitoring,
-		siteDashboard( DOTCOM_MONITORING ),
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		page( '/site-monitoring/:site', ( context: Context ) => {
+			page.redirect( `/sites/tools/monitoring/${ context.params.site }` );
+		} );
+	} else {
+		page(
+			'/site-monitoring/:site',
+			siteSelection,
+			redirectToHostingPromoIfNotAtomic,
+			redirectHomeIfIneligible,
+			navigation,
+			siteMonitoring,
+			siteDashboard( DOTCOM_MONITORING ),
+			makeLayout,
+			clientRender
+		);
+	}
 }

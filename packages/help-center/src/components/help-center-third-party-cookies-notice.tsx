@@ -1,9 +1,7 @@
-/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-third-party-cookies-notice.scss';

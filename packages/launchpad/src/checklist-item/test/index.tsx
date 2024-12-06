@@ -181,25 +181,6 @@ describe( 'ChecklistItem', () => {
 				expect( screen.getByText( 'Expanded' ) ).toBeVisible();
 			} );
 
-			it( 'calls the action click', async () => {
-				const onClick = jest.fn();
-				renderComponent( {
-					expandable: {
-						isOpen: true,
-						content: <div>Expanded</div>,
-						action: {
-							label: 'Action',
-							onClick,
-						},
-					},
-				} );
-
-				const actionButton = screen.queryByRole( 'button', { name: 'Action' } )!;
-				await userEvent.click( actionButton );
-
-				expect( onClick ).toHaveBeenCalled();
-			} );
-
 			it( 'has the expanded class', () => {
 				const { container } = renderComponent( {
 					expandable: { isOpen: true, content: <div>Expanded</div> },

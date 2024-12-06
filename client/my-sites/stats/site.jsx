@@ -27,7 +27,11 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import {
+	DATE_FORMAT,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_FEATURE_PAGE_TRAFFIC,
+} from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	recordGoogleEvent,
@@ -75,6 +79,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -172,7 +177,7 @@ class StatsSite extends Component {
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( period === 'week' ? 'isoWeek' : period )
-			.format( 'YYYY-MM-DD' );
+			.format( DATE_FORMAT );
 
 		// Limit navigation within the currently selected range.
 		const currentChartStart = this.props.context.query?.chartStart;
@@ -193,10 +198,10 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( bar ) => {
+	barClick = ( isNewDateFilteringEnabled, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 
-		if ( ! config.isEnabled( 'stats/new-date-filtering' ) ) {
+		if ( ! isNewDateFilteringEnabled ) {
 			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
 			return;
 		}
@@ -278,7 +283,7 @@ class StatsSite extends Component {
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
 		} else {
-			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+			url += `?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
 		}
 
 		return url;
@@ -303,8 +308,9 @@ class StatsSite extends Component {
 			shouldForceDefaultDateRange,
 			supportUserFeedback,
 			momentSiteZone,
+			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -317,7 +323,7 @@ class StatsSite extends Component {
 			defaultPeriod = PAST_THIRTY_DAYS;
 		}
 
-		const queryDate = date.format( 'YYYY-MM-DD' );
+		const queryDate = date.format( DATE_FORMAT );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
@@ -331,7 +337,9 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
+			customChartRange = {
+				chartEnd: momentSiteZone.format( DATE_FORMAT ),
+			};
 		}
 
 		// Find the quantity of bars for the chart.
@@ -349,7 +357,7 @@ class StatsSite extends Component {
 			customChartRange.chartStart = momentSiteZone
 				.clone()
 				.subtract( daysInRange - 1, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.format( DATE_FORMAT );
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -385,16 +393,15 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
-			customChartRange.chartStart = momentSiteZone
-				.clone()
-				.subtract( 7, 'days' )
-				.format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
+			customChartRange.chartStart = moment( customChartRange.chartEnd )
+				.subtract( customChartRange.daysInRange - 1, 'days' )
+				.format( DATE_FORMAT );
 		}
 
 		const query = isNewDateFilteringEnabled
 			? chartRangeToQuery( customChartRange )
-			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+			: memoizedQuery( period, endOf.format( DATE_FORMAT ) );
 
 		// For period option links
 		const traffic = {
@@ -462,7 +469,7 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StickyPanel>
+					<StickyPanel headerId={ isOdysseyStats ? 'wpadminbar' : 'header' }>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
@@ -475,9 +482,9 @@ class StatsSite extends Component {
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								isWithNewDateControl
-								showArrows
+								showArrows={ ! wpcomShowUpsell }
 								slug={ slug }
 								dateRange={ customChartRange }
 							>
@@ -490,6 +497,7 @@ class StatsSite extends Component {
 									showQueryDate
 									isShort
 									dateRange={ customChartRange }
+									isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								/>
 							</StatsPeriodNavigation>
 						</StatsPeriodHeader>
@@ -523,6 +531,7 @@ class StatsSite extends Component {
 										statsType="statsTopPosts"
 										showQueryDate
 										isShort
+										isNewDateFilteringEnabled={ false }
 									/>
 								</StatsPeriodNavigation>
 							</StatsPeriodHeader>
@@ -537,7 +546,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
@@ -546,6 +555,7 @@ class StatsSite extends Component {
 								customQuantity={ customChartQuantity }
 								customRange={ customChartRange }
 								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
+								isNewDateFilteringEnabled
 							/>
 						) }
 						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
@@ -554,7 +564,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
+								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
@@ -566,141 +576,147 @@ class StatsSite extends Component {
 						) }
 					</>
 
-					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
+					{ ! wpcomShowUpsell && (
+						<>
+							{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-					<div className={ moduleListClasses }>
-						<StatsModuleTopPosts
-							moduleStrings={ moduleStrings.posts }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'posts', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-						<StatsModuleReferrers
-							moduleStrings={ moduleStrings.referrers }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'referrers', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						<StatsModuleCountries
-							moduleStrings={ moduleStrings.countries }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'countryviews', query ) }
-							className={ clsx( 'stats__flexible-grid-item--full' ) }
-						/>
-
-						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
-						{ supportsUTMStats && ! isOldJetpack && (
-							<StatsModuleUTM
-								siteId={ siteId }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'utm', query ) }
-								summary={ false }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{ supportsUTMStats && isOldJetpack && (
-							<StatsModuleUTMOverlay
-								siteId={ siteId }
-								className={ halfWidthModuleClasses }
-								overlay={
-									<StatsCardUpdateJetpackVersion
-										className="stats-module__upsell stats-module__upgrade"
-										siteId={ siteId }
-										statType="utm"
-									/>
-								}
-							/>
-						) }
-
-						<StatsModuleClicks
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'clicks', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						{ ! this.isModuleHidden( 'authors' ) && (
-							<StatsModuleAuthors
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'authors', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ ! isNewDateFilteringEnabled && supportsEmailStats && (
-							<StatsModuleEmails
-								period={ this.props.period }
-								moduleStrings={ moduleStrings.emails }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'emails', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						<StatsModuleSearch
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							summaryUrl={ this.getStatHref( 'searchterms', query ) }
-							className={ halfWidthModuleClasses }
-						/>
-
-						{ ! this.isModuleHidden( 'videos' ) && (
-							<StatsModuleVideos
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( 'videoplays', query ) }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
-
-						{
-							// File downloads are not yet supported in Jetpack environment
-							! isJetpack && (
-								<StatsModuleDownloads
-									moduleStrings={ moduleStrings.filedownloads }
+							<div className={ moduleListClasses }>
+								<StatsModuleTopPosts
+									moduleStrings={ moduleStrings.posts }
 									period={ this.props.period }
 									query={ query }
-									summaryUrl={ this.getStatHref( 'filedownloads', query ) }
+									summaryUrl={ this.getStatHref( 'posts', query ) }
 									className={ halfWidthModuleClasses }
 								/>
-							)
-						}
+								<StatsModuleReferrers
+									moduleStrings={ moduleStrings.referrers }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'referrers', query ) }
+									className={ halfWidthModuleClasses }
+								/>
 
-						{ supportsDevicesStats && ! isOldJetpack && (
-							<StatsModuleDevices
-								siteId={ siteId }
-								period={ this.props.period }
-								query={ query }
-								className={ halfWidthModuleClasses }
-							/>
-						) }
+								<StatsModuleCountries
+									moduleStrings={ moduleStrings.countries }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'countryviews', query ) }
+									className={ clsx( 'stats__flexible-grid-item--full' ) }
+								/>
 
-						{ supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeDevicesOverlay
-								className={ halfWidthModuleClasses }
-								siteId={ siteId }
-								overlay={
-									<StatsCardUpdateJetpackVersion
-										className="stats-module__upsell stats-module__upgrade"
+								{ /* If UTM if supported display the module or update Jetpack plugin card */ }
+								{ supportsUTMStats && ! isOldJetpack && (
+									<StatsModuleUTM
 										siteId={ siteId }
-										statType="devices"
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'utm', query ) }
+										summary={ false }
+										className={ halfWidthModuleClasses }
 									/>
+								) }
+
+								{ supportsUTMStats && isOldJetpack && (
+									<StatsModuleUTMOverlay
+										siteId={ siteId }
+										className={ halfWidthModuleClasses }
+										overlay={
+											<StatsCardUpdateJetpackVersion
+												className="stats-module__upsell stats-module__upgrade"
+												siteId={ siteId }
+												statType="utm"
+											/>
+										}
+									/>
+								) }
+
+								<StatsModuleClicks
+									moduleStrings={ moduleStrings.clicks }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'clicks', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+
+								{ ! this.isModuleHidden( 'authors' ) && (
+									<StatsModuleAuthors
+										moduleStrings={ moduleStrings.authors }
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'authors', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+								{ ! isNewDateFilteringEnabled && supportsEmailStats && (
+									<StatsModuleEmails
+										period={ this.props.period }
+										moduleStrings={ moduleStrings.emails }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'emails', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								<StatsModuleSearch
+									moduleStrings={ moduleStrings.search }
+									period={ this.props.period }
+									query={ query }
+									summaryUrl={ this.getStatHref( 'searchterms', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+
+								{ ! this.isModuleHidden( 'videos' ) && (
+									<StatsModuleVideos
+										moduleStrings={ moduleStrings.videoplays }
+										period={ this.props.period }
+										query={ query }
+										summaryUrl={ this.getStatHref( 'videoplays', query ) }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{
+									// File downloads are not yet supported in Jetpack environment
+									! isJetpack && (
+										<StatsModuleDownloads
+											moduleStrings={ moduleStrings.filedownloads }
+											period={ this.props.period }
+											query={ query }
+											summaryUrl={ this.getStatHref( 'filedownloads', query ) }
+											className={ halfWidthModuleClasses }
+										/>
+									)
 								}
-							/>
-						) }
-					</div>
+
+								{ supportsDevicesStats && ! isOldJetpack && (
+									<StatsModuleDevices
+										siteId={ siteId }
+										period={ this.props.period }
+										query={ query }
+										className={ halfWidthModuleClasses }
+									/>
+								) }
+
+								{ supportsDevicesStats && isOldJetpack && (
+									<StatsModuleUpgradeDevicesOverlay
+										className={ halfWidthModuleClasses }
+										siteId={ siteId }
+										overlay={
+											<StatsCardUpdateJetpackVersion
+												className="stats-module__upsell stats-module__upgrade"
+												siteId={ siteId }
+												statType="devices"
+											/>
+										}
+									/>
+								) }
+							</div>
+						</>
+					) }
+
+					{ wpcomShowUpsell && <StatsUpsell siteId={ siteId } /> }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
@@ -708,7 +724,9 @@ class StatsSite extends Component {
 				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
+					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				) }
 				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
@@ -859,6 +877,9 @@ export default connect(
 			siteId,
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
+		const wpcomShowUpsell =
+			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
 		return {
 			canUserViewStats,
@@ -882,6 +903,7 @@ export default connect(
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
+			wpcomShowUpsell,
 		};
 	},
 	{

@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
@@ -10,6 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSupportStatus } from '../data/use-support-status';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
@@ -33,8 +33,9 @@ const HelpCenterFeedbackForm = ( {
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
-	const { sectionName, site } = useHelpCenterContext();
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+	const { data } = useSupportStatus();
+	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
+	const { sectionName, site, shouldUseHelpCenterExperience } = useHelpCenterContext();
 	const navigate = useNavigate();
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 	const plan = getPlan( productSlug );
@@ -107,12 +108,14 @@ const HelpCenterFeedbackForm = ( {
 
 	const handleContactSupportClick = async () => {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
-		await resetSupportInteraction();
-		startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: uuidv4(),
-		} );
-		navigate( '/odie' );
+		if ( isUserEligibleForPaidSupport ) {
+			await resetSupportInteraction();
+			startNewInteraction( {
+				event_source: 'help-center',
+				event_external_id: uuidv4(),
+			} );
+			navigate( '/odie' );
+		}
 	};
 
 	return (
@@ -132,7 +135,10 @@ const HelpCenterFeedbackForm = ( {
 								) }
 							</p>
 						</div>
-						<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+						<GetSupport
+							onClickAdditionalEvent={ handleContactSupportClick }
+							isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+						/>
 					</>
 				) : (
 					<HelpCenterContactSupportOption

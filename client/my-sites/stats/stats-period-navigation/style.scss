@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
 .stats-period-navigation {
 	display: flex;
 	flex-flow: row wrap;
@@ -16,6 +19,10 @@
 		line-height: 40px;
 		color: var(--studio-gray-100);
 		text-align: left;
+
+		@media (max-width: $break-mobile) {
+			font-size: $font-title-medium;
+		}
 	}
 
 	.stats-date-picker__refresh-status {

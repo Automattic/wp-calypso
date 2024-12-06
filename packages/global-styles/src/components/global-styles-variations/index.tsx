@@ -109,10 +109,13 @@ const GlobalStylesVariations = ( {
 	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
 		? PLAN_PERSONAL
 		: PLAN_PREMIUM;
-	const premiumStylesDescription = translate(
-		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-		{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
-	);
+
+	const variationDescription = needsUpgrade
+		? translate(
+				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
+		  )
+		: translate( 'You can change your style at any time.' );
 
 	const baseGlobalStyles = useMemo(
 		() =>
@@ -129,7 +132,7 @@ const GlobalStylesVariations = ( {
 		[ globalStylesVariations ]
 	);
 
-	const nonDefaultStylesDescription = description ?? premiumStylesDescription;
+	const nonDefaultStylesDescription = description ?? variationDescription;
 	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
@@ -199,11 +202,13 @@ const GlobalStylesVariations = ( {
 												count: nonDefaultStyles.length,
 										  } ) }
 								</span>
-								<PremiumBadge
-									shouldHideTooltip
-									shouldCompactWithAnimation
-									labelText={ translate( 'Upgrade' ) }
-								/>
+								{ needsUpgrade && (
+									<PremiumBadge
+										shouldHideTooltip
+										shouldCompactWithAnimation
+										labelText={ translate( 'Upgrade' ) }
+									/>
+								) }
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>
 						</div>

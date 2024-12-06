@@ -14,6 +14,7 @@ import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
+import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
@@ -95,6 +96,8 @@ const siteSetupFlow: Flow = {
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
+
 		const stepData = useSelect(
 			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
 			[]
@@ -305,7 +308,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// If the user skips starting point, redirect them to the post editor
-					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
+					if ( isGoalsHoldout && intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 						}
@@ -377,9 +380,13 @@ const siteSetupFlow: Flow = {
 
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
+
 						case SiteIntent.Write:
 						case SiteIntent.Sell:
-							return navigate( 'options' );
+							// If we're not in the holdout, intentionally fall through to the default case
+							if ( isGoalsHoldout ) {
+								return navigate( 'options' );
+							}
 						default: {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
@@ -453,7 +460,11 @@ const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as string );
+					const url = providedDependencies?.url;
+					if ( typeof url === 'string' ) {
+						return navigate( addQueryArgs( { origin }, url ) );
+					}
+					return navigate( url as string );
 				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as string );
@@ -524,10 +535,12 @@ const siteSetupFlow: Flow = {
 					switch ( intent ) {
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
-						case SiteIntent.Sell:
-							return navigate( 'options' );
 						case SiteIntent.Write:
-							return navigate( 'bloggerStartingPoint' );
+						case SiteIntent.Sell:
+							// If we're not in the holdout, intentionally fall through to the default case
+							if ( isGoalsHoldout ) {
+								return navigate( 'options' );
+							}
 						default: {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
@@ -566,9 +579,9 @@ const siteSetupFlow: Flow = {
 						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
 							return goToFlow( backToFlow );
 						}
-						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
-					return navigate( `importList?siteSlug=${ siteSlug }` );
+					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
 
 				case 'importerWordpress':
 					if ( backToFlow ) {

@@ -58,10 +58,13 @@ export default function MigrationsCommissions() {
 		) : (
 			<div className="migrations-commissions__content">
 				<MigrationsConsolidatedCommissions items={ taggedSites } />
-				<MigrationsCommissionsList items={ taggedSites } />
+				<MigrationsCommissionsList
+					items={ taggedSites }
+					fetchMigratedSites={ fetchMigratedSites }
+				/>
 			</div>
 		);
-	}, [ isLoading, showEmptyState, taggedSites, setShowAddSitesModal ] );
+	}, [ isLoading, showEmptyState, taggedSites, setShowAddSitesModal, fetchMigratedSites ] );
 
 	return (
 		<Layout

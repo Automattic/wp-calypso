@@ -26,8 +26,15 @@
 	margin-inline-end: 1rem;
 
 	img {
-		width: 25px;
+		width: 35px;
 		height: auto;
+
+	}
+
+	&.jetpack_complete_v2 {
+		img {
+			width: 25px;
+		}
 	}
 
 	&-woocommerce {

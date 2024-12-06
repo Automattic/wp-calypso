@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { FeaturedItemCardProps } from '../types';
 
 import './style.scss';
@@ -15,13 +16,16 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	isCtaDisabled,
 	isCtaExternal,
 	isProductInCart,
+	isVertical,
 	onClickCta,
 	price,
 	title,
 	variant,
 } ) => {
 	return (
-		<div className="featured-item-card">
+		<div
+			className={ clsx( 'featured-item-card', { [ 'featured-item-card--vertical' ]: isVertical } ) }
+		>
 			<div className="featured-item-card--hero">{ hero }</div>
 
 			<div className="featured-item-card--body">

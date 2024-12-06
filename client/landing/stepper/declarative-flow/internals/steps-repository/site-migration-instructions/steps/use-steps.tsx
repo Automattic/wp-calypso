@@ -1,12 +1,19 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { MigrationKeyCta } from './migration-key-cta';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
+import { StepButton } from './step-button';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
 import { StepInstallMigrationPlugin } from './step-install-migration-plugin';
-import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
+import { StepLinkCta } from './step-link-cta';
+import { getMigrationPluginPageURL, getMigrationPluginInstallURL } from './utils';
+import type { Task, Expandable } from '@automattic/launchpad';
+
+const INSTALL_MIGRATION_PLUGIN = 'install-the-migrate-plugin';
+const GET_SITE_READY = 'get-your-site-ready';
+const ADD_MIGRATION_KEY = 'add-your-migration-key';
 
 interface StepsDataOptions {
 	fromUrl: string;
@@ -17,8 +24,9 @@ interface StepsDataOptions {
 
 interface StepData {
 	key: string;
-	title: string;
+	title: string | React.ReactNode;
 	content: JSX.Element;
+	action?: JSX.Element;
 }
 
 type StepsData = StepData[];
@@ -54,29 +62,38 @@ const useStepsData = ( {
 
 	return [
 		{
-			key: 'install-the-migrate-plugin',
+			key: INSTALL_MIGRATION_PLUGIN,
 			title: translate( 'Install the %(pluginName)s plugin', {
 				args: {
-					pluginName: config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
-						? 'Migrate to WordPress.com'
-						: 'Migrate Guru',
+					pluginName: 'Migrate to WordPress.com',
 				},
-			} ) as string,
-			content: <StepInstallMigrationPlugin fromUrl={ fromUrl } />,
+			} ),
+			content: <StepInstallMigrationPlugin />,
+			action: (
+				<StepLinkCta url={ getMigrationPluginInstallURL( fromUrl ) } linkname="install-plugin">
+					{ translate( 'Install plugin' ) }
+				</StepLinkCta>
+			),
 		},
 		{
-			key: 'get-your-site-ready',
+			key: GET_SITE_READY,
 			title: translate( 'Get your site ready' ),
-			content: <StepGetYourSiteReady fromUrl={ fromUrl } />,
+			content: <StepGetYourSiteReady />,
+			action: fromUrl ? (
+				<StepLinkCta url={ getMigrationPluginPageURL( fromUrl ) } linkname="go-to-plugin-page">
+					{ translate( 'Get started' ) }
+				</StepLinkCta>
+			) : undefined,
 		},
 		{
-			key: 'add-your-migration-key',
+			key: ADD_MIGRATION_KEY,
 			title: translate( 'Add your migration key' ),
 			content: showMigrationKeyFallback ? (
 				<StepAddMigrationKeyFallback />
 			) : (
 				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
+			action: showMigrationKeyFallback ? <MigrationKeyCta /> : undefined,
 		},
 	];
 };
@@ -128,25 +145,26 @@ export const useSteps = ( {
 						setCurrentStep( index );
 				  };
 
+		let navigationAction = undefined;
+		const navigationButtonVariant = step.action ? 'secondary' : 'primary';
 		const isMigrationKeyStep = index === array.length - 1;
 
-		let action: ExpandableAction | undefined;
-
-		if ( ! isMigrationKeyStep ) {
-			// Next action.
-			action = {
-				label: translate( 'Next' ),
-				onClick: onNextClick,
-			};
-		} else if ( migrationKey || showMigrationKeyFallback ) {
-			// Done action for the migration key step.
-			action = {
-				label: translate( 'Done' ),
-				onClick: onDoneClick,
-			};
+		if ( isMigrationKeyStep ) {
+			// Show the Done button if there's a migration key OR if the fallback text is displayed.
+			// If neither are true, then the migration key is still being generated.
+			if ( migrationKey || showMigrationKeyFallback ) {
+				navigationAction = (
+					<StepButton variant={ navigationButtonVariant } onClick={ onDoneClick }>
+						{ translate( 'Done' ) }
+					</StepButton>
+				);
+			}
 		} else {
-			// No action for migration key step when migration key is not available.
-			action = undefined;
+			navigationAction = (
+				<StepButton variant={ navigationButtonVariant } onClick={ onNextClick }>
+					{ translate( 'Next' ) }
+				</StepButton>
+			);
 		}
 
 		return {
@@ -157,9 +175,17 @@ export const useSteps = ( {
 				disabled: lastCompleteStep < index - 1,
 			},
 			expandable: {
-				content: step.content,
+				content: (
+					<>
+						{ step.content }
+
+						<div className="checklist-item__checklist-expanded-ctas">
+							{ step.action }
+							{ navigationAction }
+						</div>
+					</>
+				),
 				isOpen: currentStep === index,
-				action,
 			},
 			onClick: onItemClick,
 		};

@@ -81,16 +81,7 @@ export default function PlanSelectionDetails( {
 			<div className="pressable-overview-plan-selection__details-card">
 				<div className="pressable-overview-plan-selection__details-card-header">
 					<h3 className="pressable-overview-plan-selection__details-card-header-title plan-name">
-						{ isNewHostingPage
-							? translate( 'Pressable' )
-							: translate( '%(planName)s plan', {
-									args: {
-										planName: selectedPlan
-											? getPressableShortName( selectedPlan.name )
-											: customString,
-									},
-									comment: '%(planName)s is the name of the selected plan.',
-							  } ) }
+						{ selectedPlan ? selectedPlan.name : customString }
 					</h3>
 
 					{ ! isReferMode && selectedPlan && (

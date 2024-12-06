@@ -5,7 +5,7 @@ import './style.scss';
 
 export default function StagingSite() {
 	return (
-		<Panel wide className="tools-staging-site">
+		<Panel className="tools-staging-site">
 			<StagingSiteWrapper />
 		</Panel>
 	);

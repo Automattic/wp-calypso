@@ -59,7 +59,7 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 			} ) }
 		>
 			<div className="pressable-overview-plan-selection__upgrade-title narrow">
-				{ translate( 'Choose plan to refer' ) }
+				{ translate( 'Choose a plan to refer' ) }
 			</div>
 			<PlanSelectionFilter
 				selectedPlan={ selectedPlan }

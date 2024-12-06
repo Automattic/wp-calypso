@@ -6,11 +6,92 @@
 
 $breakpoint-mobile: 660px;
 
+@mixin button-primary {
+	background-color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-secondary {
+	border: 2px solid var(--woo-purple-40);
+	background-color: transparent;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-70);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-tertiary {
+	background-color: transparent;
+	color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-0);
+		color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: transparent;
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-size-small {
+	padding: 5.5px 16px;
+	font-weight: 500;
+	font-size: rem(14px);
+	line-height: 21px;
+}
+
+@mixin button-size-base {
+	padding: 12px 24px;
+	font-weight: 500;
+	font-size: rem(16px);
+	line-height: 24px;
+}
+
+@mixin button-size-large {
+	padding: 14.5px 24px;
+	font-weight: 500;
+	font-size: rem(18px);
+	line-height: 27px;
+}
+
+@mixin link-woo {
+	color: var(--woo-purple-40);
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	font-weight: 400;
+
+	&:hover,
+	&:focus {
+		color: var(--woo-purple-60);
+	}
+}
+
 .woo {
-	$woo-purple-40: #966ccf;
-	$woo-purple-50: #7f54b3;
-	$woo-purple-60: #674399;
-	$woo-purple-70: #533582;
+	--woo-purple-40: #966ccf;
+	--woo-purple-50: #7f54b3;
+	--woo-purple-60: #674399;
+	--woo-purple-70: #533582;
 	$woo-label-color: #50575e;
 	$woo-gray-100: #101517;
 	$woo-gray-40: #787c82;
@@ -60,7 +141,7 @@ $breakpoint-mobile: 660px;
 		&:focus,
 		&:hover,
 		&:focus:hover {
-			border-color: $woo-purple-50;
+			border-color: var(--woo-purple-50);
 			outline: none;
 			box-shadow: 0 0 0 2px #e5cfe8;
 		}
@@ -91,7 +172,7 @@ $breakpoint-mobile: 660px;
 
 	.button:not(.social-buttons__button) {
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
-		border: 2px solid $woo-purple-60;
+		border: 2px solid var(--woo-purple-60);
 		text-decoration: none;
 		width: auto;
 		padding: 10px 24px;
@@ -101,7 +182,7 @@ $breakpoint-mobile: 660px;
 	.button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
-		background-color: $woo-purple-60;
+		background-color: var(--woo-purple-60);
 		border: none;
 		color: #fff;
 		width: 100%;
@@ -111,7 +192,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		&:hover {
-			background-color: $woo-purple-40;
+			background-color: var(--woo-purple-40);
 			color: #fff;
 		}
 
@@ -162,7 +243,7 @@ $breakpoint-mobile: 660px;
 
 			a,
 			a:visited, {
-				color: $woo-purple-60;
+				color: var(--woo-purple-60);
 				font-size: rem(14px);
 				font-style: normal;
 				font-weight: 500;
@@ -172,7 +253,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			a:hover {
-				color: $woo-purple-40;
+				color: var(--woo-purple-40);
 			}
 		}
 	}
@@ -336,18 +417,24 @@ $breakpoint-mobile: 660px;
 		-webkit-font-smoothing: subpixel-antialiased;
 
 		a {
-			color: $woo-purple-70;
+			color: var(--woo-purple-70);
 			font-weight: 400;
 			font-size: 1rem;
 			text-decoration: none;
 
 			&:hover {
-				color: $woo-purple-40;
+				color: var(--woo-purple-40);
 			}
 		}
 
 		@media (max-width: $break-mobile) {
 			text-align: left;
+		}
+
+		@media (min-width: $break-large) {
+			br.hide-on-desktop {
+				display: none;
+			}
 		}
 	}
 
@@ -633,7 +720,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		a {
-			color: $woo-purple-70;
+			color: var(--woo-purple-70);
 			font-size: $font-body;
 			text-decoration: none;
 		}
@@ -1220,7 +1307,7 @@ $breakpoint-mobile: 660px;
 			&:focus,
 			&:hover,
 			&:focus:hover {
-				border: 2px solid $woo-purple-50;
+				border: 2px solid var(--woo-purple-50);
 				box-shadow: none;
 			}
 
@@ -1244,7 +1331,7 @@ $breakpoint-mobile: 660px;
 		.button.is-primary,
 		.login .button.is-primary,
 		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
-			background-color: $woo-purple-50;
+			background-color: var(--woo-purple-50);
 			font-family: $woo-inter-font;
 			font-size: 1rem;
 			font-style: normal;
@@ -1256,7 +1343,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			&:hover {
-				background-color: $woo-purple-70;
+				background-color: var(--woo-purple-70);
 				color: #fff;
 			}
 
@@ -1327,7 +1414,7 @@ $breakpoint-mobile: 660px;
 			text-align: center;
 
 			a {
-				color: $woo-purple-50;
+				color: var(--woo-purple-50);
 				font-size: rem(18px);
 				font-style: normal;
 				font-weight: 500;
@@ -1335,7 +1422,7 @@ $breakpoint-mobile: 660px;
 				letter-spacing: -0.025px;
 
 				&:hover {
-					color: $woo-purple-40;
+					color: var(--woo-purple-40);
 				}
 			}
 
@@ -1430,7 +1517,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.login__lost-password-link {
-				color: $woo-purple-50;
+				color: var(--woo-purple-50);
 				text-align: center;
 				font-weight: 500;
 				line-height: 20px;
@@ -1608,14 +1695,14 @@ $breakpoint-mobile: 660px;
 
 			.continue-as-user__change-user-link {
 				text-decoration: none;
-				color: $woo-purple-50;
+				color: var(--woo-purple-50);
 				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 500;
 				line-height: 21px;
 
 				&:hover {
-					color: $woo-purple-70;
+					color: var(--woo-purple-70);
 				}
 			}
 
@@ -1681,6 +1768,7 @@ $breakpoint-mobile: 660px;
 
 				strong {
 					font-weight: 600;
+					display: inline-block;
 				}
 			}
 
@@ -1719,7 +1807,7 @@ $breakpoint-mobile: 660px;
 
 				a {
 					text-decoration: none;
-					color: $woo-purple-50;
+					color: var(--woo-purple-50);
 					font-size: rem(14px);
 					font-style: normal;
 					font-weight: 500;
@@ -2118,5 +2206,76 @@ $breakpoint-mobile: 660px;
 				}
 			}
 		}
+	}
+}
+
+.woo.feature-flag-woocommerce-rebrand-2-0,
+.woo.feature-flag-woocommerce-rebrand-2-0.is-woo-passwordless {
+	--woo-purple-0: #F2EDFF;
+	--woo-purple-40: #873EFF;
+	--woo-purple-50: #720EEC;
+	--woo-purple-60: #6108CE;
+	--woo-purple-70: #5007AA;
+
+	&.is-woo-passwordless {
+		.security-key-form__help-text,
+		.formatted-header__subtitle {
+			a {
+				@include link-woo;
+			}
+		}
+	}
+
+	.masterbar__woo {
+		.masterbar__woo-nav {
+			.masterbar__login-back-link {
+				margin-left: 15px;
+			}
+		}
+	}
+
+	input[type="text"].form-text-input,
+	input[type="email"].form-text-input,
+	input[type="password"].form-text-input,
+	input[type="tel"].form-text-input,
+	textarea.form-text-input {
+		border: 1px solid var(--studio-gray-30);
+		&:focus,
+		&:hover,
+		&:focus:hover {
+			border: 1px solid var(--woo-purple-40);
+		}
+	}
+
+	.button.is-primary,
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		@include button-primary;
+	}
+
+	.notice__text a,
+	.notice__text a:visited {
+		@include link-woo;
+	}
+
+	.login__header-subtitle a {
+		@include link-woo;
+	}
+
+	.continue-as-user__change-user-link {
+		@include button-tertiary;
+		@include button-size-small;
+	}
+
+	.magic-login__footer a {
+		@include link-woo;
+	}
+
+	.auth-form__social-buttons-tos a {
+		text-underline-offset: 2px;
+	}
+
+	.login__lost-password-link {
+		@include link-woo;
 	}
 }

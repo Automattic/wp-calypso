@@ -20,10 +20,8 @@
 			padding-inline: 48px;
 			// Override the max-width set in a8c-for-agencies/components/layout/style.scss
 			// as the title aligns with DataViews (full width).
+			// TODO: Remove when we drop A4A Layout or when A4A Layout drops the max-width.
 			max-width: revert;
-			@media (max-width: 402px) {
-				padding-inline: 24px;
-			}
 		}
 	}
 
@@ -79,14 +77,6 @@
 		margin: 0 auto;
 		padding-inline: 48px;
 		width: 100%;
-
-		@media (max-width: 402px) {
-			padding-inline: 24px;
-		}
-
-		@include break-huge {
-			max-width: 1400px;
-		}
 	}
 
 	.sites-banner {
@@ -377,14 +367,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-	}
-}
-
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
-	div.a4a-layout__viewport {
-		// margin: 0 auto;
-		// max-width: 1400px;
-		// box-sizing: border-box;
 	}
 }
 

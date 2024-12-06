@@ -1,6 +1,14 @@
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+@import 'node_modules/@wordpress/base-styles/mixins';
+
 .settings-web-server {
 	select {
 		width: unset;
+		max-width: 250px;
+
+		@include break-small {
+			max-width: unset;
+		}
 	}
 
 	.defensive-mode__heading {

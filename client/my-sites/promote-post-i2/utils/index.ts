@@ -284,6 +284,12 @@ export const canPromoteAgainCampaign = ( status: string ) => {
 	].includes( status );
 };
 
+export const canGetCampaignStats = ( status: string ) => {
+	return [ campaignStatus.ACTIVE, campaignStatus.FINISHED, campaignStatus.CANCELED ].includes(
+		status
+	);
+};
+
 type PagedDataMode = 'campaigns' | 'posts';
 
 type BlazeDataPaged = {
@@ -402,4 +408,13 @@ export const isRunningInWpAdmin = ( site: SiteDetails | null | undefined ): bool
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isRunningInClassicSimple = site?.options?.is_wpcom_simple;
 	return isRunningInClassicSimple || isRunningInJetpack;
+};
+
+export const cvsStatsDownload = ( csvData: string, fileName: string = 'report.csv' ) => {
+	const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8;' } );
+	const link = document.createElement( 'a' );
+	link.href = URL.createObjectURL( blob );
+	link.download = fileName;
+	link.click();
+	URL.revokeObjectURL( link.href );
 };

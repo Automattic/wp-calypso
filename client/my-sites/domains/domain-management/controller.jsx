@@ -25,6 +25,7 @@ import {
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainManagement from '.';
 
@@ -321,5 +322,53 @@ export default {
 			/>
 		);
 		next();
+	},
+
+	// The main layout that wraps all the domain management pages.
+	domainDashboardLayout( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagement.DomainDashboardLayout innerContent={ pageContext.primary } />
+		);
+
+		next();
+	},
+
+	// The domain overview page. For the All Domains view.
+	domainManagementV2( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot( ':domain' ) }
+				analyticsTitle="Domain Management"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				selectedDomainName={ selectedDomainName }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	// The domain overview pane. Has a tabbed layout with the domain overview and email management.
+	domainManagementPaneView( feature ) {
+		return ( pageContext, next ) => {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const site = getSite( state, siteSlug );
+			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+			pageContext.primary = (
+				<DomainManagement.DomainOverviewPane
+					selectedDomainPreview={ pageContext.primary }
+					selectedDomain={ selectedDomainName }
+					selectedFeature={ feature }
+					siteSlug={ siteSlug }
+					site={ site }
+				/>
+			);
+
+			next();
+		};
 	},
 };

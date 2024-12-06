@@ -340,8 +340,6 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block title translations', async function () {
-					await editorPage.openSettings();
-
 					// If on block insertion, one of the sub-blocks are selected, click on
 					// the first button in the floating toolbar which selects the overall
 					// block.

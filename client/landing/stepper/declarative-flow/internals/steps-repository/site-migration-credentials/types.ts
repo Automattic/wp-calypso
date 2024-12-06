@@ -43,3 +43,8 @@ export interface MigrationError {
 		};
 	};
 }
+
+export interface ApplicationPasswordsInfo {
+	application_passwords_enabled: boolean;
+	authorization_url?: string;
+}

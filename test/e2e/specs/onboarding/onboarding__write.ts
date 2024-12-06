@@ -21,7 +21,6 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
-	const blogTagLine = `${ blogName } tagline`;
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
 	} );
@@ -65,6 +64,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 	} );
 
 	describe( 'Onboarding', function () {
+		const themeName = 'Poema';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {
@@ -84,12 +84,8 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( blogName );
-		} );
-
-		it( 'Enter blog tagline', async function () {
-			await startSiteFlow.enterTagline( blogTagLine );
+		it( 'Select theme', async function () {
+			await startSiteFlow.selectTheme( themeName );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 	} );
@@ -97,15 +93,14 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 	describe( 'Write', function () {
 		const postTitle = DataHelper.getRandomPhrase();
 
-		let startSiteFlow: StartSiteFlow;
 		let editorPage: EditorPage;
 
-		beforeAll( async function () {
-			startSiteFlow = new StartSiteFlow( page );
+		it( 'Launchpad is shown', async function () {
+			await page.waitForURL( /launchpad/, { timeout: 30000 } );
 		} );
 
 		it( 'Write first post', async function () {
-			await startSiteFlow.clickWriteAction( 'Start writing' );
+			await page.getByRole( 'link', { name: 'Write your first post' } ).click();
 		} );
 
 		it( 'Editor loads', async function () {

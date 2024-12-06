@@ -28,6 +28,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread = false,
 	navigateTo = '',
 	supportInteractionId,
+	sectionName,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
@@ -36,13 +37,14 @@ export const HelpCenterSupportChatMessage = ( {
 	navigateTo: string;
 	altText?: string;
 	supportInteractionId: string | null;
+	sectionName?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
 	const { displayName, received, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
-	const sectionName = helpCenterContext.sectionName;
+	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -63,7 +65,7 @@ export const HelpCenterSupportChatMessage = ( {
 		<Link
 			to={ navigateTo }
 			onClick={ () => {
-				trackContactButtonClicked( sectionName );
+				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
 				if ( supportInteraction ) {
 					setCurrentSupportInteraction( supportInteraction );
 				}

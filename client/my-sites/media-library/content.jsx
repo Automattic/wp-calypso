@@ -21,7 +21,6 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
 import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
@@ -37,6 +36,8 @@ import {
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
+import GooglePhotosAuthUpgrade from './google-photos-auth-upgrade';
+import GooglePhotosPickerButton from './google-photos-picker-button';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
 import './content.scss';
@@ -140,6 +141,12 @@ export class MediaLibraryContent extends Component {
 		}
 
 		return false;
+	}
+
+	hasGoogleInvalidConnection( props ) {
+		const { googleConnection, source } = props;
+
+		return source === 'google_photos' && googleConnection && googleConnection.status === 'invalid';
 	}
 
 	renderErrors() {
@@ -355,7 +362,7 @@ export class MediaLibraryContent extends Component {
 			<div className="media-library__connect-message">
 				<p>
 					<img
-						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						src="/calypso/images/sharing/google-photos-logo-text.svg?v=20241124"
 						width="400"
 						alt={ translate( 'Google Photos' ) }
 					/>
@@ -407,6 +414,10 @@ export class MediaLibraryContent extends Component {
 					mediaScale={ this.props.mediaScale }
 				/>
 			);
+		}
+
+		if ( this.hasGoogleInvalidConnection( this.props ) ) {
+			return <GooglePhotosAuthUpgrade connection={ this.props.googleConnection } />;
 		}
 
 		if ( this.needsToBeConnected() ) {
@@ -469,6 +480,11 @@ export class MediaLibraryContent extends Component {
 				return null;
 			}
 
+			const hasRefreshButton =
+				'pexels' !== this.props.source &&
+				'openverse' !== this.props.source &&
+				! this.props.photosPickerApiEnabled;
+
 			return (
 				<MediaLibraryExternalHeader
 					onMediaScaleChange={ this.props.onMediaScaleChange }
@@ -481,12 +497,13 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
+					hasRefreshButton={ hasRefreshButton }
 					mediaScale={ this.props.mediaScale }
 					photosPickerApiEnabled={ this.props.photosPickerApiEnabled }
 					photosPickerSession={ this.props.photosPickerSession }
 					createPhotosPickerSession={ this.props.createPhotosPickerSession }
 					deletePhotosPickerSession={ this.props.deletePhotosPickerSession }
+					isCreatingPhotosPickerSession={ this.props.isCreatingPhotosPickerSession }
 				/>
 			);
 		}

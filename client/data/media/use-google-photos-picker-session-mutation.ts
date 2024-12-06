@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { setPhotoPickerSession } from 'calypso/state/media/actions';
@@ -17,7 +18,7 @@ export type PickerSession = {
 export function useCreateGooglePhotosPickerSessionMutation( queryOptions = {} ) {
 	const dispatch = useDispatch();
 
-	return useMutation( {
+	const mutation = useMutation( {
 		...queryOptions,
 		mutationFn: () =>
 			wp.req.post( {
@@ -28,6 +29,17 @@ export function useCreateGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 			dispatch( setPhotoPickerSession( data ) );
 		},
 	} );
+
+	const { mutate } = mutation;
+
+	const createSession = useCallback(
+		( options = {} ) => {
+			mutate( undefined, options );
+		},
+		[ mutate ]
+	);
+
+	return { createSession, ...mutation };
 }
 
 export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) {

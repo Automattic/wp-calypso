@@ -1,9 +1,19 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/dataviews/build-style/style.css";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+
+body.is-reader-full-post {
+	overflow: hidden;
+}
 
 .is-section-reader .recent-feed {
 	$recent-feed-spacing: 12px;
+	$feed-card-border-radius: 8px; /* stylelint-disable-line scales/radii */
+	$feed-content-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - var( --content-padding-bottom ) );
+
+	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
 
 	@media ( min-width: $break-wide ) {
 		display: flex;
@@ -13,17 +23,19 @@
 
 	%column-shared {
 		background: var( --color-surface );
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border-radius: $feed-card-border-radius;
 		box-shadow: 0 0 17.4px 0 rgba( 0, 0, 0, 0.05 );
-		height: 100%;
-		overflow-y: auto;
-		overflow-x: hidden;
 	}
 
 	&__list-column {
-		flex: 1;
-		width: 100%;
+		$feed-list-header-height: 70px;
+		$feed-list-actions-height: 65px;
+		$feed-list-footer-height: 57px;
+
 		@extend %column-shared;
+		flex: 1;
+		overflow: hidden;
+		width: 100%;
 
 		&.has-overlay {
 			display: none;
@@ -38,22 +50,42 @@
 		}
 
 		&-header {
-			padding: 0 $recent-feed-spacing;
+			padding: 16px $recent-feed-spacing;
 			border-bottom: 1px solid var( --studio-gray-0 );
-			margin-bottom: 16px;
+
+			.navigation-header__main {
+				align-items: center;
+			}
 
 			header {
-				margin: 16px 0;
-			}
+				margin: 0;
+				padding: 0;
 
-			@media ( min-width: $break-wide ) {
-				padding: 16px $recent-feed-spacing 0;
+				&::after {
+					display: none;
+				}
 			}
+		}
+
+		.dataviews-loading {
+			margin-top: 200px;
+		}
+
+		.components-spinner {
+			height: 24px;
+			width: 24px;
+		}
+
+		.dataviews-view-list {
+			height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height - $feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom ) );
+			overflow-y: auto;
+			@include custom-scrollbars-on-hover( transparent, $gray-600 );
+			scrollbar-gutter: auto;
 		}
 
 		.dataviews__view-actions {
 			box-sizing: border-box;
-			padding: 0 $recent-feed-spacing;
+			padding: 16px $recent-feed-spacing;
 		}
 
 		.dataviews-no-results {
@@ -62,7 +94,7 @@
 
 		ul {
 			list-style: none;
-			margin: 16px 0 0;
+			margin: 0;
 
 			li {
 				border-top: 1px solid var( --studio-gray-0 );
@@ -86,6 +118,7 @@
 
 				.components-flex {
 					align-items: center;
+					flex-grow: 1;
 				}
 
 				.dataviews-view-list__media-wrapper {
@@ -143,38 +176,12 @@
 				padding: $recent-feed-spacing;
 			}
 		}
-
-		&.recent-feed--no-subscriptions {
-			max-width: none;
-
-			.recent-feed__list-column-header {
-				max-width: none;
-				margin: 0;
-				padding: 16px 0;
-				border-bottom: 1px solid var( --studio-gray-0 );
-
-				header {
-					max-width: $break-medium;
-					margin: 0 auto;
-					padding: 0 24px;
-				}
-			}
-
-			.recent-feed__list-column-content {
-				max-width: $break-medium;
-				margin: 0 auto;
-				padding: 24px 24px 0;
-			}
-
-			@media ( min-width: $break-wide ) {
-				max-width: none;
-			}
-		}
 	}
 
 	&__post-column {
-		display: none;
 		@extend %column-shared;
+		display: none;
+		overflow-y: auto;
 
 		&.overlay {
 			display: block;
@@ -182,9 +189,10 @@
 
 		&-engagement-bar {
 			position: fixed;
-			bottom: 0;
+			bottom: var( --content-padding-bottom );
 			height: 60px;
 			background: var( --color-surface );
+			border-radius: 0 0 $feed-card-border-radius $feed-card-border-radius;
 			box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.05 );
 			z-index: 100;
 			display: flex;
@@ -192,6 +200,10 @@
 			justify-content: center;
 			transition: opacity 0.2s ease-in-out;
 			opacity: 1;
+
+			@media ( max-width: $break-medium ) {
+				bottom: 0;
+			}
 
 			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
 				margin-right: 24px;
@@ -221,13 +233,9 @@
 			}
 		}
 
-		.reader-full-post__story {
-			padding-bottom: 132px;
-		}
-
 		.back-button {
 			@media ( min-width: $break-wide ) {
-				display: none;
+				@include hide-content-accessibly();
 			}
 		}
 

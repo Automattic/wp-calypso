@@ -25,23 +25,6 @@ export default function useGetSiteErrors() {
 				} );
 			}
 
-			if ( data?.plugin?.status === 'warning' ) {
-				errors.push( {
-					severity: 'medium',
-					message: translate(
-						'%(count)s plugin requires update',
-						'%(count)s plugins require updates',
-						{
-							count: data.plugin.updates,
-							args: {
-								count: data.plugin.updates,
-							},
-							comment: '%(count) here is the number of plugins that require updates',
-						}
-					),
-				} );
-			}
-
 			if ( data?.site?.value?.is_simple ) {
 				const siteSlug = data?.site?.value?.url?.replace( /(^\w+:|^)\/\//, '' );
 				const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;

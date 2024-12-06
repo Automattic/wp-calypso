@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
@@ -35,6 +34,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: emptyChat,
+	canConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	isChatLoaded: false,
@@ -62,12 +62,14 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	isUserEligibleForPaidSupport = true,
+	canConnectToZendesk = false,
 	extraContactOptions,
 	selectedSiteId,
 	selectedSiteURL,
 	version = null,
 	currentUser,
 	children,
+	shouldUseHelpCenterExperience,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -88,7 +90,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		config.isEnabled( 'help-center-experience' )
+		canConnectToZendesk,
+		shouldUseHelpCenterExperience
 	);
 
 	/**
@@ -178,13 +181,14 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isChatLoaded,
 				isMinimized,
 				isUserEligibleForPaidSupport,
+				canConnectToZendesk,
 				odieBroadcastClientId,
 				selectedSiteId,
 				selectedSiteURL,
 				setChatStatus,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
-				shouldUseHelpCenterExperience: config.isEnabled( 'help-center-experience' ),
+				shouldUseHelpCenterExperience: shouldUseHelpCenterExperience ?? false,
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,

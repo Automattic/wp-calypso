@@ -122,6 +122,11 @@ function Chart( {
 		}
 	}, [ maxBars, onChangeMaxBars ] );
 
+	useEffect( () => {
+		// Invalidate (hide) the tooltip if the underlying data changes.
+		setTooltip( { isTooltipVisible: false } );
+	}, [ data ] );
+
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		const nextData = ( () => {

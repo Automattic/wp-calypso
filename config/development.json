@@ -40,6 +40,7 @@
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-assembler": true,
+		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -55,6 +56,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
+		"design-picker/goal-centric": true,
 		"design-picker/use-assembler-styles": true,
 		"desktop-promo": true,
 		"dev/auth-helper": true,
@@ -150,6 +152,7 @@
 		"me/vat-details": true,
 		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/enable-white-labeled-plugin": true,
+		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
@@ -220,6 +223,7 @@
 		"stats/empty-module-v2": true,
 		"stats/new-date-filtering": false,
 		"stats/paid-wpcom-v2": true,
+		"stats/paid-wpcom-v3": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -227,7 +231,6 @@
 		"subscription-gifting": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
-		"themes/display-thank-you-page-for-bundle": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
 		"themes/text-search-lots": true,
@@ -245,6 +248,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true
+		"woocommerce/core-profiler-passwordless-auth": true,
+		"woocommerce/rebrand-2-0": false
 	}
 }

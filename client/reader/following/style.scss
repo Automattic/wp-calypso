@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .is-section-reader .navigation-header.following-stream-header {
 	margin: 0 auto;
 	max-width: 600px;
@@ -167,5 +169,41 @@
 		top: 2px;
 		z-index: z-index("root", ".following__intro-close-icon-bg");
 		width: 20px;
+	}
+}
+
+.following__view-toggle {
+	display: flex;
+	gap: 8px;
+	
+	.components-button {
+		height: 36px;
+		min-width: 36px;
+		padding: 6px;
+		color: var(--color-text);
+		
+		&.is-pressed {
+			background: var(--color-text);
+			color: var(--color-surface);
+		}
+		
+		&:hover {
+			background: var(--color-text);
+			color: var(--color-surface);
+		}
+	}
+}
+
+.following-stream--no-subscriptions {
+	max-width: $break-medium;
+	margin: 0 auto;
+	padding: 16px 24px;
+
+	.navigation-header {
+		padding-bottom: 0;
+
+		@media (max-width: $break-medium) {
+			padding: 0 0 16px 0;
+		}
 	}
 }

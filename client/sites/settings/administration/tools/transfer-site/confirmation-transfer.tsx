@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
-import { PanelHeading } from 'calypso/components/panel';
+import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isHostingMenuUntangled } from '../../../utils';
 import { useConfirmTransfer } from './use-confirm-transfer';
@@ -65,7 +65,9 @@ export function ConfirmationTransfer( {
 		);
 		return (
 			<>
-				{ isUntangled && <PanelHeading>{ translate( 'Invitation email sent' ) }</PanelHeading> }
+				{ isUntangled && (
+					<PanelCardHeading>{ translate( 'Invitation email sent' ) }</PanelCardHeading>
+				) }
 				{ notice }
 			</>
 		);
@@ -92,7 +94,7 @@ export function ConfirmationTransfer( {
 
 	return (
 		<>
-			{ isUntangled && <PanelHeading>{ translate( 'Transferring site' ) }</PanelHeading> }
+			{ isUntangled && <PanelCardHeading>{ translate( 'Transferring site' ) }</PanelCardHeading> }
 			<p>
 				<LoadingBar key="transfer-site-loading-bar" progress={ progress } />
 			</p>

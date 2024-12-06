@@ -9,7 +9,7 @@ import {
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
-	GeneralSettingsPage,
+	SiteSettingsPage,
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
@@ -40,7 +40,6 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
 	} );
-	const blogTagLine = DataHelper.getRandomPhrase();
 
 	let page: Page;
 	let newUserDetails: NewUserResponse;
@@ -148,15 +147,6 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await startSiteFlow.selectGoal( 'Sell' );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
-
-		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( testUser.siteName );
-		} );
-
-		it( 'Enter blog tagline', async function () {
-			await startSiteFlow.enterTagline( blogTagLine );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
 	} );
 
 	describe( 'Sell', function () {
@@ -198,9 +188,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Start site launch', async function () {
-			const generalSettingsPage = new GeneralSettingsPage( page );
-			await generalSettingsPage.visit( newSiteDetails.blog_details.site_slug );
-			await generalSettingsPage.launchSite();
+			const siteSettingsPage = new SiteSettingsPage( page );
+			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug );
+			await siteSettingsPage.launchSite();
 		} );
 
 		it( 'Skip domain purchase', async function () {

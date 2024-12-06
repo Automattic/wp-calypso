@@ -228,6 +228,7 @@ export const SitePerformance = () => {
 
 	useEffect( () => {
 		if ( performanceReport.isBasicMetricsFetched && performanceReport.url ) {
+			performance.mark( 'test-started' );
 			recordTracksEvent( 'calypso_performance_profiler_test_started', {
 				url: performanceReport.url,
 				version: profilerVersion(),
@@ -241,6 +242,7 @@ export const SitePerformance = () => {
 
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
+		performance.mark( 'test-started' );
 
 		performanceReport.testAgain().then( ( { data } ) => {
 			if ( data?.token && data.token !== currentPage?.wpcom_performance_report_url?.hash ) {

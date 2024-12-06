@@ -70,9 +70,14 @@ body.is-section-plugins {
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
-			@include break-small {
-				padding-left: 2rem;
-				padding-right: 2rem;
+			padding-inline: 48px;
+
+			@media (max-width: $break-medium) {
+				padding-inline: 2rem;
+			}
+		
+			@media (max-width: $break-small) {
+				padding-inline: 16px;	
 			}
 		}
 
@@ -134,15 +139,7 @@ body.is-section-plugins {
 		.plugins-update-manager-multisite__header,
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
-			padding: 1.5rem 4rem;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				padding: 1rem;
-			}
-
-			@include breakpoint-deprecated( "<660px" ) {
-				padding: 1rem 0;
-			}
+			padding: 24px 0;
 		}
 
 		.plugins-update-manager-multisite__header {

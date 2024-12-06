@@ -8,7 +8,6 @@ import {
 	envToFeatureKey,
 	envVariables,
 	DataHelper,
-	SidebarComponent,
 	AdvertisingPage,
 	TestAccount,
 	MediaHelper,
@@ -77,12 +76,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Navigate to Tools > Advertising page', async function () {
-			if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-				await advertisingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-			} else {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Tools', 'Advertising' );
-			}
+			await advertisingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 		} );
 
 		it( 'Click on Promote for the first post', async function () {

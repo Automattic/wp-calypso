@@ -204,7 +204,7 @@ export default function PlanSelectionFilter( {
 					},
 					{
 						name: PLAN_CATEGORY_ENTERPRISE,
-						title: translate( 'Signature Shared Resource Plans' ),
+						title: translate( 'Signature Cloud Plans' ),
 					},
 				] }
 			>

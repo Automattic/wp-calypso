@@ -1,6 +1,8 @@
 import { Icon, link, linkOff, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
@@ -8,11 +10,26 @@ import { PluginActions } from '../hooks/types';
 export function useActions(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
 ) {
+	const dispatch = useDispatch();
+
+	const recordIntentionEvent = ( plugins: Array< Plugin >, action: string ) => {
+		/**
+		 * There's currently no better way to differentiate between bulk and single action clicks.
+		 */
+		const eventName =
+			plugins.length > 1
+				? 'calypso_plugins_manage_list_bulk_action_click'
+				: 'calypso_plugins_manage_list_action_click';
+
+		dispatch( recordTracksEvent( eventName, { action } ) );
+	};
+
 	const actions = [
 		{
 			id: 'manage-plugin',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'manage-plugin' );
 				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
 			},
 			label: translate( 'Manage Plugin' ),
@@ -24,6 +41,7 @@ export function useActions(
 			id: 'activate-plugin',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'activate-plugin' );
 				bulkActionDialog( PluginActions.ACTIVATE, plugins );
 			},
 			label: translate( 'Activate' ),
@@ -38,6 +56,7 @@ export function useActions(
 			id: 'deactivate-plugin',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'deactivate-plugin' );
 				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
 			},
 			label: translate( 'Deactivate' ),
@@ -52,6 +71,7 @@ export function useActions(
 			id: 'enable-autoupdate',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'enable-autoupdate' );
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Enable auto-updates' ),
@@ -65,6 +85,7 @@ export function useActions(
 			id: 'disable-autoupdate',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'disable-autoupdate' );
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Disable auto-updates' ),
@@ -78,6 +99,7 @@ export function useActions(
 			id: 'remove-plugin',
 			href: `some-url`,
 			callback: ( plugins: Array< Plugin > ) => {
+				recordIntentionEvent( plugins, 'remove-plugin' );
 				bulkActionDialog( PluginActions.REMOVE, plugins );
 			},
 			label: translate( 'Remove' ),

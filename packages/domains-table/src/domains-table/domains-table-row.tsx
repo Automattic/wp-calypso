@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -89,6 +91,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
+		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
+		if ( isAllDomainManagementEnabled && isAllSitesView ) {
+			page.show( domainManagementLink );
+			return;
+		}
+
 		window.location.href = domainManagementLink;
 	};
 

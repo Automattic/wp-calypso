@@ -1,13 +1,16 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
-import { useSmooch } from '@automattic/zendesk-client';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { calculateUnread, getConversationsFromSupportInteractions } from './utils';
+import {
+	calculateUnread,
+	getConversationsFromSupportInteractions,
+	getZendeskConversations,
+} from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
@@ -23,7 +26,6 @@ const GetSectionName = ( unreadCount: number ) => {
 
 const HelpCenterRecentConversations: React.FC = () => {
 	const { __ } = useI18n();
-	const { getConversations } = useSmooch();
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
@@ -43,11 +45,11 @@ const HelpCenterRecentConversations: React.FC = () => {
 	useEffect( () => {
 		if (
 			isChatLoaded &&
-			getConversations &&
+			getZendeskConversations &&
 			( ( supportInteractionsResolved && supportInteractionsResolved?.length > 0 ) ||
 				( supportInteractionsOpen && supportInteractionsOpen?.length > 0 ) )
 		) {
-			const allConversations = getConversations();
+			const allConversations = getZendeskConversations();
 			const supportInteractions = [
 				...( supportInteractionsResolved || [] ),
 				...( supportInteractionsOpen || [] ),
@@ -62,13 +64,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			setConversations( conversations );
 			setUnreadCount( unreadConversations );
 		}
-	}, [
-		isChatLoaded,
-		getConversations,
-		setUnreadCount,
-		supportInteractionsResolved,
-		supportInteractionsOpen,
-	] );
+	}, [ isChatLoaded, setUnreadCount, supportInteractionsResolved, supportInteractionsOpen ] );
 
 	if ( ! conversations.length ) {
 		return null;
@@ -79,7 +75,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 	);
 	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
-	const navigateTo = unreadConversationsCount === 1 ? '/odie' : '/chat-history';
+	const navigateTo =
+		unreadConversationsCount === 1 || conversations.length === 1 ? '/odie' : '/chat-history';
 
 	const chatMessage = {
 		...lastMessage,
@@ -103,6 +100,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
+					sectionName="recent_conversations"
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
 					message={ chatMessage }

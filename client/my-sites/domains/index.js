@@ -9,8 +9,13 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
+import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
+import {
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+} from './domain-management/domain-overview-pane/constants';
 import * as paths from './paths';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
@@ -368,6 +373,28 @@ export default function () {
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
 		domainManagementController.domainManagementIndex,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.allDomainManagementRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementV2,
+		domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.allDomainEmailManagementRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		emailController.emailManagement,
+		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender
 	);

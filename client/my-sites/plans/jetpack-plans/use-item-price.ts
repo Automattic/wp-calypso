@@ -31,6 +31,7 @@ interface ItemPrices {
 	discountedPriceTotal?: number | null;
 	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
+	saleCouponDiscount?: number | null;
 }
 
 interface ItemRawPrices {
@@ -220,6 +221,7 @@ const useItemPrice = (
 		discountedPriceDuration,
 		discountedPriceTotal,
 		priceTierList,
+		saleCouponDiscount,
 	};
 };
 

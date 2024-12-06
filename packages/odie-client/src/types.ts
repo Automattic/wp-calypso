@@ -3,6 +3,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
+	canConnectToZendesk: boolean;
 	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
@@ -30,6 +31,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	shouldUseHelpCenterExperience?: boolean;
+	canConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
@@ -74,11 +76,16 @@ export type Source = {
 	post_id: number;
 	content: string;
 	railcar?: {
+		fetch_algo: string;
+		fetch_lang: string;
+		fetch_position: number;
+		fetch_query: number;
+		railcar: string;
+		rec_blog_id: string;
+		rec_post_id: string;
+		rec_url: string;
 		ui_position: number;
 		ui_algo: string;
-		fetch_algo: string;
-		fetch_position: number;
-		railcar: string;
 	};
 };
 
@@ -128,6 +135,7 @@ export type MessageType =
 	| 'error'
 	| 'placeholder'
 	| 'dislike-feedback'
+	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
 	| 'image'
@@ -177,14 +185,22 @@ interface ConversationParticipant {
 	lastRead: number;
 }
 
+type MessageAction = {
+	id: string;
+	default: boolean;
+	fallback: string;
+	uri: string;
+};
+
 export type ZendeskMessage = {
 	avatarUrl?: string;
 	displayName: string;
 	id: string;
 	received: number;
 	role: string;
-	source: {
-		type: 'web' | 'slack';
+	actions?: MessageAction[];
+	source?: {
+		type: 'web' | 'slack' | 'zd:surveys';
 		id: string;
 		integrationId: string;
 	};
@@ -201,6 +217,7 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'image-placeholder'
 	| 'list'
 	| 'location'
 	| 'template';

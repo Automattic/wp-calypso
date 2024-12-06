@@ -327,10 +327,10 @@ $image-height: 47px;
 
 	.login .button.is-primary {
 		// Note: Matches primary button to `button.signup-form__submit`
-		background-color: #117ac9;
+		background-color: var(--studio-wordpress-blue, #3858e9);
 		color: var(--color-text-inverted);
 		box-shadow: none;
-		border: 0 #0e64a5;
+		border: 0 var(--studio-wordpress-blue-60);
 		font-weight: 500;
 		letter-spacing: 0.32px;
 		line-height: 17px;
@@ -341,8 +341,8 @@ $image-height: 47px;
 
 		&:hover,
 		&:focus {
-			background-color: #0e64a5;
-			border-color: #0e64a5;
+			background-color: var(--studio-wordpress-blue-60);
+			border-color: var(--studio-wordpress-blue-60);
 			color: var(--color-text-inverted);
 		}
 

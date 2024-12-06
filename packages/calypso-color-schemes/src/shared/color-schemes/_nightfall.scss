@@ -138,6 +138,7 @@
 	/* Collapse Menu Button */
 	--color-collapse-menu-text: #91caf2; /* Direct from wp-admin */
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--studio-blue-50);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

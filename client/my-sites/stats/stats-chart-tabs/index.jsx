@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -23,8 +22,6 @@ import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
-
-const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -56,6 +53,8 @@ class StatModuleChartTabs extends Component {
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
 		showChartHeader: PropTypes.bool,
+		// Temporary prop to enable new date filtering UI.
+		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -114,7 +113,17 @@ class StatModuleChartTabs extends Component {
 			className,
 			countsComp,
 			showChartHeader = false,
+			isNewDateFilteringEnabled = false,
 		} = this.props;
+
+		let chartData = this.props.chartData;
+		if ( isNewDateFilteringEnabled ) {
+			chartData = chartData?.map( ( record ) => {
+				record.className = record.className?.replaceAll( 'is-selected', '' );
+				return record;
+			} );
+		}
+
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -141,7 +150,7 @@ class StatModuleChartTabs extends Component {
 				) }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
 				<StatTabs
@@ -182,7 +191,15 @@ const memoizedQuery = memoizeLast(
 const connectComponent = connect(
 	(
 		state,
-		{ activeLegend, period: { period }, chartTab, queryDate, customQuantity, customRange }
+		{
+			isNewDateFilteringEnabled = false,
+			activeLegend,
+			period: { period },
+			chartTab,
+			queryDate,
+			customQuantity,
+			customRange,
+		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
@@ -263,7 +280,14 @@ const connectComponent = connect(
 		}
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			isNewDateFilteringEnabled ? customRange : {}
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
@@ -281,6 +305,7 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			isNewDateFilteringEnabled,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }
