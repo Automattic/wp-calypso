@@ -280,7 +280,14 @@ const connectComponent = connect(
 		}
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			isNewDateFilteringEnabled ? customRange : {}
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 

@@ -75,7 +75,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 	);
 	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
-	const navigateTo = unreadConversationsCount === 1 ? '/odie' : '/chat-history';
+	const navigateTo =
+		unreadConversationsCount === 1 || conversations.length === 1 ? '/odie' : '/chat-history';
 
 	const chatMessage = {
 		...lastMessage,

@@ -25,7 +25,8 @@ export default function useToggleActivateMonitor(
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites } =
+		useContext( SitesDashboardContext );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -37,6 +38,7 @@ export default function useToggleActivateMonitor(
 				{
 					issueTypes: getSelectedFilters( dataViewsState.filters ),
 					showOnlyFavorites: showOnlyFavorites || false,
+					showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 				},
 				dataViewsState.sort,
 				dataViewsState.perPage,
@@ -60,15 +62,17 @@ export default function useToggleActivateMonitor(
 			await queryClient.cancelQueries( {
 				queryKey,
 			} );
-
 			// Update to the new value
-			queryClient.setQueryData( queryKey, ( oldSites: any ) => {
+			// If there are issues with updating the query data, check if queryKey is the same
+			// as in client/data/agency-dashboard/use-fetch-dashboard-sites.ts
+			await queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 				return {
 					...oldSites,
-					sites: oldSites?.sites.map( ( site: Site ) => {
+					sites: oldSites?.sites?.map( ( site: Site ) => {
 						if ( site.blog_id === siteId ) {
 							return {
 								...site,
+								monitor_active: params.monitor_active,
 								monitor_settings: {
 									...site.monitor_settings,
 									monitor_active: params.monitor_active,

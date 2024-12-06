@@ -50,6 +50,7 @@ export function SiteSettings( props: any ) {
 const getFormSettings = ( settings: any ) => {
 	const defaultSettings = {
 		blog_public: '',
+		jetpack_holiday_snow_enabled: false,
 		wpcom_coming_soon: '',
 		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
@@ -65,6 +66,7 @@ const getFormSettings = ( settings: any ) => {
 
 	const formSettings = {
 		blog_public: settings.blog_public,
+		jetpack_holiday_snow_enabled: !! settings.jetpack_holiday_snow_enabled,
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,

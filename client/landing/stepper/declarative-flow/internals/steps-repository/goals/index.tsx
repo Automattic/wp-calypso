@@ -84,7 +84,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			...commonEventProps,
 			intent,
 			goals: serializeGoals( goals ),
-			combo: goals.sort().join( ',' ),
+			combo: goals.slice().sort().join( ',' ),
 			total: goals.length,
 			is_goals_big_sky_eligible: isGoalsBigSkyEligible( goals ),
 		};
