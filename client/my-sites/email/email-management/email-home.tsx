@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -96,6 +98,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
 	const hasSitesLoaded = useSelector( hasLoadedSites );
+	const isAllDomainManagementEnabled = isEnabled( 'calypso/all-domain-management' );
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
@@ -131,11 +134,13 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
 				<EmailProvidersStackedComparisonPage
+					className={ clsx( { 'context-all-domain-management': isAllDomainManagementEnabled } ) }
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }
 					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
+					hideNavigation={ isAllDomainManagementEnabled }
 				/>
 			);
 		}
