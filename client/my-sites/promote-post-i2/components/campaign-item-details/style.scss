@@ -1300,8 +1300,8 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 	&__chart-tooltip {
 		position: absolute;
 		pointer-events: none;
-		background: var( --color-black );
-		color: var( --color-text-white );
+		background: var( --studio-black );
+		color: var( --studio-white );
 		padding: 8px 10px;
 		border-radius: 4px;
 		display: none;

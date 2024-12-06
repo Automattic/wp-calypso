@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import React from 'react';
 import uPlot from 'uplot';
 
@@ -16,7 +17,8 @@ export function tooltip(
 					u.over.parentNode?.appendChild( tooltipRef.current );
 				}
 
-				u.over.addEventListener( 'mousemove', ( e ) => {
+				// Debounce the mouse move, to reduce the number of updates
+				const handleMouseMove = debounce( ( e ) => {
 					if ( ! tooltipRef?.current ) {
 						return;
 					}
@@ -25,15 +27,19 @@ export function tooltip(
 					const mouseLeft = e.clientX - left;
 					const activePoint = u.posToIdx( mouseLeft );
 
-					if ( activePoint && tooltipRef.current ) {
+					if ( activePoint >= 0 && tooltipRef.current ) {
 						window.requestAnimationFrame( () => {
 							if ( ! tooltipRef.current ) {
 								return;
 							}
 
 							// Get the highlighted point
-							const xPoint = u.data[ 0 ][ activePoint ] ?? 0;
-							const yPoint = u.data[ 1 ][ activePoint ] ?? 0;
+							const xPoint = u.data[ 0 ][ activePoint ];
+							const yPoint = u.data[ 1 ][ activePoint ];
+							if ( xPoint == null || yPoint == null ) {
+								tooltipRef.current.style.display = 'none';
+								return;
+							}
 
 							// Find where that is on the page
 							const xPos = Math.round( u.valToPos( xPoint, 'x', true ) );
@@ -45,11 +51,13 @@ export function tooltip(
 
 							// If we have a value, put the tooltip just above it.
 							if ( value != null ) {
-								tooltipRef.current.style.display = 'block';
-								tooltipRef.current.style.left = `${ xPos - tooltipRef.current.offsetWidth / 2 }px`;
-								tooltipRef.current.style.top = `${ yPos - 16 - tooltipRef.current.offsetHeight }px`;
+								const tooltip = tooltipRef.current;
+								tooltip.style.display = 'block';
+								tooltip.style.left = `${ xPos - tooltip.offsetWidth / 2 }px`;
+								tooltip.style.top = `${ yPos - 16 - tooltip.offsetHeight }px`;
 
-								tooltipRef.current.innerHTML = `
+								// Only update the content if it has changed to avoid unnecessary reflows
+								const newTooltipContent = `
 									<div class="campaign-item-details__chart-tooltip-date">
 										<strong>${ formatDate( new Date( date * 1000 ), hourly ) }</strong>
 									</div>
@@ -58,8 +66,21 @@ export function tooltip(
 										${ formatValue( value ) }
 									</div>
 								`;
+
+								if ( tooltip.innerHTML !== newTooltipContent ) {
+									tooltip.innerHTML = newTooltipContent;
+								}
 							}
 						} );
+					} else if ( tooltipRef.current ) {
+						tooltipRef.current.style.display = 'none';
+					}
+				}, 8 ); // 120mhz (1000/120 = 8.333ms)
+
+				u.over.addEventListener( 'mousemove', handleMouseMove );
+				u.over.addEventListener( 'mouseleave', () => {
+					if ( tooltipRef.current ) {
+						tooltipRef.current.style.display = 'none';
 					}
 				} );
 			},

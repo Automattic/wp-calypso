@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -42,16 +42,18 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 		}
 	};
 
+	const debouncedUpdateWidth = debounce( updateWidth, 200 );
+
 	useEffect( () => {
 		// Set initial width
 		updateWidth();
-		window.addEventListener( 'resize', updateWidth );
+		window.addEventListener( 'resize', debouncedUpdateWidth );
 
 		return () => {
 			// Remove on unmount
-			window.removeEventListener( 'resize', updateWidth );
+			window.removeEventListener( 'resize', debouncedUpdateWidth );
 		};
-	}, [] );
+	}, [ debouncedUpdateWidth ] );
 
 	// Convert ISO date string to Unix timestamp
 	const labels = data.map( ( entry ) => new Date( entry.date_utc ).getTime() / 1000 );
