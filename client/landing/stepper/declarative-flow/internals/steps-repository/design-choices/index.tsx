@@ -3,7 +3,6 @@ import {
 	themesIllustrationImage,
 	assemblerIllustrationV2Image,
 } from '@automattic/design-picker';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +11,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -29,7 +27,15 @@ import './style.scss';
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
-	const headerText = translate( 'Bring your vision to life' );
+	const documentHeaderText = translate( 'Bring your vision to life' );
+	const headerText = translate(
+		'Time to build your site!{{br/}}How would you like to get started?',
+		{
+			components: {
+				br: <br />,
+			},
+		}
+	);
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
@@ -71,7 +77,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	return (
 		<>
-			<DocumentHead title={ headerText } />
+			<DocumentHead title={ documentHeaderText } />
 			<StepContainer
 				flowName={ flow }
 				stepName={ stepName }
@@ -102,32 +108,12 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							{ ! isLoading && isEligible && (
 								<DesignChoice
 									className="design-choices__try-big-sky"
-									title={ translate( 'Design with AI' ) }
+									title={ translate( 'Create your site with AI' ) }
 									description={ translate(
-										'Use our AI website builder to easily and quickly build the site of your dreams.'
+										'Tell our AI what you need, and watch it come to life.'
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
-									footer={ preventWidows(
-										translate(
-											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
-											{
-												components: {
-													a: (
-														<a
-															href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-															target="_blank"
-															rel="noreferrer noopener"
-															onClick={ ( event ) => {
-																recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-																event.stopPropagation();
-															} }
-														/>
-													),
-												},
-											}
-										)
-									) }
 									onSelect={ () => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,
