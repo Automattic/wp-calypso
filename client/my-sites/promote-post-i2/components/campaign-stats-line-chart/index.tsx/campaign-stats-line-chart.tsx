@@ -100,9 +100,8 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					if ( ! tooltipRef.current || ! lineRef.current ) {
 						return;
 					}
-					const { left, top } = u.over.getBoundingClientRect();
+					const { left } = u.over.getBoundingClientRect();
 					const mouseLeft = e.clientX - left;
-					const mouseTop = e.clientY - top;
 
 					const idx = u.posToIdx( mouseLeft );
 					if ( idx >= 0 && idx < u.data[ 0 ].length ) {
@@ -111,7 +110,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						if ( value != null ) {
 							tooltipRef.current.style.display = 'block';
 							tooltipRef.current.style.left = mouseLeft + 'px';
-							tooltipRef.current.style.top = mouseTop + 'px';
+							tooltipRef.current.style.top = '0';
 							tooltipRef.current.innerHTML = `
 								<div class="campaign-item-details__chart-tooltip-date"><strong>${ formatDate(
 									new Date( date * 1000 ),
@@ -124,7 +123,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 							lineRef.current.style.display = 'block';
 
 							lineRef.current.style.left = mouseLeft + tooltipRef.current.offsetWidth / 2 + 'px';
-							lineRef.current.style.top = mouseTop + 50 + 'px';
+							lineRef.current.style.top = '0';
 						} else {
 							tooltipRef.current.style.display = 'none';
 							lineRef.current.style.display = 'none';
@@ -218,7 +217,10 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			},
 			scales: {
 				y: {
-					range: ( self: uPlot, min: number, max: number ) => [ min, max + ( max - min ) * 0.4 ], // Add x% padding at the top to allow space for the tooltip
+					range: ( self: uPlot, min: number, max: number ): [ number, number ] => [
+						min,
+						max + ( max - min ) * 0.4,
+					],
 				},
 			},
 			series: [
