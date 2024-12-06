@@ -484,7 +484,7 @@ class StatsSite extends Component {
 								onChangeLegend={ this.onChangeLegend }
 								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								isWithNewDateControl
-								showArrows
+								showArrows={ ! wpcomShowUpsell }
 								slug={ slug }
 								dateRange={ customChartRange }
 							>

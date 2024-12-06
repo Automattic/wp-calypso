@@ -14,10 +14,11 @@ const TrafficUpsell: React.FC< Props > = ( { siteId } ) => {
 			siteId={ siteId }
 			title={ translate( 'Unlock site growth analytics' ) }
 			features={ [
-				translate( 'View trends and data from any time period you choose' ),
+				translate( 'View trends and data from any time period' ),
 				translate( 'Understand how visitors find and use your site' ),
 				translate( 'Track which posts and pages are most popular' ),
 				translate( 'See where your visitors come from worldwide' ),
+				translate( 'Discover which links generate most clicks' ),
 				translate( 'Monitor email engagement and downloads' ),
 				translate( 'Keep your data private and GDPR-compliant' ),
 			] }

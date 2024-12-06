@@ -8,6 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -85,55 +86,58 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 			/>
 			<div className="stats-upsell__content">
 				<div className="stats-upsell__left">
-					<h1 className="stats-upsell__title">{ title }</h1>
-					<div className="stats-upsell__text">
-						{ ! pricing
-							? ''
-							: translate(
-									'Get detailed insights into your site’s performance for {{b}}%(planPrice)s/month{{/b}} with a Personal plan.',
-									{
-										components: { b: <b /> },
-										args: {
-											planPrice: formatCurrency(
-												pricing.discountedPrice.monthly ?? pricing.originalPrice.monthly ?? 0,
-												pricing.currencyCode ?? '',
-												{
-													stripZeros: true,
-													isSmallestUnit: true,
-												}
-											),
-										},
-									}
-							  ) }
-					</div>
-					<div className="stats-upsell__features">
-						{ features.map( ( feature, index ) => (
-							<div className="stats-upsell__feature" key={ index }>
-								<Gridicon icon="checkmark" size={ 18 } />
-								<div className="stats-upsell__feature-text">{ feature }</div>
-							</div>
-						) ) }
-					</div>
-					<div className="stats-upsell__buttons">
-						<Button
-							variant="primary"
-							className="stats-upsell__button"
-							onClick={ onClick }
-							disabled={ isLoading }
-						>
-							{ ! plan?.productNameShort
-								? translate( 'Upgrade plan' )
-								: translate( 'Upgrade to %(planName)s', {
-										args: { planName: plan.productNameShort },
-								  } ) }
-						</Button>
-						<Button
-							variant="secondary"
-							className="stats-upsell__button"
-							onClick={ onLearnMoreClick }
-						>
-							{ translate( 'Learn more' ) }
-						</Button>
+					<div className="stats-upsell__left-inner">
+						<Icon icon={ lock } size={ 40 } />
+						<h1 className="stats-upsell__title">{ title }</h1>
+						<div className="stats-upsell__text">
+							{ ! pricing
+								? ''
+								: translate(
+										'Get detailed insights into your site’s performance for {{b}}%(planPrice)s/month{{/b}} with a Personal plan.',
+										{
+											components: { b: <b /> },
+											args: {
+												planPrice: formatCurrency(
+													pricing.discountedPrice.monthly ?? pricing.originalPrice.monthly ?? 0,
+													pricing.currencyCode ?? '',
+													{
+														stripZeros: true,
+														isSmallestUnit: true,
+													}
+												),
+											},
+										}
+								  ) }
+						</div>
+						<div className="stats-upsell__features">
+							{ features.map( ( feature, index ) => (
+								<div className="stats-upsell__feature" key={ index }>
+									<Gridicon icon="checkmark" size={ 18 } />
+									<div className="stats-upsell__feature-text">{ feature }</div>
+								</div>
+							) ) }
+						</div>
+						<div className="stats-upsell__buttons">
+							<Button
+								variant="primary"
+								className="stats-upsell__button"
+								onClick={ onClick }
+								disabled={ isLoading }
+							>
+								{ ! plan?.productNameShort
+									? translate( 'Upgrade plan' )
+									: translate( 'Upgrade to %(planName)s', {
+											args: { planName: plan.productNameShort },
+									  } ) }
+							</Button>
+							<Button
+								variant="secondary"
+								className="stats-upsell__button"
+								onClick={ onLearnMoreClick }
+							>
+								{ translate( 'Learn more' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
 				<div className="stats-upsell__right">
