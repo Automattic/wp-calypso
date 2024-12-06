@@ -101,7 +101,9 @@ const LaunchBigSky: Step = function () {
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
 
-				window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+				window.location.replace(
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=design-choices`
+				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.error( 'An error occurred:', error );
