@@ -33,4 +33,5 @@ export type {
 	StyleVariationStylesColor,
 } from './types';
 export { useCategorization } from './hooks/use-categorization';
+export { useDesignPickerFilters } from './hooks/use-design-picker-filters';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

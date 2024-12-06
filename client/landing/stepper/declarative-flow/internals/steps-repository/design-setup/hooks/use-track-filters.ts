@@ -20,7 +20,10 @@ const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelecti
 		return selectedFilters.reduce(
 			( result, filterSlug, index ) => ( {
 				...result,
-				[ `filters_${ filterSlug }` ]: `${ getCategoryType( filterSlug ) }:${ index }`,
+				// The property cannot contain `-` character.
+				[ `filters_${ filterSlug.replace( '-', '_' ) }` ]: `${ getCategoryType(
+					filterSlug
+				) }:${ index }`,
 			} ),
 			{}
 		);

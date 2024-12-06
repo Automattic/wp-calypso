@@ -18,6 +18,7 @@ import {
 import {
 	UnifiedDesignPicker,
 	useCategorization,
+	useDesignPickerFilters,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	PERSONAL_THEME,
@@ -244,6 +245,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		handleSelect: handleSelectFilter,
 		handleDeselect: handleDeselectFilter,
 	} );
+
+	const designPickerFilters = useDesignPickerFilters();
 
 	const handleChangeTier = ( value: boolean ) => {
 		if ( value ) {
@@ -736,6 +739,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			return;
 		}
 
+		designPickerFilters.resetFilters();
 		goBack?.();
 	}
 

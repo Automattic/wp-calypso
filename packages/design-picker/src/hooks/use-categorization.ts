@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Category } from '../types';
+import { useDesignPickerFilters } from './use-design-picker-filters';
+import type { Category } from '../types';
 
 export interface Categorization {
+	categories: Category[];
 	selections: string[];
 	onSelect: ( selectedSlug: string ) => void;
-	categories: Category[];
 }
 
 interface UseCategorizationOptions {
@@ -26,8 +26,6 @@ export function useCategorization(
 		handleDeselect,
 	}: UseCategorizationOptions
 ): Categorization {
-	const [ searchParams, setSearchParams ] = useSearchParams();
-
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -38,55 +36,43 @@ export function useCategorization(
 		return result.sort( sort );
 	}, [ categoryMap, sort ] );
 
-	const selections = searchParams.get( 'categories' )?.split( ',' ) || [];
-
-	const setSelections = ( values: string[] ) => {
-		setSearchParams( ( currentSearchParams ) => {
-			if ( values.length > 0 ) {
-				currentSearchParams.set( 'categories', values.join( ',' ) );
-			} else {
-				currentSearchParams.delete( 'categories' );
-			}
-			return currentSearchParams;
-		} );
-	};
+	const { selectedCategories, setSelectedCategories } = useDesignPickerFilters();
 
 	const onSelect = useCallback(
 		( value: string ) => {
 			if ( ! isMultiSelection ) {
 				handleSelect?.( value );
-				setSelections( [ value ] );
+				setSelectedCategories( [ value ] );
 				return;
 			}
 
-			const currentSelections = searchParams.get( 'categories' )?.split( ',' ) || [];
-			const index = currentSelections.findIndex( ( selection ) => selection === value );
+			const index = selectedCategories.findIndex( ( selection ) => selection === value );
 			if ( index === -1 ) {
 				handleSelect?.( value );
-				return setSelections( [ ...currentSelections, value ] );
+				return setSelectedCategories( [ ...selectedCategories, value ] );
 			}
 
 			// The selections should at least have one.
-			if ( currentSelections.length > 1 ) {
+			if ( selectedCategories.length > 1 ) {
 				handleDeselect?.( value );
-				return setSelections( [
-					...currentSelections.slice( 0, index ),
-					...currentSelections.slice( index + 1 ),
+				return setSelectedCategories( [
+					...selectedCategories.slice( 0, index ),
+					...selectedCategories.slice( index + 1 ),
 				] );
 			}
 		},
-		[ searchParams, isMultiSelection, setSelections, handleSelect, handleDeselect ]
+		[ selectedCategories, isMultiSelection, setSelectedCategories, handleSelect, handleDeselect ]
 	);
 
 	useEffect( () => {
-		if ( selections.length === 0 ) {
-			setSelections( chooseDefaultSelections( categories, defaultSelections ) );
+		if ( selectedCategories.length === 0 ) {
+			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
 		}
 	}, [] );
 
 	return {
 		categories,
-		selections,
+		selections: selectedCategories,
 		onSelect,
 	};
 }

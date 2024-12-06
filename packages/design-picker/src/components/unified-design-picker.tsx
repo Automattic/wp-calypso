@@ -222,7 +222,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 } ) => {
-	const filteredDesigns = useFilteredDesigns( designs, categorization );
+	const filteredDesigns = useFilteredDesigns( designs );
 	const categoryTypes = useMemo(
 		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
