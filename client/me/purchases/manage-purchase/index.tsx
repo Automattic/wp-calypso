@@ -719,6 +719,7 @@ class ManagePurchase extends Component<
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
+				{ translate( 'Refund available' ) }
 			</RemovePurchase>
 		);
 	}
