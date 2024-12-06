@@ -164,7 +164,7 @@ const LaunchBigSky: Step = function () {
 									),
 									user_guidelines: (
 										<a
-											href={ localizeUrl( 'https://automattic.com/user-guidelines/' ) } // is there a user guidelines page?
+											href={ localizeUrl( 'https://wordpress.com/support/user-guidelines/' ) }
 											target="_blank"
 											rel="noreferrer noopener"
 										/>
