@@ -455,7 +455,7 @@ class Login extends Component {
 				} else if ( this.props.twoFactorEnabled ) {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 				} else if ( currentQuery.lostpassword_flow ) {
-					headerText = null;
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate(
