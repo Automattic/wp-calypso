@@ -21,6 +21,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
+import { isUseHelpCenterExperienceEnabled } from './utils';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
@@ -92,7 +93,8 @@ export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
 	const shouldUseHelpCenterExperience =
-		config.isEnabled( 'help-center-experience' ) || props.shouldUseHelpCenterExperience;
+		config.isEnabled( 'help-center-experience' ) ||
+		isUseHelpCenterExperienceEnabled( props.currentUser?.ID );
 
 	return (
 		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>

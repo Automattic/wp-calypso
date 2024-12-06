@@ -8,6 +8,7 @@ interface Props {
 	categories: Category[];
 	selectedSlugs: string[];
 	isMultiSelection?: boolean;
+	forceSwipe?: boolean;
 	onSelect: ( selectedSlug: string ) => void;
 }
 
@@ -16,6 +17,7 @@ export default function DesignPickerCategoryFilter( {
 	categories,
 	selectedSlugs,
 	isMultiSelection,
+	forceSwipe,
 	onSelect,
 }: Props ) {
 	const onClick = ( index: number ) => {
@@ -40,6 +42,7 @@ export default function DesignPickerCategoryFilter( {
 			initialActiveIndex={ initialActiveIndex !== -1 ? initialActiveIndex : 0 }
 			initialActiveIndexes={ initialActiveIndexes }
 			isMultiSelection={ isMultiSelection }
+			forceSwipe={ forceSwipe }
 			onClick={ onClick }
 		>
 			{ categories.map( ( category ) => (

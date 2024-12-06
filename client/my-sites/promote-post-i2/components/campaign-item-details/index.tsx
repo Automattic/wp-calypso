@@ -278,9 +278,12 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
 
-	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
-		activeDays >= 7 ? ChartSourceDateRanges.LAST_7_DAYS : ChartSourceDateRanges.WHOLE_CAMPAIGN
-	);
+	const initialRange =
+		activeDays <= 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
+	const initialResolution = activeDays < 3 ? ChartResolution.Hour : ChartResolution.Day;
+
+	const [ selectedDateRange, setSelectedDateRange ] =
+		useState< ChartSourceDateRanges >( initialRange );
 
 	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
 		const effectiveEndDate = getEffectiveEndDate();
@@ -310,18 +313,18 @@ export default function CampaignItemDetails( props: Props ) {
 	};
 
 	const [ chartParams, setChartParams ] = useState( {
-		startDate: getChartStartDate( ChartSourceDateRanges.LAST_7_DAYS ),
+		startDate: getChartStartDate( initialRange ),
 		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
-		resolution: ChartResolution.Day,
+		resolution: initialResolution,
 	} );
 
 	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
 		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
-		const newResolution = [ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
-			newDateRange
-		)
-			? ChartResolution.Hour
-			: ChartResolution.Day;
+		const newResolution =
+			[ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes( newDateRange ) ||
+			activeDays < 3
+				? ChartResolution.Hour
+				: ChartResolution.Day;
 
 		const newStartDate = getChartStartDate( newDateRange );
 
@@ -343,7 +346,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
 	const getCampaignStatsChart = (
-		data: CampaignChartSeriesData[],
+		data: CampaignChartSeriesData[] | null,
 		source: ChartSourceOptions,
 		isLoading = false
 	) => {
@@ -356,7 +359,8 @@ export default function CampaignItemDetails( props: Props ) {
 				</div>
 			);
 		}
-		if ( ! data || data.length === 0 ) {
+
+		if ( ! data ) {
 			return null;
 		}
 
@@ -507,7 +511,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	// The controls that are always shown
 	chartControls.push( {
-		onClick: () => setSelectedDateRange( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+		onClick: () => updateChartParams( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
 		title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.WHOLE_CAMPAIGN ],
 		isDisabled: selectedDateRange === ChartSourceDateRanges.WHOLE_CAMPAIGN,
 	} );
@@ -875,7 +879,7 @@ export default function CampaignItemDetails( props: Props ) {
 														label={ chartSource }
 													/>
 													{ getCampaignStatsChart(
-														campaignStats?.series[ chartSource ] ?? [],
+														campaignStats?.series[ chartSource ] ?? null,
 														chartSource,
 														campaignsStatsIsLoading
 													) }

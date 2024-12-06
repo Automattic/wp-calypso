@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Plans, HelpCenter } from '@automattic/data-stores';
@@ -13,26 +12,26 @@ import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { statTypeToPlan } from '../stat-type-to-plan';
 
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
-	siteId: number;
 	title: string;
 	features: string[];
 	image: string;
+	statType: string;
 }
 
-export default function StatsUpsell( { siteId, title, features, image }: Props ) {
+export default function StatsUpsell( { title, features, image, statType }: Props ) {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const planKey = isEnabled( 'stats/paid-wpcom-v3' ) ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const planKey = statTypeToPlan( statType );
 	const plan = plans?.data?.[ planKey ];
 	const pricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planKey ],
@@ -45,7 +44,6 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
 
