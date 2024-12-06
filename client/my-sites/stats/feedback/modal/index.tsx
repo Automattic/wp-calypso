@@ -126,12 +126,12 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			/>
 			<div className="stats-feedback-modal__wrapper">
 				<h1 className="stats-feedback-modal__title">
-					{ translate( 'Help us make Jetpack better' ) }
+					{ translate( 'Help us make Jetpack Stats better' ) }
 				</h1>
 
 				<div className="stats-feedback-modal__text">
 					{ translate(
-						'We value your opinion and would love to hear more about your experience. Please share any specific thoughts or suggestions you have to improve Jetpack.'
+						'We value your opinion and would love to hear more about your experience. Please share any specific thoughts or suggestions you have to improve Jetpack Stats.'
 					) }
 				</div>
 				<TextareaControl
