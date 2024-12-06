@@ -360,7 +360,13 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 	const isDomainsEmpty = isFetched && domains.length === 0;
 	const buttons = ! isDomainsEmpty
-		? [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ]
+		? [
+				<OptionsDomainButton
+					key="breadcrumb_button_1"
+					allDomainsList
+					sidebarMode={ props.sidebarMode }
+				/>,
+		  ]
 		: [];
 	const purchaseActions = usePurchaseActions();
 
