@@ -31,7 +31,8 @@ class StatsTabs extends Component {
 		} else {
 			data?.map( ( day ) =>
 				tabs.map( ( tab ) => {
-					if ( isFinite( day[ tab.attr ] ) ) {
+					// Exclude non-numeric values, e.g., NULL from unsupported stats fields.
+					if ( Number.isFinite( day[ tab.attr ] ) ) {
 						if ( ! ( tab.attr in activeData ) ) {
 							activeData[ tab.attr ] = 0;
 						}
@@ -68,7 +69,6 @@ class StatsTabs extends Component {
 			};
 
 			statsTabs = tabs.map( ( tab ) => {
-				const hasTrend = trendData?.[ tab.attr ] >= 0 && trendData[ tab.attr ] !== null;
 				const hasData = activeData?.[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 				const value = hasData ? activeData[ tab.attr ] : null;
 				const previousValue =
@@ -81,7 +81,7 @@ class StatsTabs extends Component {
 					label: tab.label,
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
-					tabClick: hasTrend ? switchTab : undefined,
+					tabClick: switchTab,
 					value,
 					previousValue,
 					format: tab.format,
