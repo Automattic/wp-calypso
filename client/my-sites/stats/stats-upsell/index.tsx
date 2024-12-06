@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Plans, HelpCenter } from '@automattic/data-stores';
@@ -15,6 +14,7 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import { useSelector } from 'calypso/state';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { statTypeToPlan } from '../stat-type-to-plan';
 
 import './style.scss';
 
@@ -32,7 +32,8 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const planKey = isEnabled( 'stats/paid-wpcom-v3' ) ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
+	const planKey = statTypeToPlan( statType );
 	const plan = plans?.data?.[ planKey ];
 	const pricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planKey ],
@@ -45,7 +46,6 @@ export default function StatsUpsell( { siteId, title, features, image }: Props )
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
 
