@@ -1,6 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
 import NavItem from 'calypso/components/section-nav/item';
 import { SectionProps } from '..';
 
@@ -78,6 +79,8 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 					}
 				) }
 			</div>
+
+			<MigrationOfferV3 />
 
 			<ul className="hosting-v3-hero-section__tabs">
 				{ navItems.map( ( item ) => {
