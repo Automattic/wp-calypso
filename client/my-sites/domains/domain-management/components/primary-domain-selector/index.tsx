@@ -8,8 +8,12 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { getTld } from 'calypso/lib/domains';
 import { useSelector } from 'calypso/state';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import {
+	CAN_SET_DOTBLOG_AS_PRIMARY,
+	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
+} from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import type { DomainData, SiteDetails } from '@automattic/data-stores';
 
@@ -36,6 +40,14 @@ const PrimaryDomainSelector = ( {
 		currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 
+	const hasDotBlogDomainAndCanSetDotBlogAsPrimary = useSelector(
+		( state ) =>
+			currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY ) &&
+			domains?.some(
+				( domain ) => ! domain.wpcom_domain && 'blog'.startsWith( getTld( domain.domain ) )
+			)
+	);
+
 	useEffect( () => {
 		if ( domains?.length ) {
 			const primary = domains.find( ( domain ) => {
@@ -48,12 +60,21 @@ const PrimaryDomainSelector = ( {
 		}
 	}, [ domains ] );
 
+	const isOnFreePlan = site?.plan?.is_free ?? false;
+	const canUserSetPrimaryDomainOnThisSite = ! ( primaryWithPlanOnly && isOnFreePlan );
+
+	const canSetSelectedDomainAsPrimary = useSelector(
+		( state ) =>
+			selectedDomain &&
+			( 'blog'.startsWith( getTld( selectedDomain ) )
+				? canUserSetPrimaryDomainOnThisSite ||
+				  currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY )
+				: canUserSetPrimaryDomainOnThisSite )
+	);
+
 	if ( ! domains || ! site ) {
 		return null;
 	}
-
-	const isOnFreePlan = site?.plan?.is_free ?? false;
-	const canUserSetPrimaryDomainOnThisSite = ! ( primaryWithPlanOnly && isOnFreePlan );
 
 	const shouldUpgradeToMakeDomainPrimary = ( domain: DomainData ): boolean => {
 		return (
@@ -119,7 +140,7 @@ const PrimaryDomainSelector = ( {
 
 	let message: Substitution;
 
-	if ( ! canUserSetPrimaryDomainOnThisSite ) {
+	if ( ! canUserSetPrimaryDomainOnThisSite && ! hasDotBlogDomainAndCanSetDotBlogAsPrimary ) {
 		// The user can't set a primary domain on this site because they need to upgrade their plan
 		message = translate(
 			"Your site plan doesn't allow to set a custom domain as a primary site address. {{planUpgradeLink}}Upgrade your plan{{/planUpgradeLink}} and get a free one-year domain registration or transfer with any annual paid plan. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
@@ -181,33 +202,55 @@ const PrimaryDomainSelector = ( {
 			</CardHeading>
 			<>
 				<p className="domains-set-primary-address__subtitle">{ message }</p>
-				{ otherValidPrimaryDomains.length > 0 && canUserSetPrimaryDomainOnThisSite && (
-					<FormFieldset className="domains-set-primary-address__fieldset">
-						<FormSelect
-							className="domains-set-primary-address__select"
-							disabled={ isSettingPrimaryDomain }
-							id="primary-domain-selector"
-							onChange={ onSelectChange }
-							value={ selectedDomain }
-						>
-							<option value="">{ translate( 'Select a domain' ) }</option>
-							{ otherValidPrimaryDomains.map( ( domain ) => (
-								<option key={ domain.domain } value={ domain.domain }>
-									{ domain.domain }
-								</option>
-							) ) }
-						</FormSelect>
-						<FormButton
-							className="domains-set-primary-address__submit"
-							primary
-							busy={ isSettingPrimaryDomain }
-							disabled={ isSettingPrimaryDomain || ! selectedDomain }
-							onClick={ onSubmit }
-						>
-							{ translate( 'Set as primary' ) }
-						</FormButton>
-					</FormFieldset>
-				) }
+				{ otherValidPrimaryDomains.length > 0 &&
+					( canUserSetPrimaryDomainOnThisSite || hasDotBlogDomainAndCanSetDotBlogAsPrimary ) && (
+						<>
+							<FormFieldset className="domains-set-primary-address__fieldset">
+								<FormSelect
+									className="domains-set-primary-address__select"
+									disabled={ isSettingPrimaryDomain }
+									id="primary-domain-selector"
+									onChange={ onSelectChange }
+									value={ selectedDomain }
+								>
+									<option value="">{ translate( 'Select a domain' ) }</option>
+									{ otherValidPrimaryDomains.map( ( domain ) => (
+										<option key={ domain.domain } value={ domain.domain }>
+											{ domain.domain }
+										</option>
+									) ) }
+								</FormSelect>
+								<FormButton
+									className="domains-set-primary-address__submit"
+									primary
+									busy={ isSettingPrimaryDomain }
+									disabled={
+										isSettingPrimaryDomain || ! selectedDomain || ! canSetSelectedDomainAsPrimary
+									}
+									onClick={ onSubmit }
+								>
+									{ translate( 'Set as primary' ) }
+								</FormButton>
+							</FormFieldset>
+							{ selectedDomain && ! canSetSelectedDomainAsPrimary && (
+								<p className="domains-set-primary-address__error">
+									{ translate(
+										"Your site plan doesn't allow to set this custom domain as a primary site address. {{planUpgradeLink}}Upgrade your plan{{/planUpgradeLink}} and get a free one-year domain registration or transfer with any annual paid plan.",
+										{
+											components: {
+												planUpgradeLink: (
+													<a
+														href={ '/plans/' + primaryDomain }
+														onClick={ () => trackUpgradeClick( true ) }
+													/>
+												),
+											},
+										}
+									) }
+								</p>
+							) }
+						</>
+					) }
 			</>
 		</Card>
 	);

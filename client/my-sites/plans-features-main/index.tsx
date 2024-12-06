@@ -53,13 +53,15 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getTld } from 'calypso/lib/domains';
 import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { CAN_SET_DOTBLOG_AS_PRIMARY } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -246,8 +248,17 @@ const PlansFeaturesMain = ( {
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 
+	const isCustomDomainAllowedAsPrimaryOnFreePlan = useSelector( ( state: IAppState ) =>
+		Boolean(
+			currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY ) &&
+				paidDomainName &&
+				'blog'.startsWith( getTld( paidDomainName ) )
+		)
+	);
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
+		isCustomDomainAllowedAsPrimaryOnFreePlan,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,

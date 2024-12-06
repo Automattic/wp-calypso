@@ -6,7 +6,10 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import {
+	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
+	CAN_SET_DOTBLOG_AS_PRIMARY,
+} from 'calypso/state/current-user/constants';
 import PrimaryDomainSelector from '../index';
 
 // Mock dependencies
@@ -69,7 +72,7 @@ describe( 'PrimaryDomainSelector', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'renders the primary domain message', () => {
+	test( 'renders the primary domain message', () => {
 		renderComponent();
 		expect(
 			screen.getByText( /The current primary address set for this site is:/i )
@@ -77,7 +80,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.getByText( 'primary.com' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the domain selector with valid options', () => {
+	test( 'renders the domain selector with valid options', () => {
 		renderComponent();
 		const select = screen.getByRole( 'combobox' );
 		expect( select ).toBeInTheDocument();
@@ -85,7 +88,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.queryByText( 'cannot-be-primary.com' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'enables the submit button only when a domain is selected', () => {
+	test( 'enables the submit button only when a domain is selected', () => {
 		renderComponent();
 		const submitButton = screen.getByRole( 'button', { name: /set as primary/i } );
 		expect( submitButton ).toBeDisabled();
@@ -96,7 +99,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( submitButton ).toBeEnabled();
 	} );
 
-	it( 'calls onSetPrimaryDomain when form is submitted', () => {
+	test( 'calls onSetPrimaryDomain when form is submitted', () => {
 		renderComponent();
 		const select = screen.getByRole( 'combobox' );
 		const submitButton = screen.getByRole( 'button', { name: /set as primary/i } );
@@ -111,7 +114,7 @@ describe( 'PrimaryDomainSelector', () => {
 		);
 	} );
 
-	it( 'shows upgrade message for free plan users', () => {
+	test( 'shows upgrade message for free plan users', () => {
 		renderComponent(
 			{
 				site: {
@@ -135,7 +138,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows add domain message when no valid domains are available', () => {
+	test( 'shows add domain message when no valid domains are available', () => {
 		renderComponent( {
 			domains: [
 				{
@@ -153,7 +156,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'tracks upgrade click events', () => {
+	test( 'tracks upgrade click events', () => {
 		renderComponent(
 			{
 				site: {
@@ -180,7 +183,7 @@ describe( 'PrimaryDomainSelector', () => {
 		);
 	} );
 
-	it( 'handles staging domains correctly', () => {
+	test( 'handles staging domains correctly', () => {
 		renderComponent( {
 			domains: [
 				{
@@ -207,11 +210,152 @@ describe( 'PrimaryDomainSelector', () => {
 			],
 		} );
 
-		const options = screen.getAllByRole( 'option' );
+		const select = screen.getByRole( 'combobox' );
 
 		// Should only show staging domain and custom domain, not regular wpcom domain
-		expect( options ).toHaveLength( 3 ); // Including the "Select a domain" option
+		expect( select ).toHaveLength( 3 ); // Including the "Select a domain" option
 		expect( screen.queryByText( 'regular.wordpress.com' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'custom.com' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows dropdown for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and .blog domain and allows selecting the .blog domain', () => {
+		renderComponent(
+			{
+				site: {
+					plan: {
+						is_free: true,
+					},
+				},
+				domains: [
+					...defaultProps.domains,
+					{
+						domain: 'test.blog',
+						primary_domain: false,
+						can_set_as_primary: true,
+						type: 'registered',
+					},
+				],
+			},
+			{
+				currentUser: {
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+				},
+			}
+		);
+
+		const select = screen.getByRole( 'combobox' );
+
+		expect( select ).toHaveLength( 3 ); // Including the "Select a domain" option
+		expect( screen.getByText( 'secondary.com' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'test.blog' ) ).toBeInTheDocument();
+		fireEvent.change( select, { target: { value: 'test.blog' } } );
+		const submitButton = screen.getByRole( 'button', { name: /set as primary/i } );
+		expect( submitButton ).toBeEnabled();
+	} );
+
+	test( 'shows upgrade message for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and no .blog domain', () => {
+		renderComponent(
+			{
+				site: {
+					plan: {
+						is_free: true,
+					},
+				},
+				domains: [
+					...defaultProps.domains,
+					{
+						domain: 'test.notblog',
+						primary_domain: false,
+						can_set_as_primary: true,
+						type: 'registered',
+					},
+				],
+			},
+			{
+				currentUser: {
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+				},
+			}
+		);
+
+		expect(
+			screen.getByText(
+				/Your site plan doesn't allow to set a custom domain as a primary site address/i
+			)
+		).toBeInTheDocument();
+		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows upgrade message for free plan users without CAN_SET_DOTBLOG_AS_PRIMARY flag and .blog domain', () => {
+		renderComponent(
+			{
+				site: {
+					plan: {
+						is_free: true,
+					},
+				},
+				domains: [
+					...defaultProps.domains,
+					{
+						domain: 'test.notblog',
+						primary_domain: false,
+						can_set_as_primary: true,
+						type: 'registered',
+					},
+				],
+			},
+			{
+				currentUser: {
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS ],
+				},
+			}
+		);
+
+		expect(
+			screen.getByText(
+				/Your site plan doesn't allow to set a custom domain as a primary site address/i
+			)
+		).toBeInTheDocument();
+		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows error and disables button for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and having a .blog domain, but a non .blog domain is selected', () => {
+		renderComponent(
+			{
+				site: {
+					plan: {
+						is_free: true,
+					},
+				},
+				domains: [
+					...defaultProps.domains,
+					{
+						domain: 'test.blog',
+						primary_domain: false,
+						can_set_as_primary: true,
+						type: 'registered',
+					},
+				],
+			},
+			{
+				currentUser: {
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+				},
+			}
+		);
+
+		const select = screen.getByRole( 'combobox' );
+
+		expect( select ).toHaveLength( 3 ); // Including the "Select a domain" option
+		expect( screen.getByText( 'secondary.com' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'test.blog' ) ).toBeInTheDocument();
+		fireEvent.change( select, { target: { value: 'secondary.com' } } );
+		const submitButton = screen.getByRole( 'button', { name: /set as primary/i } );
+		expect( submitButton ).toBeDisabled();
+		expect(
+			screen.getByText(
+				/Your site plan doesn't allow to set this custom domain as a primary site address/i
+			)
+		).toBeInTheDocument();
 	} );
 } );

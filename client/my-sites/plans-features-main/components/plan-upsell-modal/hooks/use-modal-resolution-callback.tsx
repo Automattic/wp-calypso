@@ -9,6 +9,7 @@ import {
 } from '..';
 type Props = {
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isCustomDomainAllowedAsPrimaryOnFreePlan?: boolean | null;
 	flowName?: string | null;
 	paidDomainName?: string | null;
 	intent?: string | null;
@@ -19,6 +20,7 @@ type Props = {
  */
 export function useModalResolutionCallback( {
 	isCustomDomainAllowedOnFreePlan,
+	isCustomDomainAllowedAsPrimaryOnFreePlan,
 	flowName,
 	paidDomainName,
 	intent,
@@ -26,6 +28,10 @@ export function useModalResolutionCallback( {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
 			if ( currentSelectedPlan && isFreePlan( currentSelectedPlan ) ) {
+				if ( isCustomDomainAllowedAsPrimaryOnFreePlan ) {
+					return null;
+				}
+
 				if ( isCustomDomainAllowedOnFreePlan ) {
 					if ( paidDomainName ) {
 						return FREE_PLAN_PAID_DOMAIN_DIALOG;
@@ -46,6 +52,12 @@ export function useModalResolutionCallback( {
 			}
 			return null;
 		},
-		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent ]
+		[
+			isCustomDomainAllowedOnFreePlan,
+			isCustomDomainAllowedAsPrimaryOnFreePlan,
+			flowName,
+			paidDomainName,
+			intent,
+		]
 	);
 }
