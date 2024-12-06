@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesigns } from '../hooks/use-filtered-designs';
@@ -15,7 +15,7 @@ import NoResults from './no-results';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
-import type { Category, Design, StyleVariation } from '../types';
+import type { Design, StyleVariation } from '../types';
 import type { RefCallback } from 'react';
 import './style.scss';
 
@@ -227,25 +227,20 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
-	const features = [ 'blog', 'magazine', 'portfolio', 'podcast', 'store' ];
-	const [ featureCategories, setFeatureCategories ] = useState< Category[] >( [] );
-	const [ subjectCategories, setSubjectCategories ] = useState< Category[] >( [] );
+	const features = [ 'blog', 'portfolio', 'podcast', 'store' ];
+	const featureCategories = useMemo(
+		() => ( categorization?.categories || [] ).filter( ( { slug } ) => features.includes( slug ) ),
+		[ categorization?.categories ]
+	);
+	const subjectCategories = useMemo(
+		() =>
+			( categorization?.categories || [] ).filter( ( { slug } ) => ! features.includes( slug ) ),
+		[ categorization?.categories ]
+	);
 
 	const assemblerCtaData = usePatternAssemblerCtaData();
 
 	const translate = useTranslate();
-
-	useEffect( () => {
-		if ( ! categorization?.categories?.length ) {
-			return;
-		}
-		setFeatureCategories(
-			categorization.categories.filter( ( { slug } ) => features.includes( slug ) )
-		);
-		setSubjectCategories(
-			categorization.categories.filter( ( { slug } ) => ! features.includes( slug ) )
-		);
-	}, [ categorization?.categories ] );
 
 	return (
 		<div>
