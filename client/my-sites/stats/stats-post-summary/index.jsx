@@ -35,6 +35,7 @@ class StatsPostSummary extends Component {
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		supportsUTMStats: PropTypes.bool,
+		siteSlug: PropTypes.string,
 	};
 
 	state = {
@@ -52,6 +53,28 @@ class StatsPostSummary extends Component {
 
 	selectRecord = ( record ) => {
 		this.setState( { selectedRecord: record } );
+	};
+
+	onPeriodChange = ( { direction } ) => {
+		const chartData = this.getChartData();
+		if ( ! chartData.length ) {
+			return;
+		}
+
+		let selectedRecord = this.state.selectedRecord;
+		if ( ! selectedRecord ) {
+			selectedRecord = chartData[ chartData.length - 1 ];
+		}
+
+		const recordIndex = chartData.findIndex(
+			( item ) => item.startDate === selectedRecord.startDate
+		);
+
+		if ( 'previous' === direction && recordIndex > 0 ) {
+			this.setState( { selectedRecord: chartData[ recordIndex - 1 ] } );
+		} else if ( 'next' === direction && recordIndex < chartData.length - 1 ) {
+			this.setState( { selectedRecord: chartData[ recordIndex + 1 ] } );
+		}
 	};
 
 	getChartData() {
@@ -168,7 +191,7 @@ class StatsPostSummary extends Component {
 	}
 
 	render() {
-		const { isRequesting, postId, siteId, translate } = this.props;
+		const { isRequesting, postId, siteId, translate, siteSlug } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
@@ -180,6 +203,9 @@ class StatsPostSummary extends Component {
 		if ( ! this.state.selectedRecord && chartData.length ) {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
+		const selectedRecordIndex = chartData.findIndex(
+			( item ) => item.startDate === selectedRecord.startDate
+		);
 
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
@@ -191,7 +217,14 @@ class StatsPostSummary extends Component {
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 
 					<StatsPeriodHeader>
-						<StatsPeriodNavigation showArrows={ false }>
+						<StatsPeriodNavigation
+							showArrows
+							onPeriodChange={ this.onPeriodChange }
+							url={ `/stats/post/${ postId }/${ siteSlug }` }
+							date={ selectedRecord?.startDate }
+							period={ this.state.period }
+							disablePreviousArrow={ selectedRecordIndex === 0 }
+						>
 							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
 						</StatsPeriodNavigation>
 						<SegmentedControl primary>
