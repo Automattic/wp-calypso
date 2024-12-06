@@ -5,8 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
-import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
@@ -14,6 +12,7 @@ import {
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 import useFetchTrafficHook from './use-fetch-traffic-hook';
+import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'animate.css';
@@ -271,18 +270,15 @@ interface FeedbackPresentorProps {
 
 function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const { supportCommercialUse } = useStatsPurchases( siteId );
+	const { isJetpackNotAtomic, isVip } = useSiteTypes( siteId );
 	const { data, isSuccess } = useFetchTrafficHook( siteId );
 
 	const views = data?.past_thirty_days.views ?? 0;
 	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
-
 	const isHighTrafficSite = isSuccess && views > highTrafficThreshold;
 	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
 
-	const isJetpackNotAtomic = useSelector(
-		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
-	const presentForHighTrafficSite = isJetpackNotAtomic && isHighTrafficSite;
+	const presentForHighTrafficSite = isHighTrafficSite && isJetpackNotAtomic && ! isVip;
 
 	if ( ! supportCommercialUse && ! presentForHighTrafficSite ) {
 		return null;
