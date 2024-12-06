@@ -2,7 +2,6 @@
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
-import { isUseHelpCenterExperienceEnabled } from '@automattic/help-center/src/components/utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
@@ -18,8 +17,6 @@ function AdminHelpCenterContent() {
 	} ) );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
-	const userId = helpCenterData?.currentUser?.ID;
-	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled( userId );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -87,7 +84,6 @@ function AdminHelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience }
 			/>
 		</QueryClientProvider>
 	);
