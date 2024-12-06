@@ -1,4 +1,3 @@
-import { debounce } from 'lodash';
 import React from 'react';
 import uPlot from 'uplot';
 
@@ -15,11 +14,12 @@ export function tooltip(
 				if ( ! tooltipRef.current ) {
 					tooltipRef.current = document.createElement( 'div' );
 					tooltipRef.current.className = 'campaign-item-details__chart-tooltip';
+					tooltipRef.current.style.display = 'none';
 					u.over.parentNode?.appendChild( tooltipRef.current );
 				}
 
 				// Wrap mouse move in a Debounce to reduce the number of updates
-				const handleMouseMove = debounce( ( e ) => {
+				const handleMouseMove = ( e: MouseEvent ) => {
 					if ( ! tooltipRef?.current ) {
 						return;
 					}
@@ -78,7 +78,7 @@ export function tooltip(
 					} else if ( tooltipRef.current ) {
 						tooltipRef.current.style.display = 'none';
 					}
-				}, 8 ); // 120mhz (1000/120 = 8.333ms)
+				};
 
 				u.over.addEventListener( 'mousemove', handleMouseMove );
 				u.over.addEventListener( 'mouseleave', () => {

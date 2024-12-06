@@ -100,7 +100,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
@@ -117,7 +117,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 				},
 			],
 			cursor: {
