@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -37,6 +38,8 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 	const dispatch = useDispatch();
 
 	const isNarrowView = useBreakpoint( '<660px' );
+
+	const [ scrollPosition, setScrollPosition ] = useState( 0 );
 
 	const {
 		selectedCartItems,
@@ -76,9 +79,13 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 		[ dispatch ]
 	);
 
+	const onContentScroll = useCallback( ( e: React.UIEvent< HTMLDivElement > ) => {
+		setScrollPosition( e.currentTarget.scrollTop );
+	}, [] );
+
 	return (
 		<Layout
-			className="hosting-overview-v3"
+			className={ clsx( 'hosting-overview-v3', { 'is-compact-mode': scrollPosition > 50 } ) }
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
 			wide
 		>
@@ -116,7 +123,7 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
 			</LayoutTop>
 
-			<LayoutBody className="hosting-overview-v3__body">
+			<LayoutBody className="hosting-overview-v3__body" onScroll={ onContentScroll }>
 				<QueryProductsList currency="USD" />
 
 				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }

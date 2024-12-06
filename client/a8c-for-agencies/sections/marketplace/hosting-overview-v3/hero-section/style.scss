@@ -5,6 +5,7 @@ $tab-background: linear-gradient( #EBF4FA, #DAE9F3);
 $tab-background-selected: var(--color-surface);
 
 
+
 .hosting-v3-hero-section {
 	max-width: 1500px;
 	margin-inline: auto;
@@ -17,6 +18,10 @@ $tab-background-selected: var(--color-surface);
 .hosting-v3-hero-section__heading {
 	@include a4a-font-heading-xxl;
 	color: var( --color-text-inverted );
+	height: 80px;
+	margin-block-start: 0;
+	transition: height 300ms ease-out;
+	transition: margin 300ms ease-out;
 }
 
 .hosting-v3-hero-section__tabs {
@@ -67,4 +72,12 @@ $tab-background-selected: var(--color-surface);
 .hosting-v3__nav-item-subtitle {
 	@include a4a-font-body-md;
 	color: var( --color-text );
+}
+
+.hosting-overview-v3.is-compact-mode {
+	.hosting-v3-hero-section__heading {
+		overflow: hidden;
+		height: 0;
+		margin-block-start: -39px;
+	}
 }
