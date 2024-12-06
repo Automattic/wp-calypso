@@ -32,7 +32,6 @@ export default function usePlanBillingDescription( {
 	isMonthlyPlan,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-	reflectStorageSelectionInPlanPrices,
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};

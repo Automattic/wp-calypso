@@ -51,8 +51,7 @@ interface Props {
 
 const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	const translate = useTranslate();
-	const { helpers, gridPlansIndex, coupon, siteId, enableTermSavingsPriceDisplay } =
-		usePlansGridContext();
+	const { helpers, gridPlansIndex, coupon, siteId } = usePlansGridContext();
 	const { isMonthlyPlan, billingTimeframe, pricing } = gridPlansIndex[ planSlug ];
 
 	const { introOffer, billingPeriod } = pricing;
@@ -63,7 +62,6 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		isMonthlyPlan,
 		coupon,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
-		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 	} );
 	const description = planBillingDescription || billingTimeframe;
 

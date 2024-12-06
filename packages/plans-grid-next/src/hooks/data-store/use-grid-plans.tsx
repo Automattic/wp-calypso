@@ -234,7 +234,6 @@ const useGridPlans: UseGridPlansType = ( {
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	reflectStorageSelectionInPlanPrices,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',

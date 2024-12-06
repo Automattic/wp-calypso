@@ -77,7 +77,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: termVariantPlanSlug ? [ termVariantPlanSlug ] : [],
-		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
