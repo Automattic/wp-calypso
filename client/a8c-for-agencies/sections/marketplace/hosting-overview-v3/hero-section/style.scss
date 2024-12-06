@@ -4,8 +4,6 @@
 $tab-background: linear-gradient( #EBF4FA, #DAE9F3);
 $tab-background-selected: var(--color-surface);
 
-
-
 .hosting-v3-hero-section {
 	max-width: 1500px;
 	margin-inline: auto;
@@ -20,8 +18,8 @@ $tab-background-selected: var(--color-surface);
 	color: var( --color-text-inverted );
 	height: 80px;
 	margin-block-start: 0;
-	transition: height 300ms ease-out;
-	transition: margin 300ms ease-out;
+	transition: height 800ms ease-out;
+	transition: margin 800ms ease-out;
 }
 
 .hosting-v3-hero-section__tabs {
@@ -79,5 +77,9 @@ $tab-background-selected: var(--color-surface);
 		overflow: hidden;
 		height: 0;
 		margin-block-start: -39px;
+	}
+
+	.a4a-migration-offer-v3 {
+		display: none;
 	}
 }

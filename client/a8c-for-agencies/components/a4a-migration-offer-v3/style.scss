@@ -58,9 +58,13 @@
 
 .a4a-migration-offer-v3__body-actions {
 	display: flex;
+	flex-direction: column;
 	gap: 8px;
-	flex-direction: row;
-	align-items: center;
+
+	@include break-xlarge {
+		flex-direction: row;
+		align-items: center;
+	}
 }
 
 .a4a-migration-offer-v3__body-actions-footnote {

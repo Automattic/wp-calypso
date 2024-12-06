@@ -29,6 +29,8 @@ import { HostingContent } from './hosting-content';
 
 import './style.scss';
 
+const COMPACT_MODE_SCROLL_POINT_THRESHOLD = 150;
+
 export type SectionProps = {
 	section: 'wpcom' | 'pressable' | 'vip';
 };
@@ -85,7 +87,9 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 
 	return (
 		<Layout
-			className={ clsx( 'hosting-overview-v3', { 'is-compact-mode': scrollPosition > 50 } ) }
+			className={ clsx( 'hosting-overview-v3', {
+				'is-compact-mode': scrollPosition > COMPACT_MODE_SCROLL_POINT_THRESHOLD,
+			} ) }
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
 			wide
 		>
