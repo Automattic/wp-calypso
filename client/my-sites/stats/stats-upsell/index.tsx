@@ -12,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { statTypeToPlan } from '../stat-type-to-plan';
 
@@ -21,18 +20,17 @@ import './style.scss';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
-	siteId: number;
 	title: string;
 	features: string[];
 	image: string;
+	statType: string;
 }
 
-export default function StatsUpsell( { siteId, title, features, image }: Props ) {
+export default function StatsUpsell( { title, features, image, statType }: Props ) {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 	const planKey = statTypeToPlan( statType );
 	const plan = plans?.data?.[ planKey ];
 	const pricing = Plans.usePricingMetaForGridPlans( {

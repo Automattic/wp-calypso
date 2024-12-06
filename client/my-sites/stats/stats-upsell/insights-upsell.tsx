@@ -1,17 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features-2.png';
+import { STATS_FEATURE_PAGE_INSIGHTS } from '../constants';
 import StatsUpsell from './index';
 
-interface Props {
-	siteId: number;
-}
-
-const InsightsUpsell: React.FC< Props > = ( { siteId } ) => {
+const InsightsUpsell: React.FC = () => {
 	const translate = useTranslate();
 
 	return (
 		<StatsUpsell
-			siteId={ siteId }
+			statType={ STATS_FEATURE_PAGE_INSIGHTS }
 			title={ translate( 'Unlock site insights' ) }
 			features={ [
 				translate( 'Overview yearly data' ),
