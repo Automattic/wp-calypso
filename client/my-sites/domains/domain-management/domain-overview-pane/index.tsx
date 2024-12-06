@@ -3,6 +3,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { Button } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import * as paths from 'calypso/my-sites/domains/paths';
@@ -64,8 +65,8 @@ const DomainOverviewPane = ( {
 		withIcon: false,
 		hideEnvDataInHeader: true,
 	};
-
-	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
+	const translate = useTranslate();
+	const { adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 
 	const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane }: BtnProps ) => {
 		const adminButtonRef = useRef< HTMLButtonElement | null >( null );
@@ -81,7 +82,7 @@ const DomainOverviewPane = ( {
 					href={ adminUrl }
 					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
 				>
-					{ adminLabel }
+					{ translate( 'Manage site' ) }
 				</Button>
 			</>
 		);
