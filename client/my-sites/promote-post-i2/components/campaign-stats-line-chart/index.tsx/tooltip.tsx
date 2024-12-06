@@ -11,22 +11,25 @@ export function tooltip(
 	return {
 		hooks: {
 			init: ( u: uPlot ) => {
+				// Create the tooltip element
 				if ( ! tooltipRef.current ) {
 					tooltipRef.current = document.createElement( 'div' );
 					tooltipRef.current.className = 'campaign-item-details__chart-tooltip';
 					u.over.parentNode?.appendChild( tooltipRef.current );
 				}
 
-				// Debounce the mouse move, to reduce the number of updates
+				// Wrap mouse move in a Debounce to reduce the number of updates
 				const handleMouseMove = debounce( ( e ) => {
 					if ( ! tooltipRef?.current ) {
 						return;
 					}
 
+					// Get the mouse position relative to the chart
 					const { left } = u.over.getBoundingClientRect();
 					const mouseLeft = e.clientX - left;
 					const activePoint = u.posToIdx( mouseLeft );
 
+					// If a point is active, update the tooltip
 					if ( activePoint >= 0 && tooltipRef.current ) {
 						window.requestAnimationFrame( () => {
 							if ( ! tooltipRef.current ) {

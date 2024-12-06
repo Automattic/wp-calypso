@@ -136,7 +136,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 				y: {
 					range: ( self: uPlot, min: number, max: number ): [ number, number ] => [
 						min,
-						max + ( max - min ) * 0.4,
+						max + ( max - min ) * 0.4, // Increase the scale by 40%, this allows extra space for the tooltip
 					],
 				},
 			},
