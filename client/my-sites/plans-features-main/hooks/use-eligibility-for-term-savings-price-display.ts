@@ -38,7 +38,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
-			intent: 'default',
+			intent,
 			selectedPlan,
 			siteId,
 			hiddenPlans,
