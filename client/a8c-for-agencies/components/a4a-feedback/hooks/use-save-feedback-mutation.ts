@@ -1,43 +1,33 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { MutationSaveFeedbackVariables } from '../types';
 
-// FIXME: Replace with correct interface
-interface APIFeedback {}
+const SURVEY_ID_PREFIX = 'a4a-feedback-';
 
-function mutationSaveFeedback( {
-	params,
-	agencyId,
-}: MutationSaveFeedbackVariables & { agencyId?: number } ): Promise< APIFeedback > {
-	if ( ! agencyId ) {
-		throw new Error( 'Agency ID is required to save feedback' );
-	}
-	// FIXME: Replace with correct path
+interface APIFeedback {
+	success: boolean;
+	err: string | null;
+}
+
+function mutationSaveFeedback( { params }: MutationSaveFeedbackVariables ): Promise< APIFeedback > {
+	// Add a prefix to params.survey_id
+	const prefixedParams = {
+		...params,
+		survey_id: `${ SURVEY_ID_PREFIX }${ params.survey_id }`,
+	};
+
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: `/agency/${ agencyId }/feedback`,
-		body: params,
+		path: `/marketing/survey`,
+		body: { ...prefixedParams },
 	} );
 }
 
 export default function useSaveFeedbackMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIFeedback, Error, MutationSaveFeedbackVariables, TContext >
 ): UseMutationResult< APIFeedback, Error, MutationSaveFeedbackVariables, TContext > {
-	const agencyId = useSelector( getActiveAgencyId );
-
-	const isAPIEnabled = false; // FIXME: Remove this when API is enabled
-
 	return useMutation< APIFeedback, Error, MutationSaveFeedbackVariables, TContext >( {
 		...options,
-		mutationFn: ( args ) =>
-			isAPIEnabled
-				? mutationSaveFeedback( { ...args, agencyId } )
-				: Promise.resolve( {
-						status: 200,
-						code: 'success',
-						message: 'Feedback saved',
-				  } ), // FIXME: Remove this when API is enabled
+		mutationFn: ( args ) => mutationSaveFeedback( { ...args } ),
 	} );
 }

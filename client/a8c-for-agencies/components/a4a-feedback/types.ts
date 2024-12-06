@@ -17,10 +17,16 @@ export type FeedbackProps = {
 	redirectUrl?: string;
 };
 
+interface FeedbackSurveyResponses {
+	rating: string;
+	comment: string;
+}
+export interface FeedbackSurveyResponsesPayload {
+	site_id: number;
+	survey_id: FeedbackType;
+	survey_responses: FeedbackSurveyResponses;
+}
+
 export interface MutationSaveFeedbackVariables {
-	params: {
-		feedback_name: FeedbackType;
-		feedback_rating: string;
-		feedback_comment: string;
-	};
+	params: FeedbackSurveyResponsesPayload;
 }

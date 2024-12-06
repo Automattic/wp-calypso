@@ -4,13 +4,19 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
 import useSaveFeedbackMutation from './use-save-feedback-mutation';
 import type { Props as A4AFeedbackProps } from '../index';
-import type { FeedbackQueryData, FeedbackType, FeedbackProps } from '../types';
+import type {
+	FeedbackQueryData,
+	FeedbackType,
+	FeedbackProps,
+	FeedbackSurveyResponsesPayload,
+} from '../types';
 
 const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
@@ -43,7 +49,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	const [ feedbackInteracted, setFeedbackInteracted ] = useState( false );
 
-	const { mutate: saveFeeback, isPending } = useSaveFeedbackMutation();
+	const { mutate: saveFeedback, isPending } = useSaveFeedbackMutation();
 
 	// Let's use hash #feedback if we want to show the feedback
 	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
@@ -67,25 +73,37 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		[ type, translate, args ]
 	);
 
+	const agencyId = useSelector( getActiveAgencyId );
+
 	// Do the action when submitting feedback
 	const onSubmitFeedback = useCallback(
 		( data: FeedbackQueryData ) => {
-			if ( ! data ) {
+			if ( ! data || ! agencyId ) {
 				return;
 			}
 			const { experience, comments } = data;
-			const params = {
-				feedback_name: type,
-				feedback_rating: experience,
-				feedback_comment: comments,
+			const params: FeedbackSurveyResponsesPayload = {
+				site_id: agencyId,
+				survey_id: type,
+				survey_responses: {
+					rating: experience,
+					comment: comments,
+				},
 			};
-			dispatch( recordTracksEvent( 'calypso_a4a_feedback_submit', params ) );
-			saveFeeback( { params } );
+
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_feedback_submit', {
+					agency_id: agencyId,
+					survey_id: params.survey_id,
+					rating: params.survey_responses.rating,
+				} )
+			);
+			saveFeedback( { params } );
 			setFeedbackInteracted( true );
 			const updatedPreference = getUpdatedPreference( feedbackTimestamp, type, 'lastSubmittedAt' );
 			dispatch( savePreference( FEEDBACK_PREFERENCE, updatedPreference ) );
 		},
-		[ dispatch, feedbackTimestamp, saveFeeback, type ]
+		[ agencyId, dispatch, feedbackTimestamp, saveFeedback, type ]
 	);
 
 	// Do action when skipping feedback
