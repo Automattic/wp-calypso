@@ -129,16 +129,15 @@ class ReaderStream extends Component {
 	};
 
 	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
-		if ( streamKey !== this.props.streamKey ) {
-			this.props.resetCardExpansions();
-			this.props.viewStream( streamKey, window.location.pathname );
-			this.fetchNextPage( {} );
-		}
-
+		// Fetch new page if selected feed or stream is changed.
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
 			this.scrollFeedListToTop();
 			this.props.clearStream( { streamKey } );
 			this.fetchNextPage( {}, { ...this.props, stream: null } ); // Stream as null to start fresh pagination.
+		} else if ( streamKey !== this.props.streamKey ) {
+			this.props.resetCardExpansions();
+			this.props.viewStream( streamKey, window.location.pathname );
+			this.fetchNextPage( {} );
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -615,15 +614,8 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			forcePlaceholders,
-			lastPage,
-			streamHeader,
-			streamKey,
-			selectedPostKey,
-			selectedFeedId,
-		} = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const isReaderCouncilStream = false; // Disabling banner. Original condition: ( this.props.isDiscoverStream || this.props.streamKey === 'following' );
 		let { items, isRequesting } = this.props;
@@ -634,18 +626,6 @@ class ReaderStream extends Component {
 		if ( forcePlaceholders ) {
 			items = [];
 			isRequesting = true;
-		}
-
-		// Due to infinite scrolling or fast selection, API call responses may include items from previously selected feeds.
-		// To temporarily address this issue, filtering out items that don't belong to the currently selected feed.
-		//
-		// The proper fix here is to cancel the pending API calls after the feed selection is changed.
-		if ( selectedFeedId ) {
-			items = items.filter( ( item ) => item.feed_ID === selectedFeedId );
-
-			if ( items.length === 0 ) {
-				isRequesting = true;
-			}
 		}
 
 		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
@@ -762,7 +742,10 @@ class ReaderStream extends Component {
 }
 
 export default connect(
-	( state, { streamKey, recsStreamKey } ) => {
+	( state, { streamKey: streamKeyProp, recsStreamKey } ) => {
+		const selectedFeedId = getSelectedFeedId( state );
+		const isFollowingFiltered = streamKeyProp === 'following' && selectedFeedId;
+		const streamKey = isFollowingFiltered ? `following:feed-${ selectedFeedId }` : streamKeyProp;
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 
@@ -779,8 +762,9 @@ export default connect(
 			} ),
 			notificationsOpen: isNotificationsOpen( state ),
 			stream,
+			streamKey,
 			recsStream: getStream( state, recsStreamKey ),
-			selectedFeedId: getSelectedFeedId( state ),
+			selectedFeedId,
 			selectedPostKey: stream.selected,
 			selectedPost,
 			lastPage: stream.lastPage,
