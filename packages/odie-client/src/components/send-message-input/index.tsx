@@ -43,9 +43,8 @@ export const OdieSendMessageButton = () => {
 			return;
 		}
 		const messageString = inputRef.current?.value;
-		// TODO: double check logic here
-		// Shouldn't have to clear message if talking to bot
-		if ( ! shouldUseHelpCenterExperience ) {
+		// Immediately remove the message from the input field
+		if ( chat?.provider === 'odie' ) {
 			inputRef.current!.value = '';
 		}
 
@@ -61,8 +60,8 @@ export const OdieSendMessageButton = () => {
 			setSubmitDisabled( true );
 
 			await sendMessage( message );
-			// TODO: double check logic here
-			if ( shouldUseHelpCenterExperience ) {
+			// Removes the message from the input field after it has been sent
+			if ( chat?.provider === 'zendesk' ) {
 				inputRef.current!.value = '';
 			}
 
@@ -75,7 +74,7 @@ export const OdieSendMessageButton = () => {
 		} finally {
 			setSubmitDisabled( false );
 		}
-	}, [ sendMessage, isChatBusy, shouldUseHelpCenterExperience, trackEvent ] );
+	}, [ isChatBusy, shouldUseHelpCenterExperience, chat?.provider, trackEvent, sendMessage ] );
 
 	const inputContainerClasses = clsx(
 		'odie-chat-message-input-container',
