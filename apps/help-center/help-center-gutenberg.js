@@ -21,7 +21,7 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const userId = helpCenterData?.currentUser?.ID;
+	const userId = window?.JetpackScriptData?.user?.current_user?.id;
 	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled( userId );
 
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
