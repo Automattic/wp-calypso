@@ -26,7 +26,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
-			const isNewUser = getSignupIsNewUserAndClear( username );
+			const isNewUser = getSignupIsNewUserAndClear( username ) ?? false;
 
 			// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
 			// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
