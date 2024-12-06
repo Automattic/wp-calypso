@@ -126,6 +126,7 @@ export type Logo = {
 	url: string;
 	description: string;
 	mediaId?: number;
+	revisedPrompt?: string;
 };
 
 export type RequestError = string | Error | null;
