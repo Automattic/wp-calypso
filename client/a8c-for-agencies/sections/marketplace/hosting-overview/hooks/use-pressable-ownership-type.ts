@@ -13,9 +13,8 @@ export default function usePressableOwnershipType() {
 			return 'none';
 		}
 
-		// If the agency has a regular Pressable plan (not brought through A4A marketplace), A4A id is null.
 		const hasRegularPressablePlan =
-			hasPressablePlan && activeAgency?.third_party?.pressable?.a4a_id === null;
+			activeAgency?.third_party?.pressable?.subscription?.status === 'active';
 
 		return hasRegularPressablePlan ? 'regular' : 'agency';
 	}, [ activeAgency ] );

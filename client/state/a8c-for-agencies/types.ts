@@ -24,6 +24,10 @@ export interface Agency {
 			email: string;
 			name: string;
 			pressable_id: number;
+			subscription?: null | {
+				id?: number;
+				status?: 'active' | 'canceled';
+			};
 			usage?: null | {
 				status: string;
 				storage_gb: number;
