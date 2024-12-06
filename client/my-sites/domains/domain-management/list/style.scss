@@ -336,7 +336,7 @@ main.domains-overview main.domains-overview__list .a4a-layout-column__container 
 
 		.navigation-header__main {
 			padding-inline: 0;
-			padding: 12px 24px;
+			padding: 16px 24px;
 			margin: 0;
 		}
 	}
@@ -345,7 +345,7 @@ main.domains-overview main.domains-overview__list .a4a-layout-column__container 
 	.formatted-header__title {
 		display: flex;
 		align-items: center;
-		min-width: 40px;
+		min-height: 40px;
 		font-size: 1.25rem;
 		font-weight: 500;
 		letter-spacing: normal;
