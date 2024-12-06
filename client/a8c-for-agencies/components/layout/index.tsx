@@ -20,9 +20,18 @@ type Props = {
 	wide?: boolean;
 	withBorder?: boolean;
 	compact?: boolean;
+	onScroll?: ( e: React.UIEvent< HTMLDivElement > ) => void;
 };
 
-function MainLayout( { children, className, title, wide, withBorder, sidebarNavigation }: Props ) {
+function MainLayout( {
+	children,
+	className,
+	title,
+	wide,
+	withBorder,
+	sidebarNavigation,
+	onScroll,
+}: Props ) {
 	const hasLayoutColumns = React.Children.toArray( children ).some(
 		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
 	);
@@ -41,7 +50,9 @@ function MainLayout( { children, className, title, wide, withBorder, sidebarNavi
 			<DocumentHead title={ title } />
 			{ sidebarNavigation }
 
-			<div className={ layoutContainerClassname }>{ children }</div>
+			<div className={ layoutContainerClassname } onScroll={ onScroll }>
+				{ children }
+			</div>
 		</Main>
 	);
 }

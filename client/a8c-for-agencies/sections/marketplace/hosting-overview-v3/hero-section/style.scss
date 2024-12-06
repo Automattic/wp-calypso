@@ -18,8 +18,6 @@ $tab-background-selected: var(--color-surface);
 	color: var( --color-text-inverted );
 	height: 80px;
 	margin-block-start: 0;
-	transition: height 800ms ease-out;
-	transition: margin 800ms ease-out;
 }
 
 .hosting-v3-hero-section__tabs {
@@ -73,12 +71,7 @@ $tab-background-selected: var(--color-surface);
 }
 
 .hosting-overview-v3.is-compact-mode {
-	.hosting-v3-hero-section__heading {
-		overflow: hidden;
-		height: 0;
-		margin-block-start: -39px;
-	}
-
+	.hosting-v3-hero-section__heading,
 	.a4a-migration-offer-v3 {
 		display: none;
 	}

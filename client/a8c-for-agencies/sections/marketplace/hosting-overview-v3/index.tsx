@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -29,7 +29,7 @@ import { HostingContent } from './hosting-content';
 
 import './style.scss';
 
-const COMPACT_MODE_SCROLL_POINT_THRESHOLD = 150;
+const COMPACT_MODE_SCROLL_POINT_THRESHOLD = 100;
 
 export type SectionProps = {
 	section: 'wpcom' | 'pressable' | 'vip';
@@ -42,6 +42,7 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 	const isNarrowView = useBreakpoint( '<660px' );
 
 	const [ scrollPosition, setScrollPosition ] = useState( 0 );
+	const [ isCompactMode, setIsCompactMode ] = useState( false );
 
 	const {
 		selectedCartItems,
@@ -85,12 +86,25 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 		setScrollPosition( e.currentTarget.scrollTop );
 	}, [] );
 
+	useEffect( () => {
+		setIsCompactMode( ( currentState ) => {
+			if ( currentState && scrollPosition === 0 ) {
+				return false;
+			} else if ( scrollPosition > COMPACT_MODE_SCROLL_POINT_THRESHOLD ) {
+				return true;
+			}
+
+			return currentState;
+		} );
+	}, [ scrollPosition ] );
+
 	return (
 		<Layout
 			className={ clsx( 'hosting-overview-v3', {
-				'is-compact-mode': scrollPosition > COMPACT_MODE_SCROLL_POINT_THRESHOLD,
+				'is-compact-mode': isCompactMode,
 			} ) }
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
+			onScroll={ onContentScroll }
 			wide
 		>
 			<LayoutTop>
@@ -127,7 +141,7 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
 			</LayoutTop>
 
-			<LayoutBody className="hosting-overview-v3__body" onScroll={ onContentScroll }>
+			<LayoutBody className="hosting-overview-v3__body">
 				<QueryProductsList currency="USD" />
 
 				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }
