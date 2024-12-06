@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -6,6 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
@@ -278,8 +279,10 @@ function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const isHighTrafficSite = isSuccess && views > highTrafficThreshold;
 	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const presentForHighTrafficSite = isOdysseyStats && isHighTrafficSite;
+	const isJetpackNotAtomic = useSelector(
+		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const presentForHighTrafficSite = isJetpackNotAtomic && isHighTrafficSite;
 
 	if ( ! supportCommercialUse && ! presentForHighTrafficSite ) {
 		return null;
