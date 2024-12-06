@@ -14,6 +14,8 @@ import type {
 	FeaturePreviewInterface,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
+import './style.scss';
+
 interface Props {
 	selectedDomainPreview: React.ReactNode;
 	selectedDomain: string;
@@ -57,7 +59,7 @@ const DomainOverviewPane = ( {
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
-		subtitle: selectedDomain,
+		subtitle: site.name || selectedDomain,
 		url: site.URL,
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
