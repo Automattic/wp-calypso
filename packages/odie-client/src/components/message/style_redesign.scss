@@ -485,10 +485,6 @@
 				border-color: inherit;
 			}
 
-			&:focus {
-				outline: var(--studio-white) 2px solid;
-			}
-
 			&.is-active {
 				border-width: 1px;
 			}
