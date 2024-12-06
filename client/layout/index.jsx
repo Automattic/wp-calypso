@@ -455,17 +455,11 @@ export default withCurrentRoute(
 		const isWooPasswordlessJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooPasswordlessJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 			state,
 			siteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,
