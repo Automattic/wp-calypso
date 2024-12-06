@@ -10,6 +10,7 @@ import {
 } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import 'uplot/dist/uPlot.min.css';
+import { tooltip } from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/tooltip';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
 
 const DEFAULT_DIMENSIONS = {
@@ -27,7 +28,6 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 	const hourly = resolution === ChartResolution.Hour;
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
-	const lineRef = useRef< HTMLDivElement | null >( null );
 
 	const accentColor = getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim();
 	const chartColor = hexToRgb( accentColor );
@@ -59,116 +59,31 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 
 	// Convert to uPlot's AlignedData format
 	const uplotData: uPlot.AlignedData = [ new Float64Array( labels ), new Float64Array( values ) ];
+
 	const locale = useLocale();
 
-	const formatDate = ( date: Date, hourly: boolean ) => {
-		const options: Intl.DateTimeFormatOptions = hourly
-			? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-			: { month: 'short', day: 'numeric' };
-		return new Intl.DateTimeFormat( locale, options ).format( date );
-	};
-
-	const tooltipPlugin = {
-		hooks: {
-			init: ( u: uPlot ) => {
-				if ( ! tooltipRef.current ) {
-					tooltipRef.current = document.createElement( 'div' );
-					tooltipRef.current.className = 'campaign-item-details__chart-tooltip';
-					tooltipRef.current.style.position = 'absolute';
-					tooltipRef.current.style.pointerEvents = 'none';
-					tooltipRef.current.style.background = 'black';
-					tooltipRef.current.style.color = 'white';
-					tooltipRef.current.style.padding = '8px 10px';
-					tooltipRef.current.style.borderRadius = '4px';
-					tooltipRef.current.style.display = 'none';
-					u.over.parentNode?.appendChild( tooltipRef.current );
-				}
-
-				if ( ! lineRef.current ) {
-					lineRef.current = document.createElement( 'div' );
-					lineRef.current.className = 'campaign-item-details__chart-tooltip-line';
-					lineRef.current.style.position = 'absolute';
-					lineRef.current.style.width = '2px';
-					lineRef.current.style.background = 'rgba(0, 0, 0, 0.12)';
-					lineRef.current.style.top = '0';
-					lineRef.current.style.bottom = '50px';
-					lineRef.current.style.display = 'none';
-					u.over.parentNode?.appendChild( lineRef.current );
-				}
-
-				u.over.addEventListener( 'mousemove', ( e ) => {
-					if ( ! tooltipRef.current || ! lineRef.current ) {
-						return;
-					}
-					const { left } = u.over.getBoundingClientRect();
-					const mouseLeft = e.clientX - left;
-
-					const idx = u.posToIdx( mouseLeft );
-					if ( idx >= 0 && idx < u.data[ 0 ].length ) {
-						const date = u.data[ 0 ][ idx ];
-						const value = u.data[ 1 ][ idx ];
-						if ( value != null ) {
-							tooltipRef.current.style.display = 'block';
-							tooltipRef.current.style.left = mouseLeft + 'px';
-							tooltipRef.current.style.top = '0';
-							tooltipRef.current.innerHTML = `
-								<div class="campaign-item-details__chart-tooltip-date"><strong>${ formatDate(
-									new Date( date * 1000 ),
-									hourly
-								) }</strong></div>
-								<div class="campaign-item-details__chart-tooltip-divider"></div>
-								<div class="campaign-item-details__chart-tooltip-data">${ formatValue( value ) }</div>
-							`;
-
-							lineRef.current.style.display = 'block';
-
-							lineRef.current.style.left = mouseLeft + tooltipRef.current.offsetWidth / 2 + 'px';
-							lineRef.current.style.top = '0';
-						} else {
-							tooltipRef.current.style.display = 'none';
-							lineRef.current.style.display = 'none';
-						}
-					} else {
-						tooltipRef.current.style.display = 'none';
-						lineRef.current.style.display = 'none';
-					}
-				} );
-
-				u.over.addEventListener( 'mouseleave', () => {
-					if ( tooltipRef.current ) {
-						tooltipRef.current.style.display = 'none';
-					}
-					if ( lineRef.current ) {
-						lineRef.current.style.display = 'none';
-					}
-				} );
-			},
-			destroy: () => {
-				if ( tooltipRef.current && tooltipRef.current.parentNode ) {
-					tooltipRef.current.parentNode.removeChild( tooltipRef.current );
-					tooltipRef.current = null;
-				}
-				if ( lineRef.current && lineRef.current.parentNode ) {
-					lineRef.current.parentNode.removeChild( lineRef.current );
-					lineRef.current = null;
-				}
-			},
-		},
-	};
-
-	function formatValue( rawValue: number ) {
-		if ( rawValue == null ) {
-			return '-';
-		}
-
-		if ( source === ChartSourceOptions.Spend ) {
-			return `$${ formatCents( rawValue, 2 ) }`;
-		}
-
-		return rawValue.toLocaleString();
-	}
-
 	const options = useMemo( () => {
+		const formatDate = ( date: Date, hourly: boolean ) => {
+			const options: Intl.DateTimeFormatOptions = hourly
+				? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+				: { month: 'short', day: 'numeric' };
+			return new Intl.DateTimeFormat( locale, options ).format( date );
+		};
+
+		const tooltipPlugin = tooltip( tooltipRef, formatDate, hourly, formatValue );
+
+		function formatValue( rawValue: number ) {
+			if ( rawValue == null ) {
+				return '-';
+			}
+
+			if ( source === ChartSourceOptions.Spend ) {
+				return `$${ formatCents( rawValue, 2 ) }`;
+			}
+
+			return rawValue.toLocaleString();
+		}
+
 		return {
 			class: 'campaign-item-details__uplot-chart',
 			width: width,
@@ -240,7 +155,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					fill: ( self: uPlot ) => {
 						const { r, g, b } = chartColor;
 
-						//Get the height so we can create a gradient
+						// Get the height so we can create a gradient
 						const height = self?.bbox?.height;
 						if ( ! height || ! isFinite( height ) ) {
 							return `rgba(${ r }, ${ g }, ${ b }, 0.1)`;
@@ -266,7 +181,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			],
 			plugins: [ tooltipPlugin ],
 		};
-	}, [ width, source, accentColor, formatDate, hourly, chartColor ] );
+	}, [ hourly, width, source, accentColor, locale, chartColor ] );
 
 	return (
 		<div style={ { position: 'relative' } }>

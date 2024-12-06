@@ -1297,11 +1297,15 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 .campaign-item-details {
 
-	//&__uplot-chart {
-	//	.u-over {
-	//		cursor: none;
-	//	}
-	//}
+	&__chart-tooltip {
+		position: absolute;
+		pointer-events: none;
+		background: var( --color-black );
+		color: var( --color-text-white );
+		padding: 8px 10px;
+		border-radius: 4px;
+		display: none;
+	}
 
 	&__chart-tooltip-date {
 		color: var(--studio-gray-20);
