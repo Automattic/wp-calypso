@@ -926,47 +926,53 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		categorization.selections = [ 'blog' ];
 	}
 
-	const stepContent = (
-		<UnifiedDesignPicker
-			designs={ designs }
-			locale={ locale }
-			onPreview={ previewDesign }
-			onChangeVariation={ onChangeVariation }
-			onViewAllDesigns={ trackAllDesignsView }
-			heading={ heading }
-			categorization={ categorization }
-			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-			getBadge={ getBadge }
-			oldHighResImageLoading={ oldHighResImageLoading }
-			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-			showActiveThemeBadge={ intent !== 'build' }
-			isTierFilterEnabled={ isGoalCentricFeature }
-			isMultiFilterEnabled={ isGoalCentricFeature }
-			onChangeTier={ handleChangeTier }
-		/>
+	const bigSkyButtonEventProperties = {
+		is_big_sky_eligible: isBigSkyEligible,
+		// is_filter_included_with_plan_enabled: true/false,
+		// preselected_filters: ??,
+		// selected_filters: ??,
+		// {filter} ??
+	};
+	const bigSkyButtons = isBigSkyEligible && (
+		<Button
+			onClick={ () => {
+				navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }` );
+				recordTracksEvent(
+					'calypso_design_picker_big_sky_button_click',
+					commonFilterProperties
+				);
+			} }
+		>
+			{ translate( 'Create yours with AI' ) }
+		</Button>
 	);
 
-	const bigSkyButtons = (
+	const stepContent = (
 		<>
-			{ isBigSkyEligible && (
-				<Button
-					onClick={ () => {
-						navigate(
-							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
-						);
-						recordTracksEvent(
-							'calypso_design_picker_big_sky_button_click',
-							commonFilterProperties
-						);
-					} }
-				>
-					{ translate( 'Create yours with AI' ) }
-				</Button>
-			) }
-			<TrackComponentView
-				eventName="calypso_design_picker_big_sky_button_impression"
-				eventProperties={ commonFilterProperties }
+			<div className="setup-container__big-sky-container">
+				{ bigSkyButtons }
+				<TrackComponentView
+					eventName="calypso_design_picker_big_sky_button_impression"
+					eventProperties={ commonFilterProperties }
+				/>
+			</div>
+			<UnifiedDesignPicker
+				designs={ designs }
+				locale={ locale }
+				onPreview={ previewDesign }
+				onChangeVariation={ onChangeVariation }
+				onViewAllDesigns={ trackAllDesignsView }
+				heading={ heading }
+				categorization={ categorization }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				getBadge={ getBadge }
+				oldHighResImageLoading={ oldHighResImageLoading }
+				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+				showActiveThemeBadge={ intent !== 'build' }
+				isTierFilterEnabled={ isGoalCentricFeature }
+				isMultiFilterEnabled={ isGoalCentricFeature }
+				onChangeTier={ handleChangeTier }
 			/>
 		</>
 	);
@@ -979,7 +985,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			hideFormattedHeader
 			hideSkip
 			backLabelText={ translate( 'Back' ) }
-			customizedActionButtons={ bigSkyButtons }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
