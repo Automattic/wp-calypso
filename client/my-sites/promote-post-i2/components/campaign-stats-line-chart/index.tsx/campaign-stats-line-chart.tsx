@@ -29,10 +29,8 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const lineRef = useRef< HTMLDivElement | null >( null );
 
-	const accentColour = getComputedStyle( document.body )
-		.getPropertyValue( '--color-accent' )
-		.trim();
-	const primaryRGB = hexToRgb( accentColour );
+	const accentColor = getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim();
+	const chartColor = hexToRgb( accentColor );
 
 	const updateWidth = () => {
 		const wrapperElement = document.querySelector(
@@ -218,6 +216,11 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			legend: {
 				show: false, // This will hide the legend
 			},
+			scales: {
+				y: {
+					range: ( self: uPlot, min: number, max: number ) => [ min, max + ( max - min ) * 0.4 ], // Add x% padding at the top to allow space for the tooltip
+				},
+			},
 			series: [
 				{
 					label: 'Date',
@@ -230,10 +233,10 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 				},
 				{
 					label: _.capitalize( source ),
-					stroke: accentColour,
+					stroke: accentColor,
 					width: 3,
 					fill: ( self: uPlot ) => {
-						const { r, g, b } = primaryRGB;
+						const { r, g, b } = chartColor;
 
 						//Get the height so we can create a gradient
 						const height = self?.bbox?.height;
@@ -252,7 +255,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						return linear?.()( u, seriesIdx, idx0, idx1 ) || null;
 					},
 					points: {
-						show: false,
+						show: true,
 					},
 					value: ( self: uPlot, rawValue: number ) => {
 						return formatValue( rawValue );
@@ -261,7 +264,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			],
 			plugins: [ tooltipPlugin ],
 		};
-	}, [ width, source, accentColour, formatDate, hourly, primaryRGB ] );
+	}, [ width, source, accentColor, formatDate, hourly, chartColor ] );
 
 	return (
 		<div style={ { position: 'relative' } }>
