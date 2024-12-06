@@ -45,16 +45,6 @@ export default function SiteSettingsForm( {
 				/>
 			) }
 
-			{ ! siteIsJetpack && (
-				<HolidaySnow
-					fields={ fields }
-					handleToggle={ handleToggle }
-					isSaving={ isSavingSettings }
-					onSave={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
-				/>
-			) }
-
 			<A4AFullyManagedSiteForm
 				site={ site }
 				isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
@@ -80,6 +70,16 @@ export default function SiteSettingsForm( {
 				isUnlaunchedSite={ isUnlaunchedSite }
 				urlRef="unlaunched-settings"
 			/>
+
+			{ ! siteIsJetpack && (
+				<HolidaySnow
+					fields={ fields }
+					handleToggle={ handleToggle }
+					isSaving={ isSavingSettings }
+					onSave={ handleSubmitForm }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
+			) }
 
 			<SubscriptionGiftingForm
 				fields={ fields }
