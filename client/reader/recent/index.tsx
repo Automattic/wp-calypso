@@ -166,6 +166,19 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		setIsLoading( data?.isRequesting );
 	}, [ data?.isRequesting ] );
 
+	// TODO: This is a temporary fix to ensure that the search input stays focused.
+	// We should fix this in core.
+	useEffect( () => {
+		if ( view.search && view.search.length > 0 ) {
+			requestAnimationFrame( () => {
+				const searchInput = document.querySelector(
+					'.components-input-control__input'
+				) as HTMLInputElement;
+				searchInput?.focus();
+			} );
+		}
+	}, [ view.search ] );
+
 	return (
 		<div className="recent-feed">
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
