@@ -2232,7 +2232,7 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0 {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
@@ -2292,16 +2292,13 @@ $breakpoint-mobile: 660px;
 		@include link-woo;
 	}
 
-	// These styles core core profiler flow unintentionally
-	&:not(.is-woocommerce-core-profiler-flow) {
-		.login__lost-password-link {
+	.login__lost-password-link {
+		@include link-woo;
+	}
+	.security-key-form__help-text,
+	.formatted-header__subtitle {
+		a {
 			@include link-woo;
-		}
-		.security-key-form__help-text,
-		.formatted-header__subtitle {
-			a {
-				@include link-woo;
-			}
 		}
 	}
 }
