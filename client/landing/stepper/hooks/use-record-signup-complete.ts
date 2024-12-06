@@ -11,10 +11,10 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { username, domainCartItem, planCartItem, selectedDomain, signupDomainOrigin } = useSelect(
+	const { userId, domainCartItem, planCartItem, selectedDomain, signupDomainOrigin } = useSelect(
 		( select ) => {
 			return {
-				username: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.username,
+				userId: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.ID,
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -26,8 +26,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
-			const isNewUser = getSignupIsNewUserAndClear( username ) ?? false;
-
+			const isNewUser = getSignupIsNewUserAndClear( userId ) ?? false;
 			// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
 			// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
 			// so we avoid capturing the product slug in these instances.
@@ -74,7 +73,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			signupDomainOrigin,
 			siteId,
 			theme,
-			username,
+			userId,
 		]
 	);
 };

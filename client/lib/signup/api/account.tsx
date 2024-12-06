@@ -127,6 +127,7 @@ export async function createAccount( {
 	}
 
 	const username = response?.signup_sandbox_username || response?.username;
+	const userId = response?.signup_sandbox_user_id || response?.user_id;
 	recordNewAccountCreation( {
 		response,
 		flowName,
@@ -134,7 +135,7 @@ export async function createAccount( {
 		signupType: service ? 'social' : 'default',
 	} );
 
-	setSignupIsNewUser( username );
+	setSignupIsNewUser( userId );
 
 	return { ...response };
 }

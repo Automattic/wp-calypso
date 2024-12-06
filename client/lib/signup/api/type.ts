@@ -64,6 +64,7 @@ export type AccountCreateReturn =
 			};
 	  }
 	| {
+			ID?: string;
 			username?: string;
 			marketing_price_group?: string | undefined;
 			bearer_token?: string | undefined;
