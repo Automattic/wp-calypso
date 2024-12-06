@@ -11,8 +11,13 @@ import * as ProductsList from '../../products-list';
 import * as Purchases from '../../purchases';
 import * as Site from '../../site';
 import {
-	ADD_ON_100GB_STORAGE,
 	ADD_ON_50GB_STORAGE,
+	ADD_ON_100GB_STORAGE,
+	ADD_ON_150GB_STORAGE,
+	ADD_ON_200GB_STORAGE,
+	ADD_ON_250GB_STORAGE,
+	ADD_ON_300GB_STORAGE,
+	ADD_ON_350GB_STORAGE,
 	ADD_ON_CUSTOM_DESIGN,
 	ADD_ON_UNLIMITED_THEMES,
 	STORAGE_LIMIT,
@@ -37,12 +42,22 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const displayCostCustomDesign = useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN );
 	const displayCost1GBSpace50 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 );
 	const displayCost1GBSpace100 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 );
+	const displayCost1GBSpace150 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 150 );
+	const displayCost1GBSpace200 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 200 );
+	const displayCost1GBSpace250 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 250 );
+	const displayCost1GBSpace300 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 300 );
+	const displayCost1GBSpace350 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 350 );
 
 	/*
 	 * TODO: `useAddOnPrices` be refactored instead to return an index of `{ [ slug ]: AddOnPrice }`
 	 */
 	const addOnPrices1GBSpace50 = useAddOnPrices( PRODUCT_1GB_SPACE, 50 );
 	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
+	const addOnPrices1GBSpace150 = useAddOnPrices( PRODUCT_1GB_SPACE, 150 );
+	const addOnPrices1GBSpace200 = useAddOnPrices( PRODUCT_1GB_SPACE, 200 );
+	const addOnPrices1GBSpace250 = useAddOnPrices( PRODUCT_1GB_SPACE, 250 );
+	const addOnPrices1GBSpace300 = useAddOnPrices( PRODUCT_1GB_SPACE, 300 );
+	const addOnPrices1GBSpace350 = useAddOnPrices( PRODUCT_1GB_SPACE, 350 );
 
 	return useMemo(
 		() =>
@@ -100,6 +115,86 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					featured: false,
 					purchased: false,
 					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 100 ),
+				},
+				{
+					addOnSlug: ADD_ON_150GB_STORAGE,
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: null,
+					icon: spaceUpgradeIcon,
+					quantity: 150,
+					name: translate( '150 GB Storage' ),
+					displayCost: displayCost1GBSpace150,
+					prices: addOnPrices1GBSpace150,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 150 ),
+				},
+				{
+					addOnSlug: ADD_ON_200GB_STORAGE,
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: null,
+					icon: spaceUpgradeIcon,
+					quantity: 200,
+					name: translate( '200 GB Storage' ),
+					displayCost: displayCost1GBSpace200,
+					prices: addOnPrices1GBSpace200,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 200 ),
+				},
+				{
+					addOnSlug: ADD_ON_250GB_STORAGE,
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: null,
+					icon: spaceUpgradeIcon,
+					quantity: 250,
+					name: translate( '250 GB Storage' ),
+					displayCost: displayCost1GBSpace250,
+					prices: addOnPrices1GBSpace250,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 250 ),
+				},
+				{
+					addOnSlug: ADD_ON_300GB_STORAGE,
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: null,
+					icon: spaceUpgradeIcon,
+					quantity: 300,
+					name: translate( '300 GB Storage' ),
+					displayCost: displayCost1GBSpace300,
+					prices: addOnPrices1GBSpace300,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 300 ),
+				},
+				{
+					addOnSlug: ADD_ON_350GB_STORAGE,
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: null,
+					icon: spaceUpgradeIcon,
+					quantity: 350,
+					name: translate( '350 GB Storage' ),
+					displayCost: displayCost1GBSpace350,
+					prices: addOnPrices1GBSpace350,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 350 ),
 				},
 			] as const,
 		[
