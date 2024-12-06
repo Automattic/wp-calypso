@@ -741,11 +741,24 @@ class ReaderStream extends Component {
 	}
 }
 
+/**
+ * Returns a modified stream key if necessary else returns the original stream key.
+ * @returns {string} Stream key.
+ */
+function getStreamKey( state, streamKey ) {
+	// For "following" stream, use a unique streamKey if a feed is selected. This prevent feed overwrites when rapid selections are made.
+	const selectedFeedId = getSelectedFeedId( state );
+	const isFollowingFiltered = streamKey === 'following' && selectedFeedId;
+	if ( isFollowingFiltered ) {
+		return `following:feed-${ selectedFeedId }`;
+	}
+
+	return streamKey;
+}
+
 export default connect(
-	( state, { streamKey: streamKeyProp, recsStreamKey } ) => {
-		const selectedFeedId = getSelectedFeedId( state );
-		const isFollowingFiltered = streamKeyProp === 'following' && selectedFeedId;
-		const streamKey = isFollowingFiltered ? `following:feed-${ selectedFeedId }` : streamKeyProp;
+	( state, { streamKey: tempStreamKey, recsStreamKey } ) => {
+		const streamKey = getStreamKey( state, tempStreamKey );
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 
@@ -764,7 +777,7 @@ export default connect(
 			stream,
 			streamKey,
 			recsStream: getStream( state, recsStreamKey ),
-			selectedFeedId,
+			selectedFeedId: getSelectedFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
 			lastPage: stream.lastPage,
