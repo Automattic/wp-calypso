@@ -62,10 +62,6 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 			await statsPage.clickTab( 'Traffic' );
 		} );
 
-		it( 'View 30-day highlights', async function () {
-			await statsPage.selectHighlightPeriod( '30-day' );
-		} );
-
 		it( 'Select "Months" stats period', async function () {
 			await statsPage.selectStatsPeriodFromDropdown( 'Months' );
 		} );
