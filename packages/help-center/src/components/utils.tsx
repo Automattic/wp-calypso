@@ -139,10 +139,3 @@ export const matchSupportInteractionId = (
 		return foundMatch;
 	}
 };
-
-export const isUseHelpCenterExperienceEnabled = ( userId: number ): boolean => {
-	if ( ! userId || userId % 100 > 50 ) {
-		return false;
-	}
-	return true;
-};
