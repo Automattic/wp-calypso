@@ -82,11 +82,11 @@ export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
 
-export function allDomainManagementRoot() {
+export function domainManagementOverviewRoot() {
 	return domainManagementAllRoot() + '/overview';
 }
 
-export function allDomainEmailManagementRoot() {
+export function domainManagementEmailRoot() {
 	return domainManagementAllRoot() + '/email';
 }
 
