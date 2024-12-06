@@ -36,7 +36,7 @@ const Conversations = ( {
 	isLoadingInteractions,
 }: {
 	conversations: ZendeskConversation[];
-	isLoadingInteractions: boolean;
+	isLoadingInteractions?: boolean;
 } ) => {
 	const { __ } = useI18n();
 
