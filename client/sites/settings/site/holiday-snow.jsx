@@ -1,4 +1,4 @@
-import { Button, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -41,7 +41,7 @@ export default function HolidaySnow( { fields, handleToggle, isSaving, onSave, d
 					onButtonClick={ onSave }
 					showButton
 				/>
-				<CompactCard className="site-settings__holiday-snow-content">{ renderForm() }</CompactCard>
+				<Card className="site-settings__holiday-snow-content">{ renderForm() }</Card>
 			</div>
 		);
 	}
