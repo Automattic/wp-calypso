@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Category } from '../types';
 
 export interface Categorization {
@@ -11,12 +12,22 @@ interface UseCategorizationOptions {
 	defaultSelections: string[];
 	isMultiSelection?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
+	handleSelect?: ( slug: string ) => void;
+	handleDeselect?: ( slug: string ) => void;
 }
 
 export function useCategorization(
 	categoryMap: Record< string, Category >,
-	{ defaultSelections, isMultiSelection, sort }: UseCategorizationOptions
+	{
+		defaultSelections,
+		isMultiSelection,
+		sort,
+		handleSelect,
+		handleDeselect,
+	}: UseCategorizationOptions
 ): Categorization {
+	const [ searchParams, setSearchParams ] = useSearchParams();
+
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -27,62 +38,57 @@ export function useCategorization(
 		return result.sort( sort );
 	}, [ categoryMap, sort ] );
 
-	const [ selections, setSelections ] = useState< string[] >(
-		chooseDefaultSelections( categories, defaultSelections )
-	);
+	const selections = searchParams.get( 'categories' )?.split( ',' ) || [];
+
+	const setSelections = ( values: string[] ) => {
+		setSearchParams( ( currentSearchParams ) => {
+			if ( values.length > 0 ) {
+				currentSearchParams.set( 'categories', values.join( ',' ) );
+			} else {
+				currentSearchParams.delete( 'categories' );
+			}
+			return currentSearchParams;
+		} );
+	};
 
 	const onSelect = useCallback(
 		( value: string ) => {
-			setSelections( ( currentSelections: string[] ) => {
-				if ( ! isMultiSelection ) {
-					return [ value ];
-				}
+			if ( ! isMultiSelection ) {
+				handleSelect?.( value );
+				setSelections( [ value ] );
+				return;
+			}
 
-				const index = currentSelections.findIndex( ( selection ) => selection === value );
-				if ( index === -1 ) {
-					return [ ...currentSelections, value ];
-				}
+			const currentSelections = searchParams.get( 'categories' )?.split( ',' ) || [];
+			const index = currentSelections.findIndex( ( selection ) => selection === value );
+			if ( index === -1 ) {
+				handleSelect?.( value );
+				return setSelections( [ ...currentSelections, value ] );
+			}
 
-				// The selections should at least have one.
-				return currentSelections.length > 1
-					? [ ...currentSelections.slice( 0, index ), ...currentSelections.slice( index + 1 ) ]
-					: currentSelections;
-			} );
+			// The selections should at least have one.
+			if ( currentSelections.length > 1 ) {
+				handleDeselect?.( value );
+				return setSelections( [
+					...currentSelections.slice( 0, index ),
+					...currentSelections.slice( index + 1 ),
+				] );
+			}
 		},
-		[ isMultiSelection, setSelections ]
+		[ searchParams, isMultiSelection, setSelections, handleSelect, handleDeselect ]
 	);
 
 	useEffect( () => {
-		if ( shouldSetToDefaultSelections( categories, selections ) ) {
+		if ( selections.length === 0 ) {
 			setSelections( chooseDefaultSelections( categories, defaultSelections ) );
 		}
-	}, [ categories, defaultSelections, selections ] );
+	}, [] );
 
 	return {
 		categories,
 		selections,
 		onSelect,
 	};
-}
-
-/**
- *	Check that the current selections still match one of the category slugs,
- *	and if it doesn't reset the current selections to the default selections.
- *	@param categories the list of available categories
- *	@param currentSelections the slugs of the current selected category
- *	@returns whether the current selections should be set to the default selections
- */
-function shouldSetToDefaultSelections(
-	categories: Category[],
-	currentSelections: string[]
-): boolean {
-	// For an empty list, the empty selections is the only correct one.
-	if ( categories.length === 0 && currentSelections.length === 0 ) {
-		return false;
-	}
-
-	const currentSelectionsSet = new Set( currentSelections );
-	return ! categories.some( ( { slug } ) => currentSelectionsSet.has( slug ) );
 }
 
 /**

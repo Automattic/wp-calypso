@@ -88,6 +88,7 @@ import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useRecipe from './hooks/use-recipe';
+import useTrackFilters from './hooks/use-track-filters';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
@@ -117,6 +118,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isGoalsHoldout = useIsGoalsHoldout( stepName );
 
 	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
+
+	const { isEligible } = useIsBigSkyEligible();
+	const isBigSkyEligible = isEligible && isGoalCentricFeature;
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -227,10 +231,27 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const categorizationOptions = getCategorizationOptions( goals, {
 		isMultiSelection: isGoalCentricFeature,
 	} );
+
+	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
+		preselectedFilters: categorizationOptions.defaultSelections,
+		isBigSkyEligible,
+		isMultiSelection: isGoalCentricFeature,
+	} );
+
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
+		handleSelect: handleSelectFilter,
+		handleDeselect: handleDeselectFilter,
 	} );
+
+	const handleChangeTier = ( value: boolean ) => {
+		if ( value ) {
+			handleSelectFilter( 'free', 'included_with_plan' );
+		} else {
+			handleDeselectFilter( 'free', 'included_with_plan' );
+		}
+	};
 
 	// ********** Logic for selecting a design and style variation
 	const {
@@ -452,9 +473,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
 	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
-
-	const { isEligible } = useIsBigSkyEligible();
-	const isBigSkyEligible = isEligible && isGoalCentricFeature;
 
 	const hasEligibilityMessages =
 		! isAtomic &&
@@ -921,16 +939,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			showActiveThemeBadge={ intent !== 'build' }
 			isTierFilterEnabled={ isGoalCentricFeature }
 			isMultiFilterEnabled={ isGoalCentricFeature }
+			onChangeTier={ handleChangeTier }
 		/>
 	);
 
-	const bigSkyButtonEventProperties = {
-		is_big_sky_eligible: isBigSkyEligible,
-		// is_filter_included_with_plan_enabled: true/false,
-		// preselected_filters: ??,
-		// selected_filters: ??,
-		// {filter} ??
-	};
 	const bigSkyButtons = (
 		<>
 			{ isBigSkyEligible && (
@@ -941,7 +953,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						);
 						recordTracksEvent(
 							'calypso_design_picker_big_sky_button_click',
-							bigSkyButtonEventProperties
+							commonFilterProperties
 						);
 					} }
 				>
@@ -950,7 +962,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			) }
 			<TrackComponentView
 				eventName="calypso_design_picker_big_sky_button_impression"
-				eventProperties={ bigSkyButtonEventProperties }
+				eventProperties={ commonFilterProperties }
 			/>
 		</>
 	);

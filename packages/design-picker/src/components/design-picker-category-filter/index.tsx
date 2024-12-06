@@ -1,5 +1,4 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; // eslint-disable-line no-restricted-imports
 import type { Category } from '../../types';
 import './style.scss';
 
@@ -23,10 +22,6 @@ export default function DesignPickerCategoryFilter( {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 		if ( category?.slug ) {
-			recordTracksEvent( 'calypso_signup_unified_design_select_category', {
-				category: category?.slug,
-			} );
-
 			onSelect( category.slug );
 		}
 	};

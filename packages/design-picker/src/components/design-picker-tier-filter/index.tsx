@@ -3,7 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import './style.scss';
 
-const DesignPickerTierFilter = () => {
+interface Props {
+	onChange?: ( value: boolean ) => void;
+}
+
+const DesignPickerTierFilter = ( { onChange }: Props ) => {
 	const translate = useTranslate();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 
@@ -19,6 +23,8 @@ const DesignPickerTierFilter = () => {
 
 			return currentSearchParams;
 		} );
+
+		onChange?.( value );
 	};
 
 	return (

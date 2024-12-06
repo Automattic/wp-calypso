@@ -203,6 +203,7 @@ interface DesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -219,6 +220,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
 } ) => {
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
 	const categoryTypes = useMemo(
@@ -261,7 +263,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 				{ isTierFilterEnabled && (
 					<DesignPickerFilterGroup>
-						<DesignPickerTierFilter />
+						<DesignPickerTierFilter onChange={ onChangeTier } />
 					</DesignPickerFilterGroup>
 				) }
 			</div>
@@ -306,6 +308,7 @@ export interface UnifiedDesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -324,6 +327,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -359,6 +363,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
+					onChangeTier={ onChangeTier }
 				/>
 				{ bottomAnchorContent }
 			</div>

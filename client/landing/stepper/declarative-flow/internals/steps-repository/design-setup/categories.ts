@@ -1,19 +1,15 @@
 import { Onboard } from '@automattic/data-stores';
 import { Category } from '@automattic/design-picker';
 
-const CATEGORIES = {
-	/**
-	 * Features
-	 */
+const FEATURE_CATEGORIES = {
 	BLOG: 'blog',
 	NEWSLETTER: 'newsletter',
 	PORTFOLIO: 'portfolio',
 	PODCAST: 'podcast',
 	STORE: 'store',
+};
 
-	/**
-	 * Subjects
-	 */
+const SUBJECT_CATEGORIES = {
 	BUSINESS: 'business',
 	COMMUNITY_NON_PROFIT: 'community-non-profit',
 	AUTHORS_WRITERS: 'authors-writers',
@@ -21,6 +17,11 @@ const CATEGORIES = {
 	ENTERTAINMENT: 'entertainment',
 	EVENTS: 'events',
 	LINK_IN_BIO: 'link-in-bio',
+};
+
+const CATEGORIES = {
+	...FEATURE_CATEGORIES,
+	...SUBJECT_CATEGORIES,
 };
 
 const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
