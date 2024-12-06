@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo } from 'react';
@@ -32,21 +31,13 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 
 	usePresalesChat( 'wpcom' );
 
-	const hasEnTranslation = useHasEnTranslation();
-
 	const options = useMemo(
 		() => [
 			{
 				label: translate( 'Do it for me' ),
-				description: hasEnTranslation(
-					"Share your site with us. We'll review it and handle the migration if possible."
-				)
-					? translate(
-							"Share your site with us. We'll review it and handle the migration if possible."
-					  )
-					: translate(
-							"Share your site with us, and we'll review it and handle the migration if possible."
-					  ),
+				description: translate(
+					"Share your site with us, and we'll review it and handle the migration if possible."
+				),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
 			},
