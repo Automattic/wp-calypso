@@ -134,6 +134,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		};
 	}, [ data?.pagination ] );
 
+	console.log( 'data', data );
+
 	const { data: shownData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data?.items ?? [], view, fields );
 	}, [ data?.items, view, fields ] );

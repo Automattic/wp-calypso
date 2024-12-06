@@ -421,7 +421,7 @@ function get_page_handle( streamType, action, data ) {
 
 export function handlePage( action, data ) {
 	const { posts, sites, cards } = data;
-	const { streamKey, query, isPoll, gap, streamType } = action.payload;
+	const { streamKey, query, isPoll, gap, streamType, page, perPage } = action.payload;
 	const pageHandle = get_page_handle( streamType, action, data );
 	const { dateProperty } = streamApis[ streamType ];
 
@@ -496,6 +496,8 @@ export function handlePage( action, data ) {
 				gap,
 				totalItems,
 				totalPages,
+				page,
+				perPage,
 			} )
 		);
 	}

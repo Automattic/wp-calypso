@@ -39,11 +39,31 @@ export const items = ( state = [], action ) => {
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			gap = action.payload.gap;
-			streamItems = action.payload.streamItems;
+			const { streamItems, gap, page, perPage, totalItems } = action.payload;
 
 			if ( ! Array.isArray( streamItems ) ) {
 				return state;
+			}
+
+			console.log( perPage, page, totalItems );
+
+			if ( perPage && page > 1 ) {
+				// Calculate placeholders for the entire dataset
+				const totalPages = Math.ceil( totalItems / perPage );
+				const placeholders = Array( totalItems ).fill( 'placeholder' );
+
+				// Insert the new streamItems into the correct position
+				const startIndex = ( page - 1 ) * perPage;
+				const endIndex = startIndex + streamItems.length;
+
+				const mergedItems = placeholders.map( ( item, index ) => {
+					if ( index >= startIndex && index < endIndex ) {
+						return streamItems[ index - startIndex ] || item;
+					}
+					return state[ index ] || item;
+				} );
+
+				return combineXPosts( mergedItems );
 			}
 
 			if ( gap ) {
