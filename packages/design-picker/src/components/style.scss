@@ -35,6 +35,13 @@
 			gap: 30px;
 		}
 
+		button.responsive-toolbar-group__button-item,
+		button.responsive-toolbar-group__swipe-item {
+			&:not(.is-pressed)::before {
+				background-color: var(--studio-gray-0);
+			}
+		}
+
 		.design-picker__category-group {
 			display: flex;
 			flex-direction: column;
