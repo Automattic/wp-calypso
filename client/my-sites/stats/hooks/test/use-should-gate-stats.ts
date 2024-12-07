@@ -259,10 +259,17 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 				items: {
-					[ siteId ]: { jetpack: false, options: { is_wpcom_atomic: false } },
+					[ siteId ]: {
+						jetpack: false,
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
 				},
 			},
-			purchases: { data: [] },
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
 		expect( isGatedStats ).toBe( false );
