@@ -244,8 +244,10 @@ describe( 'shouldGateStats in Calypso', () => {
 	} );
 
 	// Note: Once FEATURE_STATS_COMMERCIAL is introduced and fully rolled out,
-	// we should replace FEATURE_STATS_PAID with FEATURE_STATS_COMMERCIAL here
-	// to ensure consistent gating logic for commercial stats.
+	// we should replace FEATURE_STATS_PAID with FEATURE_STATS_COMMERCIAL in
+	// the following test to ensure consistent gating logic for commercial stats.
+	// @see: https://github.com/Automattic/wp-calypso/pull/97041
+
 	it( 'should not gate advanced stats modules for Simple site with commercial stats feature', () => {
 		const mockState = {
 			sites: {
@@ -266,9 +268,6 @@ describe( 'shouldGateStats in Calypso', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	// Note: Once FEATURE_STATS_COMMERCIAL is introduced and fully rolled out,
-	// we should replace FEATURE_STATS_PAID with FEATURE_STATS_COMMERCIAL here
-	// to ensure consistent gating logic for commercial stats.
 	it( 'should not gate advanced stats for Atomic site with commercial stats feature', () => {
 		const mockState = {
 			sites: {
