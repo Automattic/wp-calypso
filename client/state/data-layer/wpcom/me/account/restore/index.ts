@@ -34,7 +34,7 @@ function receiveAccountRestoreSuccess() {
 				window.location.href = '/sites?restored=true';
 			}, 2000 );
 		},
-		successNotice( translate( 'Your account has been restored. Please login after redirecting.' ) ),
+		successNotice( translate( 'Your account has been restored. Redirecting back to login.' ) ),
 	];
 }
 
