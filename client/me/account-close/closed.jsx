@@ -2,22 +2,21 @@ import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useSelector } from 'calypso/state';
 import { restoreAccount } from 'calypso/state/account/actions';
 import { getIsRestoring, getRestoreToken } from 'calypso/state/account/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 
 import './closed.scss';
 
-function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
+function AccountDeletedPage() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const isRestoring = useSelector( getIsRestoring );
+	const isUserAccountClosed = useSelector( isAccountClosed );
 
 	// restore token is either in the URL or in the reducer
 	const params = new URLSearchParams( window.location.search );
@@ -96,9 +95,4 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 	);
 }
 
-export default connect( ( state ) => {
-	return {
-		previousRoute: getPreviousRoute( state ),
-		isUserAccountClosed: isAccountClosed( state ),
-	};
-} )( AccountSettingsClosedComponent );
+export default AccountDeletedPage;
