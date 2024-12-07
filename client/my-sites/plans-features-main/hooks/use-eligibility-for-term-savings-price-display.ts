@@ -7,8 +7,12 @@ import {
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import { AddOns, Plans } from '@automattic/data-stores';
-import { HiddenPlans, PlansIntent, usePlanTypesWithIntent } from '@automattic/plans-grid-next';
-import usePlansFromTypes from '@automattic/plans-grid-next/src/hooks/data-store/use-plans-from-types';
+import {
+	HiddenPlans,
+	PlansIntent,
+	usePlansFromTypes,
+	usePlanTypesWithIntent,
+} from '@automattic/plans-grid-next';
 import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 

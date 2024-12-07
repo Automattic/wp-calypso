@@ -11,6 +11,7 @@ import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
 import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
+import usePlansFromTypes from './hooks/data-store/use-plans-from-types';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 
@@ -35,6 +36,7 @@ export {
 	useGridPlanForSpotlight,
 	usePlanBillingDescription,
 	usePlanFeaturesForGridPlans,
+	usePlansFromTypes,
 	usePlanTypesWithIntent,
 	useRestructuredPlanFeaturesForComparisonGrid,
 };
