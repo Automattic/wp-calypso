@@ -61,7 +61,7 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 		<BlankCanvas className="account-deleted">
 			<BlankCanvas.Header>
 				<Button variant="link" className="account-deleted__button-link" href="/">
-					Create an account
+					{ translate( 'Create an account' ) }
 				</Button>
 			</BlankCanvas.Header>
 			<BlankCanvas.Content>
