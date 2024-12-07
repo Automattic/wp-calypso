@@ -34,11 +34,11 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 		}
 	}, [ storedToken, urlToken ] );
 
-	const onClick = () => {
+	const onCancelClick = () => {
 		window.location.href = '/';
 	};
 
-	const onClickRestore = () => {
+	const onRestoreClick = () => {
 		dispatch( restoreAccount( restoreToken ) );
 	};
 
@@ -77,14 +77,14 @@ function AccountSettingsClosedComponent( { isUserAccountClosed } ) {
 					}
 				/>
 				<div className="account-deleted__buttons">
-					<Button variant="secondary" onClick={ onClick }>
+					<Button variant="secondary" onClick={ onCancelClick }>
 						{ translate( 'Return to WordPress.com' ) }
 					</Button>
 					{ config.isEnabled( 'me/account-restore' ) && (
 						<Button
 							variant="link"
 							className="account-deleted__button-link"
-							onClick={ onClickRestore }
+							onClick={ onRestoreClick }
 							isBusy={ isRestoring }
 						>
 							{ translate( 'I made a mistake! Restore my account' ) }
