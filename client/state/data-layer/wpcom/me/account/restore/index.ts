@@ -3,7 +3,7 @@ import { AccountRestoreActionType } from 'calypso/state/account/types';
 import {
 	ACCOUNT_RESTORE,
 	ACCOUNT_RESTORE_SUCCESS,
-	ACCOUNT_RESTORE_ERROR,
+	ACCOUNT_RESTORE_FAILED,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -41,7 +41,7 @@ function receiveAccountRestoreSuccess() {
 function receiveAccountRestoreError( action: AccountRestoreActionType, error: { error: string } ) {
 	if ( error.error === 'invalid_token' ) {
 		return [
-			{ type: ACCOUNT_RESTORE_ERROR },
+			{ type: ACCOUNT_RESTORE_FAILED },
 			errorNotice(
 				translate(
 					'Invalid token. Please check your account deleted email for the correct link or contact support.'
@@ -50,7 +50,7 @@ function receiveAccountRestoreError( action: AccountRestoreActionType, error: { 
 		];
 	}
 	return [
-		{ type: ACCOUNT_RESTORE_ERROR },
+		{ type: ACCOUNT_RESTORE_FAILED },
 		errorNotice(
 			translate( 'Sorry, there was a problem restoring your account. Please contact support.' )
 		),

@@ -2,7 +2,7 @@ import { withStorageKey } from '@automattic/state-utils';
 import {
 	ACCOUNT_CLOSE_SUCCESS,
 	ACCOUNT_RESTORE,
-	ACCOUNT_RESTORE_ERROR,
+	ACCOUNT_RESTORE_FAILED,
 	ACCOUNT_RESTORE_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -33,7 +33,7 @@ export const isRestoring = ( state = false, action ) => {
 			return true;
 		}
 		case ACCOUNT_RESTORE_SUCCESS:
-		case ACCOUNT_RESTORE_ERROR: {
+		case ACCOUNT_RESTORE_FAILED: {
 			return false;
 		}
 	}
