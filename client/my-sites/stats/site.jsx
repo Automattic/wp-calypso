@@ -162,7 +162,8 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
-				activeLegend: activeTab.legendOptions || [],
+				// TODO: remove this when we support hourly visitors.
+				activeLegend: props.period !== 'hour' ? activeTab.legendOptions || [] : [],
 			};
 		}
 		return null;
