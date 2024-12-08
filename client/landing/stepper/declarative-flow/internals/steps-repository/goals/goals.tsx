@@ -12,7 +12,7 @@ export const useGoals = (): Goal[] => {
 
 	const translate = useTranslate();
 
-	const addedGoalsExpResult = useMemo( () => {
+	return useMemo( () => {
 		const goals = [
 			{
 				key: SiteGoal.Write,
@@ -74,6 +74,4 @@ export const useGoals = (): Goal[] => {
 
 		return shuffleArray( goals );
 	}, [ translate ] );
-
-	return addedGoalsExpResult;
 };
