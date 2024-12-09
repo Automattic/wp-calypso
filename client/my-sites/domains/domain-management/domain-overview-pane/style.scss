@@ -2,23 +2,34 @@
 @import "@wordpress/base-styles/mixins";
 
 .domains-overview {
-	.item-preview__content {
-		padding: 24px;
+	.item-preview__pane {
+		.item-preview__header .item-preview__header-content .item-preview__header-title-summary {
+			 .item-preview__header-summary-link {
+				color: var(--studio-gray-50, #646970);
 
-		@include break-large {
-			padding: 32px 48px 48px;
+				&:hover {
+					text-decoration: none;
+				}
+			}
+
+			.item-preview__header-title {
+				font-family: Recoleta, sans-serif;
+				font-weight: 400;
+				line-height: 1;
+				letter-spacing: normal;
+			}
+		}
+
+		.item-preview__content {
+			padding: 24px;
+
+			@include break-large {
+				padding: 32px 48px 48px;
+			}
 		}
 	}
 
-	.item-preview__pane .item-preview__header .item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary .item-preview__header-summary-link {
-		color: var(--studio-gray-50, #646970);
-
-		&:hover {
-			text-decoration: none;
-		}
-	}
-
-	.item-preview__pane .preview-pane__navigation .section-nav-tabs__list {
+	.preview-pane__navigation .section-nav-tabs__list {
 		box-sizing: border-box;
 		padding: 0 8px;
 
