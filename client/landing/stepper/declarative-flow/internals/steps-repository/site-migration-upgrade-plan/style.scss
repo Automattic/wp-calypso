@@ -44,6 +44,11 @@
 	.import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
 		background-color: var(--studio-wordpress-blue-50) !important;
 		border-color: var(--studio-wordpress-blue-50);
+		color: var(--color-text-inverted);
+	}
+	.import__upgrade-plan .import__upgrade-plan-cta button.button:focus {
+		box-shadow: 0 0 0 2px var(--studio-white),
+			0 0 0 4px var(--studio-wordpress-blue-50) !important;
 	}
 	.import__upgrade-plan .import__upgrade-plan-refund-sub-text,
 	.import__upgrade-plan .import__upgrade-plan-features-list .import__upgrade-plan-feature-more button {
