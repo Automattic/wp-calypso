@@ -126,17 +126,20 @@ export async function payPalJsProcessor(
 			return makeErrorResponse( 'Transaction response did not include WordPress.com order ID' );
 		}
 
+		debug( 'paypal order created', response );
 		// Resolve the Promise which will trigger the PayPal button to display the confirmation dialog.
 		submitData.resolvePayPalOrderPromise( response.paypal_order_id );
 
 		// Wait for the PayPal dialog to complete before continuing.
 		await submitData.payPalApprovalPromise;
+		debug( 'paypal payment approved' );
 
 		// Capture PayPal order information after dialog approval.
 		const confirmResponse = await payPalJsApproval(
 			response.order_id.toString(),
 			response.paypal_order_id
 		);
+		debug( 'paypal confirmation complete' );
 		if ( 'error' in confirmResponse ) {
 			if (
 				confirmResponse.error === 'paypal_ppcp_payment_confirm_no_order' &&
