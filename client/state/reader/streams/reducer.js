@@ -48,22 +48,33 @@ export const items = ( state = [], action ) => {
 			console.log( perPage, page, totalItems );
 
 			if ( perPage && page > 1 ) {
-				// Calculate placeholders for the entire dataset
 				const totalPages = Math.ceil( totalItems / perPage );
-				const placeholders = Array( totalItems ).fill( 'placeholder' );
+				const placeholders = Array( totalItems ).fill( undefined );
 
-				// Insert the new streamItems into the correct position
+				// Calculate the indices for the current page
 				const startIndex = ( page - 1 ) * perPage;
 				const endIndex = startIndex + streamItems.length;
 
+				// Merge the streamItems into their correct positions
 				const mergedItems = placeholders.map( ( item, index ) => {
 					if ( index >= startIndex && index < endIndex ) {
 						return streamItems[ index - startIndex ] || item;
 					}
 					return state[ index ] || item;
-				} );
+				});
 
-				return combineXPosts( mergedItems );
+				// Add gap placeholders for undefined items
+				const paddedState = mergedItems.map( ( item, index ) =>
+					item === undefined
+						? { isGap: true, index, page: Math.floor( index / perPage ) + 1 }
+						: item
+				);
+
+				console.log('Padded State with Gaps:', paddedState);
+
+				const posts = combineXPosts( paddedState );
+				console.log( 'posts', posts );
+				return posts;
 			}
 
 			if ( gap ) {

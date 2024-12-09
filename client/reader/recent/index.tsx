@@ -61,6 +61,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		}
 
 		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
+			// if item is undefined, skip it
+			if ( ! item ) {
+				return acc;
+			}
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
@@ -117,6 +121,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	);
 
 	const fetchData = useCallback( () => {
+		console.log( 'fetching data' );
+		setIsLoading( true );
 		dispatch( viewStream( streamKey, window.location.pathname ) as UnknownAction );
 		dispatch(
 			requestPaginatedStream( {
@@ -125,7 +131,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				perPage: view.perPage,
 			} ) as UnknownAction
 		);
-	}, [ dispatch, view, streamKey ] );
+	}, [ dispatch, view.page, view.perPage, streamKey ] );
 
 	const defaultPaginationInfo = useMemo( () => {
 		return {
@@ -134,26 +140,27 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		};
 	}, [ data?.pagination ] );
 
-	console.log( 'data', data );
-
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data?.items ?? [], view, fields );
+		console.log( 'isRequesting', data?.isRequesting );
+		const filteredItems = data?.items?.filter( ( item ) => ! item?.isGap );
+		console.log( 'filteredItems', filteredItems );
+		return filterSortAndPaginate( filteredItems, view, fields );
 	}, [ data?.items, view, fields ] );
 
-	// Fetch the data when the component is mounted.
+	console.log( 'shownData', shownData );
+
+	// Fetch the data when the component is mounted or the view changes.
 	useEffect( () => {
+		console.log( 'view changed', view );
 		fetchData();
 	}, [ fetchData ] );
 
 	// Set the first item as selected on the current page.
 	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 ) {
-			if ( view.page && view.perPage ) {
-				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
-				setSelectedItem( selectedPost || null );
-			}
+		if ( isWide && shownData?.length > 0 ) {
+			setSelectedItem( shownData[0] || null );
 		}
-	}, [ isWide, data?.items, view ] );
+	}, [ isWide, shownData, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
@@ -182,23 +189,26 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						view={ view as View }
 						fields={ fields }
 						data={ shownData }
-						onChangeView={ ( newView: View ) =>
-							setView( {
+						onChangeView={ ( newView: View ) => {
+							console.log( 'changing view', newView );
+							setView( ( prevView ) => ( {
+								...prevView,
 								type: newView.type,
-								fields: newView.fields ?? [],
-								layout: view.layout,
-								perPage: newView.perPage,
-								page: newView.page,
-								search: newView.search,
-							} )
-						}
+								fields: newView.fields ?? prevView.fields,
+								layout: newView.layout ?? prevView.layout,
+								perPage: newView.perPage ?? prevView.perPage,
+								page: newView.page ?? prevView.page,
+								search: newView.search ?? prevView.search,
+							} ) );
+						} }
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
 						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
-							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+							console.log( 'changing selection', newSelection );
+							const selectedPost = shownData?.find(
+								( item: ReaderPost ) => item?.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
 							// Focus the post column after a short delay to ensure DOM updates.
@@ -218,7 +228,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && (
+				{ ! isLoading && shownData.length === 0 && (
 					<EmptyContent
 						title={ translate( 'Nothing Posted Yet' ) }
 						line={ translate( 'This feed is currently empty.' ) }
@@ -226,7 +236,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						illustrationWidth={ 400 }
 					/>
 				) }
-				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+				{ shownData.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad
 							require="calypso/blocks/reader-full-post"
