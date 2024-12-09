@@ -3,35 +3,35 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Persist the value in memory so when the element is unmounted it doesn't get lost.
  */
-let cachedScrollPosition = 0;
+let cachedScrollPositions: Record< string, number > = {};
 
 /**
  * Persists the scroll position of an element in memory and returns it.
  * @param ref the HTML element to track the scroll position of.
- * @param enabled to only enable for article pages.
+ * @param url the pathname of the current route.
  * @returns the current or last recorded scroll position.
  */
-export function useArticleScrollPosition( ref: React.RefObject< HTMLElement >, enabled: boolean ) {
-	const [ scrollPosition, setScrollPosition ] = useState( cachedScrollPosition );
+export function useArticleScrollPosition( ref: React.RefObject< HTMLElement >, url: string ) {
+	const [ scrollPositions, setScrollPositions ] = useState( cachedScrollPositions );
 
 	useEffect( () => {
-		const element = ref?.current;
-
-		const handleScroll = () => {
-			if ( element ) {
-				setScrollPosition( ( cachedScrollPosition = ref.current.scrollTop ) );
+		const handleScroll = ( event: { target: EventTarget | null } ) => {
+			if ( event.target === ref.current ) {
+				if ( url.startsWith( '/post' ) && event.target && 'scrollTop' in event.target ) {
+					const positions = { ...cachedScrollPositions };
+					positions[ url ] = Number( event.target?.scrollTop );
+					setScrollPositions( ( cachedScrollPositions = positions ) );
+				}
 			}
 		};
-		if ( enabled ) {
-			element?.addEventListener( 'scroll', handleScroll );
-		} else {
-			// Reset the cached scroll position when the HC is closed or the article page is unmounted.
-			cachedScrollPosition = 0;
-		}
-		return () => {
-			element?.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ ref, enabled ] );
+		window.addEventListener( 'scroll', handleScroll, true );
 
-	return scrollPosition;
+		if ( ! url.startsWith( '/post' ) ) {
+			setScrollPositions( ( cachedScrollPositions = {} ) );
+		}
+
+		return () => window.removeEventListener( 'scroll', handleScroll );
+	}, [ ref, url ] );
+
+	return scrollPositions;
 }

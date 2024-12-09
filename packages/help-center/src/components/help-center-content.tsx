@@ -71,22 +71,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} );
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
-	const { currentSupportInteraction, navigateToRoute, isMinimized, isShown } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-			return {
-				currentSupportInteraction: store.getCurrentSupportInteraction(),
-				navigateToRoute: store.getNavigateToRoute(),
-				isMinimized: store.getIsMinimized(),
-				isShown: store.isHelpCenterShown(),
-			};
-		},
-		[]
-	);
+	const { currentSupportInteraction, navigateToRoute, isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentSupportInteraction: store.getCurrentSupportInteraction(),
+			navigateToRoute: store.getNavigateToRoute(),
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
 	const scrollPosition = useArticleScrollPosition(
 		containerRef,
-		location.pathname.includes( '/post' ) && Boolean( isShown )
+		location.pathname + location.search
 	);
 
 	useEffect( () => {
@@ -118,9 +114,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( containerRef.current && ! location.hash && ! location.pathname.includes( '/odie' ) ) {
-			if ( location.pathname.includes( '/post' ) && scrollPosition > 0 ) {
+			const pos = scrollPosition[ location.pathname + location.search ];
+			if ( pos ) {
 				containerRef.current.style.scrollBehavior = 'unset';
-				containerRef.current.scrollTo( 0, scrollPosition );
+				containerRef.current.scrollTo( 0, pos );
 				containerRef.current.style.scrollBehavior = 'smooth';
 			} else {
 				containerRef.current.scrollTo( 0, 0 );
