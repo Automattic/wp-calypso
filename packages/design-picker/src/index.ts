@@ -8,6 +8,7 @@ export {
 	getMShotOptions,
 	isAssemblerSupported,
 	isLockedStyleVariation,
+	getCategoryType,
 } from './utils';
 export {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,

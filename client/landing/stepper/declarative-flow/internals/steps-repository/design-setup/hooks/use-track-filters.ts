@@ -1,7 +1,7 @@
+import { getCategoryType } from '@automattic/design-picker';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getCategoryType } from '../categories';
 
 interface Props {
 	preselectedFilters: string[];
