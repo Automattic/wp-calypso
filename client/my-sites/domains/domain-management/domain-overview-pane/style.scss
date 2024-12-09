@@ -22,6 +22,7 @@
 
 		.item-preview__content {
 			padding: 24px;
+			color: var(--studio-gray-100);
 
 			@include break-large {
 				padding: 32px 48px 48px;
