@@ -138,7 +138,16 @@ export async function payPalJsProcessor(
 		// async but we don't need to wait for the response as it can be slow
 		// and the pending page should properly handle any errors on the WPCOM
 		// Order.
-		capturePayPalPayment( response.order_id.toString(), response.paypal_order_id );
+		capturePayPalPayment( response.order_id.toString(), response.paypal_order_id ).catch(
+			( error ) => {
+				// Do nothing. Errors with the capturing should be handled
+				// async and the user should be notified by the Pending page.
+				// Catching the error here just prevents an uncaught Promise
+				// failure.
+				// eslint-disable-next-line no-console
+				console.error( 'paypal confirmation error', error );
+			}
+		);
 		debug( 'paypal confirmation complete' );
 
 		return makeSuccessResponse( response );
