@@ -93,7 +93,7 @@ export const getSortedRecentAndArchivedConversations = ( {
 export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source.type === 'web' && message.source.id )?.source.id || '';
+		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
 export const getConversationsFromSupportInteractions = (
 	conversations: ZendeskConversation[],
@@ -122,4 +122,11 @@ export const matchSupportInteractionId = (
 
 		return foundMatch;
 	}
+};
+
+export const isUseHelpCenterExperienceEnabled = ( userId: number ): boolean => {
+	if ( ! userId || userId % 100 > 50 ) {
+		return false;
+	}
+	return true;
 };

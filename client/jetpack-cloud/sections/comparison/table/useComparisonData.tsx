@@ -25,6 +25,7 @@ const CheckIcon = () => <img className="checkmark-icon" src={ Checkmark } alt=""
 
 const allChecked: ComparisonDataItem[ 'features' ][ number ][ 'info' ] = {
 	FREE: { content: <CheckIcon /> },
+	GROWTH: { content: <CheckIcon /> },
 	SECURITY: { content: <CheckIcon /> },
 	COMPLETE: { content: <CheckIcon /> },
 };
@@ -115,6 +116,9 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Last 20 events' ),
 							},
+							GROWTH: {
+								content: translate( 'Last 20 events' ),
+							},
 							SECURITY: {
 								highlight: true,
 								content: translate( '30-day archive' ),
@@ -177,6 +181,9 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Manual Critical CSS' ),
 							},
+							GROWTH: {
+								content: translate( 'Manual Critical CSS' ),
+							},
 							SECURITY: {
 								content: translate( 'Manual Critical CSS' ),
 							},
@@ -193,6 +200,9 @@ export const useComparisonData = () => {
 						url: links.videopress,
 						info: {
 							FREE: {
+								content: translate( '1 video (Up to 1GB)' ),
+							},
+							GROWTH: {
 								content: translate( '1 video (Up to 1GB)' ),
 							},
 							SECURITY: {
@@ -238,6 +248,18 @@ export const useComparisonData = () => {
 									</>
 								),
 							},
+							GROWTH: {
+								highlight: true,
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(10k page views)' ) }
+									</>
+								),
+							},
 							SECURITY: {
 								content: (
 									<>
@@ -272,6 +294,10 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Social Free' ),
 							},
+							GROWTH: {
+								highlight: true,
+								content: translate( 'Social Advanced' ),
+							},
 							SECURITY: {
 								content: translate( 'Social Free' ),
 							},
@@ -294,6 +320,9 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Free' ),
 							},
+							GROWTH: {
+								content: translate( 'Free' ),
+							},
 							SECURITY: {
 								content: translate( 'Free' ),
 							},
@@ -310,6 +339,9 @@ export const useComparisonData = () => {
 						icon: AIIcon,
 						info: {
 							FREE: {
+								content: translate( '20 free requests' ),
+							},
+							GROWTH: {
 								content: translate( '20 free requests' ),
 							},
 							SECURITY: {
@@ -354,6 +386,7 @@ export const useComparisonData = () => {
 						name: translate( 'Ad network' ),
 						url: links.ad_network,
 						info: {
+							GROWTH: { content: <CheckIcon /> },
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},
@@ -370,6 +403,7 @@ export const useComparisonData = () => {
 						url: links.transaction_fees,
 						info: {
 							FREE: { content: translate( '10%' ) },
+							GROWTH: { content: translate( '2%' ) },
 							SECURITY: { content: translate( '4%' ) },
 							COMPLETE: { content: translate( '2%' ) },
 						},
@@ -411,6 +445,7 @@ export const useComparisonData = () => {
 						name: translate( 'Priority support' ),
 						url: links.priority_support,
 						info: {
+							GROWTH: { content: <CheckIcon /> },
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},

@@ -6,7 +6,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
@@ -22,6 +22,7 @@ import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isHostingMenuUntangled } from '../../utils';
 import AdministrationToolCard from './card';
+import { requestRestore } from './restore-plan-software';
 
 import './style.scss';
 
@@ -48,6 +49,7 @@ class SiteTools extends Component {
 			cloneUrl,
 			showChangeAddress,
 			showClone,
+			showRestorePlanSoftware,
 			showDeleteContent,
 			showDeleteSite,
 			showManageConnection,
@@ -64,6 +66,11 @@ class SiteTools extends Component {
 		const startOverLink = isUntangled
 			? `/sites/settings/administration/${ siteSlug }/reset-site`
 			: `/settings/start-over/${ siteSlug }?source=${ source }`;
+
+		const restorePlanSoftwareTitle = translate( 'Restore plugins and themes' );
+		const restorePlanSoftwareText = translate(
+			'If your website is missing plugins and themes that come with your plan, you may restore them here.'
+		);
 
 		const startSiteTransferLink = isUntangled
 			? `/sites/settings/administration/${ siteSlug }/transfer-site`
@@ -139,6 +146,13 @@ class SiteTools extends Component {
 						description={ startSiteTransferText }
 					/>
 				) }
+				{ isUntangled && showRestorePlanSoftware && (
+					<AdministrationToolCard
+						onClick={ this.restorePlanSoftware }
+						title={ restorePlanSoftwareTitle }
+						description={ restorePlanSoftwareText }
+					/>
+				) }
 				{ showDeleteContent && (
 					<AdministrationToolCard
 						href={ startOverLink }
@@ -174,6 +188,16 @@ class SiteTools extends Component {
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
 	}
+
+	restorePlanSoftware = () => {
+		const { siteId, translate } = this.props;
+		requestRestore( {
+			siteId,
+			translate,
+			successNotice: this.props.successNotice,
+			errorNotice: this.props.errorNotice,
+		} );
+	};
 }
 
 export default connect(
@@ -209,6 +233,7 @@ export default connect(
 			cloneUrl,
 			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 			showClone: 'active' === rewindState.state && ! isAtomic,
+			showRestorePlanSoftware: isAtomic,
 			showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
@@ -219,5 +244,6 @@ export default connect(
 	},
 	{
 		errorNotice,
+		successNotice,
 	}
 )( localize( withSiteCopy( SiteTools ) ) );

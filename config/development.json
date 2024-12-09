@@ -152,6 +152,7 @@
 		"me/vat-details": true,
 		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/enable-white-labeled-plugin": true,
+		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
@@ -169,6 +170,7 @@
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/user-on-stepper-hosting": true,
+		"onboarding/goals-first": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,
@@ -220,7 +222,7 @@
 		"ssr/prefetch-timebox": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stats/new-date-filtering": false,
+		"stats/new-date-filtering": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,
 		"stepper-woocommerce-poc": true,
@@ -230,7 +232,6 @@
 		"subscription-gifting": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
-		"themes/display-thank-you-page-for-bundle": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
 		"themes/text-search-lots": true,
@@ -248,6 +249,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true
+		"woocommerce/core-profiler-passwordless-auth": true,
+		"woocommerce/rebrand-2-0": false
 	}
 }

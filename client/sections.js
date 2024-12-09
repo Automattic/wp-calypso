@@ -39,6 +39,9 @@ const sections = [
 	},
 	{
 		name: 'account-close',
+		// /me/account/closed enables account restoration for logged-out users
+		// Parent route is private so enableLoggedOut flag won't work here
+		// Redirection is handled in redirectLoggedOut
 		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'calypso/me/account-close',
 		group: 'me',

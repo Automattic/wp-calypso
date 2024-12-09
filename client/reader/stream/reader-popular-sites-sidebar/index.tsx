@@ -4,6 +4,7 @@ import '../style.scss';
 interface PopularSitesSidebarProps {
 	followSource: string;
 	items: PopularSiteItemProp[];
+	title?: string;
 }
 
 /**
@@ -35,8 +36,10 @@ function unescape( str: string ): string {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 }
 
-// create function to transform item into a site object
-const getSiteFromItem = ( item: PopularSiteItemProp ): ReaderPopularSite | null => {
+/**
+ * Converts a popular site item, provided as a prop, into a popular site object for display in the ReaderPopularSitesSidebar component.
+ */
+const getPopularSiteFromItem = ( item: PopularSiteItemProp ): ReaderPopularSite | null => {
 	if ( item.site_name === undefined || item.site_description === undefined ) {
 		return null;
 	}
@@ -52,12 +55,12 @@ const getSiteFromItem = ( item: PopularSiteItemProp ): ReaderPopularSite | null 
 };
 
 const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
-	const { followSource, items } = props;
-	const sites = items
-		.map( ( item ): ReaderPopularSite | null => getSiteFromItem( item ) )
+	const { followSource, items, title } = props;
+	const sites: ReaderPopularSite[] = items
+		.map( ( item ): ReaderPopularSite | null => getPopularSiteFromItem( item ) )
 		.filter( ( site ): site is ReaderPopularSite => site !== null );
 
-	const popularSitesLinks = sites.map( ( site ) => (
+	const popularSitesLinks: JSX.Element[] = sites.map( ( site ) => (
 		<ConnectedReaderSubscriptionListItem
 			key={ site.feed_ID }
 			feedId={ site.feed_ID }
@@ -75,7 +78,12 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 		return null;
 	}
 
-	return <div className="reader-tag-sidebar-recommended-sites">{ popularSitesLinks }</div>;
+	return (
+		<>
+			{ title && <h2 className="reader-tag-sidebar-title">{ title }</h2> }
+			<div className="reader-tag-sidebar-recommended-sites">{ popularSitesLinks }</div>
+		</>
+	);
 };
 
 export default ReaderPopularSitesSidebar;

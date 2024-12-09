@@ -26,6 +26,7 @@ import {
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+	STATS_FEATURE_DATE_CONTROL_CUSTOM_DATE_RANGE,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
@@ -85,13 +86,21 @@ const paidStats = [
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
+
+	// Paid stats is currently a premium plan feature.
+	// Legacy sites will inadvertantly get these temporarily but paywalling
+	// these again later is fine. (https://github.com/Automattic/wp-calypso/pull/97041)
+	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_UTM_STATS,
 ];
 
 // Gated controls for WPCOM sites without the FEATURE_STATS_PAID feature.
 const granularControlForPaidStats = [
 	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_DATE_CONTROL_CUSTOM_DATE_RANGE,
 	STATS_FEATURE_DOWNLOAD_CSV,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
@@ -160,12 +169,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 		// Paywall advanced stats for non-commercial sites.
 		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
-	}
-
-	// Gate advanced stats for non-Jetpack sites unless they have a Jetpack Stats commercial purchase.
-	// Dotcom sites are not able to see these modules yet, so the line wouldn't apply to them.
-	if ( jetpackStatsAdvancedPaywall.includes( statType ) ) {
-		return ! supportStatsCommercialUse;
 	}
 
 	const siteFeatures = getSiteFeatures( state, siteId );

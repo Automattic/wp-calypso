@@ -19,7 +19,6 @@ import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import DomainUpsell from 'calypso/me/domain-upsell';
 import withFormBase from 'calypso/me/form-base/with-form-base';
-import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -141,7 +140,7 @@ class Profile extends Component {
 							<span>
 								{ this.props.translate(
 									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your Gravatar profile and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
+										' To manage your Gravatar profile, profile links, and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
 									{
 										components: {
 											strong: <strong />,
@@ -172,8 +171,6 @@ class Profile extends Component {
 				</Card>
 
 				<DomainUpsell context="profile" />
-
-				<ProfileLinks />
 			</Main>
 		);
 	}

@@ -42,7 +42,7 @@ describe( 'streams', () => {
 
 		it( 'should set proper params for subsequent fetches', () => {
 			const pageHandle = { after: 'the robots attack' };
-			const secondPage = { ...action, payload: { ...action.payload, pageHandle } };
+			const secondPage = { ...action, payload: { ...action.payload, pageHandle, feedId: 1234 } };
 			const httpAction = requestPage( secondPage );
 
 			expect( httpAction ).toEqual(
@@ -50,7 +50,7 @@ describe( 'streams', () => {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
-					query: { ...query, number: PER_FETCH, after: 'the robots attack' },
+					query: { ...query, feed_id: 1234, number: PER_FETCH, after: 'the robots attack' },
 					onSuccess: secondPage,
 					onFailure: secondPage,
 				} )

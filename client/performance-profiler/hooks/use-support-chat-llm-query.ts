@@ -19,7 +19,7 @@ export const useSupportChatLLMQuery = (
 ) => {
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'support', 'chat', insight.title, is_wpcom ],
+		queryKey: [ 'support', 'chat', hash, insight.title, is_wpcom ],
 		queryFn: () =>
 			wp.req.post(
 				{
@@ -31,13 +31,11 @@ export const useSupportChatLLMQuery = (
 					is_wpcom,
 				}
 			),
-		meta: {
-			persist: false,
-		},
 		select: mapResult,
 		enabled: !! insight.title && enable,
 		retry: false,
 		refetchOnWindowFocus: false,
+		staleTime: 1000 * 60 * 5, // 5 minutes
 	} );
 };
 
