@@ -65,10 +65,10 @@ export function useCategorization(
 	);
 
 	useEffect( () => {
-		if ( selectedCategories.length === 0 ) {
+		if ( categories.length > 0 && selectedCategories.length === 0 ) {
 			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
 		}
-	}, [] );
+	}, [ categories ] );
 
 	return {
 		categories,
