@@ -44,8 +44,9 @@
 
 			.design-picker__category-group-content {
 				display: flex;
+				align-items: center;
 				flex-wrap: wrap;
-				gap: 16px;
+				gap: 8px 16px;
 			}
 		}
 
@@ -55,24 +56,22 @@
 			font-weight: 500;
 		}
 
-		.design-picker__design-your-own-button {
-			flex-shrink: 0;
-			height: 32px;
-			line-height: 14px;
-			margin-top: 8px;
-			margin-bottom: 8px;
-
-			&.design-picker__design-with-ai {
-				display: none;
-				
-				@include break-small {
-					display: block;
-				}
-			}
+		.design-picker__tier-filter {
+			height: 40px; // match button height
+			margin-bottom: 6px;
 		}
 
-		.design-picker__tier-filter {
-			height: 48px; // match button height
+		.design-picker__design-your-own-button {
+			flex-shrink: 0;
+			margin-bottom: 6px;
+		}
+
+		.design-picker__design-with-ai {
+			display: none;
+			
+			@include break-small {
+				display: block;
+			}
 		}
 
 		.design-picker__design-your-own-button-without-categories {
