@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -184,13 +185,14 @@ const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
 	return (
 		<div className={ clsx( 'design-picker__category-group', { grow } ) }>
 			<div className="design-picker__category-group-label">{ title }</div>
-			{ children }
+			<div className="design-picker__category-group-content">{ children }</div>
 		</div>
 	);
 };
 
 interface DesignPickerProps {
 	locale: string;
+	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -204,10 +206,12 @@ interface DesignPickerProps {
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
+	isBigSkyEligible?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
+	onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -221,6 +225,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
 	onChangeTier,
+	isBigSkyEligible = false,
 } ) => {
 	const filteredDesigns = useFilteredDesigns( designs );
 	const categoryTypes = useMemo(
@@ -261,11 +266,22 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ isTierFilterEnabled && (
-					<DesignPickerFilterGroup>
-						<DesignPickerTierFilter onChange={ onChangeTier } />
-					</DesignPickerFilterGroup>
-				) }
+				<DesignPickerFilterGroup>
+					{ isTierFilterEnabled && <DesignPickerTierFilter /> }
+					{ isBigSkyEligible && (
+						<Button
+							className={ clsx(
+								'design-picker__design-your-own-button',
+								'design-picker__design-with-ai'
+							) }
+							onClick={ () => {
+								onDesignWithAI && onDesignWithAI();
+							} }
+						>
+							{ translate( 'Design with AI' ) }
+						</Button>
+					) }
+				</DesignPickerFilterGroup>
 			</div>
 
 			<div className="design-picker__grid">
@@ -294,6 +310,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
+	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -309,10 +326,12 @@ export interface UnifiedDesignPickerProps {
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
+	isBigSkyEligible?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
+	onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -328,6 +347,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
 	onChangeTier,
+	isBigSkyEligible = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -351,6 +371,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
+					onDesignWithAI={ onDesignWithAI }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }
@@ -364,6 +385,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					onChangeTier={ onChangeTier }
+					isBigSkyEligible={ isBigSkyEligible }
 				/>
 				{ bottomAnchorContent }
 			</div>

@@ -24,6 +24,10 @@ $container-padding-large: 48px;
 			position: absolute;
 			top: $container-padding-small;
 			right: $container-padding-small;
+
+			@include break-small {
+				display: none;
+			}
 		}
 
 		.step-container__content {

@@ -933,32 +933,37 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// selected_filters: ??,
 		// {filter} ??
 	};
-	const bigSkyButtons = isBigSkyEligible && (
-		<Button
-			onClick={ () => {
-				navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }` );
-				recordTracksEvent(
-					'calypso_design_picker_big_sky_button_click',
-					commonFilterProperties
-				);
-			} }
-		>
-			{ translate( 'Create yours with AI' ) }
-		</Button>
+
+	function onDesignWithAI() {
+		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
+		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
+	}
+
+	const bigSkyButtons = (
+		<>
+			<TrackComponentView
+				eventName="calypso_design_picker_big_sky_button_impression"
+				eventProperties={ commonFilterProperties }
+			/>
+			{ isBigSkyEligible && (
+				<Button
+					onClick={ () => {
+						onDesignWithAI && onDesignWithAI()
+					} }
+				>
+					{ translate( 'Design with AI' ) }
+				</Button>
+			) }
+		</>
 	);
 
 	const stepContent = (
 		<>
-			<div className="setup-container__big-sky-container">
-				{ bigSkyButtons }
-				<TrackComponentView
-					eventName="calypso_design_picker_big_sky_button_impression"
-					eventProperties={ commonFilterProperties }
-				/>
-			</div>
+			<div className="setup-container__big-sky-container">{ bigSkyButtons }</div>
 			<UnifiedDesignPicker
 				designs={ designs }
 				locale={ locale }
+				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }
 				onChangeVariation={ onChangeVariation }
 				onViewAllDesigns={ trackAllDesignsView }
@@ -973,6 +978,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				isTierFilterEnabled={ isGoalCentricFeature }
 				isMultiFilterEnabled={ isGoalCentricFeature }
 				onChangeTier={ handleChangeTier }
+				isBigSkyEligible={ isBigSkyEligible }
 			/>
 		</>
 	);
