@@ -34,6 +34,10 @@
 }
 
 .a4a-migration-offer-v3__title {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
 	@include a4a-font-heading-md($font-weight: 400);
 
 	@include break-medium {

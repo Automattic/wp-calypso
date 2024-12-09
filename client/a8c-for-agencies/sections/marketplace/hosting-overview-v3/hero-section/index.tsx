@@ -1,6 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
 import NavItem from 'calypso/components/section-nav/item';
 import { SectionProps } from '..';
@@ -9,9 +10,13 @@ import './style.scss';
 
 type Props = SectionProps & {
 	onSectionChange: ( section: 'wpcom' | 'pressable' | 'vip' ) => void;
+	isCompact?: boolean;
 };
 
-export default function HeroSection( { section, onSectionChange }: Props ) {
+export function HeroSection(
+	{ section, onSectionChange, isCompact }: Props,
+	ref: React.Ref< HTMLDivElement >
+) {
 	const translate = useTranslate();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
@@ -68,19 +73,21 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 	} );
 
 	return (
-		<div className="hosting-v3-hero-section">
-			<div className="hosting-v3-hero-section__heading">
-				{ translate(
-					'High Performance, Highly-Secure{{br/}}Managed WordPress Hosting for Agencies',
-					{
-						components: {
-							br: <br />,
-						},
-					}
-				) }
-			</div>
+		<div className={ clsx( 'hosting-v3-hero-section', { 'is-compact': isCompact } ) } ref={ ref }>
+			<div className="hosting-v3-hero-section__content">
+				<div className="hosting-v3-hero-section__heading">
+					{ translate(
+						'High Performance, Highly-Secure{{br/}}Managed WordPress Hosting for Agencies',
+						{
+							components: {
+								br: <br />,
+							},
+						}
+					) }
+				</div>
 
-			<MigrationOfferV3 />
+				<MigrationOfferV3 />
+			</div>
 
 			<ul className="hosting-v3-hero-section__tabs">
 				{ navItems.map( ( item ) => {
@@ -90,3 +97,5 @@ export default function HeroSection( { section, onSectionChange }: Props ) {
 		</div>
 	);
 }
+
+export default forwardRef( HeroSection );

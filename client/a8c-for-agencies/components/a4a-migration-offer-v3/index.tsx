@@ -12,7 +12,7 @@ import './style.scss';
 const MigrationOfferV3 = () => {
 	const translate = useTranslate();
 
-	const [ isExpanded, setIsExpanded ] = useState( true );
+	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
@@ -22,14 +22,16 @@ const MigrationOfferV3 = () => {
 		<div className={ clsx( 'a4a-migration-offer-v3', { 'is-expanded': isExpanded } ) }>
 			<div className="a4a-migration-offer-v3__main">
 				<h3 className="a4a-migration-offer-v3__title">
-					{ translate(
-						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000!',
-						{
-							components: {
-								b: <b />,
-							},
-						}
-					) }
+					<span>
+						{ translate(
+							'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000!',
+							{
+								components: {
+									b: <b />,
+								},
+							}
+						) }
+					</span>
 
 					<Button className="a4a-migration-offer-v3__view-toggle-mobile" onClick={ onToggleView }>
 						<Icon icon={ chevronDown } size={ 24 } />

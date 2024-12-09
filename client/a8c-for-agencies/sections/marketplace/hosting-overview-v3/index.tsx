@@ -1,8 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -25,11 +24,10 @@ import ReferralToggle from '../common/referral-toggle';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
+import useCompactOnScroll from './hooks/use-compact-on-scroll';
 import { HostingContent } from './hosting-content';
 
 import './style.scss';
-
-const COMPACT_MODE_SCROLL_POINT_THRESHOLD = 100;
 
 export type SectionProps = {
 	section: 'wpcom' | 'pressable' | 'vip';
@@ -40,9 +38,6 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 	const dispatch = useDispatch();
 
 	const isNarrowView = useBreakpoint( '<660px' );
-
-	const [ scrollPosition, setScrollPosition ] = useState( 0 );
-	const [ isCompactMode, setIsCompactMode ] = useState( false );
 
 	const {
 		selectedCartItems,
@@ -82,29 +77,13 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 		[ dispatch ]
 	);
 
-	const onContentScroll = useCallback( ( e: React.UIEvent< HTMLDivElement > ) => {
-		setScrollPosition( e.currentTarget.scrollTop );
-	}, [] );
-
-	useEffect( () => {
-		setIsCompactMode( ( currentState ) => {
-			if ( currentState && scrollPosition === 0 ) {
-				return false;
-			} else if ( scrollPosition > COMPACT_MODE_SCROLL_POINT_THRESHOLD ) {
-				return true;
-			}
-
-			return currentState;
-		} );
-	}, [ scrollPosition ] );
+	const { onScroll, isCompact, ref: heroSectionRef } = useCompactOnScroll();
 
 	return (
 		<Layout
-			className={ clsx( 'hosting-overview-v3', {
-				'is-compact-mode': isCompactMode,
-			} ) }
+			className="hosting-overview-v3"
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
-			onScroll={ onContentScroll }
+			onScroll={ onScroll }
 			wide
 		>
 			<LayoutTop>
@@ -138,7 +117,12 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 					</Actions>
 				</LayoutHeader>
 
-				<HeroSection section={ section } onSectionChange={ handleSectionChange } />
+				<HeroSection
+					section={ section }
+					onSectionChange={ handleSectionChange }
+					isCompact={ isCompact }
+					ref={ heroSectionRef }
+				/>
 			</LayoutTop>
 
 			<LayoutBody className="hosting-overview-v3__body">
