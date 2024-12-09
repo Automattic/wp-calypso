@@ -1,4 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .domains-overview {
+	.item-preview__content {
+		padding: 24px;
+
+		@include break-large {
+			padding: 32px 48px 48px;
+		}
+	}
+
 	.item-preview__pane .item-preview__header .item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary .item-preview__header-summary-link {
 		color: var(--studio-gray-50, #646970);
 
@@ -7,14 +18,23 @@
 		}
 	}
 
-	.section-nav-tabs__list {
+	.item-preview__pane .preview-pane__navigation .section-nav-tabs__list {
 		box-sizing: border-box;
+		padding: 0 8px;
+
+		@include break-large {
+			padding: 0 32px;
+		}
 	}
 
 	.domain-settings-page .domains-overview__navigation-header.navigation-header {
 		padding: 0;
-		margin-bottom: 16px;
+		margin-bottom: 24px;
 		border: 0;
+
+		@include break-large {
+			margin-bottom: 32px;
+		}
 
 		.navigation-header__main {
 			padding-inline: 0;
