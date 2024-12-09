@@ -37,7 +37,7 @@ function isValidPayPalJsSubmitData( data: unknown ): data is PayPalSubmitData {
 	return false;
 }
 
-async function payPalJsApproval(
+async function capturePayPalPayment(
 	bdOrderId: string,
 	payPalOrderId: string
 ): Promise< PayPalConfirmResponse > {
@@ -134,27 +134,12 @@ export async function payPalJsProcessor(
 		await submitData.payPalApprovalPromise;
 		debug( 'paypal payment approved' );
 
-		// Capture PayPal order information after dialog approval.
-		const confirmResponse = await payPalJsApproval(
-			response.order_id.toString(),
-			response.paypal_order_id
-		);
+		// Capture PayPal order information after dialog approval. This is
+		// async but we don't need to wait for the response as it can be slow
+		// and the pending page should properly handle any errors on the WPCOM
+		// Order.
+		capturePayPalPayment( response.order_id.toString(), response.paypal_order_id );
 		debug( 'paypal confirmation complete' );
-		if ( 'error' in confirmResponse ) {
-			if (
-				confirmResponse.error === 'paypal_ppcp_payment_confirm_no_order' &&
-				confirmResponse.message
-			) {
-				return makeErrorResponse( confirmResponse.message );
-			}
-			if (
-				confirmResponse.error === 'paypal_ppcp_payment_confirm_status_wrong' &&
-				confirmResponse.message
-			) {
-				return makeErrorResponse( confirmResponse.message );
-			}
-			return makeErrorResponse( 'Transaction could not be completed' );
-		}
 
 		return makeSuccessResponse( response );
 	} catch ( error ) {
