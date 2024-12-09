@@ -440,3 +440,54 @@
 		}
 	}
 }
+
+.context-all-domain-management {
+	&.main {
+		width: 100%;
+	}
+
+	.navigation-header {
+		border-block-end: none !important;
+	}
+
+	.navigation-header__main {
+		padding-inline: 0 !important;
+
+		.navigation-header__actions {
+			flex-grow: 0;
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list {
+		border: solid 1px var(--color-border-subtle);
+		border-radius: 4px;
+
+		.card {
+			box-shadow: none;
+			background: none;
+		}
+
+		.card.section-header {
+			padding: 1.5rem 0 1rem 0;
+			margin: 0 1.5rem;
+			border-bottom: solid 1px var(--color-border-subtle);
+		}
+
+		.section-header__label-text {
+			display: flex;
+
+			svg {
+				fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			}
+		}
+
+		.section-header__actions {
+			display: flex;
+			flex-direction: row-reverse;
+
+			.components-button.is-link {
+				text-decoration: none;
+			}
+		}
+	}
+}
