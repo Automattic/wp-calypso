@@ -33,12 +33,13 @@
 			}
 		}
 
-	.preview-pane__navigation .section-nav-tabs__list {
-		box-sizing: border-box;
-		padding: 0 8px;
+		.preview-pane__navigation .section-nav-tabs__list {
+			box-sizing: border-box;
+			padding: 0 8px;
 
-		@include break-large {
-			padding: 0 32px;
+			@include break-large {
+				padding: 0 32px;
+			}
 		}
 	}
 
