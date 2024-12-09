@@ -232,11 +232,6 @@
 	.step-container__content {
 		margin-top: 0;
 		display: block;
-		min-height: 65vh;
-
-		@supports (min-height: 65svh) {
-			min-height: calc(65svh - 50px);
-		}
 	}
 
 	/**
