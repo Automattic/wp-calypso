@@ -1,11 +1,12 @@
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
@@ -49,7 +50,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	const [ feedbackInteracted, setFeedbackInteracted ] = useState( false );
 
-	const { mutate: saveFeedback, isPending } = useSaveFeedbackMutation();
+	const { mutate: saveFeedback, isPending, data: apiResponseData } = useSaveFeedbackMutation();
 
 	// Let's use hash #feedback if we want to show the feedback
 	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
@@ -124,11 +125,33 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		[ feedbackProps, onSubmitFeedback, onSkipFeedback ]
 	);
 
-	if ( feedbackFormHash && ! showFeedback ) {
-		// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
-		// If feedback was interacted, redirect to the URL passed in the feedbackProps
-		redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
-	}
+	useEffect( () => {
+		if ( apiResponseData?.success ) {
+			// Show success notice
+			dispatch(
+				successNotice( translate( 'Thanks for your feedback!' ), {
+					displayOnNextPage: true,
+					id: 'submit-product-feedback-success',
+					duration: 5000,
+				} )
+			);
+		}
+
+		if ( feedbackFormHash && ! showFeedback && ! isPending ) {
+			// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
+			// If feedback was interacted, redirect to the URL passed in the feedbackProps
+			redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
+		}
+	}, [
+		apiResponseData,
+		dispatch,
+		feedbackFormHash,
+		feedbackInteracted,
+		feedbackProps,
+		isPending,
+		showFeedback,
+		translate,
+	] );
 
 	return {
 		isFeedbackShown: ! showFeedback,
