@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { SiteExcerptData } from '@automattic/sites';
-import { Button } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -79,7 +79,7 @@ const DomainOverviewPane = ( {
 					{ __( 'Close' ) }
 				</Button>
 				<Button
-					variant="primary"
+					primary
 					className="item-preview__admin-button"
 					href={ adminUrl }
 					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
