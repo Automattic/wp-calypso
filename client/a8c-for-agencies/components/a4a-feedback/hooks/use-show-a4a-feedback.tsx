@@ -19,7 +19,6 @@ import type {
 	FeedbackSurveyResponsesPayload,
 } from '../types';
 
-
 const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
 
@@ -80,7 +79,6 @@ const useShowFeedback = ( type: FeedbackType ) => {
 	// Do the action when submitting feedback
 	const onSubmitFeedback = useCallback(
 		( data: FeedbackQueryData ) => {
-
 			if ( ! data || ! agencyId ) {
 				return;
 			}
@@ -128,7 +126,6 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		} ),
 		[ feedbackProps, onSubmitFeedback, onSkipFeedback ]
 	);
-
 
 	useEffect( () => {
 		if ( apiResponseData?.success ) {
