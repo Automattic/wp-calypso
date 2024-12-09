@@ -190,6 +190,9 @@ body.is-reader-full-post {
 			.components-input-control__suffix {
 				display: none;
 			}
+			.components-input-control__container {
+				cursor: text;
+			}
 			.components-select-control__input {
 				pointer-events: none;
 				padding: 0;
