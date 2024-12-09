@@ -5,7 +5,7 @@ import { SectionProps } from '..';
 import { MarketplaceTypeContext } from '../../context';
 import EnterpriseAgencyHosting from '../../hosting-overview/hosting-v2/enterprise-agency-hosting';
 import PremierAgencyHosting from '../../hosting-overview/hosting-v2/premier-agency-hosting';
-import StandardAgencyHosting from '../../hosting-overview/hosting-v2/standard-agency-hosting';
+import StandardAgencyHosting from './standard-agency-hosting';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 	const { content, title } = useMemo( () => {
 		if ( section === 'wpcom' ) {
 			return {
-				content: <StandardAgencyHosting onAddToCart={ onAddToCart } />,
+				content: <StandardAgencyHosting />,
 				title: isReferMode
 					? translate( 'Refer a WordPress.com site to your client' )
 					: translate( 'Purchase sites individually or in bulk, as you need them' ),
