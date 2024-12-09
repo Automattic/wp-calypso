@@ -13,7 +13,7 @@ import {
 } from '@paypal/react-paypal-js';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 
@@ -81,6 +81,7 @@ function PayPalSubmitButton( {
 } ) {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
+	const [ forceReRender, setForceReRender ] = useState< number >( 0 );
 
 	// Wait for PayPal.js to load before marking this payment method as active.
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
@@ -139,6 +140,10 @@ function PayPalSubmitButton( {
 
 	const onCancel: PayPalButtonsComponentProps[ 'onCancel' ] = async () => {
 		debug( 'order cancelled' );
+		// The PayPalButtons component appears to cache certain data about the
+		// order process and in order to make sure it has the latest data, we
+		// have to use the `forceReRender` prop.
+		setForceReRender( ( val ) => val + 1 );
 		rejectPayPalApprovalPromise(
 			new Error( translate( 'The PayPal transaction was not approved.' ) )
 		);
@@ -176,6 +181,7 @@ function PayPalSubmitButton( {
 	// transaction system that the purchase is complete.
 	return (
 		<PayPalButtons
+			forceReRender={ [ forceReRender ] }
 			disabled={ disabled }
 			style={ { layout: 'horizontal' } }
 			fundingSource="paypal"
