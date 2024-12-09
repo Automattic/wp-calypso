@@ -43,8 +43,9 @@
 	}
 	.import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
 		background-color: var(--studio-wordpress-blue-50) !important;
-		border-color: var(--studio-wordpress-blue-50) !important;
+		border: 1px solid var(--studio-wordpress-blue-50) !important;
 		color: var(--color-text-inverted);
+		height: 42px;
 	}
 	.import__upgrade-plan .import__upgrade-plan-cta button.button:focus {
 		box-shadow: 0 0 0 2px var(--studio-white),
