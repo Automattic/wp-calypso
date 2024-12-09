@@ -187,15 +187,10 @@ body.is-reader-full-post {
 		// This is a temporary fix to disable the pagination page selector because of this issue: Automattic/loop#247
 		// Once that issue is fixed, this code should be removed.
 		.dataviews-pagination__page-select {
-			.components-input-control__suffix {
-				display: none;
-			}
-			.components-input-control__container {
-				cursor: text;
-			}
-			.components-select-control__input {
-				pointer-events: none;
-				padding: 0;
+			display: none;
+
+			& + div {
+				margin-left: auto;
 			}
 		}
 	}
