@@ -97,7 +97,14 @@ function getMailboxes( data ) {
 	return account?.emails ?? [];
 }
 
-function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
+function EmailPlan( {
+	domain,
+	selectedSite,
+	source,
+	hideHeader = false,
+	hideHeaderCake = false,
+	hidePlanActions = false,
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -340,33 +347,38 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 			<MailPoetUpsell />
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
-			<EmailPlanHeader
-				domain={ domain }
-				hasEmailSubscription={ hasSubscription }
-				isLoadingEmails={ isLoading }
-				isLoadingPurchase={ isLoadingPurchase }
-				purchase={ purchase }
-				selectedSite={ selectedSite }
-				emailAccount={ getAccount( emailAccounts ) }
-			/>
+			{ ! hideHeader && (
+				<EmailPlanHeader
+					domain={ domain }
+					hasEmailSubscription={ hasSubscription }
+					isLoadingEmails={ isLoading }
+					isLoadingPurchase={ isLoadingPurchase }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					emailAccount={ getAccount( emailAccounts ) }
+				/>
+			) }
 			<EmailPlanMailboxesList
 				account={ getAccount( emailAccounts ) }
 				domain={ domain }
 				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
+				addMailboxPath={ hidePlanActions && getAddMailboxProps()?.path }
 			/>
-			<div className="email-plan__actions">
-				<VerticalNav>
-					{ renderAddNewMailboxesOrRenewNavItem( getMailboxes( emailAccounts ) ) }
-					<UpgradeNavItem
-						currentRoute={ currentRoute }
-						domain={ domain }
-						selectedSiteSlug={ selectedSite.slug }
-					/>
-					{ renderManageAllMailboxesNavItem() }
-					{ renderViewBillingAndPaymentSettingsNavItem() }
-				</VerticalNav>
-			</div>
+			{ ! hidePlanActions && (
+				<div className="email-plan__actions">
+					<VerticalNav>
+						{ renderAddNewMailboxesOrRenewNavItem( getMailboxes( emailAccounts ) ) }
+						<UpgradeNavItem
+							currentRoute={ currentRoute }
+							domain={ domain }
+							selectedSiteSlug={ selectedSite.slug }
+						/>
+						{ renderManageAllMailboxesNavItem() }
+						{ renderViewBillingAndPaymentSettingsNavItem() }
+					</VerticalNav>
+				</div>
+			) }
 		</>
 	);
 }
