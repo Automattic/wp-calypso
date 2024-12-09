@@ -2,7 +2,6 @@ import {
 	isTailoredSignupFlow,
 	MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
-	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -69,10 +68,6 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	if ( redirectToParam && isOnboardingFlow( signupFlowName ) ) {
-		window.location.assign( addQueryArgs( redirectToParam.toString(), { skippedCheckout: 1 } ) );
-		return;
-	}
 	let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
 	if (
