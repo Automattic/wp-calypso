@@ -10,4 +10,14 @@
 	.section-nav-tabs__list {
 		box-sizing: border-box;
 	}
+
+	.domain-settings-page .domains-overview__navigation-header.navigation-header {
+		padding: 0;
+		margin-bottom: 16px;
+		border: 0;
+
+		.navigation-header__main {
+			padding-inline: 0;
+		}
+	}
 }
