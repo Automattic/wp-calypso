@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 
-const SCROLL_THRESHOLD_PERCENTAGE = 0.5;
-const SCROLL_THRESHOLD_BUFFER = 15;
+const SCROLL_THRESHOLD_PERCENTAGE = 0.2;
+const SCROLL_THRESHOLD_BUFFER = 5;
 
 export default function useCompactOnScroll() {
 	const [ isCompact, setIsCompact ] = useState( false );

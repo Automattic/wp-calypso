@@ -104,11 +104,7 @@ export function HeroSection(
 				/>
 			</div>
 
-			<ul className="hosting-v3-hero-section__tabs">
-				{ navItems.map( ( item ) => {
-					return <li key={ item.key }>{ item }</li>;
-				} ) }
-			</ul>
+			<ul className="hosting-v3-hero-section__tabs">{ navItems }</ul>
 		</div>
 	);
 }

@@ -21,6 +21,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralToggle from '../common/referral-toggle';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HeroSection from './hero-section';
@@ -33,7 +34,7 @@ export type SectionProps = {
 	section: 'wpcom' | 'pressable' | 'vip';
 };
 
-export default function HostingOverviewV3( { section }: SectionProps ) {
+function HostingOverviewV3( { section }: SectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -133,3 +134,5 @@ export default function HostingOverviewV3( { section }: SectionProps ) {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( HostingOverviewV3 );

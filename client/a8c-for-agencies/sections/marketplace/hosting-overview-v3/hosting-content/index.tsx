@@ -1,8 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
-import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
-import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
-import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
+import { useContext, useMemo } from 'react';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SectionProps } from '..';
 import { MarketplaceTypeContext } from '../../context';
@@ -23,36 +20,40 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 
 	const isReferMode = marketplaceType === 'referral';
 
-	let content;
-	let logo;
-	let title;
-	if ( section === 'wpcom' ) {
-		content = <StandardAgencyHosting onAddToCart={ onAddToCart } />;
-		logo = <img src={ WPCOMLogo } alt="WPCOM" />;
-		title = translate(
-			'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
-		);
-	}
-	if ( section === 'pressable' ) {
-		content = <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />;
-		logo = <img src={ PressableLogo } alt="Pressable" />;
-		title = translate(
-			'Premier Agency hosting best for large-scale businesses and major eCommerce sites.'
-		);
-	}
-	if ( section === 'vip' ) {
-		content = <EnterpriseAgencyHosting isReferMode={ isReferMode } />;
-		logo = <img src={ VIPLogo } alt="VIP" />;
-		title = translate(
-			'Deliver unmatched performance with the highest security standards on our enterprise content platform.'
-		);
-	}
+	const { content, title } = useMemo( () => {
+		if ( section === 'wpcom' ) {
+			return {
+				content: <StandardAgencyHosting onAddToCart={ onAddToCart } />,
+				title: isReferMode
+					? translate( 'Refer a WordPress.com site to your client' )
+					: translate( 'Purchase sites individually or in bulk, as you need them' ),
+			};
+		}
+		if ( section === 'pressable' ) {
+			return {
+				content: <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />,
+				title: isReferMode
+					? translate( 'Refer a variety of plans, or single high-resource sites to your clients' )
+					: translate(
+							'Choose from a variety of plans, or purchase single high-resource sites as add-ons'
+					  ),
+			};
+		}
+		if ( section === 'vip' ) {
+			return {
+				content: <EnterpriseAgencyHosting isReferMode={ isReferMode } />,
+				title: translate(
+					'Deliver unmatched performance with the highest security standards on our enterprise platform'
+				),
+			};
+		}
+
+		return { content: null, title: '' };
+	}, [ isReferMode, onAddToCart, section, translate ] );
+
 	return (
 		<div className="hosting-v3__content">
-			<div className="hosting-v3__content-header">
-				<div className="hosting-v3__content-logo">{ logo }</div>
-				<div className="hosting-v3__content-header-title">{ title }</div>
-			</div>
+			<h2 className="hosting-v3__content-header">{ title }</h2>
 			{ content }
 		</div>
 	);
