@@ -70,7 +70,11 @@ async function queryOdysseyQuerySitePurchasesFromMyJetpack(
 	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId || shouldUseStatsBuiltInPurchasesApi ) {
-		return;
+		return {
+			data: [],
+			isFetching: false,
+			isError: false,
+		};
 	}
 	return wpcom.req
 		.get( {
@@ -91,7 +95,7 @@ const useOdysseyQuerySitePurchasesFromMyJetpack = (
 		queryKey: [
 			'odyssey-stats',
 			'site-purchases',
-			'my-jetapck',
+			'my-jetpack',
 			shouldUseStatsBuiltInPurchasesApi,
 			siteId,
 		],
