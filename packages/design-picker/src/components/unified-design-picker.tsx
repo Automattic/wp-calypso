@@ -231,11 +231,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
-	const featureCategories = useMemo(
+	const categoryTypes = useMemo(
 		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
-	const subjectCategories = useMemo(
+	const categoryTopics = useMemo(
 		() =>
 			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -248,11 +248,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	return (
 		<div>
 			<div className="design-picker__filters">
-				{ categorization && featureCategories.length && isMultiFilterEnabled && (
-					<DesignPickerFilterGroup title={ translate( 'Features' ) }>
+				{ categorization && categoryTypes.length && isMultiFilterEnabled && (
+					<DesignPickerFilterGroup title={ translate( 'Type' ) }>
 						<DesignPickerCategoryFilter
 							className="design-picker__category-filter"
-							categories={ featureCategories }
+							categories={ categoryTypes }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
 							isMultiSelection={ isMultiFilterEnabled }
@@ -260,14 +260,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ categorization && subjectCategories.length && (
-					<DesignPickerFilterGroup
-						title={ isMultiFilterEnabled ? translate( 'Subjects' ) : '' }
-						grow
-					>
+				{ categorization && categoryTopics.length && (
+					<DesignPickerFilterGroup title={ isMultiFilterEnabled ? translate( 'Topic' ) : '' } grow>
 						<DesignPickerCategoryFilter
 							className="design-picker__category-filter"
-							categories={ isMultiFilterEnabled ? subjectCategories : categorization.categories }
+							categories={ isMultiFilterEnabled ? categoryTopics : categorization.categories }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
 							isMultiSelection={ isMultiFilterEnabled }
