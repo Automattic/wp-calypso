@@ -32,8 +32,13 @@ import './style.scss';
 
 const ContentWithHeader = ( props: { children: ReactNode } ) => {
 	const translate = useTranslate();
+	const isAllDomainManagementEnabled = isEnabled( 'calypso/all-domain-management' );
+
 	return (
-		<Main wideLayout>
+		<Main
+			wideLayout
+			className={ clsx( { 'context-all-domain-management': isAllDomainManagementEnabled } ) }
+		>
 			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
 
 			<EmailHeader />
@@ -154,7 +159,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
 					// we also hide the back button, to avoid scenarios where clicking "Back"
 					// redirects users to the same page as they are currently on.
-					hideHeaderCake={ isSingleDomainThatHasEmail }
+					hideHeaderCake={ isAllDomainManagementEnabled || isSingleDomainThatHasEmail }
+					hideHeader={ isAllDomainManagementEnabled }
+					hidePlanActions={ isAllDomainManagementEnabled }
 					selectedSite={ selectedSite }
 					source={ source }
 				/>
