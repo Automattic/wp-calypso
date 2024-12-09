@@ -434,6 +434,9 @@ class StatsSite extends Component {
 			'stats__flexible-grid-item--full--medium'
 		);
 
+		// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
+		const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -472,7 +475,7 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StickyPanel headerId={ isOdysseyStats ? 'wpadminbar' : 'header' }>
+					<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
