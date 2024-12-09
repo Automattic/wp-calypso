@@ -144,7 +144,6 @@
 		"onboarding/user-on-stepper-hosting": false,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
-		"pattern-assembler/v2": true,
 		"performance-profiler/llm": true,
 		"performance-profiler/logged-in": true,
 		"plans/hosting-trial": true,

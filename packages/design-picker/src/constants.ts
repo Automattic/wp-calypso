@@ -18,15 +18,6 @@ export const STICKY_OFFSET_TOP = 109;
 /**
  * Hard-coded design
  */
-export const DEFAULT_ASSEMBLER_DESIGN = {
-	slug: 'creatio-2',
-	title: 'Creatio 2',
-	recipe: {
-		stylesheet: 'pub/creatio-2',
-	},
-	design_type: 'assembler',
-} as Design;
-
 export const ASSEMBLER_V2_DESIGN = {
 	slug: 'assembler',
 	title: 'Assembler',
