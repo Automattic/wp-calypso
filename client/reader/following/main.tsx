@@ -8,16 +8,36 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import ReaderListFollowedSites from 'calypso/reader/stream/reader-list-followed-sites';
 import Recent from '../recent';
+import ReaderStreamSidebar from './reader-stream-sidebar';
+import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
-
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
+
+	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
+		return (
+			<div className="following-stream--no-subscriptions">
+				<NavigationHeader title={ translate( 'Recent' ) } />
+				<p>
+					{ translate(
+						'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<ReaderOnboarding forceShow />
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -27,7 +47,7 @@ function FollowingStream( { ...props } ) {
 				<ReaderStream
 					{ ...props }
 					className="following"
-					streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
+					streamSidebar={ () => <ReaderStreamSidebar /> }
 				>
 					<BloganuaryHeader />
 					<NavigationHeader

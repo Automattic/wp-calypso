@@ -4,6 +4,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import {
 	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_UTM_STATS,
+	STATS_TYPE_DEVICE_STATS,
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_SEARCH_TERMS,
@@ -33,6 +35,10 @@ const getUpsellCopy = ( statType: string ) => {
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		case STAT_TYPE_VIDEO_PLAYS:
 			return translate( 'Discover your most popular videos and find out how they performed.' );
+		case STATS_FEATURE_UTM_STATS:
+			return translate( 'Generate UTM parameters and track your campaign performance data.' );
+		case STATS_TYPE_DEVICE_STATS:
+			return translate( 'See which devices your visitors are using.' );
 		default:
 			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
 	}

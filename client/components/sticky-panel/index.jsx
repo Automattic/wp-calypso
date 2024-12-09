@@ -19,8 +19,8 @@ const commonDefaultProps = {
 	minLimit: false,
 };
 
-export function calculateOffset() {
-	const headerEl = document.getElementById( 'header' );
+export function calculateOffset( headerId ) {
+	const headerEl = document.getElementById( headerId ?? 'header' );
 	// Offset to account for Masterbar if it is fixed position
 	if ( headerEl && getComputedStyle( headerEl ).position === 'fixed' ) {
 		return headerEl.getBoundingClientRect().height;
@@ -28,10 +28,10 @@ export function calculateOffset() {
 	return 0;
 }
 
-export function getBlockStyle( state ) {
+export function getBlockStyle( state, headerId ) {
 	if ( state.isSticky ) {
 		return {
-			top: calculateOffset(),
+			top: calculateOffset( headerId ),
 			width: state.blockWidth,
 		};
 	}
@@ -59,7 +59,7 @@ function renderStickyPanel( props, state ) {
 
 	return (
 		<div className={ classes } ref={ state._ref }>
-			<div className="sticky-panel__content" style={ getBlockStyle( state ) }>
+			<div className="sticky-panel__content" style={ getBlockStyle( state, props.headerId ) }>
 				{ props.children }
 			</div>
 			<div

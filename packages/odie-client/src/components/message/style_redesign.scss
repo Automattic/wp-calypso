@@ -480,6 +480,11 @@
 			align-items: center;
 			border-radius: $custom-border-corner-size;
 
+			&:hover {
+				color: var(--studio-white);
+				border-color: inherit;
+			}
+
 			&.is-active {
 				border-width: 1px;
 			}
@@ -652,7 +657,7 @@
 		text-align: center;
 		padding-top: 6px;
 	}
-	
+
 	.odie-send-message-input-spinner {
 		color: $blueberry-color !important;
 	}

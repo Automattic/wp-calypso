@@ -20,7 +20,7 @@ $heading-font-body-small: 15px;
 		padding: 0 rem(24px);
 		position: fixed;
 		width: calc(100% - 3rem);
-		background: var(--theme-text-color);
+		background: var(--studio-white);
 		z-index: 1000;
 
 		@include break-large {

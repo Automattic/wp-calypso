@@ -33,10 +33,14 @@ const isConnected = ( state, source ) =>
 	! sourceNeedsKeyring( source ) ||
 	some( getKeyringConnections( state ), { type: 'other', status: 'ok', service: source } );
 
-const needsKeyring = ( state, source ) =>
-	sourceNeedsKeyring( source ) &&
-	! isKeyringConnectionsFetching( state ) &&
-	! some( getKeyringConnections( state ), { type: 'other', status: 'ok' } );
+const needsKeyring = ( state, source ) => {
+	return (
+		sourceNeedsKeyring( source ) &&
+		! isKeyringConnectionsFetching( state ) &&
+		( ! some( getKeyringConnections( state ), { type: 'other', status: 'ok' } ) ||
+			! some( getKeyringConnections( state ), { type: 'other', status: 'invalid' } ) )
+	);
+};
 
 class MediaLibrary extends Component {
 	static propTypes = {

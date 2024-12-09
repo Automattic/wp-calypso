@@ -100,25 +100,21 @@ const DiscoverStream = ( props ) => {
 	const streamSidebar = () => {
 		if ( selectedTab === FIRST_POSTS_TAB && recommendedSites?.length ) {
 			return (
-				<>
-					<h2>{ translate( 'New sites' ) }</h2>
-					<ReaderPopularSitesSidebar
-						items={ recommendedSites }
-						followSource={ READER_DISCOVER_POPULAR_SITES }
-					/>
-				</>
+				<ReaderPopularSitesSidebar
+					items={ recommendedSites }
+					followSource={ READER_DISCOVER_POPULAR_SITES }
+					title={ translate( 'New sites' ) }
+				/>
 			);
 		}
 
 		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
 			return (
-				<>
-					<h2>{ translate( 'Popular sites' ) }</h2>
-					<ReaderPopularSitesSidebar
-						items={ recommendedSites }
-						followSource={ READER_DISCOVER_POPULAR_SITES }
-					/>
-				</>
+				<ReaderPopularSitesSidebar
+					items={ recommendedSites }
+					followSource={ READER_DISCOVER_POPULAR_SITES }
+					title={ translate( 'Popular sites' ) }
+				/>
 			);
 		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
 			return <ReaderTagSidebar tag={ selectedTab } showFollow />;

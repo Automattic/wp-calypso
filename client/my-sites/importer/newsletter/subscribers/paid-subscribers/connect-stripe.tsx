@@ -50,7 +50,7 @@ export default function ConnectStripe( {
 			<p>
 				{ createInterpolateElement(
 					__(
-						"To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're connecting the <strong>same</strong> Stripe account you use with Substack."
+						"To migrate your <strong>paid subscribers</strong>, make sure you're connecting the <strong>same</strong> Stripe account you use with Substack."
 					),
 					{
 						strong: <strong />,
@@ -64,7 +64,7 @@ export default function ConnectStripe( {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe' );
 					} }
-					ariaLabel={ __( 'Connect Stripe' ) }
+					aria-label={ __( 'Connect Stripe' ) }
 				>
 					{ createInterpolateElement( __( 'Connect <StripeLogo />' ), {
 						StripeLogo: (

@@ -14,7 +14,7 @@ import { zendeskMessageConverter } from '../../utils';
 
 const getFileType = ( file: File ) => {
 	if ( file.type.includes( 'image' ) ) {
-		return 'image';
+		return 'image-placeholder';
 	}
 
 	return 'text';

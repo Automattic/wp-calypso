@@ -56,10 +56,7 @@ class FoldableCard extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.expanded !== this.props.expanded ||
-			nextProps.expanded !== this.state.expanded
-		) {
+		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
 		}
 	}

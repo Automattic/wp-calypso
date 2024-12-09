@@ -1,3 +1,5 @@
+import { DateRangePickerShortcut } from 'calypso/components/date-range/shortcuts';
+
 interface DateControlProps {
 	onApplyButtonClick: ( startDate: Moment, endDate: Moment ) => void;
 	onDateControlClick?: () => void;
@@ -7,7 +9,7 @@ interface DateControlProps {
 		daysInRange: number;
 	};
 	shortcutList: DateRangePickerShortcut[];
-	onShortcutClick: ( shortcutId: string ) => void;
+	onShortcutClick: ( shortcut: DateRangePickerShortcut ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
 	// Temporary prop to enable new date filtering UI.

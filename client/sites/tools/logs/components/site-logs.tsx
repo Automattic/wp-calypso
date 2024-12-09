@@ -20,6 +20,8 @@ import { SiteLogsTable } from './site-logs-table';
 import { SiteLogsToolbar } from './site-logs-toolbar';
 import type { Moment } from 'moment';
 
+import './style.scss';
+
 export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;

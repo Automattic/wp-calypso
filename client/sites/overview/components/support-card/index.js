@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
@@ -25,6 +26,7 @@ function trackNavigateGetHelpClick() {
 const HELP_CENTER_STORE = HelpCenter.register();
 
 export default function SupportCard() {
+	const hasEnTranslation = useHasEnTranslation();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -38,7 +40,15 @@ export default function SupportCard() {
 
 	return (
 		<HostingCard className="support-card" title={ translate( 'Need some help?' ) }>
-			<p>{ translate( 'Our AI assistant can help, or connect you to our support team.' ) }</p>
+			<p>
+				{ hasEnTranslation(
+					'Our AI assistant can answer your questions and connect you to our Happiness Engineers for further assistance.'
+				)
+					? translate(
+							'Our AI assistant can answer your questions and connect you to our Happiness Engineers for further assistance.'
+					  )
+					: translate( 'Our AI assistant can help, or connect you to our support team.' ) }
+			</p>
 			<Button onClick={ onClick }>{ translate( 'Get help' ) }</Button>
 		</HostingCard>
 	);

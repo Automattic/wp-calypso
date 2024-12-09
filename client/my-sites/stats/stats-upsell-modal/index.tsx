@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
@@ -16,6 +15,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { statTypeToPlan } from '../stat-type-to-plan';
 
 import './style.scss';
 
@@ -25,21 +25,23 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
-	const plan = plans?.data?.[ PLAN_PREMIUM ];
+	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
+	const planKey = statTypeToPlan( statType );
+	const plan = plans?.data?.[ planKey ];
 	const pricing = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ PLAN_PREMIUM ],
+		planSlugs: [ planKey ],
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
-	} )?.[ PLAN_PREMIUM ];
+	} )?.[ planKey ];
+	const planSlug = plan?.pathSlug ?? planKey;
 	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const isSimpleClassic = useSelector( ( state ) =>
 		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
 	);
-	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
 	const closeModal = () => {
 		dispatch( toggleUpsellModal( siteId, statType ) );
@@ -53,12 +55,12 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		} );
 		if ( isSimpleClassic ) {
 			const checkoutProductUrl = new URL(
-				`https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PREMIUM }`
+				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
 			);
 			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ plan?.pathSlug ?? 'premium' }` );
+			page( `/checkout/${ siteSlug }/${ planSlug }` );
 		}
 	};
 
