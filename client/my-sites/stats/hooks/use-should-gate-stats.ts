@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_STATS_FREE,
 	FEATURE_STATS_PAID,
@@ -234,21 +235,28 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// Legacy free stats given to all sites before 2024-01-09.
 	if ( siteHasFreeStats ) {
-		return [ ...freeStats ].includes( statType );
+		return freeStats.includes( statType );
 	}
 
 	// Paid stats given to personal and higher plans
 	if ( siteHasPaidStats ) {
-		return [ ...paidStats ].includes( statType );
+		// Only gate UTM/Device stats if the v3 flag is enabled.
+		// v3 will only be enabled once the site feature backend change is deployed.
+		if ( ! isEnabled( 'stats/paid-wpcom-v3' ) ) {
+			return paidStats
+				.filter( ( stat ) => stat !== STATS_FEATURE_UTM_STATS && stat !== STATS_TYPE_DEVICE_STATS )
+				.includes( statType );
+		}
+		return paidStats.includes( statType );
 	}
 
 	// Basic stats given to free sites before 2024-12-06.
 	if ( siteHasBasicStats ) {
-		return [ ...basicStats ].includes( statType );
+		return basicStats.includes( statType );
 	}
 
 	// All other sites get gated to 7 days + paywall upsell
-	return [ ...gatedStats ].includes( statType );
+	return gatedStats.includes( statType );
 };
 
 /*
