@@ -86,6 +86,12 @@ const paidStats = [
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
+
+	// Paid stats is currently a premium plan feature.
+	// Legacy sites will inadvertantly get these temporarily but paywalling
+	// these again later is fine. (https://github.com/Automattic/wp-calypso/pull/97041)
+	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_UTM_STATS,
 ];
 
 // Gated controls for WPCOM sites without the FEATURE_STATS_PAID feature.
@@ -163,12 +169,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 		// Paywall advanced stats for non-commercial sites.
 		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
-	}
-
-	// Gate advanced stats for non-Jetpack sites unless they have a Jetpack Stats commercial purchase.
-	// Dotcom sites are not able to see these modules yet, so the line wouldn't apply to them.
-	if ( jetpackStatsAdvancedPaywall.includes( statType ) ) {
-		return ! supportStatsCommercialUse;
 	}
 
 	const siteFeatures = getSiteFeatures( state, siteId );

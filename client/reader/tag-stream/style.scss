@@ -130,6 +130,9 @@
 
 	.stream__two-column .stream__right-column {
 		margin-top: 0;
+		.reader-subscription-list-item .follow-button__label {
+			display: none;
+		}
 	}
 
 	.reader-sidebar-site_link {

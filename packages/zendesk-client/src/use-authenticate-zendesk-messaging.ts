@@ -11,6 +11,11 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
  */
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
+/**
+ * Bump me when the API response structure goes through a breaking change.
+ */
+const VERSION = 'v1';
+
 let isLoggedIn = false;
 
 export function useAuthenticateZendeskMessaging(
@@ -21,7 +26,7 @@ export function useAuthenticateZendeskMessaging(
 	const isTestMode = currentEnvironment !== 'production';
 
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', type, isTestMode ],
+		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
 		queryFn: () => {
 			const params = { type, test_mode: String( isTestMode ) };
 			const wpcomParams = new URLSearchParams( params );

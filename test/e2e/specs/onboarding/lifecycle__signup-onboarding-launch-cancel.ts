@@ -143,9 +143,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } );
 		} );
 
-		it( 'Select "Sell" goal', async function () {
-			await startSiteFlow.selectGoal( 'Sell' );
-			await startSiteFlow.clickButton( 'Continue' );
+		it( 'Select "Sell services or digital goods" goal', async function () {
+			await startSiteFlow.selectGoal( 'Sell services or digital goods' );
+			await startSiteFlow.clickButton( 'Next' );
 		} );
 	} );
 

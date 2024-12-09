@@ -215,6 +215,92 @@ describe( 'shouldGateStats in Calypso', () => {
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( true );
 	} );
+
+	it( 'should gate advanced stats modules for Simple site without commercial stats feature', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: false,
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [],
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
+		expect( isGatedStats ).toBe( true );
+	} );
+
+	// Note: Once FEATURE_STATS_COMMERCIAL is introduced and fully rolled out,
+	// we should replace FEATURE_STATS_PAID with FEATURE_STATS_COMMERCIAL in
+	// the following test to ensure consistent gating logic for commercial stats.
+	// @see: https://github.com/Automattic/wp-calypso/pull/97041
+
+	it( 'should not gate advanced stats modules for Simple site with commercial stats feature', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [ FEATURE_STATS_PAID ], // FEATURE_STATS_COMMERCIAL
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: false,
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [],
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
+
+	it( 'should not gate advanced stats for Atomic site with commercial stats feature', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [ FEATURE_STATS_PAID ], // FEATURE_STATS_COMMERCIAL
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: true,
+						options: {
+							is_wpcom_atomic: true,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [],
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
 } );
 
 describe( 'shouldGateStats in Odyssey stats', () => {

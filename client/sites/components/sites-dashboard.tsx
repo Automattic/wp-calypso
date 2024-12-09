@@ -32,6 +32,7 @@ import {
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
+import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
@@ -349,6 +350,13 @@ const SitesDashboard = ( {
 			openSitePreviewPane( targetSite, 'environment_switcher' );
 		}
 	};
+
+	const showSiteDashboard = useSelector( ( state ) =>
+		shouldShowSiteDashboard( state, selectedSite?.ID ?? null )
+	);
+	if ( !! selectedSite && ! showSiteDashboard ) {
+		return null;
+	}
 
 	// todo: temporary mock data
 	const hideListing = false;
