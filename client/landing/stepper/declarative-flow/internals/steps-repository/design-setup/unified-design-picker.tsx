@@ -939,27 +939,25 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
 	}
 
-	const bigSkyButtons = (
+	const bigSkyButton = isBigSkyEligible && (
 		<>
+			<Button
+				onClick={ () => {
+					onDesignWithAI && onDesignWithAI();
+				} }
+			>
+				{ translate( 'Design with AI' ) }
+			</Button>
 			<TrackComponentView
 				eventName="calypso_design_picker_big_sky_button_impression"
 				eventProperties={ commonFilterProperties }
 			/>
-			{ isBigSkyEligible && (
-				<Button
-					onClick={ () => {
-						onDesignWithAI && onDesignWithAI()
-					} }
-				>
-					{ translate( 'Design with AI' ) }
-				</Button>
-			) }
 		</>
 	);
 
 	const stepContent = (
 		<>
-			<div className="setup-container__big-sky-container">{ bigSkyButtons }</div>
+			<div className="setup-container__big-sky-container">{ bigSkyButton }</div>
 			<UnifiedDesignPicker
 				designs={ designs }
 				locale={ locale }
