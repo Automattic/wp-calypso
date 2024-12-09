@@ -80,12 +80,3 @@ export function getCategorizationOptions(
 function getGoalsPreferredCategories( goal: Onboard.SiteGoal ): string[] {
 	return GOALS_TO_CATEGORIES[ goal ] || [];
 }
-
-export function getCategoryType( categorySlug: string ) {
-	const featuresSet = new Set( Object.values( FEATURE_CATEGORIES ) );
-	if ( featuresSet.has( categorySlug ) ) {
-		return 'feature';
-	}
-
-	return 'subject';
-}
