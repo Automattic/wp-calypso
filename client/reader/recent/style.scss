@@ -35,6 +35,10 @@ body.is-reader-full-post {
 		$feed-list-header-height: 70px;
 		$feed-list-actions-height: 65px;
 		$feed-list-footer-height: 57px;
+		$feed-list-height: calc(
+			100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height -
+				$feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom )
+		);
 
 		@extend %column-shared;
 		flex: 1;
@@ -72,7 +76,7 @@ body.is-reader-full-post {
 		}
 
 		.dataviews-loading {
-			margin-top: 200px;
+			height: $feed-list-height;
 		}
 
 		.components-spinner {
@@ -81,10 +85,7 @@ body.is-reader-full-post {
 		}
 
 		.dataviews-view-list {
-			height: calc(
-				100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height -
-					$feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom )
-			);
+			height: $feed-list-height;
 			overflow-y: auto;
 			@include custom-scrollbars-on-hover( transparent, $gray-600 );
 			scrollbar-gutter: auto;
