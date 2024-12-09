@@ -326,5 +326,10 @@
 }
 
 .domains-overview .main.domains-overview__list {
+	display: none;
 	max-width: 400px;
+
+	@include break-wide {
+		display: block;
+	}
 }
