@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import ExternalLink from 'calypso/components/external-link';
 import SectionHeader from 'calypso/components/section-header';
+import GoogleIcon from 'calypso/components/social-icons/google';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
 	getEmailAddress,
@@ -14,6 +15,7 @@ import {
 	isEmailForwardAccount,
 	isEmailUserAdmin,
 	isTitanMailAccount,
+	isGoogleEmailAccount,
 } from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import { getGSuiteSubscriptionStatus, getGmailUrl } from 'calypso/lib/gsuite';
@@ -39,8 +41,10 @@ const MailboxListHeader = ( {
 	children,
 	isPlaceholder = false,
 	addMailboxPath,
+	showIcon,
 } ) => {
 	const translate = useTranslate();
+	const isGoogle = isGoogleEmailAccount( { accountType } );
 
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
@@ -48,8 +52,13 @@ const MailboxListHeader = ( {
 				isPlaceholder={ isPlaceholder }
 				label={
 					<>
-						<Icon icon={ wordpress } />
-						&nbsp;
+						{ !! showIcon && (
+							<>
+								{ isGoogle && <GoogleIcon /> }
+								{ ! isGoogle && <Icon icon={ wordpress } /> }
+								&nbsp;
+							</>
+						) }
 						{ getListHeaderTextForAccountType( accountType, translate ) }
 					</>
 				}

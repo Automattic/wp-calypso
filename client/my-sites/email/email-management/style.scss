@@ -479,6 +479,10 @@
 			svg {
 				fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 			}
+
+			.social-icons__google {
+				margin-top: 2px;
+			}
 		}
 
 		.section-header__actions {
