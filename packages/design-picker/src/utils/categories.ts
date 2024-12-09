@@ -10,4 +10,4 @@ export const getCategoryType = ( categorySlug: string ) => {
 	}
 
 	return 'subject';
-}
+};
