@@ -6,8 +6,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesigns } from '../hooks/use-filtered-designs';
-import { getAssemblerDesign, isDefaultGlobalStylesVariationSlug } from '../utils';
-import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
+import {
+	getAssemblerDesign,
+	isDefaultGlobalStylesVariationSlug,
+	isFeatureCategory,
+	isLockedStyleVariation,
+} from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPickerTierFilter from './design-picker-tier-filter';
 import DesignPreviewImage from './design-preview-image';
@@ -227,14 +231,13 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useFilteredDesigns( designs, categorization );
-	const features = [ 'blog', 'portfolio', 'podcast', 'store' ];
 	const featureCategories = useMemo(
-		() => ( categorization?.categories || [] ).filter( ( { slug } ) => features.includes( slug ) ),
+		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 	const subjectCategories = useMemo(
 		() =>
-			( categorization?.categories || [] ).filter( ( { slug } ) => ! features.includes( slug ) ),
+			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 
