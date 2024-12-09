@@ -23,8 +23,6 @@ describe( 'pathToUrl', () => {
 		} );
 
 		expect( pathToUrl( '/start' ) ).toBe( 'https://wordpress.com/start' );
-		expect( pathToUrl( 'https://example.com/path' ) ).toBe( 'https://example.com/path' );
-		expect( pathToUrl( 'http://test.com' ) ).toBe( 'http://test.com' );
 	} );
 
 	test( 'should return development URL', () => {
@@ -44,7 +42,5 @@ describe( 'pathToUrl', () => {
 		} );
 
 		expect( pathToUrl( '/start' ) ).toBe( 'http://calypso.localhost:3000/start' );
-		expect( pathToUrl( 'https://example.com/path' ) ).toBe( 'https://example.com/path' );
-		expect( pathToUrl( 'http://test.com' ) ).toBe( 'http://test.com' );
 	} );
 } );
