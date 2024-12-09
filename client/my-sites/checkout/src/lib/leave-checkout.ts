@@ -64,16 +64,15 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	if ( redirectToParam && isOnboardingFlow( signupFlowName ) ) {
-		window.location.assign( addQueryArgs( redirectToParam.toString(), { skippedCheckout: 1 } ) );
-		return;
-	}
-
 	if ( forceCheckoutBackUrl ) {
 		window.location.href = forceCheckoutBackUrl;
 		return;
 	}
 
+	if ( redirectToParam && isOnboardingFlow( signupFlowName ) ) {
+		window.location.assign( addQueryArgs( redirectToParam.toString(), { skippedCheckout: 1 } ) );
+		return;
+	}
 	let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
 	if (
