@@ -33,8 +33,13 @@ export default function AITranslationsBanner() {
 				args: [ language.name ],
 			} ) }
 			description={ translate(
-				"We've added translations for %s, combining AI technology and a human touch. Help us improve by sharing feedback.",
-				{ args: [ language.name ] }
+				"We've added translations for %s, combining AI technology and a human touch. Help us improve by {{feedbackLink}}sharing feedback{{/feedbackLink}}.",
+				{
+					args: [ language.name ],
+					components: {
+						feedbackLink: <a href="https://wordpress.com/forums/forum/translations/" />,
+					},
+				}
 			) }
 			callToAction={
 				isCurrentlyUsingAITranslatedLocale
