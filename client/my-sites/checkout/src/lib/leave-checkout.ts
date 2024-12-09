@@ -2,6 +2,7 @@ import {
 	isTailoredSignupFlow,
 	MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
+	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -60,6 +61,11 @@ export const leaveCheckout = ( {
 	if ( redirectToParam && launchpadURLRegexMatch ) {
 		const launchpadUrl = addQueryArgs( redirectToParam?.toString(), { skippedCheckout: 1 } );
 		window.location.assign( launchpadUrl );
+		return;
+	}
+
+	if ( redirectToParam && isOnboardingFlow( signupFlowName ) ) {
+		window.location.assign( addQueryArgs( redirectToParam.toString(), { skippedCheckout: 1 } ) );
 		return;
 	}
 
