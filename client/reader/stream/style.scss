@@ -860,6 +860,10 @@
 		margin-bottom: 24px;
 	}
 
+	.reader-subscription-list-item .follow-button__label {
+		display: none;
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 24px 16px 0;
 

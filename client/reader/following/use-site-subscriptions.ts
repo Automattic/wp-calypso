@@ -27,7 +27,8 @@ export function useSiteSubscriptions() {
 		}
 
 		// If we have site subscriptions data, filter out self-owned blogs.
-		if ( siteSubscriptions?.subscriptions ) {
+		// Self-owned blogs are not returned in the feed.
+		if ( siteSubscriptions?.subscriptions.length > 0 ) {
 			const nonSelfSubscriptions = siteSubscriptions.subscriptions.filter(
 				( sub ) => ! sub.is_owner
 			);

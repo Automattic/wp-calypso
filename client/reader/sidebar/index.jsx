@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -20,7 +19,6 @@ import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
 import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
-import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
@@ -117,13 +115,6 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleReaderSidebarFollowedSitesClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_followed_sites' );
-		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
 	handleReaderSidebarConversationsClicked = ( event, path ) => {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
@@ -174,8 +165,8 @@ export class ReaderSidebar extends Component {
 	};
 
 	renderSidebarMenu() {
-		const { path, translate, teams, locale } = this.props;
-		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
+		const { path, translate, teams } = this.props;
+
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
@@ -194,25 +185,13 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
-				{ isEnabled( 'reader/recent-feed-overhaul' ) ? (
-					<li className="sidebar-streams__following">
-						<ReaderSidebarRecent
-							onClick={ this.props.toggleFollowingVisibility }
-							isOpen={ this.props.isFollowingOpen }
-							path={ path }
-						/>
-					</li>
-				) : (
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-							'sidebar-streams__following': true,
-						} ) }
-						label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
-						onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-						customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
-						link="/read"
+				<li className="sidebar-streams__following">
+					<ReaderSidebarRecent
+						onClick={ this.props.toggleFollowingVisibility }
+						isOpen={ this.props.isFollowingOpen }
+						path={ path }
 					/>
-				) }
+				</li>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {

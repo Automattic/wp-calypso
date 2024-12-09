@@ -137,7 +137,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stats/new-date-filtering": false,
+		"stats/new-date-filtering": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,

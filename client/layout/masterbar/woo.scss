@@ -6,6 +6,87 @@
 
 $breakpoint-mobile: 660px;
 
+@mixin button-primary {
+	background-color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-secondary {
+	border: 2px solid var(--woo-purple-40);
+	background-color: transparent;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-70);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-tertiary {
+	background-color: transparent;
+	color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-0);
+		color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: transparent;
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-size-small {
+	padding: 5.5px 16px;
+	font-weight: 500;
+	font-size: rem(14px);
+	line-height: 21px;
+}
+
+@mixin button-size-base {
+	padding: 12px 24px;
+	font-weight: 500;
+	font-size: rem(16px);
+	line-height: 24px;
+}
+
+@mixin button-size-large {
+	padding: 14.5px 24px;
+	font-weight: 500;
+	font-size: rem(18px);
+	line-height: 27px;
+}
+
+@mixin link-woo {
+	color: var(--woo-purple-40);
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	font-weight: 400;
+
+	&:hover,
+	&:focus {
+		color: var(--woo-purple-60);
+	}
+}
+
 .woo {
 	--woo-purple-40: #966ccf;
 	--woo-purple-50: #7f54b3;
@@ -348,6 +429,12 @@ $breakpoint-mobile: 660px;
 
 		@media (max-width: $break-mobile) {
 			text-align: left;
+		}
+
+		@media (min-width: $break-large) {
+			br.hide-on-desktop {
+				display: none;
+			}
 		}
 	}
 
@@ -1681,6 +1768,7 @@ $breakpoint-mobile: 660px;
 
 				strong {
 					font-weight: 600;
+					display: inline-block;
 				}
 			}
 
@@ -2123,6 +2211,7 @@ $breakpoint-mobile: 660px;
 
 .woo.feature-flag-woocommerce-rebrand-2-0,
 .woo.feature-flag-woocommerce-rebrand-2-0.is-woo-passwordless {
+	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
@@ -2132,13 +2221,7 @@ $breakpoint-mobile: 660px;
 		.security-key-form__help-text,
 		.formatted-header__subtitle {
 			a {
-				color: var(--woo-purple-40);
-				text-decoration: underline;
-				text-underline-offset: 4px;
-
-				&:hover {
-					color: var(--woo-purple-60);
-				}
+				@include link-woo;
 			}
 		}
 	}
@@ -2167,51 +2250,32 @@ $breakpoint-mobile: 660px;
 	.button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
-		background-color: var(--woo-purple-40);
-
-		&:hover {
-			background-color: var(--woo-purple-60);
-		}
+		@include button-primary;
 	}
 
 	.notice__text a,
 	.notice__text a:visited {
-		color: var(--woo-purple-40);
-		text-decoration: underline;
-		text-underline-offset: 4px;
-
-		&:hover {
-			color: var(--woo-purple-60);
-		}
+		@include link-woo;
 	}
 
 	.login__header-subtitle a {
-		color: var(--woo-purple-40);
-		text-decoration: underline;
-		text-underline-offset: 4px;
-
-		&:hover {
-			color: var(--woo-purple-60);
-		}
+		@include link-woo;
 	}
 
 	.continue-as-user__change-user-link {
-		color: var(--woo-purple-50);
-
-		&:hover {
-			color: var(--woo-purple-70);
-		}
+		@include button-tertiary;
+		@include button-size-small;
 	}
 
 	.magic-login__footer a {
-		color: var(--woo-purple-50);
-
-		&:hover {
-			color: var(--woo-purple-40);
-		}
+		@include link-woo;
 	}
 
 	.auth-form__social-buttons-tos a {
 		text-underline-offset: 2px;
+	}
+
+	.login__lost-password-link {
+		@include link-woo;
 	}
 }

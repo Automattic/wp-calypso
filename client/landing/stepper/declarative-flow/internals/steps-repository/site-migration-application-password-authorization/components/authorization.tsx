@@ -1,8 +1,17 @@
 import { NextButton } from '@automattic/onboarding';
-import { check, Icon } from '@wordpress/icons';
+import { Icon, loop, backup, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 
-const AuthorizationBenefits = ( { benefits }: { benefits: string[] } ) => {
+interface AuthorizationBenefitsItem {
+	icon: React.ReactElement;
+	text: string;
+}
+
+interface AuthorizationBenefitsProps {
+	benefits: AuthorizationBenefitsItem[];
+}
+
+const AuthorizationBenefits = ( { benefits }: AuthorizationBenefitsProps ) => {
 	return (
 		<div className="site-migration-application-password-authorization__benefits">
 			{ benefits.map( ( benefit, index ) => (
@@ -11,9 +20,9 @@ const AuthorizationBenefits = ( { benefits }: { benefits: string[] } ) => {
 					key={ index }
 				>
 					<div className="site-migration-application-password-authorization__benefits-item-icon">
-						<Icon icon={ check } size={ 20 } />
+						<Icon icon={ benefit.icon } size={ 20 } />
 					</div>
-					<span>{ benefit }</span>
+					<span>{ benefit.text }</span>
 				</div>
 			) ) }
 		</div>
@@ -47,9 +56,20 @@ const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: Autho
 				<h3>{ translate( "Here's what else you're getting" ) }</h3>
 				<AuthorizationBenefits
 					benefits={ [
-						translate( 'Uninterrupted service throughout the entire migration experience.' ),
-						translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
-						translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+						{
+							icon: loop,
+							text: translate(
+								'Uninterrupted service throughout the entire migration experience.'
+							),
+						},
+						{
+							icon: backup,
+							text: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+						},
+						{
+							icon: shield,
+							text: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+						},
 					] }
 				/>
 			</div>

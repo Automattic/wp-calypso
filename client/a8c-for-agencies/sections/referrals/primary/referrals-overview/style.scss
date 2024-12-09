@@ -118,7 +118,7 @@ $data-view-border-color: #f1f1f1;
 		}
 	}
 
-	.consolidated-view {
+	.consolidated-view, .a4a-feedback__wrapper {
 		padding: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {

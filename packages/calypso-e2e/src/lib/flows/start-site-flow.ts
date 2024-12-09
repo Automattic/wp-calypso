@@ -6,7 +6,6 @@ import { Page } from 'playwright';
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
-type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
@@ -86,7 +85,7 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} goal The goal to select
 	 */
-	async selectGoal( goal: Goals ): Promise< void > {
+	async selectGoal( goal: string ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}

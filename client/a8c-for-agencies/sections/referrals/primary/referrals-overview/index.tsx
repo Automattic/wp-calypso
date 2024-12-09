@@ -1,8 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
@@ -61,6 +64,9 @@ export default function ReferralsOverview( {
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
 	);
+
+	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
+	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -175,18 +181,23 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					<LayoutBodyContent
-						isAutomatedReferral={ isAutomatedReferral }
-						tipaltiData={ tipaltiData }
-						referrals={ referrals }
-						isLoading={ isLoading }
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-						referralInvoices={ referralInvoices ?? [] }
-						isFetchingInvoices={ isFetchingReferralInvoices }
-						isArchiveView={ isArchiveView }
-						onReferralRefetch={ refetchReferrals }
-					/>
+					{ showFeedback && isProductFeedbackEnabled ? (
+						<A4AFeedback { ...feedbackProps } />
+					) : (
+						<LayoutBodyContent
+							isAutomatedReferral={ isAutomatedReferral }
+							tipaltiData={ tipaltiData }
+							referrals={ referrals }
+							isLoading={ isLoading }
+							dataViewsState={ dataViewsState }
+							setDataViewsState={ setDataViewsState }
+							referralInvoices={ referralInvoices ?? [] }
+							isFetchingInvoices={ isFetchingReferralInvoices }
+							isArchiveView={ isArchiveView }
+							onReferralRefetch={ refetchReferrals }
+						/>
+					) }
+
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
 			</LayoutColumn>

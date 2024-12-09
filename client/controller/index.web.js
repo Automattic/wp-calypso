@@ -134,6 +134,11 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
+	// Allow logged-out users to access account deleted page for self-restore.
+	// This is an exception because /me should not allow enableLoggedOut.
+	if ( context.pathname === '/me/account/closed' ) {
+		return next();
+	}
 
 	if ( isUserLoggedIn( state ) ) {
 		next();

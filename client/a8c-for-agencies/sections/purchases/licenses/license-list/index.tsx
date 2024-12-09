@@ -85,6 +85,7 @@ export default function LicenseList() {
 						<LicenseTransition key={ license.licenseKey }>
 							<LicensePreview
 								license={ license }
+								parentLicenseId={ license.licenseId }
 								productName={ getProductName( license.product ) }
 								licenseType={
 									license.ownerType === LicenseType.Standard

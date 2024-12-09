@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
 import { Icon, warning } from '@wordpress/icons';
@@ -143,17 +144,24 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		translate,
 	] );
 
+	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
+
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+				isProductFeedbackEnabled
+					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
+							args: { email },
+							redirectArgs: { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email },
+					  } ) + '#feedback'
+					: addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
 			);
 			setEmail( '' );
 			setMessage( '' );
 			onClearCart();
 		}
-	}, [ email, isSuccess, onClearCart ] );
+	}, [ email, isProductFeedbackEnabled, isSuccess, onClearCart ] );
 
 	return (
 		<>

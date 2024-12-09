@@ -162,15 +162,18 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
-				activeLegend: activeTab.legendOptions || [],
+				// TODO: remove this when we support hourly visitors.
+				activeLegend: props.period !== 'hour' ? activeTab.legendOptions || [] : [],
 			};
 		}
 		return null;
 	}
 
 	getAvailableLegend() {
+		const { period } = this.props.period;
 		const activeTab = getActiveTab( this.props.chartTab );
-		return activeTab.legendOptions || [];
+		// TODO: remove this when we support hourly visitors.
+		return period !== 'hour' ? activeTab.legendOptions || [] : [];
 	}
 
 	navigationFromChartBar = ( periodStartDate, period ) => {
@@ -310,7 +313,7 @@ class StatsSite extends Component {
 			momentSiteZone,
 			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -338,9 +341,7 @@ class StatsSite extends Component {
 			customChartRange = { chartEnd };
 		} else {
 			customChartRange = {
-				chartEnd: isNewDateFilteringEnabled
-					? momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT )
-					: momentSiteZone.format( DATE_FORMAT ),
+				chartEnd: momentSiteZone.format( DATE_FORMAT ),
 			};
 		}
 
@@ -358,7 +359,7 @@ class StatsSite extends Component {
 			// (e.g. months defaulting to 30 days and showing one point)
 			customChartRange.chartStart = momentSiteZone
 				.clone()
-				.subtract( daysInRange, 'days' )
+				.subtract( daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
 		}
 
@@ -395,9 +396,7 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = isNewDateFilteringEnabled
-				? momentSiteZone.clone().subtract( 1, 'days' ).format( DATE_FORMAT )
-				: momentSiteZone.format( DATE_FORMAT );
+			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
 			customChartRange.chartStart = moment( customChartRange.chartEnd )
 				.subtract( customChartRange.daysInRange - 1, 'days' )
 				.format( DATE_FORMAT );
@@ -488,7 +487,7 @@ class StatsSite extends Component {
 								onChangeLegend={ this.onChangeLegend }
 								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								isWithNewDateControl
-								showArrows
+								showArrows={ ! wpcomShowUpsell }
 								slug={ slug }
 								dateRange={ customChartRange }
 							>
