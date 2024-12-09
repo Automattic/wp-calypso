@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 
 const SCROLL_THRESHOLD_PERCENTAGE = 0.2;
-const SCROLL_THRESHOLD_BUFFER = 5;
+const SCROLL_THRESHOLD_NORMAL_BUFFER = 5;
+const SCROLL_THRESHOLD_COMPACT_BUFFER = 20;
 
 export default function useCompactOnScroll() {
 	const [ isCompact, setIsCompact ] = useState( false );
@@ -31,7 +32,7 @@ export default function useCompactOnScroll() {
 			if (
 				isScrollingDown &&
 				! isCompact &&
-				scrollPosition > normalScrollThreshold + SCROLL_THRESHOLD_BUFFER
+				scrollPosition > normalScrollThreshold + SCROLL_THRESHOLD_NORMAL_BUFFER
 			) {
 				setIsCompact( true );
 				setIsTransitioning( true );
@@ -39,7 +40,7 @@ export default function useCompactOnScroll() {
 			} else if (
 				! isScrollingDown &&
 				isCompact &&
-				scrollPosition < normalScrollThreshold - SCROLL_THRESHOLD_BUFFER
+				scrollPosition < normalScrollThreshold - SCROLL_THRESHOLD_COMPACT_BUFFER
 			) {
 				setIsCompact( false );
 				setIsTransitioning( true );
