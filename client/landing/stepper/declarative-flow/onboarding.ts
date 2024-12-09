@@ -1,4 +1,5 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { isEnabled } from '@automattic/calypso-config';
+import { OnboardSelect, Onboard } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -12,8 +13,12 @@ import {
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
-import { Flow, ProvidedDependencies } from './internals/types';
+import { STEPS } from './internals/steps';
+import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
+
+const SiteIntent = Onboard.SiteIntent;
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -32,7 +37,10 @@ const onboarding: Flow = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useSteps() {
-		return stepsWithRequiredLogin( [
+		// We have already checked the value has loaded in useAssertConditions
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
+		const steps = stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
@@ -54,6 +62,13 @@ const onboarding: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
 		] );
+
+		if ( isGoalsAtFrontExperiment ) {
+			// This step is not wrapped in `stepsWithRequiredLogin`
+			steps.unshift( STEPS.GOALS );
+		}
+
+		return steps;
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
@@ -84,6 +99,29 @@ const onboarding: Flow = {
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
+				case 'goals': {
+					const { intent, skip } = providedDependencies;
+
+					if ( skip ) {
+						// TODO Implement skipping to dashboard
+						return;
+					}
+
+					switch ( intent ) {
+						case SiteIntent.Import:
+							// TODO Implement exit to site migration
+							return;
+
+						case SiteIntent.DIFM:
+							// TODO Implement exit to DIFM
+							return;
+
+						default: {
+							return navigate( 'domains' );
+						}
+					}
+				}
+
 				case 'domains':
 					setSiteUrl( providedDependencies.siteUrl );
 					setDomain( providedDependencies.suggestion );
@@ -164,8 +202,9 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = addQueryArgs( '/setup/site-setup/goals', {
+					const destination = addQueryArgs( '/setup/site-setup', {
 						siteSlug: providedDependencies.siteSlug,
+						...( isEnabled( 'onboarding/goals-first' ) && { flags: 'onboarding/goals-first' } ),
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -223,6 +262,13 @@ const onboarding: Flow = {
 		};
 
 		return { goBack, submit };
+	},
+	useAssertConditions() {
+		const [ isLoading ] = useGoalsFirstExperiment();
+
+		return {
+			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
+		};
 	},
 };
 

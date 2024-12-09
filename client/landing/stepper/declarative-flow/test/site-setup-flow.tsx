@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { renderHook } from '@testing-library/react';
 import { STEPS } from '../internals/steps';
 import siteSetupFlow from '../site-setup-flow';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -27,9 +28,9 @@ describe( 'Site Setup Flow', () => {
 	 * It's totally fine to change this test if the flow changes. But please make sure to update and test the site-setup-wg accordingly.
 	 */
 	describe( 'First steps should be goals and intent capture', () => {
-		const steps = siteSetupFlow.useSteps();
-		const firstStep = steps[ 0 ];
-		const secondStep = steps[ 1 ];
+		const { result } = renderHook( () => siteSetupFlow.useSteps() );
+		const firstStep = result.current[ 0 ];
+		const secondStep = result.current[ 1 ];
 
 		it( 'should be goals', () => {
 			expect( firstStep.slug ).toBe( STEPS.GOALS.slug );

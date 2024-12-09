@@ -73,62 +73,13 @@ function makeSortCategoryToTop( slugs: string[] ) {
 	};
 }
 
-const sortBlogToTop = makeSortCategoryToTop( [ CATEGORIES.BLOG ] );
-const sortStoreToTop = makeSortCategoryToTop( [ CATEGORIES.STORE ] );
-const sortBusinessToTop = makeSortCategoryToTop( [ CATEGORIES.BUSINESS ] );
+interface CategorizationOptions {
+	isMultiSelection?: boolean;
+}
 
 export function getCategorizationOptions(
-	intent: string,
 	goals: Onboard.SiteGoal[],
-	options: {
-		useGoals?: boolean;
-		isMultiSelection?: boolean;
-	} = {}
-) {
-	if ( options.useGoals ) {
-		return getCategorizationFromGoals( goals, options.isMultiSelection );
-	}
-	return getCategorizationFromIntent( intent );
-}
-
-function getCategorizationFromIntent( intent: string ) {
-	const result = {
-		defaultSelections: [] as string[],
-	} as {
-		defaultSelections: string[];
-		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
-	};
-
-	switch ( intent ) {
-		case 'write':
-			return {
-				...result,
-				defaultSelections: [ CATEGORIES.BLOG ],
-				sort: sortBlogToTop,
-			};
-		case 'sell':
-			return {
-				...result,
-				defaultSelections: [ CATEGORIES.STORE ],
-				sort: sortStoreToTop,
-			};
-		case 'build':
-			return {
-				...result,
-				defaultSelections: [ CATEGORIES.BUSINESS ],
-				sort: sortBusinessToTop,
-			};
-		default:
-			return {
-				...result,
-				sort: sortBlogToTop,
-			};
-	}
-}
-
-function getCategorizationFromGoals(
-	goals: Onboard.SiteGoal[],
-	isMultiSelection: boolean = false
+	{ isMultiSelection = false }: CategorizationOptions = {}
 ) {
 	const defaultSelections = Array.from(
 		new Set(

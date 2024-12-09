@@ -20,6 +20,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -66,7 +67,10 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		// We have already checked the value has loaded in useAssertConditions
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
+		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
 			STEPS.OPTIONS,
@@ -94,6 +98,14 @@ const siteSetupFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.DIFM_STARTING_POINT,
 		];
+
+		if ( isGoalsAtFrontExperiment ) {
+			// The user has already seen the goals step in the `onboarding` flow
+			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
+			steps.splice( 0, 4 );
+		}
+
+		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
@@ -716,6 +728,13 @@ const siteSetupFlow: Flow = {
 				state: AssertConditionState.FAILURE,
 				message:
 					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		const [ isLoadingGoalsFirstExp ] = useGoalsFirstExperiment();
+		if ( isLoadingGoalsFirstExp ) {
+			result = {
+				state: AssertConditionState.CHECKING,
 			};
 		}
 

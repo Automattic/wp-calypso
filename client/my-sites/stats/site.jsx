@@ -162,15 +162,18 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
-				activeLegend: activeTab.legendOptions || [],
+				// TODO: remove this when we support hourly visitors.
+				activeLegend: props.period !== 'hour' ? activeTab.legendOptions || [] : [],
 			};
 		}
 		return null;
 	}
 
 	getAvailableLegend() {
+		const { period } = this.props.period;
 		const activeTab = getActiveTab( this.props.chartTab );
-		return activeTab.legendOptions || [];
+		// TODO: remove this when we support hourly visitors.
+		return period !== 'hour' ? activeTab.legendOptions || [] : [];
 	}
 
 	navigationFromChartBar = ( periodStartDate, period ) => {
@@ -310,7 +313,7 @@ class StatsSite extends Component {
 			momentSiteZone,
 			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;

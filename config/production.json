@@ -193,7 +193,7 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stats/new-date-filtering": false,
+		"stats/new-date-filtering": true,
 		"stats/paid-wpcom-v2": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
