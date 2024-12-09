@@ -107,25 +107,29 @@ class StatsPostSummary extends Component {
 		}
 
 		switch ( this.state.period ) {
-			case 'day':
+			case 'day': {
 				if ( ! stats.data ) {
 					return [];
 				}
 
-				return stats.data
-					.slice(
-						Math.max( stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * page, 0 ),
-						stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * ( page - 1 )
-					)
-					.map( ( [ date, value ] ) => {
-						const momentDate = moment( date );
-						return {
-							period: momentDate.format( 'MMM D' ),
-							periodLabel: momentDate.format( 'LL' ),
-							startDate: date,
-							value,
-						};
-					} );
+				const dataStart = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * page,
+					0
+				);
+				const dataEnd = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * ( page - 1 ),
+					0
+				);
+				return stats.data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
+					const momentDate = moment( date );
+					return {
+						period: momentDate.format( 'MMM D' ),
+						periodLabel: momentDate.format( 'LL' ),
+						startDate: date,
+						value,
+					};
+				} );
+			}
 			case 'year':
 				if ( ! stats.years ) {
 					return [];
@@ -232,7 +236,7 @@ class StatsPostSummary extends Component {
 
 		const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
 		let disablePreviousArrow = false;
-		if ( this.state.page >= maxPages - 1 ) {
+		if ( this.state.page >= maxPages ) {
 			const selectedRecordIndex = chartData.findIndex(
 				( item ) => item.startDate === selectedRecord.startDate
 			);
