@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
 import NavItem from 'calypso/components/section-nav/item';
 import { SectionProps } from '..';
@@ -20,6 +20,12 @@ export function HeroSection(
 	const translate = useTranslate();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
+
+	const [ isMigrationOfferExpanded, setIsMigrationOfferExpanded ] = useState( false );
+
+	const onToggleMigrationOfferView = useCallback( () => {
+		setIsMigrationOfferExpanded( ( isExpanded ) => ! isExpanded );
+	}, [] );
 
 	const featureTabs = useMemo(
 		() => [
@@ -72,6 +78,12 @@ export function HeroSection(
 		);
 	} );
 
+	useEffect( () => {
+		if ( isCompact ) {
+			setIsMigrationOfferExpanded( false );
+		}
+	}, [ isCompact ] );
+
 	return (
 		<div className={ clsx( 'hosting-v3-hero-section', { 'is-compact': isCompact } ) } ref={ ref }>
 			<div className="hosting-v3-hero-section__content">
@@ -86,7 +98,10 @@ export function HeroSection(
 					) }
 				</div>
 
-				<MigrationOfferV3 />
+				<MigrationOfferV3
+					isExpanded={ isMigrationOfferExpanded }
+					onToggleView={ onToggleMigrationOfferView }
+				/>
 			</div>
 
 			<ul className="hosting-v3-hero-section__tabs">

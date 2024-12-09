@@ -2,24 +2,48 @@ import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import { A4A_MIGRATIONS_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 import SimpleList from '../simple-list';
 
 import './style.scss';
 
-const MigrationOfferV3 = () => {
+type Props = {
+	isExpanded: boolean;
+	onToggleView: () => void;
+};
+
+const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const [ isExpanded, setIsExpanded ] = useState( false );
+	const onContactUsClick = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch( recordTracksEvent( 'a4a_migration_offer_contact_us_click' ) );
+		},
+		[ dispatch ]
+	);
 
-	const onToggleView = useCallback( () => {
-		setIsExpanded( ( isExpanded ) => ! isExpanded );
-	}, [] );
+	const onSeeFullTermClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'a4a_migration_offer_see_full_terms_click' ) );
+	}, [ dispatch ] );
 
 	return (
-		<div className={ clsx( 'a4a-migration-offer-v3', { 'is-expanded': isExpanded } ) }>
+		<div
+			className={ clsx( 'a4a-migration-offer-v3', { 'is-expanded': isExpanded } ) }
+			onClick={ onToggleView }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( event ) => {
+				if ( event.key === 'Enter' ) {
+					onToggleView();
+				}
+			} }
+		>
 			<div className="a4a-migration-offer-v3__main">
 				<h3 className="a4a-migration-offer-v3__title">
 					<span>
@@ -62,11 +86,19 @@ const MigrationOfferV3 = () => {
 						/>
 
 						<div className="a4a-migration-offer-v3__body-actions">
-							<Button variant="primary" href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }>
+							<Button
+								variant="primary"
+								href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
+								onClick={ onContactUsClick }
+							>
 								{ translate( 'Contact us to learn more' ) }
 							</Button>
 
-							<Button variant="secondary" href={ A4A_MIGRATIONS_OVERVIEW_LINK }>
+							<Button
+								variant="secondary"
+								href={ A4A_MIGRATIONS_OVERVIEW_LINK }
+								onClick={ onSeeFullTermClick }
+							>
 								{ translate( 'See full terms ↗' ) }
 							</Button>
 

@@ -10,6 +10,7 @@
 	background-color: var(--color-surface);
 	transition: padding 0.15s linear;
 	padding: 8px 16px;
+	cursor: pointer;
 
 	@include break-medium {
 		padding: 20px 32px;
