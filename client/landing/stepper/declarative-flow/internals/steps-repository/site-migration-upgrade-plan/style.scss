@@ -43,7 +43,7 @@
 	}
 	.import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
 		background-color: var(--studio-wordpress-blue-50) !important;
-		border-color: var(--studio-wordpress-blue-50);
+		border-color: var(--studio-wordpress-blue-50) !important;
 		color: var(--color-text-inverted);
 	}
 	.import__upgrade-plan .import__upgrade-plan-cta button.button:focus {
@@ -100,7 +100,7 @@
 				&:first-of-type .import__upgrade-plan-features-container,
 				&:last-of-type .import__upgrade-plan-features-container {
 					margin-bottom: 1.5rem;
-					margin-top: calc( 2.6rem - 2px );
+					margin-top: 41px;
 				}
 			}
 		}
