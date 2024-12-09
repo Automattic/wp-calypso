@@ -12,6 +12,7 @@ import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
@@ -20,7 +21,6 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -67,8 +67,9 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSteps() {
-		// We have already checked the value has loaded in useAssertConditions
-		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const isGoalsAtFrontExperiment = Boolean(
+			useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ]
+		);
 
 		const steps = [
 			STEPS.GOALS,
@@ -728,13 +729,6 @@ const siteSetupFlow: Flow = {
 				state: AssertConditionState.FAILURE,
 				message:
 					'site-setup the user needs to have the manage_options capability to go through the flow.',
-			};
-		}
-
-		const [ isLoadingGoalsFirstExp ] = useGoalsFirstExperiment();
-		if ( isLoadingGoalsFirstExp ) {
-			result = {
-				state: AssertConditionState.CHECKING,
 			};
 		}
 

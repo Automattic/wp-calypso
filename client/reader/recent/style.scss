@@ -1,8 +1,8 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/dataviews/build-style/style.css";
-@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/dataviews/build-style/style.css';
+@import 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly';
 
 body.is-reader-full-post {
 	overflow: hidden;
@@ -11,7 +11,11 @@ body.is-reader-full-post {
 .is-section-reader .recent-feed {
 	$recent-feed-spacing: 12px;
 	$feed-card-border-radius: 8px; /* stylelint-disable-line scales/radii */
-	$feed-content-height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - var( --content-padding-bottom ) );
+	$feed-content-height: calc(
+		100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+				--content-padding-bottom
+			)
+	);
 
 	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
 
@@ -77,7 +81,10 @@ body.is-reader-full-post {
 		}
 
 		.dataviews-view-list {
-			height: calc( 100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height - $feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom ) );
+			height: calc(
+				100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height -
+					$feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom )
+			);
 			overflow-y: auto;
 			@include custom-scrollbars-on-hover( transparent, $gray-600 );
 			scrollbar-gutter: auto;
@@ -98,7 +105,7 @@ body.is-reader-full-post {
 
 			li {
 				border-top: 1px solid var( --studio-gray-0 );
-				
+
 				&.is-selected + li {
 					border-top: 1px solid var( --studio-gray-0 );
 				}
@@ -140,30 +147,30 @@ body.is-reader-full-post {
 					width: 100%;
 					min-height: fit-content;
 					gap: $recent-feed-spacing;
-		
+
 					%text-shared {
 						white-space: nowrap;
 						text-overflow: ellipsis;
 						overflow: hidden;
 					}
-		
+
 					&__title {
 						min-width: 0;
 					}
-		
+
 					&__title-text {
 						font-weight: 700;
-						font-size: rem(13px);
+						font-size: rem( 13px );
 						@extend %text-shared;
 					}
-		
+
 					&__site-name {
 						font-weight: 400;
 						font-size: rem( 11px );
 						line-height: 1;
 						@extend %text-shared;
 					}
-		
+
 					&__featured-image {
 						max-width: 38px;
 						align-self: flex-end;
@@ -174,6 +181,16 @@ body.is-reader-full-post {
 
 			.dataviews-view-list__item {
 				padding: $recent-feed-spacing;
+			}
+		}
+
+		// This is a temporary fix to disable the pagination page selector because of this issue: Automattic/loop#247
+		// Once that issue is fixed, this code should be removed.
+		.dataviews-pagination__page-select {
+			display: none;
+
+			& + div {
+				margin-left: auto;
 			}
 		}
 	}
