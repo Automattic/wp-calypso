@@ -4,7 +4,7 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SectionProps } from '..';
 import { MarketplaceTypeContext } from '../../context';
 import EnterpriseAgencyHosting from '../../hosting-overview/hosting-v2/enterprise-agency-hosting';
-import PremierAgencyHosting from '../../hosting-overview/hosting-v2/premier-agency-hosting';
+import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
 
 import './style.scss';
@@ -31,7 +31,7 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 		}
 		if ( section === 'pressable' ) {
 			return {
-				content: <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />,
+				content: <PremierAgencyHosting />,
 				title: isReferMode
 					? translate( 'Refer a variety of plans, or single high-resource sites to your clients' )
 					: translate(
