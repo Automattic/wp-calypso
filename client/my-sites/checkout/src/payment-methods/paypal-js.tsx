@@ -82,6 +82,8 @@ function PayPalSubmitButton( {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
 	const [ forceReRender, setForceReRender ] = useState< number >( 0 );
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	// Wait for PayPal.js to load before marking this payment method as active.
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
@@ -90,6 +92,14 @@ function PayPalSubmitButton( {
 			togglePaymentMethod( 'paypal-js', true );
 		}
 	}, [ isResolved, togglePaymentMethod ] );
+
+	useEffect( () => {
+		debug( 'cart changed; rerendering PayPalSubmitButton' );
+		// The PayPalButtons component appears to cache certain data about the
+		// order process and in order to make sure it has the latest data, we
+		// have to use the `forceReRender` prop.
+		setForceReRender( ( val ) => val + 1 );
+	}, [ responseCart ] );
 
 	// We have to wait for the active payment method to switch because the
 	// contents of the `onClick` function will change when the active state
