@@ -27,8 +27,11 @@
 			@include break-large {
 				padding: 32px 48px 48px;
 			}
+
+			> * {
+				margin-bottom: auto;
+			}
 		}
-	}
 
 	.preview-pane__navigation .section-nav-tabs__list {
 		box-sizing: border-box;
