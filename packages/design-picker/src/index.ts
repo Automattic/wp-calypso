@@ -22,6 +22,7 @@ export {
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	SHOW_ALL_SLUG,
+	CATEGORIES,
 } from './constants';
 export type {
 	Design,

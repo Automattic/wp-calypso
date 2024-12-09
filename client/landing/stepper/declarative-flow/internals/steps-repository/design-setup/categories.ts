@@ -1,28 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
-import { Category } from '@automattic/design-picker';
-
-const FEATURE_CATEGORIES = {
-	BLOG: 'blog',
-	NEWSLETTER: 'newsletter',
-	PORTFOLIO: 'portfolio',
-	PODCAST: 'podcast',
-	STORE: 'store',
-};
-
-const SUBJECT_CATEGORIES = {
-	BUSINESS: 'business',
-	COMMUNITY_NON_PROFIT: 'community-non-profit',
-	AUTHORS_WRITERS: 'authors-writers',
-	EDUCATION: 'education',
-	ENTERTAINMENT: 'entertainment',
-	EVENTS: 'events',
-	LINK_IN_BIO: 'link-in-bio',
-};
-
-const CATEGORIES = {
-	...FEATURE_CATEGORIES,
-	...SUBJECT_CATEGORIES,
-};
+import { CATEGORIES } from '@automattic/design-picker';
+import type { Category } from '@automattic/design-picker';
 
 const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
 	[ Onboard.SiteGoal.Write ]: [ CATEGORIES.BLOG, CATEGORIES.NEWSLETTER ],
