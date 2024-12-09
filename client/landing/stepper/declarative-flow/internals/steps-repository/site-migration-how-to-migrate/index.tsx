@@ -1,4 +1,7 @@
-import { StepContainer } from '@automattic/onboarding';
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
+import { NextButton, StepContainer } from '@automattic/onboarding';
+import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,9 +24,10 @@ interface Props extends StepProps {
 	subHeaderText?: string;
 }
 
+const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
+
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const { navigation, headerText } = props;
-
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();
@@ -36,7 +40,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 			{
 				label: translate( 'Do it for me' ),
 				description: translate(
-					"Share your site with us, and we'll review it and handle the migration if possible."
+					"Share your site with us. We'll review it and handle the migration if possible."
 				),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
@@ -47,6 +51,36 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 					'Install the plugin yourself, find the migration key and migrate the site.'
 				),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF,
+			},
+		],
+		[ translate ]
+	);
+
+	const experimentalOptions = useMemo(
+		() => [
+			{
+				icon: lockOutline,
+				description: translate(
+					'Upgrade your site and securely share access to your current site.'
+				),
+			},
+			{
+				icon: copy,
+				description: translate(
+					"We'll bring over a copy of your site, without affecting the current live version."
+				),
+			},
+			{
+				icon: scheduled,
+				description: translate(
+					"You'll get an update on the progress of your migration within 2-3 business days."
+				),
+			},
+			{
+				icon: globe,
+				description: translate(
+					"We'll help you switch your domain over after the migration's completed."
+				),
 			},
 		],
 		[ translate ]
@@ -79,39 +113,104 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		}
 	};
 
-	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
-	const shouldDisplayHostIdentificationMessage =
-		hostingProviderSlug &&
-		hostingProviderSlug !== 'unknown' &&
-		hostingProviderSlug !== 'automattic';
-
-	const stepContent = (
-		<div className="how-to-migrate__list">
-			{ options.map( ( option, i ) => (
-				<FlowCard
-					key={ i }
-					title={ option.label }
-					text={ option.description }
-					onClick={ () => handleClick( option.value ) }
-				/>
-			) ) }
-		</div>
-	);
-
-	const platformText = shouldDisplayHostIdentificationMessage
-		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-				args: { hostingProviderName },
-		  } )
-		: '';
-
 	const goBack = useCallback( () => {
 		cancelMigration();
 		navigation.goBack?.();
 	}, [ cancelMigration, navigation ] );
 
+	function renderSubHeaderText() {
+		if ( isMigrationExperimentEnabled ) {
+			const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+			const isBusinessPlan = site?.plan?.product_slug
+				? isWpComBusinessPlan( site?.plan?.product_slug )
+				: false;
+
+			return isBusinessPlan
+				? // translators: %(planName)s is the name of the Business plan.
+				  translate(
+						'Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it’s included in your %(planName)s plan.',
+						{
+							args: {
+								planName,
+							},
+						}
+				  )
+				: translate(
+						'Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus you get 50% off our annual %(planName)s plan.',
+						{
+							args: {
+								planName,
+							},
+						}
+				  );
+		}
+
+		// Maybe extract this code to a separate component if we keep it post-experiment.
+		const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
+		const shouldDisplayHostIdentificationMessage =
+			hostingProviderSlug &&
+			hostingProviderSlug !== 'unknown' &&
+			hostingProviderSlug !== 'automattic';
+
+		return shouldDisplayHostIdentificationMessage
+			? // translators: %(hostingProviderName)s is the name of the hosting provider.
+			  translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+					args: { hostingProviderName },
+			  } )
+			: '';
+	}
+
+	function renderStepContent() {
+		if ( isMigrationExperimentEnabled ) {
+			return (
+				<div className="how-to-migrate__experiment">
+					<NextButton onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) }>
+						{ translate( 'Get started' ) }
+					</NextButton>
+					<div className="how-to-migrate__process-details">
+						<p className="how-to-migrate__process-details-title">{ translate( 'How it works' ) }</p>
+						<ul className="how-to-migrate__process-details-list">
+							{ experimentalOptions.map( ( option, index ) => (
+								<li key={ index } className="how-to-migrate__process-details-list-item">
+									<Icon
+										className="how-to-migrate__process-details-icon"
+										icon={ option.icon }
+										size={ 24 }
+									/>
+									<p className="how-to-migrate__process-details-description">
+										{ option.description }
+									</p>
+								</li>
+							) ) }
+						</ul>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<div className="how-to-migrate__list">
+				{ options.map( ( option, i ) => (
+					<FlowCard
+						key={ i }
+						title={ option.label }
+						text={ option.description }
+						onClick={ () => handleClick( option.value ) }
+					/>
+				) ) }
+			</div>
+		);
+	}
+
 	return (
 		<>
-			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
+			<DocumentHead
+				title={
+					isMigrationExperimentEnabled
+						? translate( 'Let us migrate your site' )
+						: translate( 'How do you want to migrate?' )
+				}
+			/>
 			<StepContainer
 				stepName={ props.stepName ?? 'site-migration-how-to-migrate' }
 				className="how-to-migrate"
@@ -120,12 +219,16 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				formattedHeader={
 					<FormattedHeader
 						id="how-to-migrate-header"
-						headerText={ headerText ?? translate( 'How do you want to migrate?' ) }
-						subHeaderText={ props.subHeaderText || platformText }
+						headerText={
+							headerText ?? isMigrationExperimentEnabled
+								? translate( 'Let us migrate your site' )
+								: translate( 'How do you want to migrate?' )
+						}
+						subHeaderText={ props.subHeaderText || renderSubHeaderText() }
 						align="center"
 					/>
 				}
-				stepContent={ stepContent }
+				stepContent={ renderStepContent() }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ goBack }
 			/>
