@@ -411,10 +411,7 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection
-					{ ...themesSelectionProps }
-					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
-				>
+				<ThemesSelection { ...themesSelectionProps }>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
@@ -529,12 +526,7 @@ class ThemeShowcase extends Component {
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
-				return (
-					<ThemesSelection
-						{ ...themeProps }
-						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
-					/>
-				);
+				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}
