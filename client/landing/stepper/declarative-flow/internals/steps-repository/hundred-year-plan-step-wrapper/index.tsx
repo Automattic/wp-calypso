@@ -294,7 +294,6 @@ function HundredYearPlanStepWrapper( props: Props ) {
 				hideBack
 				flowName={ flowName }
 				hideFormattedHeader
-				shouldStickyNavButtons={ false }
 				stepContent={
 					<Container
 						className={ `hundred-year-plan-step-wrapper ${ stepName }` }
