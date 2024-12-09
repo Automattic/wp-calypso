@@ -6,8 +6,6 @@ import HostingTestimonialsSection from '../../../common/hosting-testimonials-sec
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 
-import './style.scss';
-
 export default function StandardAgencyHosting() {
 	const translate = useTranslate();
 
