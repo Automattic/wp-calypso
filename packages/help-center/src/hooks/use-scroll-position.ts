@@ -24,6 +24,9 @@ export function useArticleScrollPosition( ref: React.RefObject< HTMLElement >, e
 		};
 		if ( enabled ) {
 			element?.addEventListener( 'scroll', handleScroll );
+		} else {
+			// Reset the cached scroll position when the HC is closed or the article page is unmounted.
+			cachedScrollPosition = 0;
 		}
 		return () => {
 			element?.removeEventListener( 'scroll', handleScroll );

@@ -59,10 +59,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
 		useGetSupportInteractions( 'help-center' );
 	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
-	const scrollPosition = useArticleScrollPosition(
-		containerRef,
-		location.pathname.includes( '/post' )
-	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -75,14 +71,23 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} );
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
-	const { currentSupportInteraction, navigateToRoute, isMinimized } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			navigateToRoute: store.getNavigateToRoute(),
-			isMinimized: store.getIsMinimized(),
-		};
-	}, [] );
+	const { currentSupportInteraction, navigateToRoute, isMinimized, isShown } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			return {
+				currentSupportInteraction: store.getCurrentSupportInteraction(),
+				navigateToRoute: store.getNavigateToRoute(),
+				isMinimized: store.getIsMinimized(),
+				isShown: store.isHelpCenterShown(),
+			};
+		},
+		[]
+	);
+
+	const scrollPosition = useArticleScrollPosition(
+		containerRef,
+		location.pathname.includes( '/post' ) && Boolean( isShown )
+	);
 
 	useEffect( () => {
 		if (
