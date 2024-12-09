@@ -219,7 +219,7 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: pathToUrl( destination ),
+								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
 							} )
 						);
 					} else {
