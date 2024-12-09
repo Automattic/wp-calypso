@@ -51,8 +51,7 @@ export const useZendeskMessageListener = () => {
 
 		return () => {
 			// @ts-expect-error -- 'off' is not part of the def.
-			const unsubscribe = typeof Smooch?.off === 'function' ? Smooch?.off : () => {};
-			unsubscribe( 'message:received', messageListener );
+			Smooch?.off?.( 'message:received', messageListener );
 		};
 	}, [
 		isChatLoaded,

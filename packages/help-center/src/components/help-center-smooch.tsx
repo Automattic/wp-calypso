@@ -112,8 +112,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 		return () => {
 			// @ts-expect-error -- 'off' is not part of the def.
-			const unsubscribe = typeof Smooch?.off === 'function' ? Smooch?.off : () => {};
-			unsubscribe( 'message:received', getUnreadListener );
+			Smooch?.off?.( 'message:received', getUnreadListener );
 		};
 	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
 
