@@ -1,4 +1,6 @@
 import { Badge, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -32,15 +34,32 @@ const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	} );
 };
 
-const MailboxListHeader = ( { accountType = null, children, isPlaceholder = false } ) => {
+const MailboxListHeader = ( {
+	accountType = null,
+	children,
+	isPlaceholder = false,
+	addMailboxPath,
+} ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
 			<SectionHeader
 				isPlaceholder={ isPlaceholder }
-				label={ getListHeaderTextForAccountType( accountType, translate ) }
-			/>
+				label={
+					<>
+						<Icon icon={ wordpress } />
+						&nbsp;
+						{ getListHeaderTextForAccountType( accountType, translate ) }
+					</>
+				}
+			>
+				{ addMailboxPath && (
+					<Button isLink="link" href={ addMailboxPath }>
+						{ translate( 'Add mailbox' ) }
+					</Button>
+				) }
+			</SectionHeader>
 			{ children }
 		</div>
 	);
@@ -107,7 +126,7 @@ function MailboxLink( { account, mailbox } ) {
 	);
 }
 
-function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes } ) {
+function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, addMailboxPath } ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
@@ -170,7 +189,11 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 		);
 	} );
 
-	return <MailboxListHeader accountType={ accountType }>{ mailboxItems }</MailboxListHeader>;
+	return (
+		<MailboxListHeader accountType={ accountType } addMailboxPath={ addMailboxPath }>
+			{ mailboxItems }
+		</MailboxListHeader>
+	);
 }
 
 EmailPlanMailboxesList.propTypes = {
@@ -178,6 +201,7 @@ EmailPlanMailboxesList.propTypes = {
 	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
 	mailboxes: PropTypes.array,
+	addMailboxPath: PropTypes.string,
 };
 
 export default EmailPlanMailboxesList;
