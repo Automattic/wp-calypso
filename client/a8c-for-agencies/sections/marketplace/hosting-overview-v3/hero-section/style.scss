@@ -12,7 +12,7 @@ $tab-background-selected: var(--color-surface);
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 39px;
-	transition: height 200ms ease-out;
+	transition: height .35s ease-out;
 
 	&:not(.is-compact) {
 		height: 389px;
@@ -78,22 +78,10 @@ $tab-background-selected: var(--color-surface);
 	margin: 0;
 	padding: 0;
 	height: 74px;
-
-	> li {
-		flex-grow: 1;
-	}
-
-
-	li:first-child .hosting-v3-hero-section__tab.section-nav-tab {
-		border-start-start-radius: 4px;
-	}
-
-	li:last-child .hosting-v3-hero-section__tab.section-nav-tab {
-		border-start-end-radius: 4px;
-	}
 }
 
 .hosting-v3-hero-section__tab.section-nav-tab {
+	flex-grow: 1;
 	border-bottom: none;
 
 	&,
@@ -101,18 +89,32 @@ $tab-background-selected: var(--color-surface);
 		background: $tab-background;
 	}
 
-	&.is-selected {
+	&.is-selected,
+	&.is-selected .section-nav-tab__link {
 		background: var(--color-surface);
 
 		.section-nav-tab__link:hover {
 			background: none
 		}
 	}
+
+	&:first-child {
+		border-start-start-radius: 4px;
+	}
+
+	&:last-child {
+		border-start-end-radius: 4px;
+	}
 }
 
 .hosting-v3__nav-item-label {
-	@include a4a-font-heading-lg;
+	@include a4a-font-body-md($font-weight: 500);
 	color: var( --color-text );
+	text-align: center;
+
+	@include break-medium {
+		@include a4a-font-heading-lg;
+	}
 }
 
 .hosting-v3__nav-item-subtitle {
