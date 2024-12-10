@@ -249,14 +249,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	);
 }
 
-function logFeedbackPresentationStatus( key: string, value: boolean ) {
-	const isCalypsoLive = window.location.host === 'calypso.live';
-	const isCalypsoLocalhost = window.location.host.startsWith( 'calypso.localhost' );
-	if ( isCalypsoLive || isCalypsoLocalhost ) {
-		localStorage.setItem( key, value ? 'true' : 'false' );
-	}
-}
-
 const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 10000;
 
 function getHighTrafficThreshold() {
@@ -276,8 +268,6 @@ function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const views = data?.past_thirty_days.views ?? 0;
 	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
 	const isHighTrafficSite = isSuccess && views > highTrafficThreshold;
-	logFeedbackPresentationStatus( 'StatsHighTrafficSite', isHighTrafficSite );
-
 	const presentForHighTrafficSite = isHighTrafficSite && isJetpackNotAtomic && ! isVip;
 
 	if ( ! supportCommercialUse && ! presentForHighTrafficSite ) {
