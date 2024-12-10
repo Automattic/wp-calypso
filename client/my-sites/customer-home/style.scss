@@ -234,6 +234,18 @@ body.is-section-home.theme-default.color-scheme {
 		}
 	}
 
+	&.task {
+		.task__text,
+		.task__illustration {
+			margin: 0;
+			padding: 0;
+		}
+
+		.task__text + .task__illustration {
+			padding-left: 48px;
+		}
+	}
+
 	.customer-home__card-subheader {
 		color: var(--color-text-subtle);
 		margin: 0 0 1rem;

@@ -56,7 +56,7 @@ const CelebrateNotice = ( {
 
 	return (
 		<div
-			className={ clsx( 'celebrate-notice', 'task', 'customer-home__card', {
+			className={ clsx( 'celebrate-notice', 'task', 'customer-home__card', 'is-large-hero', {
 				'is-loading': isLoading,
 			} ) }
 		>
