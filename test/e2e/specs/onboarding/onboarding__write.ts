@@ -79,9 +79,9 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			expect( page.url() ).toContain( selectedFreeDomain );
 		} );
 
-		it( 'Select "Write" goal', async function () {
-			await startSiteFlow.selectGoal( 'Write' );
-			await startSiteFlow.clickButton( 'Continue' );
+		it( 'Select "Publish a blog" goal', async function () {
+			await startSiteFlow.selectGoal( 'Publish a blog' );
+			await startSiteFlow.clickButton( 'Next' );
 		} );
 
 		it( 'Select theme', async function () {

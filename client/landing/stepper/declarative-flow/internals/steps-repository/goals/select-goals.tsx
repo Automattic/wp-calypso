@@ -2,13 +2,11 @@ import { PremiumBadge } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
 import { useGoals } from './goals';
 
 type SelectGoalsProps = {
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
-	isAddedGoalsExp: boolean;
 };
 
 const Placeholder = styled.div`
@@ -33,9 +31,8 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( { onChange, selectedGoals, isAddedGoalsExp }: SelectGoalsProps ) => {
-	const translate = useTranslate();
-	const goalOptions = useGoals( isAddedGoalsExp );
+export const SelectGoals = ( { onChange, selectedGoals }: SelectGoalsProps ) => {
+	const goalOptions = useGoals();
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
@@ -69,9 +66,6 @@ export const SelectGoals = ( { onChange, selectedGoals, isAddedGoalsExp }: Selec
 	return (
 		<>
 			<div className="select-goals__cards-container">
-				{ ! isAddedGoalsExp && (
-					<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-				) }
 				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
 				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (

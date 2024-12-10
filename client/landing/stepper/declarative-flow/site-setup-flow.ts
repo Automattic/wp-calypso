@@ -5,13 +5,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
@@ -66,7 +66,11 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		const isGoalsAtFrontExperiment = Boolean(
+			useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ]
+		);
+
+		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
 			STEPS.OPTIONS,
@@ -94,6 +98,14 @@ const siteSetupFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.DIFM_STARTING_POINT,
 		];
+
+		if ( isGoalsAtFrontExperiment ) {
+			// The user has already seen the goals step in the `onboarding` flow
+			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
+			steps.splice( 0, 4 );
+		}
+
+		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
@@ -153,12 +165,8 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 
-		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
-
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-
-		const isDesignChoicesStepEnabled =
-			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+		const isDesignChoicesStepEnabled = isBigSkyEligible;
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );

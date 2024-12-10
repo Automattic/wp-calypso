@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
-import { isAssemblerSupported } from '@automattic/design-picker';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -20,7 +19,6 @@ import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -55,9 +53,7 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
-	shouldSelectSite,
 } from './helpers';
-import PatternAssemblerButton from './pattern-assembler-button';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
@@ -388,40 +384,6 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	onDesignYourOwnClick = () => {
-		const { isLoggedIn } = this.props;
-
-		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
-			is_logged_in: isLoggedIn,
-		} );
-
-		this.onDesignYourOwnCallback();
-	};
-
-	onDesignYourOwnCallback = () => {
-		const { isLoggedIn, siteCount, siteId } = this.props;
-
-		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
-			this.setState( { isDesignThemeModalVisible: true } );
-		} else {
-			this.redirectToSiteAssembler();
-		}
-	};
-
-	redirectToSiteAssembler = ( selectedSite = this.props.site ) => {
-		const { isLoggedIn, siteEditorUrl } = this.props;
-		const shouldGoToAssemblerStep = isAssemblerSupported();
-
-		const destinationUrl = getSiteAssemblerUrl( {
-			isLoggedIn,
-			selectedSite,
-			shouldGoToAssemblerStep,
-			siteEditorUrl,
-		} );
-
-		window.location.assign( destinationUrl );
-	};
-
 	shouldShowCollections = () => {
 		const { category, search, filter, isCollectionView, tier } = this.props;
 
@@ -449,10 +411,7 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection
-					{ ...themesSelectionProps }
-					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
-				>
+				<ThemesSelection { ...themesSelectionProps }>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
@@ -567,12 +526,7 @@ class ThemeShowcase extends Component {
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
-				return (
-					<ThemesSelection
-						{ ...themeProps }
-						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
-					/>
-				);
+				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}
@@ -692,8 +646,6 @@ class ThemeShowcase extends Component {
 					vertical={ this.props.vertical }
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
-					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
-					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
 				{ this.renderSiteAssemblerSelectorModal() }
@@ -773,9 +725,6 @@ class ThemeShowcase extends Component {
 												)
 											}
 										/>
-									) }
-									{ ! isLoggedIn && tabFilters && (
-										<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
 									) }
 								</div>
 							</div>
