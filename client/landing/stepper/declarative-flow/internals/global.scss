@@ -122,7 +122,7 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
-			&.domains {
+			&.domains:not(.copy-site) {
 				margin-top: -60px;
 			}
 		}
