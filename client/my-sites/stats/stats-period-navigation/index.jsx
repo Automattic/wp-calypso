@@ -112,7 +112,12 @@ class StatsPeriodNavigation extends PureComponent {
 		const previousDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
 			addQueryPrefix: true,
 		} );
-		const href = `${ url }${ previousDayQuery }`;
+
+		let href = null;
+		if ( url ) {
+			href = `${ url }${ previousDayQuery }`;
+		}
+
 		this.handleArrowEvent( 'previous', href );
 	};
 
@@ -125,7 +130,12 @@ class StatsPeriodNavigation extends PureComponent {
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, newQueryParams ), {
 			addQueryPrefix: true,
 		} );
-		const href = `${ url }${ nextDayQuery }`;
+
+		let href = null;
+		if ( url ) {
+			href = `${ url }${ nextDayQuery }`;
+		}
+
 		this.handleArrowEvent( 'next', href );
 	};
 

@@ -213,7 +213,6 @@ class StatsPostDetail extends Component {
 								siteId={ siteId }
 								postId={ postId }
 								supportsUTMStats={ supportsUTMStats }
-								siteSlug={ siteSlug }
 							/>
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>

@@ -35,7 +35,6 @@ class StatsPostSummary extends Component {
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		supportsUTMStats: PropTypes.bool,
-		siteSlug: PropTypes.string,
 	};
 
 	static MAX_RECORDS_PER_DAY = 10;
@@ -69,9 +68,7 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
-		const recordIndex = chartData.findIndex(
-			( item ) => item.startDate === selectedRecord.startDate
-		);
+		const recordIndex = chartData.findIndex( ( item ) => item.period === selectedRecord.period );
 
 		if ( 'previous' === direction ) {
 			if ( recordIndex > 0 ) {
@@ -221,7 +218,7 @@ class StatsPostSummary extends Component {
 	}
 
 	render() {
-		const { isRequesting, postId, siteId, translate, siteSlug, stats } = this.props;
+		const { isRequesting, postId, siteId, translate, stats } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
@@ -234,13 +231,18 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
-		const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
 		let disablePreviousArrow = false;
-		if ( this.state.page >= maxPages ) {
-			const selectedRecordIndex = chartData.findIndex(
-				( item ) => item.startDate === selectedRecord.startDate
-			);
+		let disableNextArrow = false;
+		const selectedRecordIndex = chartData.findIndex(
+			( item ) => item.period === selectedRecord.period
+		);
+		if ( 'day' === this.state.period ) {
+			const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
+			disablePreviousArrow = this.state.page >= maxPages && selectedRecordIndex === 0;
+			disableNextArrow = 1 === this.state.page && selectedRecordIndex === chartData.length - 1;
+		} else {
 			disablePreviousArrow = selectedRecordIndex === 0;
+			disableNextArrow = selectedRecordIndex === chartData.length - 1;
 		}
 
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
@@ -256,10 +258,10 @@ class StatsPostSummary extends Component {
 						<StatsPeriodNavigation
 							showArrows
 							onPeriodChange={ this.onPeriodChange }
-							url={ `/stats/post/${ postId }/${ siteSlug }` }
-							date={ selectedRecord?.startDate }
-							period={ this.state.period }
 							disablePreviousArrow={ disablePreviousArrow }
+							disableNextArrow={ disableNextArrow }
+							date={ null }
+							period={ this.state.period }
 						>
 							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
 						</StatsPeriodNavigation>
