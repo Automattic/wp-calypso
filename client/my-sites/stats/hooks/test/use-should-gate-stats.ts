@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
-import { STAT_TYPE_CLICKS, STATS_TYPE_DEVICE_STATS } from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -10,9 +9,9 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 const siteId = 123;
-const gatedStatType = STAT_TYPE_CLICKS;
+const gatedStatType = 'statsSearchTerms';
 const notGatedStatType = 'notGatedStatType';
-const jetpackStatsAdvancedStatType = STATS_TYPE_DEVICE_STATS;
+const jetpackStatsAdvancedStatType = 'stats_devices_module';
 
 describe( 'shouldGateStats in Calypso', () => {
 	beforeAll( () => {
