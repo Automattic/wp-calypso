@@ -121,7 +121,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		navigation.goBack?.();
 	}, [ cancelMigration, navigation ] );
 
-	function renderSubHeaderText() {
+	const renderSubHeaderText = () => {
 		if ( isMigrationExperimentEnabled ) {
 			const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 			const isBusinessPlan = site?.plan?.product_slug
@@ -161,9 +161,9 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 					args: { hostingProviderName },
 			  } )
 			: '';
-	}
+	};
 
-	function renderStepContent() {
+	const renderStepContent = () => {
 		if ( isMigrationExperimentEnabled ) {
 			return (
 				<div className="how-to-migrate__experiment-expectations">
@@ -203,7 +203,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				) ) }
 			</div>
 		);
-	}
+	};
 
 	return (
 		<>
