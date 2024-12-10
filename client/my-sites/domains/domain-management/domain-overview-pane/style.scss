@@ -20,8 +20,12 @@
 	}
 
 	.item-preview__content {
-		padding: 24px;
+		padding: 0;
 		color: var(--studio-gray-100);
+
+		@include break-medium {
+			padding: 24px;
+		}
 
 		@include break-large {
 			padding: 32px 48px 48px;
@@ -42,16 +46,37 @@
 	}
 
 	.domains-overview__navigation-header.navigation-header {
-		padding: 0;
-		margin-bottom: 24px;
+		padding: 24px;
 		border: 0;
 
+		@include break-medium {
+			padding: 0 0 24px 0;
+		}
+
 		@include break-large {
-			margin-bottom: 32px;
+			padding-bottom: 32px;
 		}
 
 		.navigation-header__main {
 			padding-inline: 0;
+		}
+	}
+
+	.accordion .card.foldable-card {
+		.foldable-card__header {
+			padding: 24px;
+		}
+
+		.foldable-card__content {
+			padding: 0 24px 24px;
+		}
+	}
+
+	.domain-info-card.action-card {
+		padding: 24px;
+
+		@include break-medium {
+			padding: 24px 0
 		}
 	}
 }
