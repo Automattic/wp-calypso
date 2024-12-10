@@ -149,7 +149,7 @@ const basicStats = [
 ];
 
 // wpcom: Gated modules for WPCOM sites with the FEATURE_STATS_PAID feature.
-const paidStats = [
+export const paidStats = [
 	// Commercial stats
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
@@ -240,12 +240,9 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// Paid stats given to personal and higher plans
 	if ( siteHasPaidStats ) {
-		// Only gate UTM/Device stats if the v3 flag is enabled.
-		// v3 will only be enabled once the site feature backend change is deployed.
 		if ( ! isEnabled( 'stats/paid-wpcom-v3' ) ) {
-			return paidStats
-				.filter( ( stat ) => stat !== STATS_FEATURE_UTM_STATS && stat !== STATS_TYPE_DEVICE_STATS )
-				.includes( statType );
+			// if v3 is not enabled, treat paid stats as commercial stats
+			return false;
 		}
 		return paidStats.includes( statType );
 	}
