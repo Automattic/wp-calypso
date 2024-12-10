@@ -15,7 +15,8 @@ export const useSupportChatLLMQuery = (
 	insight: PerformanceMetricsItemQueryResponse,
 	hash: string,
 	is_wpcom: boolean,
-	enable: boolean
+	enable: boolean,
+	localeSlug?: string
 ) => {
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -29,6 +30,7 @@ export const useSupportChatLLMQuery = (
 				{
 					insight,
 					is_wpcom,
+					locale: localeSlug,
 				}
 			),
 		select: mapResult,
