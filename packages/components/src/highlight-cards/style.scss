@@ -342,7 +342,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 }
 
 .highlight-card-tooltip-content {
-	display: flex;
+	display: block;
 	align-items: center;
 	justify-content: space-between;
 	font-size: $font-body-small;
@@ -397,8 +397,8 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 }
 
 .highlight-card-tooltip-note {
-	font-size: $font-body-extra-small;
-	padding-top: 8px;
+	color: var(--studio-gray-30);
+	font-size: $font-body-small;
 }
 .highlight-card__settings-tooltip {
 	.highlight-card-tooltip-content {
