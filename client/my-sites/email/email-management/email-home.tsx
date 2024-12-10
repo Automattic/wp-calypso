@@ -34,9 +34,8 @@ interface ContentWithHeaderProps {
 	children: ReactNode;
 	className?: string;
 }
-const ContentWithHeader = ( props: ContentWithHeaderProps ) => {
+const ContentWithHeader = ( { children, className }: ContentWithHeaderProps ) => {
 	const translate = useTranslate();
-	const { children, className } = props;
 
 	return (
 		<Main wideLayout className={ className }>
