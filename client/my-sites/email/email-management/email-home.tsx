@@ -154,7 +154,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 		return (
 			<ContentWithHeader
-				className={ clsx( { 'context-all-domain-management': isAllDomainManagementEnabled } ) }
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
 			>
 				<EmailPlan
 					domain={ selectedDomain }
@@ -162,9 +162,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
 					// we also hide the back button, to avoid scenarios where clicking "Back"
 					// redirects users to the same page as they are currently on.
-					hideHeaderCake={ isAllDomainManagementEnabled || isSingleDomainThatHasEmail }
-					hideHeader={ isAllDomainManagementEnabled }
-					hidePlanActions={ isAllDomainManagementEnabled }
+					hideHeaderCake={ isAllDomainManagementContext || isSingleDomainThatHasEmail }
+					hideHeader={ isAllDomainManagementContext }
+					hidePlanActions={ isAllDomainManagementContext }
 					selectedSite={ selectedSite }
 					source={ source }
 				/>
