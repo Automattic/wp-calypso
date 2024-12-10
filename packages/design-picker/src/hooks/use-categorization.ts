@@ -85,9 +85,12 @@ export function useCategorization(
  * @returns the default category or null if none is available
  */
 function chooseDefaultSelections( categories: Category[], defaultSelections: string[] ): string[] {
-	const defaultSelectionsSet = new Set( defaultSelections );
-	if ( defaultSelections && categories.find( ( { slug } ) => defaultSelectionsSet.has( slug ) ) ) {
-		return defaultSelections;
+	const categorySlugsSet = new Set( categories.map( ( { slug } ) => slug ) );
+	const availableDefaultSelections = defaultSelections.filter( ( selection ) =>
+		categorySlugsSet.has( selection )
+	);
+	if ( availableDefaultSelections.length > 0 ) {
+		return availableDefaultSelections;
 	}
 
 	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : [];
