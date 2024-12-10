@@ -124,3 +124,49 @@
 		}
 	}
 }
+
+.import__site-identify-hosting-details-experiment {
+	margin: 40px auto 0 auto;
+	max-width: 350px;
+
+	&-title {
+		color: var(--studio-gray-100);
+		font-size: 1.25rem;
+		font-weight: 500;
+		margin-bottom: 0.5rem;
+		text-align: center;
+	}
+
+	&-list {
+		background-color: #f6f7f7;
+		font-size: 0.75rem;
+		list-style: none;
+		margin: 0;
+		padding: 2rem;
+
+		&-item {
+			display: flex;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	&-icon {
+		background-color: #dcdcde;
+		border: 2px solid #dcdcde;
+		border-radius: 4px;
+		display: flex;
+		fill: var(--studio-gray-70);
+		flex: 0 0 24px;
+		padding: 4px;
+	}
+
+	&-description {
+		color: var(--studio-black);
+		line-height: 1.66666667;
+	}
+}

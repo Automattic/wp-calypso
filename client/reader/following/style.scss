@@ -2,7 +2,6 @@
 
 .is-section-reader .navigation-header.following-stream-header {
 	margin: 0 auto;
-	max-width: 600px;
 	padding: 0;
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
@@ -13,7 +12,7 @@
 	}
 
 	@media (max-width: 600px) {
-		margin: 0 16px;
+		padding: 0 16px;
 		.navigation-header__main {
 			min-height: auto;
 		}

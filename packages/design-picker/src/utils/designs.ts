@@ -1,11 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import {
-	ASSEMBLER_V2_DESIGN,
-	DEFAULT_ASSEMBLER_DESIGN,
-	DEFAULT_VIEWPORT_HEIGHT,
-} from '../constants';
+import { ASSEMBLER_V2_DESIGN, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 function encodeParenthesesInText( text: string ) {
@@ -70,10 +65,7 @@ export const getDesignPreviewUrl = (
 };
 
 export const getAssemblerDesign = () => {
-	if ( isEnabled( 'pattern-assembler/v2' ) ) {
-		return ASSEMBLER_V2_DESIGN;
-	}
-	return DEFAULT_ASSEMBLER_DESIGN;
+	return ASSEMBLER_V2_DESIGN;
 };
 
 export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';

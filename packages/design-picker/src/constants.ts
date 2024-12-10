@@ -18,15 +18,6 @@ export const STICKY_OFFSET_TOP = 109;
 /**
  * Hard-coded design
  */
-export const DEFAULT_ASSEMBLER_DESIGN = {
-	slug: 'creatio-2',
-	title: 'Creatio 2',
-	recipe: {
-		stylesheet: 'pub/creatio-2',
-	},
-	design_type: 'assembler',
-} as Design;
-
 export const ASSEMBLER_V2_DESIGN = {
 	slug: 'assembler',
 	title: 'Assembler',
@@ -52,4 +43,19 @@ export const FEATURE_CATEGORIES = {
 	PORTFOLIO: 'portfolio',
 	PODCAST: 'podcast',
 	STORE: 'store',
+};
+
+export const SUBJECT_CATEGORIES = {
+	BUSINESS: 'business',
+	COMMUNITY_NON_PROFIT: 'community-non-profit',
+	AUTHORS_WRITERS: 'authors-writers',
+	EDUCATION: 'education',
+	ENTERTAINMENT: 'entertainment',
+	EVENTS: 'events',
+	LINK_IN_BIO: 'link-in-bio',
+};
+
+export const CATEGORIES = {
+	...FEATURE_CATEGORIES,
+	...SUBJECT_CATEGORIES,
 };

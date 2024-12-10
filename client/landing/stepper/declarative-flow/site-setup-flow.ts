@@ -5,7 +5,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -166,12 +165,8 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 
-		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
-
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-
-		const isDesignChoicesStepEnabled =
-			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+		const isDesignChoicesStepEnabled = isBigSkyEligible;
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );

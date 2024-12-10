@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { isBlankCanvasDesign } from '../utils/available-designs';
-import type { Categorization } from './use-categorization';
+import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
 const getDesignSlug = ( design: Design ) => design.recipe?.slug ?? design.slug;
@@ -51,18 +50,16 @@ export const filterDesigns = (
 	return filteredDesigns;
 };
 
-export const useFilteredDesigns = ( designs: Design[], categorization?: Categorization ) => {
-	const [ searchParams ] = useSearchParams();
-
-	const selectedDesignTier = searchParams.get( 'tier' ) ?? '';
+export const useFilteredDesigns = ( designs: Design[] ) => {
+	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
-		if ( categorization?.selections || selectedDesignTier ) {
-			return filterDesigns( designs, categorization?.selections, selectedDesignTier );
+		if ( selectedCategories.length > 0 || selectedDesignTier ) {
+			return filterDesigns( designs, selectedCategories, selectedDesignTier );
 		}
 
 		return designs;
-	}, [ designs, categorization?.selections, selectedDesignTier ] );
+	}, [ designs, selectedCategories, selectedDesignTier ] );
 
 	return filteredDesigns;
 };
