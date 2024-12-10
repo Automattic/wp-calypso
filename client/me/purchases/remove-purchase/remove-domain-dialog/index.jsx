@@ -257,7 +257,7 @@ class RemoveDomainDialog extends Component {
 		return (
 			<Dialog
 				buttons={ buttons }
-				className="remove-domain-dialog__dialog"
+				additionalClassNames="remove-domain-dialog"
 				isVisible={ this.props.isDialogVisible }
 				onClose={ this.close }
 				leaveTimeout={ 0 }

@@ -3,10 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
+import { CredentialsFormData, ApplicationPasswordsInfo, ApiError } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
@@ -21,12 +22,45 @@ export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined
 	}
 };
 
+export const getApplicationPasswordsInfo = async (
+	siteId: number,
+	from: string
+): Promise< ApplicationPasswordsInfo | undefined > => {
+	try {
+		return await wp.req.post( {
+			path: `/sites/${ siteId }/automated-migration/application-passwords/setup`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				source: from,
+			},
+		} );
+	} catch ( error ) {
+		if ( ( error as ApiError )?.code === 'failed_to_get_authorization_path' ) {
+			return {
+				application_passwords_enabled: false,
+			};
+		}
+		return undefined;
+	}
+};
+
 const isNotWordPress = ( siteInfo?: UrlData ) => {
 	return !! siteInfo?.platform && siteInfo?.platform !== 'wordpress';
 };
 
 const isWPCOM = ( siteInfo?: UrlData ) => {
 	return !! siteInfo?.platform_data?.is_wpcom;
+};
+
+const getFormDefaultValues = ( fromUrl: string ): CredentialsFormData => {
+	return {
+		from_url: fromUrl,
+		username: '',
+		password: '',
+		backupFileLocation: '',
+		notes: '',
+		migrationType: 'credentials',
+	};
 };
 
 export const useCredentialsForm = (
@@ -37,6 +71,7 @@ export const useCredentialsForm = (
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
+	const siteId = parseInt( useSiteIdParam() ?? '' );
 
 	const {
 		mutateAsync: requestAutomatedMigration,
@@ -57,14 +92,7 @@ export const useCredentialsForm = (
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 		disabled: isBusy,
-		defaultValues: {
-			from_url: importSiteQueryParam,
-			username: '',
-			password: '',
-			backupFileLocation: '',
-			notes: '',
-			migrationType: 'credentials',
-		},
+		defaultValues: getFormDefaultValues( importSiteQueryParam ),
 		errors: serverSideError,
 	} );
 
@@ -97,14 +125,12 @@ export const useCredentialsForm = (
 	);
 
 	const submitWithApplicationPassword = useCallback(
-		( siteInfoResult: UrlData ) => {
+		async ( siteId: number, from: string, siteInfoResult: UrlData ) => {
 			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
 				onSubmit( siteInfoResult );
 			} else {
-				const applicationPasswordsInfo = {
-					isAvailable: true,
-				};
-				onSubmit( siteInfoResult, applicationPasswordsInfo );
+				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
+				onSubmit( siteInfoResult, applicationPasswordsInfoResult );
 			}
 		},
 		[ onSubmit ]
@@ -117,7 +143,7 @@ export const useCredentialsForm = (
 		setSiteInfo( siteInfoResult );
 
 		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' && siteInfoResult ) {
-			await submitWithApplicationPassword( siteInfoResult );
+			await submitWithApplicationPassword( siteId, data.from_url, siteInfoResult );
 		} else {
 			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );
 		}

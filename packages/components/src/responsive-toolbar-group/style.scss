@@ -44,6 +44,12 @@
 		opacity: 1;
 	}
 
+	.is-multi {
+		.responsive-toolbar-group__menu-item:not(:first-child) {
+			margin-top: 8px;
+		}
+	}
+
 	.responsive-toolbar-group__full-list {
 		overflow: hidden;
 		position: absolute;

@@ -168,7 +168,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
-			hour: translate( 'MMM D HH:mm', {
+			hour: translate( 'HH:mm', {
 				context: 'momentjs format string (hour)',
 				comment: 'This specifies an hour for the stats x-axis label.',
 			} ),

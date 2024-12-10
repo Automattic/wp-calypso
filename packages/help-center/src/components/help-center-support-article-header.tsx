@@ -15,15 +15,16 @@ export const SupportArticleHeader = ( {
 		</div>
 	) : (
 		<div className="help-center-article-content__header">
+			<ExternalLink
+				className="help-center-article-content__header-link"
+				href={ post.URL }
+				target="_blank"
+				icon
+			>
+				Open support page
+			</ExternalLink>
 			<h1 className="help-center-article-content__header-title">
-				<ExternalLink
-					className="help-center-article-content__header-title-link"
-					href={ post.URL }
-					target="_blank"
-					icon={ false }
-				>
-					{ decodeEntities( post.title ) }
-				</ExternalLink>
+				{ decodeEntities( post.title ) }
 			</h1>
 		</div>
 	);

@@ -28,8 +28,9 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
+	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
-	STAT_TYPE_REFERRERS,
+	STATS_FEATURE_PAGE_TRAFFIC,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -63,7 +64,7 @@ import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
-import StatsFeedbackController from './feedback';
+import StatsFeedbackPresentor from './feedback';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -78,7 +79,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
-import StatsUpsell from './stats-upsell';
+import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -161,22 +162,25 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
-				activeLegend: activeTab.legendOptions || [],
+				// TODO: remove this when we support hourly visitors.
+				activeLegend: props.period !== 'hour' ? activeTab.legendOptions || [] : [],
 			};
 		}
 		return null;
 	}
 
 	getAvailableLegend() {
+		const { period } = this.props.period;
 		const activeTab = getActiveTab( this.props.chartTab );
-		return activeTab.legendOptions || [];
+		// TODO: remove this when we support hourly visitors.
+		return period !== 'hour' ? activeTab.legendOptions || [] : [];
 	}
 
 	navigationFromChartBar = ( periodStartDate, period ) => {
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( period === 'week' ? 'isoWeek' : period )
-			.format( 'YYYY-MM-DD' );
+			.format( DATE_FORMAT );
 
 		// Limit navigation within the currently selected range.
 		const currentChartStart = this.props.context.query?.chartStart;
@@ -282,7 +286,7 @@ class StatsSite extends Component {
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
 		} else {
-			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+			url += `?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
 		}
 
 		return url;
@@ -309,7 +313,7 @@ class StatsSite extends Component {
 			momentSiteZone,
 			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -322,7 +326,7 @@ class StatsSite extends Component {
 			defaultPeriod = PAST_THIRTY_DAYS;
 		}
 
-		const queryDate = date.format( 'YYYY-MM-DD' );
+		const queryDate = date.format( DATE_FORMAT );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
@@ -336,7 +340,9 @@ class StatsSite extends Component {
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
 		} else {
-			customChartRange = { chartEnd: momentSiteZone.format( 'YYYY-MM-DD' ) };
+			customChartRange = {
+				chartEnd: momentSiteZone.format( DATE_FORMAT ),
+			};
 		}
 
 		// Find the quantity of bars for the chart.
@@ -354,7 +360,7 @@ class StatsSite extends Component {
 			customChartRange.chartStart = momentSiteZone
 				.clone()
 				.subtract( daysInRange - 1, 'days' )
-				.format( 'YYYY-MM-DD' );
+				.format( DATE_FORMAT );
 		}
 
 		customChartRange.daysInRange = daysInRange;
@@ -390,16 +396,15 @@ class StatsSite extends Component {
 
 			// For StatsDateControl
 			customChartRange.daysInRange = 7;
-			customChartRange.chartEnd = momentSiteZone.format( 'YYYY-MM-DD' );
-			customChartRange.chartStart = momentSiteZone
-				.clone()
-				.subtract( 7, 'days' )
-				.format( 'YYYY-MM-DD' );
+			customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
+			customChartRange.chartStart = moment( customChartRange.chartEnd )
+				.subtract( customChartRange.daysInRange - 1, 'days' )
+				.format( DATE_FORMAT );
 		}
 
 		const query = isNewDateFilteringEnabled
 			? chartRangeToQuery( customChartRange )
-			: memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
+			: memoizedQuery( period, endOf.format( DATE_FORMAT ) );
 
 		// For period option links
 		const traffic = {
@@ -428,6 +433,9 @@ class StatsSite extends Component {
 			'stats__flexible-grid-item--full--large',
 			'stats__flexible-grid-item--full--medium'
 		);
+
+		// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
+		const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
 		return (
 			<div className="stats">
@@ -467,7 +475,7 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StickyPanel>
+					<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
@@ -482,7 +490,7 @@ class StatsSite extends Component {
 								onChangeLegend={ this.onChangeLegend }
 								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								isWithNewDateControl
-								showArrows
+								showArrows={ ! wpcomShowUpsell }
 								slug={ slug }
 								dateRange={ customChartRange }
 							>
@@ -495,6 +503,7 @@ class StatsSite extends Component {
 									showQueryDate
 									isShort
 									dateRange={ customChartRange }
+									isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 								/>
 							</StatsPeriodNavigation>
 						</StatsPeriodHeader>
@@ -528,6 +537,7 @@ class StatsSite extends Component {
 										statsType="statsTopPosts"
 										showQueryDate
 										isShort
+										isNewDateFilteringEnabled={ false }
 									/>
 								</StatsPeriodNavigation>
 							</StatsPeriodHeader>
@@ -723,7 +733,7 @@ class StatsSite extends Component {
 				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
 					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				) }
-				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
+				{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
@@ -875,7 +885,7 @@ export default connect(
 		);
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STAT_TYPE_REFERRERS );
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
 		return {
 			canUserViewStats,

@@ -28,6 +28,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 		width: 100%;
 		padding: 24px 0 16px;
 		border: 0;
+		// Use border radius of its parent; otherwise it'd break the parent corner.
+		border-radius: 4px;
 		box-sizing: border-box;
 
 		display: flex;
@@ -108,6 +110,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 					grid-template-columns: 2fr 2fr 3fr;
 					align-items: center;
 					justify-content: space-between;
+					border-radius: 0;
 				}
 
 				&:hover {

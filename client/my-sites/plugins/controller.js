@@ -403,8 +403,7 @@ export function renderPluginsSidebar( context, next ) {
 				isCollapsed={ getShouldShowCollapsedGlobalSidebar(
 					state,
 					undefined,
-					context.section.group,
-					context.section.name
+					context.section.group
 				) }
 			/>
 		);

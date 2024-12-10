@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import {
@@ -11,12 +11,15 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
+import useHighlightsQuery from './use-highlights-query';
+import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'animate.css';
 
 import './style.scss';
 
+const TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD = 'stats_feedback_action_present_persistent_section';
 const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
@@ -77,7 +80,7 @@ interface FeedbackContentProps {
 function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProps ) {
 	const translate = useTranslate();
 
-	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
+	const ctaText = translate( 'How would you rate your overall experience with Jetpack?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
@@ -165,6 +168,10 @@ interface FeedbackCardProps {
 }
 
 function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+	useEffect( () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
+	}, [] );
+
 	const handleLeaveReviewFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
 		onLeaveReview();
@@ -188,19 +195,17 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
-	const { supportCommercialUse } = useStatsPurchases( siteId );
-
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
 
 	useEffect( () => {
-		if ( ! isPending && ! isError && shouldShowFeedbackPanel && supportCommercialUse ) {
+		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
 				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel, supportCommercialUse ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
@@ -228,10 +233,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		setIsFeedbackModalOpen( false );
 	};
 
-	if ( ! supportCommercialUse ) {
-		return null;
-	}
-
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
@@ -248,4 +249,32 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	);
 }
 
-export default StatsFeedbackController;
+const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 10000;
+
+function getHighTrafficThreshold() {
+	const value = Number( localStorage.getItem( 'StatsHighTrafficThreshold' ) );
+	return value !== 0 ? value : FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD;
+}
+
+interface FeedbackPresentorProps {
+	siteId: number;
+}
+
+function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
+	const { supportCommercialUse } = useStatsPurchases( siteId );
+	const { isJetpackNotAtomic, isVip } = useSiteTypes( siteId );
+	const { data, isSuccess } = useHighlightsQuery( siteId );
+
+	const views = data?.past_thirty_days.views ?? 0;
+	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
+	const isHighTrafficSite = isSuccess && views > highTrafficThreshold;
+	const presentForHighTrafficSite = isHighTrafficSite && isJetpackNotAtomic && ! isVip;
+
+	if ( ! supportCommercialUse && ! presentForHighTrafficSite ) {
+		return null;
+	}
+
+	return <StatsFeedbackController siteId={ siteId } />;
+}
+
+export default StatsFeedbackPresentor;

@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -74,6 +74,7 @@ import PlansPageSubheader from './components/plans-page-subheader';
 import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
+import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -442,10 +443,10 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 		siteId,
 		storageAddOns,
-		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		term,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -754,6 +755,15 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
+	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
+		gridPlans: gridPlansForFeaturesGrid ?? [],
+		displayedIntervals: filteredDisplayedIntervals,
+		storageAddOns,
+		coupon,
+		siteId,
+		isInSignup,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -870,11 +880,7 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
-										enableTermSavingsPriceDisplay={
-											( isEnabled( 'plans/term-savings-price-display' ) ||
-												longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-											isInSignup
-										}
+										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -934,11 +940,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={
-														( isEnabled( 'plans/term-savings-price-display' ) ||
-															longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-														isInSignup
-													}
+													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 												/>
 											) }
 											<ComparisonGridToggle

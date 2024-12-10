@@ -482,8 +482,8 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					const poweredByWpCom = (
 						<>
-							{ translate( 'Log in with your WordPress.com account.' ) }
-							<br />
+							{ translate( 'Log in with your WordPress.com account.' ) }{ ' ' }
+							<br className="hide-on-desktop" />
 						</>
 					);
 

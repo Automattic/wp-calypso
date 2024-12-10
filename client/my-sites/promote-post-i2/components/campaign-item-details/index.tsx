@@ -5,7 +5,7 @@ import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, chevronLeft, chevronDown } from '@wordpress/icons';
+import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import React, { useState } from 'react';
@@ -135,9 +135,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const [ chartSource, setChartSource ] = useState< ChartSourceOptions >(
 		ChartSourceOptions.Clicks
 	);
-	const [ selectedDateRange, setSelectedDateRange ] = useState< ChartSourceDateRanges >(
-		ChartSourceDateRanges.LAST_7_DAYS
-	);
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
@@ -153,8 +150,7 @@ export default function CampaignItemDetails( props: Props ) {
 		const today = new Date();
 
 		// If the campaign has already finished, fetch data relative to the end date (we can't fetch data after that point)
-		const effectiveEndDate = endDate && endDate < today ? endDate : today;
-		return effectiveEndDate;
+		return endDate && endDate < today ? endDate : today;
 	};
 
 	const {
@@ -193,99 +189,10 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
-		const effectiveEndDate = getEffectiveEndDate();
-		let startDate = new Date( effectiveEndDate );
-
-		switch ( dateRange ) {
-			case ChartSourceDateRanges.YESTERDAY:
-				startDate.setDate( effectiveEndDate.getDate() - 1 );
-				break;
-			case ChartSourceDateRanges.LAST_7_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 7 );
-				break;
-			case ChartSourceDateRanges.LAST_14_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 14 );
-				break;
-			case ChartSourceDateRanges.LAST_30_DAYS:
-				startDate.setDate( effectiveEndDate.getDate() - 30 );
-				break;
-			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
-				if ( campaign?.start_date ) {
-					startDate = new Date( campaign.start_date );
-				}
-				break;
-		}
-
-		return startDate.toISOString().split( 'T' )[ 0 ];
-	};
-
-	const [ chartParams, setChartParams ] = useState( {
-		startDate: getChartStartDate( ChartSourceDateRanges.LAST_7_DAYS ),
-		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
-		resolution: ChartResolution.Day,
-	} );
-
-	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
-		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
-		const newResolution = [ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes(
-			newDateRange
-		)
-			? ChartResolution.Hour
-			: ChartResolution.Day;
-
-		const newStartDate = getChartStartDate( newDateRange );
-
-		// Update the params for the chart here, which will trigger the refetch
-		setChartParams( {
-			startDate: newStartDate,
-			endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
-			resolution: newResolution,
-		} );
-		setSelectedDateRange( newDateRange );
-	};
-
-	const campaignStatsQuery = useCampaignChartStatsQuery(
-		siteId,
-		campaignId,
-		chartParams,
-		!! impressions_total
-	);
-	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
-	const { data: campaignStats } = campaignStatsQuery;
-
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
-
-	const getCampaignStatsChart = (
-		data: CampaignChartSeriesData[],
-		source: ChartSourceOptions,
-		isLoading = false
-	) => {
-		if ( isLoading ) {
-			return (
-				<div className="campaign-item-details__graph-stats-loader">
-					<div>
-						<Spinner />
-					</div>
-				</div>
-			);
-		}
-
-		if ( ! data ) {
-			return null;
-		}
-
-		return (
-			<CampaignStatsLineChart
-				data={ data }
-				source={ source }
-				resolution={ chartParams.resolution }
-			/>
-		);
-	};
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
@@ -370,8 +277,104 @@ export default function CampaignItemDetails( props: Props ) {
 		: '-';
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
+
+	const initialRange =
+		activeDays <= 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
+	const initialResolution = activeDays < 3 ? ChartResolution.Hour : ChartResolution.Day;
+
+	const [ selectedDateRange, setSelectedDateRange ] =
+		useState< ChartSourceDateRanges >( initialRange );
+
+	const getChartStartDate = ( dateRange: ChartSourceDateRanges ) => {
+		const effectiveEndDate = getEffectiveEndDate();
+		let startDate = new Date( effectiveEndDate );
+
+		switch ( dateRange ) {
+			case ChartSourceDateRanges.YESTERDAY:
+				startDate.setDate( effectiveEndDate.getDate() - 1 );
+				break;
+			case ChartSourceDateRanges.LAST_7_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 7 );
+				break;
+			case ChartSourceDateRanges.LAST_14_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 14 );
+				break;
+			case ChartSourceDateRanges.LAST_30_DAYS:
+				startDate.setDate( effectiveEndDate.getDate() - 30 );
+				break;
+			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
+				if ( campaign?.start_date ) {
+					startDate = new Date( campaign.start_date );
+				}
+				break;
+		}
+
+		return startDate.toISOString().split( 'T' )[ 0 ];
+	};
+
+	const [ chartParams, setChartParams ] = useState( {
+		startDate: getChartStartDate( initialRange ),
+		endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
+		resolution: initialResolution,
+	} );
+
+	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
+		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
+		const newResolution =
+			[ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes( newDateRange ) ||
+			activeDays < 3
+				? ChartResolution.Hour
+				: ChartResolution.Day;
+
+		const newStartDate = getChartStartDate( newDateRange );
+
+		// Update the params for the chart here, which will trigger the refetch
+		setChartParams( {
+			startDate: newStartDate,
+			endDate: getEffectiveEndDate().toISOString().split( 'T' )[ 0 ],
+			resolution: newResolution,
+		} );
+		setSelectedDateRange( newDateRange );
+	};
+
+	const campaignStatsQuery = useCampaignChartStatsQuery(
+		siteId,
+		campaignId,
+		chartParams,
+		!! impressions_total
+	);
+	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
+	const { data: campaignStats } = campaignStatsQuery;
+	const getCampaignStatsChart = (
+		data: CampaignChartSeriesData[] | null,
+		source: ChartSourceOptions,
+		isLoading = false
+	) => {
+		if ( isLoading ) {
+			return (
+				<div className="campaign-item-details__graph-stats-loader">
+					<div>
+						<Spinner />
+					</div>
+				</div>
+			);
+		}
+
+		if ( ! data ) {
+			return null;
+		}
+
+		return (
+			<CampaignStatsLineChart
+				data={ data }
+				source={ source }
+				resolution={ chartParams.resolution }
+			/>
+		);
+	};
+
 	const budgetRemainingFormatted =
-		total_budget && total_budget_used
+		total_budget && total_budget_used !== undefined
 			? `$${ formatCents( total_budget - total_budget_used, 2 ) }`
 			: '';
 	const overallSpendingFormatted = activeDays
@@ -468,7 +471,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 7,
+			condition: activeDays > 7,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_7_DAYS ),
@@ -478,7 +481,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 14,
+			condition: activeDays > 14,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_14_DAYS ),
@@ -488,7 +491,7 @@ export default function CampaignItemDetails( props: Props ) {
 			],
 		},
 		{
-			condition: activeDays >= 30,
+			condition: activeDays > 30,
 			controls: [
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_30_DAYS ),
@@ -508,7 +511,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	// The controls that are always shown
 	chartControls.push( {
-		onClick: () => setSelectedDateRange( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
+		onClick: () => updateChartParams( ChartSourceDateRanges.WHOLE_CAMPAIGN ),
 		title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.WHOLE_CAMPAIGN ],
 		isDisabled: selectedDateRange === ChartSourceDateRanges.WHOLE_CAMPAIGN,
 	} );
@@ -876,7 +879,7 @@ export default function CampaignItemDetails( props: Props ) {
 														label={ chartSource }
 													/>
 													{ getCampaignStatsChart(
-														campaignStats?.series[ chartSource ] ?? [],
+														campaignStats?.series[ chartSource ] ?? null,
 														chartSource,
 														campaignsStatsIsLoading
 													) }
@@ -956,13 +959,15 @@ export default function CampaignItemDetails( props: Props ) {
 													<span className="campaign-item-details__text wp-brand-font">
 														{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
 													</span>
-													<span className="campaign-item-details__details">
-														{ ! isLoading ? (
-															`${ budgetRemainingFormatted } remaining`
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</span>
+													{ budgetRemainingFormatted !== '' && (
+														<span className="campaign-item-details__details">
+															{ ! isLoading ? (
+																`${ budgetRemainingFormatted } remaining`
+															) : (
+																<FlexibleSkeleton />
+															) }
+														</span>
+													) }
 												</div>
 											) }
 										</>
@@ -993,17 +998,19 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-									<div>
-										<div className="campaign-item-page__graph">
-											{ getCampaignStatsChart(
-												campaignStats?.series.spend ?? [],
-												ChartSourceOptions.Spend,
-												campaignsStatsIsLoading
-											) }
+								{ campaign?.campaign_stats?.impressions_total > 0 && (
+									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+										<div>
+											<div className="campaign-item-page__graph">
+												{ getCampaignStatsChart(
+													campaignStats?.series.spend ?? [],
+													ChartSourceOptions.Spend,
+													campaignsStatsIsLoading
+												) }
+											</div>
 										</div>
 									</div>
-								</div>
+								) }
 							</div>
 						</div>
 

@@ -39,7 +39,7 @@ export const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 	const billingTerm = upsellSlug?.displayTerm || upsellSlug?.term || 'TERM_MONTHLY';
 	return (
 		<span className={ priceClass }>
-			<PlanPrice displayFlatPrice rawPrice={ originalPrice } currencyCode={ currencyCode } />
+			<PlanPrice displayFlatPrice rawPrice={ originalPrice } currencyCode={ currencyCode } />{ ' ' }
 			<TimeFrame billingTerm={ billingTerm } />
 		</span>
 	);

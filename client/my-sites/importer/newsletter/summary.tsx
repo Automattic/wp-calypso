@@ -9,6 +9,8 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
@@ -55,6 +57,8 @@ export default function Summary( {
 	const { __ } = useI18n();
 	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = useReducedMotion();
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
+	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 
 	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 	const paidSubscribersCount = parseInt(
@@ -69,7 +73,7 @@ export default function Summary( {
 	}, [ showConfetti, shouldShownConfetti ] );
 
 	// Combined status of subscriber & content importer
-	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+	const importerStatus = getImporterStatus( steps?.content?.status, steps.subscribers.status );
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' || importerStatus === 'initial' ) {
@@ -79,7 +83,7 @@ export default function Summary( {
 				<div className="summary__content">
 					<p>
 						<strong>
-							{ getSummaryDescription( steps.content.status, steps.subscribers.status ) }
+							{ getSummaryDescription( steps?.content?.status, steps.subscribers.status ) }
 						</strong>
 						<br />
 					</p>
@@ -102,7 +106,7 @@ export default function Summary( {
 			<Card>
 				<h2>{ __( 'Summary' ) }</h2>
 				<div className="summary__content summary__content-skipped">
-					{ steps.content.content && (
+					{ steps?.content?.content && (
 						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
 					) }
 					{ steps.subscribers.content && (
@@ -114,7 +118,10 @@ export default function Summary( {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `/import/newsletter/substack/${ selectedSite.slug }/content?from=${ fromSite }` }
+						href={ `/import/newsletter/substack/${ selectedSite.slug }/${
+							// Content step is disabled for Jetpack sites, thus first step would be subscribers
+							steps?.content ? 'content' : 'subscribers'
+						}?from=${ fromSite }` }
 						onClick={ resetImporter }
 						primary
 					>
@@ -140,7 +147,7 @@ export default function Summary( {
 					) }
 				</p>
 				<div className="summary__content">
-					{ steps.content.content && (
+					{ steps?.content?.content && (
 						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
 					) }
 					{ steps.subscribers.content && (
@@ -179,22 +186,41 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						href={ '/settings/newsletter/' + selectedSite.slug }
-						onClick={ resetImporter }
-						primary
-					>
-						{ __( 'Customize your newsletter' ) }
-					</ImporterActionButton>
-					<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ resetImporter }>
-						{ __( 'View content' ) }
-					</ImporterActionButton>
-					<ImporterActionButton
-						href={ '/subscribers/' + selectedSite.slug }
-						onClick={ resetImporter }
-					>
-						{ __( 'Check subscribers' ) }
-					</ImporterActionButton>
+					{ isJetpack ? (
+						<ImporterActionButton
+							href={ `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter` }
+							primary
+						>
+							{ __( 'Customize your newsletter' ) }
+						</ImporterActionButton>
+					) : (
+						<ImporterActionButton
+							href={ `/settings/newsletter/${ selectedSite.slug }` }
+							onClick={ resetImporter }
+							primary
+						>
+							{ __( 'Customize your newsletter' ) }
+						</ImporterActionButton>
+					) }
+					{ steps?.content && (
+						<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ resetImporter }>
+							{ __( 'View content' ) }
+						</ImporterActionButton>
+					) }
+					{ isJetpack ? (
+						<ImporterActionButton
+							href={ `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }` }
+						>
+							{ __( 'Check subscribers' ) }
+						</ImporterActionButton>
+					) : (
+						<ImporterActionButton
+							href={ `/subscribers/${ selectedSite.slug }` }
+							onClick={ resetImporter }
+						>
+							{ __( 'Check subscribers' ) }
+						</ImporterActionButton>
+					) }
 				</ImporterActionButtonContainer>
 			</Card>
 		);

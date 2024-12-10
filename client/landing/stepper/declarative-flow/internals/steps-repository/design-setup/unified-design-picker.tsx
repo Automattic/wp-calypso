@@ -17,10 +17,10 @@ import {
 } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	useCategorizationFromApi,
+	useCategorization,
+	useDesignPickerFilters,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
-	isAssemblerSupported,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -45,10 +45,12 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -68,6 +70,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
+import { useIsGoalsHoldout } from '../../../../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -86,6 +89,7 @@ import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useRecipe from './hooks/use-recipe';
+import useTrackFilters from './hooks/use-track-filters';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
@@ -112,9 +116,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
 
-	const [ isAddedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
-		'calypso_onboarding_goals_step_added_goals'
-	);
+	const isGoalsHoldout = useIsGoalsHoldout( stepName );
+
+	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
+
+	const { isEligible } = useIsBigSkyEligible();
+	const isBigSkyEligible = isEligible && isGoalCentricFeature;
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -137,8 +144,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
-
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
@@ -224,15 +229,32 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}, [ hasTrackedView, designs ] );
 
-	const categorizationOptions = getCategorizationOptions(
-		intent,
-		goals,
-		addedGoalsExpAssignment?.variationName === 'treatment'
-	);
-	const categorization = useCategorizationFromApi(
-		allDesigns?.filters?.subject || EMPTY_OBJECT,
-		categorizationOptions
-	);
+	const categorizationOptions = getCategorizationOptions( goals, {
+		isMultiSelection: isGoalCentricFeature,
+	} );
+
+	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
+		preselectedFilters: categorizationOptions.defaultSelections,
+		isBigSkyEligible,
+		isMultiSelection: isGoalCentricFeature,
+	} );
+
+	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
+		...categorizationOptions,
+		isMultiSelection: isGoalCentricFeature,
+		handleSelect: handleSelectFilter,
+		handleDeselect: handleDeselectFilter,
+	} );
+
+	const designPickerFilters = useDesignPickerFilters();
+
+	const handleChangeTier = ( value: boolean ) => {
+		if ( value ) {
+			handleSelectFilter( 'free', 'included_with_plan' );
+		} else {
+			handleDeselectFilter( 'free', 'included_with_plan' );
+		}
+	};
 
 	// ********** Logic for selecting a design and style variation
 	const {
@@ -294,7 +316,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design,
 			} ),
-			category: categorization.selection,
+			category: categorization.selections?.join( ',' ),
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -326,7 +348,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
-			category: categorization?.selection,
+			category: categorization?.selections?.join( ',' ),
 		} );
 	}
 
@@ -670,7 +692,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit(
 				{
 					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selection,
+					selectedSiteCategory: categorization.selections?.join( ',' ),
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
@@ -680,40 +702,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function pickUnlistedDesign( theme: string ) {
 		// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
 		exitFlow?.( `/theme/${ theme }/${ siteSlug }` );
-	}
-
-	function designYourOwn( design: Design ) {
-		const shouldGoToAssembler = isAssemblerSupported();
-		if ( shouldGoToAssembler ) {
-			const _selectedDesign = {
-				...design,
-				design_type: 'assembler',
-			} as Design;
-
-			recordPreviewedDesign( {
-				flow,
-				intent,
-				design: _selectedDesign,
-			} );
-
-			setSelectedDesign( _selectedDesign );
-
-			handleSubmit( {
-				selectedDesign: _selectedDesign,
-				selectedSiteCategory: categorization.selection,
-				shouldGoToAssembler,
-			} );
-		} else {
-			pickDesign( design );
-		}
-	}
-
-	function clickDesignYourOwnTopButton( design: Design ) {
-		recordTracksEvent(
-			'calypso_signup_design_picker_design_your_own_top_button_click',
-			getDesignEventProps( { flow, intent, design } )
-		);
-		designYourOwn( design );
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
@@ -751,6 +739,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			return;
 		}
 
+		designPickerFilters.resetFilters();
 		goBack?.();
 	}
 
@@ -802,7 +791,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingDesigns || isAddedGoalsExpLoading ) {
+	if ( ! site || isLoadingDesigns ) {
 		return <StepperLoader />;
 	}
 
@@ -934,15 +923,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	if ( isDesignFirstFlow ) {
 		categorization.categories = [];
-		categorization.selection = 'blog';
+		categorization.selections = [ 'blog' ];
 	}
 
 	const stepContent = (
 		<UnifiedDesignPicker
 			designs={ designs }
 			locale={ locale }
-			onDesignYourOwn={ designYourOwn }
-			onClickDesignYourOwnTopButton={ clickDesignYourOwnTopButton }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
@@ -952,10 +939,36 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
 			oldHighResImageLoading={ oldHighResImageLoading }
-			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 			showActiveThemeBadge={ intent !== 'build' }
+			isTierFilterEnabled={ isGoalCentricFeature }
+			isMultiFilterEnabled={ isGoalCentricFeature }
+			onChangeTier={ handleChangeTier }
 		/>
+	);
+
+	const bigSkyButtons = (
+		<>
+			{ isBigSkyEligible && (
+				<Button
+					onClick={ () => {
+						navigate(
+							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
+						);
+						recordTracksEvent(
+							'calypso_design_picker_big_sky_button_click',
+							commonFilterProperties
+						);
+					} }
+				>
+					{ translate( 'Create yours with AI' ) }
+				</Button>
+			) }
+			<TrackComponentView
+				eventName="calypso_design_picker_big_sky_button_impression"
+				eventProperties={ commonFilterProperties }
+			/>
+		</>
 	);
 
 	return (
@@ -966,6 +979,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			hideFormattedHeader
 			hideSkip
 			backLabelText={ translate( 'Back' ) }
+			customizedActionButtons={ bigSkyButtons }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }

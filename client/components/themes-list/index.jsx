@@ -1,11 +1,6 @@
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import {
-	PatternAssemblerCta,
-	usePatternAssemblerCtaData,
-	isAssemblerSupported,
-} from '@automattic/design-picker';
-import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
+import { Icon, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -13,11 +8,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnECommerceTrial, isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors';
@@ -37,7 +30,6 @@ import {
 	StartNewDesignWarningModal,
 	StartOverWarningModal,
 } from '../woo-design-with-ai-warning-modals';
-import getSiteAssemblerUrl from './get-site-assembler-url';
 import useWooActiveThemeQuery from './use-woo-active-theme-query';
 
 import './style.scss';
@@ -81,7 +73,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 	const updateShowSecondUpsellNudge = useCallback( () => {
 		const minColumnWidth = 320; // $theme-item-min-width: 320px;
 		const margin = 32; // $theme-item-horizontal-margin: 32px;
@@ -99,40 +90,12 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	}, [ updateShowSecondUpsellNudge ] );
 
 	const selectedSite = useSelector( getSelectedSite );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const siteEditorUrl = useSelector( ( state ) =>
-		getSiteEditorUrl( state, selectedSite?.ID, {
-			canvas: 'edit',
-			assembler: '1',
-		} )
-	);
-
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
 		},
 		[ props.fetchNextPage ]
 	);
-
-	const goToSiteAssemblerFlow = () => {
-		const shouldGoToAssemblerStep = isAssemblerSupported();
-		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
-			goes_to_assembler_step: shouldGoToAssemblerStep,
-			is_logged_in: isLoggedIn,
-		} );
-
-		if ( props.onDesignYourOwnClick ) {
-			props.onDesignYourOwnClick();
-		} else {
-			const destinationUrl = getSiteAssemblerUrl( {
-				isLoggedIn,
-				selectedSite,
-				shouldGoToAssemblerStep,
-				siteEditorUrl,
-			} );
-			window.location.assign( destinationUrl );
-		}
-	};
 
 	const [ openWarningModal, setOpenWarningModal ] = useState( false );
 	const { data: activeTheme } = useWooActiveThemeQuery(
@@ -187,7 +150,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
-				isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			/>
 		);
 	}
@@ -227,12 +189,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
-			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ ! props.isWooCYSEligibleSite &&
-				! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
-				tabFilter !== 'my-themes' &&
-				_themes.length > 0 &&
-				isSiteAssemblerEnabled && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ /* The Woo Design with AI banner will be displayed on the 2nd or last row.The behavior is controlled by CSS */ }
 			{ props.isWooCYSEligibleSite && _themes.length > 0 && (
 				<WooDesignWithAIBanner
@@ -347,14 +303,7 @@ export function ThemeBlock( props ) {
 	);
 }
 
-function Options( {
-	isFSEActive,
-	recordTracksEvent,
-	searchTerm,
-	translate,
-	upsellCardDisplayed,
-	isSiteAssemblerEnabled,
-} ) {
+function Options( { recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -362,16 +311,9 @@ function Options( {
 	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
 	const sitePlan = selectedSite?.plan?.product_slug;
-	const siteEditorUrl = useSelector( ( state ) =>
-		getSiteEditorUrl( state, selectedSite?.ID, {
-			canvas: 'edit',
-			assembler: '1',
-		} )
-	);
 	const siteThemeInstallUrl = useSelector( ( state ) =>
 		getSiteThemeInstallUrl( state, selectedSite?.ID )
 	);
-	const assemblerCtaData = usePatternAssemblerCtaData();
 	const options = [];
 
 	useEffect( () => {
@@ -380,32 +322,6 @@ function Options( {
 			upsellCardDisplayed( false );
 		};
 	}, [ upsellCardDisplayed ] );
-
-	// Design your own theme / homepage.
-	if ( ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) && isSiteAssemblerEnabled ) {
-		options.push( {
-			title: assemblerCtaData.title,
-			icon: addTemplate,
-			description: assemblerCtaData.subtitle,
-			onClick: () =>
-				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
-					site_plan: sitePlan,
-					search_term: searchTerm,
-					destination: assemblerCtaData.shouldGoToAssemblerStep ? 'assembler' : 'site-editor',
-				} ),
-			url: getSiteAssemblerUrl( {
-				isLoggedIn,
-				selectedSite,
-				shouldGoToAssemblerStep: assemblerCtaData.shouldGoToAssemblerStep,
-				siteEditorUrl,
-			} ),
-			buttonText: assemblerCtaData.buttonText,
-		} );
-	} else {
-		// This should also start the Pattern Assembler, which is currently in development for
-		// the logged-out showcase on mobile viewport. Since there isn't any proper fallback for the meantime, we
-		// just don't include this option.
-	}
 
 	// Do it for me.
 	options.push( {
@@ -519,12 +435,10 @@ function Empty( props ) {
 				{ props.translate( 'No themes match your search' ) }
 			</div>
 			<Options
-				isFSEActive={ props.isFSEActive }
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
-				isSiteAssemblerEnabled={ props.isSiteAssemblerEnabled }
 			/>
 		</>
 	);

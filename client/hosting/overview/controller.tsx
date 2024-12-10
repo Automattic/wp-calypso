@@ -3,11 +3,17 @@ import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
 import Hosting from 'calypso/hosting/server-settings/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingOverview from 'calypso/sites/overview/components/hosting-overview';
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function hostingOverview( context: PageJSContext, next: () => void ) {
-	context.primary = <HostingOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker path="/overview/:site" title="Site Overview" />
+			<HostingOverview />
+		</>
+	);
 	next();
 }
 

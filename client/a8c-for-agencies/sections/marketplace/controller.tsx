@@ -13,6 +13,7 @@ import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
+import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import PressableOverview from './pressable-overview';
@@ -62,11 +63,17 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 
 	const section = getValidHostingSection( context.params.section );
 
+	const isV3Enabled = isEnabled( 'a4a-hosting-page-redesign-v3' );
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
+			{ isV3Enabled ? (
+				<HostingOverviewV3 />
+			) : (
+				<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
+			) }
 		</>
 	);
 	next();

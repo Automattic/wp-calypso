@@ -6,16 +6,20 @@ function mapResult( response: UrlPerformanceInsightsQueryResponse ) {
 	return response.pagespeed;
 }
 
-export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) => {
+export const useUrlPerformanceInsightsQuery = (
+	url?: string,
+	hash?: string,
+	locale?: string | null
+) => {
 	return useQuery( {
-		queryKey: [ 'url', 'performance', url, hash ],
+		queryKey: [ 'url', 'performance', url, hash, locale ],
 		queryFn: () =>
 			wp.req.get(
 				{
 					path: '/site-profiler/metrics/advanced/insights',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url, hash }
+				{ url, hash, locale }
 			),
 		meta: {
 			persist: false,
