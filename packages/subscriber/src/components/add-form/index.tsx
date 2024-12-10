@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
-import { Subscriber } from '@automattic/data-stores';
+import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button, ComboboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -18,6 +18,7 @@ import {
 	useEffect,
 	useRef,
 	useCallback,
+	useMemo,
 } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
@@ -50,6 +51,7 @@ interface Props {
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
+	onCategorySelect?: ( email: string, category: string ) => void;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -81,6 +83,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		hidden = false,
 		isWPCOMSite = false,
 		disabled,
+		onCategorySelect,
 	} = props;
 
 	const {
@@ -109,6 +112,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
+	const [ emailCategories, setEmailCategories ] = useState< Record< string, string > >( {} );
 
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
@@ -431,6 +435,21 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
+	const { data: newsletterCategoriesData } = useNewsletterCategories( {
+		siteId,
+	} );
+
+	const categoryOptions = useMemo(
+		() =>
+			newsletterCategoriesData?.newsletterCategories?.map(
+				( category: { id: number; name: string } ) => ( {
+					label: category.name,
+					value: category.id.toString(),
+				} )
+			) ?? [],
+		[ newsletterCategoriesData ]
+	);
+
 	if ( hidden ) {
 		return null;
 	}
@@ -455,6 +474,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				<form onSubmit={ onFormSubmit } autoComplete="off">
 					{ emailFormControls.map( ( placeholder, i ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
+						const currentEmail = emails[ i ] || '';
 
 						return (
 							<div key={ i }>
@@ -463,15 +483,34 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 										<strong>{ __( 'Emails' ) }</strong>
 									</label>
 								) }
-								<TextControl
-									className={ showError ? 'is-error' : '' }
-									disabled={ inProgress || disabled }
-									placeholder={ placeholder }
-									value={ emails[ i ] || '' }
-									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
-									onChange={ ( value: string ) => onEmailChange( value, i ) }
-									onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
-								/>
+								<div className="add-subscriber__form-row">
+									<TextControl
+										className={ showError ? 'is-error' : '' }
+										disabled={ inProgress || disabled }
+										placeholder={ placeholder }
+										value={ currentEmail }
+										help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
+										onChange={ ( value: string ) => onEmailChange( value, i ) }
+										onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
+									/>
+
+									{ currentEmail && isValidEmails[ i ] && (
+										<ComboboxControl
+											className="add-subscriber__category-select"
+											value={ emailCategories[ currentEmail ] || '' }
+											onChange={ ( value ) => {
+												setEmailCategories( ( prev ) => ( {
+													...prev,
+													[ currentEmail ]: value || '',
+												} ) );
+												onCategorySelect?.( currentEmail, value || '' );
+											} }
+											options={ categoryOptions }
+											allowReset
+											placeholder={ __( 'Select or create category' ) }
+										/>
+									) }
+								</div>
 
 								{ showError && (
 									<FormInputValidation
