@@ -432,16 +432,6 @@
 				column-gap: 24px;
 			}
 		}
-
-		@include break-xlarge {
-			.pattern-assembler-cta-wrapper {
-				flex-direction: row-reverse;
-
-				.pattern-assembler-cta__content {
-					align-items: flex-start;
-				}
-			}
-		}
 	}
 
 	.unified-design-picker__title {

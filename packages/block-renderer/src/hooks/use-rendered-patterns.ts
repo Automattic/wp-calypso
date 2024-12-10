@@ -1,10 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPattern, RenderedPatterns, SiteInfo } from '../types';
-
-const CACHE_TIME = isEnabled( 'pattern-assembler/v2' ) ? 0 : 1000 * 60 * 5; // 5 minutes
 
 const fetchRenderedPatterns = (
 	siteId: number | string,
@@ -49,7 +46,7 @@ const useRenderedPatterns = (
 		queryKey: [ 'rendered-patterns', siteId, locale, stylesheet, category, patternIds, siteInfo ],
 		queryFn: () =>
 			fetchRenderedPatterns( siteId, locale, stylesheet, category, patternIds, siteInfo ),
-		staleTime: CACHE_TIME,
+		staleTime: 0,
 		refetchOnWindowFocus: false,
 	} ) );
 

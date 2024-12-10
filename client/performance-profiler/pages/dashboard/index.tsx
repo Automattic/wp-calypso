@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
-import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -16,6 +15,8 @@ import {
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import { LoadingScreen } from '../loading-screen';
+
+import './style.scss';
 
 type PerformanceProfilerDashboardProps = {
 	url: string;
@@ -33,10 +34,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		data: basicMetrics,
 		isError: isBasicMetricsError,
 		isFetched,
-	} = useUrlBasicMetricsQuery( url, hash, true );
+	} = useUrlBasicMetricsQuery( url, hash, true, translate.localeSlug );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights, isError: isPerformanceInsightsError } =
-		useUrlPerformanceInsightsQuery( url, hash );
+		useUrlPerformanceInsightsQuery( url, hash, translate.localeSlug );
 	const isError =
 		isBasicMetricsError ||
 		isPerformanceInsightsError ||

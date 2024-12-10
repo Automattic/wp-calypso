@@ -1,6 +1,6 @@
 .blogging-prompt {
 	/* Blogging Prompt Card ------------------------ */
-	.card.blogging-prompt__card {
+	.card:not(.customer-home__card).blogging-prompt__card {
 		padding: 24px;
 	}
 	/* Blogging Prompt Header ------------------------ */
