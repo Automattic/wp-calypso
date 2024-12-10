@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import FlowCard from '../components/flow-card';
+import { DIYOption } from './diy-option';
 import type { StepProps } from '../../types';
 import './style.scss';
 
@@ -27,7 +28,7 @@ interface Props extends StepProps {
 const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
 
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
-	const { navigation, headerText } = props;
+	const { navigation, headerText, stepName, subHeaderText } = props;
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();
@@ -56,6 +57,8 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		[ translate ]
 	);
 
+	// Extract the display of items to a separate component if we keep this version post-experiment,
+	// as this format is also used on the site identification page and further into the DIFM flow.
 	const experimentalOptions = useMemo(
 		() => [
 			{
@@ -202,6 +205,35 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		);
 	}
 
+	let stepContainerProps = {
+		stepName: stepName ?? 'site-migration-how-to-migrate',
+		className: 'how-to-migrate',
+		shouldHideNavButtons: false,
+		hideSkip: true,
+		formattedHeader: (
+			<FormattedHeader
+				id="how-to-migrate-header"
+				headerText={
+					headerText ?? isMigrationExperimentEnabled
+						? translate( 'Let us migrate your site' )
+						: translate( 'How do you want to migrate?' )
+				}
+				subHeaderText={ subHeaderText || renderSubHeaderText() }
+				align="center"
+			/>
+		),
+		stepContent: renderStepContent(),
+		recordTracksEvent: recordTracksEvent,
+		goBack: goBack,
+	};
+
+	if ( isMigrationExperimentEnabled ) {
+		stepContainerProps = {
+			...stepContainerProps,
+			customizedActionButtons: <DIYOption onClick={ handleClick } />,
+		};
+	}
+
 	return (
 		<>
 			<DocumentHead
@@ -211,27 +243,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 						: translate( 'How do you want to migrate?' )
 				}
 			/>
-			<StepContainer
-				stepName={ props.stepName ?? 'site-migration-how-to-migrate' }
-				className="how-to-migrate"
-				shouldHideNavButtons={ false }
-				hideSkip
-				formattedHeader={
-					<FormattedHeader
-						id="how-to-migrate-header"
-						headerText={
-							headerText ?? isMigrationExperimentEnabled
-								? translate( 'Let us migrate your site' )
-								: translate( 'How do you want to migrate?' )
-						}
-						subHeaderText={ props.subHeaderText || renderSubHeaderText() }
-						align="center"
-					/>
-				}
-				stepContent={ renderStepContent() }
-				recordTracksEvent={ recordTracksEvent }
-				goBack={ goBack }
-			/>
+			<StepContainer { ...stepContainerProps } />
 		</>
 	);
 };
