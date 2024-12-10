@@ -25,6 +25,7 @@ const CelebrateNotice = ( {
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
+	const showActions = showAction || showSkip;
 	const showNextTask = () => {
 		setIsLoading( true );
 		skipCurrentView();
@@ -64,23 +65,25 @@ const CelebrateNotice = ( {
 			<div className="celebrate-notice__text task__text">
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>
 				<p className="celebrate-notice__description task__description">{ description }</p>
-				<div className="celebrate-notice__actions task__actions">
-					{ showAction && (
-						<Button
-							className="celebrate-notice__action task__action"
-							primary
-							onClick={ showNextTask }
-						>
-							{ actionText }
-						</Button>
-					) }
+				{ showActions && (
+					<div className="celebrate-notice__actions task__actions">
+						{ showAction && (
+							<Button
+								className="celebrate-notice__action task__action"
+								primary
+								onClick={ showNextTask }
+							>
+								{ actionText }
+							</Button>
+						) }
 
-					{ showSkip && (
-						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
-							{ skipText }
-						</Button>
-					) }
-				</div>
+						{ showSkip && (
+							<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
+								{ skipText }
+							</Button>
+						) }
+					</div>
+				) }
 			</div>
 			{ isDesktop() && (
 				<div className="celebrate-notice__illustration task__illustration">

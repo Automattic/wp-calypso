@@ -30,6 +30,10 @@
 		flex-direction: column;
 		margin-top: 16px;
 		align-items: flex-start;
+
+		> :last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.task__illustration {
