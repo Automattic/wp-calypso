@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -7,7 +6,6 @@ import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesigns } from '../hooks/use-filtered-designs';
 import {
-	getAssemblerDesign,
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
 	isLockedStyleVariation,
@@ -16,7 +14,6 @@ import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPickerTierFilter from './design-picker-tier-filter';
 import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
-import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -194,8 +191,6 @@ const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design ) => void;
-	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -204,17 +199,15 @@ interface DesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
-	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onDesignYourOwn,
-	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -223,14 +216,13 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
-	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
 } ) => {
-	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
-	const filteredDesigns = useFilteredDesigns( designs, categorization );
+	const filteredDesigns = useFilteredDesigns( designs );
 	const categoryTypes = useMemo(
 		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -240,8 +232,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
-
-	const assemblerCtaData = usePatternAssemblerCtaData();
 
 	const translate = useTranslate();
 
@@ -271,21 +261,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
-					<DesignPickerFilterGroup>
-						<Button
-							className={ clsx( 'design-picker__design-your-own-button', {
-								'design-picker__design-your-own-button-without-categories': ! hasCategories,
-							} ) }
-							onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
-						>
-							{ assemblerCtaData.title }
-						</Button>
-					</DesignPickerFilterGroup>
-				) }
 				{ isTierFilterEnabled && (
 					<DesignPickerFilterGroup>
-						<DesignPickerTierFilter />
+						<DesignPickerTierFilter onChange={ onChangeTier } />
 					</DesignPickerFilterGroup>
 				) }
 			</div>
@@ -309,9 +287,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					);
 				} ) }
 				{ filteredDesigns.length === 0 && <NoResults /> }
-				{ isSiteAssemblerEnabled && (
-					<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
-				) }
 			</div>
 		</div>
 	);
@@ -319,8 +294,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design ) => void;
-	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -331,17 +304,15 @@ export interface UnifiedDesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
-	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onDesignYourOwn,
-	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -352,11 +323,11 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
-	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -380,8 +351,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onDesignYourOwn={ onDesignYourOwn }
-					onClickDesignYourOwnTopButton={ onClickDesignYourOwnTopButton }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }
@@ -390,11 +359,11 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
 					oldHighResImageLoading={ oldHighResImageLoading }
-					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
+					onChangeTier={ onChangeTier }
 				/>
 				{ bottomAnchorContent }
 			</div>

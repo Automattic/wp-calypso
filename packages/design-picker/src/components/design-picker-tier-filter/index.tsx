@@ -1,24 +1,22 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSearchParams } from 'react-router-dom';
+import { useDesignPickerFilters } from '../../hooks/use-design-picker-filters';
 import './style.scss';
 
-const DesignPickerTierFilter = () => {
-	const translate = useTranslate();
-	const [ searchParams, setSearchParams ] = useSearchParams();
+interface Props {
+	onChange?: ( value: boolean ) => void;
+}
 
-	const isFreeOnly = searchParams.get( 'tier' ) === 'free';
+const DesignPickerTierFilter = ( { onChange }: Props ) => {
+	const translate = useTranslate();
+
+	const { selectedDesignTier, setSelectedDesignTier } = useDesignPickerFilters();
+
+	const isFreeOnly = selectedDesignTier === 'free';
 
 	const handleChange = ( value: boolean ) => {
-		setSearchParams( ( currentSearchParams: any ) => {
-			if ( value ) {
-				currentSearchParams.set( 'tier', 'free' );
-			} else {
-				currentSearchParams.delete( 'tier' );
-			}
-
-			return currentSearchParams;
-		} );
+		setSelectedDesignTier( value ? 'free' : '' );
+		onChange?.( value );
 	};
 
 	return (

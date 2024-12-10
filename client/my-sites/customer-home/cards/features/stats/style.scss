@@ -2,8 +2,6 @@
 
 .stats .customer-home__card.stats__with-chart {
 	box-shadow: none;
-	border-bottom: none;
-	margin-bottom: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		padding: 16px 24px 0;

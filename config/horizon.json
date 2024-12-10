@@ -104,7 +104,6 @@
 		"network-connection": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
-		"pattern-assembler/v2": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

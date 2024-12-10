@@ -1,8 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, SearchableDropdown } from '@automattic/components';
 import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import validateEmail from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/email';
@@ -42,6 +45,10 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const agency = useSelector( getActiveAgency );
 
+	const { showFeedback, isFeedbackShown, feedbackProps } =
+		useShowFeedback( 'agency-details-added' );
+	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
+
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
 			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
@@ -52,9 +59,15 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					duration: 6000,
 				} )
 			);
-			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+			isProductFeedbackEnabled && ! isFeedbackShown
+				? window.history.replaceState(
+						null,
+						'',
+						window.location.pathname + window.location.search + '#feedback'
+				  )
+				: page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ agency, translate ]
+		[ agency, isProductFeedbackEnabled, isFeedbackShown, translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -104,6 +117,10 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			};
 		} );
 	};
+
+	if ( isProductFeedbackEnabled && showFeedback ) {
+		return <A4AFeedback { ...feedbackProps } />;
+	}
 
 	return (
 		<Form

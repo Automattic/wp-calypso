@@ -174,7 +174,6 @@
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,
-		"pattern-assembler/v2": true,
 		"performance-profiler/llm": true,
 		"performance-profiler/logged-in": true,
 		"plans/hosting-trial": true,
