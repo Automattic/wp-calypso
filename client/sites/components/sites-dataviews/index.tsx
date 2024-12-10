@@ -1,7 +1,7 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,7 +13,7 @@ import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import type { Filter, View } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 import './dataview-style.scss';
@@ -176,26 +176,29 @@ const DotcomSitesDataViews = ( {
 		viewType: dataViewsState.type,
 	} );
 
-	const getTracksEventDataForFilter = ( fieldId: string, value: any ): TracksEventData | null => {
-		if ( value === undefined ) {
-			return null;
-		}
-
-		switch ( fieldId ) {
-			case 'status': {
-				const statusGroup = siteStatusGroups.find( ( group ) => group.value === value );
-				return [ 'calypso_sites_dashboard_filter_status', statusGroup?.slug ?? '' ];
+	const getTracksEventDataForFilter = useCallback(
+		( fieldId: string, value: any ): TracksEventData | null => {
+			if ( value === undefined ) {
+				return null;
 			}
 
-			default:
-				return null;
-		}
-	};
+			switch ( fieldId ) {
+				case 'status': {
+					const statusGroup = siteStatusGroups.find( ( group ) => group.value === value );
+					return [ 'calypso_sites_dashboard_filter_status', statusGroup?.slug ?? '' ];
+				}
+
+				default:
+					return null;
+			}
+		},
+		[ siteStatusGroups ]
+	);
 
 	const previousViewFilters = useRef< Record< string, string > >( {} );
 
-	const submitTracksEventForFilters = ( filters: Filter[] ) => {
-		const filterTracksEvents = filters
+	useEffect( () => {
+		const filterTracksEvents = ( dataViewsState.filters ?? [] )
 			.map( ( filter ) => getTracksEventDataForFilter( filter.field, filter.value ) )
 			.filter( ( filter ): filter is TracksEventData => filter !== null );
 
@@ -208,17 +211,14 @@ const DotcomSitesDataViews = ( {
 		} );
 
 		previousViewFilters.current = Object.fromEntries( filterTracksEvents );
-	};
+	}, [ dataViewsState.filters, getTracksEventDataForFilter ] );
 
 	return (
 		<div className="sites-dataviews">
 			<DataViews
 				data={ sites }
 				fields={ fields }
-				onChangeView={ ( newView ) => {
-					submitTracksEventForFilters( newView.filters ?? [] );
-					setDataViewsState( () => newView );
-				} }
+				onChangeView={ ( newView ) => setDataViewsState( () => newView ) }
 				view={ dataViewsState }
 				actions={ actions }
 				search
