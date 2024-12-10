@@ -14,6 +14,7 @@ import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-ver
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -143,6 +144,7 @@ export const SitePerformance = () => {
 	const { getSiteSetting } = useSiteSettings( site?.slug );
 	const blog_public = getSiteSetting( 'blog_public' );
 	const isSitePublic = site && blog_public === 1;
+	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -371,6 +373,10 @@ export const SitePerformance = () => {
 						},
 					}
 			  );
+
+	if ( ! isSiteAtomic ) {
+		return null;
+	}
 
 	return (
 		<div className="site-performance">
