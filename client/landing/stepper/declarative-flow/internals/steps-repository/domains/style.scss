@@ -602,9 +602,12 @@
 		.domain-search-results__domain-available-notice {
 			background: transparent;
 
-			/* hide transfer link */
-			a {
-				display: none;
+			span {
+				color: var(--studio-gray-60);
+			}
+
+			svg {
+				fill: var(--studio-gray-60);
 			}
 		}
 
