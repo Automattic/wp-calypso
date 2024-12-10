@@ -36,9 +36,9 @@
 		"@automattic/calypso-e2e": "workspace:^",
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@playwright/browser-chromium": "1.41.2",
-		"@playwright/browser-firefox": "1.41.2",
-		"@playwright/browser-webkit": "1.41.2",
+		"@playwright/browser-chromium": "1.49.1",
+		"@playwright/browser-firefox": "1.49.1",
+		"@playwright/browser-webkit": "1.49.1",
 		"@types/archiver": "^5.3.1",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",
@@ -57,7 +57,7 @@
 		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
 		"node-fetch": "^2.6.1",
-		"playwright": "1.41.2",
+		"playwright": "1.49.1",
 		"postcss": "^8.3.11"
 	}
 }
