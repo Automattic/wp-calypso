@@ -44,6 +44,8 @@ type DotcomSitesField = Field< SiteExcerptData > & {
 	id: FieldId;
 };
 
+type TracksEventData = [ name: string, value: string ];
+
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
 
@@ -187,10 +189,7 @@ const DotcomSitesDataViews = ( {
 		viewType: dataViewsState.type,
 	} );
 
-	const getTracksEventDataForFilter = (
-		fieldId: FieldId,
-		value: any
-	): [ name: string, value: string ] | null => {
+	const getTracksEventDataForFilter = ( fieldId: FieldId, value: any ): TracksEventData | null => {
 		if ( value === undefined ) {
 			return null;
 		}
@@ -222,7 +221,7 @@ const DotcomSitesDataViews = ( {
 	const submitTracksEventForFilters = ( filters: Filter[] ) => {
 		const filterTracksEvents = filters
 			.map( ( filter ) => getTracksEventDataForFilter( filter.field as FieldId, filter.value ) )
-			.filter( ( filter ) => filter !== null );
+			.filter( ( filter ): filter is TracksEventData => filter !== null );
 
 		filterTracksEvents.forEach( ( [ name, value ] ) => {
 			if ( previousViewFilters.current[ name ] !== value ) {
