@@ -582,10 +582,9 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug )
+					);
 				}
 			}
 		}
