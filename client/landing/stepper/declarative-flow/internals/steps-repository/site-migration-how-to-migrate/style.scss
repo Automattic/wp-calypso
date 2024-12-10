@@ -50,7 +50,13 @@
 	}
 }
 
-.how-to-migrate__experiment {
+.how-to-migrate__experiment-expectations {
+	padding: 0 0 60px;
+
+	@include break-large {
+		padding: 0;
+	}
+
 	.action-buttons__next {
 		display: block;
 		margin: auto;

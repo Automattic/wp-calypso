@@ -163,7 +163,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	function renderStepContent() {
 		if ( isMigrationExperimentEnabled ) {
 			return (
-				<div className="how-to-migrate__experiment">
+				<div className="how-to-migrate__experiment-expectations">
 					<NextButton onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) }>
 						{ translate( 'Get started' ) }
 					</NextButton>
