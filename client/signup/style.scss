@@ -297,7 +297,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		width: 100%;
 		height: 56px;
 
-		svg > g {
+		svg>g {
 			transform: translateX(50%);
 		}
 	}
@@ -455,6 +455,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout),
 	// Stepper's header.
 	.step-container:not(.is-horizontal-layout) {
+
 		// Stepper's header.
 		.step-container__header,
 		.step-wrapper__header {
@@ -539,6 +540,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.formatted-header__subtitle {
 				text-align: center;
 				color: #646970;
+
 				a {
 					color: var(--studio-gray-90);
 					text-decoration: underline;
@@ -684,7 +686,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				text-align: start;
 			}
 
-			.auth-form__social > p {
+			.auth-form__social>p {
 				display: none;
 			}
 
@@ -708,6 +710,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 		}
 	}
+
 	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
 	// This selector is part of an experiment which is supposed to be cleaned up
 	// https://github.com/Automattic/wp-calypso/pull/83886
@@ -803,7 +806,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
 		.social-buttons__button {
 			border: 0;
-			> svg {
+
+			>svg {
 				border: none;
 				padding: 0;
 				border-radius: 0;
