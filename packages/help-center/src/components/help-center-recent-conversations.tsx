@@ -1,15 +1,16 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import {
-	useGetSupportInteractions,
-	useGetUnreadConversations,
-} from '@automattic/odie-client/src/data';
-import { useSelect } from '@wordpress/data';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
+import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getConversationsFromSupportInteractions, getZendeskConversations } from './utils';
+import {
+	calculateUnread,
+	getConversationsFromSupportInteractions,
+	getZendeskConversations,
+} from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
@@ -39,7 +40,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 	const sectionName = GetSectionName( unreadConversationsCount );
-	const getUnreadNotifications = useGetUnreadConversations();
+	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		if (
@@ -57,12 +58,13 @@ const HelpCenterRecentConversations: React.FC = () => {
 				allConversations,
 				supportInteractions
 			);
-			const { unreadConversations, unreadMessages } = getUnreadNotifications( conversations );
+			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 			setUnreadConversationsCount( unreadConversations );
 			setUnreadMessagesCount( unreadMessages );
 			setConversations( conversations );
+			setUnreadCount( unreadConversations );
 		}
-	}, [ isChatLoaded, supportInteractionsResolved, supportInteractionsOpen ] );
+	}, [ isChatLoaded, setUnreadCount, supportInteractionsResolved, supportInteractionsOpen ] );
 
 	if ( ! conversations.length ) {
 		return null;

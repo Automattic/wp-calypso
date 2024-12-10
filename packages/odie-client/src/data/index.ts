@@ -1,7 +1,6 @@
 export { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 export { useGetSupportInteractions } from './use-get-support-interactions';
-export { useGetZendeskConversation } from './use-get-zendesk-conversation';
-export { useGetUnreadConversations } from './use-get-unread-conversations';
+export { getZendeskConversation } from './use-get-zendesk-conversation';
 export { useManageSupportInteraction } from './use-manage-support-interaction';
 export {
 	broadcastOdieMessage,
