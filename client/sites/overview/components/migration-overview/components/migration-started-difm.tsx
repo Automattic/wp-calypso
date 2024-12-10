@@ -5,12 +5,13 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 export const MigrationStartedDIFM = ( { site }: { site?: SiteDetails } ) => {
 	const translate = useTranslate();
+	const migrationSourceSiteDomain = site?.options?.migration_source_site_domain;
 	const title = translate( 'Your migration is underway' );
 	const subTitle = translate(
 		"Sit back as {{strong}}%(siteUrl)s{{/strong}} transfers to its new home. Here's what you can expect.",
 		{
 			components: { strong: <strong /> },
-			args: { siteUrl: site?.migration_source_site_domain ?? translate( 'your site' ) },
+			args: { siteUrl: migrationSourceSiteDomain ?? translate( 'your site' ) },
 		}
 	) as string;
 
