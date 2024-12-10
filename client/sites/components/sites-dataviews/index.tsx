@@ -1,10 +1,9 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -30,8 +29,6 @@ type Props = {
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
 };
-
-type TracksEventData = [ name: string, value: string ];
 
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
@@ -175,43 +172,6 @@ const DotcomSitesDataViews = ( {
 		openSitePreviewPane,
 		viewType: dataViewsState.type,
 	} );
-
-	const getTracksEventDataForFilter = useCallback(
-		( fieldId: string, value: any ): TracksEventData | null => {
-			if ( value === undefined ) {
-				return null;
-			}
-
-			switch ( fieldId ) {
-				case 'status': {
-					const statusGroup = siteStatusGroups.find( ( group ) => group.value === value );
-					return [ 'calypso_sites_dashboard_filter_status', statusGroup?.slug ?? '' ];
-				}
-
-				default:
-					return null;
-			}
-		},
-		[ siteStatusGroups ]
-	);
-
-	const previousViewFilters = useRef< Record< string, string > >( {} );
-
-	useEffect( () => {
-		const filterTracksEvents = ( dataViewsState.filters ?? [] )
-			.map( ( filter ) => getTracksEventDataForFilter( filter.field, filter.value ) )
-			.filter( ( filter ): filter is TracksEventData => filter !== null );
-
-		filterTracksEvents.forEach( ( [ name, value ] ) => {
-			if ( previousViewFilters.current[ name ] !== value ) {
-				recordTracksEvent( name, {
-					value: value,
-				} );
-			}
-		} );
-
-		previousViewFilters.current = Object.fromEntries( filterTracksEvents );
-	}, [ dataViewsState.filters, getTracksEventDataForFilter ] );
 
 	return (
 		<div className="sites-dataviews">
