@@ -30,20 +30,21 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactNode } ) => {
+interface ContentWithHeaderProps {
+	children: ReactNode;
+	className?: string;
+}
+const ContentWithHeader = ( props: ContentWithHeaderProps ) => {
 	const translate = useTranslate();
-	const isAllDomainManagementEnabled = isEnabled( 'calypso/all-domain-management' );
+	const { children, className } = props;
 
 	return (
-		<Main
-			wideLayout
-			className={ clsx( { 'context-all-domain-management': isAllDomainManagementEnabled } ) }
-		>
+		<Main wideLayout className={ className }>
 			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
 
 			<EmailHeader />
 
-			{ props.children }
+			{ children }
 		</Main>
 	);
 };
@@ -152,7 +153,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 
 		return (
-			<ContentWithHeader>
+			<ContentWithHeader
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementEnabled } ) }
+			>
 				<EmailPlan
 					domain={ selectedDomain }
 					// When users have a single domain with email, they are auto-redirected from the
