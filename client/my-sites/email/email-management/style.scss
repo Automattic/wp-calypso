@@ -475,14 +475,6 @@
 
 		.section-header__label-text {
 			display: flex;
-
-			svg {
-				fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			}
-
-			.social-icons__google {
-				margin-top: 2px;
-			}
 		}
 
 		.section-header__actions {
@@ -492,6 +484,19 @@
 			.components-button.is-link {
 				text-decoration: none;
 			}
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-header-icon {
+		display: flex;
+		margin-inline-end: 0.5rem;
+
+		svg {
+			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		.social-icons__google {
+			margin-top: 2px;
 		}
 	}
 }

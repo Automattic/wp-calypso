@@ -46,19 +46,20 @@ const MailboxListHeader = ( {
 	const translate = useTranslate();
 	const isGoogle = isGoogleEmailAccount( { accountType } );
 
+	const HeaderIcon = () => (
+		<div className="email-plan-mailboxes-list__mailbox-header-icon">
+			{ isGoogle && <GoogleIcon /> }
+			{ ! isGoogle && <Icon icon={ wordpress } /> }
+		</div>
+	);
+
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
 			<SectionHeader
 				isPlaceholder={ isPlaceholder }
 				label={
 					<>
-						{ !! showIcon && (
-							<>
-								{ isGoogle && <GoogleIcon /> }
-								{ ! isGoogle && <Icon icon={ wordpress } /> }
-								&nbsp;
-							</>
-						) }
+						{ !! showIcon && <HeaderIcon /> }
 						{ getListHeaderTextForAccountType( accountType, translate ) }
 					</>
 				}
