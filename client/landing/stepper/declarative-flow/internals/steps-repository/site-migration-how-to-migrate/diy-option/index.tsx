@@ -5,7 +5,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import './style.scss';
 
 interface Props {
-	onClick: () => void;
+	onClick: ( option: string ) => void;
 }
 
 export const DIYOption: FC< Props > = ( { onClick } ) => {
