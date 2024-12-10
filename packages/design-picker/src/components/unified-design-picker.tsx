@@ -354,7 +354,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ isMultiFilterEnabled && (
+			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
 					title={ translate( 'Best matching themes' ) }
