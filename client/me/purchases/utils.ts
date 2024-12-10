@@ -7,12 +7,16 @@ import {
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
 import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
-function isDataLoading( props ) {
+function isDataLoading( props: {
+	hasLoadedSites: boolean;
+	hasLoadedUserPurchasesFromServer: boolean;
+} ): boolean {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
-function canEditPaymentDetails( purchase ) {
+function canEditPaymentDetails( purchase: Purchase ) {
 	return (
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&
@@ -22,13 +26,9 @@ function canEditPaymentDetails( purchase ) {
 	);
 }
 
-function getChangePaymentMethodPath( siteSlug, purchase ) {
-	if ( isPaidWithCreditCard( purchase ) ) {
-		const {
-			payment: { creditCard },
-		} = purchase;
-
-		return changePaymentMethod( siteSlug, purchase.id, creditCard.id );
+function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ) {
+	if ( isPaidWithCreditCard( purchase ) && purchase.payment.creditCard ) {
+		return changePaymentMethod( siteSlug, purchase.id, purchase.payment.creditCard.id );
 	}
 
 	return addPaymentMethod( siteSlug, purchase.id );
@@ -38,7 +38,7 @@ function getAddNewPaymentMethodPath() {
 	return addNewPaymentMethod;
 }
 
-function isTemporarySitePurchase( purchase ) {
+function isTemporarySitePurchase( purchase: Purchase ) {
 	const { domain } = purchase;
 	// Currently only Jeypack, Akismet and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
 	// site(s) to work. This function may need to be updated in the future as additional products types
@@ -46,27 +46,27 @@ function isTemporarySitePurchase( purchase ) {
 	return /^siteless.(jetpack|akismet|marketplace.wp).com$/.test( domain );
 }
 
-function getTemporarySiteType( purchase ) {
+function getTemporarySiteType( purchase: Purchase ) {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) ? productType : null;
 }
 
-function isAkismetTemporarySitePurchase( purchase ) {
+function isAkismetTemporarySitePurchase( purchase: Purchase ) {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'akismet';
 }
 
-function isMarketplaceTemporarySitePurchase( purchase ) {
+function isMarketplaceTemporarySitePurchase( purchase: Purchase ) {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'saas_plugin';
 }
 
-function isJetpackTemporarySitePurchase( purchase ) {
+function isJetpackTemporarySitePurchase( purchase: Purchase ) {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'jetpack';
 }
 
-function getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId ) {
+function getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId: string | number ) {
 	return `cancel-purchase-survey-completed-${ purchaseId }`;
 }
 
