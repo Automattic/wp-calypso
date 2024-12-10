@@ -555,8 +555,9 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					const { action, authorizationUrl } = providedDependencies as {
+					const { action, authorizationUrl, from } = providedDependencies as {
 						action: string;
+						from: string;
 						authorizationUrl: string;
 					};
 
@@ -583,7 +584,10 @@ const siteMigration: Flow = {
 					}
 
 					return navigate(
-						addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug )
+						addQueryArgs(
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
 					);
 				}
 			}
