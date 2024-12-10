@@ -49,18 +49,12 @@ export const getFilteredDesignsByCategory = (
 	return filteredDesignsByCategory;
 };
 
-export const useFilteredDesignsByGroup = (
-	designs: Design[]
-): { [ key: string ]: Design[] } => {
+export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
 	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
 		if ( selectedCategories.length > 0 || selectedDesignTier ) {
-			return getFilteredDesignsByCategory(
-				designs,
-				selectedCategories,
-				selectedDesignTier
-			);
+			return getFilteredDesignsByCategory( designs, selectedCategories, selectedDesignTier );
 		}
 
 		return {
