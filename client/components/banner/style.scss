@@ -139,8 +139,9 @@
 }
 
 .banner__content {
-	align-items: center;
+	align-items: flex-start;
 	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
 	flex-wrap: wrap;
 
@@ -203,7 +204,6 @@
 }
 
 .banner__action {
-	align-self: center;
 	font-size: $font-body-extra-small;
 	margin: 12px 0 0;
 	text-align: left;
@@ -240,7 +240,7 @@
 		width: auto;
 
 		.is-dismissible & {
-			margin-top: 40px;
+			margin: 10px 0 0 0;
 		}
 
 		.is-compact & {
@@ -267,8 +267,7 @@
 .banner.is-compact .dismissible-card__close-button {
 	width: 16px;
 	height: 16px;
-	top: 50%;
-	margin-top: -8px;
+	margin-top: -10px;
 }
 
 .is-horizontal .dismissible-card__close-button,
