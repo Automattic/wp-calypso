@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useRef } from 'react';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Category } from '../types';
 
@@ -26,6 +26,7 @@ export function useCategorization(
 		handleDeselect,
 	}: UseCategorizationOptions
 ): Categorization {
+	const isInitRef = useRef( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -52,23 +53,21 @@ export function useCategorization(
 				return setSelectedCategories( [ ...selectedCategories, value ] );
 			}
 
-			// The selections should at least have one.
-			if ( selectedCategories.length > 1 ) {
-				handleDeselect?.( value );
-				return setSelectedCategories( [
-					...selectedCategories.slice( 0, index ),
-					...selectedCategories.slice( index + 1 ),
-				] );
-			}
+			handleDeselect?.( value );
+			return setSelectedCategories( [
+				...selectedCategories.slice( 0, index ),
+				...selectedCategories.slice( index + 1 ),
+			] );
 		},
 		[ selectedCategories, isMultiSelection, setSelectedCategories, handleSelect, handleDeselect ]
 	);
 
 	useEffect( () => {
-		if ( categories.length > 0 && selectedCategories.length === 0 ) {
+		if ( ! isInitRef.current && categories.length > 0 && selectedCategories.length === 0 ) {
 			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
+			isInitRef.current = true;
 		}
-	}, [ categories ] );
+	}, [ isInitRef, categories ] );
 
 	return {
 		categories,

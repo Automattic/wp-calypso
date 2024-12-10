@@ -365,6 +365,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
+			{ isMultiFilterEnabled && categorization && categorization.selections.length === 0 && (
+				<DesignCardGroup { ...designCardProps } designs={ all } />
+			) }
 			{ /* We want to show the last one on top first. */ }
 			{ Object.entries( designsByGroup )
 				.reverse()
