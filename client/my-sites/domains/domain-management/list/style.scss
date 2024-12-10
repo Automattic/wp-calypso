@@ -384,11 +384,3 @@ main.domains-overview main.domains-overview__list .a4a-layout-column__container 
 		}
 	}
 }
-
-// Similar to the sites-overview, hide the domains-overview list on the left on smaller screens.
-@media (max-width: 1280px) {
-	main.domains-overview main.domains-overview__list {
-		display: none;
-		width: unset;
-	}
-}
