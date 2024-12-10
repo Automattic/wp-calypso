@@ -172,7 +172,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 interface DesignCardGroup {
 	title?: string;
-	designs: Design;
+	designs: Design[];
 	locale: string;
 	category?: string | null;
 	isPremiumThemeAvailable?: boolean;
@@ -194,7 +194,7 @@ const DesignCardGroup = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	oldHighResImageLoading,
-	showActiveThemeBadge,
+	showActiveThemeBadge = false,
 	siteActiveTheme,
 	showNoResults,
 	onChangeVariation,
