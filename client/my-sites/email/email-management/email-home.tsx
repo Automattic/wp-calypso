@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
@@ -73,6 +72,7 @@ interface EmailManagementHomeProps {
 	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
+	context?: 'domains' | 'email' | string;
 }
 
 const domainHasEmail = ( domain: ResponseDomain ) =>
@@ -87,6 +87,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
+		context,
 	} = props;
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -98,7 +99,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
 	const hasSitesLoaded = useSelector( hasLoadedSites );
-	const isAllDomainManagementEnabled = isEnabled( 'calypso/all-domain-management' );
+	const isAllDomainManagementEnabled = context === 'domains';
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
