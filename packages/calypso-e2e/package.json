@@ -24,7 +24,10 @@
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"nock": "^13.5.4",
-		"playwright": "^1.37",
+		"playwright": "1.41.2",
+		"@playwright/browser-chromium": "1.41.2",
+		"@playwright/browser-firefox": "1.41.2",
+		"@playwright/browser-webkit": "1.41.2",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
