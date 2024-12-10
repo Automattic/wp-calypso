@@ -292,7 +292,11 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">
-						<MigrationPlanFeatureList planSlug={ planSlug } />
+						<MigrationPlanFeatureList
+							planSlug={ planSlug }
+							fullMonthlyPrice={ pricing?.[ PLAN_BUSINESS_MONTHLY ]?.originalPrice?.monthly }
+							pricing={ pricing?.[ planSlug ] }
+						/>
 					</div>
 				</div>
 			</div>
@@ -378,7 +382,11 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 								setShowFeatures={ setShowFeatures }
 							/>
 						) : (
-							<MigrationPlanFeatureList planSlug={ selectedPlan } />
+							<MigrationPlanFeatureList
+								planSlug={ selectedPlan }
+								fullMonthlyPrice={ pricing?.[ PLAN_BUSINESS_MONTHLY ]?.originalPrice?.monthly }
+								pricing={ pricing?.[ selectedPlan ] }
+							/>
 						) }
 					</div>
 				</div>

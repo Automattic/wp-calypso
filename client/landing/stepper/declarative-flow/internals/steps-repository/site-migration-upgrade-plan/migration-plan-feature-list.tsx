@@ -6,10 +6,31 @@ import {
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import type { PlanSlug } from '@automattic/calypso-products';
+import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
-export const MigrationPlanFeatureList = ( { planSlug }: { planSlug: PlanSlug } ) => {
+export const MigrationPlanFeatureList = ( {
+	planSlug,
+	fullMonthlyPrice,
+	pricing,
+}: {
+	planSlug: PlanSlug;
+	fullMonthlyPrice?: number | null;
+	pricing?: PricingMetaForGridPlan;
+} ) => {
 	const translate = useTranslate();
+	if ( ! pricing || ! fullMonthlyPrice ) {
+		return null;
+	}
+
+	const selectedPlanPricing = pricing.originalPrice?.monthly;
+
+	let percentageString = '0%';
+	if ( fullMonthlyPrice && selectedPlanPricing ) {
+		percentageString =
+			Math.floor( ( ( fullMonthlyPrice - selectedPlanPricing ) / fullMonthlyPrice ) * 100 ) + '%';
+	}
+
 	const jetpackFeatures = [
 		translate( 'In-depth site analytics dashboard' ),
 		translate( 'SEO, marketing, and analytics tools' ),
@@ -23,6 +44,25 @@ export const MigrationPlanFeatureList = ( { planSlug }: { planSlug: PlanSlug } )
 		translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 	];
 
+	const commonDiscountedFeatures = [
+		// translators: %(percentage)s is the percentage of annual savings formatted like '50%'
+		translate( '{{strong}}%(percentage)s{{/strong}} annual savings', {
+			args: {
+				percentage: percentageString,
+			},
+			components: { strong: <strong /> },
+		} ),
+		translate( '{{strong}}Free{{/strong}} domain for a year', {
+			components: { strong: <strong /> },
+		} ),
+		translate( '{{strong}}Free{{/strong}} migration service', {
+			components: { strong: <strong /> },
+		} ),
+		translate( 'Refundable within {{strong}}14 days{{/strong}}', {
+			components: { strong: <strong /> },
+		} ),
+	];
+
 	const migrationPlanFeatures: {
 		wpcomFeatures: Partial< Record< PlanSlug, ReactNode[] > >;
 		jetpackFeatures: ReactNode[];
@@ -32,18 +72,7 @@ export const MigrationPlanFeatureList = ( { planSlug }: { planSlug: PlanSlug } )
 				translate( '{{strong}}50% off{{/strong}} your first year', {
 					components: { strong: <strong /> },
 				} ),
-				translate( '{{strong}}39%{{/strong}} annual savings', {
-					components: { strong: <strong /> },
-				} ),
-				translate( '{{strong}}Free{{/strong}} domain for a year', {
-					components: { strong: <strong /> },
-				} ),
-				translate( '{{strong}}Free{{/strong}} migration service', {
-					components: { strong: <strong /> },
-				} ),
-				translate( 'Refundable within {{strong}}14 days{{/strong}}', {
-					components: { strong: <strong /> },
-				} ),
+				...commonDiscountedFeatures,
 				...businessFeatures,
 			],
 			[ PLAN_BUSINESS_MONTHLY ]: [
@@ -62,18 +91,7 @@ export const MigrationPlanFeatureList = ( { planSlug }: { planSlug: PlanSlug } )
 				translate( '{{strong}}50% off{{/strong}} your first two years', {
 					components: { strong: <strong /> },
 				} ),
-				translate( '{{strong}}52%{{/strong}} annual savings', {
-					components: { strong: <strong /> },
-				} ),
-				translate( '{{strong}}Free{{/strong}} domain for a year', {
-					components: { strong: <strong /> },
-				} ),
-				translate( '{{strong}}Free{{/strong}} migration service', {
-					components: { strong: <strong /> },
-				} ),
-				translate( 'Refundable within {{strong}}14 days{{/strong}}', {
-					components: { strong: <strong /> },
-				} ),
+				...commonDiscountedFeatures,
 				...businessFeatures,
 			],
 		},
