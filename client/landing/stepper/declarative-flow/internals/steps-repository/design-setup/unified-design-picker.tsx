@@ -23,7 +23,7 @@ import {
 	isAssemblerDesign,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -130,6 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const translate = useTranslate();
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
@@ -914,7 +915,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const heading = (
 		<FormattedHeader
 			id="step-header"
-			headerText={ translate( 'Pick a design' ) }
+			headerText={
+				hasEnTranslation( 'Pick a theme' )
+					? translate( 'Pick a theme' )
+					: translate( 'Pick a design' )
+			}
 			subHeaderText={ translate(
 				'One of these homepage options could be great to start with. You can always change later.'
 			) }

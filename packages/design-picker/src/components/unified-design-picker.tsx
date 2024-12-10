@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
-import { useFilteredDesigns } from '../hooks/use-filtered-designs';
+import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
@@ -170,6 +170,72 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
+interface DesignCardGroup {
+	title?: string;
+	designs: Design;
+	locale: string;
+	category?: string | null;
+	isPremiumThemeAvailable?: boolean;
+	shouldLimitGlobalStyles?: boolean;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
+	showActiveThemeBadge?: boolean;
+	siteActiveTheme?: string | null;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+}
+
+const DesignCardGroup = ( {
+	title,
+	designs,
+	category,
+	locale,
+	isPremiumThemeAvailable,
+	shouldLimitGlobalStyles,
+	onChangeVariation,
+	onPreview,
+	getBadge,
+	oldHighResImageLoading,
+	showActiveThemeBadge,
+	siteActiveTheme,
+}: DesignCardGroup ) => {
+	const content = (
+		<div className="design-picker__grid">
+			{ designs.map( ( design, index ) => {
+				return (
+					<DesignCard
+						key={ design.recipe?.slug ?? design.slug ?? index }
+						category={ category }
+						design={ design }
+						locale={ locale }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+						onChangeVariation={ onChangeVariation }
+						onPreview={ onPreview }
+						getBadge={ getBadge }
+						oldHighResImageLoading={ oldHighResImageLoading }
+						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+					/>
+				);
+			} ) }
+			{ designs.length === 0 && <NoResults /> }
+		</div>
+	);
+
+	if ( ! title ) {
+		return content;
+	}
+
+	return (
+		<div className="design-picker__design-card-group">
+			<div className="design-picker__design-card-title">
+				{ title } ({ designs.length })
+			</div>
+			{ content }
+		</div>
+	);
+};
+
 interface DesignPickerFilterGroupProps {
 	title?: string;
 	grow?: boolean;
@@ -222,7 +288,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 } ) => {
-	const filteredDesigns = useFilteredDesigns( designs );
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 	const categoryTypes = useMemo(
 		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -234,6 +300,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 
 	const translate = useTranslate();
+	const designCardProps = {
+		locale,
+		isPremiumThemeAvailable,
+		shouldLimitGlobalStyles,
+		onChangeVariation,
+		onPreview,
+		getBadge,
+		oldHighResImageLoading,
+		showActiveThemeBadge,
+		siteActiveTheme,
+	};
 
 	return (
 		<div>
@@ -268,26 +345,33 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			<div className="design-picker__grid">
-				{ filteredDesigns.map( ( design, index ) => {
-					return (
-						<DesignCard
-							key={ design.recipe?.slug ?? design.slug ?? index }
-							category={ categorization?.selections.join( ',' ) }
-							design={ design }
-							locale={ locale }
-							isPremiumThemeAvailable={ isPremiumThemeAvailable }
-							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-							onChangeVariation={ onChangeVariation }
-							onPreview={ onPreview }
-							getBadge={ getBadge }
-							oldHighResImageLoading={ oldHighResImageLoading }
-							isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+			{ isMultiFilterEnabled ? (
+				<>
+					<DesignCardGroup
+						{ ...designCardProps }
+						title={ translate( 'Best matching themes' ) }
+						category="best"
+						designs={ best }
+					/>
+					{ Object.entries( designsByGroup ).map( ( [ categorySlug, categoryDesigns ] ) => (
+						<DesignCardGroup
+							key={ categorySlug }
+							{ ...designCardProps }
+							title={ `${ ( categorization?.categories || [] ).find(
+								( { slug } ) => slug === categorySlug
+							)?.name } themes` }
+							category={ categorySlug }
+							designs={ categoryDesigns }
 						/>
-					);
-				} ) }
-				{ filteredDesigns.length === 0 && <NoResults /> }
-			</div>
+					) ) }
+				</>
+			) : (
+				<DesignCardGroup
+					{ ...designCardProps }
+					category={ categorization?.selections.join( ',' ) }
+					designs={ all }
+				/>
+			) }
 		</div>
 	);
 };
