@@ -180,6 +180,7 @@ interface DesignCardGroup {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 	showActiveThemeBadge?: boolean;
 	siteActiveTheme?: string | null;
+	showNoResults?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
@@ -192,12 +193,13 @@ const DesignCardGroup = ( {
 	locale,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
-	onChangeVariation,
-	onPreview,
-	getBadge,
 	oldHighResImageLoading,
 	showActiveThemeBadge,
 	siteActiveTheme,
+	showNoResults,
+	onChangeVariation,
+	onPreview,
+	getBadge,
 }: DesignCardGroup ) => {
 	const content = (
 		<div className="design-picker__grid">
@@ -218,11 +220,15 @@ const DesignCardGroup = ( {
 					/>
 				);
 			} ) }
-			{ designs.length === 0 && <NoResults /> }
+			{ showNoResults && designs.length === 0 && <NoResults /> }
 		</div>
 	);
 
-	if ( ! title ) {
+	if ( ! showNoResults && designs.length === 0 ) {
+		return null;
+	}
+
+	if ( ! title || designs.length === 0 ) {
 		return content;
 	}
 
@@ -289,6 +295,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	onChangeTier,
 } ) => {
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const isNoResults = Object.values( designsByGroup ).every(
+		( categoryDesigns ) => categoryDesigns.length === 0
+	);
 	const categoryTypes = useMemo(
 		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -345,32 +354,31 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ isMultiFilterEnabled ? (
-				<>
-					<DesignCardGroup
-						{ ...designCardProps }
-						title={ translate( 'Best matching themes' ) }
-						category="best"
-						designs={ best }
-					/>
-					{ Object.entries( designsByGroup ).map( ( [ categorySlug, categoryDesigns ] ) => (
-						<DesignCardGroup
-							key={ categorySlug }
-							{ ...designCardProps }
-							title={ `${ ( categorization?.categories || [] ).find(
-								( { slug } ) => slug === categorySlug
-							)?.name } themes` }
-							category={ categorySlug }
-							designs={ categoryDesigns }
-						/>
-					) ) }
-				</>
-			) : (
+			{ isMultiFilterEnabled && (
 				<DesignCardGroup
 					{ ...designCardProps }
-					category={ categorization?.selections.join( ',' ) }
-					designs={ all }
+					title={ translate( 'Best matching themes' ) }
+					category="best"
+					designs={ best }
 				/>
+			) }
+			{ Object.entries( designsByGroup ).map(
+				( [ categorySlug, categoryDesigns ], index, array ) => (
+					<DesignCardGroup
+						key={ categorySlug }
+						{ ...designCardProps }
+						title={
+							isMultiFilterEnabled
+								? `${ ( categorization?.categories || [] ).find(
+										( { slug } ) => slug === categorySlug
+								  )?.name } themes`
+								: ''
+						}
+						category={ categorySlug }
+						designs={ categoryDesigns }
+						showNoResults={ index === array.length - 1 && isNoResults }
+					/>
+				)
 			) }
 		</div>
 	);
