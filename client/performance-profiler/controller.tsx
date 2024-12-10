@@ -5,8 +5,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { TabType } from './components/header';
-import { PerformanceProfilerDashboard } from './pages/dashboard';
+import { TabTypes } from './components/header';
+import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
 import { WeeklyReport } from './pages/weekly-report';
 
 import './style.scss';
@@ -41,12 +41,12 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 
 	context.primary = (
 		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
-			<PerformanceProfilerDashboard
+			<PerformanceProfilerDashboardWrapper
 				url={ url }
 				tab={
-					[ TabType.mobile, TabType.desktop ].indexOf( context.query?.tab ) !== -1
+					[ TabTypes.mobile, TabTypes.desktop ].indexOf( context.query?.tab ) !== -1
 						? context.query?.tab
-						: TabType.mobile
+						: TabTypes.mobile
 				}
 				hash={ context.query?.hash ?? '' }
 				filter={ context.query?.filter }

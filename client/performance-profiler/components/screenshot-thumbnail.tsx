@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
-import { TabType } from './header';
+import { type TabType, TabTypes } from './header';
 
 const Container = styled.div< { activeTab: TabType } >`
-	flex: ${ ( props ) => ( props.activeTab === TabType.desktop ? '0 300px' : null ) };
+	flex: ${ ( props ) => ( props.activeTab === TabTypes.desktop ? '0 300px' : null ) };
 	height: 280px;
 	display: flex;
 	align-items: center;
