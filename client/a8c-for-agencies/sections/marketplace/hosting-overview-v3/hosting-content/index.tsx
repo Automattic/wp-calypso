@@ -3,7 +3,7 @@ import { useContext, useMemo } from 'react';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SectionProps } from '..';
 import { MarketplaceTypeContext } from '../../context';
-import EnterpriseAgencyHosting from '../../hosting-overview/hosting-v2/enterprise-agency-hosting';
+import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
 

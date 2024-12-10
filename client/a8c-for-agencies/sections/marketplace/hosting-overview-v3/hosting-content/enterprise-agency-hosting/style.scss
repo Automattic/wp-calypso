@@ -1,0 +1,96 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.enterprise-agency-hosting-v3__top-wrapper {
+	padding: 0 32px 16px;
+
+	> * {
+		@include break-medium {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding: 0 64px 32px;
+		}
+	}
+
+}
+
+.enterprise-agency-hosting-v3__top {
+	background-color: #f5f2f1;
+	padding: 32px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+	box-sizing: border-box;
+
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 48px;
+
+	@include break-xlarge {
+		grid-template-columns: 30% auto;
+	}
+}
+
+.enterprise-agency-hosting-v3__top-details {
+	gap: 16px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	&.is-card {
+		padding: 32px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		background-color: var(--color-surface);
+		box-shadow: 0 3px 1px 0 #0000000A;
+		justify-content: flex-start;
+	}
+
+	.simple-list-icon {
+		fill: var(--color-text);
+	}
+}
+
+.enterprise-agency-hosting-v3__top-details-heading {
+	@include a4a-font-heading-lg;
+	display: flex;
+}
+
+.enterprise-agency-hosting-v3__top-details.is-card .enterprise-agency-hosting-v3__top-details-subheading {
+	@include a4a-font-heading-xl;
+}
+
+.theme-a8c-for-agencies .enterprise-agency-hosting-v3__top-details-button.components-button.is-primary {
+	margin-block-start: auto;
+
+	background-color: var(--color-text);
+	color: var(--color-text-inverted);
+}
+
+.enterprise-agency-hosting-v3__logos {
+	padding-block: 24px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+
+	@include break-medium {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
+	@include break-wide {
+		grid-template-columns: repeat(8, 1fr);
+	}
+
+	svg,
+	img {
+		width: 120px;
+		min-height: 40px;
+
+		@include break-xlarge {
+			width: auto;
+		}
+
+		@include break-huge {
+			width: 120px;
+		}
+	}
+}
