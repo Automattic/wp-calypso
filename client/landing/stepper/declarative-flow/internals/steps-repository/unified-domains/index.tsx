@@ -32,7 +32,6 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
-import './style.scss';
 
 const RenderDomainsStepConnect = connect(
 	( state, { flow }: StepProps ) => {
