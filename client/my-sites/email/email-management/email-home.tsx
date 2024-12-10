@@ -164,6 +164,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					hideHeaderCake={ isAllDomainManagementContext || isSingleDomainThatHasEmail }
 					hideHeader={ isAllDomainManagementContext }
 					hidePlanActions={ isAllDomainManagementContext }
+					hideMailPoetUpsell={ isAllDomainManagementContext }
 					selectedSite={ selectedSite }
 					source={ source }
 				/>

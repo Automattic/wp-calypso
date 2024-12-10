@@ -104,6 +104,7 @@ function EmailPlan( {
 	hideHeader = false,
 	hideHeaderCake = false,
 	hidePlanActions = false,
+	hideMailPoetUpsell = false,
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -345,7 +346,7 @@ function EmailPlan( {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
-			<MailPoetUpsell />
+			{ ! hideMailPoetUpsell && <MailPoetUpsell /> }
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
 			{ ! hideHeader && (
 				<EmailPlanHeader
@@ -385,9 +386,12 @@ function EmailPlan( {
 
 EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
-	hideHeaderCake: PropTypes.bool,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
+	hideHeader: PropTypes.bool,
+	hideHeaderCake: PropTypes.bool,
+	hidePlanActions: PropTypes.bool,
+	hideMailPoetUpsell: PropTypes.bool,
 };
 
 export default EmailPlan;
