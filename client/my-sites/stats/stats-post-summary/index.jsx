@@ -261,7 +261,6 @@ class StatsPostSummary extends Component {
 							disablePreviousArrow={ disablePreviousArrow }
 							disableNextArrow={ disableNextArrow }
 							date={ null }
-							period={ this.state.period }
 						>
 							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
 						</StatsPeriodNavigation>
