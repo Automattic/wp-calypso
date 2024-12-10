@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 $blueberry-color: #3858e9;
 
-.site-migration-credentials {
+.site-migration-fallback-credentials {
 	#site-migration-credentials-header {
 		.formatted-header__subtitle {
 			text-align: center;
@@ -30,6 +30,9 @@ $blueberry-color: #3858e9;
 		@media (min-width: $break-mobile) {
 			margin-bottom: 16px;
 		}
+
+		max-width: 400px;
+		margin: auto;
 
 		hr {
 			margin-top: 1em;
