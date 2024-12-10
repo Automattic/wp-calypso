@@ -205,35 +205,6 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		);
 	}
 
-	let stepContainerProps = {
-		stepName: stepName ?? 'site-migration-how-to-migrate',
-		className: 'how-to-migrate',
-		shouldHideNavButtons: false,
-		hideSkip: true,
-		formattedHeader: (
-			<FormattedHeader
-				id="how-to-migrate-header"
-				headerText={
-					headerText ?? isMigrationExperimentEnabled
-						? translate( 'Let us migrate your site' )
-						: translate( 'How do you want to migrate?' )
-				}
-				subHeaderText={ subHeaderText || renderSubHeaderText() }
-				align="center"
-			/>
-		),
-		stepContent: renderStepContent(),
-		recordTracksEvent: recordTracksEvent,
-		goBack: goBack,
-	};
-
-	if ( isMigrationExperimentEnabled ) {
-		stepContainerProps = {
-			...stepContainerProps,
-			customizedActionButtons: <DIYOption onClick={ handleClick } />,
-		};
-	}
-
 	return (
 		<>
 			<DocumentHead
@@ -243,7 +214,30 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 						: translate( 'How do you want to migrate?' )
 				}
 			/>
-			<StepContainer { ...stepContainerProps } />
+			<StepContainer
+				stepName={ stepName ?? 'site-migration-how-to-migrate' }
+				className="how-to-migrate"
+				shouldHideNavButtons={ false }
+				hideSkip
+				formattedHeader={
+					<FormattedHeader
+						id="how-to-migrate-header"
+						headerText={
+							headerText ?? isMigrationExperimentEnabled
+								? translate( 'Let us migrate your site' )
+								: translate( 'How do you want to migrate?' )
+						}
+						subHeaderText={ subHeaderText || renderSubHeaderText() }
+						align="center"
+					/>
+				}
+				stepContent={ renderStepContent() }
+				recordTracksEvent={ recordTracksEvent }
+				goBack={ goBack }
+				customizedActionButtons={
+					isMigrationExperimentEnabled ? <DIYOption onClick={ handleClick } /> : undefined
+				}
+			/>
 		</>
 	);
 };
