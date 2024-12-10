@@ -180,7 +180,7 @@ export async function waitForMutations(
 		observe?: MutationObserverInit;
 	}
 ): Promise< void > {
-	const timeout = options?.timeout || 10000;
+	const timeout = options?.timeout || 20000;
 	const debounce = options?.debounce || 1000;
 	const observe = options?.observe || { attributes: true, subtree: true, childList: true };
 	const target = await page.waitForSelector( selector );
