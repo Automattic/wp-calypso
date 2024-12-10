@@ -507,4 +507,8 @@
 			fill: var(--color-accent);
 		}
 	}
+
+	.email-plan-mailboxes-list__mailbox-list-item > div {
+		flex-grow: initial;
+	}
 }
