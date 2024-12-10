@@ -7,12 +7,12 @@
 	position: relative;
 	margin-top: 0;
 	margin-bottom: 30px;
-	border-radius: 3px;
 
 	@include break-small {
 		flex-direction: row;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin-bottom: 16px;
+		border-radius: 3px;
 	}
 
 	.task__text,
