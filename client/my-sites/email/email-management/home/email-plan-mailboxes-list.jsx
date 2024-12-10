@@ -199,7 +199,11 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 	} );
 
 	return (
-		<MailboxListHeader accountType={ accountType } addMailboxPath={ addMailboxPath }>
+		<MailboxListHeader
+			accountType={ accountType }
+			addMailboxPath={ addMailboxPath }
+			showIcon={ !! addMailboxPath }
+		>
 			{ mailboxItems }
 		</MailboxListHeader>
 	);
