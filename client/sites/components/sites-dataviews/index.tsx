@@ -31,19 +31,6 @@ type Props = {
 	) => void;
 };
 
-type FieldId =
-	| 'icon'
-	| 'last-interacted'
-	| 'last-publish'
-	| 'plan'
-	| 'site-title'
-	| 'stats'
-	| 'status';
-
-type DotcomSitesField = Field< SiteExcerptData > & {
-	id: FieldId;
-};
-
 type TracksEventData = [ name: string, value: string ];
 
 export function useSiteStatusGroups() {
@@ -104,7 +91,7 @@ const DotcomSitesDataViews = ( {
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
-	const fields = useMemo< DotcomSitesField[] >(
+	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
 				id: 'icon',
@@ -189,7 +176,7 @@ const DotcomSitesDataViews = ( {
 		viewType: dataViewsState.type,
 	} );
 
-	const getTracksEventDataForFilter = ( fieldId: FieldId, value: any ): TracksEventData | null => {
+	const getTracksEventDataForFilter = ( fieldId: string, value: any ): TracksEventData | null => {
 		if ( value === undefined ) {
 			return null;
 		}
@@ -200,19 +187,8 @@ const DotcomSitesDataViews = ( {
 				return [ 'calypso_sites_dashboard_filter_status', statusGroup?.slug ?? '' ];
 			}
 
-			case 'icon':
-			case 'last-interacted':
-			case 'last-publish':
-			case 'plan':
-			case 'site-title':
-			case 'stats':
+			default:
 				return null;
-
-			default: {
-				// Ensures that the switch statement is exhaustive
-				const exhaustiveCheck: never = fieldId;
-				return exhaustiveCheck;
-			}
 		}
 	};
 
@@ -220,7 +196,7 @@ const DotcomSitesDataViews = ( {
 
 	const submitTracksEventForFilters = ( filters: Filter[] ) => {
 		const filterTracksEvents = filters
-			.map( ( filter ) => getTracksEventDataForFilter( filter.field as FieldId, filter.value ) )
+			.map( ( filter ) => getTracksEventDataForFilter( filter.field, filter.value ) )
 			.filter( ( filter ): filter is TracksEventData => filter !== null );
 
 		filterTracksEvents.forEach( ( [ name, value ] ) => {
