@@ -119,6 +119,9 @@ export class ConfigApi extends Function {
 		// Note: configData is hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
 		this.configData.features = productionConfig.features;
 
+		// Set a flag to identify if the app is running in WP Admin becuase `is_running_in_jetpack_site` now means whether the app calls public-api directly or use the Jetpack ones.
+		this.configData.features.is_odyssey = true;
+
 		// Sets the Blaze Dashboard path prefix.
 		this.configData.advertising_dashboard_path_prefix = '/advertising';
 	}

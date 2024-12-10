@@ -43,7 +43,7 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 	} )?.[ planKey ];
 	const planSlug = plan?.pathSlug ?? planKey;
 	const isLoading = plans.isLoading || ! pricing;
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
+	const isOdysseyStats = isEnabled( 'is_odyssey' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
@@ -53,6 +53,7 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_submit`, {
 			stat_type: statType,
 		} );
+		// TODO: add redirect_to param so that we can redirect back to the stats page after checkout.
 		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
 				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
@@ -67,8 +68,12 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 
 	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		setShowHelpCenter( true );
-		setShowSupportDoc( learnMoreLink );
+		if ( ! isOdysseyStats ) {
+			setShowHelpCenter( true );
+			setShowSupportDoc( learnMoreLink );
+		} else {
+			window.open( learnMoreLink, '_blank' );
+		}
 
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
 			stat_type: statType,
