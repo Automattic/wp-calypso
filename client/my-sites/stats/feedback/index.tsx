@@ -11,7 +11,7 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
-import useFetchTrafficHook from './use-fetch-traffic-hook';
+import useHighlightsQuery from './use-highlights-query';
 import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -263,7 +263,7 @@ interface FeedbackPresentorProps {
 function StatsFeedbackPresentor( { siteId }: FeedbackPresentorProps ) {
 	const { supportCommercialUse } = useStatsPurchases( siteId );
 	const { isJetpackNotAtomic, isVip } = useSiteTypes( siteId );
-	const { data, isSuccess } = useFetchTrafficHook( siteId );
+	const { data, isSuccess } = useHighlightsQuery( siteId );
 
 	const views = data?.past_thirty_days.views ?? 0;
 	const highTrafficThreshold = useMemo( () => getHighTrafficThreshold(), [] );
