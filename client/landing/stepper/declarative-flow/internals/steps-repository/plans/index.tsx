@@ -9,6 +9,9 @@ import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
+/**
+ * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
+ */
 const plans: Step = function Plans( { navigation, flow } ) {
 	const { goBack, submit } = navigation;
 
