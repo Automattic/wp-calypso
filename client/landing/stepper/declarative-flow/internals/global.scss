@@ -121,7 +121,8 @@ button {
 		@include break-small {
 			&.courses,
 			&.site-picker,
-			&.new-or-existing-site {
+			&.new-or-existing-site,
+			&.domains:not(.copy-site) {
 				margin-top: -60px;
 			}
 		}
