@@ -239,6 +239,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
 				display: flex;
 				flex-direction: column;
+				padding-bottom: 0;
 
 				.domains-table {
 					flex-grow: 1;
