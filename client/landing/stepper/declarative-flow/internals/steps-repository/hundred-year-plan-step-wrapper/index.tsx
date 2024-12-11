@@ -245,7 +245,7 @@ function InfoColumn( {
 					<WordPressWordmark size={ { width: 200, height: 25 } } />
 				</WordPressLogoWrapper>
 
-				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
+				{ ! isMobile && <HundredYearPlanLogo /> }
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
 					<Description isMobile={ isMobile }>
