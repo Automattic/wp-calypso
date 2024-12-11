@@ -29,6 +29,7 @@ import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-i
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { SurveyData } from 'calypso/signup/steps/initial-intent/types';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -241,6 +242,11 @@ function UnifiedPlansStep( {
 	const isDomainOnlySite = useSelector( ( state ) =>
 		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
 	);
+
+	/**
+	 * In manage site flow, i.e when coming back from checkout, we need to get the plan for the site that is being managed to make its plan as selected.
+	 */
+	const managedSiteSlug = getSignupCompleteSlug();
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -510,7 +516,7 @@ function UnifiedPlansStep( {
 									freeSubdomain={ freeWPComSubdomain }
 									siteTitle={ siteTitle ?? undefined }
 									signupFlowUserName={ username ?? undefined }
-									siteId={ selectedSite?.ID }
+									siteId={ selectedSite?.ID || managedSiteSlug }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									isInSignup
 									isLaunchPage={ isLaunchPage }
