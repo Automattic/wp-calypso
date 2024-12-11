@@ -5,9 +5,20 @@ import { check, Icon, chevronDown, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { capitalize } from 'lodash';
 import qs from 'qs';
+import { useRef } from 'react';
 import './style.scss';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 
-const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGatedHandler } ) => {
+const StatsIntervalDropdownListing = ( {
+	selected,
+	onSelection,
+	intervals,
+	onGatedHandler,
+	onClickOutside,
+} ) => {
+	const ref = useRef( null );
+	useOutsideClickCallback( ref, onClickOutside );
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const isSelectedItem = ( interval ) => {
@@ -33,7 +44,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGat
 	};
 
 	return (
-		<div className="stats-interval-dropdown-listing">
+		<div className="stats-interval-dropdown-listing" ref={ ref }>
 			<ul className="stats-interval-dropdown-listing__list" role="radiogroup">
 				{ Object.keys( intervals ).map( ( intervalKey ) => {
 					const interval = intervals[ intervalKey ];
@@ -105,13 +116,14 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 					<Icon className="gridicon" icon={ chevronDown } />
 				</Button>
 			) }
-			renderContent={ () => (
+			renderContent={ ( { onClose } ) => (
 				<div className="stats-interval-dropdown__container">
 					<StatsIntervalDropdownListing
 						selected={ period }
 						onSelection={ onSelectionHandler }
 						intervals={ intervals }
 						onGatedHandler={ onGatedHandler }
+						onClickOutside={ onClose }
 					/>
 				</div>
 			) }

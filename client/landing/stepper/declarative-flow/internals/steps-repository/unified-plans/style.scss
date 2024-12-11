@@ -2,43 +2,25 @@
 
 .step-route.plans {
 	padding: 48px 0 0;
+	@include break-xlarge {
+		padding: 0;
+	}
 
 	.plans.plans-step {
 		.step-container {
 			padding-bottom: 80px;
 
-			.step-container__header {
-				.formatted-header {
-					h1.formatted-header__title {
-						font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-						font-size: 2.25rem;
-						font-weight: 500;
-						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-						line-height: 2.5rem;
-						padding: 0 20px;
-						text-align: center;
-						letter-spacing: 0.2px;
+			h1.formatted-header__title {
+				font-size: 2.25rem;
+				padding: 0 20px;
+				text-align: center;
+				letter-spacing: 0.2px;
 
-						@include break-mobile {
-							font-size: 2.75rem;
-							/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-							line-height: 3rem;
-						}
-					}
-
-					.formatted-header__subtitle {
-						text-align: center;
-						font-size: 1rem;
-					}
+				@include break-mobile {
+					font-size: 2.75rem;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					line-height: 3rem;
 				}
-			}
-
-			.foldable-card.card.is-expanded {
-				margin-bottom: 0;
-			}
-
-			.card.is-compact {
-				margin-bottom: 0;
 			}
 		}
 	}
