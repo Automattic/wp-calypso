@@ -25,10 +25,9 @@ interface Props extends StepProps {
 	subHeaderText?: string;
 }
 
-const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
-
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const { navigation, headerText, stepName, subHeaderText } = props;
+	const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();
