@@ -230,6 +230,32 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
+			.domains-overview__list.a4a-layout-column,
+			.domains-overview__list .a4a-layout-column__container,
+			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+				height: 100%;
+			}
+
+			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+				display: flex;
+				flex-direction: column;
+
+				.domains-table {
+					flex-grow: 1;
+					margin-top: 0;
+					overflow: auto;
+					padding-bottom: 0;
+
+					table {
+						max-height: unset;
+					}
+				}
+			}
+
+			.domains-overview__list .gridicons-ellipsis {
+				rotate: 90deg;
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
@@ -269,6 +295,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				.domains-overview__list .domains-table {
 					table {
 						grid-template-columns: 4fr auto;
+						max-height: 100%;
 
 						.domains-table__domain-name {
 							overflow-wrap: anywhere;
