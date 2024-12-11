@@ -267,7 +267,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					</DesignPickerFilterGroup>
 				) }
 				<DesignPickerFilterGroup>
-					{ isTierFilterEnabled && <DesignPickerTierFilter /> }
+					{ isTierFilterEnabled && <DesignPickerTierFilter onChange={ onChangeTier } /> }
 					{ isBigSkyEligible && (
 						<Button
 							className={ clsx(
