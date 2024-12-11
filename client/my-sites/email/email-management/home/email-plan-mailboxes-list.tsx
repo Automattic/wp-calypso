@@ -1,6 +1,5 @@
 import { Badge, Gridicon, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
 import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
@@ -9,8 +8,10 @@ import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/e
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
 import MailboxLink from './email-plan-mailboxes/list-item-link';
+import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-function EmailForwardSecondaryDetails( { mailbox } ) {
+function EmailForwardSecondaryDetails( { mailbox }: { mailbox: Mailbox } ) {
 	if ( isEmailForward( mailbox ) ) {
 		return (
 			<div className="email-plan-mailboxes-list__mailbox-secondary-details">
@@ -22,7 +23,20 @@ function EmailForwardSecondaryDetails( { mailbox } ) {
 	return null;
 }
 
-function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, addMailboxPath } ) {
+type Props = {
+	domain: ResponseDomain;
+	account: EmailAccount;
+	mailboxes: Mailbox[];
+	addMailboxPath: string;
+	isLoadingEmails: boolean;
+};
+function EmailPlanMailboxesList( {
+	domain,
+	account,
+	mailboxes,
+	addMailboxPath,
+	isLoadingEmails,
+}: Props ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
@@ -96,13 +110,5 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 		</MailboxListHeader>
 	);
 }
-
-EmailPlanMailboxesList.propTypes = {
-	account: PropTypes.object,
-	domain: PropTypes.object,
-	isLoadingEmails: PropTypes.bool,
-	mailboxes: PropTypes.array,
-	addMailboxPath: PropTypes.string,
-};
 
 export default EmailPlanMailboxesList;
