@@ -444,17 +444,17 @@
 .context-all-domain-management {
 	&.main {
 		width: 100%;
-	}
 
-	.navigation-header {
-		border-block-end: none !important;
-	}
+		.email-header .navigation-header {
+			border-block-end: none;
 
-	.navigation-header__main {
-		padding-inline: 0 !important;
+			.navigation-header__main {
+				padding-inline: 0 !important;
 
-		.navigation-header__actions {
-			flex-grow: 0;
+				.navigation-header__actions {
+					flex-grow: 0;
+				}
+			}
 		}
 	}
 
