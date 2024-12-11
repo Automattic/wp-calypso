@@ -158,7 +158,7 @@ window.AppBoot = async () => {
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
-	await geolocateCurrencySymbol();
+	geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
@@ -179,7 +179,6 @@ window.AppBoot = async () => {
 						/>
 					</BrowserRouter>
 					<AsyncHelpCenter />
-
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
