@@ -73,6 +73,13 @@ function getWebpackConfig(
 					if ( request === 'tinymce/tinymce' ) {
 						return 'tinymce';
 					}
+					// Force bundling the React JSX runtime packages so that we don't have a missing `react-jsx-runtime`
+					// dependency on older WordPress versions that don't ship it yet.
+					if ( request === 'react/jsx-runtime' || request === 'react/jsx-dev-runtime' ) {
+						// returning null means don't externalize;
+						// returning undefined means call the default `requestToExternal`, which _would_ externalize `react-jsx-runtime`.
+						return null;
+					}
 				},
 				requestToHandle( request ) {
 					if ( request === 'tinymce/tinymce' ) {
