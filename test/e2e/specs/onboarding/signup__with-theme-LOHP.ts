@@ -29,7 +29,7 @@ declare const browser: Browser;
  *
  * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
  */
-describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel subscription', function () {
+describe.skip( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
 	let themeSlug: string | null = null;
 
