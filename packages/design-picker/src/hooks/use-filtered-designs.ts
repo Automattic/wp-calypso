@@ -30,14 +30,17 @@ export const getFilteredDesignsByCategory = (
 	// Get designs by the selected category.
 	// Note that we don't want to show a theme in multiple sections.
 	// See https://github.com/Automattic/dotcom-forge/issues/10110.
-	const categorySlugsSet = new Set( categorySlugs );
 	for ( let i = 0; i < filteredDesigns.length; i++ ) {
 		const design = filteredDesigns[ i ];
-		const matchedCategories = design.categories.filter( ( category ) =>
-			categorySlugsSet.has( category.slug )
+		const designCategorySlugsSet = new Set(
+			design.categories.map( ( category ) => category.slug )
 		);
 
-		const matchedCount = matchedCategories.length;
+		const matchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			designCategorySlugsSet.has( categorySlug )
+		);
+
+		const matchedCount = matchedCategorySlugs.length;
 
 		// For designs that match all selected categories.
 		// Limit the best matches to at least 2 selected categories.
@@ -49,9 +52,9 @@ export const getFilteredDesignsByCategory = (
 		// We show the designs for the last selected category on top first
 		// so it would be better to put the design into the last matched category
 		// if it doesn't match all selected categories.
-		const lastMatchedCategory = matchedCategories[ matchedCategories.length - 1 ];
-		if ( lastMatchedCategory ) {
-			filteredDesignsByCategory[ lastMatchedCategory.slug ].push( design );
+		const lastMatchedCategorySlug = matchedCategorySlugs[ matchedCategorySlugs.length - 1 ];
+		if ( lastMatchedCategorySlug ) {
+			filteredDesignsByCategory[ lastMatchedCategorySlug ].push( design );
 		}
 	}
 
