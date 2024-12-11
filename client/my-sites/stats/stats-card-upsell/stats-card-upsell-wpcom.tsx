@@ -27,9 +27,9 @@ const getUpsellCopy = ( statType: string ) => {
 				'Learn what external links your visitors click on your site to reveal their areas of interest.'
 			);
 		case STAT_TYPE_COUNTRY_VIEWS:
-			return translate( 'Upgrade to see where your visitors come from.' );
+			return translate( 'See where your visitors come from.' );
 		case STAT_TYPE_FILE_DOWNLOADS:
-			return translate( 'Upgrade to monitor your file downloads engagement.' );
+			return translate( 'Monitor your file downloads engagement.' );
 		case STAT_TYPE_REFERRERS:
 			return translate(
 				'Find out where your visitors come from to optimize your content strategy.'
@@ -39,7 +39,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STAT_TYPE_TOP_AUTHORS:
 			return translate( 'Identify your audience’s favorite writers and perspectives.' );
 		case STAT_TYPE_TOP_POSTS:
-			return translate( 'Upgrade to track posts and pages views.' );
+			return translate( 'Track posts and pages views.' );
 		case STAT_TYPE_VIDEO_PLAYS:
 			return translate( 'Discover your most popular videos and find out how they performed.' );
 		case STATS_FEATURE_DATE_CONTROL:
