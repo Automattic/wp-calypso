@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { OnboardSelect, Onboard } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -94,6 +94,8 @@ const onboarding: Flow = {
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
+
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
@@ -204,7 +206,7 @@ const onboarding: Flow = {
 				case 'processing': {
 					const destination = addQueryArgs( '/setup/site-setup', {
 						siteSlug: providedDependencies.siteSlug,
-						...( isEnabled( 'onboarding/goals-first' ) && { flags: 'onboarding/goals-first' } ),
+						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -218,6 +220,7 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
+								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
 							} )
 						);
 					} else {

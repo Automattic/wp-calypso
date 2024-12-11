@@ -12,6 +12,12 @@ import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/da
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
+// The `currentSearchParams` parameter from the callback of the `setSearchParams` function
+// might not have the latest query parameter on multiple calls at the same time.
+const makeSearchParams = (
+	callback: ( currentSearchParams: URLSearchParams ) => URLSearchParams
+) => callback( new URLSearchParams( window.location.search ) );
+
 const useRecipe = (
 	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
@@ -92,22 +98,24 @@ const useRecipe = (
 		}
 
 		if ( theme !== searchParams.get( 'theme' ) ) {
-			setSearchParams( ( currentSearchParams ) => {
-				if ( theme ) {
-					currentSearchParams.set( 'theme', theme );
-				} else {
-					currentSearchParams.delete( 'theme' );
-				}
+			setSearchParams(
+				makeSearchParams( ( currentSearchParams ) => {
+					if ( theme ) {
+						currentSearchParams.set( 'theme', theme );
+					} else {
+						currentSearchParams.delete( 'theme' );
+					}
 
-				return currentSearchParams;
-			} );
+					return currentSearchParams;
+				} )
+			);
 		}
 	};
 
 	const handleSelectedStyleVariationChange = ( variation?: StyleVariation ) => {
 		setSelectedStyleVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation ) {
 					currentSearchParams.set( 'style_variation', variation.slug );
 				} else {
@@ -115,7 +123,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};
@@ -123,7 +131,7 @@ const useRecipe = (
 	const handleSelectedColorVariationChange = ( variation: GlobalStyles | null ) => {
 		setSelectedColorVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation && variation.title ) {
 					currentSearchParams.set( 'color_variation_title', variation.title );
 				} else {
@@ -131,7 +139,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};
@@ -139,7 +147,7 @@ const useRecipe = (
 	const handleSelectedFontVariationChange = ( variation: GlobalStyles | null ) => {
 		setSelectedFontVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation && variation.title ) {
 					currentSearchParams.set( 'font_variation_title', variation.title );
 				} else {
@@ -147,7 +155,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};

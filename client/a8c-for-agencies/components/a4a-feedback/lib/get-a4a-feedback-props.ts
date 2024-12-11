@@ -1,17 +1,12 @@
-import { FeedbackType } from '../types';
-
-type A4AfeedbackProps = {
-	title: string;
-	description: string;
-	questionDetails: string;
-	ctaText: string;
-};
+import { TAB_INVITED_MEMBERS } from 'calypso/a8c-for-agencies/sections/team/constants';
+import { A4A_TEAM_LINK, A4A_PARTNER_DIRECTORY_LINK } from '../../sidebar-menu/lib/constants';
+import type { FeedbackProps, FeedbackType } from '../types';
 
 export const getA4AfeedbackProps = (
 	type: FeedbackType,
 	translate: ( key: string, args?: Record< string, unknown > ) => string,
 	args?: Record< string, unknown >
-): A4AfeedbackProps => {
+): FeedbackProps => {
 	switch ( type ) {
 		case 'referral-complete':
 			return {
@@ -31,6 +26,7 @@ export const getA4AfeedbackProps = (
 				),
 				questionDetails: translate( "How was your experience adding your agency's details?" ),
 				ctaText: translate( 'Submit and continue to Partner Directory' ),
+				redirectUrl: A4A_PARTNER_DIRECTORY_LINK,
 			};
 		case 'member-invite-sent':
 			return {
@@ -41,6 +37,7 @@ export const getA4AfeedbackProps = (
 				) as string,
 				questionDetails: translate( 'How was your experience inviting a team member?' ),
 				ctaText: translate( 'Submit and continue to Team' ),
+				redirectUrl: `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }`,
 			};
 		default:
 			return {

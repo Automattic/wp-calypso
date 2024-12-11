@@ -3,11 +3,10 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { InView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
-import { useFilteredDesigns } from '../hooks/use-filtered-designs';
+import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
-	getAssemblerDesign,
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
 	isLockedStyleVariation,
@@ -16,7 +15,6 @@ import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPickerTierFilter from './design-picker-tier-filter';
 import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
-import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -173,6 +171,78 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
+interface DesignCardGroup {
+	title?: string | React.ReactNode;
+	designs: Design[];
+	locale: string;
+	category?: string | null;
+	isPremiumThemeAvailable?: boolean;
+	shouldLimitGlobalStyles?: boolean;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
+	showActiveThemeBadge?: boolean;
+	siteActiveTheme?: string | null;
+	showNoResults?: boolean;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+}
+
+const DesignCardGroup = ( {
+	title,
+	designs,
+	category,
+	locale,
+	isPremiumThemeAvailable,
+	shouldLimitGlobalStyles,
+	oldHighResImageLoading,
+	showActiveThemeBadge = false,
+	siteActiveTheme,
+	showNoResults,
+	onChangeVariation,
+	onPreview,
+	getBadge,
+}: DesignCardGroup ) => {
+	const content = (
+		<div className="design-picker__grid">
+			{ designs.map( ( design, index ) => {
+				return (
+					<DesignCard
+						key={ design.recipe?.slug ?? design.slug ?? index }
+						category={ category }
+						design={ design }
+						locale={ locale }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+						onChangeVariation={ onChangeVariation }
+						onPreview={ onPreview }
+						getBadge={ getBadge }
+						oldHighResImageLoading={ oldHighResImageLoading }
+						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+					/>
+				);
+			} ) }
+			{ showNoResults && designs.length === 0 && <NoResults /> }
+		</div>
+	);
+
+	if ( ! showNoResults && designs.length === 0 ) {
+		return null;
+	}
+
+	if ( ! title || designs.length === 0 ) {
+		return content;
+	}
+
+	return (
+		<div className="design-picker__design-card-group">
+			<div className="design-picker__design-card-title">
+				{ title } ({ designs.length })
+			</div>
+			{ content }
+		</div>
+	);
+};
+
 interface DesignPickerFilterGroupProps {
 	title?: string;
 	grow?: boolean;
@@ -187,15 +257,14 @@ const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
 	return (
 		<div className={ clsx( 'design-picker__category-group', { grow } ) }>
 			<div className="design-picker__category-group-label">{ title }</div>
-			{ children }
+			<div className="design-picker__category-group-content">{ children }</div>
 		</div>
 	);
 };
 
 interface DesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design ) => void;
-	onClickDesignYourOwnTopButton: ( design: Design ) => void;
+	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
@@ -204,17 +273,17 @@ interface DesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
-	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
+	isBigSkyEligible?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onDesignYourOwn,
-	onClickDesignYourOwnTopButton,
+	onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -223,27 +292,42 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
-	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
+	isBigSkyEligible = false,
 } ) => {
-	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
-	const filteredDesigns = useFilteredDesigns( designs, categorization );
+	const translate = useTranslate();
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const categories = categorization?.categories || [];
+	const isNoResults = Object.values( designsByGroup ).every(
+		( categoryDesigns ) => categoryDesigns.length === 0
+	);
 	const categoryTypes = useMemo(
-		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
+		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 	const categoryTopics = useMemo(
-		() =>
-			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
+		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 
-	const assemblerCtaData = usePatternAssemblerCtaData();
+	const getCategoryName = ( value: string ) =>
+		categories.find( ( { slug } ) => slug === value )?.name || '';
 
-	const translate = useTranslate();
+	const designCardProps = {
+		locale,
+		isPremiumThemeAvailable,
+		shouldLimitGlobalStyles,
+		onChangeVariation,
+		onPreview,
+		getBadge,
+		oldHighResImageLoading,
+		showActiveThemeBadge,
+		siteActiveTheme,
+	};
 
 	return (
 		<div>
@@ -271,56 +355,62 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
-					<DesignPickerFilterGroup>
+				<DesignPickerFilterGroup>
+					{ isTierFilterEnabled && <DesignPickerTierFilter onChange={ onChangeTier } /> }
+					{ isBigSkyEligible && (
 						<Button
-							className={ clsx( 'design-picker__design-your-own-button', {
-								'design-picker__design-your-own-button-without-categories': ! hasCategories,
-							} ) }
-							onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
+							className={ clsx(
+								'design-picker__design-your-own-button',
+								'design-picker__design-with-ai'
+							) }
+							onClick={ () => {
+								onDesignWithAI && onDesignWithAI();
+							} }
 						>
-							{ assemblerCtaData.title }
+							{ translate( 'Design with AI' ) }
 						</Button>
-					</DesignPickerFilterGroup>
-				) }
-				{ isTierFilterEnabled && (
-					<DesignPickerFilterGroup>
-						<DesignPickerTierFilter />
-					</DesignPickerFilterGroup>
-				) }
+					) }
+				</DesignPickerFilterGroup>
 			</div>
 
-			<div className="design-picker__grid">
-				{ filteredDesigns.map( ( design, index ) => {
-					return (
-						<DesignCard
-							key={ design.recipe?.slug ?? design.slug ?? index }
-							category={ categorization?.selections.join( ',' ) }
-							design={ design }
-							locale={ locale }
-							isPremiumThemeAvailable={ isPremiumThemeAvailable }
-							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-							onChangeVariation={ onChangeVariation }
-							onPreview={ onPreview }
-							getBadge={ getBadge }
-							oldHighResImageLoading={ oldHighResImageLoading }
-							isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
-						/>
-					);
-				} ) }
-				{ filteredDesigns.length === 0 && <NoResults /> }
-				{ isSiteAssemblerEnabled && (
-					<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
-				) }
-			</div>
+			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Best matching themes' ) }
+					category="best"
+					designs={ best }
+				/>
+			) }
+			{ isMultiFilterEnabled && categorization && categorization.selections.length === 0 && (
+				<DesignCardGroup { ...designCardProps } designs={ all } />
+			) }
+			{ /* We want to show the last one on top first. */ }
+			{ Object.entries( designsByGroup )
+				.reverse()
+				.map( ( [ categorySlug, categoryDesigns ], index, array ) => (
+					<DesignCardGroup
+						key={ categorySlug }
+						{ ...designCardProps }
+						title={
+							isMultiFilterEnabled
+								? translate( '%s themes', {
+										args: getCategoryName( categorySlug ),
+										comment: '%s will be a name of the theme category. e.g. Blog.',
+								  } )
+								: ''
+						}
+						category={ categorySlug }
+						designs={ categoryDesigns }
+						showNoResults={ index === array.length - 1 && isNoResults }
+					/>
+				) ) }
 		</div>
 	);
 };
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design ) => void;
-	onClickDesignYourOwnTopButton: ( design: Design ) => void;
+	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -331,17 +421,17 @@ export interface UnifiedDesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
-	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
+	onChangeTier?: ( value: boolean ) => void;
+	isBigSkyEligible?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onDesignYourOwn,
-	onClickDesignYourOwnTopButton,
+	onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -352,23 +442,14 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
-	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
+	onChangeTier,
+	isBigSkyEligible = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
-
-	const { ref } = useInView( {
-		onChange: ( inView ) => {
-			if ( inView ) {
-				onViewAllDesigns();
-			}
-		},
-	} );
-	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (
 		<div
@@ -380,8 +461,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onDesignYourOwn={ onDesignYourOwn }
-					onClickDesignYourOwnTopButton={ onClickDesignYourOwnTopButton }
+					onDesignWithAI={ onDesignWithAI }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }
@@ -390,13 +470,14 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
 					oldHighResImageLoading={ oldHighResImageLoading }
-					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
+					onChangeTier={ onChangeTier }
+					isBigSkyEligible={ isBigSkyEligible }
 				/>
-				{ bottomAnchorContent }
+				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>
 		</div>
 	);

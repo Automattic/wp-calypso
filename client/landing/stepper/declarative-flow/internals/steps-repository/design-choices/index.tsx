@@ -1,8 +1,4 @@
-import {
-	getAssemblerDesign,
-	themesIllustrationImage,
-	assemblerIllustrationV2Image,
-} from '@automattic/design-picker';
+import { getAssemblerDesign, themesIllustrationImage } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -10,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
@@ -36,9 +31,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
-
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
-
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
@@ -87,18 +79,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="designSetup"
 								onSelect={ handleSubmit }
 							/>
-							{ isSiteAssemblerEnabled && (
-								<DesignChoice
-									className="design-choices__design-your-own"
-									title={ translate( 'Design your own' ) }
-									description={ translate(
-										'Start from scratch, designing your site with patterns, pages, and styles.'
-									) }
-									imageSrc={ assemblerIllustrationV2Image }
-									destination="pattern-assembler"
-									onSelect={ handleSubmit }
-								/>
-							) }
 							{ ! isLoading && isEligible && (
 								<DesignChoice
 									className="design-choices__try-big-sky"

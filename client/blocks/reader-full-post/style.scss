@@ -42,8 +42,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	max-width: 1200px;
 	margin: 0 auto;
 
-	.comment-button__icon path,
-	.conversation-follow-button path {
+	.comment-button__icon path {
 		fill: var( --color-neutral-0 );
 	}
 }

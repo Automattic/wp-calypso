@@ -14,12 +14,12 @@ import { SOURCE_SETTINGS_GENERAL } from './site-tools/utils';
 
 const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub, isWpcomStagingSite } ) => (
 	<div className="site-settings__main general-settings">
-		<GeneralForm site={ site } />
+		{ site && <GeneralForm site={ site } /> }
 		{ isWPForTeamsSite && isP2Hub && <P2PreapprovedDomainsForm siteId={ site?.ID } /> }
 		{ ! isWpcomStagingSite && ! isEnabled( 'untangling/hosting-menu' ) && (
 			<SiteTools headerTitle={ translate( 'Site tools' ) } source={ SOURCE_SETTINGS_GENERAL } />
 		) }
-		{ isEnabled( 'untangling/hosting-menu' ) && (
+		{ isEnabled( 'untangling/hosting-menu' ) && site && (
 			<Notice
 				showDismiss={ false }
 				status="is-info"

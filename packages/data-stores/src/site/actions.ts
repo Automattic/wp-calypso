@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles/src/constants';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
@@ -526,10 +525,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			},
 		].filter( Boolean ) as RequestTemplate[];
 
-		const endpointSuffix = isEnabled( 'pattern-assembler/perf-test' ) ? '-perf-test' : '';
-
 		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler${ endpointSuffix }`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				templates,

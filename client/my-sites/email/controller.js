@@ -209,6 +209,7 @@ export default {
 
 				<EmailHome
 					source={ pageContext.query.source }
+					context={ pageContext.section.name }
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }

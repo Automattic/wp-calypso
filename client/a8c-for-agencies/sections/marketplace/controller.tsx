@@ -70,7 +70,7 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
 			{ isV3Enabled ? (
-				<HostingOverviewV3 />
+				<HostingOverviewV3 section={ section } />
 			) : (
 				<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
 			) }
