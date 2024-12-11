@@ -94,7 +94,7 @@ export default {
 		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if ( isWoo ) {
-			// Do nothing, we don't want to remove the white background for Woo
+			// Do nothing, Woo flow background should keep white.
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
