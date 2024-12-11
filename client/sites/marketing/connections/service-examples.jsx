@@ -30,6 +30,7 @@ import './service-examples.scss';
 export const SERVICES_WITH_EXAMPLES = [
 	'google_plus',
 	'mastodon',
+	'bandpage',
 	'bluesky',
 	'facebook',
 	'google_photos',
@@ -41,6 +42,9 @@ export const SERVICES_WITH_EXAMPLES = [
 	'threads',
 	'tumblr',
 	'mailchimp',
+	'p2_slack',
+	'p2_github',
+	'google_my_business',
 ];
 
 class SharingServiceExamples extends Component {
