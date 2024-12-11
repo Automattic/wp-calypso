@@ -1,6 +1,6 @@
 import {
+	FEATURE_STATS_COMMERCIAL,
 	JETPACK_COMPLETE_PLANS,
-	JETPACK_GROWTH_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
@@ -20,6 +20,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchases,
 } from 'calypso/state/purchases/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getShouldShowPaywallNotice,
 	getShouldShowPaywallAfterGracePeriod,
@@ -135,9 +136,8 @@ export default function useStatsPurchases( siteId: number | null ) {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ sitePurchases ] );
 
-	const supportCommercialUse = useMemo(
-		() => supportCommercialPurchaseUse( sitePurchases ),
-		[ sitePurchases ]
+	const supportCommercialUse = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL )
 	);
 
 	const isLegacyCommercialLicense = useMemo( () => {
