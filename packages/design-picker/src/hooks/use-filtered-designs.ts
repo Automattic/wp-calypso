@@ -33,18 +33,11 @@ export const getFilteredDesignsByCategory = (
 	const categorySlugsSet = new Set( categorySlugs );
 	for ( let i = 0; i < filteredDesigns.length; i++ ) {
 		const design = filteredDesigns[ i ];
-		let lastMatchedCategory = null;
-		let matchedCount = 0;
-		for ( let j = 0; j < design.categories.length; j++ ) {
-			const category = design.categories[ j ];
-			if ( categorySlugsSet.has( category.slug ) ) {
-				// We show the designs for the last selected category on top first
-				// so it would be better to put the design into the last matched category
-				// if it doesn't match all selected categories.
-				lastMatchedCategory = category.slug;
-				matchedCount++;
-			}
-		}
+		const matchedCategories = design.categories.filter( ( category ) =>
+			categorySlugsSet.has( category.slug )
+		);
+
+		const matchedCount = matchedCategories.length;
 
 		// For designs that match all selected categories.
 		// Limit the best matches to at least 2 selected categories.
@@ -53,8 +46,12 @@ export const getFilteredDesignsByCategory = (
 			continue;
 		}
 
+		// We show the designs for the last selected category on top first
+		// so it would be better to put the design into the last matched category
+		// if it doesn't match all selected categories.
+		const lastMatchedCategory = matchedCategories[ matchedCategories.length - 1 ];
 		if ( lastMatchedCategory ) {
-			filteredDesignsByCategory[ lastMatchedCategory ].push( design );
+			filteredDesignsByCategory[ lastMatchedCategory.slug ].push( design );
 		}
 	}
 
