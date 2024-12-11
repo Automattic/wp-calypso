@@ -149,6 +149,9 @@ const StatsDateControl = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
 
+		localStorage.setItem( 'jetpack_stats_stored_chart_range_chartStart', startDate );
+		localStorage.setItem( 'jetpack_stats_stored_chart_range_chartEnd', endDate );
+
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
 	};

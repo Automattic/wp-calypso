@@ -245,9 +245,13 @@ class StatsSite extends Component {
 		}
 	}
 
-	getValidDateOrNullFromInput( inputDate ) {
+	getValidDateOrNullFromInput( inputDate, inputKey ) {
 		if ( inputDate === undefined ) {
-			return null;
+			// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
+			const storedValue = localStorage.getItem( `jetpack_stats_stored_chart_range_${ inputKey }` );
+			const isStoredValueValid = moment( storedValue ).isValid();
+
+			return isStoredValueValid ? storedValue : null;
 		}
 		const isValid = moment( inputDate ).isValid();
 		return isValid ? inputDate : null;
@@ -348,7 +352,7 @@ class StatsSite extends Component {
 		let customChartRange = null;
 
 		// Sort out end date for chart.
-		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd, 'chartEnd' );
 
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
@@ -360,7 +364,7 @@ class StatsSite extends Component {
 
 		// Find the quantity of bars for the chart.
 		let daysInRange = this.getDefaultDaysForPeriod( period, isNewDateFilteringEnabled );
-		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart, 'chartStart' );
 		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 
 		if ( chartStart && isSameOrBefore ) {
