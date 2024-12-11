@@ -16,6 +16,7 @@ import {
 	DOMAIN_OVERVIEW,
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
+import { ADD_FOWARDING_EMAIL } from './domain-management/subpage-wrapper/subpage-params';
 import * as paths from './paths';
 
 /**
@@ -401,6 +402,18 @@ export default function () {
 		navigation,
 		emailController.emailManagement,
 		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.allDomainEmailManagementRoot() + '/:domain/forwarding/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubPageParams( ADD_FOWARDING_EMAIL ),
+		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainManagementSubPageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender

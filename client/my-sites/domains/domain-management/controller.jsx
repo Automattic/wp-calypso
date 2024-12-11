@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import SubPageWrapper from 'calypso/my-sites/domains/domain-management/subpage-wrapper';
 import {
 	domainManagementAllEditSelectedContactInfo,
 	domainManagementEditSelectedContactInfo,
@@ -27,6 +28,7 @@ import {
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSubPageParams } from './subpage-wrapper/subpage-params';
 import DomainManagement from '.';
 
 export default {
@@ -370,5 +372,21 @@ export default {
 
 			next();
 		};
+	},
+
+	domainManagementSubPageParams( subPageKey ) {
+		return ( pageContext, next ) => {
+			pageContext.params = getSubPageParams( subPageKey );
+			next();
+		};
+	},
+
+	domainManagementSubPageView( pageContext, next ) {
+		pageContext.primary = (
+			<SubPageWrapper subPageKey={ pageContext.params.subPageKey }>
+				{ pageContext.primary }
+			</SubPageWrapper>
+		);
+		next();
 	},
 };
