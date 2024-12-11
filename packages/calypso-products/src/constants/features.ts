@@ -370,6 +370,8 @@ export const FEATURE_REAL_TIME_SECURITY_SCANS = 'real-time-security-scans';
 export const FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS = 'security-vulnerability-notifications';
 export const FEATURE_SECURITY_DDOS = 'security-ddos';
 export const FEATURE_DEV_TOOLS = 'dev-tools';
+export const FEATURE_SSH_CLI = 'dev-tools-ssh-cli';
+export const FEATURE_GIT = 'dev-tools-git';
 export const FEATURE_WP_UPDATES = 'wp-updates';
 export const FEATURE_MULTI_SITE = 'multi-site';
 export const FEATURE_SELL_SHIP = 'sell-ship';
@@ -437,7 +439,9 @@ export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
 export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_TIERED_STORAGE_PLANS_AVAILABLE = 'tiered-storage-plans-available';
 export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
+export const FEATURE_SUPPORT_FROM_EXPERTS = 'support-from-experts';
 export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
+export const FEATURE_SUPPORT = 'support';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store

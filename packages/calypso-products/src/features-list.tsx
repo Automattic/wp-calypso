@@ -192,6 +192,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_SSH_CLI,
+	FEATURE_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -310,7 +312,9 @@ import {
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
+	FEATURE_SUPPORT,
 	FEATURE_SOCIAL_AUTO_SHARE,
 	FEATURE_SOCIAL_SHARES_1000,
 	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
@@ -526,6 +530,11 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium themes' ),
 		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
+	},
+
+	[ FEATURE_SUPPORT ]: {
+		getSlug: () => FEATURE_SUPPORT,
+		getTitle: () => i18n.translate( 'Support' ),
 	},
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
@@ -1964,6 +1973,20 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
+	[ FEATURE_SSH_CLI ]: {
+		getSlug: () => FEATURE_SSH_CLI,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported. '
+			),
+	},
+	[ FEATURE_GIT ]: {
+		getSlug: () => FEATURE_GIT,
+		getTitle: () => i18n.translate( 'Git commands and GitHub DeploymentsDeploy' ),
+		getDescription: () =>
+			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging site' ),
@@ -2450,6 +2473,10 @@ const FEATURES_LIST: FeatureList = {
 		},
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+	},
+	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
+		getTitle: () => i18n.translate( 'Support from our expert team' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
