@@ -84,9 +84,8 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			// Get theme slug
 			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
 			themeSlug = pageMatch?.[ 1 ] || null;
-
-			// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-			await themeCard.hover();
+			// Silly, but this wait makes it constantly work...
+			await page.waitForTimeout( 2000 );
 			await themeCard.getByText( 'Start with this theme' ).click();
 		} );
 
