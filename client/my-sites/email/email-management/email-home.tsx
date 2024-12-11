@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import React, { ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -26,14 +27,12 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
-interface ContentWithHeaderProps {
-	children: ReactNode;
+type ContentWithHeaderProps = React.PropsWithChildren< {
 	className?: string;
-}
+} >;
 const ContentWithHeader = ( { children, className }: ContentWithHeaderProps ) => {
 	const translate = useTranslate();
 
