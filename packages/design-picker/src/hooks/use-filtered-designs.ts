@@ -3,62 +3,63 @@ import { isBlankCanvasDesign } from '../utils/available-designs';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
-const getDesignSlug = ( design: Design ) => design.recipe?.slug ?? design.slug;
-
 // Returns designs that match the features, subjects and tiers.
 // Designs with `showFirst` are always included regardless of the selected features and subjects.
-export const filterDesigns = (
+export const getFilteredDesignsByCategory = (
 	designs: Design[],
 	categorySlugs: string[] | null | undefined,
 	selectedDesignTier: string = ''
-): Design[] => {
-	const categorySlugsSet = new Set( categorySlugs || [] );
+) => {
 	const filteredDesigns = designs.filter(
 		( design ) =>
-			( design.showFirst ||
-				categorySlugsSet.size === 0 ||
-				design.categories.find( ( { slug } ) => categorySlugsSet.has( slug ) ) ) &&
 			( ! selectedDesignTier || design.design_tier === selectedDesignTier ) &&
 			! isBlankCanvasDesign( design )
 	);
 
-	if ( categorySlugsSet.size > 1 ) {
-		const scores: { [ key: string ]: number } = filteredDesigns.reduce(
-			( result, design ) => ( {
-				...result,
-				[ getDesignSlug( design ) ]: design.categories.reduce(
-					( sum, { slug } ) => sum + ( categorySlugsSet.has( slug ) ? 1 : 0 ),
-					0
-				),
-			} ),
-			{}
-		);
+	const filteredDesignsByCategory: { [ key: string ]: Design[] } = {
+		all: filteredDesigns,
+		best: [],
+		...Object.fromEntries( ( categorySlugs || [] ).map( ( slug ) => [ slug, [] ] ) ),
+	};
 
-		filteredDesigns.sort( ( a: Design, b: Design ) => {
-			const aScore = scores[ getDesignSlug( a ) ];
-			const bScore = scores[ getDesignSlug( b ) ];
-
-			if ( aScore > bScore ) {
-				return -1;
-			} else if ( aScore < bScore ) {
-				return 1;
-			}
-			return 0;
-		} );
+	// Return early if none of the category is selected.
+	if ( ! categorySlugs || categorySlugs.length === 0 ) {
+		return filteredDesignsByCategory;
 	}
 
-	return filteredDesigns;
+	// Get designs by the selected category.
+	const categorySlugsSet = new Set( categorySlugs );
+	for ( let i = 0; i < filteredDesigns.length; i++ ) {
+		const design = filteredDesigns[ i ];
+		let count = 0;
+		for ( let j = 0; j < design.categories.length; j++ ) {
+			const category = design.categories[ j ];
+			if ( categorySlugsSet.has( category.slug ) ) {
+				filteredDesignsByCategory[ category.slug ].push( design );
+				count++;
+			}
+		}
+
+		// For designs that match all selected categories.
+		if ( count === categorySlugs.length ) {
+			filteredDesignsByCategory.best.push( design );
+		}
+	}
+
+	return filteredDesignsByCategory;
 };
 
-export const useFilteredDesigns = ( designs: Design[] ) => {
+export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
 	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
 		if ( selectedCategories.length > 0 || selectedDesignTier ) {
-			return filterDesigns( designs, selectedCategories, selectedDesignTier );
+			return getFilteredDesignsByCategory( designs, selectedCategories, selectedDesignTier );
 		}
 
-		return designs;
+		return {
+			all: designs,
+		};
 	}, [ designs, selectedCategories, selectedDesignTier ] );
 
 	return filteredDesigns;

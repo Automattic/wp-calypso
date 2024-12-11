@@ -292,6 +292,7 @@ import {
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	FEATURE_STATS_PAID,
+	FEATURE_STATS_COMMERCIAL,
 	FEATURE_SENSEI_SUPPORT,
 	FEATURE_SENSEI_UNLIMITED,
 	FEATURE_SENSEI_INTERACTIVE,
@@ -1863,6 +1864,18 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
+		getTitle: () => {
+			return isEnabled( 'stats/paid-wpcom-v3' )
+				? i18n.translate( 'Stats beyond the last 7 days' )
+				: i18n.translate( 'In-depth site analytics dashboard' );
+		},
+		getDescription: () =>
+			i18n.translate(
+				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
+			),
+	},
+	[ FEATURE_STATS_COMMERCIAL ]: {
+		getSlug: () => FEATURE_STATS_COMMERCIAL,
 		getTitle: () => i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(

@@ -26,7 +26,6 @@ import {
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
 	TASK_AFFILIATES,
-	TASK_BLACK_FRIDAY_2024,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -73,7 +72,6 @@ import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reade
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
-import BlackFriday2024 from 'calypso/my-sites/customer-home/cards/tasks/black-friday-2024';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -112,7 +110,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
 	[ TASK_AFFILIATES ]: Affiliates,
-	[ TASK_BLACK_FRIDAY_2024 ]: BlackFriday2024,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,

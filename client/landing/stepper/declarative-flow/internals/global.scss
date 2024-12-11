@@ -127,6 +127,12 @@ button {
 			}
 		}
 
+		@include break-xlarge {
+			&.domains {
+				margin-top: -60px;
+			}
+		}
+
 		// Importer flows
 		&.import-focused,
 		&.import-hosted-site,

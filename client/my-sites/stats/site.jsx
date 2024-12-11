@@ -193,7 +193,12 @@ class StatsSite extends Component {
 		}
 
 		// Determine the target period for the navigation.
-		const targetPeriod = period === 'day' ? 'hour' : 'day';
+		let targetPeriod = 'day';
+		if ( period === 'day' ) {
+			targetPeriod = 'hour';
+		} else if ( period === 'year' ) {
+			targetPeriod = 'month';
+		}
 
 		const path = `/stats/${ targetPeriod }/${ this.props.slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
