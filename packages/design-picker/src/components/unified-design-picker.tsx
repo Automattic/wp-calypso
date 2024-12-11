@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { InView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG } from '../constants';
+import { DESIGN_TIER_CATEGORIES, SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
@@ -305,10 +305,13 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 	const categories = categorization?.categories || [];
 
+	const tierFilter = Object.values( DESIGN_TIER_CATEGORIES )[ 0 ]; // Free tier only
+
 	const categoryTypes = useMemo(
-		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
+		() => [ ...categories.filter( ( { slug } ) => isFeatureCategory( slug ) ), tierFilter ],
 		[ categorization?.categories ]
 	);
+
 	const categoryTopics = useMemo(
 		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]

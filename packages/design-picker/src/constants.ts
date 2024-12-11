@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import type { Design } from './types';
 
 export const DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = 'default';
@@ -43,6 +44,13 @@ export const FEATURE_CATEGORIES = {
 	PORTFOLIO: 'portfolio',
 	PODCAST: 'podcast',
 	STORE: 'store',
+};
+
+export const DESIGN_TIER_CATEGORIES = {
+	FREE: {
+		slug: FREE_THEME,
+		name: translate( 'Free' ),
+	},
 };
 
 export const SUBJECT_CATEGORIES = {

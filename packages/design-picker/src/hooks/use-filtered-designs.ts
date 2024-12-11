@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DESIGN_TIER_CATEGORIES } from '../constants';
 import { isBlankCanvasDesign } from '../utils/available-designs';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
@@ -7,12 +8,19 @@ import type { Design } from '../types';
 // Designs with `showFirst` are always included regardless of the selected features and subjects.
 export const getFilteredDesignsByCategory = (
 	designs: Design[],
-	categorySlugs: string[] | null | undefined,
-	selectedDesignTier: string = ''
+	categorySlugs: string[] | null | undefined
 ) => {
+	// separate selectedTierSlugs from categorySlugs
+	const tierSlugs = Object.values( DESIGN_TIER_CATEGORIES ).map( ( category ) => category.slug );
+	const selectedTierSlugs = categorySlugs?.filter( ( categorySlug ) =>
+		tierSlugs.includes( categorySlug )
+	);
+	categorySlugs = categorySlugs?.filter( ( categorySlug ) => ! tierSlugs.includes( categorySlug ) );
+
 	const filteredDesigns = designs.filter(
 		( design ) =>
-			( ! selectedDesignTier || design.design_tier === selectedDesignTier ) &&
+			( ! selectedTierSlugs?.length ||
+				( design.design_tier && selectedTierSlugs.includes( design.design_tier ) ) ) &&
 			! isBlankCanvasDesign( design )
 	);
 
@@ -62,17 +70,17 @@ export const getFilteredDesignsByCategory = (
 };
 
 export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
-	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
+	const { selectedCategories } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
-		if ( selectedCategories.length > 0 || selectedDesignTier ) {
-			return getFilteredDesignsByCategory( designs, selectedCategories, selectedDesignTier );
+		if ( selectedCategories.length > 0 ) {
+			return getFilteredDesignsByCategory( designs, selectedCategories );
 		}
 
 		return {
 			all: designs,
 		};
-	}, [ designs, selectedCategories, selectedDesignTier ] );
+	}, [ designs, selectedCategories ] );
 
 	return filteredDesigns;
 };
