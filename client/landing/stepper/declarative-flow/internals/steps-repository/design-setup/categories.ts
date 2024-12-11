@@ -1,27 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
-import { Category } from '@automattic/design-picker';
-
-const CATEGORIES = {
-	/**
-	 * Features
-	 */
-	BLOG: 'blog',
-	NEWSLETTER: 'newsletter',
-	PORTFOLIO: 'portfolio',
-	PODCAST: 'podcast',
-	STORE: 'store',
-
-	/**
-	 * Subjects
-	 */
-	BUSINESS: 'business',
-	COMMUNITY_NON_PROFIT: 'community-non-profit',
-	AUTHORS_WRITERS: 'authors-writers',
-	EDUCATION: 'education',
-	ENTERTAINMENT: 'entertainment',
-	EVENTS: 'events',
-	LINK_IN_BIO: 'link-in-bio',
-};
+import { CATEGORIES } from '@automattic/design-picker';
+import type { Category } from '@automattic/design-picker';
 
 const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
 	[ Onboard.SiteGoal.Write ]: [ CATEGORIES.BLOG, CATEGORIES.NEWSLETTER ],
@@ -81,16 +60,20 @@ export function getCategorizationOptions(
 	goals: Onboard.SiteGoal[],
 	{ isMultiSelection = false }: CategorizationOptions = {}
 ) {
-	const defaultSelections = Array.from(
+	let defaultSelections = Array.from(
 		new Set(
 			goals
 				.map( ( goal ) => {
 					const preferredCategories = getGoalsPreferredCategories( goal );
 					return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
 				} )
-				.flat() ?? [ CATEGORIES.BUSINESS ]
+				.flat()
 		)
 	);
+
+	if ( defaultSelections.length === 0 ) {
+		defaultSelections = [ CATEGORIES.BLOG ];
+	}
 
 	return {
 		defaultSelections,

@@ -1,95 +1,112 @@
 import page from '@automattic/calypso-router';
-import { addQueryArgs } from '@wordpress/url';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
-import { Props as A4AFeedbackProps } from '../index';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
-import { FeedbackQueryData, FeedbackType } from '../types';
+import type { Props as A4AFeedbackProps } from '../index';
+import type { FeedbackQueryData, FeedbackType, FeedbackProps } from '../types';
 
 const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
-const FEEDBACK_SENT_PREFERENCE_PREFIX = 'a4a-feedback-sent__';
+const FEEDBACK_PREFERENCE = 'a4a-feedback';
 
-const redirectToDefaultUrl = ( redirectArgs: Record< string, string > ) => {
-	const currentUrl = new URL( window.location.href );
-	currentUrl.hash = '';
-	currentUrl.search = '';
-	page.redirect( addQueryArgs( currentUrl.toString(), redirectArgs ) );
+const redirectToDefaultUrl = ( redirectUrl?: string ) => {
+	if ( redirectUrl ) {
+		page.redirect( redirectUrl );
+		return;
+	}
+	page.redirect( removeQueryArgs( window.location.pathname + window.location.search, 'args' ) );
 };
 
-const useShowFeedbackModal = ( type: FeedbackType ) => {
+const getUpdatedPreference = (
+	feedbackTimestamp: Record< string, Record< string, number > > | undefined,
+	type: FeedbackType,
+	paramType: string
+) => {
+	return {
+		...( feedbackTimestamp ?? {} ),
+		[ type ]: {
+			...feedbackTimestamp?.[ type ],
+			[ paramType ]: Date.now(),
+		},
+	};
+};
+
+const useShowFeedback = ( type: FeedbackType ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ feedbackInteracted, setFeedbackInteracted ] = useState( false );
 
 	// Let's use hash #feedback if we want to show the feedback
 	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
 
 	// Additional args, like email for invite flow
-	const urlParams = new URLSearchParams( window.location.search );
-	const args = JSON.parse( urlParams.get( 'args' ) ?? '{}' );
-	const redirectArgs = JSON.parse( urlParams.get( 'redirectArgs' ) ?? '{}' );
+	const { value: args } = useUrlQueryParam( 'args' );
 
-	// Preference name, eg a4a-feedback-sent__referral-complete
-	const preference = FEEDBACK_SENT_PREFERENCE_PREFIX + type;
+	// We are storing the timestamp when last feedback for given preference was submitted or skipped
+	const feedbackTimestamp = useSelector( ( state ) => getPreference( state, FEEDBACK_PREFERENCE ) );
 
-	// We are storing the timestamp when last feedback for given preference was sent
-	const feedbackTimestamp = useSelector( ( state ) => getPreference( state, preference ) );
+	const feedbackSubmitTimestamp = feedbackTimestamp?.[ type ]?.lastSubmittedAt;
+	const feedbackSkipTimestamp = feedbackTimestamp?.[ type ]?.lastSkippedAt;
 
-	const feedbackSubmitTimestamp = feedbackTimestamp?.submitted;
-	const feedbackSkipTimestamp = feedbackTimestamp?.skipped;
-
-	// Checking if hash for feedback is present in the url and if it was more than 7 days ago since last feedback was sent
+	// Checking if the feedback was submitted or skipped
 	const showFeedback = useMemo( () => {
-		const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-		return (
-			feedbackFormHash &&
-			( ! feedbackSubmitTimestamp ||
-				feedbackSubmitTimestamp < sevenDaysAgo ||
-				! feedbackSkipTimestamp ||
-				feedbackSkipTimestamp < sevenDaysAgo )
-		);
-	}, [ feedbackFormHash, feedbackSubmitTimestamp, feedbackSkipTimestamp ] );
+		return ! feedbackSubmitTimestamp && ! feedbackSkipTimestamp;
+	}, [ feedbackSubmitTimestamp, feedbackSkipTimestamp ] );
+
+	const feedbackProps: FeedbackProps = useMemo(
+		() => getA4AfeedbackProps( type, translate, args ),
+		[ type, translate, args ]
+	);
 
 	// Do the action when submitting feedback
 	const onSubmitFeedback = useCallback(
 		( data: FeedbackQueryData ) => {
-			dispatch( savePreference( preference, { submitted: Date.now() } ) );
+			dispatch( recordTracksEvent( 'calypso_a4a_feedback_submit', { type } ) );
 			if ( data ) {
 				// TODO: Send feedback data to the backend
 			}
-			redirectToDefaultUrl( redirectArgs );
+			setFeedbackInteracted( true );
+			const updatedPreference = getUpdatedPreference( feedbackTimestamp, type, 'lastSubmittedAt' );
+			dispatch( savePreference( FEEDBACK_PREFERENCE, updatedPreference ) );
 		},
-		[ dispatch, preference, redirectArgs ]
+		[ dispatch, feedbackTimestamp, type ]
 	);
 
 	// Do action when skipping feedback
 	const onSkipFeedback = useCallback( () => {
-		dispatch( savePreference( preference, { skipped: Date.now() } ) );
-		redirectToDefaultUrl( redirectArgs );
-	}, [ dispatch, preference, redirectArgs ] );
+		dispatch( recordTracksEvent( 'calypso_a4a_feedback_skip', { type } ) );
+		const updatedPreference = getUpdatedPreference( feedbackTimestamp, type, 'lastSkippedAt' );
+		setFeedbackInteracted( true );
+		dispatch( savePreference( FEEDBACK_PREFERENCE, updatedPreference ) );
+	}, [ dispatch, feedbackTimestamp, type ] );
 
 	// Combine props passed to Feedback component
-	const feedbackProps: A4AFeedbackProps = useMemo(
+	const updatedFeedbackProps: A4AFeedbackProps = useMemo(
 		() => ( {
-			...getA4AfeedbackProps( type, translate, args ),
+			...feedbackProps,
 			onSubmit: onSubmitFeedback,
 			onSkip: onSkipFeedback,
 		} ),
-		[ type, onSubmitFeedback, onSkipFeedback, args, translate ]
+		[ feedbackProps, onSubmitFeedback, onSkipFeedback ]
 	);
 
-	// Some pages have banners and require url params
-	// we need to find an elegant way to pass these.
 	if ( feedbackFormHash && ! showFeedback ) {
-		redirectToDefaultUrl( redirectArgs );
+		// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
+		// If feedback was interacted, redirect to the URL passed in the feedbackProps
+		redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
 	}
 
 	return {
-		showFeedback,
-		feedbackProps,
+		isFeedbackShown: ! showFeedback,
+		showFeedback: feedbackFormHash && showFeedback,
+		feedbackProps: updatedFeedbackProps,
 	};
 };
 
-export default useShowFeedbackModal;
+export default useShowFeedback;

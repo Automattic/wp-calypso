@@ -4,7 +4,7 @@
 
 .domains {
 	.step-container {
-		max-width: 1280px;
+		max-width: 1040px;
 		padding: 0 20px;
 		margin: 0;
 
@@ -628,5 +628,12 @@
 				margin-right: 16px;
 			}
 		}		
+	}
+}
+
+.copy-site.domains {
+
+	.step-wrapper.is-wide-layout {
+		max-width: 1040px;
 	}
 }

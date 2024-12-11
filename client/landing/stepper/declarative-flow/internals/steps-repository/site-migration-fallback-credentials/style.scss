@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 $blueberry-color: #3858e9;
 
-.site-migration-credentials {
+.site-migration-fallback-credentials {
 	#site-migration-credentials-header {
 		.formatted-header__subtitle {
 			text-align: center;
@@ -31,6 +31,9 @@ $blueberry-color: #3858e9;
 			margin-bottom: 16px;
 		}
 
+		max-width: 400px;
+		margin: auto;
+
 		hr {
 			margin-top: 1em;
 			background: var(--color-border-subtle);
@@ -52,8 +55,8 @@ $blueberry-color: #3858e9;
 			margin-top: 1em;
 			flex: 1;
 		}
-		.site-migration-credentials__form-field--notes {
-			margin-top: 5px;
+		.site-migration-credentials__form-field:nth-of-type(1) {
+			margin-top: 0;
 		}
 
 		.site-migration-credentials__form-note {

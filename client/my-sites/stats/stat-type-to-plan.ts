@@ -1,12 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import {
-	STATS_TYPE_DEVICE_STATS,
-	STATS_FEATURE_UTM_STATS,
-	STAT_TYPE_SEARCH_TERMS,
-	STAT_TYPE_VIDEO_PLAYS,
-	STAT_TYPE_TOP_AUTHORS,
-} from './constants';
+import { paidStats } from './hooks/use-should-gate-stats';
 
 export function statTypeToPlan( statType: string ) {
 	if ( ! config.isEnabled( 'stats/paid-wpcom-v3' ) ) {
@@ -14,15 +8,7 @@ export function statTypeToPlan( statType: string ) {
 	}
 
 	// Commercial stats features that require the premium plan
-	if (
-		[
-			STAT_TYPE_TOP_AUTHORS,
-			STAT_TYPE_SEARCH_TERMS,
-			STAT_TYPE_VIDEO_PLAYS,
-			STATS_FEATURE_UTM_STATS,
-			STATS_TYPE_DEVICE_STATS,
-		].includes( statType )
-	) {
+	if ( paidStats.includes( statType ) ) {
 		return PLAN_PREMIUM;
 	}
 

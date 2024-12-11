@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { Card, CardHeader, CardBody } from '@wordpress/components';
+import { Card, CardHeader, CardBody, Spinner } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
@@ -31,8 +31,22 @@ const TAB_STATES = {
 	archived: 'archived',
 };
 
-const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
+const Conversations = ( {
+	conversations,
+	isLoadingInteractions,
+}: {
+	conversations: ZendeskConversation[];
+	isLoadingInteractions?: boolean;
+} ) => {
 	const { __ } = useI18n();
+
+	if ( isLoadingInteractions ) {
+		return (
+			<div className="help-center-chat-history__no-results">
+				<Spinner />
+			</div>
+		);
+	}
 
 	if ( ! conversations || ! conversations.length ) {
 		return (
@@ -88,10 +102,10 @@ export const HelpCenterChatHistory = () => {
 	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	useEffect( () => {
-		const isLoadingInteractions =
-			isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
+	const isLoadingInteractions =
+		isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
 
+	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
 			const allConversations = getZendeskConversations();
 			const supportInteractions = [
@@ -107,13 +121,11 @@ export const HelpCenterChatHistory = () => {
 			setConversations( filteredConversations );
 		}
 	}, [
+		isLoadingInteractions,
 		supportInteractionsResolved,
 		supportInteractionsOpen,
 		isChatLoaded,
 		setUnreadCount,
-		isLoadingResolvedInteractions,
-		isLoadingClosedInteractions,
-		isLoadingOpenInteractions,
 		supportInteractionsClosed,
 	] );
 
@@ -143,7 +155,12 @@ export const HelpCenterChatHistory = () => {
 
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
-		return <Conversations conversations={ recentConversations } />;
+		return (
+			<Conversations
+				conversations={ recentConversations }
+				isLoadingInteractions={ isLoadingInteractions }
+			/>
+		);
 	}
 
 	return (
