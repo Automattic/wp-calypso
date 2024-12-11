@@ -90,24 +90,23 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// See https://github.com/Automattic/wp-calypso/pull/82981.
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 
-	// this pre-loads all the lazy steps down the flow.
+	// this pre-loads the next step in the flow.
 	useEffect( () => {
+		// Omit user step if user is logged in.
+		const steps = isLoggedIn ? flowSteps.filter( ( step ) => step.slug !== 'user' ) : flowSteps;
+		const nextStepIndex = steps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
+		const nextStep = steps[ nextStepIndex ];
+
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
 			// Otherwise, we're still waiting to render something meaningful, and we don't want to
 			// potentially slow that down by having the CPU busy initialising future steps.
 			return;
 		}
-		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
-		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
-		// which means that we don't want to depend on `flowSteps` here, or this would end up
-		// running on every render. We thus depend on `flow` instead.
-		//
-		// This should be safe, because flows shouldn't return different lists of steps at
-		// different points. But even if they do, worst case scenario we only fail to preload
-		// some steps, and they'll simply be loaded later.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow, siteSlugOrId, selectedSite ] );
+		if ( nextStepIndex > 0 && nextStep && 'asyncComponent' in nextStep ) {
+			nextStep.asyncComponent();
+		}
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flowSteps, isLoggedIn ] );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,

@@ -2,7 +2,10 @@ import type { Flow, StepperStep } from '../declarative-flow/internals/types';
 
 const USER_STEP: StepperStep = {
 	slug: 'user',
-	asyncComponent: () => import( '../declarative-flow/internals/steps-repository/__user' ),
+	asyncComponent: () =>
+		import(
+			/* webpackChunkName: "stepper-user-step" */ '../declarative-flow/internals/steps-repository/__user'
+		),
 };
 
 function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
