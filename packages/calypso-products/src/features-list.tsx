@@ -1866,8 +1866,8 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_PAID,
 		getTitle: () => {
 			return isEnabled( 'stats/paid-wpcom-v3' )
-				? i18n.translate( 'Stats beyond last 7 days. Detailed traffic stats and site insights.' )
-				: i18n.translate( 'In-depth site analytics dashboard.' );
+				? i18n.translate( 'Stats beyond the last 7 days' )
+				: i18n.translate( 'In-depth site analytics dashboard' );
 		},
 		getDescription: () =>
 			i18n.translate(
