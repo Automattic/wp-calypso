@@ -12,6 +12,7 @@ type EmailPathUtilityFunction = (
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
+export const domainsManagementPrefix = '/domains/manage/all/email';
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
@@ -26,8 +27,12 @@ function resolveRootPath( relativeTo?: string | null ) {
 		return emailManagementAllSitesPrefix;
 	}
 
-	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isUnderEmailManagementAll( relativeTo ) ) {
 		return emailManagementAllSitesPrefix;
+	}
+
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return domainsManagementPrefix;
 	}
 
 	return emailManagementPrefix;

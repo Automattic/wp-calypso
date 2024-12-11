@@ -31,12 +31,17 @@ import './style.scss';
 type EmailForwardsAddProps = {
 	selectedDomainName: string;
 	source?: string;
+	showHeader?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
 
-const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps ) => {
+const EmailForwardsAdd = ( {
+	selectedDomainName,
+	source,
+	showHeader = true,
+}: EmailForwardsAddProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -111,13 +116,17 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
 
-				<EmailHeader />
+				{ showHeader && (
+					<>
+						<EmailHeader />
 
-				<HeaderCake onClick={ goToEmail }>
-					{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
-				</HeaderCake>
+						<HeaderCake onClick={ goToEmail }>
+							{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
+						</HeaderCake>
 
-				<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+						<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+					</>
+				) }
 
 				{ content }
 			</Main>

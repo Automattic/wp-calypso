@@ -398,4 +398,14 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		paths.allDomainEmailManagementRoot() + '/:domain/forwarding/add/:site',
+		siteSelection,
+		navigation,
+		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
 }

@@ -371,4 +371,20 @@ export default {
 			next();
 		};
 	},
+
+	domainManagementSubpage( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot( ':domain' ) }
+				analyticsTitle="Domain Management"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				selectedDomainName={ selectedDomainName }
+				needsDomains
+			/>
+		);
+		next();
+	},
 };
