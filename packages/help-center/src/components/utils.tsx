@@ -140,9 +140,6 @@ export const matchSupportInteractionId = (
 	}
 };
 
-export const isUseHelpCenterExperienceEnabled = ( userId: number ): boolean => {
-	if ( ! userId ) {
-		return false;
-	}
+export const isUseHelpCenterExperienceEnabled = (): boolean => {
 	return true;
 };
