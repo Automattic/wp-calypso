@@ -15,12 +15,11 @@ export const useSupportChatLLMQuery = (
 	insight: PerformanceMetricsItemQueryResponse,
 	hash: string,
 	is_wpcom: boolean,
-	enable: boolean,
-	localeSlug?: string
+	enable: boolean
 ) => {
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'support', 'chat', hash, insight.title, is_wpcom, localeSlug ],
+		queryKey: [ 'support', 'chat', hash, insight.title, is_wpcom ],
 		queryFn: () =>
 			wp.req.post(
 				{
@@ -30,7 +29,6 @@ export const useSupportChatLLMQuery = (
 				{
 					insight,
 					is_wpcom,
-					locale: localeSlug,
 				}
 			),
 		select: mapResult,

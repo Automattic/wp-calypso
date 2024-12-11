@@ -105,8 +105,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		insight,
 		hash,
 		isWpcom,
-		isEnabled( 'performance-profiler/llm' ) && retrieveInsight,
-		translate.localeSlug
+		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
