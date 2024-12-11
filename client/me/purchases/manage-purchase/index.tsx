@@ -671,6 +671,23 @@ class ManagePurchase extends Component<
 		return null;
 	}
 
+	renderRefundText() {
+		const { purchase, translate } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		// Hide if refund window has lapsed.
+		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
+			return;
+		}
+
+		return (
+			<span className="manage-purchase__refund-text">{ translate( 'Refund available' ) }</span>
+		);
+	}
+
 	renderRemovePurchaseNavItem() {
 		const {
 			hasLoadedSites,
@@ -719,6 +736,7 @@ class ManagePurchase extends Component<
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
+				{ this.renderRefundText() }
 			</RemovePurchase>
 		);
 	}
@@ -923,6 +941,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
