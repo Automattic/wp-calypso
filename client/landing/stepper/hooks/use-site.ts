@@ -8,11 +8,11 @@ import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
 import type { SiteSelect } from '@automattic/data-stores';
 
-export function useSite() {
+export function useSite( signupSlugParam?: string ) {
 	const dispatch = useDispatch();
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
-	const siteIdOrSlug = siteIdParam ?? siteSlug ?? '';
+	const siteIdOrSlug = siteIdParam ?? siteSlug ?? signupSlugParam ?? '';
 
 	const site = useSelect(
 		( select ) => {
