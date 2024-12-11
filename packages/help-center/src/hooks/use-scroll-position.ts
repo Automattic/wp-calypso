@@ -1,4 +1,5 @@
 import { useEffect, useState } from '@wordpress/element';
+import { debounce } from 'lodash';
 
 /**
  * Persist the value in memory so when the element is unmounted it doesn't get lost.
@@ -24,7 +25,7 @@ export function useArticleScrollPosition( ref: React.RefObject< HTMLElement >, u
 				}
 			}
 		};
-		window.addEventListener( 'scroll', handleScroll, true );
+		window.addEventListener( 'scroll', debounce( handleScroll, 250 ), true );
 
 		// When the Help Center is closed and reopened, the scroll position should be reset.
 		if ( ! url.startsWith( '/post' ) ) {
