@@ -257,6 +257,15 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		return basicStats.includes( statType );
 	}
 
+	// If v3 is not enabled do not directly gate top posts, file downloads, and country views.
+	// We could remove this check once v3 is enabled.
+	if (
+		! isEnabled( 'stats/paid-wpcom-v3' ) &&
+		[ STAT_TYPE_TOP_POSTS, STAT_TYPE_FILE_DOWNLOADS, STAT_TYPE_COUNTRY_VIEWS ].includes( statType )
+	) {
+		return false;
+	}
+
 	// All other sites get gated to 7 days + paywall upsell
 	return gatedStats.includes( statType );
 };
