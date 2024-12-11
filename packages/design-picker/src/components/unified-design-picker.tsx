@@ -294,24 +294,23 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 } ) => {
+	const translate = useTranslate();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const categories = categorization?.categories || [];
 	const isNoResults = Object.values( designsByGroup ).every(
 		( categoryDesigns ) => categoryDesigns.length === 0
 	);
 	const categoryTypes = useMemo(
-		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
+		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 	const categoryTopics = useMemo(
-		() =>
-			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
+		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 
-	const translate = useTranslate();
-
 	const getCategoryName = ( value: string ) =>
-		( categorization?.categories || [] ).find( ( { slug } ) => slug === value )?.name || '';
+		categories.find( ( { slug } ) => slug === value )?.name || '';
 
 	const designCardProps = {
 		locale,
@@ -366,8 +365,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
-			{ Object.entries( designsByGroup ).map(
-				( [ categorySlug, categoryDesigns ], index, array ) => (
+			{ /* We want to show the last one on top first. */ }
+			{ Object.entries( designsByGroup )
+				.reverse()
+				.map( ( [ categorySlug, categoryDesigns ], index, array ) => (
 					<DesignCardGroup
 						key={ categorySlug }
 						{ ...designCardProps }
@@ -383,8 +384,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						designs={ categoryDesigns }
 						showNoResults={ index === array.length - 1 && isNoResults }
 					/>
-				)
-			) }
+				) ) }
 		</div>
 	);
 };
