@@ -12,7 +12,6 @@ import {
 	isLockedStyleVariation,
 } from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
-import DesignPickerTierFilter from './design-picker-tier-filter';
 import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
 import ThemeCard from './theme-card';
@@ -275,9 +274,7 @@ interface DesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
-	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
-	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
 	recommendedDesignSlugs?: string[];
 }
@@ -295,9 +292,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
-	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
-	onChangeTier,
 	isBigSkyEligible = false,
 	recommendedDesignSlugs = [],
 } ) => {
@@ -305,10 +300,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 	const categories = categorization?.categories || [];
 
-	const tierFilter = Object.values( DESIGN_TIER_CATEGORIES )[ 0 ]; // Free tier only
+	const tierFilters = isMultiFilterEnabled ? Object.values( DESIGN_TIER_CATEGORIES ) : [];
 
 	const categoryTypes = useMemo(
-		() => [ ...categories.filter( ( { slug } ) => isFeatureCategory( slug ) ), tierFilter ],
+		() => [ ...categories.filter( ( { slug } ) => isFeatureCategory( slug ) ), ...tierFilters ],
 		[ categorization?.categories ]
 	);
 
@@ -379,7 +374,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					</DesignPickerFilterGroup>
 				) }
 				<DesignPickerFilterGroup>
-					{ isTierFilterEnabled && <DesignPickerTierFilter onChange={ onChangeTier } /> }
 					{ isBigSkyEligible && (
 						<Button
 							className={ clsx(
@@ -455,9 +449,7 @@ export interface UnifiedDesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
-	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
-	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
 	recommendedDesignSlugs?: string[];
 }
@@ -477,9 +469,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
-	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
-	onChangeTier,
 	isBigSkyEligible = false,
 	recommendedDesignSlugs = [],
 } ) => {
@@ -506,9 +496,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					oldHighResImageLoading={ oldHighResImageLoading }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
-					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
-					onChangeTier={ onChangeTier }
 					isBigSkyEligible={ isBigSkyEligible }
 					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>

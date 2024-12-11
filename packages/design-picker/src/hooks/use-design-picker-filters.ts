@@ -26,44 +26,14 @@ const useCategoriesFilter = () => {
 	return { selectedCategories, setSelectedCategories };
 };
 
-const useDesignTierFilter = () => {
-	const [ searchParams, setSearchParams ] = useSearchParams();
-
-	const selectedDesignTier = searchParams.get( 'tier' ) ?? '';
-
-	const setSelectedDesignTier = ( value: string ) => {
-		setSearchParams(
-			makeSearchParams( ( currentSearchParams: any ) => {
-				if ( value ) {
-					currentSearchParams.set( 'tier', value );
-				} else {
-					currentSearchParams.delete( 'tier' );
-				}
-
-				return currentSearchParams;
-			} ),
-			{ replace: true }
-		);
-	};
-
-	return {
-		selectedDesignTier,
-		setSelectedDesignTier,
-	};
-};
-
 export const useDesignPickerFilters = () => {
 	const { selectedCategories, setSelectedCategories } = useCategoriesFilter();
-	const { selectedDesignTier, setSelectedDesignTier } = useDesignTierFilter();
 
 	return {
 		selectedCategories,
-		selectedDesignTier,
 		setSelectedCategories,
-		setSelectedDesignTier,
 		resetFilters: () => {
 			setSelectedCategories( [] );
-			setSelectedDesignTier( '' );
 		},
 	};
 };
