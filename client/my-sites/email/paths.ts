@@ -41,7 +41,7 @@ function resolveRootPath( relativeTo?: string | null ) {
 function getPath(
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
-	slug: string,
+	slug?: string | null,
 	relativeTo?: string | null,
 	urlParameters?: QueryStringParameters
 ) {
@@ -53,12 +53,13 @@ function getPath(
 			domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 		}
 
+		const slugFragment = slug ? '/' + slug : '';
+
 		return (
 			resolveRootPath( relativeTo ) +
 			'/' +
 			domainName +
-			'/' +
-			slug +
+			slugFragment +
 			'/' +
 			siteName +
 			buildQueryString( urlParameters )
@@ -143,7 +144,13 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return getPath( siteName, domainName, '', relativeTo, urlParameters );
+	}
+
+	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+};
 
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
 	getPath( siteName, domainName, 'forwarding', relativeTo );
