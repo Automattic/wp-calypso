@@ -159,7 +159,7 @@ export default class extends Component {
 
 			case 'gridicons-reblog':
 				return (
-					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>Reblog</title>
 						<g>
 							<path d="M22.086 9.914L20 7.828V18c0 1.105-.895 2-2 2h-7v-2h7V7.828l-2.086 2.086L14.5 8.5 19 4l4.5 4.5-1.414 1.414zM6 16.172V6h7V4H6c-1.105 0-2 .895-2 2v10.172l-2.086-2.086L.5 15.5 5 20l4.5-4.5-1.414-1.414L6 16.172z" />
