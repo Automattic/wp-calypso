@@ -291,7 +291,7 @@ export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
 }
 
 /**
- * Check whether the provided locale is translated wit AI.
+ * Check whether the provided locale is translated with AI.
  *
  * @param {string} locale Locale slug
  * @returns {boolean}
