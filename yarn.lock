@@ -366,9 +366,9 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.5.0"
-    "@playwright/browser-chromium": "npm:1.49.1"
-    "@playwright/browser-firefox": "npm:1.49.1"
-    "@playwright/browser-webkit": "npm:1.49.1"
+    "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/browser-firefox": "npm:1.48.2"
+    "@playwright/browser-webkit": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
     "@types/node-fetch": "npm:^2.6.1"
     "@types/totp-generator": "npm:^0.0.3"
@@ -379,7 +379,7 @@ __metadata:
     mailosaur: "npm:^8.4.0"
     nock: "npm:^13.5.4"
     node-fetch: "npm:^2.6.7"
-    playwright: "npm:1.49.1"
+    playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -5180,30 +5180,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/browser-chromium@npm:1.49.1":
-  version: 1.49.1
-  resolution: "@playwright/browser-chromium@npm:1.49.1"
+"@playwright/browser-chromium@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/browser-chromium@npm:1.48.2"
   dependencies:
-    playwright-core: "npm:1.49.1"
-  checksum: b62287ed3c2e475ac7efa0b399adf91fd83403a83d5a4ce0ce24d6f9a9cf576f51df772707e0b981a1d288c71fa9d9e72dd1e23402620d2564b69738ddd65c31
+    playwright-core: "npm:1.48.2"
+  checksum: b65f763b6862883ee177ff859e267ca60f5f3b88f97177cdc799254045c2d55b498fc3074e34d51414d01d04bd2fbbfb4205095d6f33644c22692400c587c755
   languageName: node
   linkType: hard
 
-"@playwright/browser-firefox@npm:1.49.1":
-  version: 1.49.1
-  resolution: "@playwright/browser-firefox@npm:1.49.1"
+"@playwright/browser-firefox@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/browser-firefox@npm:1.48.2"
   dependencies:
-    playwright-core: "npm:1.49.1"
-  checksum: 95ac0429f9b3ee28d0fc292aa7f8c2fe90a41abbf47be9e3936151c143aaee050afc1ab65078956c25b4457304b97301bccea5e5022db57ac26298a7144d8434
+    playwright-core: "npm:1.48.2"
+  checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
   languageName: node
   linkType: hard
 
-"@playwright/browser-webkit@npm:1.49.1":
-  version: 1.49.1
-  resolution: "@playwright/browser-webkit@npm:1.49.1"
+"@playwright/browser-webkit@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/browser-webkit@npm:1.48.2"
   dependencies:
-    playwright-core: "npm:1.49.1"
-  checksum: f5f090b56659eccaadfecf4e6ab00f182bdb4860872653f75e1948590ebad7dc3af70fb1df359591f7fd90bee72220b822f425e65b2cc6f1309d96ba774b56ff
+    playwright-core: "npm:1.48.2"
+  checksum: bf46c1f0b6a759aa9bb1b24392ce735803b1467952f9d029713698c48739cdf1a892623e95f88000a36e3b4f8170b0dfe40fed146b0acc4366dab24836cc5fcd
   languageName: node
   linkType: hard
 
@@ -10923,9 +10923,9 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@electron/notarize": "npm:^2.4.0"
-    "@playwright/browser-chromium": "npm:1.49.1"
-    "@playwright/browser-firefox": "npm:1.49.1"
-    "@playwright/browser-webkit": "npm:1.49.1"
+    "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/browser-firefox": "npm:1.48.2"
+    "@playwright/browser-webkit": "npm:1.48.2"
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
@@ -10939,7 +10939,7 @@ __metadata:
     js-yaml: "npm:^4.0.0"
     lodash: "npm:^4.17.21"
     make-dir: "npm:^3.1.0"
-    playwright: "npm:1.49.1"
+    playwright: "npm:1.48.2"
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -26764,27 +26764,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.49.1":
-  version: 1.49.1
-  resolution: "playwright-core@npm:1.49.1"
+"playwright-core@npm:1.48.2":
+  version: 1.48.2
+  resolution: "playwright-core@npm:1.48.2"
   bin:
     playwright-core: cli.js
-  checksum: 990b619c75715cd98b2c10c1180a126e3a454b247063b8352bc67792fe01183ec07f31d30c8714c3768cefed12886d1d64ac06da701f2baafc2cad9b439e3919
+  checksum: 511da53d9df01fec5e5798915c68e7d1574890a504d1aae05430bf538d0080efa8db86e3dafdcd450f084ce7622f6bbede23ca52e798bfc4c3b3ea8da52a51f5
   languageName: node
   linkType: hard
 
-"playwright@npm:1.49.1":
-  version: 1.49.1
-  resolution: "playwright@npm:1.49.1"
+"playwright@npm:1.48.2":
+  version: 1.48.2
+  resolution: "playwright@npm:1.48.2"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.49.1"
+    playwright-core: "npm:1.48.2"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 2368762c898920d4a0a5788b153dead45f9c36c3f5cf4d2af5228d0b8ea65823e3bbe998877950a2b9bb23a211e4633996f854c6188769dc81a25543ac818ab5
+  checksum: ecde4ee4767556868b24d7700f3502692a3cb14c8ef127052b51b48833ffcce80942954fb188a9b72505122b48b1b625d1bb486721e1c4f2e980215328ba1ad5
   languageName: node
   linkType: hard
 
@@ -34807,9 +34807,9 @@ __metadata:
     "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
-    "@playwright/browser-chromium": "npm:1.49.1"
-    "@playwright/browser-firefox": "npm:1.49.1"
-    "@playwright/browser-webkit": "npm:1.49.1"
+    "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/browser-firefox": "npm:1.48.2"
+    "@playwright/browser-webkit": "npm:1.48.2"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
@@ -34828,7 +34828,7 @@ __metadata:
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
     node-fetch: "npm:^2.6.1"
-    playwright: "npm:1.49.1"
+    playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown
