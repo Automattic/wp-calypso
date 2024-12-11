@@ -335,6 +335,14 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
+		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
+		// Use the stored period if it's different from the current period.
+		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		if ( storedPeriod && storedPeriod !== period ) {
+			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
+			return;
+		}
+
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
