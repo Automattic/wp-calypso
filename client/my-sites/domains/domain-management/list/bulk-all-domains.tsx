@@ -252,8 +252,19 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
-			.domains-overview__list .gridicons-ellipsis {
-				rotate: 90deg;
+			.domains-overview__list {
+				.domains-table__row {
+					.gridicons-ellipsis {
+						rotate: 90deg;
+						visibility: hidden;
+					}
+
+					&:hover {
+						.gridicons-ellipsis {
+							visibility: visible;
+						}
+					}
+				}
 			}
 
 			@media only screen and ( min-width: 782px ) {
