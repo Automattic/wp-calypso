@@ -279,6 +279,7 @@ interface DesignPickerProps {
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -298,6 +299,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
@@ -313,6 +315,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
+
+	const recommendedDesigns = useMemo( () => {
+		const recommendedDesignSlugsSet = new Set( recommendedDesignSlugs );
+
+		// The number should be a multiple of 3 but no more than 5
+		return designs
+			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
+			.slice( 0, 3 );
+	}, [ designs, recommendedDesignSlugs ] );
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -373,6 +384,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				</DesignPickerFilterGroup>
 			</div>
 
+			{ isMultiFilterEnabled && recommendedDesigns.length === 3 && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Recommended themes' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
 			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
@@ -427,6 +447,7 @@ export interface UnifiedDesignPickerProps {
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -448,6 +469,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -476,6 +498,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					onChangeTier={ onChangeTier }
 					isBigSkyEligible={ isBigSkyEligible }
+					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>
