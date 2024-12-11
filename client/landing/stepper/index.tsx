@@ -158,6 +158,7 @@ window.AppBoot = async () => {
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
+	// No need to await this, it's not critical to the boot process and will slow booting down.
 	geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
