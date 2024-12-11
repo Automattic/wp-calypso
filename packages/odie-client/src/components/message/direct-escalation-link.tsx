@@ -8,13 +8,10 @@ import { getHelpCenterZendeskConversationStarted } from '../../utils';
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
 	const newConversation = useCreateZendeskConversation();
-	const { shouldUseHelpCenterExperience, trackEvent, isUserEligibleForPaidSupport } =
-		useOdieAssistantContext();
+	const { trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const navigate = useNavigate();
 
-	const disclaimerText = shouldUseHelpCenterExperience
-		? __( 'Feeling stuck?', __i18n_text_domain__ )
-		: __( 'Did you find the answer to your question?', __i18n_text_domain__ );
+	const disclaimerText = __( 'Feeling stuck?', __i18n_text_domain__ );
 	const handleClick = useCallback( () => {
 		trackEvent( 'chat_message_direct_escalation_link_click', {
 			message_id: messageId,
@@ -22,14 +19,10 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		} );
 
 		if ( isUserEligibleForPaidSupport ) {
-			if ( shouldUseHelpCenterExperience ) {
-				if ( conversationStarted ) {
-					return;
-				}
-				newConversation();
-			} else {
-				navigate( '/contact-options' );
+			if ( conversationStarted ) {
+				return;
 			}
+			newConversation();
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}
@@ -37,7 +30,6 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		trackEvent,
 		messageId,
 		isUserEligibleForPaidSupport,
-		shouldUseHelpCenterExperience,
 		conversationStarted,
 		newConversation,
 		navigate,
