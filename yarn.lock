@@ -366,6 +366,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.5.0"
+    "@playwright/browser-chromium": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
     "@types/node-fetch": "npm:^2.6.1"
     "@types/totp-generator": "npm:^0.0.3"
@@ -376,7 +377,7 @@ __metadata:
     mailosaur: "npm:^8.4.0"
     nock: "npm:^13.5.4"
     node-fetch: "npm:^2.6.7"
-    playwright: "npm:^1.37"
+    playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -5174,6 +5175,15 @@ __metadata:
   version: 0.1.0
   resolution: "@pkgr/core@npm:0.1.0"
   checksum: 8f4a0aa6cc1c445fec4f5f12157047e8a05e30b5c03441156f40203d6430f84d15135e8f1a6886e6c9800ff0e4a75d9d3419a43dbcd7490683f2882375a3b99a
+  languageName: node
+  linkType: hard
+
+"@playwright/browser-chromium@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/browser-chromium@npm:1.48.2"
+  dependencies:
+    playwright-core: "npm:1.48.2"
+  checksum: b65f763b6862883ee177ff859e267ca60f5f3b88f97177cdc799254045c2d55b498fc3074e34d51414d01d04bd2fbbfb4205095d6f33644c22692400c587c755
   languageName: node
   linkType: hard
 
@@ -10893,6 +10903,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@electron/notarize": "npm:^2.4.0"
+    "@playwright/browser-chromium": "npm:1.48.2"
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
@@ -10906,7 +10917,7 @@ __metadata:
     js-yaml: "npm:^4.0.0"
     lodash: "npm:^4.17.21"
     make-dir: "npm:^3.1.0"
-    playwright: "npm:^1.37"
+    playwright: "npm:1.48.2"
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -18794,12 +18805,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.3.2":
+  version: 2.3.2
+  resolution: "fsevents@npm:2.3.2"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^2.3.2, fsevents@npm:^2.3.3, fsevents@npm:~2.3.1, fsevents@npm:~2.3.2":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: "npm:latest"
   checksum: a1f0c44595123ed717febbc478aa952e47adfc28e2092be66b8ab1635147254ca6cfe1df792a8997f22716d4cbafc73309899ff7bfac2ac3ad8cf2e4ecc3ec60
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>":
+  version: 2.3.2
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
+  dependencies:
+    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -26712,23 +26742,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.37.0":
-  version: 1.37.0
-  resolution: "playwright-core@npm:1.37.0"
+"playwright-core@npm:1.48.2":
+  version: 1.48.2
+  resolution: "playwright-core@npm:1.48.2"
   bin:
     playwright-core: cli.js
-  checksum: 1778ba865f1ca5d5022cbaafac3b9cca98ee589171825da81f0408c48b66c7d6ba03ed53ceacb1e79093caa106f57c5e0fbc4bbb42266a4502746e54571bd14b
+  checksum: 511da53d9df01fec5e5798915c68e7d1574890a504d1aae05430bf538d0080efa8db86e3dafdcd450f084ce7622f6bbede23ca52e798bfc4c3b3ea8da52a51f5
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.37":
-  version: 1.37.0
-  resolution: "playwright@npm:1.37.0"
+"playwright@npm:1.48.2":
+  version: 1.48.2
+  resolution: "playwright@npm:1.48.2"
   dependencies:
-    playwright-core: "npm:1.37.0"
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.48.2"
+  dependenciesMeta:
+    fsevents:
+      optional: true
   bin:
     playwright: cli.js
-  checksum: 78a711fe8e7faff8012bd277a8d8dd73faeb795e266d6ce07d07a9c5f9a2333f823dc70813ec34dbf3d3177c84d9c152287c02c3545b4ee33f47a3e716ef14f8
+  checksum: ecde4ee4767556868b24d7700f3502692a3cb14c8ef127052b51b48833ffcce80942954fb188a9b72505122b48b1b625d1bb486721e1c4f2e980215328ba1ad5
   languageName: node
   linkType: hard
 
@@ -34751,6 +34785,7 @@ __metadata:
     "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
+    "@playwright/browser-chromium": "npm:1.48.2"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
@@ -34769,7 +34804,7 @@ __metadata:
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
     node-fetch: "npm:^2.6.1"
-    playwright: "npm:^1.37"
+    playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
   languageName: unknown

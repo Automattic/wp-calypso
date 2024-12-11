@@ -19,12 +19,13 @@
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
 		"@jest/types": "^29.5.0",
+		"@playwright/browser-chromium": "1.48.2",
 		"@types/totp-generator": "^0.0.3",
 		"form-data": "^4.0.0",
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"nock": "^13.5.4",
-		"playwright": "^1.37",
+		"playwright": "1.48.2",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
