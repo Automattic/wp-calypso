@@ -1876,7 +1876,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_COMMERCIAL ]: {
 		getSlug: () => FEATURE_STATS_COMMERCIAL,
-		getTitle: () => i18n.translate( 'In-depth site analytics dashboard.' ),
+		getTitle: () => i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(
 				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
