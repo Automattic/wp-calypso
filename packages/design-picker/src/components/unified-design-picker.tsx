@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { InView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
@@ -428,16 +428,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
-	const { ref } = useInView( {
-		onChange: ( inView ) => {
-			if ( inView ) {
-				onViewAllDesigns();
-			}
-		},
-	} );
-	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
-
 	return (
 		<div
 			className={ clsx( 'design-picker', `design-picker--theme-light`, 'design-picker__unified', {
@@ -462,7 +452,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					onChangeTier={ onChangeTier }
 				/>
-				{ bottomAnchorContent }
+				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>
 		</div>
 	);
