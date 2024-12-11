@@ -12,6 +12,7 @@ import {
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_STATS_PRODUCTS,
 	JETPACK_CREATOR_PRODUCTS,
+	JETPACK_AI_PRODUCTS,
 	isJetpackCompleteSlug,
 	isJetpackGrowthSlug,
 } from '@automattic/calypso-products';
@@ -44,6 +45,9 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 					span: <span />,
 				},
 			}
+		);
+		const aiDescription = translate(
+			'Turn your ideas into ready‑to‑publish content at lightspeed.'
 		);
 		const scanDescription = translate(
 			'Keep your site or store ahead of security threats with automated malware scanning; including one-click fixes.'
@@ -78,6 +82,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ],
 				{ value: backupT2Description, calloutText: translate( '1TB cloud storage' ) }
 			),
+			...setProductDescription( JETPACK_AI_PRODUCTS, {
+				value: aiDescription,
+				calloutText: translate( 'High request capacity' ),
+			} ),
 
 			...setProductDescription( JETPACK_SCAN_PRODUCTS, {
 				value: scanDescription,
