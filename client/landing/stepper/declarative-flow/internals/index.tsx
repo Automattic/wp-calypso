@@ -92,10 +92,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	// this pre-loads the next step in the flow.
 	useEffect( () => {
-		// Omit user step if user is logged in.
-		const steps = isLoggedIn ? flowSteps.filter( ( step ) => step.slug !== 'user' ) : flowSteps;
-		const nextStepIndex = steps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
-		const nextStep = steps[ nextStepIndex ];
+		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
+		const nextStep = flowSteps[ nextStepIndex ];
 
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
@@ -103,7 +101,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			// potentially slow that down by having the CPU busy initialising future steps.
 			return;
 		}
-		if ( nextStepIndex > 0 && nextStep && 'asyncComponent' in nextStep ) {
+		if (
+			// Don't load anything on user step because the user step will hard-navigate anyways.
+			currentStepRoute !== 'user' &&
+			nextStepIndex > 0 &&
+			nextStep &&
+			'asyncComponent' in nextStep
+		) {
 			nextStep.asyncComponent();
 		}
 		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
