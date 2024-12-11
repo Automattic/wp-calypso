@@ -171,7 +171,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 };
 
 interface DesignCardGroup {
-	title?: string;
+	title?: string | React.ReactNode;
 	designs: Design[];
 	locale: string;
 	category?: string | null;
@@ -309,6 +309,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 
 	const translate = useTranslate();
+
+	const getCategoryName = ( value: string ) =>
+		( categorization?.categories || [] ).find( ( { slug } ) => slug === value )?.name || '';
+
 	const designCardProps = {
 		locale,
 		isPremiumThemeAvailable,
@@ -369,9 +373,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						{ ...designCardProps }
 						title={
 							isMultiFilterEnabled
-								? `${ ( categorization?.categories || [] ).find(
-										( { slug } ) => slug === categorySlug
-								  )?.name } themes`
+								? translate( '%s themes', {
+										args: getCategoryName( categorySlug ),
+										comment: '%s will be a name of the theme category. e.g. Blog.',
+								  } )
 								: ''
 						}
 						category={ categorySlug }
