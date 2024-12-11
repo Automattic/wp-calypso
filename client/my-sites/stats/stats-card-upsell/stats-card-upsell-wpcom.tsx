@@ -27,9 +27,11 @@ const getUpsellCopy = ( statType: string ) => {
 				'Learn what external links your visitors click on your site to reveal their areas of interest.'
 			);
 		case STAT_TYPE_COUNTRY_VIEWS:
-			return translate( 'See where your visitors come from.' );
+			return translate(
+				'Discover where your visitors are located and identify where your traffic is coming from.'
+			);
 		case STAT_TYPE_FILE_DOWNLOADS:
-			return translate( 'Monitor your file downloads engagement.' );
+			return translate( 'Discover the most downloaded files by your visitors.' );
 		case STAT_TYPE_REFERRERS:
 			return translate(
 				'Find out where your visitors come from to optimize your content strategy.'
@@ -39,7 +41,9 @@ const getUpsellCopy = ( statType: string ) => {
 		case STAT_TYPE_TOP_AUTHORS:
 			return translate( 'Identify your audience’s favorite writers and perspectives.' );
 		case STAT_TYPE_TOP_POSTS:
-			return translate( 'Track posts and pages views.' );
+			return translate(
+				'Discover your post and pages traffic in detail and learn what content resonates the most.'
+			);
 		case STAT_TYPE_VIDEO_PLAYS:
 			return translate( 'Discover your most popular videos and find out how they performed.' );
 		case STATS_FEATURE_DATE_CONTROL:
@@ -47,7 +51,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STATS_FEATURE_UTM_STATS:
 			return translate( 'Generate UTM parameters and track your campaign performance data.' );
 		case STATS_TYPE_DEVICE_STATS:
-			return translate( 'See which devices your visitors are using.' );
+			return translate( 'See which devices, browsers and OS your visitors are using.' );
 		default:
 			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
 	}
