@@ -1,5 +1,7 @@
 import { Badge, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { isEmailUserAdmin } from 'calypso/lib/emails';
 import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
@@ -29,9 +31,13 @@ function EmailPlanMailboxesList( {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
+	const isGoogleConfiguring =
+		isRecentlyRegistered( domain.registrationDate, 45 ) &&
+		getGSuiteSubscriptionStatus( domain ) === 'unknown';
+
 	if ( isLoadingEmails ) {
 		return (
-			<MailboxListHeader isPlaceholder accountType={ accountType } domain={ domain }>
+			<MailboxListHeader isPlaceholder>
 				<MailboxListItem isPlaceholder>
 					<MaterialIcon icon="email" />
 					<span />
@@ -43,10 +49,7 @@ function EmailPlanMailboxesList( {
 	if ( ! mailboxes || mailboxes.length < 1 ) {
 		let missingMailboxesText = translate( 'No mailboxes' );
 
-		if (
-			isRecentlyRegistered( domain.registrationDate, 45 ) &&
-			getGSuiteSubscriptionStatus( domain ) === 'unknown'
-		) {
+		if ( isGoogleConfiguring ) {
 			missingMailboxesText = translate(
 				'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
 			);
@@ -65,38 +68,53 @@ function EmailPlanMailboxesList( {
 		const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 
 		return (
-			<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
-				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-					<MailboxLink account={ account } mailbox={ mailbox } />
-					<EmailForwardSecondaryDetails mailbox={ mailbox } />
-				</div>
+			<>
+				<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
+					<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+						<MailboxLink account={ account } mailbox={ mailbox } />
+						<EmailForwardSecondaryDetails mailbox={ mailbox } />
+					</div>
+					{ isEmailUserAdmin( mailbox ) && (
+						<Badge type="info">
+							{ translate( 'Admin', {
+								comment: 'Email user role displayed as a badge',
+							} ) }
+						</Badge>
+					) }
 
-				{ isEmailUserAdmin( mailbox ) && (
-					<Badge type="info">
-						{ translate( 'Admin', {
-							comment: 'Email user role displayed as a badge',
-						} ) }
-					</Badge>
-				) }
-
-				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-
-				{ ! mailbox.temporary && (
-					<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
-				) }
-			</MailboxListItem>
+					<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+					{ ! mailbox.temporary && (
+						<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+					) }
+				</MailboxListItem>
+			</>
 		);
 	} );
 
 	return (
-		<MailboxListHeader
-			accountType={ accountType }
-			addMailboxPath={ addMailboxPath }
-			showIcon={ !! addMailboxPath }
-			domain={ domain }
-		>
-			{ mailboxItems }
-		</MailboxListHeader>
+		<>
+			{ isGoogleConfiguring && (
+				<Notice
+					className="email-plan-mailboxes-list__notice"
+					status="is-warning"
+					showDismiss={ false }
+					text={ translate(
+						'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+					) }
+				>
+					<NoticeAction>{ translate( 'Finish setup' ) }</NoticeAction>
+				</Notice>
+			) }
+			<MailboxListHeader
+				accountType={ accountType }
+				addMailboxPath={ addMailboxPath }
+				showIcon={ !! addMailboxPath }
+				domain={ domain }
+				disableActions
+			>
+				{ mailboxItems }
+			</MailboxListHeader>
+		</>
 	);
 }
 
