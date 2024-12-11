@@ -55,7 +55,6 @@ const siteSetupFlow: Flow = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -270,16 +269,6 @@ const siteSetupFlow: Flow = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// End of Pattern Assembler flow
-					if ( isAssemblerDesign( selectedDesign ) ) {
-						const params = new URLSearchParams( {
-							canvas: 'edit',
-							assembler: '1',
-						} );
-
-						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor

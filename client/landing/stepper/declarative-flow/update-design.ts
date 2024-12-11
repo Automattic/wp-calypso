@@ -24,7 +24,7 @@ const updateDesign: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
+		return [ STEPS.DESIGN_SETUP, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );

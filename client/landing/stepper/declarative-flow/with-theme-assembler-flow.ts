@@ -12,8 +12,16 @@ import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE } from '../stores';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import { AssertConditionResult, AssertConditionState, Flow } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -25,7 +33,7 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
-		const { setIntent } = useDispatch( ONBOARD_STORE );
+		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
@@ -70,7 +78,7 @@ const withThemeAssemblerFlow: Flow = {
 			navigate( 'processing' );
 		};
 
-		const submit = ( _, ...results: string[] ) => {
+		const submit = ( _: ProvidedDependencies, ...results: string[] ) => {
 			switch ( _currentStep ) {
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
