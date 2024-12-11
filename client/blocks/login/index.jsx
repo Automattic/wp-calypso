@@ -884,14 +884,16 @@ class Login extends Component {
 		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
 			return (
 				<Fragment>
-					<AsyncLoad
-						require="calypso/blocks/login/lost-password-form"
-						redirectToAfterLoginUrl={ this.props.redirectTo }
-						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
-						locale={ locale }
-						isWooPasswordlessJPC={ isWooPasswordlessJPC }
-						from={ get( currentQuery, 'from' ) }
-					/>
+					<div className="login__lost-password-form-wrapper">
+						<AsyncLoad
+							require="calypso/blocks/login/lost-password-form"
+							redirectToAfterLoginUrl={ this.props.redirectTo }
+							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
+							locale={ locale }
+							isWooPasswordlessJPC={ isWooPasswordlessJPC }
+							from={ get( currentQuery, 'from' ) }
+						/>
+					</div>
 					{ ! isWooPasswordlessJPC && ! isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">

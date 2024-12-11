@@ -796,6 +796,14 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
+	.login__lost-password-form-wrapper {
+		.async-load__placeholder {
+			visibility: hidden;
+			height: 185px;
+			margin: 48px auto 0;
+		}
+	}
+
 	.login .login__form-forgot-password {
 		text-align: start;
 		color: $gray-50;
