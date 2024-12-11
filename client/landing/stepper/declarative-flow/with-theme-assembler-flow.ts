@@ -79,7 +79,7 @@ const withThemeAssemblerFlow: Flow = {
 		};
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const submit = ( providedDependencies: ProvidedDependencies, ...results: string[] ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			switch ( _currentStep ) {
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
