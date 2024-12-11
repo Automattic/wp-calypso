@@ -367,6 +367,7 @@ __metadata:
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.5.0"
     "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
     "@types/node-fetch": "npm:^2.6.1"
     "@types/totp-generator": "npm:^0.0.3"
@@ -5184,6 +5185,15 @@ __metadata:
   dependencies:
     playwright-core: "npm:1.48.2"
   checksum: b65f763b6862883ee177ff859e267ca60f5f3b88f97177cdc799254045c2d55b498fc3074e34d51414d01d04bd2fbbfb4205095d6f33644c22692400c587c755
+  languageName: node
+  linkType: hard
+
+"@playwright/browser-firefox@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/browser-firefox@npm:1.48.2"
+  dependencies:
+    playwright-core: "npm:1.48.2"
+  checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
   languageName: node
   linkType: hard
 
