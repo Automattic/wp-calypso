@@ -62,7 +62,7 @@ class ConversationsIntro extends Component {
 							{ isInternal
 								? translate(
 										`{{strong}}Welcome to A8C Conversations.{{/strong}} ` +
-											`Automattic P2 posts you've written, Followed, or commented on will appear here when they have new comments. ` +
+											`Automattic P2 posts you've written, followed, or commented on will appear here when they have new comments. ` +
 											`Posts with the most recent comments appear on top. ` +
 											`{{a}}More info.{{/a}}`,
 										{
@@ -74,7 +74,7 @@ class ConversationsIntro extends Component {
 								  )
 								: translate(
 										`{{strong}}Welcome to Conversations{{/strong}} ` +
-											`WordPress posts you've written, Followed, or commented on will appear here when they have new comments. ` +
+											`WordPress posts you've written, followed, or commented on will appear here when they have new comments. ` +
 											`Posts with the most recent comments appear on top.`,
 										{
 											components: {
