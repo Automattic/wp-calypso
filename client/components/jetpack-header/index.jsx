@@ -45,7 +45,11 @@ export class JetpackHeader extends PureComponent {
 					viewBox="0 0 1270 170"
 					partnerName="WooCommerce"
 				>
-					<g transform="translate(360 25)">
+					<g
+						transform={
+							config.isEnabled( 'woocommerce/rebrand-2-0' ) ? 'translate(360 25)' : 'translate(360)'
+						}
+					>
 						<AsyncLoad
 							require="calypso/components/jetpack-header/woocommerce"
 							darkColorScheme={ darkColorScheme }
@@ -65,7 +69,7 @@ export class JetpackHeader extends PureComponent {
 							transform={
 								config.isEnabled( 'woocommerce/rebrand-2-0' )
 									? 'translate(125 25)'
-									: 'translate(-120)'
+									: 'translate(240)'
 							}
 						>
 							<AsyncLoad
