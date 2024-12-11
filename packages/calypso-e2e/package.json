@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@jest/types": "^29.5.0",
 		"@playwright/browser-chromium": "1.48.2",
+		"@playwright/browser-firefox": "1.48.2",
 		"@types/totp-generator": "^0.0.3",
 		"form-data": "^4.0.0",
 		"jest-docblock": "^29.7.0",
