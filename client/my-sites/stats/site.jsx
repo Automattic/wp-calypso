@@ -31,6 +31,7 @@ import {
 	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_PAGE_TRAFFIC,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -247,13 +248,17 @@ class StatsSite extends Component {
 
 	getValidDateOrNullFromInput( inputDate, inputKey ) {
 		if ( inputDate === undefined ) {
+			const { shouldForceDefaultPeriod } = this.props;
+
 			// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 			const storedValue = localStorage.getItem( `jetpack_stats_stored_chart_range_${ inputKey }` );
 			const isStoredValueValid = moment( storedValue ).isValid();
 
-			return isStoredValueValid ? storedValue : null;
+			return ! shouldForceDefaultPeriod && isStoredValueValid ? storedValue : null;
 		}
+
 		const isValid = moment( inputDate ).isValid();
+
 		return isValid ? inputDate : null;
 	}
 
@@ -342,7 +347,7 @@ class StatsSite extends Component {
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// Use the stored period if it's different from the current period.
 		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
-		if ( storedPeriod && storedPeriod !== period ) {
+		if ( ! shouldForceDefaultDateRange && storedPeriod && storedPeriod !== period ) {
 			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
 			return;
 		}
@@ -900,6 +905,11 @@ export default connect(
 			siteId,
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
+		const shouldForceDefaultPeriod = shouldGateStats(
+			state,
+			siteId,
+			STATS_FEATURE_INTERVAL_DROPDOWN_WEEK
+		);
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
@@ -925,6 +935,7 @@ export default connect(
 			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			shouldForceDefaultPeriod,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
 		};
