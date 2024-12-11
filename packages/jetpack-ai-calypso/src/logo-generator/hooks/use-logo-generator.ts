@@ -189,8 +189,10 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 
 	const generateImage = async function ( {
 		prompt,
+		style = 'none',
 	}: {
 		prompt: string;
+		style?: string;
 	} ): Promise< { data: Array< { url?: string; b64_json?: string; revised_prompt?: string } > } > {
 		setLogoFetchError( null );
 
@@ -349,7 +351,13 @@ User request:${ prompt }`;
 		[ siteId, addLogoToHistory ]
 	);
 
-	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< void > {
+	const generateLogo = async function ( {
+		prompt,
+		style = 'none',
+	}: {
+		prompt: string;
+		style?: string;
+	} ): Promise< void > {
 		debug( 'Generating logo for site', siteId );
 
 		setIsRequestingImage( true );
@@ -371,7 +379,7 @@ User request:${ prompt }`;
 			let image;
 
 			try {
-				image = await generateImage( { prompt } );
+				image = await generateImage( { prompt, style } );
 
 				if ( ! image || ! image.data.length ) {
 					throw new Error( 'No image returned' );
