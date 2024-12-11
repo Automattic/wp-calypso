@@ -131,9 +131,9 @@ export function WPOrderReviewLineItems( {
 		);
 	}, [ responseCart.products ] );
 
-	const hasWPCOMPlanInCart = useMemo( () => {
-		return responseCart.products.some( ( product ) => isWpComPlan( product.product_slug ) );
-	}, [ responseCart.products ] );
+	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
+		isWpComPlan( product.product_slug )
+	);
 
 	const [ variantOpenId, setVariantOpenId ] = useState< string | null >( null );
 	const [ akQuantityOpenId, setAkQuantityOpenId ] = useState< string | null >( null );
