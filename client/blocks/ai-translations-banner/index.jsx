@@ -24,7 +24,11 @@ export default function AITranslationsBanner() {
 		return;
 	}
 
-	const language = getLanguage( localeSuggestions?.[ 0 ]?.locale );
+	const localeSlug = isCurrentlyUsingAITranslatedLocale
+		? translate.localeSlug
+		: localeSuggestions?.[ 0 ]?.locale;
+
+	const language = getLanguage( localeSlug );
 
 	return (
 		<Banner
