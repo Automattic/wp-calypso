@@ -27,8 +27,12 @@ function resolveRootPath( relativeTo?: string | null ) {
 		return emailManagementAllSitesPrefix;
 	}
 
-	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isUnderEmailManagementAll( relativeTo ) ) {
 		return emailManagementAllSitesPrefix;
+	}
+
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return domainsManagementPrefix;
 	}
 
 	return emailManagementPrefix;
