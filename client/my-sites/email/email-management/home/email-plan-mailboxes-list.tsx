@@ -1,27 +1,16 @@
-import { Badge, Gridicon, MaterialIcon } from '@automattic/components';
+import { Badge, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
-import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
+import { isEmailUserAdmin } from 'calypso/lib/emails';
 import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
+import EmailForwardSecondaryDetails from './email-plan-mailboxes/email-forward-secondary-details';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
 import MailboxLink from './email-plan-mailboxes/list-item-link';
 import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-
-function EmailForwardSecondaryDetails( { mailbox }: { mailbox: Mailbox } ) {
-	if ( isEmailForward( mailbox ) ) {
-		return (
-			<div className="email-plan-mailboxes-list__mailbox-secondary-details">
-				<Gridicon icon="chevron-right" />
-				<span>{ getEmailForwardAddress( mailbox ) }</span>
-			</div>
-		);
-	}
-	return null;
-}
 
 type Props = {
 	domain: ResponseDomain;
