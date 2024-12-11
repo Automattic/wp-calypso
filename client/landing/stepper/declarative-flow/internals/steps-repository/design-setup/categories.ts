@@ -60,16 +60,20 @@ export function getCategorizationOptions(
 	goals: Onboard.SiteGoal[],
 	{ isMultiSelection = false }: CategorizationOptions = {}
 ) {
-	const defaultSelections = Array.from(
+	let defaultSelections = Array.from(
 		new Set(
 			goals
 				.map( ( goal ) => {
 					const preferredCategories = getGoalsPreferredCategories( goal );
 					return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
 				} )
-				.flat() ?? [ CATEGORIES.BUSINESS ]
+				.flat()
 		)
 	);
+
+	if ( defaultSelections.length === 0 ) {
+		defaultSelections = [ CATEGORIES.BLOG ];
+	}
 
 	return {
 		defaultSelections,

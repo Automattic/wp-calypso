@@ -121,7 +121,12 @@ button {
 		@include break-small {
 			&.courses,
 			&.site-picker,
-			&.new-or-existing-site,
+			&.new-or-existing-site {
+				margin-top: -60px;
+			}
+		}
+
+		@include break-xlarge {
 			&.domains {
 				margin-top: -60px;
 			}

@@ -85,7 +85,7 @@ body.is-section-home.theme-default.color-scheme {
 
 .customer-home__layout {
 	@include grid-row( 4, 1 );
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include break-xlarge {
 		@include grid-column( 1, 12 );
 		@include display-grid;
 		@include grid-template-columns( 12, 24px, 1fr );
@@ -94,23 +94,58 @@ body.is-section-home.theme-default.color-scheme {
 }
 
 .customer-home__layout-col-left {
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include break-xlarge {
 		@include grid-column( 1, 8 );
+	}
+
+	> :first-child {
+		border-top: 1px solid var(--color-border-subtle);
+
+		@include break-small {
+			border-top: none;
+		}
 	}
 }
 
-.customer-home__layout-col-right {
-	@include breakpoint-deprecated( ">1040px" ) {
+.customer-home__main .customer-home__layout-col-right {
+	@include break-xlarge {
 		@include grid-column( 9, 4 );
 	}
 
-	.card.app-promo.customer-home__card {
-		padding-left: 16px;
-
-		@include break-large {
-			padding-left: 0;
+	.customer-home__card {
+		@include break-xlarge {
+			padding: 16px 0;
+			margin: 0;
+			box-shadow: none;
 		}
 
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.card.foldable-card {
+		.foldable-card__header {
+			padding: 0 0 8px;
+
+			.foldable-card__action {
+				top: -4px;
+				width: auto;
+				margin-right: 0;
+			}
+		}
+
+		.foldable-card__content {
+			padding-right: 0;
+
+			.quick-links__action-box {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+
+	.card.app-promo {
 		.app-promo__icon {
 			margin: 0 0 6px;
 		}
@@ -132,39 +167,16 @@ body.is-section-home.theme-default.color-scheme {
 		}
 	}
 
-	@include break-mobile {
-		> .card,
-		> .card.quick-links,
-		> .card.app-promo {
-			padding: 16px 0;
+	.home-site-preview {
+		.home-site-preview__thumbnail-wrapper {
+			margin: 0 -24px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
 
-			.foldable-card__header {
-				padding: 16px 0 14px;
-
-				.foldable-card__action {
-					width: auto;
-					margin-right: 0;
-				}
+			@include break-xlarge {
+				margin: 0;
+				border-radius: 3px;
 			}
-
-			.foldable-card__content {
-				padding-right: 0;
-				.quick-links__action-box {
-					padding-left: 0;
-					padding-right: 0;
-				}
-			}
-		}
-	}
-
-	& > .card,
-	& > .foldable-card.card,
-	& > .foldable-card.card.is-expanded {
-		margin-bottom: 30px;
-		margin-top: 0;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-bottom: 16px;
 		}
 	}
 }
@@ -184,23 +196,58 @@ body.is-section-home.theme-default.color-scheme {
 }
 
 .customer-home__main .customer-home__card {
-	padding: 0 16px 30px;
-	margin-top: 0;
-	margin-bottom: 24px;
+	padding: 32px 16px;
+	margin: 0;
 	border-bottom: 1px solid var(--color-border-subtle);
 	box-shadow: none;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-small {
 		border-radius: 3px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		border-bottom: none;
 		padding: 16px 24px;
-		margin: 0 0 16px;
+		margin-bottom: 16px;
 	}
 
 	&.is-compact {
 		margin: 0 0 1px;
 		padding: 16px 24px;
+	}
+
+	&.is-small-hero {
+		@include break-small {
+			padding: 24px;
+		}
+	}
+
+	&.is-large-hero {
+		@include break-small {
+			padding: 32px 24px;
+		}
+	}
+
+	&.is-full-width {
+		padding-top: 0;
+
+		@include break-xlarge {
+			box-shadow: none;
+		}
+	}
+
+	&.task {
+		.task__text,
+		.task__illustration {
+			padding: 0;
+		}
+
+		.task__text + .task__illustration {
+			padding-left: 48px;
+		}
+	}
+
+	.customer-home__card-subheader {
+		color: var(--color-text-subtle);
+		margin: 0 0 1rem;
 	}
 }
 
@@ -217,11 +264,6 @@ body.is-section-home.theme-default.color-scheme {
 
 .customer-home__main .blogging-prompt .blogging-prompt__card .blogging-prompt__prompt-text {
 	font-size: $font-body-large;
-}
-
-.customer-home__card-subheader {
-	color: var(--color-text-subtle);
-	margin: 0 0 1rem;
 }
 
 .customer-home__main .vertical-nav {
@@ -247,7 +289,12 @@ body.is-section-home.theme-default.color-scheme {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
-	margin-bottom: 16px;
+
+	@include break-small {
+		margin-bottom: 16px;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px;
+	}
 
 	// We add margin here to the direct children and strip it away from the
 	// outer edges of child elements.
@@ -256,7 +303,11 @@ body.is-section-home.theme-default.color-scheme {
 	// edges of the space with it's inner list.
 	.card,
 	.task {
-		margin: 32px;
+		margin: 32px 16px;
+
+		@include break-small {
+			margin: 32px;
+		}
 
 		@media (min-width: ($break-wide + 1)) {
 			margin: 0 32px 32px;
@@ -266,12 +317,6 @@ body.is-section-home.theme-default.color-scheme {
 	// Extend the checklist to the edge of the primary content area
 	.site-setup-list__nav {
 		margin: 0;
-	}
-
-	border-radius: 3px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
 
 	.dot-pager__controls {
@@ -322,12 +367,12 @@ body.is-section-home.theme-default.color-scheme {
 
 		.site-setup-list__task {
 			margin: 0;
-			padding: 32px 8px 32px 32px;
+			padding: 24px 8px 24px 24px;
 
 			// When the list switches to a single-column
 			@include breakpoint-deprecated( "<960px" ) {
 				// Less space at the top because the nav-item contributes
-				padding: 16px 32px 32px;
+				padding: 16px 24px 24px;
 			}
 		}
 	}

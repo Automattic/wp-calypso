@@ -7,17 +7,20 @@ import { formatNumber } from './lib/numbers';
 interface CountCardProps {
 	heading?: React.ReactNode;
 	icon?: JSX.Element;
+	label?: string;
 	note?: string;
 	showValueTooltip?: boolean;
 	value: number | string | null;
 }
 
-function TooltipContent( { value }: CountCardProps ) {
+function TooltipContent( { value, label, note }: CountCardProps ) {
 	return (
 		<div className="highlight-card-tooltip-content">
 			<span className="highlight-card-tooltip-counts">
 				{ formatNumber( value as number, false ) }
+				{ label && ` ${ label }` }
 			</span>
+			{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 		</div>
 	);
 }
@@ -25,6 +28,7 @@ function TooltipContent( { value }: CountCardProps ) {
 export default function CountCard( {
 	heading,
 	icon,
+	label,
 	note,
 	value,
 	showValueTooltip,
@@ -58,8 +62,7 @@ export default function CountCard( {
 					position="bottom right"
 					context={ textRef.current }
 				>
-					<TooltipContent value={ value } />
-					{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
+					<TooltipContent value={ value } label={ label } note={ note } />
 				</Popover>
 			) }
 		</Card>

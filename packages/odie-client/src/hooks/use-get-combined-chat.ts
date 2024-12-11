@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { getOdieTransferMessageConstant } from '../constants';
 import { emptyChat } from '../context';
-import { useGetZendeskConversation, useOdieChat } from '../data';
+import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
 
 /**
@@ -24,7 +24,7 @@ export const useGetCombinedChat = (
 	}, [] );
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
-	const getZendeskConversation = useGetZendeskConversation();
+
 	// Get the current odie chat
 	const odieId =
 		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )

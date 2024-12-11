@@ -167,6 +167,6 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
-		await this.page.getByRole( 'link', { name: themeName } ).click();
+		await this.page.getByRole( 'link', { name: themeName } ).first().click();
 	}
 }

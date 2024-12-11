@@ -1,4 +1,4 @@
-import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
+import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -11,7 +11,6 @@ interface Props {
 	stepSectionName?: string;
 	stepContent: ReactElement;
 	shouldHideNavButtons?: boolean;
-	shouldStickyNavButtons?: boolean;
 	hasStickyNavButtonsPadding?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
@@ -52,7 +51,6 @@ const StepContainer: React.FC< Props > = ( {
 	stepContent,
 	stepName,
 	shouldHideNavButtons,
-	shouldStickyNavButtons,
 	hasStickyNavButtonsPadding,
 	hideBack,
 	backLabelText,
@@ -182,13 +180,9 @@ const StepContainer: React.FC< Props > = ( {
 			<ActionButtons
 				className={ clsx( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
-					'should-sticky-nav-buttons': shouldStickyNavButtons,
 					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,
 				} ) }
 			>
-				{ shouldStickyNavButtons && (
-					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
-				) }
 				{ ! hideBack && <BackButton /> }
 				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
 				{ ! hideNext && <NextButton /> }
