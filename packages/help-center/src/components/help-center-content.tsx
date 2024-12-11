@@ -16,7 +16,6 @@ import { v4 as uuidv4 } from 'uuid';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
-import { useArticleScrollPosition } from '../hooks/use-scroll-position';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
@@ -80,11 +79,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 
-	const scrollPosition = useArticleScrollPosition(
-		containerRef,
-		location.pathname + location.search
-	);
-
 	useEffect( () => {
 		if (
 			! isLoadingOpenSupportInteractions &&
@@ -113,17 +107,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		if ( containerRef.current && ! location.hash && ! location.pathname.includes( '/odie' ) ) {
-			const pos = scrollPosition[ location.pathname + location.search ];
-			if ( pos ) {
-				containerRef.current.style.scrollBehavior = 'unset';
-				containerRef.current.scrollTo( 0, pos );
-				containerRef.current.style.scrollBehavior = 'smooth';
-			} else {
-				containerRef.current.scrollTo( 0, 0 );
-			}
+		if (
+			containerRef.current &&
+			! location.hash &&
+			! location.pathname.includes( '/odie' ) &&
+			! location.pathname.includes( '/post' )
+		) {
+			containerRef.current.scrollTo( 0, 0 );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want to run this on scroll
 	}, [ location ] );
 
 	return (
