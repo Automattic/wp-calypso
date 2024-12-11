@@ -1,20 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, createInterpolateElement, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { debounce } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
+import { useHelpCenterArticleScroll } from '../hooks/use-help-center-article-scroll';
 import { useHelpCenterArticleTabComponent } from '../hooks/use-help-center-article-tab-component';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
 import './help-center-article.scss';
-
-/**
- * Persist the value in memory so when the element is unmounted it doesn't get lost.
- */
-const cachedScrollPositions: Record< string, number > = {};
 
 export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
@@ -33,7 +28,7 @@ export const HelpCenterArticle = () => {
 
 	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 	useHelpCenterArticleTabComponent( post?.content );
-
+	useHelpCenterArticleScroll( post?.ID, scrollParentRef );
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
 		if ( postUrl?.includes( '#' ) && post?.content ) {
@@ -68,37 +63,6 @@ export const HelpCenterArticle = () => {
 				: recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
 		}
 	}, [ post, query, sectionName ] );
-
-	useEffect( () => {
-		if ( ! post?.ID || ! scrollParentRef?.current ) {
-			return;
-		}
-
-		const scrollBehaviour = scrollParentRef.current.style.scrollBehavior;
-		// temporary disable smooth scrolling
-		scrollParentRef.current.style.scrollBehavior = 'auto';
-
-		if ( cachedScrollPositions[ post.ID ] ) {
-			scrollParentRef.current.scrollTop = cachedScrollPositions[ post.ID ];
-		} else {
-			scrollParentRef.current.scrollTop = 0;
-		}
-
-		// restore smooth scrolling
-		scrollParentRef.current.style.scrollBehavior = scrollBehaviour;
-
-		const handleScroll = debounce( ( event: { target: EventTarget | null } ) => {
-			if ( event.target === scrollParentRef.current ) {
-				cachedScrollPositions[ post.ID ] = Number( scrollParentRef.current?.scrollTop );
-			}
-		}, 250 );
-
-		scrollParentRef.current.addEventListener( 'scroll', handleScroll );
-
-		return () => {
-			scrollParentRef.current?.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ post?.ID ] );
 
 	return (
 		<div className="help-center-article" ref={ elementRef }>
