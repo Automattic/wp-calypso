@@ -1,0 +1,26 @@
+.subpage-wrapper {
+    display: flex;
+
+    .main.is-wide-layout {
+        width: 100%;
+        max-width: inherit;
+        margin: 32px 48px 0;
+    }
+
+    .email-forwards-add {
+        .card {
+            border-radius: 4px;
+        }
+
+        .card-heading {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 24px;
+            margin-top: 0;
+        }
+
+        .form-text-input {
+            border-radius: 2px 0 0 2px;
+        }
+    }
+}
