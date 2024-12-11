@@ -7,9 +7,12 @@ import {
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 	STAT_TYPE_CLICKS,
+	STAT_TYPE_COUNTRY_VIEWS,
+	STAT_TYPE_FILE_DOWNLOADS,
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_VIDEO_PLAYS,
 } from '../constants';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
@@ -19,22 +22,28 @@ import './style.scss';
 
 const getUpsellCopy = ( statType: string ) => {
 	switch ( statType ) {
-		case STAT_TYPE_REFERRERS:
-			return translate(
-				'Find out where your visitors come from to optimize your content strategy.'
-			);
 		case STAT_TYPE_CLICKS:
 			return translate(
 				'Learn what external links your visitors click on your site to reveal their areas of interest.'
+			);
+		case STAT_TYPE_COUNTRY_VIEWS:
+			return translate( 'See where your visitors come from.' );
+		case STAT_TYPE_FILE_DOWNLOADS:
+			return translate( 'Monitor your file downloads engagement.' );
+		case STAT_TYPE_REFERRERS:
+			return translate(
+				'Find out where your visitors come from to optimize your content strategy.'
 			);
 		case STAT_TYPE_SEARCH_TERMS:
 			return translate( 'Discover the terms and phrases your visitors use to find your site.' );
 		case STAT_TYPE_TOP_AUTHORS:
 			return translate( 'Identify your audience’s favorite writers and perspectives.' );
-		case STATS_FEATURE_DATE_CONTROL:
-			return translate( 'Compare different time periods to analyze your site’s growth.' );
+		case STAT_TYPE_TOP_POSTS:
+			return translate( 'Track posts and pages views.' );
 		case STAT_TYPE_VIDEO_PLAYS:
 			return translate( 'Discover your most popular videos and find out how they performed.' );
+		case STATS_FEATURE_DATE_CONTROL:
+			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		case STATS_FEATURE_UTM_STATS:
 			return translate( 'Generate UTM parameters and track your campaign performance data.' );
 		case STATS_TYPE_DEVICE_STATS:

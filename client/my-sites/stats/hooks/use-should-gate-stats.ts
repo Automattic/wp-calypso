@@ -18,6 +18,7 @@ import {
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_COUNTRY_VIEWS,
 	STAT_TYPE_CLICKS,
+	STAT_TYPE_FILE_DOWNLOADS,
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
@@ -104,8 +105,11 @@ const gatedStats = [
 	STATS_TYPE_DEVICE_STATS,
 
 	// Paid Stats
+	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_REFERRERS,
+	STAT_TYPE_COUNTRY_VIEWS,
 	STAT_TYPE_CLICKS,
+	STAT_TYPE_FILE_DOWNLOADS,
 	...defaultDateControlGates,
 	STATS_FEATURE_DOWNLOAD_CSV,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
@@ -251,6 +255,15 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	// Basic stats given to free sites before 2024-12-06.
 	if ( siteHasBasicStats ) {
 		return basicStats.includes( statType );
+	}
+
+	// If v3 is not enabled do not directly gate top posts, file downloads, and country views.
+	// We could remove this check once v3 is enabled.
+	if (
+		! isEnabled( 'stats/paid-wpcom-v3' ) &&
+		[ STAT_TYPE_TOP_POSTS, STAT_TYPE_FILE_DOWNLOADS, STAT_TYPE_COUNTRY_VIEWS ].includes( statType )
+	) {
+		return false;
 	}
 
 	// All other sites get gated to 7 days + paywall upsell
