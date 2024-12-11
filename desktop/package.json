@@ -38,8 +38,6 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@electron/notarize": "^2.4.0",
 		"@playwright/browser-chromium": "1.48.2",
-		"@playwright/browser-firefox": "1.48.2",
-		"@playwright/browser-webkit": "1.48.2",
 		"copy-webpack-plugin": "^10.2.4",
 		"electron": "26.2.4",
 		"electron-builder": "23.0.3",

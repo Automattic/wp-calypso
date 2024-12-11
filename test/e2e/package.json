@@ -37,8 +37,6 @@
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@playwright/browser-chromium": "1.48.2",
-		"@playwright/browser-firefox": "1.48.2",
-		"@playwright/browser-webkit": "1.48.2",
 		"@types/archiver": "^5.3.1",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",
