@@ -53,7 +53,6 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_submit`, {
 			stat_type: statType,
 		} );
-		// TODO: add redirect_to param so that we can redirect back to the stats page after checkout.
 		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
 				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
