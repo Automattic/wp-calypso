@@ -106,7 +106,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( nextStepIndex > 0 && nextStep && 'asyncComponent' in nextStep ) {
 			nextStep.asyncComponent();
 		}
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flowSteps, isLoggedIn ] );
+		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
+		// which means that we don't want to depend on `flowSteps` here, or this would end up
+		// running on every render. We thus depend on `flow` instead.
+		//
+		// This should be safe, because flows shouldn't return different lists of steps at
+		// different points. But even if they do, worst case scenario we only fail to preload
+		// some steps, and they'll simply be loaded later.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow, isLoggedIn ] );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
