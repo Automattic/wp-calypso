@@ -384,14 +384,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				</DesignPickerFilterGroup>
 			</div>
 
-			{ isMultiFilterEnabled && recommendedDesigns.length === 3 && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Recommended themes' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
+			{ /* Show recommended themes only when the selected categories are never changed. */ }
+			{ isMultiFilterEnabled &&
+				! categorization?.isSelectionsChanged &&
+				recommendedDesigns.length === 3 && (
+					<DesignCardGroup
+						{ ...designCardProps }
+						title={ translate( 'Recommended themes' ) }
+						category="recommended"
+						designs={ recommendedDesigns }
+					/>
+				) }
 
 			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
 				<DesignCardGroup
@@ -471,7 +474,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isBigSkyEligible = false,
 	recommendedDesignSlugs = [],
 } ) => {
-	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
+	const hasCategories = !! ( categorization?.categories || [] ).length;
 
 	return (
 		<div
