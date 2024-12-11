@@ -1,12 +1,13 @@
 import {
+	FEATURE_STATS_FREE,
 	FEATURE_STATS_COMMERCIAL,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_GROWTH_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
@@ -122,23 +123,23 @@ export default function useStatsPurchases( siteId: number | null ) {
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 
 	// Determine whether a product is owned.
-	// TODO we need to do plan check as well, because Stats products would be built into other plans.
-	const isFreeOwned = useMemo( () => {
-		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
-	}, [ sitePurchases ] );
+	const isFreeOwned = useSelector( ( state ) => {
+		return siteHasFeature( state, siteId, FEATURE_STATS_FREE );
+	} );
 
 	const isCommercialOwned = useMemo(
 		() => isCommercialPurchaseOwned( sitePurchases ),
 		[ sitePurchases ]
 	);
 
+	// Pay what you want
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ sitePurchases ] );
 
-	const supportCommercialUse = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL )
-	);
+	const supportCommercialUse = useSelector( ( state ) => {
+		return siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL );
+	} );
 
 	const isLegacyCommercialLicense = useMemo( () => {
 		const purchases = filterPurchasesByProducts( sitePurchases, [
