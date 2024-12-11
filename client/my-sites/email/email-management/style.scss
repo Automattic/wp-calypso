@@ -481,8 +481,7 @@
 		}
 
 		.section-header__actions {
-			display: flex;
-			flex-direction: row-reverse;
+			flex: none;
 
 			.components-button {
 				font-size: 0.875rem;
@@ -497,13 +496,15 @@
 	.email-plan-mailboxes-list__mailbox-header-icon {
 		display: flex;
 		margin-inline-end: 0.5rem;
+		width: 24px;
 
-		svg {
-			fill: var(--color-accent);
+		img {
+			height: 24px;
 		}
 
-		.social-icons__google {
-			margin-top: 2px;
+		svg {
+			height: 24px;
+			fill: var(--color-accent);
 		}
 	}
 }

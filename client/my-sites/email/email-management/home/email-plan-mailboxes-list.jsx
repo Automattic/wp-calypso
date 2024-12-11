@@ -1,12 +1,10 @@
 import { Badge, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import ExternalLink from 'calypso/components/external-link';
 import SectionHeader from 'calypso/components/section-header';
-import GoogleIcon from 'calypso/components/social-icons/google';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
 	getEmailAddress,
@@ -15,13 +13,13 @@ import {
 	isEmailForwardAccount,
 	isEmailUserAdmin,
 	isTitanMailAccount,
-	isGoogleEmailAccount,
 } from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import { getGSuiteSubscriptionStatus, getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
+import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import { recordEmailAppLaunchEvent } from './utils';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
@@ -41,15 +39,14 @@ const MailboxListHeader = ( {
 	children,
 	isPlaceholder = false,
 	addMailboxPath,
+	domain,
 	showIcon,
 } ) => {
 	const translate = useTranslate();
-	const isGoogle = isGoogleEmailAccount( { accountType } );
 
 	const HeaderIcon = () => (
 		<div className="email-plan-mailboxes-list__mailbox-header-icon">
-			{ isGoogle && <GoogleIcon /> }
-			{ ! isGoogle && <Icon icon={ wordpress } /> }
+			<EmailTypeIcon domain={ domain } />
 		</div>
 	);
 
@@ -59,7 +56,7 @@ const MailboxListHeader = ( {
 				isPlaceholder={ isPlaceholder }
 				label={
 					<>
-						{ !! showIcon && <HeaderIcon /> }
+						{ !! showIcon && domain && <HeaderIcon /> }
 						{ getListHeaderTextForAccountType( accountType, translate ) }
 					</>
 				}
@@ -142,7 +139,7 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 
 	if ( isLoadingEmails ) {
 		return (
-			<MailboxListHeader isPlaceholder accountType={ accountType }>
+			<MailboxListHeader isPlaceholder accountType={ accountType } domain={ domain }>
 				<MailboxListItem isPlaceholder>
 					<MaterialIcon icon="email" />
 					<span />
@@ -204,6 +201,7 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 			accountType={ accountType }
 			addMailboxPath={ addMailboxPath }
 			showIcon={ !! addMailboxPath }
+			domain={ domain }
 		>
 			{ mailboxItems }
 		</MailboxListHeader>
