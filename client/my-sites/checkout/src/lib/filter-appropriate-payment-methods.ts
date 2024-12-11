@@ -17,10 +17,13 @@ export default function filterAppropriatePaymentMethods( {
 			if ( ! slug ) {
 				return false;
 			}
+			if ( ! isPaymentMethodEnabled( slug, allowedPaymentMethods ) ) {
+				return false;
+			}
 			if ( slug === 'paypal-js' ) {
 				isPayPalPPCPEnabled = true;
 			}
-			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
+			return true;
 		} )
 		.filter( ( methodObject ) => {
 			// Only allow one of 'paypal-express' or 'paypal-js' in checkout. We
