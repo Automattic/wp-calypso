@@ -167,10 +167,6 @@ const assemblerFirstFlow: Flow = {
 					return;
 				}
 
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
-				}
-
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
@@ -213,14 +209,6 @@ const assemblerFirstFlow: Flow = {
 				case 'freePostSetup':
 				case 'domains': {
 					return navigate( 'launchpad' );
-				}
-
-				case 'pattern-assembler': {
-					const params = new URLSearchParams( window.location.search );
-					params.delete( 'siteSlug' );
-					params.delete( 'siteId' );
-					setSelectedSite( null );
-					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};

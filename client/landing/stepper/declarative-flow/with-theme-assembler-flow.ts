@@ -5,12 +5,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { useSiteSlug } from '../hooks/use-site-slug';
+import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE } from '../stores';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import { Flow, ProvidedDependencies } from './internals/types';
+import { AssertConditionResult, AssertConditionState, Flow } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -23,7 +25,7 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
-		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
@@ -53,59 +55,81 @@ const withThemeAssemblerFlow: Flow = {
 	},
 
 	useSteps() {
-		return [ STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR, STEPS.CELEBRATION ];
+		return [ STEPS.PROCESSING, STEPS.ERROR ];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const siteSlug = useSiteSlug();
+		const reduxDispatch = useReduxDispatch();
+		const selectedTheme = getAssemblerDesign().slug;
+		const { siteSlug, siteId } = useSiteData();
 
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
+		const handleSelectSite = () => {
+			setPendingAction( enableAssemblerTheme( selectedTheme, siteId, siteSlug, reduxDispatch ) );
 
-			return navigate( 'processing' );
+			navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
+		const submit = ( _, ...results: string[] ) => {
 			switch ( _currentStep ) {
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					// We will navigate to the celebration step in the follow-up PR
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
-				}
-
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
-				}
-
-				case 'celebration-step': {
-					return window.location.assign( providedDependencies.destinationUrl as string );
+					return handleSelectSite();
 				}
 			}
 		};
 
-		const goBack = () => {
-			switch ( _currentStep ) {
-				case 'pattern-assembler': {
-					return window.location.assign( `/themes/${ siteSlug }` );
-				}
-			}
-		};
+		return { submit };
+	},
 
-		return { submit, goBack };
+	useAssertConditions(): AssertConditionResult {
+		const { site, siteSlug } = useSiteData();
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		if ( ! siteSlug ) {
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug it is configured to.',
+			};
+		}
+
+		if ( ! site ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
+		}
+
+		return result;
 	},
 };
+
+function enableAssemblerTheme(
+	themeId: string,
+	siteId: number,
+	siteSlug: string,
+	reduxDispatch: CalypsoDispatch
+) {
+	const params = new URLSearchParams( {
+		canvas: 'edit',
+		assembler: '1',
+	} );
+
+	return () =>
+		Promise.resolve()
+			.then( () =>
+				reduxDispatch(
+					activateOrInstallThenActivate( themeId, siteId, { source: 'assembler' } ) as ThunkAction<
+						PromiseLike< string >,
+						any,
+						any,
+						AnyAction
+					>
+				)
+			)
+			.then( () => window.location.assign( `/site-editor/${ siteSlug }?${ params }` ) );
+}
 
 export default withThemeAssemblerFlow;
