@@ -2,9 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { InView } from 'react-intersection-observer';
+import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
-import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
+import { useFilteredDesigns } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
@@ -170,78 +170,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
-interface DesignCardGroup {
-	title?: string | React.ReactNode;
-	designs: Design[];
-	locale: string;
-	category?: string | null;
-	isPremiumThemeAvailable?: boolean;
-	shouldLimitGlobalStyles?: boolean;
-	oldHighResImageLoading?: boolean; // Temporary for A/B test.
-	showActiveThemeBadge?: boolean;
-	siteActiveTheme?: string | null;
-	showNoResults?: boolean;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
-	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
-}
-
-const DesignCardGroup = ( {
-	title,
-	designs,
-	category,
-	locale,
-	isPremiumThemeAvailable,
-	shouldLimitGlobalStyles,
-	oldHighResImageLoading,
-	showActiveThemeBadge = false,
-	siteActiveTheme,
-	showNoResults,
-	onChangeVariation,
-	onPreview,
-	getBadge,
-}: DesignCardGroup ) => {
-	const content = (
-		<div className="design-picker__grid">
-			{ designs.map( ( design, index ) => {
-				return (
-					<DesignCard
-						key={ design.recipe?.slug ?? design.slug ?? index }
-						category={ category }
-						design={ design }
-						locale={ locale }
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-						onChangeVariation={ onChangeVariation }
-						onPreview={ onPreview }
-						getBadge={ getBadge }
-						oldHighResImageLoading={ oldHighResImageLoading }
-						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
-					/>
-				);
-			} ) }
-			{ showNoResults && designs.length === 0 && <NoResults /> }
-		</div>
-	);
-
-	if ( ! showNoResults && designs.length === 0 ) {
-		return null;
-	}
-
-	if ( ! title || designs.length === 0 ) {
-		return content;
-	}
-
-	return (
-		<div className="design-picker__design-card-group">
-			<div className="design-picker__design-card-title">
-				{ title } ({ designs.length })
-			</div>
-			{ content }
-		</div>
-	);
-};
-
 interface DesignPickerFilterGroupProps {
 	title?: string;
 	grow?: boolean;
@@ -294,35 +222,18 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 } ) => {
-	const translate = useTranslate();
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
-	const categories = categorization?.categories || [];
-	const isNoResults = Object.values( designsByGroup ).every(
-		( categoryDesigns ) => categoryDesigns.length === 0
-	);
+	const filteredDesigns = useFilteredDesigns( designs );
 	const categoryTypes = useMemo(
-		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
+		() => ( categorization?.categories || [] ).filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 	const categoryTopics = useMemo(
-		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
+		() =>
+			( categorization?.categories || [] ).filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
 
-	const getCategoryName = ( value: string ) =>
-		categories.find( ( { slug } ) => slug === value )?.name || '';
-
-	const designCardProps = {
-		locale,
-		isPremiumThemeAvailable,
-		shouldLimitGlobalStyles,
-		onChangeVariation,
-		onPreview,
-		getBadge,
-		oldHighResImageLoading,
-		showActiveThemeBadge,
-		siteActiveTheme,
-	};
+	const translate = useTranslate();
 
 	return (
 		<div>
@@ -357,34 +268,26 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Best matching themes' ) }
-					category="best"
-					designs={ best }
-				/>
-			) }
-			{ /* We want to show the last one on top first. */ }
-			{ Object.entries( designsByGroup )
-				.reverse()
-				.map( ( [ categorySlug, categoryDesigns ], index, array ) => (
-					<DesignCardGroup
-						key={ categorySlug }
-						{ ...designCardProps }
-						title={
-							isMultiFilterEnabled
-								? translate( '%s themes', {
-										args: getCategoryName( categorySlug ),
-										comment: '%s will be a name of the theme category. e.g. Blog.',
-								  } )
-								: ''
-						}
-						category={ categorySlug }
-						designs={ categoryDesigns }
-						showNoResults={ index === array.length - 1 && isNoResults }
-					/>
-				) ) }
+			<div className="design-picker__grid">
+				{ filteredDesigns.map( ( design, index ) => {
+					return (
+						<DesignCard
+							key={ design.recipe?.slug ?? design.slug ?? index }
+							category={ categorization?.selections.join( ',' ) }
+							design={ design }
+							locale={ locale }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+							onChangeVariation={ onChangeVariation }
+							onPreview={ onPreview }
+							getBadge={ getBadge }
+							oldHighResImageLoading={ oldHighResImageLoading }
+							isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+						/>
+					);
+				} ) }
+				{ filteredDesigns.length === 0 && <NoResults /> }
+			</div>
 		</div>
 	);
 };
@@ -428,6 +331,16 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
+	const { ref } = useInView( {
+		onChange: ( inView ) => {
+			if ( inView ) {
+				onViewAllDesigns();
+			}
+		},
+	} );
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
+
 	return (
 		<div
 			className={ clsx( 'design-picker', `design-picker--theme-light`, 'design-picker__unified', {
@@ -452,7 +365,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					onChangeTier={ onChangeTier }
 				/>
-				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
+				{ bottomAnchorContent }
 			</div>
 		</div>
 	);

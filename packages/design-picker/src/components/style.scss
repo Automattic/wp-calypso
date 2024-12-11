@@ -76,28 +76,16 @@
 		}
 	}
 
-	.design-picker__design-card-group {
-		.design-picker__design-card-title {
-			position: sticky;
-			top: 0;
-			padding: 16px 12px;
-			margin: 0 -12px 8px;
-			color: var(--studio-black);
-			background-color: var(--color-body-background);
-			font-size: $font-body;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 24px;
-			z-index: 10;
-		}
-
-		.design-picker__grid {
-			margin-bottom: 24px;
-		}
+	.design-picker__grid,
+	.design-picker__grid-minimal {
+		flex: 5;
 	}
 
 	.design-picker__grid {
-		flex: 5;
+		margin: 0 -12px 30px;
+	}
+
+	.design-picker__grid-minimal {
 		margin: 0 -12px 30px;
 	}
 
@@ -153,6 +141,23 @@
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
 				row-gap: 28px;
+			}
+		}
+
+		.design-picker__grid-minimal {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 36px;
+			margin: 0 0 30px;
+
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-xlarge {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 32px;
 			}
 		}
 
@@ -420,7 +425,7 @@
 
 	.design-picker__grid {
 		@supports ( display: grid ) {
-			row-gap: 24px;
+			row-gap: 32px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
