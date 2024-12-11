@@ -367,8 +367,6 @@ __metadata:
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.5.0"
     "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/browser-firefox": "npm:1.48.2"
-    "@playwright/browser-webkit": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
     "@types/node-fetch": "npm:^2.6.1"
     "@types/totp-generator": "npm:^0.0.3"
@@ -5186,24 +5184,6 @@ __metadata:
   dependencies:
     playwright-core: "npm:1.48.2"
   checksum: b65f763b6862883ee177ff859e267ca60f5f3b88f97177cdc799254045c2d55b498fc3074e34d51414d01d04bd2fbbfb4205095d6f33644c22692400c587c755
-  languageName: node
-  linkType: hard
-
-"@playwright/browser-firefox@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/browser-firefox@npm:1.48.2"
-  dependencies:
-    playwright-core: "npm:1.48.2"
-  checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
-  languageName: node
-  linkType: hard
-
-"@playwright/browser-webkit@npm:1.48.2":
-  version: 1.48.2
-  resolution: "@playwright/browser-webkit@npm:1.48.2"
-  dependencies:
-    playwright-core: "npm:1.48.2"
-  checksum: bf46c1f0b6a759aa9bb1b24392ce735803b1467952f9d029713698c48739cdf1a892623e95f88000a36e3b4f8170b0dfe40fed146b0acc4366dab24836cc5fcd
   languageName: node
   linkType: hard
 
@@ -10924,8 +10904,6 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@electron/notarize": "npm:^2.4.0"
     "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/browser-firefox": "npm:1.48.2"
-    "@playwright/browser-webkit": "npm:1.48.2"
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
@@ -34808,8 +34786,6 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
     "@playwright/browser-chromium": "npm:1.48.2"
-    "@playwright/browser-firefox": "npm:1.48.2"
-    "@playwright/browser-webkit": "npm:1.48.2"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
