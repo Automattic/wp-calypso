@@ -4,12 +4,13 @@ import React, { useCallback } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import EmailTypeIcon from '../email-type-icon';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = React.PropsWithChildren< {
 	accountType?: string | null;
 	isPlaceholder?: boolean;
 	addMailboxPath?: string;
-	domain?: string;
+	domain?: ResponseDomain;
 	showIcon?: boolean;
 } >;
 const MailboxListHeader = ( {
