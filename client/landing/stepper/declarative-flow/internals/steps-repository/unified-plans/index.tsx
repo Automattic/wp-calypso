@@ -10,6 +10,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
+import { useIsManagedSiteFlowProps } from '../unified-domains/use-is-managed-site-flow';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 
@@ -19,6 +20,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
+	const managedSiteFlowProps = useIsManagedSiteFlowProps();
 
 	const { siteTitle, domainItem, domainItems } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -44,7 +46,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		domainCart: domainItems,
 	};
 
-	const site = useSite();
+	const site = useSite( managedSiteFlowProps.selectedSite?.slug );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
