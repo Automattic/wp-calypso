@@ -78,6 +78,8 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 					themeButtonUrl.protocol = calypsoUrl.protocol;
 
 					await route.abort();
+					await page.waitForTimeout( 2000 );
+
 					await page.goto( themeButtonUrl.href );
 				} );
 			}
