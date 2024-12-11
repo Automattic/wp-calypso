@@ -20,6 +20,15 @@ function getLabels( dateToQuery: number ) {
 	}
 }
 
+function getNote( heading: string ) {
+	let note = translate( 'As of today' );
+	if ( heading !== 'Today' ) {
+		const prefix = translate( 'Since' );
+		note = `${ prefix } ${ heading }`;
+	}
+	return note;
+}
+
 // calculate the date to query for based on the number of days to subtract
 function calculateQueryDate( daysToSubtract: number ) {
 	const today = new Date();
@@ -43,9 +52,11 @@ export default function useSubscribersOverview( siteId: number | null, isTodayEx
 	const overviewData = subscribersData.map( ( data, index ) => {
 		const count = data?.data?.[ 0 ]?.subscribers || null;
 		const heading = getLabels( datesToQuery[ index ] );
+		const note = getNote( heading );
 		return {
 			count,
 			heading,
+			note,
 		};
 	} );
 
