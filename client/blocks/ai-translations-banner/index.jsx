@@ -42,13 +42,13 @@ export default function AITranslationsBanner() {
 				}
 			) }
 			callToAction={
-				isCurrentlyUsingAITranslatedLocale
-					? undefined
-					: translate( 'Switch to %s', { args: [ language.name ] } )
+				! isCurrentlyUsingAITranslatedLocale &&
+				translate( 'Switch to %s', { args: [ language.name ] } )
 			}
 			event={ BANNER_NAME }
 			dismissPreferenceName={ BANNER_NAME }
 			href="/me/account"
+			disableHref={ isCurrentlyUsingAITranslatedLocale }
 			horizontal
 		/>
 	);
