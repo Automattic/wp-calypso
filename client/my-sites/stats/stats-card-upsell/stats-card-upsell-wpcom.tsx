@@ -54,9 +54,18 @@ const getUpsellCopy = ( statType: string ) => {
 					},
 				}
 			);
-		// https://wordpress.com/support/stats/understand-your-sites-traffic/#file-downloads
 		case STAT_TYPE_FILE_DOWNLOADS:
-			return translate( 'Discover the most downloaded files by your visitors.' );
+			return translate( 'Discover the most {{link}}downloaded files{{/link}} by your visitors.', {
+				components: {
+					link: (
+						<a
+							href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+				},
+			} );
 		case STAT_TYPE_REFERRERS:
 			return translate(
 				'Find out where your {{link}}visitors come from{{/link}} to optimize your content strategy.',
