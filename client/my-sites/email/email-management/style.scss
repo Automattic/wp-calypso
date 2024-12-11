@@ -476,11 +476,17 @@
 		.section-header__label-text {
 			display: flex;
 			align-items: center;
+			font-size: 1rem;
+			color: var(--studio-gray-100);
 		}
 
 		.section-header__actions {
 			display: flex;
 			flex-direction: row-reverse;
+
+			.components-button {
+				font-size: 0.875rem;
+			}
 
 			.components-button.is-link {
 				text-decoration: none;
