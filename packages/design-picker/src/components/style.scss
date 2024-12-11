@@ -37,6 +37,13 @@
 
 		button.responsive-toolbar-group__button-item,
 		button.responsive-toolbar-group__swipe-item {
+			padding: 8px 16px !important;
+			&::before {
+				height: 36px;
+				left: 4px;
+				right: 4px;
+				border-radius: 4px;
+			}
 			&:not(.is-pressed)::before {
 				background-color: var(--studio-gray-0);
 			}
