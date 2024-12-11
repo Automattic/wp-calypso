@@ -131,11 +131,16 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		if ( apiResponseData?.success ) {
 			// Show success notice
 			dispatch(
-				successNotice( translate( 'Thanks for your feedback!' ), {
-					displayOnNextPage: true,
-					id: 'submit-product-feedback-success',
-					duration: 5000,
-				} )
+				successNotice(
+					translate(
+						'Thanks! Our team will use your feedback to help prioritize improvements to Automattic for Agencies.'
+					),
+					{
+						displayOnNextPage: true,
+						id: 'submit-product-feedback-success',
+						duration: 2000,
+					}
+				)
 			);
 		}
 
