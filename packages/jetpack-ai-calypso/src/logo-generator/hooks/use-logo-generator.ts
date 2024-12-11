@@ -197,34 +197,6 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		try {
 			const tokenData = await requestJwt( { siteDetails } );
 
-			let style;
-			// get URL hash
-			const urlHash = window.location.hash.split( '#' )?.[ 1 ];
-			if (
-				[
-					'none',
-					'enhance',
-					'anime',
-					'photographic',
-					'digital-art',
-					'comicbook',
-					'fantasy-art',
-					'analog-film',
-					'neonpunk',
-					'isometric',
-					'lowpoly',
-					'origami',
-					'line-art',
-					'craft-clay',
-					'cinematic',
-					'3d-model',
-					'pixel-art',
-					'texture',
-				].includes( urlHash )
-			) {
-				style = urlHash;
-			}
-
 			if ( ! tokenData || ! tokenData.token ) {
 				throw new Error( 'No token provided' );
 			}
