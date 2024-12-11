@@ -926,14 +926,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		categorization.selections = [ 'blog' ];
 	}
 
-	const bigSkyButtonEventProperties = {
-		is_big_sky_eligible: isBigSkyEligible,
-		// is_filter_included_with_plan_enabled: true/false,
-		// preselected_filters: ??,
-		// selected_filters: ??,
-		// {filter} ??
-	};
-
 	function onDesignWithAI() {
 		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
 		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
@@ -941,13 +933,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const bigSkyButton = isBigSkyEligible && (
 		<>
-			<Button
-				onClick={ () => {
-					onDesignWithAI && onDesignWithAI();
-				} }
-			>
-				{ translate( 'Design with AI' ) }
-			</Button>
+			<Button onClick={ onDesignWithAI }>{ translate( 'Design with AI' ) }</Button>
 			<TrackComponentView
 				eventName="calypso_design_picker_big_sky_button_impression"
 				eventProperties={ commonFilterProperties }
