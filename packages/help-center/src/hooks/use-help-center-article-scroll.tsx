@@ -1,5 +1,4 @@
-import { useEffect } from '@wordpress/element';
-import { debounce } from 'lodash';
+import { useEffect, useRef } from '@wordpress/element';
 
 /**
  * Persist the value in memory so when the element is unmounted it doesn't get lost.
@@ -10,6 +9,8 @@ export const useHelpCenterArticleScroll = (
 	postId: number | undefined,
 	scrollParentRef: React.RefObject< HTMLElement >
 ) => {
+	const timeoutRef = useRef< number | null >( null );
+
 	useEffect( () => {
 		if ( ! postId || ! scrollParentRef?.current ) {
 			return;
@@ -30,15 +31,23 @@ export const useHelpCenterArticleScroll = (
 		// restore smooth scrolling
 		scrollRef.style.scrollBehavior = scrollBehaviour;
 
-		const handleScroll = debounce( ( event: { target: EventTarget | null } ) => {
-			if ( event.target === scrollParentRef.current ) {
-				cachedScrollPositions[ postId ] = Number( scrollRef.scrollTop );
+		const handleScroll = ( event: { target: EventTarget | null } ) => {
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current );
 			}
-		}, 250 );
+
+			timeoutRef.current = setTimeout( () => {
+				if ( event.target === scrollParentRef.current ) {
+					cachedScrollPositions[ postId ] = Number( scrollRef.scrollTop );
+				}
+			}, 250 );
+		};
 
 		scrollRef.addEventListener( 'scroll', handleScroll );
-
 		return () => {
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current ); // Clear the timeout during cleanup
+			}
 			scrollRef?.removeEventListener( 'scroll', handleScroll );
 		};
 	}, [ postId, scrollParentRef ] );
