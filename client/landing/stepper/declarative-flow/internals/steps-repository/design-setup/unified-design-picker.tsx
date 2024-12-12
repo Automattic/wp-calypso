@@ -317,7 +317,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design,
 			} ),
-			category: categorization.selections?.join( ',' ),
+			categories: categorization.selections?.join( ',' ),
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -349,7 +349,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
-			category: categorization?.selections?.join( ',' ),
+			categories: categorization?.selections?.join( ',' ),
 		} );
 	}
 
@@ -693,7 +693,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit(
 				{
 					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selections?.join( ',' ),
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
@@ -709,6 +708,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
 		if ( ! isAssemblerDesign( _selectedDesign ) ) {
 			recordSelectedDesign( {
+				...commonFilterProperties,
 				flow,
 				intent,
 				design: _selectedDesign,
@@ -722,6 +722,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		submit?.( {
 			...providedDependencies,
 			...getDesignTypeProps( _selectedDesign ),
+			eventProps: commonFilterProperties,
 		} );
 	}
 
