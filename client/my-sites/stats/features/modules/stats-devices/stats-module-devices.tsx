@@ -12,7 +12,7 @@ import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -151,6 +151,10 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		/>
 	);
 
+	const supportUrl = isOdysseyStats
+		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` )
+		: localizeUrl( `${ SUPPORT_URL }#devices` );
+
 	const titleNodes = (
 		<StatsInfoArea isNew>
 			{ translate(
@@ -158,13 +162,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: (
-							<a
-								target="_blank"
-								rel="noreferrer"
-								href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) }
-							/>
-						),
+						link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
 					},
 					context: 'Stats: Info popover content when the Devices module has data.',
 				}
@@ -201,15 +199,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 											{
 												comment: '{{link}} links to support documentation.',
 												components: {
-													link: (
-														<a
-															target="_blank"
-															rel="noreferrer"
-															href={ localizeUrl(
-																`${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats`
-															) }
-														/>
-													),
+													link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
 												},
 												context: 'Stats: Info box label when the Devices module is empty',
 											}
