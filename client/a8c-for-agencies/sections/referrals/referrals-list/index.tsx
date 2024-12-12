@@ -81,20 +81,20 @@ export default function ReferralList( {
 							enableSorting: false,
 						},
 						{
+							id: 'completed-orders',
+							label: translate( 'Purchases' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
 							id: 'pending-orders',
 							label: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
-							id: 'completed-orders',
-							label: translate( 'Completed Orders' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode =>
-								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
 							enableHiding: false,
 							enableSorting: false,
 						},
