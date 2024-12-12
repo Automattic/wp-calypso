@@ -26,7 +26,6 @@ function Placeholder() {
 			<div className="wpcom-plan-selector__price"></div>
 			<div className="wpcom-plan-selector__price-interval"></div>
 			<div className="wpcom-plan-selector__cta">
-				<div className="wpcom-plan-selector__cta-label"></div>
 				<div className="wpcom-plan-selector__cta-component"></div>
 			</div>
 		</div>
