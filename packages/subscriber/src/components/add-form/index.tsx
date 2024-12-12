@@ -3,19 +3,11 @@ import { FormInputValidation } from '@automattic/components';
 import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import {
-	TextControl,
-	ToggleControl,
-	FormTokenField,
-	Button,
-	Popover,
-	FormFileUpload,
-} from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { TextControl, Button, FormFileUpload } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, check, info } from '@wordpress/icons';
+import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import {
@@ -31,6 +23,7 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
+import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
 import './style.scss';
 
@@ -131,9 +124,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
-	const [ showCategories, setShowCategories ] = useState( false );
-	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
-	const infoButtonRef = useRef< HTMLButtonElement >( null );
 
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
@@ -458,19 +448,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	const handleCategoryChange = ( tokens: ( string | TokenItem )[] ) => {
-		// Only allow tokens that exist in the suggestions
-		const validTokens = tokens.filter(
-			( token ) =>
-				newsletterCategoriesData?.newsletterCategories.some(
-					( cat ) => cat.name === ( typeof token === 'string' ? token : token.value )
-				)
-		);
-		setSelectedCategories(
-			validTokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) )
-		);
-	};
-
 	if ( hidden ) {
 		return null;
 	}
@@ -535,83 +512,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ renderEmptyFormValidationMsg() }
 
-					<div className="add-subscriber__categories-container">
-						<h3>
-							{ __( 'Categories' ) } <span>({ __( 'optional' ) })</span>
-						</h3>
-						<ToggleControl
-							label={
-								<div className="categories-toggle-container">
-									<p>
-										{ createInterpolateElement(
-											__( 'Add these subscribers to specific <link>categories</link>.' ),
-											{
-												link: (
-													<a
-														href={ `/settings/newsletter/${ siteId }` }
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-											}
-										) }
-									</p>
-									<Button
-										icon={ info }
-										onClick={ () => setShowInfoPopover( ! showInfoPopover ) }
-										ref={ infoButtonRef }
-									/>
-									{ showInfoPopover && infoButtonRef.current && (
-										<Popover
-											anchor={ infoButtonRef.current }
-											onClose={ () => setShowInfoPopover( false ) }
-											position="middle left"
-											noArrow={ false }
-											ignoreViewportSize
-										>
-											<div className="categories-info-popover">
-												<p>
-													{ __(
-														'Adding newsletter categories helps you segment your subscribers more effectively.'
-													) }{ ' ' }
-													<a
-														href={ localizeUrl(
-															'https://wordpress.com/support/newsletter-settings/enable-newsletter-categories/'
-														) }
-														target="_blank"
-														rel="noopener noreferrer"
-													>
-														{ __( 'Learn more' ) }
-													</a>
-												</p>
-											</div>
-										</Popover>
-									) }
-								</div>
-							}
-							checked={ showCategories }
-							onChange={ ( value ) => {
-								setShowCategories( value );
-								if ( ! value ) {
-									setSelectedCategories( [] );
-								}
-							} }
-						/>
-
-						{ showCategories && newsletterCategoriesData?.newsletterCategories && (
-							<FormTokenField
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								value={ selectedCategories }
-								suggestions={ newsletterCategoriesData.newsletterCategories.map(
-									( cat ) => cat.name
-								) }
-								onChange={ handleCategoryChange }
-								__experimentalShowHowTo={ false }
-								label=""
-							/>
-						) }
-					</div>
+					<CategoriesSection
+						siteId={ siteId }
+						newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
+						selectedCategories={ selectedCategories }
+						setSelectedCategories={ setSelectedCategories }
+					/>
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 
