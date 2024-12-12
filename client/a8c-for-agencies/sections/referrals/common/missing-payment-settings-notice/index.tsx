@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import LayoutBanner from 'calypso/components/multi-site-dashboard/layout/banner';
 
 import './style.scss';
 

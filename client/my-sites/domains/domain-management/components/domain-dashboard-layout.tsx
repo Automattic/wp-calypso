@@ -1,5 +1,5 @@
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutColumn from 'calypso/components/multi-site-dashboard/layout/column';
 import DomainManagement from 'calypso/my-sites/domains/domain-management';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 

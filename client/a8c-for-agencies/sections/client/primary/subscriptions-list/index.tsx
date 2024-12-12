@@ -5,14 +5,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import {
 	SubscriptionAction,

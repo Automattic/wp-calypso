@@ -2,16 +2,16 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderActions as Actions,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';

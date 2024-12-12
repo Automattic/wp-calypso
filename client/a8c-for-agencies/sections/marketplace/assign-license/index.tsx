@@ -4,14 +4,6 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderSubtitle as Subtitle,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
@@ -19,6 +11,14 @@ import {
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderSubtitle as Subtitle,
+	LayoutHeaderTitle as Title,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';

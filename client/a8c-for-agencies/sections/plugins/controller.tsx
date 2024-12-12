@@ -1,12 +1,12 @@
 import { type Callback } from '@automattic/calypso-router';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
 import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import MainSidebar from '../../components/sidebar-menu/main';
 
 export const pluginsContext: Callback = ( context, next ) => {

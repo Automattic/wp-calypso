@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
+import LayoutStepper from 'calypso/components/multi-site-dashboard/layout/stepper';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-method';

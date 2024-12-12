@@ -3,22 +3,22 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutNavigation, {
-	LayoutNavigationTabs,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_TEAM_INVITE_LINK,
 	A4A_TEAM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderTitle as Title,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationTabs,
+} from 'calypso/components/multi-site-dashboard/layout/nav';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TAB_ACTIVE_MEMBERS, TAB_INVITED_MEMBERS } from '../../constants';

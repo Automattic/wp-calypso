@@ -2,16 +2,16 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutBody from 'calypso/components/multi-site-dashboard/layout/body';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import { useSelector } from 'calypso/state';
 import { hasAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 

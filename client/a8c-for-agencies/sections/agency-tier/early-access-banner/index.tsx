@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import LayoutBanner from 'calypso/components/multi-site-dashboard/layout/banner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';

@@ -9,19 +9,19 @@ import {
 	DATAVIEWS_TABLE,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutNavigation, {
-	LayoutNavigationTabs as NavigationTabs,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import Layout from 'calypso/components/multi-site-dashboard/layout';
+import LayoutColumn from 'calypso/components/multi-site-dashboard/layout/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
+} from 'calypso/components/multi-site-dashboard/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationTabs as NavigationTabs,
+} from 'calypso/components/multi-site-dashboard/layout/nav';
+import LayoutTop from 'calypso/components/multi-site-dashboard/layout/top';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';

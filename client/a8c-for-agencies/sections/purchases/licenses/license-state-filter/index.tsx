@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
+import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutNavigation, {
 	LayoutNavigationTabs,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+} from 'calypso/components/multi-site-dashboard/layout/nav';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lib/license-filters';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';

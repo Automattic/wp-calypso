@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import useFetchInvoices from 'calypso/a8c-for-agencies/data/purchases/use-fetch-invoices';
+import LayoutBanner from 'calypso/components/multi-site-dashboard/layout/banner';
 import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import { A4A_INVOICES_LINK } from '../sidebar-menu/lib/constants';
 
