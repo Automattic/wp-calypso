@@ -14,13 +14,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	return (
 		<div className="subscribers-overview highlight-cards">
 			<div className="highlight-cards-list">
-				{ overviewData.map( ( { count, heading }, index ) => {
-					let note = translate( 'As of today' );
-					if ( heading !== 'Today' ) {
-						const prefix = translate( 'Since' );
-						note = `${ prefix } ${ heading }`;
-					}
-
+				{ overviewData.map( ( { count, heading, note }, index ) => {
 					return (
 						// TODO: Communicate loading vs error state to the user.
 						<CountCard

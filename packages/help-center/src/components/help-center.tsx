@@ -6,7 +6,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
-import { createPortal, useEffect } from '@wordpress/element';
+import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -23,13 +23,7 @@ import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
 import { isUseHelpCenterExperienceEnabled } from './utils';
 import type { HelpCenterSelect } from '@automattic/data-stores';
-
 import '../styles.scss';
-
-const portalParent = document.createElement( 'div' );
-portalParent.className = 'help-center';
-portalParent.setAttribute( 'aria-modal', 'true' );
-portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
@@ -37,6 +31,8 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 	shouldUseHelpCenterExperience,
 } ) => {
+	const portalParent = useRef( document.createElement( 'div' ) ).current;
+
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -58,17 +54,24 @@ const HelpCenter: React.FC< Container > = ( {
 		}
 	}, [ currentUser ] );
 
-	useEffect( () => {
-		if ( isHelpCenterShown ) {
-			document.body.appendChild( portalParent );
-		} else {
-			portalParent.remove();
-		}
-	}, [ isHelpCenterShown ] );
-
 	useActionHooks();
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
+
+	useEffect( () => {
+		const classes = [ 'help-center' ];
+		portalParent.classList.add( ...classes );
+
+		portalParent.setAttribute( 'aria-modal', 'true' );
+		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
+
+		document.body.appendChild( portalParent );
+
+		return () => {
+			document.body.removeChild( portalParent );
+			handleClose();
+		};
+	}, [ portalParent, handleClose ] );
 
 	return createPortal(
 		<>
