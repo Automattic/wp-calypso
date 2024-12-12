@@ -36,7 +36,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 
 	const specifiedLogs =
 		logType === 'php'
-			? [ 'message', 'timestamp', 'kind', 'name', 'file', 'line' ]
+			? [ 'severity', 'message', 'timestamp', 'kind', 'name', 'file', 'line' ]
 			: [ 'timestamp', 'body_bytes_sent', 'cached', 'http_host', 'http_referer' ];
 
 	return (

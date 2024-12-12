@@ -12,6 +12,13 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	&.is-loading {
 		opacity: 0.5;
 	}
+
+	.severity .badge {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 }
 
 .site-logs-table thead tr,

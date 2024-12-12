@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
@@ -30,6 +31,8 @@ function replaceKey( key: string ) {
 		return __( 'File' );
 	} else if ( key === 'line' ) {
 		return __( 'Line' );
+	} else if ( key === 'severity' ) {
+		return __( 'Severity' );
 	}
 }
 
@@ -56,6 +59,16 @@ export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props )
 function renderCell( column: string, value: unknown ) {
 	if ( value === null || value === undefined || value === '' ) {
 		return '-';
+	}
+
+	if ( column === 'severity' ) {
+		const formattedSeverities = {
+			User: __( 'User' ),
+			Warning: __( 'Warning' ),
+			Deprecated: __( 'Deprecated' ),
+			'Fatal error': __( 'Fatal error' ),
+		};
+		return <Badge className={ `badge--${ value }` }>{ formattedSeverities[ value ] }</Badge>;
 	}
 
 	switch ( typeof value ) {
