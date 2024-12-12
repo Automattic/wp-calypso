@@ -20,6 +20,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -247,14 +248,23 @@ class StatsSite extends Component {
 	}
 
 	getValidDateOrNullFromInput( inputDate, inputKey ) {
+		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const { shouldForceDefaultPeriod } = this.props;
+			const { shouldForceDefaultDateRange, supportedShortcutList } = this.props;
 
-			// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
-			const storedValue = localStorage.getItem( `jetpack_stats_stored_chart_range_${ inputKey }` );
-			const isStoredValueValid = moment( storedValue ).isValid();
+			const appliedShortcutId = localStorage.getItem(
+				'jetpack_stats_stored_date_range_shortcut_id'
+			);
+			const appliedShortcut = supportedShortcutList.find(
+				( shortcut ) => shortcut.id === appliedShortcutId
+			);
 
-			return ! shouldForceDefaultPeriod && isStoredValueValid ? storedValue : null;
+			if ( appliedShortcut ) {
+				const storedValue = appliedShortcut[ inputKey ];
+				const isStoredValueValid = moment( storedValue ).isValid();
+
+				return ! shouldForceDefaultDateRange && isStoredValueValid ? storedValue : null;
+			}
 		}
 
 		const isValid = moment( inputDate ).isValid();
@@ -323,6 +333,7 @@ class StatsSite extends Component {
 			supportsDevicesStatsFeature,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			shouldForceDefaultPeriod,
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
@@ -347,7 +358,7 @@ class StatsSite extends Component {
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// Use the stored period if it's different from the current period.
 		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
-		if ( ! shouldForceDefaultDateRange && storedPeriod && storedPeriod !== period ) {
+		if ( ! shouldForceDefaultPeriod && storedPeriod && storedPeriod !== period ) {
 			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
 			return;
 		}
@@ -357,7 +368,7 @@ class StatsSite extends Component {
 		let customChartRange = null;
 
 		// Sort out end date for chart.
-		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd, 'chartEnd' );
+		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
@@ -369,7 +380,7 @@ class StatsSite extends Component {
 
 		// Find the quantity of bars for the chart.
 		let daysInRange = this.getDefaultDaysForPeriod( period, isNewDateFilteringEnabled );
-		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart, 'chartStart' );
+		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
 		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 
 		if ( chartStart && isSameOrBefore ) {
@@ -914,6 +925,8 @@ export default connect(
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
+		const { supportedShortcutList } = getShortcuts( state, {}, undefined, true );
+
 		return {
 			canUserViewStats,
 			isAtomic: isAtomicSite( state, siteId ),
@@ -938,6 +951,7 @@ export default connect(
 			shouldForceDefaultPeriod,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
+			supportedShortcutList,
 		};
 	},
 	{
