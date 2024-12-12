@@ -28,7 +28,7 @@ import {
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSubPageParams } from './subpage-wrapper/subpage-params';
+import { getSubPageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
 
 export default {

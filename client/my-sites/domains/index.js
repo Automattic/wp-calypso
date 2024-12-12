@@ -16,7 +16,7 @@ import {
 	DOMAIN_OVERVIEW,
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
-import { ADD_FOWARDING_EMAIL } from './domain-management/subpage-wrapper/subpage-params';
+import { ADD_FOWARDING_EMAIL } from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
 
 /**

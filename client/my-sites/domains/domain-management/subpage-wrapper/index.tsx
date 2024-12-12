@@ -1,5 +1,5 @@
 import NavigationHeader from 'calypso/components/navigation-header';
-import { getSubPageParams } from './subpage-params';
+import { getSubPageParams } from './subpages';
 import './style.scss';
 
 type SubPageWrapperProps = {
