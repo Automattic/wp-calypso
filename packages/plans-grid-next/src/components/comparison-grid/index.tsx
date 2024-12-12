@@ -652,7 +652,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareTitle() }
 								</span>
 							) }
-							{ hasFeature && featureLabel && (
+							{ featureLabel && (
 								<span className="plan-comparison-grid__plan-conditional-title">
 									{ featureLabel }
 								</span>
@@ -663,7 +663,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							{ hasFeature && ! featureLabel && <Gridicon icon="checkmark" color="#0675C4" /> }
-							{ ! hasFeature && <Gridicon icon="minus-small" color="#C3C4C7" /> }
+							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
 						</>
 					) }
 				</>
