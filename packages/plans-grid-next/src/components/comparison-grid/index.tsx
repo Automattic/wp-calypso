@@ -560,19 +560,32 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 
 	const featureSlug = feature?.getSlug();
 
+	const combinedFeatures = [
+		...gridPlan.features.wpcomFeatures,
+		...gridPlan.features.jetpackFeatures,
+	];
+	const isMontlyInterval = 'monthly' === intervalType;
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug
-			? [ ...gridPlan.features.wpcomFeatures, ...gridPlan.features.jetpackFeatures ]
+			? combinedFeatures
 					.filter( ( feature ) =>
-						'monthly' === intervalType ? ! feature.availableOnlyForAnnualPlans : true
+						isMontlyInterval ? ! feature.availableOnlyForAnnualPlans : true
 					)
 					.some( ( feature ) => feature.getSlug() === featureSlug )
 			: false );
 
-	const featureLabel = featureSlug
+	let featureLabel = featureSlug
 		? gridPlan?.features?.comparisonGridFeatureLabels?.[ featureSlug ]
 		: undefined;
+
+	// Annual-only features should not be displayed for monthly plans event if they have labels.
+	if ( featureLabel && isMontlyInterval ) {
+		const feature = combinedFeatures.find( ( feature ) => feature.getSlug() === featureSlug );
+		if ( feature?.availableOnlyForAnnualPlans ) {
+			featureLabel = undefined;
+		}
+	}
 
 	const cellClasses = clsx(
 		'plan-comparison-grid__feature-group-row-cell',
