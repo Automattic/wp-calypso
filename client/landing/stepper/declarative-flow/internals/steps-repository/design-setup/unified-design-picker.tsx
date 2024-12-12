@@ -969,7 +969,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				isMultiFilterEnabled={ isGoalCentricFeature }
 				onChangeTier={ handleChangeTier }
 				isBigSkyEligible={ isBigSkyEligible }
-				recommendedDesignSlugs={ allDesigns.recommendation || [] }
+				recommendedDesignSlugs={ allDesigns?.recommendation || [] }
 			/>
 		</>
 	);
