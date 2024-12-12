@@ -21,6 +21,7 @@ import 'animate.css';
 import './style.scss';
 
 const TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD = 'stats_feedback_action_present_persistent_section';
+const TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD = 'stats_feedback_action_view_persistent_section';
 const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
@@ -178,15 +179,9 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	}, [] );
 
 	useEffect( () => {
-		if ( isVisible ) {
-			if ( hasFiredViewEvent ) {
-				return;
-			}
-
-			console.log( 'FeedbackCard fire visibilty event here' );
+		if ( isVisible && ! hasFiredViewEvent ) {
+			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD );
 			setHasFiredViewEvent( true );
-			// Once the card is visible, we should track that event.
-			// trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
 		}
 	}, [ isVisible, hasFiredViewEvent ] );
 
