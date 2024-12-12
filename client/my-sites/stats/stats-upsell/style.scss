@@ -9,6 +9,7 @@
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-5);
 	font-family: $font-sf-pro-text;
+	overflow: hidden;
 
 	.components-modal__content {
 		padding: 0;
