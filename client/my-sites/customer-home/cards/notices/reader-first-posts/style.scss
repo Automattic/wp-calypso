@@ -16,9 +16,10 @@
 		margin-bottom: 5px;
 	}
 	.reader-first-posts__actions {
-		padding: 24px 0 0;
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
+		padding-left: 24px;
 		width: 30%;
 	}
 	.reader-first-posts__button {
