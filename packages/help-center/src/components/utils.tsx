@@ -24,7 +24,7 @@ export const getLastMessage = ( { conversation }: { conversation: ZendeskConvers
 };
 
 export const getZendeskConversations = () => {
-	const conversations = Smooch?.getConversations?.() ?? [];
+	const conversations = Smooch?.getConversations?.() ?? undefined;
 	return conversations as unknown as ZendeskConversation[];
 };
 
