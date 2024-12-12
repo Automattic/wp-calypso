@@ -44,8 +44,8 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setupErrorLogger } from '../lib/error-logger/setup-error-logger';
 import { setupLocale } from './locale';
-import { setupErrorLogger } from './setup-error-logger';
 
 const debug = debugFactory( 'calypso' );
 
