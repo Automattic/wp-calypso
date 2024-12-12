@@ -12,6 +12,7 @@ import {
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 import useHighlightsQuery from './use-highlights-query';
+import useOnScreen from './use-on-screen';
 import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -160,22 +161,6 @@ function FeedbackPanel( {
 			</Button>
 		</div>
 	);
-}
-
-function useOnScreen( ref: any ) {
-	const [ isIntersecting, setIntersecting ] = useState( false );
-
-	const observer = useMemo(
-		() => new IntersectionObserver( ( [ entry ] ) => setIntersecting( entry.isIntersecting ) ),
-		[]
-	);
-
-	useEffect( () => {
-		observer.observe( ref.current );
-		return () => observer.disconnect();
-	}, [ observer, ref ] );
-
-	return isIntersecting;
 }
 
 interface FeedbackCardProps {
