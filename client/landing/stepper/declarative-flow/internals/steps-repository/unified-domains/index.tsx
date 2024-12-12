@@ -100,7 +100,7 @@ export default function DomainsStep( props: StepProps ) {
 				saveSignupStep={ ( step: ProvidedDependencies ) => {
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 				} }
-				submitSignupStep={ ( _, step: ProvidedDependencies ) => {
+				submitSignupStep={ ( _: never, step: ProvidedDependencies ) => {
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 				} }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
