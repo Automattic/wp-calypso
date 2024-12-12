@@ -30,8 +30,8 @@ export const useStepNavigationWithTracking = ( {
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
 		return {
-			intent: onboardStore.getIntent() ?? '',
-			goals: onboardStore.getGoals() ?? [],
+			intent: onboardStore.getIntent(),
+			goals: onboardStore.getGoals(),
 		};
 	}, [] );
 
@@ -44,20 +44,16 @@ export const useStepNavigationWithTracking = ( {
 			event,
 			providedDependencies,
 		}: Omit< RecordStepNavigationParams, 'step' | 'intent' | 'goals' | 'flow' | 'variant' > ) => {
-			let eventProps;
-			if ( providedDependencies && providedDependencies.eventProps ) {
-				eventProps = providedDependencies.eventProps;
-				delete providedDependencies.eventProps;
-			}
+			const { eventProps, ...dependencies } = providedDependencies || {};
 
 			recordStepNavigation( {
 				event,
-				intent,
-				goals,
+				intent: intent ?? '',
+				goals: goals ?? [],
 				flow: flow.name,
 				step: currentStepRoute,
 				variant: flow.variantSlug,
-				providedDependencies,
+				providedDependencies: dependencies,
 				additionalProps: {
 					...( eventProps ?? {} ),
 					...( tracksEventPropsFromFlowRef.current?.[ event ] ?? {} ),
