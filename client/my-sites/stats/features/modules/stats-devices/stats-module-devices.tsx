@@ -10,6 +10,7 @@ import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
@@ -151,7 +152,11 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		/>
 	);
 
-	const supportUrl = isOdysseyStats
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` )
 		: localizeUrl( `${ SUPPORT_URL }#devices` );
 

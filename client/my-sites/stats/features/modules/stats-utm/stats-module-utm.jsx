@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
@@ -129,8 +129,11 @@ const StatsModuleUTM = ( {
 		? generateFileNameForDownload( siteSlug, period )
 		: '';
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
 		: localizeUrl( `${ SUPPORT_URL }#utm` );
 
