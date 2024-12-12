@@ -797,7 +797,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.login__lost-password-form-wrapper {
-		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved.  Otherwise we will see a flash of content.
+		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved. Otherwise we will see a flash of content.
 		.async-load__placeholder {
 			visibility: hidden;
 			height: 185px;
