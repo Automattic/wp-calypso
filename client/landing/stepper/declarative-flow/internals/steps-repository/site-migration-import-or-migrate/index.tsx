@@ -1,4 +1,5 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { getPlan, isWpComBusinessPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
@@ -15,6 +16,8 @@ import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
+const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
+
 const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
@@ -22,28 +25,63 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 
-	const options = [
-		{
-			label: translate( 'Migrate site' ),
-			description: translate(
-				"All your site's content, themes, plugins, users and customizations."
-			),
-			value: 'migrate',
-			badge: {
-				type: 'info-blue' as BadgeType,
-				// translators: %(planName)s is a plan name (e.g. Commerce plan).
-				text: translate( 'Requires %(planName)s plan', {
+	const isBusinessPlan = site?.plan?.product_slug
+		? isWpComBusinessPlan( site?.plan?.product_slug )
+		: false;
+
+	let options;
+
+	if ( isMigrationExperimentEnabled ) {
+		const badgeText = isBusinessPlan
+			? translate( 'Included with your plan' )
+			: // translators: %(planName)s is a plan name (e.g. Commerce plan).
+			  ( translate( 'Available on %(planName)s with 50% off', {
 					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-				} ) as string,
+			  } ) as string );
+
+		options = [
+			{
+				label: translate( 'Migrate site' ),
+				description: translate(
+					"Best for WordPress sites. Seamlessly move all your site's content, themes, plugins, users, and customizations to WordPress.com."
+				),
+				value: 'migrate',
+				badge: {
+					type: 'info-blue' as BadgeType,
+					text: badgeText,
+				},
+				selected: true,
 			},
-			selected: true,
-		},
-		{
-			label: translate( 'Import content only' ),
-			description: translate( 'Import just posts, pages, comments and media.' ),
-			value: 'import',
-		},
-	];
+			{
+				label: translate( 'Import content only' ),
+				description: translate( 'Import posts, pages, comments, and media only.' ),
+				value: 'import',
+			},
+		];
+	} else {
+		options = [
+			{
+				label: translate( 'Migrate site' ),
+				description: translate(
+					"All your site's content, themes, plugins, users and customizations."
+				),
+				value: 'migrate',
+				badge: {
+					type: 'info-blue' as BadgeType,
+					// translators: %(planName)s is a plan name (e.g. Commerce plan).
+					text: translate( 'Requires %(planName)s plan', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) as string,
+				},
+				selected: true,
+			},
+			{
+				label: translate( 'Import content only' ),
+				description: translate( 'Import just posts, pages, comments and media.' ),
+				value: 'import',
+			},
+		];
+	}
 
 	const { data: hostingProviderDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const hostingProviderName = hostingProviderDetails.name;
