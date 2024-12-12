@@ -1,4 +1,8 @@
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { DESIGN_TIER_CATEGORIES } from '../constants';
+import { isDesignTierCategory } from '../utils';
 
 // The `currentSearchParams` parameter from the callback of the `setSearchParams` function
 // might not have the latest query parameter on multiple calls at the same time.
@@ -26,11 +30,41 @@ const useCategoriesFilter = () => {
 	return { selectedCategories, setSelectedCategories };
 };
 
+export const useDesignTiers = () => {
+	const translate = useTranslate();
+
+	const designTiers = useMemo(
+		() => [
+			{
+				slug: DESIGN_TIER_CATEGORIES.FREE,
+				name: translate( 'Free' ),
+			},
+		],
+		[ translate ]
+	);
+
+	return designTiers;
+};
+
 export const useDesignPickerFilters = () => {
 	const { selectedCategories, setSelectedCategories } = useCategoriesFilter();
 
+	// Split selectedCategories into categorySlugs and designTierSlugs.
+	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useMemo( () => {
+		return {
+			selectedCategoriesWithoutDesignTier: selectedCategories.filter(
+				( slug: string ) => ! isDesignTierCategory( slug )
+			),
+			selectedDesignTiers: selectedCategories.filter( ( slug: string ) =>
+				isDesignTierCategory( slug )
+			),
+		};
+	}, [ selectedCategories ] );
+
 	return {
 		selectedCategories,
+		selectedCategoriesWithoutDesignTier,
+		selectedDesignTiers,
 		setSelectedCategories,
 		resetFilters: () => {
 			setSelectedCategories( [] );

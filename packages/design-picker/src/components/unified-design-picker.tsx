@@ -4,7 +4,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { InView } from 'react-intersection-observer';
-import { DESIGN_TIER_CATEGORIES, SHOW_ALL_SLUG } from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
+import { useDesignTiers, useDesignPickerFilters } from '../hooks/use-design-picker-filters';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
@@ -297,14 +298,16 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
+	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+
 	const categories = categorization?.categories || [];
 
-	const tierFilters = isMultiFilterEnabled ? Object.values( DESIGN_TIER_CATEGORIES ) : [];
+	const tierFilters = useDesignTiers();
 
 	const categoryTypes = useMemo(
 		() => [ ...categories.filter( ( { slug } ) => isFeatureCategory( slug ) ), ...tierFilters ],
-		[ categorization?.categories ]
+		[ categorization?.categories, tierFilters ]
 	);
 
 	const categoryTopics = useMemo(
@@ -399,7 +402,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 
-			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
+			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
 					title={ translate( 'Best matching themes' ) }
@@ -407,7 +410,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
-			{ isMultiFilterEnabled && categorization && categorization.selections.length === 0 && (
+			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
 			{ /* We want to show the last one on top first. */ }

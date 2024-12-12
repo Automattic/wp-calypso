@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { DESIGN_TIER_CATEGORIES } from '../constants';
-import { isBlankCanvasDesign } from '../utils/available-designs';
+import { isBlankCanvasDesign } from '../utils';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
@@ -8,19 +7,13 @@ import type { Design } from '../types';
 // Designs with `showFirst` are always included regardless of the selected features and subjects.
 export const getFilteredDesignsByCategory = (
 	designs: Design[],
-	categorySlugs: string[] | null | undefined
+	categorySlugs: string[] | null | undefined,
+	designTierSlugs: string[]
 ) => {
-	// separate selectedTierSlugs from categorySlugs
-	const tierSlugs = Object.values( DESIGN_TIER_CATEGORIES ).map( ( category ) => category.slug );
-	const selectedTierSlugs = categorySlugs?.filter( ( categorySlug ) =>
-		tierSlugs.includes( categorySlug )
-	);
-	categorySlugs = categorySlugs?.filter( ( categorySlug ) => ! tierSlugs.includes( categorySlug ) );
-
 	const filteredDesigns = designs.filter(
 		( design ) =>
-			( ! selectedTierSlugs?.length ||
-				( design.design_tier && selectedTierSlugs.includes( design.design_tier ) ) ) &&
+			( ! designTierSlugs.length ||
+				( design.design_tier && designTierSlugs.includes( design.design_tier ) ) ) &&
 			! isBlankCanvasDesign( design )
 	);
 
@@ -70,17 +63,21 @@ export const getFilteredDesignsByCategory = (
 };
 
 export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
-	const { selectedCategories } = useDesignPickerFilters();
+	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
-		if ( selectedCategories.length > 0 ) {
-			return getFilteredDesignsByCategory( designs, selectedCategories );
+		if ( selectedCategoriesWithoutDesignTier.length > 0 || selectedDesignTiers.length > 0 ) {
+			return getFilteredDesignsByCategory(
+				designs,
+				selectedCategoriesWithoutDesignTier,
+				selectedDesignTiers
+			);
 		}
 
 		return {
 			all: designs,
 		};
-	}, [ designs, selectedCategories ] );
+	}, [ designs, selectedCategoriesWithoutDesignTier ] );
 
 	return filteredDesigns;
 };
