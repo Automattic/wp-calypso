@@ -7,6 +7,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
@@ -44,7 +45,10 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		domainCart: domainItems,
 	};
 
-	const site = useSite();
+	const postSignUpSiteSlugParam = getSignupCompleteSlug();
+	const postSignUpSiteIdParam = getSignupCompleteSiteID();
+
+	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
