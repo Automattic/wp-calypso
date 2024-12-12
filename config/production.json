@@ -194,6 +194,7 @@
 		"stats/empty-module-v2": true,
 		"stats/new-date-filtering": true,
 		"stats/paid-wpcom-v2": true,
+		"stats/paid-wpcom-v3": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
