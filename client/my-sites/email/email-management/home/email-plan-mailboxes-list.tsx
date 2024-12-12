@@ -121,7 +121,7 @@ function EmailPlanMailboxesList( {
 				addMailboxPath={ addMailboxPath }
 				showIcon={ !! addMailboxPath }
 				domain={ domain }
-				disableActions
+				disableActions={ isGoogleConfiguring }
 			>
 				{ mailboxItems }
 			</MailboxListHeader>
