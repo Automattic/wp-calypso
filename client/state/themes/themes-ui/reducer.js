@@ -1,5 +1,5 @@
 import { THEME_BACK_PATH_SET, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
-import { combineReducers, withPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 // Destination for 'back' button on theme sheet
 export function backPath( state = '/themes', action ) {
@@ -10,12 +10,12 @@ export function backPath( state = '/themes', action ) {
 	return state;
 }
 
-export const themesBookmark = withPersistence( ( state = '', action ) => {
+export function themesBookmark( state = '', action ) {
 	if ( THEMES_BOOKMARK_SET === action.type ) {
 		return action.payload;
 	}
 	return state;
-} );
+}
 
 export default combineReducers( {
 	backPath,
