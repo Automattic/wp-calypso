@@ -46,19 +46,25 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	if ( ! mailboxes || mailboxes.length < 1 ) {
-		let missingMailboxesText = translate( 'No mailboxes' );
-
-		if ( isGoogleConfiguring ) {
-			missingMailboxesText = translate(
-				'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
-			);
-		}
-
+	if ( isGoogleConfiguring ) {
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
-					<span>{ missingMailboxesText }</span>
+					<span>
+						{ translate(
+							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+						) }
+					</span>
+				</MailboxListItem>
+			</MailboxListHeader>
+		);
+	}
+
+	if ( isNoMailboxes ) {
+		return (
+			<MailboxListHeader accountType={ accountType }>
+				<MailboxListItem hasNoEmails>
+					<span>{ translate( 'No mailboxes' ) }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
