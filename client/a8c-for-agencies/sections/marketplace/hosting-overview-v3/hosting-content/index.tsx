@@ -23,7 +23,7 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 	const { content, title } = useMemo( () => {
 		if ( section === 'wpcom' ) {
 			return {
-				content: <StandardAgencyHosting />,
+				content: <StandardAgencyHosting onAddToCart={ onAddToCart } />,
 				title: isReferMode
 					? translate( 'Refer a WordPress.com site to your client' )
 					: translate( 'Purchase sites individually or in bulk, as you need them' ),

@@ -22,8 +22,6 @@ export default function PremierAgencyHosting() {
 
 	return (
 		<div className="premier-agency-hosting">
-			<section className="premier-agency-hosting__plan-selector-container">TODO</section>
-
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
 
 			<HostingAdditionalFeaturesSection
