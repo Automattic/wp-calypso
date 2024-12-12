@@ -42,6 +42,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 				{ __( 'Categories' ) } <span>({ __( 'optional' ) })</span>
 			</h3>
 			<ToggleControl
+				__nextHasNoMarginBottom
 				label={
 					<div className="categories-toggle-container">
 						<p>
