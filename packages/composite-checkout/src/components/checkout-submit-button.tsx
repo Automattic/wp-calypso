@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { cloneElement } from 'react';
+import { cloneElement, useCallback } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
 import { makeErrorResponse } from '../lib/payment-processors';
@@ -99,6 +99,21 @@ function CheckoutSubmitButtonForPaymentMethod( {
 		return onClick( processorData );
 	};
 
+	// Add payment method to any errors that get logged.
+	const onLoadErrorWithPaymentMethodId = useCallback(
+		( error: Error ) => {
+			if ( ! onLoadError ) {
+				return;
+			}
+			const errorWithCause = new Error(
+				`Error while rendering submit button for payment method '${ paymentMethod.id }': ${ error.message } (${ error.name })`,
+				{ cause: error }
+			);
+			onLoadError( errorWithCause );
+		},
+		[ onLoadError, paymentMethod.id ]
+	);
+
 	const { submitButton } = paymentMethod;
 	if ( ! submitButton ) {
 		return null;
@@ -112,7 +127,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ __( 'There was a problem with the submit button.' ) }
-			onError={ onLoadError }
+			onError={ onLoadErrorWithPaymentMethodId }
 		>
 			<CheckoutSubmitButtonWrapper
 				className={ joinClasses( [
