@@ -3,11 +3,19 @@ import { FormInputValidation } from '@automattic/components';
 import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button, ComboboxControl } from '@wordpress/components';
+import {
+	TextControl,
+	ToggleControl,
+	FormTokenField,
+	Button,
+	Popover,
+	FormFileUpload,
+} from '@wordpress/components';
+import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import {
@@ -18,14 +26,12 @@ import {
 	useEffect,
 	useRef,
 	useCallback,
-	useMemo,
 } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { tip } from './icon';
-
 import './style.scss';
 
 interface Props {
@@ -83,8 +89,21 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		hidden = false,
 		isWPCOMSite = false,
 		disabled,
-		onCategorySelect,
 	} = props;
+
+	const { data: newsletterCategoriesData } = useNewsletterCategories( {
+		siteId,
+	} );
+
+	const [ selectedCategories, setSelectedCategories ] = useState< string[] >( [] );
+
+	useEffect( () => {
+		if ( newsletterCategoriesData?.newsletterCategories ) {
+			setSelectedCategories(
+				newsletterCategoriesData.newsletterCategories.map( ( cat ) => cat.name )
+			);
+		}
+	}, [ newsletterCategoriesData ] );
 
 	const {
 		addSubscribers,
@@ -112,7 +131,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
-	const [ emailCategories, setEmailCategories ] = useState< Record< string, string > >( {} );
+	const [ showCategories, setShowCategories ] = useState( false );
+	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
+	const infoButtonRef = useRef< HTMLButtonElement >( null );
 
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
@@ -130,10 +151,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}, [ isValidEmails, emails ] );
 
-	// This useState call has been moved below getValidEmails() to resolve
-	// an error with calling getValidEmails() before it is initialized.
-	// The next line calls isSubmitButtonReady() which invokes getValidEmails()
-	// if submitBtnAlwaysEnable and allowEmptyFormSubmit are both false.
+	const isSubmitButtonReady = useCallback(
+		() =>
+			submitBtnAlwaysEnable ||
+			!! allowEmptyFormSubmit ||
+			!! getValidEmails().length ||
+			!! selectedFile,
+		[ submitBtnAlwaysEnable, allowEmptyFormSubmit, getValidEmails, selectedFile ]
+	);
+
 	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 
 	/**
@@ -142,10 +168,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	// get initial list of jobs
 	useEffect( () => {
 		getSubscribersImports( siteId );
-	}, [] );
+	}, [ getSubscribersImports, siteId ] );
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
-	useEffect( extendEmailFormControls, [ emails ] );
+	useEffect( extendEmailFormControls, [ __, emailFormControls, emails, isValidEmails ] );
 	useEffect( importFinishedRecognition );
 
 	useEffect( () => {
@@ -158,7 +184,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
-	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
+	}, [
+		isValidEmails,
+		selectedFile,
+		allowEmptyFormSubmit,
+		submitBtnAlwaysEnable,
+		isSubmitButtonReady,
+	] );
 
 	useEffect( () => {
 		if ( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) {
@@ -188,7 +220,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} else {
 			// import subscribers proving CSV and manual list of emails
 			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails );
+				importCsvSubscribers( siteId, selectedFile, validEmails, false );
 		}
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
@@ -258,15 +290,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 			setEmailFormControls( controls );
 		}
-	}
-
-	function isSubmitButtonReady(): boolean {
-		return (
-			submitBtnAlwaysEnable ||
-			!! allowEmptyFormSubmit ||
-			!! getValidEmails().length ||
-			!! selectedFile
-		);
 	}
 
 	function resetFormState(): void {
@@ -435,20 +458,18 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	const { data: newsletterCategoriesData } = useNewsletterCategories( {
-		siteId,
-	} );
-
-	const categoryOptions = useMemo(
-		() =>
-			newsletterCategoriesData?.newsletterCategories?.map(
-				( category: { id: number; name: string } ) => ( {
-					label: category.name,
-					value: category.id.toString(),
-				} )
-			) ?? [],
-		[ newsletterCategoriesData ]
-	);
+	const handleCategoryChange = ( tokens: ( string | TokenItem )[] ) => {
+		// Only allow tokens that exist in the suggestions
+		const validTokens = tokens.filter(
+			( token ) =>
+				newsletterCategoriesData?.newsletterCategories.some(
+					( cat ) => cat.name === ( typeof token === 'string' ? token : token.value )
+				)
+		);
+		setSelectedCategories(
+			validTokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) )
+		);
+	};
 
 	if ( hidden ) {
 		return null;
@@ -493,23 +514,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 										onChange={ ( value: string ) => onEmailChange( value, i ) }
 										onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
 									/>
-
-									{ currentEmail && isValidEmails[ i ] && (
-										<ComboboxControl
-											className="add-subscriber__category-select"
-											value={ emailCategories[ currentEmail ] || '' }
-											onChange={ ( value ) => {
-												setEmailCategories( ( prev ) => ( {
-													...prev,
-													[ currentEmail ]: value || '',
-												} ) );
-												onCategorySelect?.( currentEmail, value || '' );
-											} }
-											options={ categoryOptions }
-											allowReset
-											placeholder={ __( 'Select or create category' ) }
-										/>
-									) }
 								</div>
 
 								{ showError && (
@@ -530,6 +534,84 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
 
 					{ renderEmptyFormValidationMsg() }
+
+					<div className="add-subscriber__categories-container">
+						<h3>
+							{ __( 'Categories' ) } <span>({ __( 'optional' ) })</span>
+						</h3>
+						<ToggleControl
+							label={
+								<div className="categories-toggle-container">
+									<p>
+										{ createInterpolateElement(
+											__( 'Add these subscribers to specific <link>categories</link>.' ),
+											{
+												link: (
+													<a
+														href={ `/settings/newsletter/${ siteId }` }
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											}
+										) }
+									</p>
+									<Button
+										icon={ info }
+										onClick={ () => setShowInfoPopover( ! showInfoPopover ) }
+										ref={ infoButtonRef }
+									/>
+									{ showInfoPopover && infoButtonRef.current && (
+										<Popover
+											anchor={ infoButtonRef.current }
+											onClose={ () => setShowInfoPopover( false ) }
+											position="middle left"
+											noArrow={ false }
+											ignoreViewportSize
+										>
+											<div className="categories-info-popover">
+												<p>
+													{ __(
+														'Adding newsletter categories helps you segment your subscribers more effectively.'
+													) }{ ' ' }
+													<a
+														href={ localizeUrl(
+															'https://wordpress.com/support/newsletter-settings/enable-newsletter-categories/'
+														) }
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{ __( 'Learn more' ) }
+													</a>
+												</p>
+											</div>
+										</Popover>
+									) }
+								</div>
+							}
+							checked={ showCategories }
+							onChange={ ( value ) => {
+								setShowCategories( value );
+								if ( ! value ) {
+									setSelectedCategories( [] );
+								}
+							} }
+						/>
+
+						{ showCategories && newsletterCategoriesData?.newsletterCategories && (
+							<FormTokenField
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								value={ selectedCategories }
+								suggestions={ newsletterCategoriesData.newsletterCategories.map(
+									( cat ) => cat.name
+								) }
+								onChange={ handleCategoryChange }
+								__experimentalShowHowTo={ false }
+								label=""
+							/>
+						) }
+					</div>
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 
