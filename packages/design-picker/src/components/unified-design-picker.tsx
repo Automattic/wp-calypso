@@ -279,6 +279,7 @@ interface DesignPickerProps {
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -298,13 +299,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 	const categories = categorization?.categories || [];
-	const isNoResults = Object.values( designsByGroup ).every(
-		( categoryDesigns ) => categoryDesigns.length === 0
-	);
+
 	const categoryTypes = useMemo(
 		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -313,6 +313,26 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
+
+	const recommendedDesigns = useMemo( () => {
+		const recommendedDesignSlugsSet = new Set( recommendedDesignSlugs );
+
+		// The number should be a multiple of 3 but no more than 5
+		return designs
+			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
+			.slice( 0, 3 );
+	}, [ designs, recommendedDesignSlugs ] );
+
+	// Show recommended themes only when the selected categories are never changed.
+	const showRecommendedDesigns =
+		isMultiFilterEnabled &&
+		! categorization?.isSelectionsChanged &&
+		recommendedDesigns.length === 3;
+
+	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
+	const showNoResults =
+		! showRecommendedDesigns &&
+		Object.values( designsByGroup ).every( ( categoryDesigns ) => categoryDesigns.length === 0 );
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -373,6 +393,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				</DesignPickerFilterGroup>
 			</div>
 
+			{ showRecommendedDesigns && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Recommended themes' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
 			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
@@ -401,7 +430,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						}
 						category={ categorySlug }
 						designs={ categoryDesigns }
-						showNoResults={ index === array.length - 1 && isNoResults }
+						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
 		</div>
@@ -427,6 +456,7 @@ export interface UnifiedDesignPickerProps {
 	isMultiFilterEnabled?: boolean;
 	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -448,8 +478,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isMultiFilterEnabled = false,
 	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
-	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
+	const hasCategories = !! ( categorization?.categories || [] ).length;
 
 	return (
 		<div
@@ -476,6 +507,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					onChangeTier={ onChangeTier }
 					isBigSkyEligible={ isBigSkyEligible }
+					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

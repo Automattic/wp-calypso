@@ -21,7 +21,7 @@ const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelecti
 			( result, filterSlug, index ) => ( {
 				...result,
 				// The property cannot contain `-` character.
-				[ `filters_${ filterSlug.replace( '-', '_' ) }` ]: `${ getCategoryType(
+				[ `filters_${ filterSlug.replaceAll( '-', '_' ) }` ]: `${ getCategoryType(
 					filterSlug
 				) }:${ index }`,
 			} ),

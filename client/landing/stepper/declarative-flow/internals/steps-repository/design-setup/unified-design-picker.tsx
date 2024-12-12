@@ -213,6 +213,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			seed: siteSlugOrId ? String( siteSlugOrId ) : undefined,
+			goals: goals.length > 0 ? goals : [ 'none' ],
 			_locale: locale,
 		},
 		{
@@ -968,6 +969,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				isMultiFilterEnabled={ isGoalCentricFeature }
 				onChangeTier={ handleChangeTier }
 				isBigSkyEligible={ isBigSkyEligible }
+				recommendedDesignSlugs={ allDesigns?.recommendation || [] }
 			/>
 		</>
 	);
