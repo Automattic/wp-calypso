@@ -29,15 +29,23 @@
 			flex-direction: row;
 		}
 	}
-	.stats-upsell__left-inner,
-	.stats-upsell__right {
+	.stats-upsell__left-inner {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		min-width: 279px;
+	}
+
+	.stats-upsell_right {
+		min-width: 279px;
+		overflow: hidden;
 		img {
 			border-radius: 4px;
 		}
+	}
+
+	.stats-upsell_collapsed {
+		max-height: 570px;
 	}
 
 	.stats-upsell__left {

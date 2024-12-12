@@ -210,7 +210,12 @@ export default function StatsUpsell( {
 						) }
 					</div>
 				</div>
-				<div className="stats-upsell__right">
+				<div
+					className={
+						'stats-upsell__right ' +
+						( expandableView && ! isExpanded ? 'stats-upsell_collapsed' : '' )
+					}
+				>
 					<img src={ image } alt={ translate( 'Features' ) } />
 				</div>
 			</div>
