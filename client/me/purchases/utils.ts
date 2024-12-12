@@ -16,7 +16,7 @@ export function isDataLoading( props: {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
-export function canEditPaymentDetails( purchase: Purchase ) {
+export function canEditPaymentDetails( purchase: Purchase ): boolean {
 	return (
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&
@@ -26,7 +26,7 @@ export function canEditPaymentDetails( purchase: Purchase ) {
 	);
 }
 
-export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ) {
+export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ): string {
 	if ( isPaidWithCreditCard( purchase ) && purchase.payment.creditCard ) {
 		return changePaymentMethod( siteSlug, purchase.id, purchase.payment.creditCard.id );
 	}
@@ -34,11 +34,11 @@ export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase
 	return addPaymentMethod( siteSlug, purchase.id );
 }
 
-export function getAddNewPaymentMethodPath() {
+export function getAddNewPaymentMethodPath(): string {
 	return addNewPaymentMethod;
 }
 
-export function isTemporarySitePurchase( purchase: Purchase ) {
+export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
 	// Currently only Jeypack, Akismet and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
 	// site(s) to work. This function may need to be updated in the future as additional products types
@@ -46,26 +46,28 @@ export function isTemporarySitePurchase( purchase: Purchase ) {
 	return /^siteless.(jetpack|akismet|marketplace.wp).com$/.test( domain );
 }
 
-export function getTemporarySiteType( purchase: Purchase ) {
+export function getTemporarySiteType( purchase: Purchase ): string | null {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) ? productType : null;
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ) {
+export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'akismet';
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ) {
+export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ) {
+export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'jetpack';
 }
 
-export function getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId: string | number ) {
+export function getCancelPurchaseSurveyCompletedPreferenceKey(
+	purchaseId: string | number
+): string {
 	return `cancel-purchase-survey-completed-${ purchaseId }`;
 }
