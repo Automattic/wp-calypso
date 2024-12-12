@@ -174,13 +174,11 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	const isVisible = useOnScreen( inlineFeedbackCardRef );
 
 	useEffect( () => {
-		console.log( 'FeedbackCard tracks event fired' );
 		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
 	}, [] );
 
 	useEffect( () => {
 		if ( isVisible ) {
-			console.log( 'FeedbackCard is visible on screen' );
 			if ( hasFiredViewEvent ) {
 				return;
 			}
