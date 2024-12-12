@@ -512,6 +512,12 @@
 		flex-grow: initial;
 	}
 
+	.email-plan-mailboxes-list__mailbox-list-link span,
+	.section-header__actions button {
+		color: var(--theme-highlight-color-50);
+		opacity: 0.5;
+	}
+
 	.email-plan-mailboxes-list__notice {
 		margin-top: 1rem;
 		margin-bottom: 2rem;
