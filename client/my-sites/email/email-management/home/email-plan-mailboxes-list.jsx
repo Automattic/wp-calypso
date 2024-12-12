@@ -1,4 +1,5 @@
 import { Badge, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -18,6 +19,7 @@ import { getGSuiteSubscriptionStatus, getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
+import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import { recordEmailAppLaunchEvent } from './utils';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
@@ -32,15 +34,39 @@ const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	} );
 };
 
-const MailboxListHeader = ( { accountType = null, children, isPlaceholder = false } ) => {
+const MailboxListHeader = ( {
+	accountType = null,
+	children,
+	isPlaceholder = false,
+	addMailboxPath,
+	domain,
+	showIcon,
+} ) => {
 	const translate = useTranslate();
+
+	const HeaderIcon = () => (
+		<div className="email-plan-mailboxes-list__mailbox-header-icon">
+			<EmailTypeIcon domain={ domain } />
+		</div>
+	);
 
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
 			<SectionHeader
 				isPlaceholder={ isPlaceholder }
-				label={ getListHeaderTextForAccountType( accountType, translate ) }
-			/>
+				label={
+					<>
+						{ !! showIcon && domain && <HeaderIcon /> }
+						{ getListHeaderTextForAccountType( accountType, translate ) }
+					</>
+				}
+			>
+				{ addMailboxPath && (
+					<Button isLink="link" href={ addMailboxPath }>
+						{ translate( 'Add mailbox' ) }
+					</Button>
+				) }
+			</SectionHeader>
 			{ children }
 		</div>
 	);
@@ -107,13 +133,13 @@ function MailboxLink( { account, mailbox } ) {
 	);
 }
 
-function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes } ) {
+function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, addMailboxPath } ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
 	if ( isLoadingEmails ) {
 		return (
-			<MailboxListHeader isPlaceholder accountType={ accountType }>
+			<MailboxListHeader isPlaceholder accountType={ accountType } domain={ domain }>
 				<MailboxListItem isPlaceholder>
 					<MaterialIcon icon="email" />
 					<span />
@@ -170,7 +196,16 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 		);
 	} );
 
-	return <MailboxListHeader accountType={ accountType }>{ mailboxItems }</MailboxListHeader>;
+	return (
+		<MailboxListHeader
+			accountType={ accountType }
+			addMailboxPath={ addMailboxPath }
+			showIcon={ !! addMailboxPath }
+			domain={ domain }
+		>
+			{ mailboxItems }
+		</MailboxListHeader>
+	);
 }
 
 EmailPlanMailboxesList.propTypes = {
@@ -178,6 +213,7 @@ EmailPlanMailboxesList.propTypes = {
 	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
 	mailboxes: PropTypes.array,
+	addMailboxPath: PropTypes.string,
 };
 
 export default EmailPlanMailboxesList;
