@@ -1510,7 +1510,7 @@ $breakpoint-mobile: 660px;
 			align-items: center;
 			width: 100%;
 			flex-direction: column;
-			margin: 40px auto 0;
+			margin: 12px auto 0;
 
 			@media (max-width: $break-mobile) {
 				max-width: $max-width;
@@ -1831,13 +1831,19 @@ $breakpoint-mobile: 660px;
 		}
 
 		.login__lostpassword-form {
+			margin-bottom: 44px;
+
 			.login__form-action {
-				margin: 8px 0 32px;
+				margin: 24px 0 0;
 				width: 100%;
 			}
 
 			.login__form-userdata {
 				width: 100%;
+			}
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
 			}
 		}
 
@@ -2011,6 +2017,10 @@ $breakpoint-mobile: 660px;
 
 		.login__lost-password-link {
 			color: var(--wp-admin-theme-color);
+
+			&:hover {
+				color: var(--wp-admin-theme-color);
+			}
 		}
 
 		.login__form-forgot-password {
@@ -2029,6 +2039,11 @@ $breakpoint-mobile: 660px;
 			border-radius: 2px;
 			&:hover:not(:disabled) {
 				background-color: var(--color-primary);
+			}
+
+			&:disabled {
+				background-color: var(--studio-gray-0);
+				color: var(--studio-gray-20);
 			}
 		}
 
@@ -2066,6 +2081,13 @@ $breakpoint-mobile: 660px;
 				font-weight: inherit;
 				font-size: inherit;
 				color: var(--wp-admin-theme-color);
+				line-height: inherit;
+				text-decoration: none;
+				text-underline-offset: 0;
+
+				&:hover {
+					color: var(--wp-admin-theme-color);
+				}
 			}
 
 			@media (max-width: $break-mobile) {
@@ -2084,7 +2106,8 @@ $breakpoint-mobile: 660px;
 			border: 1px solid var(--Gutenberg-Gray-500, #bbb);
 			background: var(--Gutenberg-White, #fff);
 			&:hover,
-			&:focus {
+			&:focus,
+			&:focus:hover {
 				border: 2px solid var(--Gutenberg-Gray-500, #bbb);
 			}
 		}
@@ -2218,22 +2241,12 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.feature-flag-woocommerce-rebrand-2-0,
-.woo.feature-flag-woocommerce-rebrand-2-0.is-woo-passwordless {
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0 {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
 	--woo-purple-70: #5007AA;
-
-	&.is-woo-passwordless {
-		.security-key-form__help-text,
-		.formatted-header__subtitle {
-			a {
-				@include link-woo;
-			}
-		}
-	}
 
 	.masterbar__woo {
 		.masterbar__woo-nav {
@@ -2284,7 +2297,17 @@ $breakpoint-mobile: 660px;
 		text-underline-offset: 2px;
 	}
 
+	.login__lost-password-no-account a {
+		@include link-woo;
+	}
+
 	.login__lost-password-link {
 		@include link-woo;
+	}
+	.security-key-form__help-text,
+	.formatted-header__subtitle {
+		a {
+			@include link-woo;
+		}
 	}
 }
