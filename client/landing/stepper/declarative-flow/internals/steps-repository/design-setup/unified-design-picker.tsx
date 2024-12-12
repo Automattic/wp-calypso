@@ -213,6 +213,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			seed: siteSlugOrId ? String( siteSlugOrId ) : undefined,
+			goals: goals.length > 0 ? goals : [ 'none' ],
 			_locale: locale,
 		},
 		{
@@ -234,7 +235,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		isMultiSelection: isGoalCentricFeature,
 	} );
 
-	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
+	const { commonFilterProperties } = useTrackFilters( {
 		preselectedFilters: categorizationOptions.defaultSelections,
 		isBigSkyEligible,
 		isMultiSelection: isGoalCentricFeature,
@@ -243,19 +244,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
-		handleSelect: handleSelectFilter,
-		handleDeselect: handleDeselectFilter,
 	} );
 
 	const designPickerFilters = useDesignPickerFilters();
-
-	const handleChangeTier = ( value: boolean ) => {
-		if ( value ) {
-			handleSelectFilter( 'free', 'included_with_plan' );
-		} else {
-			handleDeselectFilter( 'free', 'included_with_plan' );
-		}
-	};
 
 	// ********** Logic for selecting a design and style variation
 	const {
@@ -964,10 +955,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }
-				isTierFilterEnabled={ isGoalCentricFeature }
 				isMultiFilterEnabled={ isGoalCentricFeature }
-				onChangeTier={ handleChangeTier }
 				isBigSkyEligible={ isBigSkyEligible }
+				recommendedDesignSlugs={ allDesigns?.recommendation || [] }
 			/>
 		</>
 	);
