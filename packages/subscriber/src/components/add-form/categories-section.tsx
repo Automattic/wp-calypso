@@ -94,9 +94,6 @@ export const CategoriesSection: React.FC< Props > = ( {
 				checked={ showCategories }
 				onChange={ ( value ) => {
 					setShowCategories( value );
-					if ( ! value ) {
-						setSelectedCategories( [] );
-					}
 				} }
 			/>
 
