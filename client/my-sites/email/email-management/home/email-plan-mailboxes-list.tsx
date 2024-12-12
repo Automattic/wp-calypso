@@ -83,7 +83,7 @@ function EmailPlanMailboxesList( {
 					) }
 
 					<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-					{ ! mailbox.temporary && (
+					{ ! mailbox.temporary && ! isGoogleConfiguring && (
 						<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
 					) }
 				</MailboxListItem>
