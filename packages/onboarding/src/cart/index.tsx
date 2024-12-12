@@ -13,7 +13,6 @@ import {
 	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
-	isOnboardingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -184,8 +183,6 @@ export const createSiteWithCart = async (
 	// 	return;
 	// }
 
-	const isOnboarding = isOnboardingFlow( flowName );
-
 	const locale = getLocaleSlug();
 	const hasSegmentationSurvey: boolean =
 		newSiteParams[ 'options' ][ 'site_creation_flow' ] === 'entrepreneur';
@@ -208,7 +205,7 @@ export const createSiteWithCart = async (
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
-				...( isOnboarding && siteGoals && { site_goals: siteGoals } ),
+				...( siteGoals && { site_goals: siteGoals } ),
 			},
 		},
 	} );
