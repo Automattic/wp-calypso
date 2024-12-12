@@ -169,10 +169,9 @@ interface FeedbackCardProps {
 }
 
 function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
-	console.log( 'FeedbackCard' );
-	const ref = useRef( null );
 	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
-	const isVisible = useOnScreen( ref );
+	const inlineFeedbackCardRef = useRef( null );
+	const isVisible = useOnScreen( inlineFeedbackCardRef );
 
 	useEffect( () => {
 		console.log( 'FeedbackCard tracks event fired' );
@@ -203,7 +202,7 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	};
 
 	return (
-		<div className="stats-feedback-card" ref={ ref }>
+		<div className="stats-feedback-card" ref={ inlineFeedbackCardRef }>
 			<FeedbackContent
 				onLeaveReview={ handleLeaveReviewFromCard }
 				onSendFeedback={ handleSendFeedbackFromCard }
