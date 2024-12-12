@@ -116,7 +116,7 @@ export class FullPostView extends Component {
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
-		this.handleStartTime();
+		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
 
@@ -148,6 +148,12 @@ export class FullPostView extends Component {
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
+
+			// If the post being viewed changes, track the reading time.
+			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
+				this.trackReadingTime( prevProps.post );
+				this.setReadingStartTime();
+			}
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -175,12 +181,12 @@ export class FullPostView extends Component {
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
 		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
-		this.handleEndTime();
+		this.trackReadingTime();
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 	}
 
-	handleStartTime = () => {
+	setReadingStartTime = () => {
 		this.readingStartTime = new Date().getTime();
 	};
 
@@ -224,15 +230,18 @@ export class FullPostView extends Component {
 
 	handleVisibilityChange = () => {
 		if ( document.hidden ) {
-			this.handleEndTime();
+			this.trackReadingTime();
 		}
 	};
 
-	handleEndTime() {
+	trackReadingTime( post = null ) {
+		if ( ! post ) {
+			post = this.props.post;
+		}
 		if ( this.readingStartTime ) {
 			const endTime = Math.floor( Date.now() );
 			const engagementTime = endTime - this.readingStartTime;
-			recordTrackForPost( 'calypso_reader_article_engaged_time', this.props.post, {
+			recordTrackForPost( 'calypso_reader_article_engaged_time', post, {
 				context: 'full-post',
 				engagement_time: engagementTime / 1000,
 			} );
