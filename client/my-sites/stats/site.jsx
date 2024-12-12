@@ -43,6 +43,7 @@ import {
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -250,7 +251,8 @@ class StatsSite extends Component {
 	getValidDateOrNullFromInput( inputDate, inputKey ) {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const { shouldForceDefaultDateRange, supportedShortcutList } = this.props;
+			const { hasSiteLoadedFeatures, shouldForceDefaultDateRange, supportedShortcutList } =
+				this.props;
 
 			const appliedShortcutId = localStorage.getItem(
 				'jetpack_stats_stored_date_range_shortcut_id'
@@ -263,7 +265,9 @@ class StatsSite extends Component {
 				const storedValue = appliedShortcut[ inputKey ];
 				const isStoredValueValid = moment( storedValue ).isValid();
 
-				return ! shouldForceDefaultDateRange && isStoredValueValid ? storedValue : null;
+				return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
+					? storedValue
+					: null;
 			}
 		}
 
@@ -332,6 +336,7 @@ class StatsSite extends Component {
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
 			isOldJetpack,
+			hasSiteLoadedFeatures,
 			shouldForceDefaultDateRange,
 			shouldForceDefaultPeriod,
 			supportUserFeedback,
@@ -355,10 +360,14 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// Use the stored period if it's different from the current period.
 		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
-		if ( ! shouldForceDefaultPeriod && storedPeriod && storedPeriod !== period ) {
+		if (
+			hasSiteLoadedFeatures &&
+			! shouldForceDefaultPeriod &&
+			storedPeriod &&
+			storedPeriod !== period
+		) {
 			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
 			return;
 		}
@@ -910,6 +919,7 @@ export default connect(
 			supportUserFeedback,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
+		const hasSiteLoadedFeatures = hasLoadedSiteFeatures( state, siteId );
 		// Determine if the default date range should be forced to 7 days.
 		const shouldForceDefaultDateRange = shouldGateStats(
 			state,
@@ -921,6 +931,7 @@ export default connect(
 			siteId,
 			STATS_FEATURE_INTERVAL_DROPDOWN_WEEK
 		);
+
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
@@ -947,6 +958,7 @@ export default connect(
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			supportUserFeedback,
 			isOldJetpack,
+			hasSiteLoadedFeatures,
 			shouldForceDefaultDateRange,
 			shouldForceDefaultPeriod,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
