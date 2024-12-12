@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Category } from '../types';
 
 export interface Categorization {
 	categories: Category[];
 	selections: string[];
+	isSelectionsChanged: boolean;
 	onSelect: ( selectedSlug: string ) => void;
 }
 
@@ -27,6 +28,7 @@ export function useCategorization(
 	}: UseCategorizationOptions
 ): Categorization {
 	const isInitRef = useRef( false );
+	const [ isSelectionsChanged, setIsSelectionsChanged ] = useState( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -47,6 +49,10 @@ export function useCategorization(
 				return;
 			}
 
+			if ( ! isSelectionsChanged ) {
+				setIsSelectionsChanged( true );
+			}
+
 			const index = selectedCategories.findIndex( ( selection ) => selection === value );
 			if ( index === -1 ) {
 				handleSelect?.( value );
@@ -59,7 +65,15 @@ export function useCategorization(
 				...selectedCategories.slice( index + 1 ),
 			] );
 		},
-		[ selectedCategories, isMultiSelection, setSelectedCategories, handleSelect, handleDeselect ]
+		[
+			selectedCategories,
+			isMultiSelection,
+			isSelectionsChanged,
+			setSelectedCategories,
+			handleSelect,
+			handleDeselect,
+			setIsSelectionsChanged,
+		]
 	);
 
 	useEffect( () => {
@@ -72,6 +86,7 @@ export function useCategorization(
 	return {
 		categories,
 		selections: selectedCategories,
+		isSelectionsChanged,
 		onSelect,
 	};
 }

@@ -16,6 +16,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -32,7 +33,7 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
 
@@ -388,5 +389,21 @@ export const setSelectedSiteIdByOrigin = ( context, next ) => {
  * This function is only used to provide API compatibility for the sections that use shared controllers.
  */
 export const ssrSetupLocale = ( _context, next ) => {
+	next();
+};
+
+export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
+	const duplicateViewsExperimentAssignment = await loadExperimentAssignment(
+		'calypso_duplicate_views_placeholder'
+	);
+	if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
+		if ( wpAdminUrl ) {
+			window.location = wpAdminUrl;
+			return;
+		}
+	}
 	next();
 };
