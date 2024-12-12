@@ -39,6 +39,18 @@
 	.stats-upsell__right {
 		min-width: 279px;
 		overflow: hidden;
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 60px;
+			background: linear-gradient(to top, #FFF, rgba(255, 255, 255, 0));
+		}
+
 		@include break-wide {
 			flex: 1;
 		}
