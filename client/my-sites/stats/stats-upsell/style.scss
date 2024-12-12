@@ -36,9 +36,12 @@
 		min-width: 279px;
 	}
 
-	.stats-upsell_right {
+	.stats-upsell__right {
 		min-width: 279px;
 		overflow: hidden;
+		@include break-wide {
+			flex: 1;
+		}
 		img {
 			border-radius: 4px;
 		}
@@ -56,17 +59,6 @@
 			@include break-wide {
 				padding: 48px;
 			}
-		}
-	}
-
-	.stats-upsell__right {
-		gap: 8px;
-		@include break-wide {
-			flex: 1;
-		}
-
-		img {
-			height: 100%;
 		}
 	}
 
@@ -152,6 +144,11 @@
 			justify-content: space-between;
 			width: 100%;
 			padding: 0;
+			color: var(--color-link);
+		}
+		.components-button:focus:not(:disabled) {
+			box-shadow: none;
+			color: var(--color-link);
 		}
 	}
 }
