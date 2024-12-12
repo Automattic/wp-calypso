@@ -71,7 +71,7 @@ function EmailPlanMailboxesList( {
 			<>
 				<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
 					<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-						<MailboxLink account={ account } mailbox={ mailbox } />
+						<MailboxLink account={ account } mailbox={ mailbox } readonly={ isGoogleConfiguring } />
 						<EmailForwardSecondaryDetails mailbox={ mailbox } />
 					</div>
 					{ isEmailUserAdmin( mailbox ) && (
