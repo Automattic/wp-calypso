@@ -5,6 +5,7 @@ import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { isWebUri } from 'valid-url';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -43,6 +44,26 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 		shouldShowNoThanks = false;
 	}
 
+	const logo = config.isEnabled( 'woocommerce/rebrand-2-0' ) ? (
+		<SVGIcon
+			name="woocommerce-logo"
+			icon={ WooLogoRebrand2 }
+			classes="masterbar__woo-client-logo"
+			width="60"
+			height="24"
+			viewBox="0 0 60 24"
+		/>
+	) : (
+		<SVGIcon
+			name="woocommerce-logo"
+			icon={ WooLogo }
+			classes="masterbar__woo-client-logo"
+			width="38"
+			height="23"
+			viewBox="0 0 38 23"
+		/>
+	);
+
 	return (
 		<Fragment>
 			{ shouldShowProgressBar && <ProgressBar className="masterbar__progress-bar" value={ 95 } /> }
@@ -51,14 +72,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
 							<a href="https://woocommerce.com" className="masterbar__woo-link">
-								<SVGIcon
-									name="woocommerce-logo"
-									icon={ WooLogo }
-									classes="masterbar__woo-client-logo"
-									width="38"
-									height="23"
-									viewBox="0 0 38 23"
-								/>
+								{ logo }
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
