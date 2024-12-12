@@ -4,7 +4,7 @@ import './style.scss';
 import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
@@ -39,6 +39,7 @@ import {
 	formatAmount,
 	getAdvertisingDashboardPath,
 	getCampaignActiveDays,
+	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -179,6 +180,7 @@ export default function CampaignItemDetails( props: Props ) {
 		impressions_total = 0,
 		clicks_total,
 		clickthrough_rate,
+		duration_days,
 		total_budget,
 		total_budget_used,
 		conversions_total,
@@ -275,6 +277,30 @@ export default function CampaignItemDetails( props: Props ) {
 		: '-';
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
+
+	const durationDateFormatted = getCampaignDurationFormatted(
+		start_date,
+		end_date,
+		is_evergreen,
+		campaign?.ui_status
+	);
+
+	const durationDateAndTimeFormatted = getCampaignDurationFormatted(
+		start_date,
+		end_date,
+		is_evergreen,
+		campaign?.ui_status,
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D` refers to day of month (e.g. `5`), `HH` refers to hours in 24-hour format (e.g. `19` in 19:50), `mm` refers to minutes (e.g. `50`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		_x( 'MMM D, HH:mm', 'shorter date format' )
+	);
+
+	const durationFormatted = duration_days
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', duration_days ),
+				formatNumber( duration_days, true )
+		  )
+		: '';
 
 	const initialRange =
 		activeDays <= 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
@@ -754,10 +780,36 @@ export default function CampaignItemDetails( props: Props ) {
 						{ shouldShowStats && (
 							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
+									{ duration_days && (
+										<div className="campaign-item-details__main-stats-row ">
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Duration' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Run between' ) }
+													&nbsp;
+													<InfoPopover position="right">
+														<span className="popover-title">
+															{ ! isLoading ? durationDateAndTimeFormatted : <FlexibleSkeleton /> }
+														</span>
+													</InfoPopover>
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
+										</div>
+									) }
 									<div className="campaign-item-details__main-stats-row ">
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Clicks' ) }
+												{ translate( 'Visitors' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
@@ -765,7 +817,7 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Impressions' ) }
+												{ translate( 'People reached' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
