@@ -14,5 +14,5 @@ export const getPreferredEditorView = ( state, siteId, postType = 'post' ) => {
 		return 'default';
 	}
 
-	return postsMenuItem.url.includes( 'wp-admin/edit.php' ) ? 'classic' : 'default';
+	return postsMenuItem.use_core_editor ? 'classic' : 'default';
 };
