@@ -4,6 +4,7 @@
 
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import {
+	domainsManagementPrefix,
 	emailManagementAllSitesPrefix,
 	getAddEmailForwardsPath,
 	getAddGSuiteUsersPath,
@@ -37,6 +38,9 @@ describe( 'path helper functions', () => {
 		);
 		expect( getAddEmailForwardsPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getAddEmailForwardsPath( null, null ) ).toEqual( '/email' );
+		expect( getAddEmailForwardsPath( ':site', ':domain', domainsManagementPrefix ) ).toEqual(
+			'/domains/manage/all/email/:domain/forwarding/add/:site'
+		);
 	} );
 
 	it( 'getAddGSuiteUsersPath', () => {
@@ -129,6 +133,10 @@ describe( 'path helper functions', () => {
 		expect( getEmailManagementPath( ':site' ) ).toEqual( '/email/:site' );
 		expect( getEmailManagementPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getEmailManagementPath( null, null ) ).toEqual( '/email' );
+
+		expect( getEmailManagementPath( siteName, domainName, domainsManagementPrefix ) ).toEqual(
+			`/domains/manage/all/email/${ domainName }/${ siteName }`
+		);
 	} );
 
 	it( 'getForwardingPath', () => {
