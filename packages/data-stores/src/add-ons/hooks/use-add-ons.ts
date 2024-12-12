@@ -129,8 +129,6 @@ const useAddOns = ( {
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
-	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
-	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
 	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
 		siteId: selectedSiteId,
 		productSlug: PRODUCT_1GB_SPACE,
@@ -148,7 +146,7 @@ const useAddOns = ( {
 				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
 				 * that to the add-on's meta if need to.
 				 */
-				if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
+				if ( productsList.isLoading || mediaStorage.isLoading ) {
 					return {
 						...addOn,
 						name,
@@ -226,11 +224,9 @@ const useAddOns = ( {
 			activeAddOns,
 			enableStorageAddOns,
 			mediaStorage.data?.maxStorageBytes,
+			mediaStorage.isLoading,
 			productsList.data,
 			productsList.isLoading,
-			siteFeatures.data?.active,
-			siteFeatures.isLoading,
-			sitePurchases.isLoading,
 			spaceUpgradesPurchased,
 		]
 	);
