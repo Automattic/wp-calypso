@@ -1,4 +1,5 @@
 import { Button, Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
 import moment from 'moment';
 import './style.scss';
@@ -23,13 +24,13 @@ export const ExpiredReportNotice = ( { onRetest, reportTimestamp }: ExpiredRepor
 			<Icon className="icon" icon={ scheduled } size={ 24 } />
 			<div className="expired-report-notice-content">
 				<div className="expired-report-text">
-					<span className="text">These results are more than 24 hours old</span>
+					<span className="text">{ __( 'These results are more than 24 hours old' ) }</span>
 					<span className="subtext">
-						Test the page again if you have recently made updates to your site.
+						{ __( 'Test the page again if you have recently made updates to your site.' ) }
 					</span>
 				</div>
 				<Button variant="primary" onClick={ onRetest }>
-					Test again
+					{ __( 'Test again' ) }
 				</Button>
 			</div>
 		</div>
