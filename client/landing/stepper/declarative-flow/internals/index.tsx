@@ -95,6 +95,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
 		const nextStep = flowSteps[ nextStepIndex ];
 
+		// 0 implies the findIndex returned -1.
+		if ( nextStepIndex === 0 || ! nextStep ) {
+			return;
+		}
+
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
 			// Otherwise, we're still waiting to render something meaningful, and we don't want to
@@ -104,8 +109,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if (
 			// Don't load anything on user step because the user step will hard-navigate anyways.
 			currentStepRoute !== 'user' &&
-			nextStepIndex > 0 &&
-			nextStep &&
 			'asyncComponent' in nextStep
 		) {
 			nextStep.asyncComponent();
@@ -118,7 +121,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// different points. But even if they do, worst case scenario we only fail to preload
 		// some steps, and they'll simply be loaded later.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow, isLoggedIn ] );
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
