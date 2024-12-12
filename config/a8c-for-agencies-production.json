@@ -40,7 +40,7 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
 		"a4a-tracking-site-migrations": true,
-		"a4a-product-feedback": true
+		"a4a-product-feedback-no-exist": true
 	},
 	"enable_all_sections": false,
 	"sections": {
