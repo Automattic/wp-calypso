@@ -43,7 +43,7 @@ function FollowingStream( { ...props } ) {
 			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
 				<Recent viewToggle={ viewToggle } />
 			) : (
-				<ReaderStream { ...props } className="following">
+				<ReaderStream { ...props } className="following recent-scrolling-feed">
 					<BloganuaryHeader />
 					<NavigationHeader
 						title={ translate( 'Recent' ) }

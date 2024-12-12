@@ -7,6 +7,11 @@
 .is-reader-page .tag-stream__main.main {
 	max-width: 600px;
 
+	&.recent-scrolling-feed,
+	&.is-discover-stream {
+		max-width: 768px;
+	}
+
 	&.reader-two-column {
 		max-width: 968px;
 
