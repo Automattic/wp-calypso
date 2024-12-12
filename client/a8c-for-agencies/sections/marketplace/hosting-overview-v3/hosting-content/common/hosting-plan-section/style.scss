@@ -43,7 +43,9 @@
 }
 
 .hosting-plan-section__details {
+	@include break-wide {
 	margin-inline-start: 32px;
+	}
 }
 
 .hosting-plan-section__aside {

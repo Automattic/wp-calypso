@@ -2,7 +2,7 @@ import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import A4ANumberInput from 'calypso/a8c-for-agencies/components/a4a-number-input';
+import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
 import useWPCOMDiscountTiers from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-wpcom-discount-tiers';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/wpcom-card/hooks/use-wpcom-plan-description';
@@ -126,7 +126,7 @@ export default function WPCOMPlanSelector( {
 						{ ctaLabel }
 					</Button>
 
-					{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
+					{ ! referralMode && <A4ANumberInputV2 value={ quantity } onChange={ setQuantity } /> }
 				</div>
 			</div>
 		</div>

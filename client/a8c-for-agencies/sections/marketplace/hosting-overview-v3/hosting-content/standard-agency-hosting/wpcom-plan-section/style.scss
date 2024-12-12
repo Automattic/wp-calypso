@@ -3,8 +3,15 @@
 
 
 .wpcom-plan-section .a4a-slider {
-		position: relative;
-		z-index: 1;
+	position: relative;
+	z-index: 1;
+}
+.wpcom-plan-section .a4a-number-input-v2 {
+	width: 100%;
+
+	@include break-medium {
+		width: auto;
+	}
 }
 
 .wpcom-plan-selector__price-actual-value,
@@ -51,18 +58,19 @@
 
 .wpcom-plan-selector__cta-component {
 	display: flex;
-	flex-direction: column-reverse;
-	align-items: flex-start;
+	flex-direction: column;
+	justify-content: stretch;
 	gap: 16px;
 
-	@include break-huge {
+	@include break-mobile {
 		flex-direction: row;
 	}
 }
 
 .wpcom-plan-selector__cta-button {
-	min-width: 260px;
+	min-width: 0;
 	width: 100%;
+	min-height: 40px;
 }
 
 .wpcom-plan-selector__details.is-placeholder {
