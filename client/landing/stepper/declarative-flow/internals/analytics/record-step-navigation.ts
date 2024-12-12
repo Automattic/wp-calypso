@@ -8,7 +8,7 @@ import { ProvidedDependencies } from '../types';
 export interface RecordStepNavigationParams {
 	event: ( typeof STEPPER_TRACKS_EVENTS_STEP_NAV )[ number ];
 	intent: string;
-	goals: string[];
+	goals?: string[];
 	flow: string;
 	step: string;
 	variant?: string;
@@ -29,8 +29,8 @@ const EXCLUDED_DEPENDENCIES = [
 
 export function recordStepNavigation( {
 	event,
-	intent,
-	goals,
+	intent = '',
+	goals = [],
 	flow,
 	step,
 	variant,
