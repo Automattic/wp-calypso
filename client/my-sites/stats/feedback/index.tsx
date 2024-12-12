@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import {
@@ -162,15 +162,51 @@ function FeedbackPanel( {
 	);
 }
 
+function useOnScreen( ref: any ) {
+	const [ isIntersecting, setIntersecting ] = useState( false );
+
+	const observer = useMemo(
+		() => new IntersectionObserver( ( [ entry ] ) => setIntersecting( entry.isIntersecting ) ),
+		[]
+	);
+
+	useEffect( () => {
+		observer.observe( ref.current );
+		return () => observer.disconnect();
+	}, [ observer, ref ] );
+
+	return isIntersecting;
+}
+
 interface FeedbackCardProps {
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
 }
 
 function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+	console.log( 'FeedbackCard' );
+	const ref = useRef( null );
+	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
+	const isVisible = useOnScreen( ref );
+
 	useEffect( () => {
+		console.log( 'FeedbackCard tracks event fired' );
 		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
 	}, [] );
+
+	useEffect( () => {
+		if ( isVisible ) {
+			console.log( 'FeedbackCard is visible on screen' );
+			if ( hasFiredViewEvent ) {
+				return;
+			}
+
+			console.log( 'FeedbackCard fire visibilty event here' );
+			setHasFiredViewEvent( true );
+			// Once the card is visible, we should track that event.
+			// trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
+		}
+	}, [ isVisible, hasFiredViewEvent ] );
 
 	const handleLeaveReviewFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
@@ -182,7 +218,7 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	};
 
 	return (
-		<div className="stats-feedback-card">
+		<div className="stats-feedback-card" ref={ ref }>
 			<FeedbackContent
 				onLeaveReview={ handleLeaveReviewFromCard }
 				onSendFeedback={ handleSendFeedbackFromCard }
