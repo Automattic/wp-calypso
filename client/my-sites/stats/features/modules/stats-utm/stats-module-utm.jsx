@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -129,6 +129,11 @@ const StatsModuleUTM = ( {
 		? generateFileNameForDownload( siteSlug, period )
 		: '';
 
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats
+		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
+		: localizeUrl( `${ SUPPORT_URL }#utm` );
+
 	const titleNodes = (
 		<StatsInfoArea isNew>
 			{ translate(
@@ -136,15 +141,7 @@ const StatsModuleUTM = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: (
-							<a
-								target="_blank"
-								rel="noreferrer"
-								href={ localizeUrl(
-									`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
-								) }
-							/>
-						),
+						link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
 					},
 					context: 'Stats: Popover information when the UTM module has data',
 				}
@@ -179,15 +176,7 @@ const StatsModuleUTM = ( {
 											{
 												comment: '{{link}} links to support documentation.',
 												components: {
-													link: (
-														<a
-															target="_blank"
-															rel="noreferrer"
-															href={ localizeUrl(
-																`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
-															) }
-														/>
-													),
+													link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
 												},
 												context: 'Stats: Info box label when the UTM module is empty',
 											}
