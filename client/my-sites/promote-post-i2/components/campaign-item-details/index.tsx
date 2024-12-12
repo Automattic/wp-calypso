@@ -357,8 +357,14 @@ export default function CampaignItemDetails( props: Props ) {
 			);
 		}
 
-		if ( ! data ) {
-			return null;
+		if ( ! Array.isArray( data ) || ! data.length ) {
+			return (
+				<div>
+					{ translate(
+						'We could not fetch any data for this time frame, please try again later. Campaign data can be delayed by a few hours.'
+					) }
+				</div>
+			);
 		}
 
 		return (
