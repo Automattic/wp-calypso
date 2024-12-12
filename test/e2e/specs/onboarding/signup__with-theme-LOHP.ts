@@ -65,7 +65,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 
 			// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
 			const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
-			await themeCard.hover();
+			await themeCard.hover( { force: true } );
 
 			const themeButton = themeCard.getByText( 'Start with this theme' );
 			const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
@@ -74,20 +74,17 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			if ( calypsoUrl.hostname !== 'wordpress.com' ) {
 				// Reroute the click to the current Calypso URL.
 				await page.route( themeButtonUrl.href, async ( route ) => {
-					themeButtonUrl.host = calypsoUrl.host;
-					themeButtonUrl.protocol = calypsoUrl.protocol;
-
 					await route.abort();
-					await page.waitForTimeout( 2000 );
-
-					await page.goto( themeButtonUrl.href );
 				} );
+
+				themeButtonUrl.host = calypsoUrl.host;
+				themeButtonUrl.protocol = calypsoUrl.protocol;
+				await page.goto( themeButtonUrl.href );
 			}
 			// Get theme slug
 			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
 			themeSlug = pageMatch?.[ 1 ] || null;
-			// Silly, but this wait makes it constantly work...
-			await page.waitForTimeout( 2000 );
+			await themeCard.hover( { force: true } );
 			await themeCard.getByText( 'Start with this theme' ).click();
 		} );
 
