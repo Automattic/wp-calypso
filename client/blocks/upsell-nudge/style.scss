@@ -22,6 +22,7 @@
 		top: 1px;
 	}
 	.banner__content {
+		flex-direction: row;
 		color: var(--color-text-inverted);
 		padding: 0 0 0 8px;
 	}
@@ -54,7 +55,9 @@
 		box-shadow: none;
 	}
 }
-
+.upsell-nudge.is-dismissible.banner.card .banner__content {
+	flex-direction: column;
+}
 .upsell-nudge.is-dismissible.is-compact .banner__action {
 	margin-top: 5px;
 	margin-right: 28px;
