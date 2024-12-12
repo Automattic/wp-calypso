@@ -211,7 +211,6 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 			} ),
 		[
 			activeAddOns,
-			enableStorageAddOns,
 			mediaStorage.data?.maxStorageBytes,
 			productsList.data,
 			productsList.isLoading,
