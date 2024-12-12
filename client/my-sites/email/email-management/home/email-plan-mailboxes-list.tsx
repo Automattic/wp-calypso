@@ -20,6 +20,7 @@ type Props = {
 	mailboxes: Mailbox[];
 	addMailboxPath: string;
 	isLoadingEmails: boolean;
+	configuringStateMode?: 'message' | 'notice';
 };
 function EmailPlanMailboxesList( {
 	domain,
@@ -27,6 +28,7 @@ function EmailPlanMailboxesList( {
 	mailboxes,
 	addMailboxPath,
 	isLoadingEmails,
+	configuringStateMode = 'message',
 }: Props ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
@@ -46,7 +48,7 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	if ( isGoogleConfiguring ) {
+	if ( isGoogleConfiguring && configuringStateMode === 'message' ) {
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
@@ -99,7 +101,7 @@ function EmailPlanMailboxesList( {
 
 	return (
 		<>
-			{ isGoogleConfiguring && (
+			{ isGoogleConfiguring && configuringStateMode === 'notice' && (
 				<Notice
 					className="email-plan-mailboxes-list__notice"
 					status="is-warning"
