@@ -79,7 +79,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 
 					await route.abort();
 					await page.unrouteAll( { behavior: 'ignoreErrors' } );
-					await page.goto( themeButtonUrl.href );
+					await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
 				} );
 			}
 			// Get theme slug
