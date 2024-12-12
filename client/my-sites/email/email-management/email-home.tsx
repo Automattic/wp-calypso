@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import React, { ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -26,19 +27,22 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactNode } ) => {
+type ContentWithHeaderProps = React.PropsWithChildren< {
+	className?: string;
+} >;
+const ContentWithHeader = ( { children, className }: ContentWithHeaderProps ) => {
 	const translate = useTranslate();
+
 	return (
-		<Main wideLayout>
+		<Main wideLayout className={ className }>
 			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
 
 			<EmailHeader />
 
-			{ props.children }
+			{ children }
 		</Main>
 	);
 };
@@ -147,14 +151,19 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 
 		return (
-			<ContentWithHeader>
+			<ContentWithHeader
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			>
 				<EmailPlan
 					domain={ selectedDomain }
 					// When users have a single domain with email, they are auto-redirected from the
 					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
 					// we also hide the back button, to avoid scenarios where clicking "Back"
 					// redirects users to the same page as they are currently on.
-					hideHeaderCake={ isSingleDomainThatHasEmail }
+					hideHeaderCake={ isAllDomainManagementContext || isSingleDomainThatHasEmail }
+					hideHeader={ isAllDomainManagementContext }
+					hidePlanActions={ isAllDomainManagementContext }
+					hideMailPoetUpsell={ isAllDomainManagementContext }
 					selectedSite={ selectedSite }
 					source={ source }
 				/>
