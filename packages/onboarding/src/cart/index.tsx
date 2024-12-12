@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import {
 	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
+	isOnboardingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -156,7 +158,8 @@ export const createSiteWithCart = async (
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
-	siteIntent?: string
+	siteIntent?: string,
+	siteGoals?: SiteGoal[]
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -181,6 +184,8 @@ export const createSiteWithCart = async (
 	// 	return;
 	// }
 
+	const isOnboarding = isOnboardingFlow( flowName );
+
 	const locale = getLocaleSlug();
 	const hasSegmentationSurvey: boolean =
 		newSiteParams[ 'options' ][ 'site_creation_flow' ] === 'entrepreneur';
@@ -203,6 +208,7 @@ export const createSiteWithCart = async (
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
+				...( isOnboarding && siteGoals && { site_goals: siteGoals } ),
 			},
 		},
 	} );

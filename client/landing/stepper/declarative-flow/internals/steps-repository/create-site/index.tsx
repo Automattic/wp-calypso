@@ -84,6 +84,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
+		siteGoals,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -95,6 +96,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
+			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
@@ -231,7 +233,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent
+			siteIntent,
+			siteGoals
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
