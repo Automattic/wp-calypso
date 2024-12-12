@@ -3,7 +3,7 @@ import { FormInputValidation } from '@automattic/components';
 import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { TextControl, Button, FormFileUpload } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -25,6 +25,7 @@ import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-recor
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
+
 import './style.scss';
 
 interface Props {
@@ -50,7 +51,6 @@ interface Props {
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
-	onCategorySelect?: ( email: string, category: string ) => void;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -141,15 +141,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}, [ isValidEmails, emails ] );
 
-	const isSubmitButtonReady = useCallback(
-		() =>
-			submitBtnAlwaysEnable ||
-			!! allowEmptyFormSubmit ||
-			!! getValidEmails().length ||
-			!! selectedFile,
-		[ submitBtnAlwaysEnable, allowEmptyFormSubmit, getValidEmails, selectedFile ]
-	);
-
+	// This useState call has been moved below getValidEmails() to resolve
+	// an error with calling getValidEmails() before it is initialized.
+	// The next line calls isSubmitButtonReady() which invokes getValidEmails()
+	// if submitBtnAlwaysEnable and allowEmptyFormSubmit are both false.
 	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 
 	/**
@@ -158,10 +153,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	// get initial list of jobs
 	useEffect( () => {
 		getSubscribersImports( siteId );
-	}, [ getSubscribersImports, siteId ] );
+	}, [] );
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
-	useEffect( extendEmailFormControls, [ __, emailFormControls, emails, isValidEmails ] );
+	useEffect( extendEmailFormControls, [ emails ] );
 	useEffect( importFinishedRecognition );
 
 	useEffect( () => {
@@ -174,13 +169,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
-	}, [
-		isValidEmails,
-		selectedFile,
-		allowEmptyFormSubmit,
-		submitBtnAlwaysEnable,
-		isSubmitButtonReady,
-	] );
+	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
 
 	useEffect( () => {
 		if ( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) {
@@ -210,7 +199,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} else {
 			// import subscribers proving CSV and manual list of emails
 			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails, false );
+				importCsvSubscribers( siteId, selectedFile, validEmails );
 		}
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
@@ -280,6 +269,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 			setEmailFormControls( controls );
 		}
+	}
+
+	function isSubmitButtonReady(): boolean {
+		return (
+			submitBtnAlwaysEnable ||
+			!! allowEmptyFormSubmit ||
+			!! getValidEmails().length ||
+			!! selectedFile
+		);
 	}
 
 	function resetFormState(): void {
@@ -472,7 +470,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				<form onSubmit={ onFormSubmit } autoComplete="off">
 					{ emailFormControls.map( ( placeholder, i ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
-						const currentEmail = emails[ i ] || '';
 
 						return (
 							<div key={ i }>
@@ -481,17 +478,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 										<strong>{ __( 'Emails' ) }</strong>
 									</label>
 								) }
-								<div className="add-subscriber__form-row">
-									<TextControl
-										className={ showError ? 'is-error' : '' }
-										disabled={ inProgress || disabled }
-										placeholder={ placeholder }
-										value={ currentEmail }
-										help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
-										onChange={ ( value: string ) => onEmailChange( value, i ) }
-										onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
-									/>
-								</div>
+								<TextControl
+									className={ showError ? 'is-error' : '' }
+									disabled={ inProgress || disabled }
+									placeholder={ placeholder }
+									value={ emails[ i ] || '' }
+									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
+									onChange={ ( value: string ) => onEmailChange( value, i ) }
+									onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
+								/>
 
 								{ showError && (
 									<FormInputValidation
