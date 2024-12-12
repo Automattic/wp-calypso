@@ -1,22 +1,34 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { Category } from '../types';
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
+import { useDesignPickerFilters } from './use-design-picker-filters';
+import type { Category } from '../types';
 
 export interface Categorization {
-	selections: string[];
-	onSelect: ( selectedSlug: string ) => void;
 	categories: Category[];
+	selections: string[];
+	isSelectionsChanged: boolean;
+	onSelect: ( selectedSlug: string ) => void;
 }
 
 interface UseCategorizationOptions {
 	defaultSelections: string[];
 	isMultiSelection?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
+	handleSelect?: ( slug: string ) => void;
+	handleDeselect?: ( slug: string ) => void;
 }
 
 export function useCategorization(
 	categoryMap: Record< string, Category >,
-	{ defaultSelections, isMultiSelection, sort }: UseCategorizationOptions
+	{
+		defaultSelections,
+		isMultiSelection,
+		sort,
+		handleSelect,
+		handleDeselect,
+	}: UseCategorizationOptions
 ): Categorization {
+	const isInitRef = useRef( false );
+	const [ isSelectionsChanged, setIsSelectionsChanged ] = useState( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -27,62 +39,56 @@ export function useCategorization(
 		return result.sort( sort );
 	}, [ categoryMap, sort ] );
 
-	const [ selections, setSelections ] = useState< string[] >(
-		chooseDefaultSelections( categories, defaultSelections )
-	);
+	const { selectedCategories, setSelectedCategories } = useDesignPickerFilters();
 
 	const onSelect = useCallback(
 		( value: string ) => {
-			setSelections( ( currentSelections: string[] ) => {
-				if ( ! isMultiSelection ) {
-					return [ value ];
-				}
+			if ( ! isMultiSelection ) {
+				handleSelect?.( value );
+				setSelectedCategories( [ value ] );
+				return;
+			}
 
-				const index = currentSelections.findIndex( ( selection ) => selection === value );
-				if ( index === -1 ) {
-					return [ ...currentSelections, value ];
-				}
+			if ( ! isSelectionsChanged ) {
+				setIsSelectionsChanged( true );
+			}
 
-				// The selections should at least have one.
-				return currentSelections.length > 1
-					? [ ...currentSelections.slice( 0, index ), ...currentSelections.slice( index + 1 ) ]
-					: currentSelections;
-			} );
+			const index = selectedCategories.findIndex( ( selection ) => selection === value );
+			if ( index === -1 ) {
+				handleSelect?.( value );
+				return setSelectedCategories( [ ...selectedCategories, value ] );
+			}
+
+			handleDeselect?.( value );
+			return setSelectedCategories( [
+				...selectedCategories.slice( 0, index ),
+				...selectedCategories.slice( index + 1 ),
+			] );
 		},
-		[ isMultiSelection, setSelections ]
+		[
+			selectedCategories,
+			isMultiSelection,
+			isSelectionsChanged,
+			setSelectedCategories,
+			handleSelect,
+			handleDeselect,
+			setIsSelectionsChanged,
+		]
 	);
 
 	useEffect( () => {
-		if ( shouldSetToDefaultSelections( categories, selections ) ) {
-			setSelections( chooseDefaultSelections( categories, defaultSelections ) );
+		if ( ! isInitRef.current && categories.length > 0 && selectedCategories.length === 0 ) {
+			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
+			isInitRef.current = true;
 		}
-	}, [ categories, defaultSelections, selections ] );
+	}, [ isInitRef, categories ] );
 
 	return {
 		categories,
-		selections,
+		selections: selectedCategories,
+		isSelectionsChanged,
 		onSelect,
 	};
-}
-
-/**
- *	Check that the current selections still match one of the category slugs,
- *	and if it doesn't reset the current selections to the default selections.
- *	@param categories the list of available categories
- *	@param currentSelections the slugs of the current selected category
- *	@returns whether the current selections should be set to the default selections
- */
-function shouldSetToDefaultSelections(
-	categories: Category[],
-	currentSelections: string[]
-): boolean {
-	// For an empty list, the empty selections is the only correct one.
-	if ( categories.length === 0 && currentSelections.length === 0 ) {
-		return false;
-	}
-
-	const currentSelectionsSet = new Set( currentSelections );
-	return ! categories.some( ( { slug } ) => currentSelectionsSet.has( slug ) );
 }
 
 /**
@@ -94,9 +100,12 @@ function shouldSetToDefaultSelections(
  * @returns the default category or null if none is available
  */
 function chooseDefaultSelections( categories: Category[], defaultSelections: string[] ): string[] {
-	const defaultSelectionsSet = new Set( defaultSelections );
-	if ( defaultSelections && categories.find( ( { slug } ) => defaultSelectionsSet.has( slug ) ) ) {
-		return defaultSelections;
+	const categorySlugsSet = new Set( categories.map( ( { slug } ) => slug ) );
+	const availableDefaultSelections = defaultSelections.filter( ( selection ) =>
+		categorySlugsSet.has( selection )
+	);
+	if ( availableDefaultSelections.length > 0 ) {
+		return availableDefaultSelections;
 	}
 
 	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : [];

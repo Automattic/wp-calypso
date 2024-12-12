@@ -9,7 +9,6 @@ import {
 } from '@automattic/design-picker';
 import { isDesktop } from '@automattic/viewport';
 import { localize, translate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansStep from 'calypso/signup/steps/plans';
 
@@ -59,10 +58,8 @@ function PlansThemePreselectedStep( props: object & { signupDependencies: Signup
 	const hidePlanProps = getHidePlanPropsBasedOnSignupDependencies( props.signupDependencies );
 
 	const freePlanButton = (
-		<Button
-			onClick={ () => buildUpgradeFunction( { ...props, recordTracksEvent }, null ) }
-			borderless
-		/>
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		<Button onClick={ () => buildUpgradeFunction( { ...( props as any ) }, null ) } borderless />
 	);
 
 	let subHeaderText = translate(
@@ -84,7 +81,9 @@ function PlansThemePreselectedStep( props: object & { signupDependencies: Signup
 			? {}
 			: { fallbackSubHeaderText: subHeaderText };
 
-	return <PlansStep { ...props } { ...hidePlanProps } { ...fallbackSubheaderTextProps } />;
+	return (
+		<PlansStep { ...( props as any ) } { ...hidePlanProps } { ...fallbackSubheaderTextProps } />
+	);
 }
 
 export default localize( PlansThemePreselectedStep );

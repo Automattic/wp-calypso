@@ -6,10 +6,12 @@ import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -87,7 +89,12 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
+		const isWoo = isWooOAuth2Client( getCurrentOAuth2Client( context.store.getState() ) );
+
 		if ( isReskinnedFlow( currentFlowName ) ) {
+			next();
+		} else if ( isWoo ) {
+			// Do nothing, Woo flow background should keep white.
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||

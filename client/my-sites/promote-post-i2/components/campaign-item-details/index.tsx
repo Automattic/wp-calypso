@@ -109,7 +109,6 @@ export enum ChartSourceOptions {
 
 // Define the available date range options
 enum ChartSourceDateRanges {
-	TODAY = 'today',
 	YESTERDAY = 'yesterday',
 	LAST_7_DAYS = 'last_7_days',
 	LAST_14_DAYS = 'last_14_days',
@@ -119,7 +118,6 @@ enum ChartSourceDateRanges {
 
 // User facing strings for date ranges
 const ChartSourceDateRangeLabels = {
-	[ ChartSourceDateRanges.TODAY ]: __( 'Today' ),
 	[ ChartSourceDateRanges.YESTERDAY ]: __( 'Yesterday' ),
 	[ ChartSourceDateRanges.LAST_7_DAYS ]: __( 'Last 7 days' ),
 	[ ChartSourceDateRanges.LAST_14_DAYS ]: __( 'Last 14 days' ),
@@ -321,8 +319,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
 		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
 		const newResolution =
-			[ ChartSourceDateRanges.TODAY, ChartSourceDateRanges.YESTERDAY ].includes( newDateRange ) ||
-			activeDays < 3
+			newDateRange === ChartSourceDateRanges.YESTERDAY || activeDays < 3
 				? ChartResolution.Hour
 				: ChartResolution.Day;
 
@@ -453,16 +450,11 @@ export default function CampaignItemDetails( props: Props ) {
 	const chartControls = [];
 
 	// Some controls are conditional, depending on how long the campaign has been active, or if the campaign is in the past
-	// It would be pointless showing "today" to a finished campaign, or 30 days to a 7-day campaign
+	// It would be pointless showing "yesterday" to a finished campaign, or 30 days to a 7-day campaign
 	const conditionalControls = [
 		{
 			condition: ! campaignIsFinished,
 			controls: [
-				{
-					onClick: () => updateChartParams( ChartSourceDateRanges.TODAY ),
-					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.TODAY ],
-					isDisabled: selectedDateRange === ChartSourceDateRanges.TODAY,
-				},
 				{
 					onClick: () => updateChartParams( ChartSourceDateRanges.YESTERDAY ),
 					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.YESTERDAY ],

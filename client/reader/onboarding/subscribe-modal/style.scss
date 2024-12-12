@@ -80,6 +80,12 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 					border-radius: 6px; /* stylelint-disable-line scales/radii */
 				}
 			}
+
+			.reader-subscription-list-item__site-url-timestamp {
+				&:not( .is-placeholder )::after {
+					background: none;
+				}
+			}
 		}
 	}
 

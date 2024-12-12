@@ -12,9 +12,11 @@ import LaunchSite from './visibility';
 export default function SiteSettingsForm( {
 	site,
 	siteIsJetpack,
+	siteIsWpcom,
 	isUnlaunchedSite,
 	isAtomicAndEditingToolkitDeactivated,
 	isWpcomStagingSite,
+	isWPForTeamsSite,
 	fields,
 	updateFields,
 	onChangeField,
@@ -71,7 +73,7 @@ export default function SiteSettingsForm( {
 				urlRef="unlaunched-settings"
 			/>
 
-			{ ! siteIsJetpack && (
+			{ siteIsWpcom && ! isWPForTeamsSite && (
 				<HolidaySnow
 					fields={ fields }
 					handleToggle={ handleToggle }

@@ -117,7 +117,8 @@ export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'premium-themes-v3';
 export const FEATURE_STATS_PAID = 'stats-paid';
 export const FEATURE_STATS_FREE = 'stats-free';
-
+export const FEATURE_STATS_COMMERCIAL = 'stats-commercial';
+export const FEATURE_STATS_BASIC = 'stats-basic';
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';

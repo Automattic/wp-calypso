@@ -440,3 +440,75 @@
 		}
 	}
 }
+
+.context-all-domain-management {
+	&.main {
+		width: 100%;
+
+		.email-header .navigation-header {
+			border-block-end: none;
+
+			.navigation-header__main {
+				padding-inline: 0 !important;
+
+				.navigation-header__actions {
+					flex-grow: 0;
+				}
+			}
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list {
+		border: solid 1px var(--color-border-subtle);
+		border-radius: 4px;
+
+		.card {
+			box-shadow: none;
+			background: none;
+		}
+
+		.card.section-header {
+			padding: 1.5rem 0 1rem 0;
+			margin: 0 1.5rem;
+			border-bottom: solid 1px var(--color-border-subtle);
+		}
+
+		.section-header__label-text {
+			display: flex;
+			align-items: center;
+			font-size: 1rem;
+			color: var(--studio-gray-100);
+		}
+
+		.section-header__actions {
+			flex: none;
+
+			.components-button {
+				font-size: 0.875rem;
+			}
+
+			.components-button.is-link {
+				text-decoration: none;
+			}
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-header-icon {
+		display: flex;
+		margin-inline-end: 0.5rem;
+		width: 24px;
+
+		img {
+			height: 24px;
+		}
+
+		svg {
+			height: 24px;
+			fill: var(--color-accent);
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list-item > div {
+		flex-grow: initial;
+	}
+}
