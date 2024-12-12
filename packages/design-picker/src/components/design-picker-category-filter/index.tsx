@@ -1,9 +1,10 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import clsx from 'clsx';
 import type { Category } from '../../types';
 import './style.scss';
 
 interface Props {
-	className: string;
+	className?: string;
 	categories: Category[];
 	selectedSlugs: string[];
 	isMultiSelection?: boolean;
@@ -33,7 +34,7 @@ export default function DesignPickerCategoryFilter( {
 		.filter( ( index ) => index >= 0 );
 	return (
 		<ResponsiveToolbarGroup
-			className={ className }
+			className={ clsx( 'design-picker__category-filter', className ) }
 			initialActiveIndex={ initialActiveIndex !== -1 ? initialActiveIndex : 0 }
 			initialActiveIndexes={ initialActiveIndexes }
 			isMultiSelection={ isMultiSelection }
