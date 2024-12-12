@@ -304,9 +304,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const translate = useTranslate();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 	const categories = categorization?.categories || [];
-	const isNoResults = Object.values( designsByGroup ).every(
-		( categoryDesigns ) => categoryDesigns.length === 0
-	);
+
 	const categoryTypes = useMemo(
 		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
@@ -324,6 +322,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
 			.slice( 0, 3 );
 	}, [ designs, recommendedDesignSlugs ] );
+
+	// Show recommended themes only when the selected categories are never changed.
+	const showRecommendedDesigns =
+		isMultiFilterEnabled &&
+		! categorization?.isSelectionsChanged &&
+		recommendedDesigns.length === 3;
+
+	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
+	const showNoResults =
+		! showRecommendedDesigns &&
+		Object.values( designsByGroup ).every( ( categoryDesigns ) => categoryDesigns.length === 0 );
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -384,17 +393,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				</DesignPickerFilterGroup>
 			</div>
 
-			{ /* Show recommended themes only when the selected categories are never changed. */ }
-			{ isMultiFilterEnabled &&
-				! categorization?.isSelectionsChanged &&
-				recommendedDesigns.length === 3 && (
-					<DesignCardGroup
-						{ ...designCardProps }
-						title={ translate( 'Recommended themes' ) }
-						category="recommended"
-						designs={ recommendedDesigns }
-					/>
-				) }
+			{ showRecommendedDesigns && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Recommended themes' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
 
 			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
 				<DesignCardGroup
@@ -424,7 +430,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						}
 						category={ categorySlug }
 						designs={ categoryDesigns }
-						showNoResults={ index === array.length - 1 && isNoResults }
+						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
 		</div>
