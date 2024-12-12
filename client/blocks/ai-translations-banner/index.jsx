@@ -20,7 +20,10 @@ export default function AITranslationsBanner() {
 		return <QueryLocaleSuggestions />;
 	}
 
-	if ( ! isAITranslatedLocale( localeSuggestions?.[ 0 ]?.locale ) ) {
+	if (
+		! isCurrentlyUsingAITranslatedLocale &&
+		! isAITranslatedLocale( localeSuggestions?.[ 0 ]?.locale )
+	) {
 		return;
 	}
 
