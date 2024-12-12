@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, FormTokenField, Popover, ToggleControl } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
@@ -33,7 +34,23 @@ export const CategoriesSection: React.FC< Props > = ( {
 			.map( ( token ) => ( typeof token === 'string' ? token : token.value ) )
 			.filter( ( value ) => validCategoryNames.has( value ) );
 
+		const wasAdded = validCategories.length > selectedCategories.length;
+
+		recordTracksEvent( 'calypso_subscriber_add_form_categories_change', {
+			site_id: siteId,
+			categories_count: validCategories.length,
+			action: wasAdded ? 'added' : 'removed',
+		} );
+
 		setSelectedCategories( validCategories );
+	};
+
+	const handleToggle = ( value: boolean ) => {
+		setShowCategories( value );
+		recordTracksEvent( 'calypso_subscriber_add_form_categories_toggle', {
+			site_id: siteId,
+			enabled: value,
+		} );
 	};
 
 	return (
@@ -93,9 +110,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 					</div>
 				}
 				checked={ showCategories }
-				onChange={ ( value ) => {
-					setShowCategories( value );
-				} }
+				onChange={ handleToggle }
 			/>
 
 			{ showCategories && newsletterCategories && (
