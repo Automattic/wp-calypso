@@ -33,7 +33,7 @@ import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
 const RenderDomainsStepConnect = connect(
-	( state, { flow, step }: StepProps ) => {
+	( state, { flow, step }: { flow: string; step: ProvidedDependencies } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
