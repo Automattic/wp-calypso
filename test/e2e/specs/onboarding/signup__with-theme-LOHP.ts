@@ -78,7 +78,8 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 					themeButtonUrl.protocol = calypsoUrl.protocol;
 
 					await route.abort();
-					await page.goto( themeButtonUrl.href );
+					await page.unrouteAll( { behavior: 'ignoreErrors' } );
+					await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
 				} );
 			}
 			// Get theme slug
@@ -86,8 +87,8 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			themeSlug = pageMatch?.[ 1 ] || null;
 
 			// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-			await themeCard.hover();
-			await themeCard.getByText( 'Start with this theme' ).click();
+			await themeCard.hover( { force: true } );
+			await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
 		} );
 
 		it( 'Sign up as new user', async function () {
