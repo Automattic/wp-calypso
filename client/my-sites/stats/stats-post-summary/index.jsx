@@ -37,9 +37,12 @@ class StatsPostSummary extends Component {
 		supportsUTMStats: PropTypes.bool,
 	};
 
+	static MAX_RECORDS_PER_DAY = 10;
+
 	state = {
 		selectedRecord: null,
 		period: 'day',
+		page: 1,
 	};
 
 	selectPeriod( period ) {
@@ -54,29 +57,76 @@ class StatsPostSummary extends Component {
 		this.setState( { selectedRecord: record } );
 	};
 
-	getChartData() {
+	onPeriodChange = ( { direction } ) => {
+		let chartData = this.getChartData();
+		if ( ! chartData.length ) {
+			return;
+		}
+
+		let selectedRecord = this.state.selectedRecord;
+		if ( ! selectedRecord ) {
+			selectedRecord = chartData[ chartData.length - 1 ];
+		}
+
+		const recordIndex = chartData.findIndex( ( item ) => item.period === selectedRecord.period );
+
+		if ( 'previous' === direction ) {
+			if ( recordIndex > 0 ) {
+				this.setState( { selectedRecord: chartData[ recordIndex - 1 ] } );
+			} else {
+				const nextPage = this.state.page + 1;
+				chartData = this.getChartData( nextPage );
+				if ( chartData ) {
+					this.setState( { selectedRecord: chartData[ chartData.length - 1 ] } );
+				}
+			}
+		} else if ( 'next' === direction ) {
+			if ( recordIndex < chartData.length - 1 ) {
+				this.setState( { selectedRecord: chartData[ recordIndex + 1 ] } );
+			} else {
+				const nextPage = this.state.page - 1;
+				chartData = this.getChartData( nextPage );
+				this.setState( { selectedRecord: chartData[ 0 ] } );
+			}
+		}
+	};
+
+	getChartData( newPage = 0 ) {
 		const { moment, stats } = this.props;
 		if ( ! stats ) {
 			return [];
 		}
 
+		let page = this.state.page;
+		if ( newPage ) {
+			page = newPage;
+			this.setState( { page: newPage } );
+		}
+
 		switch ( this.state.period ) {
-			case 'day':
+			case 'day': {
 				if ( ! stats.data ) {
 					return [];
 				}
 
-				return stats.data
-					.slice( Math.max( stats.data.length - 10, 0 ) )
-					.map( ( [ date, value ] ) => {
-						const momentDate = moment( date );
-						return {
-							period: momentDate.format( 'MMM D' ),
-							periodLabel: momentDate.format( 'LL' ),
-							startDate: date,
-							value,
-						};
-					} );
+				const dataStart = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * page,
+					0
+				);
+				const dataEnd = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * ( page - 1 ),
+					0
+				);
+				return stats.data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
+					const momentDate = moment( date );
+					return {
+						period: momentDate.format( 'MMM D' ),
+						periodLabel: momentDate.format( 'LL' ),
+						startDate: date,
+						value,
+					};
+				} );
+			}
 			case 'year':
 				if ( ! stats.years ) {
 					return [];
@@ -168,7 +218,7 @@ class StatsPostSummary extends Component {
 	}
 
 	render() {
-		const { isRequesting, postId, siteId, translate } = this.props;
+		const { isRequesting, postId, siteId, translate, stats } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
@@ -181,6 +231,20 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
+		let disablePreviousArrow = false;
+		let disableNextArrow = false;
+		const selectedRecordIndex = chartData.findIndex(
+			( item ) => item.period === selectedRecord.period
+		);
+		if ( 'day' === this.state.period ) {
+			const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
+			disablePreviousArrow = this.state.page >= maxPages && selectedRecordIndex === 0;
+			disableNextArrow = 1 === this.state.page && selectedRecordIndex === chartData.length - 1;
+		} else {
+			disablePreviousArrow = selectedRecordIndex === 0;
+			disableNextArrow = selectedRecordIndex === chartData.length - 1;
+		}
+
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
 		} );
@@ -191,7 +255,13 @@ class StatsPostSummary extends Component {
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 
 					<StatsPeriodHeader>
-						<StatsPeriodNavigation showArrows={ false }>
+						<StatsPeriodNavigation
+							showArrows
+							onPeriodChange={ this.onPeriodChange }
+							disablePreviousArrow={ disablePreviousArrow }
+							disableNextArrow={ disableNextArrow }
+							date={ null }
+						>
 							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
 						</StatsPeriodNavigation>
 						<SegmentedControl primary>

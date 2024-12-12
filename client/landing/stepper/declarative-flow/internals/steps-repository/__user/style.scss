@@ -13,10 +13,7 @@ body.is-section-stepper .step-route {
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 96px);
-	margin: 140px 0 0;
-	@include break-small {
-		margin: 108px 0 0;
-	}
+	margin: 20px 0;
 
 	.locale-suggestions {
 		margin: 0 auto;

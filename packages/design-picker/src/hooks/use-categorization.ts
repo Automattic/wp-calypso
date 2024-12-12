@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Category } from '../types';
 
 export interface Categorization {
 	categories: Category[];
 	selections: string[];
+	isSelectionsChanged: boolean;
 	onSelect: ( selectedSlug: string ) => void;
 }
 
@@ -26,6 +27,8 @@ export function useCategorization(
 		handleDeselect,
 	}: UseCategorizationOptions
 ): Categorization {
+	const isInitRef = useRef( false );
+	const [ isSelectionsChanged, setIsSelectionsChanged ] = useState( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -46,33 +49,44 @@ export function useCategorization(
 				return;
 			}
 
+			if ( ! isSelectionsChanged ) {
+				setIsSelectionsChanged( true );
+			}
+
 			const index = selectedCategories.findIndex( ( selection ) => selection === value );
 			if ( index === -1 ) {
 				handleSelect?.( value );
 				return setSelectedCategories( [ ...selectedCategories, value ] );
 			}
 
-			// The selections should at least have one.
-			if ( selectedCategories.length > 1 ) {
-				handleDeselect?.( value );
-				return setSelectedCategories( [
-					...selectedCategories.slice( 0, index ),
-					...selectedCategories.slice( index + 1 ),
-				] );
-			}
+			handleDeselect?.( value );
+			return setSelectedCategories( [
+				...selectedCategories.slice( 0, index ),
+				...selectedCategories.slice( index + 1 ),
+			] );
 		},
-		[ selectedCategories, isMultiSelection, setSelectedCategories, handleSelect, handleDeselect ]
+		[
+			selectedCategories,
+			isMultiSelection,
+			isSelectionsChanged,
+			setSelectedCategories,
+			handleSelect,
+			handleDeselect,
+			setIsSelectionsChanged,
+		]
 	);
 
 	useEffect( () => {
-		if ( categories.length > 0 && selectedCategories.length === 0 ) {
+		if ( ! isInitRef.current && categories.length > 0 && selectedCategories.length === 0 ) {
 			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
+			isInitRef.current = true;
 		}
-	}, [ categories ] );
+	}, [ isInitRef, categories ] );
 
 	return {
 		categories,
 		selections: selectedCategories,
+		isSelectionsChanged,
 		onSelect,
 	};
 }
@@ -86,9 +100,12 @@ export function useCategorization(
  * @returns the default category or null if none is available
  */
 function chooseDefaultSelections( categories: Category[], defaultSelections: string[] ): string[] {
-	const defaultSelectionsSet = new Set( defaultSelections );
-	if ( defaultSelections && categories.find( ( { slug } ) => defaultSelectionsSet.has( slug ) ) ) {
-		return defaultSelections;
+	const categorySlugsSet = new Set( categories.map( ( { slug } ) => slug ) );
+	const availableDefaultSelections = defaultSelections.filter( ( selection ) =>
+		categorySlugsSet.has( selection )
+	);
+	if ( availableDefaultSelections.length > 0 ) {
+		return availableDefaultSelections;
 	}
 
 	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : [];

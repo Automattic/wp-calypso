@@ -45,6 +45,10 @@ export const FEATURE_CATEGORIES = {
 	STORE: 'store',
 };
 
+export const DESIGN_TIER_CATEGORIES = {
+	FREE: FREE_THEME,
+};
+
 export const SUBJECT_CATEGORIES = {
 	BUSINESS: 'business',
 	COMMUNITY_NON_PROFIT: 'community-non-profit',

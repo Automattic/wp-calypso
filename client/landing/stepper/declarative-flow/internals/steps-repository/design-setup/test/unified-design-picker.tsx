@@ -182,7 +182,7 @@ describe( 'UnifiedDesignPickerStep', () => {
 			);
 
 			await waitFor( () => {
-				expect( screen.getByText( 'Pick a design' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Pick a theme' ) ).toBeInTheDocument();
 				expect( container.getElementsByClassName( 'unified-design-picker__designs' ) ).toHaveLength(
 					1
 				);

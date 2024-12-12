@@ -1,65 +1,83 @@
 import { useMemo } from 'react';
-import { isBlankCanvasDesign } from '../utils/available-designs';
+import { isBlankCanvasDesign } from '../utils';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
-const getDesignSlug = ( design: Design ) => design.recipe?.slug ?? design.slug;
-
 // Returns designs that match the features, subjects and tiers.
 // Designs with `showFirst` are always included regardless of the selected features and subjects.
-export const filterDesigns = (
+export const getFilteredDesignsByCategory = (
 	designs: Design[],
 	categorySlugs: string[] | null | undefined,
-	selectedDesignTier: string = ''
-): Design[] => {
-	const categorySlugsSet = new Set( categorySlugs || [] );
+	designTierSlugs: string[]
+) => {
 	const filteredDesigns = designs.filter(
 		( design ) =>
-			( design.showFirst ||
-				categorySlugsSet.size === 0 ||
-				design.categories.find( ( { slug } ) => categorySlugsSet.has( slug ) ) ) &&
-			( ! selectedDesignTier || design.design_tier === selectedDesignTier ) &&
+			( ! designTierSlugs.length ||
+				( design.design_tier && designTierSlugs.includes( design.design_tier ) ) ) &&
 			! isBlankCanvasDesign( design )
 	);
 
-	if ( categorySlugsSet.size > 1 ) {
-		const scores: { [ key: string ]: number } = filteredDesigns.reduce(
-			( result, design ) => ( {
-				...result,
-				[ getDesignSlug( design ) ]: design.categories.reduce(
-					( sum, { slug } ) => sum + ( categorySlugsSet.has( slug ) ? 1 : 0 ),
-					0
-				),
-			} ),
-			{}
-		);
+	const filteredDesignsByCategory: { [ key: string ]: Design[] } = {
+		all: filteredDesigns,
+		best: [],
+		...Object.fromEntries( ( categorySlugs || [] ).map( ( slug ) => [ slug, [] ] ) ),
+	};
 
-		filteredDesigns.sort( ( a: Design, b: Design ) => {
-			const aScore = scores[ getDesignSlug( a ) ];
-			const bScore = scores[ getDesignSlug( b ) ];
-
-			if ( aScore > bScore ) {
-				return -1;
-			} else if ( aScore < bScore ) {
-				return 1;
-			}
-			return 0;
-		} );
+	// Return early if none of the category is selected.
+	if ( ! categorySlugs || categorySlugs.length === 0 ) {
+		return filteredDesignsByCategory;
 	}
 
-	return filteredDesigns;
-};
+	// Get designs by the selected category.
+	// Note that we don't want to show a theme in multiple sections.
+	// See https://github.com/Automattic/dotcom-forge/issues/10110.
+	for ( let i = 0; i < filteredDesigns.length; i++ ) {
+		const design = filteredDesigns[ i ];
+		const designCategorySlugsSet = new Set(
+			design.categories.map( ( category ) => category.slug )
+		);
 
-export const useFilteredDesigns = ( designs: Design[] ) => {
-	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
+		const matchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			designCategorySlugsSet.has( categorySlug )
+		);
 
-	const filteredDesigns = useMemo( () => {
-		if ( selectedCategories.length > 0 || selectedDesignTier ) {
-			return filterDesigns( designs, selectedCategories, selectedDesignTier );
+		const matchedCount = matchedCategorySlugs.length;
+
+		// For designs that match all selected categories.
+		// Limit the best matches to at least 2 selected categories.
+		if ( categorySlugs.length > 1 && matchedCount === categorySlugs.length ) {
+			filteredDesignsByCategory.best.push( design );
+			continue;
 		}
 
-		return designs;
-	}, [ designs, selectedCategories, selectedDesignTier ] );
+		// We show the designs for the last selected category on top first
+		// so it would be better to put the design into the last matched category
+		// if it doesn't match all selected categories.
+		const lastMatchedCategorySlug = matchedCategorySlugs[ matchedCategorySlugs.length - 1 ];
+		if ( lastMatchedCategorySlug ) {
+			filteredDesignsByCategory[ lastMatchedCategorySlug ].push( design );
+		}
+	}
+
+	return filteredDesignsByCategory;
+};
+
+export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
+	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
+
+	const filteredDesigns = useMemo( () => {
+		if ( selectedCategoriesWithoutDesignTier.length > 0 || selectedDesignTiers.length > 0 ) {
+			return getFilteredDesignsByCategory(
+				designs,
+				selectedCategoriesWithoutDesignTier,
+				selectedDesignTiers
+			);
+		}
+
+		return {
+			all: designs,
+		};
+	}, [ designs, selectedCategoriesWithoutDesignTier ] );
 
 	return filteredDesigns;
 };

@@ -1,7 +1,8 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import config from '@automattic/calypso-config';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -20,6 +21,41 @@ import './style.scss';
 interface HostingDetailsProps {
 	items: { title: string; description: string }[];
 }
+
+interface HostingDetailsWithIconsProps {
+	items: {
+		icon: ReactElement;
+		description: string;
+	}[];
+}
+
+const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
+
+const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="import__site-identify-hosting-details-experiment">
+			<p className="import__site-identify-hosting-details-experiment-title">
+				{ translate( 'Why should you host with us?' ) }
+			</p>
+			<ul className="import__site-identify-hosting-details-experiment-list">
+				{ items.map( ( item, index ) => (
+					<li key={ index } className="import__site-identify-hosting-details-experiment-list-item">
+						<Icon
+							className="import__site-identify-hosting-details-experiment-icon"
+							icon={ item.icon }
+							size={ 24 }
+						/>
+						<p className="import__site-identify-hosting-details-experiment-description">
+							{ item.description }
+						</p>
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
+};
 
 const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
 	const translate = useTranslate();
@@ -52,27 +88,7 @@ interface Props {
 
 export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- title.
-	const titleInUse = hasEnTranslation( 'Let’s find your site' )
-		? translate( 'Let’s find your site' )
-		: translate( 'Let’s import your content' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- subtitle.
-	const subtitleInUse = hasEnTranslation(
-		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-	)
-		? translate(
-				"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-		  )
-		: translate( 'Drop your current site address below to get started.' );
-
-	// TODO: Remove extra steps for non-English locales once we have translations -- CTA text.
-	const nextLabelText = hasEnTranslation( 'Check my site' ) ? translate( 'Check my site' ) : false;
-	const nextLabelProp = nextLabelText ? { nextLabelText } : {}; // If we don't pass anything, the default label 'Continue' will be used.
-
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -90,46 +106,59 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		return <ScanningStep />;
 	}
 
-	// TODO: Remove extra steps and properties for non-English locales once we have translations -- hosting details.
-	const hostingDetailItems = {
-		'unmatched-uptime': {
-			title: translate( 'Unmatched Reliability and Uptime' ),
-			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
-			description: translate(
-				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
-			),
-			descriptionString:
-				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
-		},
-		'effortless-customization': {
-			title: translate( 'Effortless Customization' ),
-			titleString: 'Effortless Customization',
-			description: translate(
-				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
-			),
-			descriptionString:
-				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
-		},
-		'blazing-fast-speed': {
-			title: translate( 'Blazing Fast Page Speed' ),
-			titleString: 'Blazing Fast Page Speed',
-			description: translate(
-				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
-			),
-			descriptionString:
-				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
-		},
-	};
+	let hostingDetailItems;
 
-	const hasTranslationsForAllItems = Object.values( hostingDetailItems ).every(
-		( item ) => hasEnTranslation( item.titleString ) && hasEnTranslation( item.descriptionString )
-	);
+	if ( isMigrationExperimentEnabled ) {
+		hostingDetailItems = {
+			'blazing-fast-speed': {
+				icon: next,
+				description: translate(
+					'Blazing fast speeds with lightning-fast load times for a seamless experience.'
+				),
+			},
+			'unmatched-uptime': {
+				icon: published,
+				description: translate(
+					'Unmatched reliability with 99.999% uptime and unmetered traffic.'
+				),
+			},
+			security: {
+				icon: shield,
+				description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+			},
+		};
+	} else {
+		hostingDetailItems = {
+			'unmatched-uptime': {
+				title: translate( 'Unmatched Reliability and Uptime' ),
+				description: translate(
+					"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
+				),
+			},
+			'effortless-customization': {
+				title: translate( 'Effortless Customization' ),
+				description: translate(
+					'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
+				),
+			},
+			'blazing-fast-speed': {
+				title: translate( 'Blazing Fast Page Speed' ),
+				description: translate(
+					'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
+				),
+			},
+		};
+	}
 
 	return (
 		<div className="import__capture-wrapper">
 			<div className="import__heading import__heading-center">
-				<Title>{ titleInUse }</Title>
-				<SubTitle>{ subtitleInUse }</SubTitle>
+				<Title>{ translate( 'Let’s find your site' ) }</Title>
+				<SubTitle>
+					{ translate(
+						"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+					) }
+				</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
@@ -144,10 +173,12 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 						'Or <button>pick your current platform from a list</button>'
 					) }
 					hideImporterListLink={ hideImporterListLink }
-					{ ...nextLabelProp }
+					nextLabelText={ translate( 'Check my site' ) }
 				/>
 			</div>
-			{ hasTranslationsForAllItems && (
+			{ isMigrationExperimentEnabled ? (
+				<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
+			) : (
 				<HostingDetails items={ Object.values( hostingDetailItems ) } />
 			) }
 		</div>

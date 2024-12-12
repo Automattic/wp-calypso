@@ -32,6 +32,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
+	const focusedIndexRef = useRef< string | null >( null ); // Keep track of the currently focused row index
+
+	const handleItemFocus = useCallback( ( itemIndex: string ) => {
+		focusedIndexRef.current = itemIndex;
+	}, [] );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -100,12 +105,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
 				render: ( { item }: { item: ReaderPost } ) => {
 					return (
-						<RecentPostField
-							ref={ ( el ) => {
-								itemRefs.current[ item.postId?.toString() ?? '' ] = el;
-							} }
-							post={ getPostFromItem( item ) }
-						/>
+						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
+							<RecentPostField
+								ref={ ( el ) => {
+									itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+								} }
+								post={ getPostFromItem( item ) }
+							/>
+						</div>
 					);
 				},
 				enableHiding: false,
@@ -166,8 +173,28 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		setIsLoading( data?.isRequesting );
 	}, [ data?.isRequesting ] );
 
+	// Handle key events
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( event.key === 'Enter' && focusedIndexRef.current !== null ) {
+				// Use the focused index to determine the selected item
+				const focusedItem = shownData.find(
+					( item ) => item.postId?.toString() === focusedIndexRef.current
+				);
+				if ( focusedItem ) {
+					setSelectedItem( focusedItem );
+					setTimeout( () => {
+						postColumnRef.current?.focus();
+					}, 0 );
+				}
+			}
+		},
+		[ shownData ]
+	);
+
 	return (
-		<div className="recent-feed">
+		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
+		<div className="recent-feed" onKeyDown={ handleKeyDown }>
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>

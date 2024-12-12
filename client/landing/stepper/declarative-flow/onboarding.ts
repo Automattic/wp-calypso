@@ -4,12 +4,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
+import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
@@ -89,6 +91,7 @@ const onboarding: Flow = {
 			} ),
 			[]
 		);
+		const coupon = useQuery().get( 'coupon' );
 
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
@@ -219,6 +222,8 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
+								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								coupon,
 							} )
 						);
 					} else {

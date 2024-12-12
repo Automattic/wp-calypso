@@ -93,3 +93,5 @@ export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
 export const setSelectedSiteIdByOrigin = () => {};
+// eslint-disable-next-line no-unused-vars
+export const redirectIfDuplicatedView = ( wpAdminPath ) => () => {};
