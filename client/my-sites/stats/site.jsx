@@ -360,18 +360,6 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		// Use the stored period if it's different from the current period.
-		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
-		if (
-			hasSiteLoadedFeatures &&
-			! shouldForceDefaultPeriod &&
-			storedPeriod &&
-			storedPeriod !== period
-		) {
-			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
-			return;
-		}
-
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
@@ -411,6 +399,20 @@ class StatsSite extends Component {
 		// If it's single day period, redirect to hourly stats.
 		if ( period === 'day' && daysInRange === 1 ) {
 			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
+			return;
+		}
+
+		// Use the stored period if it's different from the current period.
+		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		if (
+			hasSiteLoadedFeatures &&
+			! shouldForceDefaultPeriod &&
+			// Avoid the infinite redirect loop between single day period and hourly views.
+			period !== 'hour' &&
+			storedPeriod &&
+			storedPeriod !== period
+		) {
+			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
 			return;
 		}
 
