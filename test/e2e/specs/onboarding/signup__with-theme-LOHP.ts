@@ -85,6 +85,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			// Get theme slug
 			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
 			themeSlug = pageMatch?.[ 1 ] || null;
+			await themeCard.hover();
 			await themeCard.getByText( 'Start with this theme' ).click();
 		} );
 
