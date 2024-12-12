@@ -9,7 +9,7 @@ export const useHelpCenterArticleScroll = (
 	postId: number | undefined,
 	scrollParentRef: React.RefObject< HTMLElement >
 ) => {
-	const timeoutRef = useRef< number | null >( null );
+	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	useEffect( () => {
 		if ( ! postId || ! scrollParentRef?.current ) {
