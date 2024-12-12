@@ -24,6 +24,7 @@ export {
 	MARKETPLACE_THEME,
 	SHOW_ALL_SLUG,
 	CATEGORIES,
+	DESIGN_TIER_CATEGORIES,
 } from './constants';
 export type {
 	Design,

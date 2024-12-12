@@ -1,6 +1,9 @@
-import { getCategoryType } from '@automattic/design-picker';
+import {
+	getCategoryType,
+	useDesignPickerFilters,
+	DESIGN_TIER_CATEGORIES,
+} from '@automattic/design-picker';
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 interface Props {
@@ -10,14 +13,12 @@ interface Props {
 }
 
 const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelection }: Props ) => {
-	const [ searchParams ] = useSearchParams();
+	const { selectedCategories, selectedDesignTiers } = useDesignPickerFilters();
 
-	const selectedFilters = searchParams.get( 'categories' )?.split( ',' ) || [];
-
-	const isIncludedWithPlan = searchParams.get( 'tier' ) === 'free';
+	const isIncludedWithPlan = selectedDesignTiers.includes( DESIGN_TIER_CATEGORIES.FREE );
 
 	const filters = useMemo( () => {
-		return selectedFilters.reduce(
+		return selectedCategories.reduce(
 			( result, filterSlug, index ) => ( {
 				...result,
 				// The property cannot contain `-` character.
@@ -27,13 +28,13 @@ const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelecti
 			} ),
 			{}
 		);
-	}, [ selectedFilters ] );
+	}, [ selectedCategories ] );
 
 	const commonFilterProperties = {
 		is_filter_included_with_plan_enabled: isIncludedWithPlan,
 		is_big_sky_eligible: isBigSkyEligible,
 		preselected_filters: preselectedFilters.join( ',' ),
-		selected_filters: selectedFilters.join( ',' ),
+		selected_filters: selectedCategories.join( ',' ),
 		...filters,
 	};
 

@@ -1,4 +1,8 @@
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { DESIGN_TIER_CATEGORIES } from '../constants';
+import { isDesignTierCategory } from '../utils';
 
 // The `currentSearchParams` parameter from the callback of the `setSearchParams` function
 // might not have the latest query parameter on multiple calls at the same time.
@@ -26,44 +30,44 @@ const useCategoriesFilter = () => {
 	return { selectedCategories, setSelectedCategories };
 };
 
-const useDesignTierFilter = () => {
-	const [ searchParams, setSearchParams ] = useSearchParams();
+export const useDesignTiers = () => {
+	const translate = useTranslate();
 
-	const selectedDesignTier = searchParams.get( 'tier' ) ?? '';
+	const designTiers = useMemo(
+		() => [
+			{
+				slug: DESIGN_TIER_CATEGORIES.FREE,
+				name: translate( 'Free' ),
+			},
+		],
+		[ translate ]
+	);
 
-	const setSelectedDesignTier = ( value: string ) => {
-		setSearchParams(
-			makeSearchParams( ( currentSearchParams: any ) => {
-				if ( value ) {
-					currentSearchParams.set( 'tier', value );
-				} else {
-					currentSearchParams.delete( 'tier' );
-				}
-
-				return currentSearchParams;
-			} ),
-			{ replace: true }
-		);
-	};
-
-	return {
-		selectedDesignTier,
-		setSelectedDesignTier,
-	};
+	return designTiers;
 };
 
 export const useDesignPickerFilters = () => {
 	const { selectedCategories, setSelectedCategories } = useCategoriesFilter();
-	const { selectedDesignTier, setSelectedDesignTier } = useDesignTierFilter();
+
+	// Split selectedCategories into categorySlugs and designTierSlugs.
+	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useMemo( () => {
+		return {
+			selectedCategoriesWithoutDesignTier: selectedCategories.filter(
+				( slug: string ) => ! isDesignTierCategory( slug )
+			),
+			selectedDesignTiers: selectedCategories.filter( ( slug: string ) =>
+				isDesignTierCategory( slug )
+			),
+		};
+	}, [ selectedCategories ] );
 
 	return {
 		selectedCategories,
-		selectedDesignTier,
+		selectedCategoriesWithoutDesignTier,
+		selectedDesignTiers,
 		setSelectedCategories,
-		setSelectedDesignTier,
 		resetFilters: () => {
 			setSelectedCategories( [] );
-			setSelectedDesignTier( '' );
 		},
 	};
 };

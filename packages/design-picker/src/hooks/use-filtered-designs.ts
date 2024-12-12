@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { isBlankCanvasDesign } from '../utils/available-designs';
+import { isBlankCanvasDesign } from '../utils';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
@@ -8,11 +8,12 @@ import type { Design } from '../types';
 export const getFilteredDesignsByCategory = (
 	designs: Design[],
 	categorySlugs: string[] | null | undefined,
-	selectedDesignTier: string = ''
+	designTierSlugs: string[]
 ) => {
 	const filteredDesigns = designs.filter(
 		( design ) =>
-			( ! selectedDesignTier || design.design_tier === selectedDesignTier ) &&
+			( ! designTierSlugs.length ||
+				( design.design_tier && designTierSlugs.includes( design.design_tier ) ) ) &&
 			! isBlankCanvasDesign( design )
 	);
 
@@ -62,17 +63,21 @@ export const getFilteredDesignsByCategory = (
 };
 
 export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
-	const { selectedCategories, selectedDesignTier } = useDesignPickerFilters();
+	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
-		if ( selectedCategories.length > 0 || selectedDesignTier ) {
-			return getFilteredDesignsByCategory( designs, selectedCategories, selectedDesignTier );
+		if ( selectedCategoriesWithoutDesignTier.length > 0 || selectedDesignTiers.length > 0 ) {
+			return getFilteredDesignsByCategory(
+				designs,
+				selectedCategoriesWithoutDesignTier,
+				selectedDesignTiers
+			);
 		}
 
 		return {
 			all: designs,
 		};
-	}, [ designs, selectedCategories, selectedDesignTier ] );
+	}, [ designs, selectedCategoriesWithoutDesignTier ] );
 
 	return filteredDesigns;
 };
