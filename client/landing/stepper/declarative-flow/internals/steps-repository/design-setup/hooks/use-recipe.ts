@@ -7,6 +7,7 @@ import { useColorPaletteVariations, useFontPairingVariations } from '@automattic
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
@@ -168,6 +169,17 @@ const useRecipe = (
 			pickDesign( design );
 			return;
 		}
+
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.set(
+			'siteSlug',
+			design.demo_uri ? urlToSlug( design.demo_uri.replace( /\/$/, '' ) ) : ''
+		);
+		window.history.replaceState(
+			{},
+			'',
+			`${ window.location.pathname }?${ searchParams.toString() }`
+		);
 
 		handleSelectedDesignChange( design );
 		handleSelectedStyleVariationChange( styleVariation );
