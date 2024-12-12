@@ -1,4 +1,5 @@
 import { OnboardSelect, Onboard } from '@automattic/data-stores';
+import { type Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -66,8 +67,8 @@ const onboarding: Flow = {
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
-			// This step is not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS );
+			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
+			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP );
 		}
 
 		return steps;
@@ -128,9 +129,18 @@ const onboarding: Flow = {
 						}
 
 						default: {
-							return navigate( 'domains' );
+							return navigate( 'designSetup' );
 						}
 					}
+				}
+
+				case 'designSetup': {
+					const { selectedDesign: _selectedDesign } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
+						return navigate( 'pattern-assembler' );
+					}
+
+					return navigate( 'domains' );
 				}
 
 				case 'domains':
