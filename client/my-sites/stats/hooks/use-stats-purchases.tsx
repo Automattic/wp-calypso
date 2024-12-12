@@ -1,5 +1,6 @@
 import {
 	FEATURE_STATS_FREE,
+	FEATURE_STATS_PAID,
 	FEATURE_STATS_COMMERCIAL,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
@@ -127,20 +128,22 @@ export default function useStatsPurchases( siteId: number | null ) {
 		return siteHasFeature( state, siteId, FEATURE_STATS_FREE );
 	} );
 
-	const isCommercialOwned = useMemo(
-		() => isCommercialPurchaseOwned( sitePurchases ),
-		[ sitePurchases ]
-	);
+	const isPaidOwned = useSelector( ( state ) => {
+		return siteHasFeature( state, siteId, FEATURE_STATS_PAID );
+	} );
+
+	const isCommercialOwned = useSelector( ( state ) => {
+		return siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL );
+	} );
 
 	// Pay what you want
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ sitePurchases ] );
 
-	const supportCommercialUse = useSelector( ( state ) => {
-		return siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL );
-	} );
+	const supportCommercialUse = isCommercialOwned;
 
+	// TODO: can this be removed now?
 	const isLegacyCommercialLicense = useMemo( () => {
 		const purchases = filterPurchasesByProducts( sitePurchases, [
 			PRODUCT_JETPACK_STATS_MONTHLY,
@@ -158,6 +161,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isRequestingSitePurchases,
 		isFreeOwned,
 		isPWYWOwned,
+		isPaidOwned,
 		isCommercialOwned,
 		supportCommercialUse,
 		isLegacyCommercialLicense,
