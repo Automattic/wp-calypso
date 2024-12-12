@@ -14,6 +14,7 @@ import type {
 
 interface StarterDesignsQueryParams {
 	seed?: string;
+	goals?: string[];
 	_locale: string;
 }
 
@@ -25,6 +26,7 @@ interface Options extends QueryOptions< StarterDesignsResponse > {
 interface StarterDesignsResponse {
 	filters: { subject: Record< string, Category > };
 	static: { designs: StarterDesign[] };
+	recommendation: string[];
 }
 
 export type ThemeTier = {
@@ -63,6 +65,7 @@ export function useStarterDesignsQuery(
 					subject: response.filters?.subject || {},
 				},
 				designs: response.static?.designs?.map( apiStarterDesignsToDesign ),
+				recommendation: response.recommendation,
 			};
 
 			return select ? select( allDesigns ) : allDesigns;

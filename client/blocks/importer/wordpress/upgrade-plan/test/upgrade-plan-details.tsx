@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { type PricingMetaForGridPlan } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
@@ -54,7 +55,8 @@ describe( 'UpgradePlanDetails', () => {
 
 	it( 'should show the pricing description for the introductory offer when the intro offer is avaiable', async () => {
 		renderUpgradePlanDetailsComponent( {
-			pricing: getPricing(),
+			planSlugs: [ PLAN_BUSINESS ],
+			pricing: { [ PLAN_BUSINESS ]: getPricing() },
 			introOfferAvailable: true,
 			children: 'Content',
 			upgradePlanHostingDetailsList: [],
@@ -83,7 +85,8 @@ describe( 'UpgradePlanDetails', () => {
 
 	it( 'should show the standard pricing offer description when the introductory offer is not avaiable', async () => {
 		renderUpgradePlanDetailsComponent( {
-			pricing: getPricing(),
+			planSlugs: [ PLAN_BUSINESS ],
+			pricing: { [ PLAN_BUSINESS ]: getPricing() },
 			introOfferAvailable: false,
 			children: 'Content',
 			upgradePlanHostingDetailsList: [],

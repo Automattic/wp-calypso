@@ -1,15 +1,11 @@
-/** @jest-environment jsdom */
-jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
-jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
-
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	PLAN_FREE,
-	PLAN_ECOMMERCE,
-	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -23,61 +19,48 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { render, screen, waitFor } from '@testing-library/react';
-import { PlansStep, isDotBlogDomainRegistration } from '../index';
+import { buildUpgradeFunction } from '../util';
 
-const noop = () => {};
-const props = {
-	stepName: 'Step name',
-	stepSectionName: 'Step section name',
-	signupDependencies: { domainItem: null },
-	saveSignupStep: noop,
-	submitSignupStep: noop,
-	goToNextStep: noop,
-	recordTracksEvent: noop,
-	translate: ( string ) => string,
-};
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
 
-function getCartItems( overrides ) {
-	return [
-		{
-			product_slug: PLAN_FREE,
-			...overrides,
-		},
-	];
-}
+const getCartItems = ( overrides?: { [ key: string ]: string } ) => [
+	{
+		product_slug: PLAN_FREE,
+		...overrides,
+	},
+];
 
-describe( 'Plans basic tests', () => {
-	test( 'should not blow up and have proper CSS class', async () => {
-		render( <PlansStep { ...props } /> );
-		const stepWrapper = await waitFor( () => screen.getByTestId( 'step-wrapper' ) );
-		expect( stepWrapper ).toBeVisible();
-		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
-	} );
-} );
-
-describe( 'Plans.onSelectPlan', () => {
+describe( 'buildUpgradeFunction', () => {
 	const tplProps = {
-		...props,
 		flowName: 'ecommerce',
 		designType: 'store',
+		stepName: 'Step name',
+		stepSectionName: 'Step section name',
+		submitSignupStep: jest.fn(),
+		goToNextStep: jest.fn(),
 	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
 
 	test( 'Should call goToNextStep', () => {
 		const myProps = {
 			...tplProps,
 			goToNextStep: jest.fn(),
 		};
-		const comp = new PlansStep( myProps );
-		comp.onSelectPlan( getCartItems() );
+		const cartItems = getCartItems();
+		buildUpgradeFunction( myProps, cartItems );
 		expect( myProps.goToNextStep ).toHaveBeenCalled();
 	} );
 
 	test( 'Should call submitSignupStep with step details', () => {
 		const submitSignupStep = jest.fn();
 		const cartItems = getCartItems();
-		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
-		comp.onSelectPlan( cartItems );
+		const myProps = { ...tplProps, submitSignupStep };
+		buildUpgradeFunction( myProps, cartItems );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
@@ -95,8 +78,8 @@ describe( 'Plans.onSelectPlan', () => {
 			additionalStepData: { test: 23 },
 			submitSignupStep,
 		};
-		const comp = new PlansStep( myProps );
-		comp.onSelectPlan( getCartItems() );
+		const cartItems = getCartItems();
+		buildUpgradeFunction( myProps, cartItems );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
@@ -106,9 +89,9 @@ describe( 'Plans.onSelectPlan', () => {
 
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
 		const submitSignupStep = jest.fn();
-		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
+		const myProps = { ...tplProps, submitSignupStep };
 		const cartItems = getCartItems();
-		comp.onSelectPlan( cartItems );
+		buildUpgradeFunction( myProps, cartItems );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
@@ -116,11 +99,9 @@ describe( 'Plans.onSelectPlan', () => {
 		expect( args[ 1 ].cartItems ).toBe( cartItems );
 	} );
 
-	test( 'Should call recordEvent when cartItem is specified', () => {
-		const recordTracksEvent = jest.fn();
-		const comp = new PlansStep( { ...tplProps, recordTracksEvent } );
-		comp.onSelectPlan( getCartItems( {} ) );
-
+	test( 'Should call recordTracksEvent when cartItem is specified', () => {
+		const myProps = { ...tplProps };
+		buildUpgradeFunction( myProps, getCartItems( {} ) );
 		expect( recordTracksEvent ).toHaveBeenCalled();
 
 		const calls = recordTracksEvent.mock.calls;
@@ -147,8 +128,7 @@ describe( 'Plans.onSelectPlan', () => {
 			};
 			const cartItems = getCartItems( { product_slug: plan } );
 			const [ planCartItem ] = cartItems;
-			const comp = new PlansStep( myProps );
-			comp.onSelectPlan( cartItems );
+			buildUpgradeFunction( myProps, cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( planCartItem.extra ).toEqual( {
 				is_store_signup: true,
@@ -172,8 +152,7 @@ describe( 'Plans.onSelectPlan', () => {
 			};
 			const cartItems = getCartItems( { product_slug: plan } );
 			const [ planCartItem ] = cartItems;
-			const comp = new PlansStep( myProps );
-			comp.onSelectPlan( cartItems );
+			buildUpgradeFunction( myProps, cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( planCartItem.extra ).toEqual( undefined );
 		}
@@ -183,14 +162,12 @@ describe( 'Plans.onSelectPlan', () => {
 		const myProps = {
 			...tplProps,
 			signupDependencies: {
-				...tplProps.signupDependencies,
 				designType: 'other',
 			},
 		};
 		const cartItems = getCartItems();
 		const [ planCartItem ] = cartItems;
-		const comp = new PlansStep( myProps );
-		comp.onSelectPlan( cartItems );
+		buildUpgradeFunction( myProps, cartItems );
 		expect( planCartItem.extra ).toEqual( undefined );
 	} );
 
@@ -212,46 +189,8 @@ describe( 'Plans.onSelectPlan', () => {
 		( plan ) => {
 			const cartItems = getCartItems( { product_slug: plan } );
 			const [ planCartItem ] = cartItems;
-			const comp = new PlansStep( tplProps );
-			comp.onSelectPlan( cartItems );
+			buildUpgradeFunction( tplProps, cartItems );
 			expect( planCartItem.extra ).toEqual( undefined );
 		}
 	);
-} );
-
-describe( 'Plans.getCustomerType', () => {
-	test( "Should return customerType prop when it's provided", () => {
-		const comp = new PlansStep( { ...props, customerType: 'customerType' } );
-		expect( comp.getCustomerType() ).toEqual( 'customerType' );
-	} );
-} );
-
-describe( 'isDotBlogDomainRegistration()', () => {
-	test( 'should return true for dot blog domain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.blog',
-				is_domain_registration: true,
-			} )
-		).toBe( true );
-	} );
-
-	test( 'should return false for dot blog domain mapping', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.blog',
-				is_domain_registration: false,
-				is_domain_mapping: true,
-			} )
-		).toBe( false );
-	} );
-
-	test( 'should return false for dot com domain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.com',
-				is_domain_registration: true,
-			} )
-		).toBe( false );
-	} );
 } );

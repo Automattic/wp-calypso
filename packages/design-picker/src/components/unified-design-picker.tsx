@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
+import { useDesignTiers, useDesignPickerFilters } from '../hooks/use-design-picker-filters';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
@@ -12,7 +13,6 @@ import {
 	isLockedStyleVariation,
 } from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
-import DesignPickerTierFilter from './design-picker-tier-filter';
 import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
 import ThemeCard from './theme-card';
@@ -275,10 +275,9 @@ interface DesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
-	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
-	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -294,25 +293,47 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
-	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
-	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
+	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+
 	const categories = categorization?.categories || [];
-	const isNoResults = Object.values( designsByGroup ).every(
-		( categoryDesigns ) => categoryDesigns.length === 0
-	);
+
+	const tierFilters = useDesignTiers();
+
 	const categoryTypes = useMemo(
-		() => categories.filter( ( { slug } ) => isFeatureCategory( slug ) ),
-		[ categorization?.categories ]
+		() => [ ...categories.filter( ( { slug } ) => isFeatureCategory( slug ) ), ...tierFilters ],
+		[ categorization?.categories, tierFilters ]
 	);
+
 	const categoryTopics = useMemo(
 		() => categories.filter( ( { slug } ) => ! isFeatureCategory( slug ) ),
 		[ categorization?.categories ]
 	);
+
+	const recommendedDesigns = useMemo( () => {
+		const recommendedDesignSlugsSet = new Set( recommendedDesignSlugs );
+
+		// The number should be a multiple of 3 but no more than 5
+		return designs
+			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
+			.slice( 0, 3 );
+	}, [ designs, recommendedDesignSlugs ] );
+
+	// Show recommended themes only when the selected categories are never changed.
+	const showRecommendedDesigns =
+		isMultiFilterEnabled &&
+		! categorization?.isSelectionsChanged &&
+		recommendedDesigns.length === 3;
+
+	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
+	const showNoResults =
+		! showRecommendedDesigns &&
+		Object.values( designsByGroup ).every( ( categoryDesigns ) => categoryDesigns.length === 0 );
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -356,7 +377,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					</DesignPickerFilterGroup>
 				) }
 				<DesignPickerFilterGroup>
-					{ isTierFilterEnabled && <DesignPickerTierFilter onChange={ onChangeTier } /> }
 					{ isBigSkyEligible && (
 						<Button
 							className={ clsx(
@@ -373,7 +393,16 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				</DesignPickerFilterGroup>
 			</div>
 
-			{ isMultiFilterEnabled && categorization && categorization.selections.length > 1 && (
+			{ showRecommendedDesigns && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Recommended themes' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
+			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
 					title={ translate( 'Best matching themes' ) }
@@ -381,7 +410,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
-			{ isMultiFilterEnabled && categorization && categorization.selections.length === 0 && (
+			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
 			{ /* We want to show the last one on top first. */ }
@@ -401,7 +430,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						}
 						category={ categorySlug }
 						designs={ categoryDesigns }
-						showNoResults={ index === array.length - 1 && isNoResults }
+						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
 		</div>
@@ -423,10 +452,9 @@ export interface UnifiedDesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
-	isTierFilterEnabled?: boolean;
 	isMultiFilterEnabled?: boolean;
-	onChangeTier?: ( value: boolean ) => void;
 	isBigSkyEligible?: boolean;
+	recommendedDesignSlugs?: string[];
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -444,12 +472,11 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
-	isTierFilterEnabled = false,
 	isMultiFilterEnabled = false,
-	onChangeTier,
 	isBigSkyEligible = false,
+	recommendedDesignSlugs = [],
 } ) => {
-	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
+	const hasCategories = !! ( categorization?.categories || [] ).length;
 
 	return (
 		<div
@@ -472,10 +499,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					oldHighResImageLoading={ oldHighResImageLoading }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
-					isTierFilterEnabled={ isTierFilterEnabled }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
-					onChangeTier={ onChangeTier }
 					isBigSkyEligible={ isBigSkyEligible }
+					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

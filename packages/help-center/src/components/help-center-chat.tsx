@@ -37,7 +37,7 @@ export function HelpCenterChat( {
 		}
 	}, [] );
 
-	const odieVersion = shouldUseHelpCenterExperience ? '14.0.3' : null;
+	const odieVersion = null; // Use the default version specified on the back-end
 
 	return (
 		<OdieAssistantProvider
