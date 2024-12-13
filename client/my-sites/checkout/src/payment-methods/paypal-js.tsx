@@ -1,4 +1,4 @@
-import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
+import { PayPalProvider } from '@automattic/calypso-paypal';
 import {
 	useTogglePaymentMethod,
 	type PaymentMethod,
@@ -14,19 +14,10 @@ import {
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
-import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
-
-async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
-	return await wp.req.get( {
-		path: `/me/paypal-configuration`,
-		method: 'GET',
-	} );
-}
 
 export function createPayPal(): PaymentMethod {
 	return {
@@ -75,18 +66,10 @@ function PayPalSubmitButtonWrapper( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	return (
-		<PayPalProvider
-			currency={ responseCart.currency }
-			fetchPayPalConfiguration={ fetchPayPalConfiguration }
-			handleError={ handlePayPalConfigurationError }
-		>
+		<PayPalProvider currency={ responseCart.currency }>
 			<PayPalSubmitButton disabled={ disabled } onClick={ onClick } />
 		</PayPalProvider>
 	);
-}
-
-function handlePayPalConfigurationError( error: Error ) {
-	logStashEvent( convertErrorToString( error ), { tags: [ 'paypal-configuration' ] }, 'error' );
 }
 
 function PayPalSubmitButton( {

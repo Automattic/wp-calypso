@@ -1,9 +1,9 @@
 import { PayPalScriptProvider, ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState, createContext, PropsWithChildren, useContext, useRef } from 'react';
+import { useEffect, useState, createContext, PropsWithChildren, useContext } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
-export interface PayPalConfigurationApiResponse {
+interface PayPalConfigurationApiResponse {
 	client_id: string | undefined;
 }
 
@@ -15,7 +15,7 @@ export interface UsePayPalConfiguration {
 	payPalConfiguration: PayPalConfiguration | undefined;
 }
 
-async function defaultFetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
+async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
 	return await wpcomRequest( {
 		path: `/me/paypal-configuration`,
 		method: 'GET',
@@ -28,11 +28,7 @@ const defaultConfiguration: PayPalConfiguration = {
 	clientId: undefined,
 };
 
-function usePayPalConfigurationInternalOnly( {
-	fetchPayPalConfiguration,
-}: {
-	fetchPayPalConfiguration?: () => Promise< PayPalConfigurationApiResponse >;
-} ): {
+function usePayPalConfigurationInternalOnly(): {
 	payPalConfiguration: PayPalConfiguration | undefined;
 	error: undefined | Error;
 } {
@@ -43,7 +39,7 @@ function usePayPalConfigurationInternalOnly( {
 
 	useEffect( () => {
 		let isSubscribed = true;
-		( fetchPayPalConfiguration ?? defaultFetchPayPalConfiguration )()
+		fetchPayPalConfiguration()
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
@@ -61,7 +57,7 @@ function usePayPalConfigurationInternalOnly( {
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ fetchPayPalConfiguration ] );
+	}, [] );
 
 	return { payPalConfiguration, error: configurationError };
 }
@@ -77,35 +73,12 @@ export function usePayPalConfiguration(): UsePayPalConfiguration {
 export function PayPalProvider( {
 	children,
 	currency,
-	handleError,
-	fetchPayPalConfiguration,
-}: PropsWithChildren< {
-	currency: string;
-	handleError?: ( error: Error ) => void;
-	fetchPayPalConfiguration?: () => Promise< PayPalConfigurationApiResponse >;
-} > ) {
-	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly( {
-		fetchPayPalConfiguration,
-	} );
-	const lastError = useRef< Error | undefined >();
+}: PropsWithChildren< { currency: string } > ) {
+	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly();
 
-	useEffect( () => {
-		if ( ! error || lastError.current === error ) {
-			return;
-		}
-		lastError.current = error;
-		const errorWithCause = new Error(
-			`Error fetching PayPal configuration: ${ error?.message ?? error }`,
-			{
-				cause: error,
-			}
-		);
-		// eslint-disable-next-line no-console
-		console.error( errorWithCause );
-		if ( handleError ) {
-			handleError( errorWithCause );
-		}
-	}, [ error, handleError ] );
+	if ( error ) {
+		throw error;
+	}
 
 	const payPalScriptOptions: ReactPayPalScriptOptions = {
 		clientId: payPalConfiguration?.clientId ?? 'loading-client-id',
