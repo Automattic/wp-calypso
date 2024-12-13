@@ -1,13 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { ReactNode } from 'react';
 
 interface Props {
 	className?: string;
 	copyText: string | ReactNode;
 	onClick: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
-	buttonLabel?: string;
+	buttonLabel?: string | TranslateResult;
 	buttonComponent?: React.ReactNode;
 }
 

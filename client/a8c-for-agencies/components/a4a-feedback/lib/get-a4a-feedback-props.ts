@@ -22,7 +22,7 @@ export const getA4AfeedbackProps = (
 			return {
 				title: translate( 'Agency details added!' ),
 				description: translate(
-					"Nice job! Your information has been added to the your agency's public profile."
+					"Nice job! Your information has been added to your agency's public profile."
 				),
 				questionDetails: translate( "How was your experience adding your agency's details?" ),
 				ctaText: translate( 'Submit and continue to Partner Directory' ),

@@ -26,6 +26,7 @@ export const STAT_TYPE_CLICKS = 'statsClicks';
 export const STAT_TYPE_COMMENT_FOLLOWERS = 'statsCommentFollowers';
 export const STAT_TYPE_COMMENTS = 'statsComments';
 export const STAT_TYPE_COUNTRY_VIEWS = 'statsCountryViews';
+export const STAT_TYPE_FILE_DOWNLOADS = 'statsFileDownloads';
 export const STAT_TYPE_FOLLOWERS = 'statsFollowers';
 export const STAT_TYPE_INSIGHTS_ALL_TIME_STATS = 'statsInsightsAllTimeStats';
 export const STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME = 'statsInsightsMostPopularTime';

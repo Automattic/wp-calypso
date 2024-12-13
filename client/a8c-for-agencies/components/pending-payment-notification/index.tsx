@@ -72,7 +72,7 @@ export default function PendingPaymentNotification() {
 		);
 	} else {
 		description = translate(
-			'Your product licenses have now been revoked. If you want to continue using the plaform, please pay your outstanding invoices.'
+			'Your product licenses have now been revoked. If you want to continue using the platform, please pay your outstanding invoices.'
 		);
 	}
 
