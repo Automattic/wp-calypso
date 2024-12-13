@@ -117,8 +117,7 @@ const onboarding: Flow = {
 							return;
 
 						case SiteIntent.DIFM:
-							// TODO Implement exit to DIFM
-							return;
+							return window.location.assign( '/start/do-it-for-me' );
 
 						default: {
 							return navigate( 'domains' );
