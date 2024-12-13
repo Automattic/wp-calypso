@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
+import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
 
@@ -77,10 +78,15 @@ function PayPalSubmitButtonWrapper( {
 		<PayPalProvider
 			currency={ responseCart.currency }
 			fetchPayPalConfiguration={ fetchPayPalConfiguration }
+			handleError={ handlePayPalConfigurationError }
 		>
 			<PayPalSubmitButton disabled={ disabled } onClick={ onClick } />
 		</PayPalProvider>
 	);
+}
+
+function handlePayPalConfigurationError( error: Error ) {
+	logStashEvent( convertErrorToString( error ), { tags: [ 'paypal-configuration' ] }, 'error' );
 }
 
 function PayPalSubmitButton( {
