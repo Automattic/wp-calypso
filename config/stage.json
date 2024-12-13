@@ -160,6 +160,7 @@
 		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
+		"purchases/purchase-list-dataview": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/first-posts-stream": true,
