@@ -97,17 +97,23 @@ const useLogoGenerator = () => {
 			const langName =
 				languages.find( ( language ) => language.langSlug === locale )?.name ?? 'English';
 
-			const firstPromptGenerationPrompt = `Generate a simple and short prompt asking for a logo based on the site's name and description. The prompt should be in ${ langName } (${ locale }).
-Example for a site named "The minimalist fashion blog", described as "Daily inspiration for all things fashion": A logo for a minimalist fashion site focused on daily sartorial inspiration with a clean and modern aesthetic that is sleek and sophisticated.
-Another example, now for a site called "El observatorio de aves", described as "Un sitio dedicado a nuestros compañeros y compañeras entusiastas de la observación de aves.": Un logo para un sitio web dedicado a la observación de aves,  capturando la esencia de la naturaleza y la pasión por la avifauna en un diseño elegante y representativo, reflejando una estética natural y apasionada por la vida silvestre.
-
-Site name: ${ name }
-Site description: ${ description }`;
+			const messages = [
+				{
+					role: 'jetpack-ai',
+					context: {
+						type: 'jetpack-ai-generate-logo-prompt',
+						name,
+						description,
+						language: langName,
+						locale,
+					},
+				},
+			];
 
 			const body = {
-				question: firstPromptGenerationPrompt,
 				feature: 'jetpack-ai-logo-generator',
 				stream: false,
+				messages,
 			};
 
 			const data = await wpcomLimitedRequest< {
@@ -183,9 +189,11 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 
 	const generateImage = async function ( {
 		prompt,
+		style = 'none',
 	}: {
 		prompt: string;
-	} ): Promise< { data: Array< { url: string } > } > {
+		style?: string;
+	} ): Promise< { data: Array< { url?: string; b64_json?: string; revised_prompt?: string } > } > {
 		setLogoFetchError( null );
 
 		try {
@@ -207,11 +215,33 @@ The image should contain a single icon, without variations, color palettes or di
 
 User request:${ prompt }`;
 
-			const body = {
+			const body: {
+				prompt: string;
+				feature: string;
+				response_format: string;
+				style?: string;
+				messages?: Array< { role: string; context: Record< string, unknown > } >;
+			} = {
 				prompt: imageGenerationPrompt,
 				feature: 'jetpack-ai-logo-generator',
 				response_format: 'url',
 			};
+
+			if ( style ) {
+				body[ 'response_format' ] = 'b64_json';
+				body[ 'style' ] = style;
+				body[ 'messages' ] = [
+					{
+						role: 'jetpack-ai',
+						context: {
+							type: 'ai-assistant-generate-logo',
+							request: prompt,
+							name,
+							description,
+						},
+					},
+				];
+			}
 
 			const data = await wpcomLimitedRequest( {
 				apiNamespace: 'wpcom/v2',
@@ -220,6 +250,10 @@ User request:${ prompt }`;
 				token: tokenData.token,
 				body,
 			} );
+
+			if ( style ) {
+				return data as { data: { url?: string; b64_json?: string }[] };
+			}
 
 			return data as { data: { url: string }[] };
 		} catch ( error ) {
@@ -256,6 +290,7 @@ User request:${ prompt }`;
 				const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
 					siteId,
 					url: logo.url,
+					logo,
 					attrs: {
 						caption: logo.description,
 						description: logo.description,
@@ -316,7 +351,13 @@ User request:${ prompt }`;
 		[ siteId, addLogoToHistory ]
 	);
 
-	const generateLogo = async function ( { prompt }: { prompt: string } ): Promise< void > {
+	const generateLogo = async function ( {
+		prompt,
+		style = 'none',
+	}: {
+		prompt: string;
+		style?: string;
+	} ): Promise< void > {
 		debug( 'Generating logo for site', siteId );
 
 		setIsRequestingImage( true );
@@ -338,7 +379,7 @@ User request:${ prompt }`;
 			let image;
 
 			try {
-				image = await generateImage( { prompt } );
+				image = await generateImage( { prompt, style } );
 
 				if ( ! image || ! image.data.length ) {
 					throw new Error( 'No image returned' );
@@ -350,8 +391,11 @@ User request:${ prompt }`;
 
 			// response_format=url returns object with url, otherwise b64_json
 			const logo: Logo = {
-				url: image.data[ 0 ].url,
+				url: image.data[ 0 ].b64_json
+					? 'data:image/png;base64,' + image.data[ 0 ].b64_json
+					: image.data[ 0 ].url || '',
 				description: prompt,
+				revisedPrompt: image.data[ 0 ].revised_prompt,
 			};
 
 			try {

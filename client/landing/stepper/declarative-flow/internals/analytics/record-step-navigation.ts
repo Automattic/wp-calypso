@@ -1,5 +1,5 @@
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { reduce, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { STEPPER_TRACKS_EVENTS_STEP_NAV } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -8,6 +8,7 @@ import { ProvidedDependencies } from '../types';
 export interface RecordStepNavigationParams {
 	event: ( typeof STEPPER_TRACKS_EVENTS_STEP_NAV )[ number ];
 	intent: string;
+	goals?: string[];
 	flow: string;
 	step: string;
 	variant?: string;
@@ -28,7 +29,8 @@ const EXCLUDED_DEPENDENCIES = [
 
 export function recordStepNavigation( {
 	event,
-	intent,
+	intent = '',
+	goals = [],
 	flow,
 	step,
 	variant,
@@ -36,9 +38,8 @@ export function recordStepNavigation( {
 	additionalProps = {},
 }: RecordStepNavigationParams ) {
 	const device = resolveDeviceTypeByViewPort();
-	const inputs = reduce(
-		providedDependencies,
-		( props, propValue, propName: string ) => {
+	const inputs = Object.entries( providedDependencies ).reduce(
+		( props, [ propName, propValue ] ) => {
 			if ( EXCLUDED_DEPENDENCIES.includes( propName ) ) {
 				return props;
 			}
@@ -80,9 +81,8 @@ export function recordStepNavigation( {
 		{}
 	);
 
-	const additionalInputs = reduce(
-		additionalProps,
-		( props, propValue, propName: string ) => {
+	const additionalInputs = Object.entries( additionalProps ).reduce(
+		( props, [ propName, propValue ] ) => {
 			propName = snakeCase( propName );
 
 			return {
@@ -99,6 +99,7 @@ export function recordStepNavigation( {
 		variant,
 		step,
 		intent,
+		goals: goals.join( ',' ),
 		...inputs,
 		...additionalInputs,
 	} );
@@ -111,6 +112,7 @@ export function recordStepNavigation( {
 			variant,
 			step: stepOldSlug,
 			intent,
+			goals: goals.join( ',' ),
 			...inputs,
 			...additionalInputs,
 		} );
