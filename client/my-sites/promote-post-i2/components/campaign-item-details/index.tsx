@@ -361,7 +361,7 @@ export default function CampaignItemDetails( props: Props ) {
 			return (
 				<div>
 					{ translate(
-						'We could not fetch any data for this time frame, please try again later. Campaign data can be delayed by a few hours.'
+						"We couldn't retrieve any data for this time frame. Please check back later, as campaign data may take a few hours to appear."
 					) }
 				</div>
 			);
