@@ -12,8 +12,18 @@ const AsyncHelpCenter = () => {
 		setShowHelpCenter( false );
 	}, [ setShowHelpCenter ] );
 
+	/**
+	 * The ?v2 query parameter ensures Webpack treats this Help Center as separate from the one in the main client app.
+	 * Without it, Webpack would create one shared chunk, loaded in both apps. Since Stepper is smaller, more CSS would
+	 * need be bundled into that shared chunk. This is great for Stepper, but it duplicates the CSS in the main client app.
+	 * See: #97451
+	 */
 	return (
-		<AsyncLoad require="@automattic/help-center" placeholder={ null } handleClose={ handleClose } />
+		<AsyncLoad
+			require="@automattic/help-center?v2"
+			placeholder={ null }
+			handleClose={ handleClose }
+		/>
 	);
 };
 
