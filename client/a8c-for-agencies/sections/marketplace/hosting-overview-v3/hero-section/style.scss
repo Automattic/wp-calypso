@@ -1,0 +1,123 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$tab-background: linear-gradient( #EBF4FA, #DAE9F3);
+$tab-background-selected: var(--color-surface);
+
+.hosting-v3-hero-section {
+	max-width: 1500px;
+	margin-inline: auto;
+	padding: 32px 64px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 39px;
+	transition: height .35s ease-out;
+
+	&:not(.is-compact) {
+		height: 389px;
+
+		&:has(.a4a-migration-offer-v3.is-expanded) {
+			height: 797px;
+		}
+
+		@include break-large {
+			height: 321px;
+
+			&:has(.a4a-migration-offer-v3.is-expanded) {
+				height: 517px;
+			}
+		}
+
+		@include break-wide {
+			height: 315px;
+
+			&:has(.a4a-migration-offer-v3.is-expanded) {
+				height: 485px;
+			}
+		}
+	}
+}
+
+.hosting-v3-hero-section.is-compact {
+	overflow: hidden;
+	gap: 0;
+	justify-content: flex-end;
+
+	.hosting-v3-hero-section__content {
+		display: none;
+		position: absolute;
+	}
+
+	height: 55px;
+
+	@include break-wide {
+		height: 74px;
+	}
+}
+
+
+.hosting-v3-hero-section__heading {
+	@include a4a-font-heading-xxl;
+	color: var( --color-text-inverted );
+	margin-block-start: 0;
+}
+
+.hosting-v3-hero-section__content {
+	display: flex;
+	flex-direction: column;
+	gap: 39px;
+}
+
+.hosting-v3-hero-section__tabs {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 74px;
+}
+
+.hosting-v3-hero-section__tab.section-nav-tab {
+	flex-grow: 1;
+	border-bottom: none;
+
+	&,
+	&:hover:not(.is-selected) {
+		background: $tab-background;
+	}
+
+	&.is-selected,
+	&.is-selected .section-nav-tab__link {
+		background: var(--color-surface);
+
+		.section-nav-tab__link:hover {
+			background: none
+		}
+	}
+
+	&:first-child {
+		border-start-start-radius: 4px;
+	}
+
+	&:last-child {
+		border-start-end-radius: 4px;
+	}
+}
+
+.hosting-v3__nav-item-label {
+	@include a4a-font-body-md($font-weight: 500);
+	color: var( --color-text );
+	text-align: center;
+
+	@include break-medium {
+		@include a4a-font-heading-lg;
+	}
+}
+
+.hosting-v3__nav-item-subtitle {
+	@include a4a-font-body-md;
+	color: var( --color-text );
+}

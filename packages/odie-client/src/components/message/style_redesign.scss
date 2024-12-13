@@ -102,6 +102,10 @@
 			}
 		}
 
+		&.odie-chatbox-message-error {
+			flex-direction: column;
+		}
+
 		.help-center-contact-page {
 			.help-center-contact-page__content {
 				margin-bottom: 0 !important;

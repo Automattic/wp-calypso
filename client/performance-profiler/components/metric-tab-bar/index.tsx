@@ -4,7 +4,7 @@ import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	metricsNames,
+	getMetricsNames,
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
@@ -29,6 +29,8 @@ const MetricTabBar = ( props: Props ) => {
 			version: profilerVersion(),
 		} );
 	};
+
+	const metricsNames = getMetricsNames( translate );
 
 	return (
 		<div className="metric-tab-bar">

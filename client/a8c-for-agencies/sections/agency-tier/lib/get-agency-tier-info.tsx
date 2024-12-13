@@ -31,6 +31,7 @@ const getAgencyTierInfo = (
 		description: '',
 		logo: NoTierLogo,
 		includedTiers: [],
+		learnMoreLink: 'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits',
 	};
 	switch ( agencyTier ) {
 		case 'emerging-partner':
@@ -64,6 +65,8 @@ const getAgencyTierInfo = (
 					image: EmergingPartnerBackground,
 					cta: translate( 'Learn about Tiers' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#account-activated',
 			};
 			break;
 		case 'agency-partner':
@@ -104,6 +107,8 @@ const getAgencyTierInfo = (
 					image: AgencyPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#agency-partner',
 			};
 			break;
 		case 'pro-agency-partner':
@@ -143,6 +148,8 @@ const getAgencyTierInfo = (
 					image: ProAgencyPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#pro-partner',
 			};
 	}
 	return { id: agencyTier, ...tierInfo };

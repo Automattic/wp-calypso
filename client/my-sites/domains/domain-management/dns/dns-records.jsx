@@ -135,13 +135,13 @@ class DnsRecords extends Component {
 		);
 
 		const buttons = [
-			<DnsAddNewRecordButton
-				key="add-new-record-button"
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
-			<DnsImportBindFileButton
-				key="import-bind-file-button"
+			<DnsAddNewRecordButton
+				key="add-new-record-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,

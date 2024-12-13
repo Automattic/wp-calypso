@@ -202,13 +202,14 @@ export class UserStep extends Component {
 			wccomFrom,
 			isReskinned,
 			isOnboardingAffiliateFlow,
+			isWoo,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
 		const loginUrl = this.getLoginUrl();
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
-			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+			if ( isWoo && wccomFrom ) {
 				switch ( wccomFrom ) {
 					case 'cart':
 						subHeaderText = translate(
@@ -241,7 +242,7 @@ export class UserStep extends Component {
 							}
 						);
 				}
-			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
+			} else if ( isWoo && ! wccomFrom ) {
 				subHeaderText = translate(
 					'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
@@ -491,6 +492,7 @@ export class UserStep extends Component {
 			isSocialFirst,
 			userLoggedIn,
 			isBlazePro,
+			isWoo,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -504,7 +506,7 @@ export class UserStep extends Component {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
-		if ( isWooOAuth2Client( oauth2Client ) ) {
+		if ( isWoo ) {
 			if ( 'cart' === wccomFrom ) {
 				return <WooCommerceConnectCartHeader />;
 			}
@@ -565,7 +567,7 @@ export class UserStep extends Component {
 	}
 
 	submitButtonText() {
-		const { translate, flowName } = this.props;
+		const { translate, flowName, isWoo } = this.props;
 
 		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
@@ -575,7 +577,7 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isWoo ) {
 			return translate( 'Get started' );
 		}
 
@@ -587,7 +589,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, isReskinned, isWoo } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
@@ -597,7 +599,7 @@ export class UserStep extends Component {
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWooOAuth2Client( oauth2Client ) ) {
+		if ( isWoo ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -635,9 +637,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={
-						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
-					}
+					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
@@ -732,8 +732,8 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.userCreationComplete() ) {
-			return null; // return nothing so that we don't see the completed signup form flash.
+		if ( this.userCreationComplete() && ! this.props.isWoo ) {
+			return null; // return nothing so that we don't see the completed signup form flash but skip for Woo because it need to keep the form until the user is redirected back to original page (e.g. WooCommerce.com).
 		}
 
 		if ( isP2Flow( this.props.flowName ) ) {
@@ -748,7 +748,7 @@ export class UserStep extends Component {
 			return this.renderGravatarSignupStep();
 		}
 
-		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.userLoggedIn ) {
+		if ( this.props.isWoo && this.props.userLoggedIn ) {
 			page( this.getLoginUrl() );
 			return null;
 		}
@@ -772,10 +772,12 @@ export class UserStep extends Component {
 
 const ConnectedUser = connect(
 	( state ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
 		return {
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
+			isWoo: isWooOAuth2Client( oauth2Client ),
 			isWooPasswordless: getIsWooPasswordless( state ),
 			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),

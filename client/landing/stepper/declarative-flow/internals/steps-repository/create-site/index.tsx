@@ -49,6 +49,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -84,6 +85,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
+		siteGoals,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -95,11 +97,13 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
+			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
+	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -108,6 +112,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
+
+	const shouldSaveSiteGoals = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
 
 	const username = useSelector( getCurrentUserName );
 
@@ -231,7 +237,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent
+			siteIntent,
+			shouldSaveSiteGoals ? siteGoals : undefined
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {

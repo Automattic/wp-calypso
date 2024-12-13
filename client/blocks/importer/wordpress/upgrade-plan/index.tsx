@@ -1,10 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -12,15 +18,17 @@ import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/compon
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
+import { VariantsSkeleton } from './skeleton/variants-skeleton';
 import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
+import type { PlanSlug } from '@automattic/calypso-products';
+import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 
 export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const plan = getPlan( PLAN_BUSINESS );
 	const hasEnTranslation = useHasEnTranslation();
 	const {
 		site,
@@ -35,6 +43,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		trackingEventsProps,
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
 		visiblePlan = PLAN_BUSINESS,
+		showVariants = false,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
@@ -44,26 +53,37 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
 		useUpgradePlanHostingDetailsList();
+	const plan = getPlan( visiblePlan );
+
+	const planMonthly = PLAN_BUSINESS_MONTHLY;
+	const planBiennial = PLAN_BUSINESS_2_YEARS;
+
+	const planSlugs: PlanSlug[] = [ visiblePlan, planMonthly, planBiennial ];
 
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
-		planSlugs: [ visiblePlan ],
+		planSlugs: planSlugs,
 		siteId: site.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
-
-	const pricing =
-		pricingMeta && pricingMeta[ visiblePlan ] ? pricingMeta[ visiblePlan ] : undefined;
+	const pricing = planSlugs.reduce(
+		( acc, planSlug: string ) => {
+			acc[ planSlug ] = pricingMeta?.[ planSlug ];
+			return acc;
+		},
+		{} as Record< string, PricingMetaForGridPlan | undefined >
+	);
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
-		pricing?.introOffer &&
-		pricing.introOffer.rawPrice &&
-		! pricing.introOffer.isOfferComplete &&
-		pricing.originalPrice.monthly &&
-		pricing.originalPrice.full &&
-		pricing.currencyCode;
+		pricing[ visiblePlan ]?.introOffer &&
+		pricing[ visiblePlan ]?.introOffer.rawPrice &&
+		! pricing[ visiblePlan ]?.introOffer.isOfferComplete &&
+		pricing[ visiblePlan ]?.originalPrice &&
+		pricing[ visiblePlan ]?.originalPrice.monthly &&
+		pricing[ visiblePlan ]?.originalPrice.full &&
+		pricing[ visiblePlan ]?.currencyCode;
 
 	const hideFreeMigrationTrial =
 		introOfferAvailable ||
@@ -104,7 +124,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 		if ( hideFreeMigrationTrial ) {
 			return (
-				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+				<NextButton isBusy={ isBusy } onClick={ () => onCtaClick( visiblePlan ) }>
 					{ cta }
 				</NextButton>
 			);
@@ -114,7 +134,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			return (
 				<>
 					<NextButton onClick={ onFreeTrialClick }>{ trialText }</NextButton>
-					<Button busy={ isBusy } transparent onClick={ onCtaClick }>
+					<Button busy={ isBusy } transparent onClick={ () => onCtaClick( visiblePlan ) }>
 						{ cta }
 					</Button>
 				</>
@@ -123,7 +143,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 
 		return (
 			<>
-				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+				<NextButton isBusy={ isBusy } onClick={ () => onCtaClick( visiblePlan ) }>
 					{ cta }
 				</NextButton>
 				<Button disabled transparent>
@@ -154,8 +174,11 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 		  );
 
-	if ( isFetchingHostingDetails || ! pricing ) {
-		return <Skeleton />;
+	if ( isFetchingHostingDetails || ! pricing[ visiblePlan ] ) {
+		if ( ! showVariants ) {
+			return <Skeleton />;
+		}
+		return <VariantsSkeleton />;
 	}
 
 	return (
@@ -194,14 +217,22 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 			) }
 
 			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
-
 			<UpgradePlanDetails
-				pricing={ pricing }
+				planSlugs={ planSlugs }
+				pricing={ pricing as { [ key: string ]: PricingMetaForGridPlan } }
 				introOfferAvailable={ !! introOfferAvailable }
 				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+				showVariants={ showVariants }
+				onCtaClick={ onCtaClick }
 			>
 				{ renderCTAs() }
 			</UpgradePlanDetails>
+			{ showVariants && (
+				<div className="import__upgrade-plan-refund-sub-text">
+					<Icon icon={ reusableBlock } />
+					{ translate( 'Fully refundable. No questions asked.' ) }
+				</div>
+			) }
 		</div>
 	);
 };
