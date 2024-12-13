@@ -110,6 +110,8 @@ const getFormSettings = ( settings?: Fields ) => {
 	};
 };
 
+type ErrorNotice = ( text: string ) => void;
+
 type NewsletterSettingsFormProps = {
 	fields: Fields;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
@@ -118,6 +120,7 @@ type NewsletterSettingsFormProps = {
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
 	updateFields: ( fields: Fields ) => void;
+	errorNotice: ErrorNotice;
 };
 
 const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
@@ -128,6 +131,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	isSavingSettings,
 	settings,
 	updateFields,
+	errorNotice,
 }: NewsletterSettingsFormProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -184,6 +188,22 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		// If the URL has a hash, scroll to it.
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions, updateFields ] );
+
+	const onSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
+		event?.preventDefault();
+
+		if (
+			fields.wpcom_newsletter_categories_enabled &&
+			! fields.wpcom_newsletter_categories?.length
+		) {
+			errorNotice(
+				translate( 'Please select at least one category when newsletter categories are enabled.' )
+			);
+			return;
+		}
+
+		handleSubmitForm();
+	};
 
 	return (
 		<form onSubmit={ handleSubmitForm }>
@@ -299,7 +319,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
 				showButton
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
