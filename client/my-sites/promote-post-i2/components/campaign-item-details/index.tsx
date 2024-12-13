@@ -809,7 +809,7 @@ export default function CampaignItemDetails( props: Props ) {
 									<div className="campaign-item-details__main-stats-row ">
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Visitors' ) }
+												{ translate( 'Clicks' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
