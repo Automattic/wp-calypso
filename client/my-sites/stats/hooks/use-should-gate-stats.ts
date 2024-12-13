@@ -46,6 +46,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 	STATS_FEATURE_PAGE_INSIGHTS,
 	STATS_FEATURE_PAGE_TRAFFIC,
+	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
 } from '../constants';
 import {
 	hasSupportedCommercialUse,
