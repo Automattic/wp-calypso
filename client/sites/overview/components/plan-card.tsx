@@ -328,7 +328,7 @@ const PlanCard = () => {
 							siteId={ site?.ID }
 							storageBarComponent={ PlanStorageBar }
 						>
-							{ availableStorageAddOns.length ? (
+							{ availableStorageAddOns.length && ! isAgencyPurchase ? (
 								<div className="hosting-overview__plan-storage-footer">
 									<NeedMoreStorage noLink={ footerWrapperIsLink } />
 								</div>
