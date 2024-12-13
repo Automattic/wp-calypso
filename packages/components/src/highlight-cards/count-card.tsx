@@ -1,8 +1,9 @@
+import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { Card } from '../';
 import Popover from '../popover';
-import { formatNumber } from './lib/numbers';
+import { formatNumber, subtract } from './lib/numbers';
 
 interface CountCardProps {
 	heading?: React.ReactNode;
@@ -10,16 +11,32 @@ interface CountCardProps {
 	label?: string;
 	note?: string;
 	showValueTooltip?: boolean;
-	value: number | string | null;
+	value: number | null;
+	previousValue?: number | null;
 }
 
-function TooltipContent( { value, label, note }: CountCardProps ) {
+export function TooltipContent( { value, label, note, previousValue }: CountCardProps ) {
+	const difference = subtract( value, previousValue );
+
+	let trendClass = 'highlight-card-tooltip-count-difference-positive';
+	let trendIcon = arrowUp;
+	if ( difference !== null && difference < 0 ) {
+		trendClass = 'highlight-card-tooltip-count-difference-negative';
+		trendIcon = arrowDown;
+	}
+
 	return (
 		<div className="highlight-card-tooltip-content">
 			<span className="highlight-card-tooltip-counts">
-				{ formatNumber( value as number, false ) }
+				{ formatNumber( value, false ) }
 				{ label && ` ${ label }` }
 			</span>
+			{ difference !== null && difference !== 0 && (
+				<span className={ trendClass }>
+					<Icon size={ 18 } icon={ trendIcon } />
+					{ formatNumber( Math.abs( difference ), false ) }
+				</span>
+			) }
 			{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 		</div>
 	);

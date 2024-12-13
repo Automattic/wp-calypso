@@ -396,6 +396,21 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	color: var(--studio-gray-10);
 }
 
+.highlight-card-tooltip-count-difference-positive {
+	color: var(--studio-green-10);
+}
+
+.highlight-card-tooltip-count-difference-negative {
+	color: var(--studio-red-10);
+}
+
+.highlight-card-tooltip-count-difference-positive svg,
+.highlight-card-tooltip-count-difference-negative svg {
+	fill: currentColor;
+	margin-left: 16px;
+	vertical-align: text-bottom;
+}
+
 .highlight-card-tooltip-note {
 	color: var(--studio-gray-30);
 	font-size: $font-body-small;

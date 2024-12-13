@@ -31,7 +31,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
-	const coupon = undefined;
+	const coupon = useQuery().get( 'coupon' ) ?? undefined;
 
 	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
