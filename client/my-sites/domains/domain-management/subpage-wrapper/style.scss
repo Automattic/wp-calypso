@@ -1,9 +1,9 @@
 .subpage-wrapper {
     display: flex;
+    justify-content: center;
 
     .main.is-wide-layout {
         width: 100%;
-        max-width: inherit;
         margin: 32px 48px 0;
     }
 
