@@ -39,6 +39,7 @@ export default function DesignPickerCategoryFilter( {
 			initialActiveIndexes={ initialActiveIndexes }
 			isMultiSelection={ isMultiSelection }
 			forceSwipe={ forceSwipe }
+			rootMargin="1px"
 			onClick={ onClick }
 		>
 			{ categories.map( ( category ) => (
