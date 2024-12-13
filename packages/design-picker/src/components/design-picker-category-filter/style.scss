@@ -15,16 +15,6 @@
 		gap: 24px;
 	}
 
-	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
-		> div:first-of-type {
-			margin-inline-start: 0;
-		}
-
-		> div:last-of-type {
-			margin-inline-end: 0;
-		}
-	}
-
 	button.components-button.responsive-toolbar-group__button-item,
 	button.components-button.responsive-toolbar-group__swipe-item {
 		padding: 8px 16px;
@@ -130,6 +120,15 @@
 
 		.responsive-toolbar-group__grouped-list {
 			justify-content: flex-start;
+			border: none;
+
+			> div:first-of-type {
+				margin-inline-start: 0;
+			}
+	
+			> div:last-of-type {
+				margin-inline-end: 0;
+			}
 		}
 	}
 }
