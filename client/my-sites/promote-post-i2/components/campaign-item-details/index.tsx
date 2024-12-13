@@ -780,7 +780,7 @@ export default function CampaignItemDetails( props: Props ) {
 						{ shouldShowStats && (
 							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
-									{ duration_days && (
+									{ !! duration_days && (
 										<div className="campaign-item-details__main-stats-row ">
 											<div>
 												<span className="campaign-item-details__label">
