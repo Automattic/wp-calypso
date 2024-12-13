@@ -110,8 +110,6 @@ const getFormSettings = ( settings?: Fields ) => {
 	};
 };
 
-type ErrorNotice = ( text: string ) => void;
-
 type NewsletterSettingsFormProps = {
 	fields: Fields;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
@@ -120,7 +118,7 @@ type NewsletterSettingsFormProps = {
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
 	updateFields: ( fields: Fields ) => void;
-	errorNotice: ErrorNotice;
+	errorNotice: ( text: string ) => void;
 };
 
 const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
@@ -189,7 +187,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions, updateFields ] );
 
-	const onSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
+	const onNewsletterCategoriesSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
 		event?.preventDefault();
 
 		if (
@@ -319,7 +317,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
 				showButton
-				onButtonClick={ onSubmit }
+				onButtonClick={ onNewsletterCategoriesSubmit }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
