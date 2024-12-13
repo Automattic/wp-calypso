@@ -139,7 +139,9 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		const scrollableContainer = document.querySelector( '#primary > div > div' );
+		const scrollableContainer =
+			document.querySelector( '#primary > div > div.recent-feed > section' ) ||
+			document.querySelector( '#primary > div > div' );
 		if ( scrollableContainer ) {
 			scrollableContainer.addEventListener( 'scroll', this.setScrollDepth );
 			this.scrollableContainer = scrollableContainer; // Save reference for cleanup
