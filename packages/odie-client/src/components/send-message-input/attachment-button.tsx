@@ -34,8 +34,11 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 };
 
 export const AttachmentButton: React.FC = () => {
-	const { chat, addMessage, trackEvent } = useOdieAssistantContext();
-	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { data: authData } = useAuthenticateZendeskMessaging(
+		isUserEligibleForPaidSupport,
+		'messenger'
+	);
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 	const { zendeskClientId } = useSelect( ( select ) => {

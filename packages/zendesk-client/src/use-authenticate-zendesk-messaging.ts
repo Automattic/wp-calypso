@@ -19,7 +19,7 @@ const VERSION = 'v1';
 let isLoggedIn = false;
 
 export function useAuthenticateZendeskMessaging(
-	enabled = true,
+	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
 	const currentEnvironment = config( 'env_id' );
