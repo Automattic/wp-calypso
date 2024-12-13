@@ -74,6 +74,7 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
+		isFromAkismet: PropTypes.bool,
 		isFromMigrationPlugin: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
@@ -356,6 +357,7 @@ class Login extends Component {
 			action,
 			currentQuery,
 			fromSite,
+			isFromAkismet,
 			isFromMigrationPlugin,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
@@ -743,6 +745,11 @@ class Login extends Component {
 			);
 		}
 
+		if ( isFromAkismet ) {
+			headerText = 'Log in to Akismet';
+			// @todo add Akismet logo
+		}
+
 		if ( isFromAutomatticForAgenciesPlugin ) {
 			headerText = translate( 'Log in to Automattic for Agencies' );
 			preHeader = (
@@ -1118,6 +1125,10 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isFromAkismet:
+			'akismet' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			'akismet' ===
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
