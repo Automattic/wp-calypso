@@ -299,7 +299,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
 	const categories = categorization?.categories || [];
 
@@ -329,6 +328,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		isMultiFilterEnabled &&
 		! categorization?.isSelectionsChanged &&
 		recommendedDesigns.length === 3;
+
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
+		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
+	} );
 
 	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
 	const showNoResults =
