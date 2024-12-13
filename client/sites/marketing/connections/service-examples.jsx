@@ -28,23 +28,23 @@ import './service-examples.scss';
  * @type {string[]}
  */
 export const SERVICES_WITH_EXAMPLES = [
-	'google_plus',
-	'mastodon',
 	'bandpage',
 	'bluesky',
 	'facebook',
-	'google_photos',
 	'google-drive',
+	'google_my_business',
+	'google_photos',
+	'google_plus',
 	'instagram-basic-display',
 	'instagram-business',
 	'linkedin',
+	'mailchimp',
+	'mastodon',
 	'nextdoor',
+	'p2_github',
+	'p2_slack',
 	'threads',
 	'tumblr',
-	'mailchimp',
-	'p2_slack',
-	'p2_github',
-	'google_my_business',
 ];
 
 class SharingServiceExamples extends Component {
