@@ -20,6 +20,7 @@ import {
 	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
+	domainMagementDNS,
 } from './paths';
 import { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
@@ -101,6 +102,22 @@ export function resolveDomainStatus(
 	const paymentSetupCallToAction = {
 		href: '/me/purchases/payment-methods',
 		label: translate( 'Fix' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
+	};
+
+	const editNameserversCallToAction = {
+		href: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+			nameservers: true,
+		} ),
+		label: translate( 'Point to WordPress.com' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
+	};
+
+	const editDNSRecordsCallToAction = {
+		href: domainMagementDNS( siteSlug as string, domain.domain ),
+		label: translate( 'Point to WordPress.com' ),
 		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
 			e.stopPropagation(),
 	};
@@ -486,9 +503,11 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
-				const ctaLink = domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-					nameservers: true,
-				} );
+				const ctaLink = domain.hasWpcomNameservers
+					? domainMagementDNS( siteSlug as string, domain.domain )
+					: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+							nameservers: true,
+					  } );
 
 				return {
 					statusText: translate( 'Action required' ),
@@ -500,14 +519,13 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ ctaLink } />,
+								a: <a href={ ctaLink } onClick={ ( e ) => e.stopPropagation() } />,
 							},
 						}
 					),
-					callToAction: {
-						href: ctaLink,
-						label: translate( 'Point to WordPress.com' ),
-					},
+					callToAction: domain.hasWpcomNameservers
+						? editDNSRecordsCallToAction
+						: editNameserversCallToAction,
 					listStatusWeight: 600,
 				};
 			}
