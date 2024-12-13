@@ -1,29 +1,29 @@
-const PAYOUT_SCHEDULE = {
-	Q1: { start: '01-01', end: '03-31', payoutDate: '06-01' },
-	Q2: { start: '04-01', end: '06-30', payoutDate: '09-01' },
-	Q3: { start: '07-01', end: '09-30', payoutDate: '12-01' },
-	Q4: { start: '10-01', end: '12-31', payoutDate: '03-01' }, // Next year
-};
+const PAYOUT_DATES = [
+	{ month: 3, day: 1 }, // March 1
+	{ month: 6, day: 1 }, // June 1
+	{ month: 9, day: 1 }, // September 1
+	{ month: 12, day: 1 }, // December 1
+];
 
 export const getNextPayoutDate = ( currentDate: Date ): Date => {
-	const currentMonth = currentDate.getMonth() + 1; // Convert to 1-based month
 	const currentYear = currentDate.getFullYear();
+	const currentMonth = currentDate.getMonth() + 1; // Convert to 1-based month
+	const currentDay = currentDate.getDate();
 
-	// Find which quarter we're in
-	const quarterKey = Object.keys( PAYOUT_SCHEDULE ).find( ( quarter ) => {
-		const schedule = PAYOUT_SCHEDULE[ quarter as keyof typeof PAYOUT_SCHEDULE ];
-		const [ startMonth ] = schedule.start.split( '-' ).map( Number );
-		const [ endMonth ] = schedule.end.split( '-' ).map( Number );
-		return currentMonth >= startMonth && currentMonth <= endMonth;
-	} ) as keyof typeof PAYOUT_SCHEDULE;
+	// For December dates, return March 1st of next year
+	if ( currentMonth === 12 ) {
+		return new Date( currentYear + 1, 2, 1 ); // Month is 0-based, so 2 = March
+	}
 
-	// Get payout month and day
-	const [ payoutMonth, payoutDay ] = PAYOUT_SCHEDULE[ quarterKey ].payoutDate
-		.split( '-' )
-		.map( Number );
+	// Find the next payout date that's closest to current date
+	const nextPayout = PAYOUT_DATES.find( ( { month } ) => {
+		return month > currentMonth || ( month === currentMonth && currentDay > 1 );
+	} );
 
-	// Calculate payout year (next year if we're in Q4)
-	const payoutYear = quarterKey === 'Q4' ? currentYear + 1 : currentYear;
+	if ( nextPayout ) {
+		return new Date( currentYear, nextPayout.month - 1, nextPayout.day );
+	}
 
-	return new Date( payoutYear, payoutMonth - 1, payoutDay );
+	// If no payout dates left this year, return first payout of next year
+	return new Date( currentYear + 1, PAYOUT_DATES[ 0 ].month - 1, PAYOUT_DATES[ 0 ].day );
 };

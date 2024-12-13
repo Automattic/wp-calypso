@@ -1,32 +1,38 @@
 import { getNextPayoutDate } from '../get-next-payout-date';
 
 describe( 'getNextPayoutDate', () => {
-	it( 'should return June 1st for Q1 dates', () => {
+	it( 'should return March 1st for dates before March 1st', () => {
 		const result = getNextPayoutDate( new Date( '2024-02-15' ) );
+		expect( result ).toEqual( new Date( '2024-03-01' ) );
+	} );
+
+	it( 'should return June 1st for dates between March 1st and June 1st', () => {
+		const result = getNextPayoutDate( new Date( '2024-04-15' ) );
 		expect( result ).toEqual( new Date( '2024-06-01' ) );
 	} );
 
-	it( 'should return September 1st for Q2 dates', () => {
-		const result = getNextPayoutDate( new Date( '2024-05-15' ) );
+	it( 'should return September 1st for dates between June 1st and September 1st', () => {
+		const result = getNextPayoutDate( new Date( '2024-07-15' ) );
 		expect( result ).toEqual( new Date( '2024-09-01' ) );
 	} );
-	it( 'should return December 1st for Q3 dates', () => {
-		const result = getNextPayoutDate( new Date( '2024-08-15' ) );
+
+	it( 'should return December 1st for dates between September 1st and December 1st', () => {
+		const result = getNextPayoutDate( new Date( '2024-10-15' ) );
 		expect( result ).toEqual( new Date( '2024-12-01' ) );
 	} );
 
-	it( 'should return March 1st of next year for Q4 dates', () => {
-		const result = getNextPayoutDate( new Date( '2024-11-15' ) );
+	it( 'should return March 1st of next year for dates after December 1st', () => {
+		const result = getNextPayoutDate( new Date( '2024-12-15' ) );
 		expect( result ).toEqual( new Date( '2025-03-01' ) );
 	} );
 
-	it( 'should handle quarter boundaries correctly', () => {
-		// Test first day of Q1
-		let result = getNextPayoutDate( new Date( '2024-01-01' ) );
+	it( 'should handle exact payout dates correctly', () => {
+		// On March 1st, next payout is June 1st
+		let result = getNextPayoutDate( new Date( '2024-03-01' ) );
 		expect( result ).toEqual( new Date( '2024-06-01' ) );
 
-		// Test last day of Q4
-		result = getNextPayoutDate( new Date( '2024-12-31' ) );
+		// On December 1st, next payout is March 1st of next year
+		result = getNextPayoutDate( new Date( '2024-12-01' ) );
 		expect( result ).toEqual( new Date( '2025-03-01' ) );
 	} );
 } );
