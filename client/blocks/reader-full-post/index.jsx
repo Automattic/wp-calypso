@@ -204,13 +204,6 @@ export class FullPostView extends Component {
 		}
 	}
 
-	getScrollableContainer = () => {
-		return (
-			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
-			document.querySelector( '#primary > div > div' )
-		); // for Recent Feed in Stream
-	};
-
 	setReadingStartTime = () => {
 		this.readingStartTime = new Date().getTime();
 	};
