@@ -512,8 +512,8 @@
 		flex-grow: initial;
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-link span,
-	.section-header__actions button {
+	div.email-plan-mailboxes-list__mailbox-list-link span,
+	.section-header__actions button[disabled] {
 		color: var(--theme-highlight-color-50);
 		opacity: 0.5;
 	}
