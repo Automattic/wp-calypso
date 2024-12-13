@@ -59,7 +59,7 @@ export interface PurchasesListConnectedProps {
 	siteId: number | null;
 }
 
-class PurchasesList extends Component<
+class PurchasesListDataView extends Component<
 	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
 > {
 	isDataLoading() {
@@ -200,4 +200,6 @@ export default connect( ( state: AppState ) => ( {
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-} ) )( withStoredPaymentMethods( localize( PurchasesList ), { type: 'card', expired: true } ) );
+} ) )(
+	withStoredPaymentMethods( localize( PurchasesListDataView ), { type: 'card', expired: true } )
+);

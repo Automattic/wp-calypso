@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -21,7 +22,6 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
-import config from 'calypso/server/config';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -125,7 +125,7 @@ export function list( context, next ) {
 		return (
 			<PurchasesWrapper>
 				{ useDataViewPurchasesList ? (
-					<PurchasesListDataView />
+					<PurchasesListDataView noticeType={ context.params.noticeType } />
 				) : (
 					<PurchasesList noticeType={ context.params.noticeType } />
 				) }
