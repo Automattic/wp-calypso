@@ -214,7 +214,7 @@ const siteSetupFlow: Flow = {
 
 					const settings = {
 						site_intent: siteIntent,
-						site_goals: goals,
+						...( goals.length && { site_goals: goals } ),
 						launchpad_screen: undefined as string | undefined,
 					};
 
