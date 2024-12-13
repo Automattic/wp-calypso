@@ -246,6 +246,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					margin-top: 0;
 					overflow: auto;
 					padding-bottom: 0;
+					width: 100%;
 
 					table {
 						max-height: unset;
