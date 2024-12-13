@@ -1,6 +1,5 @@
 import { useMemo } from '@wordpress/element';
-import { useSiteMediaStorage } from '../../site';
-import { STORAGE_LIMIT } from '../constants';
+import { SiteMediaStorage, useSiteMediaStorage } from '../../site';
 import { AddOnMeta } from '../types';
 import useStorageAddOns from './use-storage-add-ons';
 
@@ -8,12 +7,24 @@ interface Props {
 	siteId?: number | null;
 }
 
-export function isStorageQuantityAvailable( quantity: number, maxStorageBytes?: number ) {
-	const currentMaxStorage =
-		maxStorageBytes !== undefined ? maxStorageBytes / Math.pow( 1024, 3 ) : 0;
-	const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
+/**
+ * Check if the quantity for a storage add-on is available for purchase.
+ * @param quantity The number of gigabytes the given add-on adds to the site's storage
+ * @param storage Data returned from
+ */
+export function isStorageQuantityAvailable(
+	quantity: number,
+	storage?: SiteMediaStorage
+): boolean {
+	if ( ! storage ) {
+		return true;
+	}
 
-	return quantity <= availableStorageUpgrade;
+	const currentMaxStorage = storage.maxStorageBytes / Math.pow( 1024, 3 );
+	const maxStorageExcludingAddons = storage.maxStorageBytesExcludingAddons / Math.pow( 1024, 3 );
+	const existingAddOnStorage = currentMaxStorage - maxStorageExcludingAddons;
+
+	return existingAddOnStorage < quantity;
 }
 
 /**
@@ -31,7 +42,7 @@ const useAvailableStorageAddOns = ( { siteId }: Props ): AddOnMeta[] => {
 		return storageAddOns
 			.filter( ( addOn ) => addOn !== null )
 			.filter( ( addOn ): addOn is AddOnMeta =>
-				isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorage.data?.maxStorageBytes )
+				isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorage.data )
 			);
 	}, [ siteMediaStorage, storageAddOns ] );
 };

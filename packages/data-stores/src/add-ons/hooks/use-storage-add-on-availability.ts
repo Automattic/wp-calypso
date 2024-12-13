@@ -21,5 +21,5 @@ export default function useStorageAddOnAvailability( {
 		return true;
 	}
 
-	return isStorageQuantityAvailable( addOnMeta.quantity ?? 0, mediaStorage.data?.maxStorageBytes );
+	return isStorageQuantityAvailable( addOnMeta.quantity ?? 0, mediaStorage.data );
 }
