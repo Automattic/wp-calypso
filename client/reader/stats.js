@@ -191,7 +191,6 @@ export function recordTracksRailcarInteract( eventName, railcar, overrides ) {
 }
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
-	console.log( 'recordTrackForPost', eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
 	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
 	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
