@@ -117,17 +117,23 @@ function EmailPlanMailboxesList( {
 
 	return (
 		<>
-			{ configuringStateMode === 'notice' && !! account?.warnings.length && (
+			{ isGoogleConfiguring && configuringStateMode === 'notice' && (
 				<Notice
 					className="email-plan-mailboxes-list__notice"
 					status="is-warning"
 					showDismiss={ false }
 				>
-					<EmailPlanWarnings
-						domain={ domain }
-						emailAccount={ account }
-						ctaBtnProps={ { primary: false, plain: true } }
-					/>
+					{ ! account?.warnings.length ? (
+						translate(
+							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+						)
+					) : (
+						<EmailPlanWarnings
+							domain={ domain }
+							emailAccount={ account }
+							ctaBtnProps={ { primary: false, plain: true } }
+						/>
+					) }
 				</Notice>
 			) }
 
