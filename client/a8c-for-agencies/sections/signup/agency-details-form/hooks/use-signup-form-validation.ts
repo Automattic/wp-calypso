@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { isSiteActive } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetailsPayload } from '../types';
 
 export const CAPTURE_URL_RGX =
@@ -24,7 +25,7 @@ const useSignupFormValidation = () => {
 	};
 
 	const validate = useCallback(
-		( payload: AgencyDetailsPayload ) => {
+		async ( payload: AgencyDetailsPayload ) => {
 			const newValidationError: ValidationState = {};
 			if ( payload.firstName === '' ) {
 				newValidationError.firstName = translate( `First name can't be empty` );
@@ -41,6 +42,10 @@ const useSignupFormValidation = () => {
 				newValidationError.agencyUrl = translate( `Agency URL can't be empty` );
 			} else if ( ! CAPTURE_URL_RGX.test( payload.agencyUrl ) ) {
 				newValidationError.agencyUrl = translate( `Please enter a valid URL` );
+			} else if ( ! ( await isSiteActive( payload.agencyUrl ) ) ) {
+				newValidationError.agencyUrl = translate(
+					`Please enter a live site URL for your business.`
+				);
 			}
 
 			if ( payload.line1 === '' ) {
