@@ -1,7 +1,6 @@
 import { getPlan, PlanSlug, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder, Badge } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
-import { ADD_ON_100GB_STORAGE, useAddOnPurchaseStatus } from '@automattic/data-stores/src/add-ons';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
@@ -192,20 +191,14 @@ const PricingSection = () => {
 };
 
 type NeedMoreStorageProps = {
-	addOn: AddOns.AddOnMeta;
 	noLink?: boolean;
 };
 
-function NeedMoreStorage( { addOn, noLink = false }: NeedMoreStorageProps ) {
+function NeedMoreStorage( { noLink = false }: NeedMoreStorageProps ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
-	const availability = useAddOnPurchaseStatus( { addOnMeta: addOn, selectedSiteId: site?.ID } );
 	const text = translate( 'Need more storage?' );
-
-	if ( availability.hidden || ! availability.available ) {
-		return null;
-	}
 
 	if ( noLink ) {
 		return text;
@@ -250,11 +243,7 @@ const PlanCard = () => {
 	const isLoading = ! planDetails || planPurchaseLoading;
 
 	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
-	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
-	// Storage add-ons can be upgraded (i.e., if you already have the 50GB add-on, you can upgrade
-	// to 100GB) but not downgraded. That's why we only check the availability of the largest
-	// storage add-on.
-	const bigStorageAddon = addOns.find( ( addOn ) => addOn?.addOnSlug === ADD_ON_100GB_STORAGE );
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: site?.ID } );
 
 	const renderManageButton = () => {
 		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
@@ -339,11 +328,11 @@ const PlanCard = () => {
 							siteId={ site?.ID }
 							storageBarComponent={ PlanStorageBar }
 						>
-							{ bigStorageAddon && (
+							{ availableStorageAddOns.length ? (
 								<div className="hosting-overview__plan-storage-footer">
-									<NeedMoreStorage addOn={ bigStorageAddon } noLink={ footerWrapperIsLink } />
+									<NeedMoreStorage noLink={ footerWrapperIsLink } />
 								</div>
-							) }
+							) : null }
 						</PlanStorage>
 
 						{ site && (

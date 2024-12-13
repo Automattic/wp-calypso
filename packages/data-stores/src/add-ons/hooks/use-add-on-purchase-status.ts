@@ -2,7 +2,7 @@ import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import i18n, { useTranslate } from 'i18n-calypso';
 import * as Purchases from '../../purchases';
 import * as Site from '../../site';
-import { STORAGE_LIMIT } from '../constants';
+import { isStorageQuantityAvailable } from './use-available-storage-add-ons';
 import type { AddOnMeta } from '../types';
 
 interface Props {
@@ -40,7 +40,7 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 	 */
 
 	if ( matchingPurchases ) {
-		if ( addOnMeta.productSlug === PRODUCT_1GB_SPACE ) {
+		if ( addOnMeta.quantity ) {
 			const purchase: Purchases.Purchase = Object.values( matchingPurchases )[ 0 ];
 			if ( purchase.purchaseRenewalQuantity === addOnMeta.quantity ) {
 				return { available: false, text: translate( 'Purchased' ) };
@@ -51,13 +51,12 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 	}
 
 	if ( addOnMeta.productSlug === PRODUCT_1GB_SPACE ) {
-		const currentMaxStorage = mediaStorage.data?.maxStorageBytes
-			? mediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
-			: 0;
-		const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
-		const quantity = addOnMeta.quantity ?? 0;
+		const available = isStorageQuantityAvailable(
+			addOnMeta.quantity ?? 0,
+			mediaStorage.data?.maxStorageBytes
+		);
 
-		if ( quantity > availableStorageUpgrade ) {
+		if ( ! available ) {
 			return { available: false, hidden: true };
 		}
 	}
