@@ -271,7 +271,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setGlobalStyles,
 		resetPreview,
 	} = useRecipe(
-		site?.ID,
 		allDesigns,
 		pickDesign,
 		pickUnlistedDesign,

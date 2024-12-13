@@ -19,7 +19,6 @@ const makeSearchParams = (
 ) => callback( new URLSearchParams( window.location.search ) );
 
 const useRecipe = (
-	//siteId = 0,
 	allDesigns: StarterDesigns | undefined,
 	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	pickUnlistedDesign: ( theme: string ) => void,
