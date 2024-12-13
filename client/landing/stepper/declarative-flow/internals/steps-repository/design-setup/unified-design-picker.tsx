@@ -693,6 +693,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
+		} else if ( ! isSiteRequired && ! siteSlugOrId && _selectedDesign ) {
+			const positionIndex = designs.findIndex(
+				( design ) => design.slug === _selectedDesign?.slug
+			);
+			handleSubmit(
+				{
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selections?.join( ',' ),
+				},
+				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
+			);
 		}
 	}
 
