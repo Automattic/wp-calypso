@@ -10,6 +10,7 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext } from '../../../context';
+import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';
@@ -29,12 +30,14 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	};
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const pressableOwnership = usePressableOwnershipType();
 
 	return (
 		<div className="premier-agency-hosting">
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ marketplaceType === 'referral' }
+				pressableOwnership={ marketplaceType === 'referral' ? 'agency' : pressableOwnership }
 			/>
 
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />

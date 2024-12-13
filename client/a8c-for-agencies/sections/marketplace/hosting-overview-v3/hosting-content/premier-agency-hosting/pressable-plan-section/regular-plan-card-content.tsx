@@ -1,5 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/hooks/use-total-invoice-value';
@@ -12,9 +13,15 @@ type Props = {
 	plan: APIProductFamilyProduct;
 	onSelect: ( plan: APIProductFamilyProduct ) => void;
 	isReferralMode?: boolean;
+	pressableOwnership?: 'agency' | 'regular' | 'none';
 };
 
-export default function PressablePlanSelectorCard( { plan, onSelect, isReferralMode }: Props ) {
+export default function PressablePlanSelectorCard( {
+	plan,
+	onSelect,
+	isReferralMode,
+	pressableOwnership,
+}: Props ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
 
@@ -47,25 +54,48 @@ export default function PressablePlanSelectorCard( { plan, onSelect, isReferralM
 			<div className="pressable-plan-card-content__top">
 				<img className="pressable-plan-card-content__logo" src={ PressableLogo } alt="Pressable" />
 
-				<div className="pressable-plan-card-content__price">
-					<b className="pressable-plan-card-content__price-actual-value">
-						{ formatCurrency( discountedCost, plan.currency ) }
-					</b>
-
-					<div className="pressable-plan-card-content__price-interval">
-						{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
-						{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
+				{ pressableOwnership === 'regular' ? (
+					<div className="pressable-plan-card-content__regular-ownership-text">
+						{ translate(
+							'{{b}}You own this plan.{{/b}} Manage your hosting seamlessly by accessing the Pressable dashboard',
+							{
+								components: { b: <b /> },
+							}
+						) }
 					</div>
-				</div>
+				) : (
+					<div className="pressable-plan-card-content__price">
+						<b className="pressable-plan-card-content__price-actual-value">
+							{ formatCurrency( discountedCost, plan.currency ) }
+						</b>
+
+						<div className="pressable-plan-card-content__price-interval">
+							{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
+							{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
+						</div>
+					</div>
+				) }
 			</div>
 
-			<Button
-				className="pressable-plan-card-content__cta-button"
-				variant="primary"
-				onClick={ () => onSelect( plan ) }
-			>
-				{ ctaLabel }
-			</Button>
+			{ pressableOwnership === 'regular' ? (
+				<Button
+					className="pressable-plan-card-content__cta-button"
+					variant="secondary"
+					target="_blank"
+					rel="norefferer nooppener"
+					href="https://my.pressable.com/agency/auth"
+				>
+					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
+				</Button>
+			) : (
+				<Button
+					className="pressable-plan-card-content__cta-button"
+					variant="primary"
+					onClick={ () => onSelect( plan ) }
+				>
+					{ ctaLabel }
+				</Button>
+			) }
 		</div>
 	);
 }

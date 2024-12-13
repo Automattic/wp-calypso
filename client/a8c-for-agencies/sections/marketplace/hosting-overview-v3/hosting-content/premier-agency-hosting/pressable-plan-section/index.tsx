@@ -19,9 +19,14 @@ import './style.scss';
 type Props = {
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 	isReferralMode?: boolean;
+	pressableOwnership?: 'agency' | 'regular' | 'none';
 };
 
-export default function PressablePlanSection( { onSelect, isReferralMode }: Props ) {
+export default function PressablePlanSection( {
+	onSelect,
+	isReferralMode,
+	pressableOwnership,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
@@ -71,6 +76,10 @@ export default function PressablePlanSection( { onSelect, isReferralMode }: Prop
 	}, [ dispatch, onSelect, selectedPlan ] );
 
 	const banner = useMemo( () => {
+		if ( pressableOwnership === 'regular' ) {
+			return null;
+		}
+
 		return (
 			<HostingPlanSection.Banner>
 				<PlanSelectionFilter
@@ -83,7 +92,14 @@ export default function PressablePlanSection( { onSelect, isReferralMode }: Prop
 				/>
 			</HostingPlanSection.Banner>
 		);
-	}, [ selectedPlan, pressablePlans, isReferralMode, existingPlanInfo, isExistingPlanFetched ] );
+	}, [
+		pressableOwnership,
+		selectedPlan,
+		pressablePlans,
+		isReferralMode,
+		existingPlanInfo,
+		isExistingPlanFetched,
+	] );
 
 	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
@@ -170,6 +186,7 @@ export default function PressablePlanSection( { onSelect, isReferralMode }: Prop
 					plan={ selectedPlan }
 					onSelect={ onPlanAddToCart }
 					isReferralMode={ isReferralMode }
+					pressableOwnership={ pressableOwnership }
 				/>
 			</HostingPlanSection.Card>
 
