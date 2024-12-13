@@ -60,7 +60,7 @@ const MailboxListHeader = ( {
 				{ addMailboxPath && (
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-expect-error
-					<Button href={ addMailboxPath } disabled={ !! disableActions }>
+					<Button href={ addMailboxPath } variant="link" disabled={ !! disableActions }>
 						{ translate( 'Add mailbox' ) }
 					</Button>
 				) }
