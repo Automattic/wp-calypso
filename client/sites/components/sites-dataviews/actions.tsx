@@ -236,6 +236,10 @@ export const isActionEligible = (
 
 				return isNotAtomicJetpack( site ) || !! isDisconnectedJetpackAndNotAtomic( site );
 			};
+		case 'delete-site':
+			return ( site: SiteExcerptData ) => {
+				return ! site.is_deleted && ! isNotAtomicJetpack( site );
+			};
 		default:
 			return () => true;
 	}
@@ -557,6 +561,17 @@ export function useActions( {
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
 				},
 				isEligible: isActionEligible( 'migrate-to-wpcom', capabilities ),
+			},
+
+			{
+				id: 'delete-site',
+				label: __( 'Delete site' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					page( `/sites/settings/administration/${ site.slug }/delete-site` );
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
+				},
+				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
 		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]
