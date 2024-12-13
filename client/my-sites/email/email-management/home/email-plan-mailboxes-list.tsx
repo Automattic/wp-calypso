@@ -34,6 +34,7 @@ function EmailPlanMailboxesList( {
 	const accountType = account?.account_type;
 
 	const isNoMailboxes = ! mailboxes || mailboxes.length < 1;
+	const isAccountWarningPresent = !! account?.warnings.length;
 	const isGoogleConfiguring =
 		isRecentlyRegistered( domain.registrationDate, 45 ) &&
 		getGSuiteSubscriptionStatus( domain ) === 'unknown';
@@ -117,22 +118,22 @@ function EmailPlanMailboxesList( {
 
 	return (
 		<>
-			{ isGoogleConfiguring && configuringStateMode === 'notice' && (
+			{ ( isGoogleConfiguring || isAccountWarningPresent ) && configuringStateMode === 'notice' && (
 				<Notice
 					className="email-plan-mailboxes-list__notice"
 					status="is-warning"
 					showDismiss={ false }
 				>
-					{ ! account?.warnings.length ? (
-						translate(
-							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
-						)
-					) : (
+					{ isAccountWarningPresent ? (
 						<EmailPlanWarnings
 							domain={ domain }
 							emailAccount={ account }
 							ctaBtnProps={ { primary: false, plain: true } }
 						/>
+					) : (
+						translate(
+							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+						)
 					) }
 				</Notice>
 			) }
