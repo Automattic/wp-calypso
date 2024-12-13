@@ -63,6 +63,10 @@
 		background-color: var(--studio-gray-0);
 		font-size: rem(13px);
 
+		&:not(:first-child) {
+			margin-top: 8px;
+		}
+
 		&.is-selected {
 			background-color: var(--studio-wordpress-blue);
 
