@@ -22,86 +22,12 @@
 		flex-grow: 1;
 	}
 
-	.design-picker__filters {
-		display: flex;
-		justify-content: space-between;
-		flex-direction: column;
-		gap: 10px;
-		margin-bottom: 24px;
-
-		@include break-small {
-			flex-direction: row;
-			align-items: flex-end;
-			gap: 30px;
-		}
-
-		button.responsive-toolbar-group__button-item,
-		button.responsive-toolbar-group__swipe-item {
-			&:not(.is-pressed)::before {
-				background-color: var(--studio-gray-0);
-			}
-		}
-
-		.design-picker__category-group {
-			display: flex;
-			flex-direction: column;
-			&.grow {
-				flex-grow: 1;
-			}
-
-			.design-picker__category-group-content {
-				display: flex;
-				align-items: center;
-				flex-wrap: wrap;
-				gap: 8px 16px;
-			}
-		}
-
-		.design-picker__category-group-label {
-			text-transform: uppercase;
-			font-size: rem(13px);
-			font-weight: 500;
-		}
-
-		.design-picker__tier-filter {
-			height: 40px; // match button height
-			margin-bottom: 6px;
-		}
-
-		.design-picker__design-your-own-button {
-			flex-shrink: 0;
-			margin-bottom: 6px;
-		}
-
-		.design-picker__design-with-ai {
-			display: none;
-			
-			@include break-small {
-				display: block;
-			}
-		}
-
-		.design-picker__design-your-own-button-without-categories {
-			margin-left: auto;
-			margin-top: -60px;
-		}
-
-		.design-picker__category-filter.responsive-toolbar-group__dropdown {
-			width: 100%;
-			padding-bottom: 0;
-
-			.responsive-toolbar-group__grouped-list {
-				justify-content: flex-start;
-			}
-		}
-	}
-
 	.design-picker__design-card-group {
 		.design-picker__design-card-title {
 			position: sticky;
 			top: 0;
 			padding: 16px 12px;
-			margin: 0 -12px 8px;
+			margin: -16px -12px 8px;
 			color: var(--studio-black);
 			background-color: var(--color-body-background);
 			font-size: $font-body;
@@ -495,10 +421,6 @@
 		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
 	}
 
-	.components-button.is-pressed:active:hover {
-		color: var(--theme-base-color);
-	}
-
 	.unified-design-picker__designs {
 		min-height: 100vh;
 	}
@@ -509,26 +431,6 @@
 	.responsive-toolbar-group__swipe {
 		.responsive-toolbar-group__swipe-list {
 			padding: 0;
-
-			>div:first-of-type {
-				button {
-					padding-left: 8px;
-
-					&::before {
-						left: 0;
-					}
-				}
-			}
-
-			>div:last-of-type {
-				button {
-					padding-right: 8px;
-
-					&::before {
-						right: 0;
-					}
-				}
-			}
 		}
 	}
 
