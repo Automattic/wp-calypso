@@ -395,7 +395,7 @@ class StatsSite extends Component {
 		);
 
 		// Force the default date range to be 7 days if the 30-day option is locked.
-		if ( shouldForceDefaultDateRange ) {
+		if ( shouldForceDefaultDateRange && period !== 'hour' ) {
 			// For ChartTabs
 			customChartQuantity = 7;
 
