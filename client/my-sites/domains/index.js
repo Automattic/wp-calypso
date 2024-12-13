@@ -411,9 +411,9 @@ export default function () {
 		paths.allDomainEmailManagementRoot() + '/:domain/forwarding/add/:site',
 		siteSelection,
 		navigation,
-		domainManagementController.domainManagementSubPageParams( ADD_FOWARDING_EMAIL ),
+		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
 		emailController.emailManagementAddEmailForwards,
-		domainManagementController.domainManagementSubPageView,
+		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender

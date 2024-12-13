@@ -1,21 +1,21 @@
 import NavigationHeader from 'calypso/components/navigation-header';
-import { getSubPageParams } from './subpages';
+import { getSubpageParams } from './subpages';
 import './style.scss';
 
-type SubPageWrapperProps = {
+type SubpageWrapperProps = {
 	children: React.ReactNode;
-	subPageKey: string;
+	subpageKey: string;
 };
 
-const SubPageWrapper = ( { children, subPageKey }: SubPageWrapperProps ) => {
-	const subPageParams = getSubPageParams( subPageKey );
+const SubpageWrapper = ( { children, subpageKey }: SubpageWrapperProps ) => {
+	const subpageParams = getSubpageParams( subpageKey );
 
-	return subPageParams ? (
+	return subpageParams ? (
 		<>
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ subPageParams.title }
-				subtitle={ subPageParams.subtitle }
+				title={ subpageParams.title }
+				subtitle={ subpageParams.subtitle }
 			/>
 			<div className="subpage-wrapper">{ children }</div>
 		</>
@@ -24,4 +24,4 @@ const SubPageWrapper = ( { children, subPageKey }: SubPageWrapperProps ) => {
 	);
 };
 
-export default SubPageWrapper;
+export default SubpageWrapper;

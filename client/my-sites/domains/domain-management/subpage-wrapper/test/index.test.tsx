@@ -3,15 +3,15 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import SubPageWrapper from '../index';
+import SubpageWrapper from '../index';
 import { ADD_FOWARDING_EMAIL } from '../subpages';
 
-describe( 'SubPageWrapper', () => {
+describe( 'SubpageWrapper', () => {
 	it( 'should render the children', () => {
 		render(
-			<SubPageWrapper subPageKey={ ADD_FOWARDING_EMAIL }>
+			<SubpageWrapper subpageKey={ ADD_FOWARDING_EMAIL }>
 				<span>Hello</span>
-			</SubPageWrapper>
+			</SubpageWrapper>
 		);
 
 		expect( screen.getByText( 'Hello' ) ).toBeInTheDocument();
@@ -19,9 +19,9 @@ describe( 'SubPageWrapper', () => {
 
 	it( 'should render the children with the subpage header', () => {
 		render(
-			<SubPageWrapper subPageKey={ ADD_FOWARDING_EMAIL }>
+			<SubpageWrapper subpageKey={ ADD_FOWARDING_EMAIL }>
 				<span>Hello</span>
-			</SubPageWrapper>
+			</SubpageWrapper>
 		);
 
 		expect( screen.getByText( 'Add new email forwarding' ) ).toBeInTheDocument();
@@ -32,9 +32,9 @@ describe( 'SubPageWrapper', () => {
 
 	it( 'should render the children without the subpage header', () => {
 		render(
-			<SubPageWrapper subPageKey="non-existent">
+			<SubpageWrapper subpageKey="non-existent">
 				<span>Hello</span>
-			</SubPageWrapper>
+			</SubpageWrapper>
 		);
 
 		expect( screen.getByText( 'Hello' ) ).toBeInTheDocument();

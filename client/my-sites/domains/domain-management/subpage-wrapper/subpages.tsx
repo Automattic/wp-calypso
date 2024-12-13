@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import CardHeading from 'calypso/components/card-heading';
 
-type SubPageWrapperParamsType = {
+type SubpageWrapperParamsType = {
 	subPageKey: string;
 	title: string;
 	subtitle?: string;
@@ -12,7 +12,7 @@ type SubPageWrapperParamsType = {
 export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
 
 // Subpage params map
-const SUBPAGE_TO_PARAMS_MAP: Record< string, SubPageWrapperParamsType > = {
+const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	[ ADD_FOWARDING_EMAIL ]: {
 		subPageKey: ADD_FOWARDING_EMAIL,
 		title: __( 'Add new email forwarding' ),
@@ -22,6 +22,6 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubPageWrapperParamsType > = {
 	},
 };
 
-export const getSubPageParams = ( subPageKey: string ): SubPageWrapperParamsType => {
+export const getSubpageParams = ( subPageKey: string ): SubpageWrapperParamsType => {
 	return SUBPAGE_TO_PARAMS_MAP[ subPageKey ];
 };
