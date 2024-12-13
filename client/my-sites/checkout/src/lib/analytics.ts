@@ -59,7 +59,9 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
-	captureException( error.cause ? error.cause : error );
+	captureException( error, {
+		tags: { calypso_checkout: 'true', error_type: errorType, ...additionalData },
+	} );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
