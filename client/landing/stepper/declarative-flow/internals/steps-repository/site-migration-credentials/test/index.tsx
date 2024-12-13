@@ -435,7 +435,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Verifying credentials" on the Continue button during submission with application password', async () => {
+	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
@@ -446,7 +446,7 @@ describe( 'SiteMigrationCredentials', () => {
 		userEvent.click( continueButton() );
 
 		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
 	} );
 
@@ -605,7 +605,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Verifying credentials" on the Continue button during submission when fetching site info with application password', async () => {
+	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
@@ -621,7 +621,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
 	} );
 

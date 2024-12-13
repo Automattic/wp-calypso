@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -25,6 +26,8 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
+
 	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
 		useCredentialsForm( onSubmit );
 
@@ -43,6 +46,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 	const getContinueButtonText = () => {
 		if ( isBusy && ! canBypassVerification ) {
+			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
+			if ( applicationPasswordEnabled && hasScanningTranslation ) {
+				return translate( 'Scanning site' );
+			}
 			return translate( 'Verifying credentials' );
 		}
 		if ( canBypassVerification ) {
