@@ -4,6 +4,7 @@ import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_CLIENT_PAYMENT_METHODS_LINK,
 	A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
+	A4A_CLIENT_INVOICES_LINK,
 	A4A_CLIENT_CHECKOUT,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireClientAccessContext } from 'calypso/a8c-for-agencies/controller';
@@ -30,6 +31,13 @@ export default function () {
 		A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
 		requireClientAccessContext,
 		controller.clientPaymentMethodsAddContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_CLIENT_INVOICES_LINK,
+		requireClientAccessContext,
+		controller.clientInvoicesContext,
 		makeLayout,
 		clientRender
 	);

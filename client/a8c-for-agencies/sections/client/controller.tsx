@@ -3,6 +3,7 @@ import { getQueryArg } from '@wordpress/url';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import ClientSidebar from '../../components/sidebar-menu/client';
+import InvoicesOverview from '../purchases/invoices/invoices-overview';
 import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
 import PaymentMethodOverview from '../purchases/payment-methods/payment-method-overview';
 import ClientLanding from './client-landing';
@@ -50,6 +51,17 @@ export const clientPaymentMethodsAddContext: Callback = ( context, next ) => {
 	if ( ! agencyId ) {
 		context.secondary = <ClientSidebar path={ context.path } />;
 	}
+	next();
+};
+
+export const clientInvoicesContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Client > Invoices" path={ context.path } />
+			<InvoicesOverview />
+		</>
+	);
+	context.secondary = <ClientSidebar path={ context.path } />;
 	next();
 };
 
