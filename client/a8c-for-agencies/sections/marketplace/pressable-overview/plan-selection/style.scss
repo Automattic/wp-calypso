@@ -147,12 +147,17 @@
 
 		.components-radio-control__group-wrapper {
 			display: flex;
-			flex-direction: row;
-			gap: 24px;
+			flex-direction: column;
+			gap: 16px;
 			padding: 16px;
 			// stylelint-disable-next-line scales/radii
 			border-radius: 8px;
 			background-color: var(--color-neutral-0);
+
+			@include break-large {
+				flex-direction: row;
+				gap: 24px;
+			}
 		}
 
 		.components-radio-control__input[type="radio"]:checked {
