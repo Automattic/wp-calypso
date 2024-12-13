@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
+import { PLAN_CATEGORY_STANDARD } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
@@ -10,10 +11,11 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
-import CustomPressablePlanCardContent from './custom-pressable-plan-card-content';
-import PressablePlanSelectorCardContent from './pressable-plan-selector-card-content';
+import CustomPlanCardContent from './custom-plan-card-content';
+import RegularPlanCardContent from './regular-plan-card-content';
 
 import './style.scss';
+
 type Props = {
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 };
@@ -30,11 +32,11 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 		productSearchQuery: '',
 	} );
 
-	const planInfo = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
+	const selectedPlanInfo = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
 
 	const {
 		existingPlan,
-		pressablePlan,
+		pressablePlan: existingPlanInfo,
 		isReady: isExistingPlanFetched,
 	} = useExistingPressablePlan( {
 		plans: pressablePlans,
@@ -70,12 +72,13 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 					selectedPlan={ selectedPlan }
 					plans={ pressablePlans }
 					onSelectPlan={ setSelectedPlan }
-					pressablePlan={ pressablePlan }
+					pressablePlan={ existingPlanInfo }
 					isLoading={ ! isExistingPlanFetched }
+					showHighResourceTab
 				/>
 			</HostingPlanSection.Banner>
 		);
-	}, [ isExistingPlanFetched, pressablePlan, pressablePlans, selectedPlan ] );
+	}, [ isExistingPlanFetched, existingPlanInfo, pressablePlans, selectedPlan ] );
 
 	if ( ! selectedPlan ) {
 		return (
@@ -83,7 +86,7 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 				{ banner }
 
 				<HostingPlanSection.Card>
-					<CustomPressablePlanCardContent />
+					<CustomPlanCardContent />
 				</HostingPlanSection.Card>
 
 				<HostingPlanSection.Details heading={ translate( 'High Resource Sites' ) }>
@@ -146,18 +149,24 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 		);
 	}
 
+	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
+
 	return (
 		<HostingPlanSection className="pressable-plan-section">
 			{ banner }
 			<HostingPlanSection.Card>
-				<PressablePlanSelectorCardContent plan={ selectedPlan } onSelect={ onPlanAddToCart } />
+				<RegularPlanCardContent plan={ selectedPlan } onSelect={ onPlanAddToCart } />
 			</HostingPlanSection.Card>
 
-			<HostingPlanSection.Details heading={ selectedPlan.name }>
+			<HostingPlanSection.Details heading={ selectedPlan.name.replace( /Pressable/g, '' ) }>
 				<p>
-					{ translate(
-						'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
-					) }
+					{ isStandardPlan
+						? translate(
+								'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+						  )
+						: translate(
+								'With Signature Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+						  ) }
 				</p>
 
 				<SimpleList
@@ -167,9 +176,9 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 							'Up to {{b}}%(count)d WordPress installs{{/b}}',
 							{
 								args: {
-									count: planInfo?.install ?? 0,
+									count: selectedPlanInfo?.install ?? 0,
 								},
-								count: planInfo?.install ?? 0,
+								count: selectedPlanInfo?.install ?? 0,
 								components: {
 									b: <b />,
 								},
@@ -181,9 +190,9 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 							'Up to {{b}}%(count)d staging sites{{/b}}',
 							{
 								args: {
-									count: planInfo?.install ?? 0,
+									count: selectedPlanInfo?.install ?? 0,
 								},
-								count: planInfo?.install ?? 0,
+								count: selectedPlanInfo?.install ?? 0,
 								components: {
 									b: <b />,
 								},
@@ -192,7 +201,7 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 						),
 						translate( '{{b}}%(count)s visits{{/b}} per month*', {
 							args: {
-								count: formatNumber( planInfo?.visits ?? 0 ),
+								count: formatNumber( selectedPlanInfo?.visits ?? 0 ),
 							},
 							components: {
 								b: <b />,
@@ -201,7 +210,7 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 						} ),
 						translate( '{{b}}%(storageSize)dGB of storage*{{/b}}', {
 							args: {
-								storageSize: planInfo?.storage ?? 0,
+								storageSize: selectedPlanInfo?.storage ?? 0,
 							},
 							components: {
 								b: <b />,

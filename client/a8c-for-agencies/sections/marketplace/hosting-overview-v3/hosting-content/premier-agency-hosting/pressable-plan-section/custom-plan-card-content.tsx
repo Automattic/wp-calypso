@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 
-export default function CustomPressablePlanCardContent() {
+export default function CustomPlanCardContent() {
 	const translate = useTranslate();
 
 	return (
