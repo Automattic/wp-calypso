@@ -1,5 +1,8 @@
 import { Badge, Gridicon, Spinner } from '@automattic/components';
-import { useAddOnPurchaseStatus } from '@automattic/data-stores/src/add-ons';
+import {
+	useAddOnPurchaseStatus,
+	useStorageAddOnAvailability,
+} from '@automattic/data-stores/src/add-ons';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -103,7 +106,8 @@ const Container = styled.div`
 const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatured }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const availabilityStatus = useAddOnPurchaseStatus( { selectedSiteId, addOnMeta } );
+	const purchaseStatus = useAddOnPurchaseStatus( { selectedSiteId, addOnMeta } );
+	const available = useStorageAddOnAvailability( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
@@ -113,10 +117,10 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 	};
 
 	const shouldRenderLoadingState = addOnMeta.isLoading;
-	const shouldRenderPrimaryAction = availabilityStatus?.available && ! shouldRenderLoadingState;
-	const shouldRenderSecondaryAction = ! availabilityStatus?.available && ! shouldRenderLoadingState;
+	const shouldRenderPrimaryAction = purchaseStatus?.available && ! shouldRenderLoadingState;
+	const shouldRenderSecondaryAction = ! purchaseStatus?.available && ! shouldRenderLoadingState;
 
-	if ( availabilityStatus?.hidden ) {
+	if ( ! available && purchaseStatus.available ) {
 		return null;
 	}
 
@@ -151,10 +155,10 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 									{ actionSecondary.text }
 								</Button>
 							) }
-							{ availabilityStatus?.text && (
+							{ purchaseStatus?.text && (
 								<div className="add-ons-card__selected-tag">
 									<Gridicon icon="checkmark" className="add-ons-card__checkmark" />
-									<span>{ availabilityStatus.text }</span>
+									<span>{ purchaseStatus.text }</span>
 								</div>
 							) }
 						</>
