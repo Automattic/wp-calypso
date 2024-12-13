@@ -63,6 +63,9 @@ function PayPalSubmitButtonWrapper( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 } ) {
+	useEffect( () => {
+		throw new Error( 'testing error' );
+	}, [] );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	return (

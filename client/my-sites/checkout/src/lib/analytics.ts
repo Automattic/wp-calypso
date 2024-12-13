@@ -14,16 +14,17 @@ function serializeCaughtError(
 	// type. It can be used to keep another Error but it could also be anything
 	// else so let's not make any assumptions. Also things other than Error
 	// objects can be thrown so let's not even assume this is an Error.
-	error: unknown
+	error: unknown,
+	includeStack: boolean
 ): string {
 	const messages = [];
 	messages.push( getErrorMessageFromError( error ) );
 	const errorObject = error as Error;
 	if ( 'cause' in errorObject && errorObject.cause ) {
-		const cause = serializeCaughtError( errorObject.cause );
+		const cause = serializeCaughtError( errorObject.cause, includeStack );
 		messages.push( `(Cause: ${ cause })` );
 	}
-	if ( 'stack' in errorObject && errorObject.stack ) {
+	if ( includeStack && 'stack' in errorObject && errorObject.stack ) {
 		messages.push( `(Stack: ${ errorObject.stack })` );
 	}
 	return messages.join( '; ' );
@@ -46,7 +47,10 @@ function getErrorMessageFromError( error: unknown ): string {
  * handle other things like strings just fine.
  */
 export function convertErrorToString( error: Error ): string {
-	return serializeCaughtError( error );
+	// We do not include the Stack trace because it will be minified and won't
+	// be of much use. It makes the actual error message more difficult to
+	// read.
+	return serializeCaughtError( error, false );
 }
 
 export function logStashLoadErrorEvent(
