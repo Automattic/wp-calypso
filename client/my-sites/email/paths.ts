@@ -27,12 +27,8 @@ function resolveRootPath( relativeTo?: string | null ) {
 		return emailManagementAllSitesPrefix;
 	}
 
-	if ( isUnderEmailManagementAll( relativeTo ) ) {
+	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
 		return emailManagementAllSitesPrefix;
-	}
-
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
-		return domainsManagementPrefix;
 	}
 
 	return emailManagementPrefix;
@@ -79,7 +75,15 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+};
 
 // Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
 export function getAddGSuiteUsersPath(
