@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -27,7 +26,7 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
-	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
 		useCredentialsForm( onSubmit );
@@ -47,7 +46,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 	const getContinueButtonText = () => {
 		if ( isBusy && ! canBypassVerification ) {
-			const hasScanningTranslation = locale.startsWith( 'en' ) || hasTranslation( 'Scanning site' );
+			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
 			if ( applicationPasswordEnabled && hasScanningTranslation ) {
 				return translate( 'Scanning site' );
 			}
