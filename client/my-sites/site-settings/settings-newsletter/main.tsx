@@ -187,7 +187,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions, updateFields ] );
 
-	const onNewsletterCategoriesSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
+	const onSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
 		event?.preventDefault();
 
 		if (
@@ -204,14 +204,14 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	};
 
 	return (
-		<form onSubmit={ handleSubmitForm }>
+		<form onSubmit={ onSubmit }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="subscriptions"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Subscriptions' ) }
 			/>
@@ -270,7 +270,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				disabled={ disabled }
 				id="email-settings"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Email' ) }
 			/>
@@ -317,7 +317,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
 				showButton
-				onButtonClick={ onNewsletterCategoriesSubmit }
+				onButtonClick={ onSubmit }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
@@ -332,7 +332,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				disabled={ disabled }
 				id="messages"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Messages' ) }
 			/>
