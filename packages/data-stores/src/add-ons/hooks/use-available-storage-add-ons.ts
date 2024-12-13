@@ -30,8 +30,8 @@ const useAvailableStorageAddOns = ( { siteId }: Props ): AddOnMeta[] => {
 	return useMemo( () => {
 		return storageAddOns
 			.filter( ( addOn ) => addOn !== null )
-			.filter( ( addOn ) =>
-				isStorageQuantityAvailable( addOn.quantity ?? 0, siteMediaStorage.data?.maxStorageBytes )
+			.filter( ( addOn ): addOn is AddOnMeta =>
+				isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorage.data?.maxStorageBytes )
 			);
 	}, [ siteMediaStorage, storageAddOns ] );
 };
