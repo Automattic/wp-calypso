@@ -22,7 +22,7 @@ export default function PurchasesSite(
 				siteId?: number;
 		  }
 		| {
-				getManagePurchaseUrlFor: ( slug: string, purchaseId: number ) => string;
+				getManagePurchaseUrlFor?: ( slug: string, purchaseId: number ) => string;
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
