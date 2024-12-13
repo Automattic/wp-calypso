@@ -3,7 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 
-export default function CustomPlanCardContent() {
+type Props = {
+	isReferralMode?: boolean;
+};
+
+export default function CustomPlanCardContent( { isReferralMode }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -23,7 +27,7 @@ export default function CustomPlanCardContent() {
 				variant="primary"
 				href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 			>
-				{ translate( 'Contact us' ) }
+				{ isReferralMode ? translate( 'Contact us to refer' ) : translate( 'Contact us' ) }
 			</Button>
 		</div>
 	);

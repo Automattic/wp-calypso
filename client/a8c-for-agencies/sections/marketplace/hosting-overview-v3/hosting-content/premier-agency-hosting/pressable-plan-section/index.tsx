@@ -18,9 +18,10 @@ import './style.scss';
 
 type Props = {
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+	isReferralMode?: boolean;
 };
 
-export default function PressablePlanSection( { onSelect }: Props ) {
+export default function PressablePlanSection( { onSelect, isReferralMode }: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
@@ -32,7 +33,7 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 		productSearchQuery: '',
 	} );
 
-	const selectedPlanInfo = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
+	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
 	const {
 		existingPlan,
@@ -44,15 +45,19 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
-			setSelectedPlan( pressablePlans[ 0 ] );
+			setSelectedPlan(
+				isReferralMode
+					? pressablePlans.find( ( plan ) => plan.slug === 'pressable-build' ) ?? null
+					: pressablePlans[ 0 ]
+			);
 		}
-	}, [ pressablePlans, setSelectedPlan ] );
+	}, [ isReferralMode, pressablePlans, setSelectedPlan ] );
 
 	useEffect( () => {
-		if ( existingPlan ) {
+		if ( ! isReferralMode && existingPlan ) {
 			setSelectedPlan( existingPlan );
 		}
-	}, [ existingPlan ] );
+	}, [ existingPlan, isReferralMode ] );
 
 	const onPlanAddToCart = useCallback( () => {
 		if ( selectedPlan ) {
@@ -72,13 +77,15 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 					selectedPlan={ selectedPlan }
 					plans={ pressablePlans }
 					onSelectPlan={ setSelectedPlan }
-					pressablePlan={ existingPlanInfo }
+					pressablePlan={ isReferralMode ? null : existingPlanInfo }
 					isLoading={ ! isExistingPlanFetched }
 					showHighResourceTab
 				/>
 			</HostingPlanSection.Banner>
 		);
-	}, [ isExistingPlanFetched, existingPlanInfo, pressablePlans, selectedPlan ] );
+	}, [ selectedPlan, pressablePlans, isReferralMode, existingPlanInfo, isExistingPlanFetched ] );
+
+	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
 	if ( ! selectedPlan ) {
 		return (
@@ -86,10 +93,16 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 				{ banner }
 
 				<HostingPlanSection.Card>
-					<CustomPlanCardContent />
+					<CustomPlanCardContent isReferralMode={ isReferralMode } />
 				</HostingPlanSection.Card>
 
-				<HostingPlanSection.Details heading={ translate( 'High Resource Sites' ) }>
+				<HostingPlanSection.Details
+					heading={
+						isReferralMode
+							? translate( 'Refer High Resource Sites' )
+							: translate( 'High Resource Sites' )
+					}
+				>
 					<p>
 						{ translate(
 							'Single site plan add-ons designed to offer completely custom traffic and storage limits for your high profile clients that need more resources than the rest of your portfolio.'
@@ -149,25 +162,35 @@ export default function PressablePlanSection( { onSelect }: Props ) {
 		);
 	}
 
-	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
-
 	return (
 		<HostingPlanSection className="pressable-plan-section">
 			{ banner }
 			<HostingPlanSection.Card>
-				<RegularPlanCardContent plan={ selectedPlan } onSelect={ onPlanAddToCart } />
+				<RegularPlanCardContent
+					plan={ selectedPlan }
+					onSelect={ onPlanAddToCart }
+					isReferralMode={ isReferralMode }
+				/>
 			</HostingPlanSection.Card>
 
 			<HostingPlanSection.Details heading={ selectedPlan.name.replace( /Pressable/g, '' ) }>
-				<p>
-					{ isStandardPlan
-						? translate(
-								'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
-						  )
-						: translate(
-								'With Signature Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
-						  ) }
-				</p>
+				{ isReferralMode ? (
+					<p>
+						{ translate(
+							"When you refer a Pressable plan to your client, they'll pay and manage the billing. You'll manage the site, and make a recurring commission."
+						) }
+					</p>
+				) : (
+					<p>
+						{ isStandardPlan
+							? translate(
+									'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+							  )
+							: translate(
+									'With Signature Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+							  ) }
+					</p>
+				) }
 
 				<SimpleList
 					items={ [

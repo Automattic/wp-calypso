@@ -1,5 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
@@ -8,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import { MarketplaceTypeContext } from '../../../context';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';
@@ -26,9 +28,14 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 		dispatch( recordTracksEvent( 'a4a_hosting_premier_jetpack_complete_more_link_click' ) );
 	};
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
 	return (
 		<div className="premier-agency-hosting">
-			<PressablePlanSection onSelect={ onAddToCart } />
+			<PressablePlanSection
+				onSelect={ onAddToCart }
+				isReferralMode={ marketplaceType === 'referral' }
+			/>
 
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
 

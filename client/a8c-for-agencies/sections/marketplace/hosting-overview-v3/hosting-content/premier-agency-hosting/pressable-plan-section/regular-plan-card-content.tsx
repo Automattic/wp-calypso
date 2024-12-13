@@ -11,9 +11,10 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 type Props = {
 	plan: APIProductFamilyProduct;
 	onSelect: ( plan: APIProductFamilyProduct ) => void;
+	isReferralMode?: boolean;
 };
 
-export default function PressablePlanSelectorCard( { plan, onSelect }: Props ) {
+export default function PressablePlanSelectorCard( { plan, onSelect, isReferralMode }: Props ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
 
@@ -24,13 +25,22 @@ export default function PressablePlanSelectorCard( { plan, onSelect }: Props ) {
 		: { discountedCost: 0 };
 
 	const ctaLabel = useMemo( () => {
+		if ( isReferralMode ) {
+			return translate( 'Add %(planName)s to referral', {
+				args: {
+					planName: plan.name,
+				},
+				comment: '%(planName)s is the name of the plan.',
+			} );
+		}
+
 		return translate( 'Add %(planName)s to cart', {
 			args: {
 				planName: plan.name,
 			},
 			comment: '%(planName)s is the name of the plan.',
 		} );
-	}, [ plan.name, translate ] );
+	}, [ isReferralMode, plan.name, translate ] );
 
 	return (
 		<div className="pressable-plan-card-content">
