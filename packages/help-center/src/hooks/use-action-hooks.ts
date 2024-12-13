@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { isThisASupportArticleLink } from './use-content-filter';
@@ -12,6 +13,19 @@ export const useActionHooks = () => {
 	const helpCenterParam = queryParams.get( 'help-center' ) || '';
 
 	const actionHooks = [
+		/**
+		 * Open to the support doc for the Subscribe block.
+		 */
+		{
+			condition() {
+				return helpCenterParam === 'subscribe-block';
+			},
+			action() {
+				setShowSupportDoc(
+					localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/' )
+				);
+			},
+		},
 		/**
 		 * Open to a specific support doc.
 		 */
