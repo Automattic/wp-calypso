@@ -44,7 +44,7 @@ const useSignupFormValidation = () => {
 				newValidationError.agencyUrl = translate( `Please enter a valid URL` );
 			} else if ( ! ( await isSiteActive( payload.agencyUrl ) ) ) {
 				newValidationError.agencyUrl = translate(
-					`Please enter a live site URL for your business.`
+					`Please enter a live site URL for your business`
 				);
 			}
 
