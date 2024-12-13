@@ -76,7 +76,13 @@ export function logStashLoadErrorEvent(
 		message: additionalData.message
 			? String( additionalData.message )
 			: convertErrorToString( error ),
-		errorMessage: convertErrorToString( error ),
+		...( additionalData.message
+			? // No need to log the `errorMessage` separately if it's the same as
+			  // the `message` property.
+			  {
+					errorMessage: convertErrorToString( error ),
+			  }
+			: {} ),
 		tags: [ 'checkout-error-boundary' ],
 	} );
 }
