@@ -2,7 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .quick-links.foldable-card.card {
-	box-shadow: none;
 	@include breakpoint-deprecated( ">660px" ) {
 		border-radius: 3px;
 	}

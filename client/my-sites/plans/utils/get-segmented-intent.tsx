@@ -1,7 +1,7 @@
 import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
 import { SurveyData, SegmentedIntent } from 'calypso/signup/steps/initial-intent/types';
 
-export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
+export function getSegmentedIntent( answers?: SurveyData ): SegmentedIntent {
 	const surveyedGoals = answers?.[ 'what-are-your-goals' ];
 	const surveyedIntent = answers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 

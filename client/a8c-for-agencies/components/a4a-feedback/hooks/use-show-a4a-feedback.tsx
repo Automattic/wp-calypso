@@ -1,15 +1,23 @@
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
+import useSaveFeedbackMutation from './use-save-feedback-mutation';
 import type { Props as A4AFeedbackProps } from '../index';
-import type { FeedbackQueryData, FeedbackType, FeedbackProps } from '../types';
+import type {
+	FeedbackQueryData,
+	FeedbackType,
+	FeedbackProps,
+	FeedbackSurveyResponsesPayload,
+} from '../types';
 
 const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
@@ -42,6 +50,8 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	const [ feedbackInteracted, setFeedbackInteracted ] = useState( false );
 
+	const { mutate: saveFeedback, isPending, data: apiResponseData } = useSaveFeedbackMutation();
+
 	// Let's use hash #feedback if we want to show the feedback
 	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
 
@@ -64,18 +74,39 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		[ type, translate, args ]
 	);
 
+	const agencyId = useSelector( getActiveAgencyId );
+
 	// Do the action when submitting feedback
 	const onSubmitFeedback = useCallback(
 		( data: FeedbackQueryData ) => {
-			dispatch( recordTracksEvent( 'calypso_a4a_feedback_submit', { type } ) );
-			if ( data ) {
-				// TODO: Send feedback data to the backend
+			if ( ! data || ! agencyId ) {
+				return;
 			}
+			const { experience, comments } = data;
+			const params: FeedbackSurveyResponsesPayload = {
+				site_id: agencyId,
+				survey_id: type,
+				survey_responses: {
+					rating: experience,
+					comment: comments,
+				},
+			};
+
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_feedback_submit', {
+					agency_id: agencyId,
+					survey_id: params.survey_id,
+					rating: params.survey_responses.rating,
+				} )
+			);
+			saveFeedback( { params } );
+
 			setFeedbackInteracted( true );
 			const updatedPreference = getUpdatedPreference( feedbackTimestamp, type, 'lastSubmittedAt' );
 			dispatch( savePreference( FEEDBACK_PREFERENCE, updatedPreference ) );
 		},
-		[ dispatch, feedbackTimestamp, type ]
+
+		[ agencyId, dispatch, feedbackTimestamp, saveFeedback, type ]
 	);
 
 	// Do action when skipping feedback
@@ -96,16 +127,44 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		[ feedbackProps, onSubmitFeedback, onSkipFeedback ]
 	);
 
-	if ( feedbackFormHash && ! showFeedback ) {
-		// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
-		// If feedback was interacted, redirect to the URL passed in the feedbackProps
-		redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
-	}
+	useEffect( () => {
+		if ( apiResponseData?.success ) {
+			// Show success notice
+			dispatch(
+				successNotice(
+					translate(
+						'Thanks! Our team will use your feedback to help prioritize improvements to Automattic for Agencies.'
+					),
+					{
+						displayOnNextPage: true,
+						id: 'submit-product-feedback-success',
+						duration: 2000,
+					}
+				)
+			);
+		}
+
+		if ( feedbackFormHash && ! showFeedback && ! isPending ) {
+			// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
+			// If feedback was interacted, redirect to the URL passed in the feedbackProps
+			redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
+		}
+	}, [
+		apiResponseData,
+		dispatch,
+		feedbackFormHash,
+		feedbackInteracted,
+		feedbackProps,
+		isPending,
+		showFeedback,
+		translate,
+	] );
 
 	return {
 		isFeedbackShown: ! showFeedback,
 		showFeedback: feedbackFormHash && showFeedback,
 		feedbackProps: updatedFeedbackProps,
+		isSubmitting: isPending,
 	};
 };
 

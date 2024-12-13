@@ -33,9 +33,6 @@ export default function AgencyTierOverview() {
 	const currentAgencyTier = agency?.tier?.id;
 	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTier, translate );
 
-	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/';
-
 	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
 	// todo: Restore this. We have to hide temporary the 'Download your badges' button until the WooCommerce ones are ready
@@ -87,7 +84,7 @@ export default function AgencyTierOverview() {
 											a: (
 												<a
 													target="_blank"
-													href={ learnMoreLink }
+													href={ currentAgencyTierInfo.learnMoreLink }
 													onClick={ () => {
 														dispatch(
 															recordTracksEvent( 'calypso_a4a_agency_tier_badge_learn_more_click', {

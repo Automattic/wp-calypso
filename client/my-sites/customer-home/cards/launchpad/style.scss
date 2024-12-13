@@ -8,7 +8,7 @@
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	margin-bottom: 16px;
 
-	@include break-mobile {
+	@include break-small {
 		border-radius: 3px;
 	}
 

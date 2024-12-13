@@ -125,7 +125,7 @@ export const matchSupportInteractionId = (
 };
 
 export const isUseHelpCenterExperienceEnabled = ( userId: number ): boolean => {
-	if ( ! userId || userId % 100 < 75 ) {
+	if ( ! userId || userId % 100 > 75 ) {
 		return false;
 	}
 	return true;

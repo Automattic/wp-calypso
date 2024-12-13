@@ -25,13 +25,15 @@ export function useSite() {
 
 	// Request the site for the redux store
 	useEffect( () => {
-		dispatch( ( d, getState ) => {
-			const state = getState();
-			if ( getSite( state, siteIdOrSlug ) || isRequestingSite( state, siteIdOrSlug ) ) {
-				return;
-			}
-			d( requestSite( siteIdOrSlug ) );
-		} );
+		if ( siteIdOrSlug ) {
+			dispatch( ( d, getState ) => {
+				const state = getState();
+				if ( getSite( state, siteIdOrSlug ) || isRequestingSite( state, siteIdOrSlug ) ) {
+					return;
+				}
+				d( requestSite( siteIdOrSlug ) );
+			} );
+		}
 	}, [ dispatch, siteIdOrSlug ] );
 
 	if ( siteIdOrSlug && site ) {

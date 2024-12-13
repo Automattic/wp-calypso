@@ -2,15 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .app-promo {
-	&.customer-home__card.card {
-		border-bottom: none;
-
-		@include break-large {
-			padding-left: 48px;
-			box-shadow: none;
-		}
-	}
-
 	.app-promo__icon {
 		display: block;
 		margin: 0 auto 6px;

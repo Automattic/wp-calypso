@@ -64,6 +64,7 @@ export { default as isSingleUserSite } from './is-single-user-site';
 export { default as isSiteConflicting } from './is-site-conflicting';
 export { default as isSitePreviewable } from './is-site-previewable';
 export { default as isSSOEnabled } from './is-sso-enabled';
+export { default as isWpcomSite } from './is-wpcom-site';
 export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-active';
 export { default as getSelectedSiteWithFallback } from './get-site-with-fallback';
 export { default as getSiteThemeInstallUrl } from './get-site-theme-install-url';

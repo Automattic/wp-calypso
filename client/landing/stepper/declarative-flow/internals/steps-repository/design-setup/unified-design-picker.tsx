@@ -23,7 +23,7 @@ import {
 	isAssemblerDesign,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -130,6 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const translate = useTranslate();
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
@@ -212,6 +213,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			seed: siteSlugOrId ? String( siteSlugOrId ) : undefined,
+			goals: goals.length > 0 ? goals : [ 'none' ],
 			_locale: locale,
 		},
 		{
@@ -233,7 +235,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		isMultiSelection: isGoalCentricFeature,
 	} );
 
-	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
+	const { commonFilterProperties } = useTrackFilters( {
 		preselectedFilters: categorizationOptions.defaultSelections,
 		isBigSkyEligible,
 		isMultiSelection: isGoalCentricFeature,
@@ -242,19 +244,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
-		handleSelect: handleSelectFilter,
-		handleDeselect: handleDeselectFilter,
 	} );
 
 	const designPickerFilters = useDesignPickerFilters();
-
-	const handleChangeTier = ( value: boolean ) => {
-		if ( value ) {
-			handleSelectFilter( 'free', 'included_with_plan' );
-		} else {
-			handleDeselectFilter( 'free', 'included_with_plan' );
-		}
-	};
 
 	// ********** Logic for selecting a design and style variation
 	const {
@@ -316,7 +308,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design,
 			} ),
-			category: categorization.selections?.join( ',' ),
+			categories: categorization.selections?.join( ',' ),
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -348,7 +340,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
-			category: categorization?.selections?.join( ',' ),
+			categories: categorization?.selections?.join( ',' ),
 		} );
 	}
 
@@ -692,7 +684,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			handleSubmit(
 				{
 					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selections?.join( ',' ),
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
@@ -708,6 +699,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
 		if ( ! isAssemblerDesign( _selectedDesign ) ) {
 			recordSelectedDesign( {
+				...commonFilterProperties,
 				flow,
 				intent,
 				design: _selectedDesign,
@@ -721,6 +713,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		submit?.( {
 			...providedDependencies,
 			...getDesignTypeProps( _selectedDesign ),
+			eventProps: commonFilterProperties,
 		} );
 	}
 
@@ -914,7 +907,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const heading = (
 		<FormattedHeader
 			id="step-header"
-			headerText={ translate( 'Pick a design' ) }
+			headerText={
+				hasEnTranslation( 'Pick a theme' )
+					? translate( 'Pick a theme' )
+					: translate( 'Pick a design' )
+			}
 			subHeaderText={ translate(
 				'One of these homepage options could be great to start with. You can always change later.'
 			) }
@@ -926,47 +923,42 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		categorization.selections = [ 'blog' ];
 	}
 
-	const stepContent = (
-		<UnifiedDesignPicker
-			designs={ designs }
-			locale={ locale }
-			onPreview={ previewDesign }
-			onChangeVariation={ onChangeVariation }
-			onViewAllDesigns={ trackAllDesignsView }
-			heading={ heading }
-			categorization={ categorization }
-			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-			getBadge={ getBadge }
-			oldHighResImageLoading={ oldHighResImageLoading }
-			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-			showActiveThemeBadge={ intent !== 'build' }
-			isTierFilterEnabled={ isGoalCentricFeature }
-			isMultiFilterEnabled={ isGoalCentricFeature }
-			onChangeTier={ handleChangeTier }
-		/>
-	);
+	function onDesignWithAI() {
+		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
+		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
+	}
 
-	const bigSkyButtons = (
+	const bigSkyButton = isBigSkyEligible && (
 		<>
-			{ isBigSkyEligible && (
-				<Button
-					onClick={ () => {
-						navigate(
-							`/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site.ID }`
-						);
-						recordTracksEvent(
-							'calypso_design_picker_big_sky_button_click',
-							commonFilterProperties
-						);
-					} }
-				>
-					{ translate( 'Create yours with AI' ) }
-				</Button>
-			) }
+			<Button onClick={ onDesignWithAI }>{ translate( 'Design with AI' ) }</Button>
 			<TrackComponentView
 				eventName="calypso_design_picker_big_sky_button_impression"
 				eventProperties={ commonFilterProperties }
+			/>
+		</>
+	);
+
+	const stepContent = (
+		<>
+			<div className="setup-container__big-sky-container">{ bigSkyButton }</div>
+			<UnifiedDesignPicker
+				designs={ designs }
+				locale={ locale }
+				onDesignWithAI={ onDesignWithAI }
+				onPreview={ previewDesign }
+				onChangeVariation={ onChangeVariation }
+				onViewAllDesigns={ trackAllDesignsView }
+				heading={ heading }
+				categorization={ categorization }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				getBadge={ getBadge }
+				oldHighResImageLoading={ oldHighResImageLoading }
+				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+				showActiveThemeBadge={ intent !== 'build' }
+				isMultiFilterEnabled={ isGoalCentricFeature }
+				isBigSkyEligible={ isBigSkyEligible }
+				recommendedDesignSlugs={ allDesigns?.recommendation || [] }
 			/>
 		</>
 	);
@@ -979,7 +971,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			hideFormattedHeader
 			hideSkip
 			backLabelText={ translate( 'Back' ) }
-			customizedActionButtons={ bigSkyButtons }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
