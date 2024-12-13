@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 
 const BANNER_NAME = 'ai_translations_banner';
@@ -10,9 +11,10 @@ const BANNER_NAME = 'ai_translations_banner';
 export default function AITranslationsBanner() {
 	const translate = useTranslate();
 	const localeSuggestions = useSelector( getLocaleSuggestions );
-	const isCurrentlyUsingAITranslatedLocale = isAITranslatedLocale( translate.localeSlug );
+	const userLocaleSlug = useSelector( getCurrentUserLocale );
+	const isCurrentlyUsingAITranslatedLocale = isAITranslatedLocale( userLocaleSlug );
 
-	if ( ! isDefaultLocale( translate.localeSlug ) && ! isCurrentlyUsingAITranslatedLocale ) {
+	if ( ! isDefaultLocale( userLocaleSlug ) && ! isCurrentlyUsingAITranslatedLocale ) {
 		return null;
 	}
 
@@ -28,7 +30,7 @@ export default function AITranslationsBanner() {
 	}
 
 	const localeSlug = isCurrentlyUsingAITranslatedLocale
-		? translate.localeSlug
+		? userLocaleSlug
 		: localeSuggestions?.[ 0 ]?.locale;
 
 	const language = getLanguage( localeSlug );
