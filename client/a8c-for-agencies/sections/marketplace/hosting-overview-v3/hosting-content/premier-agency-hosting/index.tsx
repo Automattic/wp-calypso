@@ -5,14 +5,20 @@ import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premi
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
+import PressablePlanSection from './pressable-plan-section';
 
 import './style.scss';
 
-export default function PremierAgencyHosting() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -22,6 +28,8 @@ export default function PremierAgencyHosting() {
 
 	return (
 		<div className="premier-agency-hosting">
+			<PressablePlanSection onSelect={ onAddToCart } />
+
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
 
 			<HostingAdditionalFeaturesSection
