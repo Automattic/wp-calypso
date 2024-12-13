@@ -1,11 +1,14 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PlanSlug,
 	getPlan,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
@@ -18,6 +21,7 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { StepProps } from '../../types';
+import './style.scss';
 
 type StepContainerProps = React.ComponentProps< typeof StepContainer >;
 
@@ -35,6 +39,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	customizedActionButtons,
 	...props
 } ) => {
+	const showVariants = config.isEnabled( 'migration-flow/experiment' );
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
@@ -57,10 +62,11 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
-	const goToMigrationAssistanceCheckout = ( userAcceptedDeal = false ) => {
+	const goToMigrationAssistanceCheckout = ( planSlug: PlanSlug, userAcceptedDeal = false ) => {
+		const plan = getPlan( planSlug );
 		navigation?.submit?.( {
 			goToCheckout: true,
-			plan: plan.getPathSlug ? plan.getPathSlug() : '',
+			plan: plan?.getPathSlug ? plan.getPathSlug() : '',
 			userAcceptedDeal,
 		} );
 	};
@@ -74,9 +80,9 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => {
+					onConfirm={ ( planSlug: PlanSlug ) => {
 						const userAcceptedDeal = true;
-						goToMigrationAssistanceCheckout( userAcceptedDeal );
+						goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
 					} }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
@@ -88,9 +94,9 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle
-				onCtaClick={ () => {
+				onCtaClick={ ( planSlug: PlanSlug ) => {
 					const userAcceptedDeal = false;
-					goToMigrationAssistanceCheckout( userAcceptedDeal );
+					goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
 				} }
 				onFreeTrialClick={ () => {
 					navigation.submit?.( {
@@ -105,15 +111,44 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 				trackingEventsProps={ customTracksEventProps }
 				visiblePlan={ plan.getStoreSlug() }
+				showVariants={ showVariants }
 			/>
 		</>
 	);
 
-	const headerText =
+	const className = clsx(
+		'is-step-site-migration-upgrade-plan',
+		showVariants && 'is-step-site-migration-upgrade-plan-with-variants'
+	);
+
+	let headerText =
 		props.headerText ??
 		( hasEnTranslation( 'Upgrade your plan' )
 			? translate( 'Upgrade your plan' )
 			: translate( 'Upgrade your plan to migrate your site' ) );
+
+	showVariants && ( headerText = translate( 'There is a plan for you' ) );
+
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+
+	let subHeaderText = hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
+		? translate( 'Migrations are exclusive to the %(planName)s plan.', {
+				args: {
+					planName,
+				},
+		  } )
+		: translate(
+				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+		  );
+	showVariants &&
+		( subHeaderText = translate(
+			'A %(planName)s plan is needed for Migrations. Pick one of the following options to tap into our lightning-fast infrastructure. Your site will be faster, smoother, and ready for anything.',
+			{
+				args: {
+					planName,
+				},
+			}
+		) );
 
 	return (
 		<>
@@ -121,28 +156,19 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 			<StepContainer
 				stepName="site-migration-upgrade-plan"
 				shouldHideNavButtons={ false }
-				className="is-step-site-migration-upgrade-plan"
+				className={ className }
 				goBack={ navigation.goBack }
 				skipLabelText={ skipLabelText }
 				skipButtonAlign={ skipPosition }
 				goNext={ onSkip }
 				hideSkip={ ! onSkip }
+				isWideLayout={ showVariants }
 				customizedActionButtons={ customizedActionButtons }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
 						headerText={ headerText }
-						subHeaderText={
-							hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
-								? translate( 'Migrations are exclusive to the %(planName)s plan.', {
-										args: {
-											planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-										},
-								  } )
-								: translate(
-										'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-								  )
-						}
+						subHeaderText={ subHeaderText }
 						align="center"
 						subHeaderAlign="center"
 					/>

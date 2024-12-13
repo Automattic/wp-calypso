@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { translate, getLocaleSlug } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
@@ -14,6 +14,7 @@ import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-ver
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -53,15 +54,13 @@ const usePerformanceReport = (
 
 	const [ retestState, setRetestState ] = useState( 'idle' );
 
-	const localeSlug = getLocaleSlug();
-
 	const {
 		data: basicMetrics,
 		isError: isBasicMetricsError,
 		isFetched: isBasicMetricsFetched,
 		isLoading: isLoadingBasicMetrics,
 		refetch: requeueAdvancedMetrics,
-	} = useUrlBasicMetricsQuery( url, hash, true, localeSlug );
+	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	useEffect( () => {
 		if ( token && finalUrl ) {
@@ -82,7 +81,7 @@ const usePerformanceReport = (
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
-	} = useUrlPerformanceInsightsQuery( url, token ?? hash, localeSlug );
+	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -145,6 +144,7 @@ export const SitePerformance = () => {
 	const { getSiteSetting } = useSiteSettings( site?.slug );
 	const blog_public = getSiteSetting( 'blog_public' );
 	const isSitePublic = site && blog_public === 1;
+	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -373,6 +373,10 @@ export const SitePerformance = () => {
 						},
 					}
 			  );
+
+	if ( ! isSiteAtomic ) {
+		return null;
+	}
 
 	return (
 		<div className="site-performance">

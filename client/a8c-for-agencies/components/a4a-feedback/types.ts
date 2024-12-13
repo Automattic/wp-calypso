@@ -16,3 +16,17 @@ export type FeedbackProps = {
 	ctaText: string;
 	redirectUrl?: string;
 };
+
+interface FeedbackSurveyResponses {
+	rating: string;
+	comment: string;
+}
+export interface FeedbackSurveyResponsesPayload {
+	site_id: number;
+	survey_id: FeedbackType;
+	survey_responses: FeedbackSurveyResponses;
+}
+
+export interface MutationSaveFeedbackVariables {
+	params: FeedbackSurveyResponsesPayload;
+}

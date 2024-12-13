@@ -133,7 +133,7 @@ export class LoginForm extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		} );
 		// Remove url param to keep the last used login consistent upon refresh
 		const url = new URL( window.location );

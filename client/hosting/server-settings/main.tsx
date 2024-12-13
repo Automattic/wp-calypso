@@ -38,6 +38,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -177,6 +178,10 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
 
 	const siteId = useSelector( getSelectedSiteId );
+
+	const requestingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, siteId )
+	);
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
 	);
@@ -294,6 +299,10 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		( ! isLoadingSftpData || isECommerceTrial ) &&
 		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
+
+	if ( requestingSiteFeatures ) {
+		return null;
+	}
 
 	return (
 		<Panel wide className="page-server-settings">
