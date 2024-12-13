@@ -14,7 +14,10 @@ function serializeCaughtError(
 	// type. It can be used to keep another Error but it could also be anything
 	// else so let's not make any assumptions. Also things other than Error
 	// objects can be thrown so let's not even assume this is an Error.
-	error: unknown
+	error: unknown,
+	options: {
+		excludeStack?: boolean;
+	} = {}
 ): string {
 	const messages = [];
 	messages.push( getErrorMessageFromError( error ) );
@@ -22,13 +25,13 @@ function serializeCaughtError(
 	const errorObject = error as Error;
 	if ( 'cause' in errorObject && errorObject.cause ) {
 		hasCause = true;
-		const cause = serializeCaughtError( errorObject.cause );
+		const cause = serializeCaughtError( errorObject.cause, options );
 		messages.push( `(Cause: ${ cause })` );
 	}
 	// We only include the stack trace if there is no cause, meaning this is
 	// the deepest error in the chain. The others are all likely re-thrown
 	// errors so we should know their stack trace already.
-	if ( ! hasCause && 'stack' in errorObject && errorObject.stack ) {
+	if ( ! options?.excludeStack && ! hasCause && 'stack' in errorObject && errorObject.stack ) {
 		messages.push( `(Stack: ${ errorObject.stack })` );
 	}
 	return messages.join( '; ' );
@@ -59,7 +62,14 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
-	captureException( error.cause ? error.cause : error );
+	captureException( error, {
+		tags: {
+			serialized_message: serializeCaughtError( error, { excludeStack: true } ),
+			calypso_checkout: 'true',
+			error_type: errorType,
+			...additionalData,
+		},
+	} );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
