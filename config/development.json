@@ -162,7 +162,7 @@
 		"publicize-preview": true,
 		"purchases/billing-history-data-view": true,
 		"purchases/new-payment-methods": true,
-		"purchases/purchase-list-dataview": false,
+		"purchases/purchase-list-dataview": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
