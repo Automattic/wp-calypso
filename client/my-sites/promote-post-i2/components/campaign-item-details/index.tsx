@@ -357,7 +357,9 @@ export default function CampaignItemDetails( props: Props ) {
 			);
 		}
 
-		if ( ! Array.isArray( data ) || ! data.length ) {
+		// Data should be an array with at least 2 elements. The reason is the necessity to overcome
+		// uPlot's bug of having an infinite loop https://github.com/leeoniya/uPlot/issues/827.
+		if ( ! Array.isArray( data ) || data.length < 2 ) {
 			return (
 				<div>
 					{ translate(
