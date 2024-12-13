@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import {
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
-	CAN_SET_DOTBLOG_AS_PRIMARY,
+	CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024,
 } from 'calypso/state/current-user/constants';
 import PrimaryDomainSelector from '../index';
 
@@ -218,7 +218,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.getByText( 'custom.com' ) ).toBeInTheDocument();
 	} );
 
-	test( 'shows dropdown for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and .blog domain and allows selecting the .blog domain', () => {
+	test( 'shows dropdown for free plan users with CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 flag and .blog domain and allows selecting the .blog domain', () => {
 		renderComponent(
 			{
 				site: {
@@ -238,7 +238,7 @@ describe( 'PrimaryDomainSelector', () => {
 			},
 			{
 				currentUser: {
-					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 ],
 				},
 			}
 		);
@@ -253,7 +253,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( submitButton ).toBeEnabled();
 	} );
 
-	test( 'shows upgrade message for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and no .blog domain', () => {
+	test( 'shows upgrade message for free plan users with CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 flag and no .blog domain', () => {
 		renderComponent(
 			{
 				site: {
@@ -273,7 +273,7 @@ describe( 'PrimaryDomainSelector', () => {
 			},
 			{
 				currentUser: {
-					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 ],
 				},
 			}
 		);
@@ -286,7 +286,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows upgrade message for free plan users without CAN_SET_DOTBLOG_AS_PRIMARY flag and .blog domain', () => {
+	test( 'shows upgrade message for free plan users without CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 flag and .blog domain', () => {
 		renderComponent(
 			{
 				site: {
@@ -319,7 +319,7 @@ describe( 'PrimaryDomainSelector', () => {
 		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows error and disables button for free plan users with CAN_SET_DOTBLOG_AS_PRIMARY flag and having a .blog domain, but a non .blog domain is selected', () => {
+	test( 'shows error and disables button for free plan users with CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 flag and having a .blog domain, but a non .blog domain is selected', () => {
 		renderComponent(
 			{
 				site: {
@@ -339,7 +339,7 @@ describe( 'PrimaryDomainSelector', () => {
 			},
 			{
 				currentUser: {
-					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAN_SET_DOTBLOG_AS_PRIMARY ],
+					flags: [ NON_PRIMARY_DOMAINS_TO_FREE_USERS, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 ],
 				},
 			}
 		);

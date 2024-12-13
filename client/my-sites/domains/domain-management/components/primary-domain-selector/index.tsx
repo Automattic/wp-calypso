@@ -11,7 +11,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getTld } from 'calypso/lib/domains';
 import { useSelector } from 'calypso/state';
 import {
-	CAN_SET_DOTBLOG_AS_PRIMARY,
+	CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
 } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -42,7 +42,7 @@ const PrimaryDomainSelector = ( {
 
 	const hasDotBlogDomainAndCanSetDotBlogAsPrimary = useSelector(
 		( state ) =>
-			currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY ) &&
+			currentUserHasFlag( state, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 ) &&
 			domains?.some(
 				( domain ) => ! domain.wpcom_domain && 'blog'.startsWith( getTld( domain.domain ) )
 			)
@@ -68,7 +68,7 @@ const PrimaryDomainSelector = ( {
 			selectedDomain &&
 			( 'blog'.startsWith( getTld( selectedDomain ) )
 				? canUserSetPrimaryDomainOnThisSite ||
-				  currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY )
+				  currentUserHasFlag( state, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 )
 				: canUserSetPrimaryDomainOnThisSite )
 	);
 

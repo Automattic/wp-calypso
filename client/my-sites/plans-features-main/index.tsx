@@ -60,7 +60,7 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { CAN_SET_DOTBLOG_AS_PRIMARY } from 'calypso/state/current-user/constants';
+import { CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -250,7 +250,7 @@ const PlansFeaturesMain = ( {
 
 	const isCustomDomainAllowedAsPrimaryOnFreePlan = useSelector( ( state: IAppState ) =>
 		Boolean(
-			currentUserHasFlag( state, CAN_SET_DOTBLOG_AS_PRIMARY ) &&
+			currentUserHasFlag( state, CAMPAIGN_PRIMARY_DOTBLOG_ON_FREE_2024 ) &&
 				paidDomainName &&
 				'blog'.startsWith( getTld( paidDomainName ) )
 		)
