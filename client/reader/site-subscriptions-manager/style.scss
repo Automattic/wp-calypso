@@ -29,12 +29,11 @@
 	}
 }
 
-.site-subscriptions-manager {
+body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 	&.main {
 		max-width: 1168px;
 		min-height: 100vh;
 		margin: 0 auto;
-		padding: 0 32px;
 
 		@media (max-width: $break-small) {
 			padding: 0 16px;
