@@ -121,9 +121,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
 
-	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment( {
-		isEligible: flow === ONBOARDING_FLOW,
-	} );
+	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const { isEligible } = useIsBigSkyEligible();
