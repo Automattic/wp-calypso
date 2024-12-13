@@ -1,0 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-layout.domains-overview .domains-overview__details .item-preview__content {
+    @include break-large {
+        padding-top: 24px;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+.a4a-layout.domains-overview .domains-overview__details .section-nav-tabs__list {
+    box-sizing: border-box;
+    overflow-x: auto;
+}

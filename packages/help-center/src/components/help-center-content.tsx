@@ -107,7 +107,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		if ( containerRef.current && ! location.hash && ! location.pathname.includes( '/odie' ) ) {
+		if (
+			containerRef.current &&
+			! location.hash &&
+			! location.pathname.includes( '/odie' ) &&
+			! location.pathname.includes( '/post' )
+		) {
 			containerRef.current.scrollTo( 0, 0 );
 		}
 	}, [ location ] );
