@@ -5,6 +5,8 @@ import { AgencyDetailsPayload } from '../types';
 
 export const CAPTURE_URL_RGX =
 	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
+const CAPTURE_SOCIAL_URL_RGX =
+	/^(https?:\/\/)?(www\.)?(facebook\.com|linkedin\.com|instagram\.com)(\/.*)?$/i;
 
 type ValidationState = {
 	firstName?: string;
@@ -42,7 +44,10 @@ const useSignupFormValidation = () => {
 				newValidationError.agencyUrl = translate( `Agency URL can't be empty` );
 			} else if ( ! CAPTURE_URL_RGX.test( payload.agencyUrl ) ) {
 				newValidationError.agencyUrl = translate( `Please enter a valid URL` );
-			} else if ( ! ( await isSiteActive( payload.agencyUrl ) ) ) {
+			} else if (
+				CAPTURE_SOCIAL_URL_RGX.test( payload.agencyUrl ) ||
+				! ( await isSiteActive( payload.agencyUrl ) )
+			) {
 				newValidationError.agencyUrl = translate(
 					`Please enter a live site URL for your business`
 				);
