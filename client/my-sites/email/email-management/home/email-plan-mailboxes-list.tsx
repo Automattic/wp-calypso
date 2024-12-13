@@ -63,7 +63,7 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	if ( isNoMailboxes ) {
+	if ( isNoMailboxes && configuringStateMode === 'message' ) {
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
@@ -73,36 +73,51 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	const mailboxItems = mailboxes.map( ( mailbox ) => {
-		const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
+	const MailboxItems = () =>
+		mailboxes.map( ( mailbox ) => {
+			const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 
-		return (
-			<>
-				<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
-					<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-						<MailboxLink account={ account } mailbox={ mailbox } readonly={ isGoogleConfiguring } />
-						<EmailForwardSecondaryDetails mailbox={ mailbox } />
-					</div>
-					{ isEmailUserAdmin( mailbox ) && (
-						<Badge type="info">
-							{ translate( 'Admin', {
-								comment: 'Email user role displayed as a badge',
-							} ) }
-						</Badge>
-					) }
+			return (
+				<>
+					<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
+						<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+							<MailboxLink
+								account={ account }
+								mailbox={ mailbox }
+								readonly={ isGoogleConfiguring }
+							/>
+							<EmailForwardSecondaryDetails mailbox={ mailbox } />
+						</div>
+						{ isEmailUserAdmin( mailbox ) && (
+							<Badge type="info">
+								{ translate( 'Admin', {
+									comment: 'Email user role displayed as a badge',
+								} ) }
+							</Badge>
+						) }
 
-					<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-					{ ! mailbox.temporary && ! isGoogleConfiguring && (
-						<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
-					) }
-				</MailboxListItem>
-			</>
-		);
-	} );
+						<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+						{ ! mailbox.temporary && ! isGoogleConfiguring && (
+							<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+						) }
+					</MailboxListItem>
+				</>
+			);
+		} );
+
+	const MailboxItemsEmpty = () => (
+		<MailboxListItem>
+			<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+				<div className="email-plan-mailboxes-list__mailbox-list-link">
+					<span>{ domain.domain }</span>
+				</div>
+			</div>
+		</MailboxListItem>
+	);
 
 	return (
 		<>
-			{ configuringStateMode === 'notice' && account?.warnings.length && (
+			{ configuringStateMode === 'notice' && !! account?.warnings.length && (
 				<Notice
 					className="email-plan-mailboxes-list__notice"
 					status="is-warning"
@@ -123,7 +138,7 @@ function EmailPlanMailboxesList( {
 				domain={ domain }
 				disableActions={ isGoogleConfiguring }
 			>
-				{ mailboxItems }
+				{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
 			</MailboxListHeader>
 		</>
 	);
