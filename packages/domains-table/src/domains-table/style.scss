@@ -424,3 +424,37 @@ a.domains-table-view-email-button {
 		color: var(--color-link);
 	}
 }
+
+main.domains-overview main.domains-overview__list .a4a-layout-column__container {
+	.domains-table {
+		margin-top: 0;
+	}
+
+	.domains-table .domains-table-toolbar {
+		padding: 12px 24px;
+		margin: 0;
+	}
+
+	.domains-table-search {
+		width: 100%;
+	}
+
+	.domains-table-search .components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.domains-table-search .components-input-base {
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.domains-table-toolbar {
+		border-block-end: 1px solid var(--color-border-secondary);
+	}
+
+	.domains-table__row td.domains-table-row__domain,
+	.domains-table__row td.domains-table-row__actions {
+		padding: 16px 24px;
+		margin-inline-start: 0;
+	}
+}

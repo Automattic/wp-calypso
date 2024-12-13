@@ -38,6 +38,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import { useTracksEventOnFilterChange } from '../hooks/use-tracks-event-on-filter-change';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -323,6 +324,8 @@ const SitesDashboard = ( {
 			} );
 		}
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
+
+	useTracksEventOnFilterChange( dataViewsState.filters ?? [] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = () => {

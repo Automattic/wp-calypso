@@ -9,11 +9,52 @@ import {
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
-export function convertErrorToString( error: Error ): string {
-	if ( error.cause ) {
-		return `${ error }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
+function serializeCaughtError(
+	// This may come from Error.cause which I'm pretty sure has no defined
+	// type. It can be used to keep another Error but it could also be anything
+	// else so let's not make any assumptions. Also things other than Error
+	// objects can be thrown so let's not even assume this is an Error.
+	error: unknown,
+	options: {
+		excludeStack?: boolean;
+	} = {}
+): string {
+	const messages = [];
+	messages.push( getErrorMessageFromError( error ) );
+	let hasCause = false;
+	const errorObject = error as Error;
+	if ( 'cause' in errorObject && errorObject.cause ) {
+		hasCause = true;
+		const cause = serializeCaughtError( errorObject.cause, options );
+		messages.push( `(Cause: ${ cause })` );
 	}
-	return `${ error }; Stack: ${ error.stack }`;
+	// We only include the stack trace if there is no cause, meaning this is
+	// the deepest error in the chain. The others are all likely re-thrown
+	// errors so we should know their stack trace already.
+	if ( ! options?.excludeStack && ! hasCause && 'stack' in errorObject && errorObject.stack ) {
+		messages.push( `(Stack: ${ errorObject.stack })` );
+	}
+	return messages.join( '; ' );
+}
+
+function getErrorMessageFromError( error: unknown ): string {
+	const errorObject = error as Error;
+	if ( 'message' in errorObject && errorObject.message ) {
+		return `Message: ${ errorObject.message }`;
+	}
+	return `Non-Error: ${ error }`;
+}
+
+/**
+ * Convert a thrown error to a string for logging.
+ *
+ * I've typed this function as requiring an Error because that's the intended
+ * behavior and I'd like TypeScript to enforce that as best as it can. However,
+ * other things can be thrown besides Error objects and so this will actually
+ * handle other things like strings just fine.
+ */
+export function convertErrorToString( error: Error ): string {
+	return serializeCaughtError( error );
 }
 
 export function logStashLoadErrorEvent(
@@ -21,7 +62,14 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
-	captureException( error.cause ? error.cause : error );
+	captureException( error, {
+		tags: {
+			serialized_message: serializeCaughtError( error, { excludeStack: true } ),
+			calypso_checkout: 'true',
+			error_type: errorType,
+			...additionalData,
+		},
+	} );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
