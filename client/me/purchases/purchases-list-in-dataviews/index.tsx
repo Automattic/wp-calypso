@@ -9,6 +9,7 @@ import noSitesIllustration from 'calypso/assets/images/illustrations/illustratio
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { DataViews } from 'calypso/components/dataviews';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -41,7 +42,10 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
+import { purchasesDataFields } from './purchases-data-field'; // This is the temporary data
+import { purchasesDataView } from './purchases-data-view'; // This is the temporary data
 import PurchasesListHeader from './purchases-list-header';
+import { testoctorPurchases } from './tests/testoctor-flat-data'; // This is the temporary data
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
@@ -163,29 +167,49 @@ class PurchasesListDataView extends Component<
 			);
 		}
 
-		return (
-			<Main wideLayout className="purchases-list">
-				<QueryUserPurchases />
-				<QueryMembershipsSubscriptions />
-				<PageViewTracker path="/me/purchases" title="Purchases" />
+		const onChangeView = () => {
+			alert( 'You clicked something!!' );
+		};
 
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ titles.sectionTitle }
-					subtitle={ translate(
-						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
-							},
-						}
-					) }
-				/>
-				<PurchasesNavigation section="activeUpgrades" />
-				{ content }
-				{ this.renderMembershipSubscriptions() }
-				<QueryConciergeInitial />
-			</Main>
+		return (
+			<div>
+				{ testoctorPurchases ? (
+					<DataViews
+						data={ testoctorPurchases }
+						fields={ purchasesDataFields }
+						view={ purchasesDataView }
+						onChangeView={ onChangeView }
+						defaultLayouts={ { table: {} } }
+						actions={ undefined }
+						paginationInfo={ { totalItems: 100, totalPages: 10 } }
+					/>
+				) : (
+					<Main wideLayout className="purchases-list">
+						<QueryUserPurchases />
+						<QueryMembershipsSubscriptions />
+						<PageViewTracker path="/me/purchases" title="Purchases" />
+
+						<NavigationHeader
+							navigationItems={ [] }
+							title={ titles.sectionTitle }
+							subtitle={ translate(
+								'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="purchases" showIcon={ false } />
+										),
+									},
+								}
+							) }
+						/>
+						<PurchasesNavigation section="activeUpgrades" />
+						{ content }
+						{ this.renderMembershipSubscriptions() }
+						<QueryConciergeInitial />
+					</Main>
+				) }
+			</div>
 		);
 	}
 }
