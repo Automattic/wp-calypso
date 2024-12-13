@@ -1,6 +1,6 @@
 import { Button, Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import './style.scss';
 
@@ -12,6 +12,7 @@ type ExpiredReportNoticeProps = {
 };
 
 export const ExpiredReportNotice = ( { onRetest, reportTimestamp }: ExpiredReportNoticeProps ) => {
+	const translate = useTranslate();
 	const isOlderThan24Hours = reportTimestamp
 		? moment().diff( moment( reportTimestamp ), 'hours' ) > REFRESH_REPORT_INTERVAL
 		: false;
@@ -24,13 +25,13 @@ export const ExpiredReportNotice = ( { onRetest, reportTimestamp }: ExpiredRepor
 			<Icon className="icon" icon={ scheduled } size={ 24 } />
 			<div className="expired-report-notice-content">
 				<div className="expired-report-text">
-					<span className="text">{ __( 'These results are more than 24 hours old' ) }</span>
+					<span className="text">{ translate( 'These results are more than 24 hours old' ) }</span>
 					<span className="subtext">
-						{ __( 'Test the page again if you have recently made updates to your site.' ) }
+						{ translate( 'Test the page again if you have recently made updates to your site.' ) }
 					</span>
 				</div>
 				<Button variant="primary" onClick={ onRetest }>
-					{ __( 'Test again' ) }
+					{ translate( 'Test again' ) }
 				</Button>
 			</div>
 		</div>
