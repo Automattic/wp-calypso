@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
-import { STORE_KEY as SiteStore } from '@automattic/data-stores/src/site';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
@@ -26,7 +25,6 @@ import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-recor
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
-import type { SiteSettings } from '@automattic/data-stores/src/site/types';
 
 import './style.scss';
 
@@ -89,17 +87,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const { data: newsletterCategoriesData } = useNewsletterCategories( {
 		siteId,
 	} );
-
-	const newsletterCategoriesEnabled = useSelect(
-		( select ) => {
-			const store = select( SiteStore ) as {
-				getSiteSettings: ( id: number ) => SiteSettings | undefined;
-			};
-			const siteSettings = siteId ? store.getSiteSettings( siteId ) : undefined;
-			return siteSettings?.wpcom_newsletter_categories_enabled ?? false;
-		},
-		[ siteId ]
-	);
 
 	const [ selectedCategories, setSelectedCategories ] = useState< string[] >( [] );
 
@@ -520,14 +507,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ renderEmptyFormValidationMsg() }
 
-					{ newsletterCategoriesEnabled && (
-						<CategoriesSection
-							siteId={ siteId }
-							newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
-							selectedCategories={ selectedCategories }
-							setSelectedCategories={ setSelectedCategories }
-						/>
-					) }
+					{ newsletterCategoriesData?.enabled &&
+						newsletterCategoriesData?.newsletterCategories.length > 0 && (
+							<CategoriesSection
+								siteId={ siteId }
+								newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
+								selectedCategories={ selectedCategories }
+								setSelectedCategories={ setSelectedCategories }
+							/>
+						) }
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 
