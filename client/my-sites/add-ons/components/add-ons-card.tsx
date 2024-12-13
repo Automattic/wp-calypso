@@ -1,5 +1,5 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Badge, Gridicon, Spinner } from '@automattic/components';
+import { useAddOnPurchaseStatus } from '@automattic/data-stores/src/add-ons';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -16,16 +16,6 @@ export interface Props {
 	actionSecondary?: {
 		text: string;
 		handler: ( productSlug: string ) => void;
-	};
-	useAddOnAvailabilityStatus?: ( {
-		selectedSiteId,
-		addOnMeta,
-	}: {
-		selectedSiteId?: number | null | undefined;
-		addOnMeta: AddOnMeta;
-	} ) => {
-		available: boolean;
-		text?: string;
 	};
 	highlightFeatured: boolean;
 	addOnMeta: AddOnMeta;
@@ -110,16 +100,10 @@ const Container = styled.div`
 	}
 `;
 
-const AddOnCard = ( {
-	addOnMeta,
-	actionPrimary,
-	actionSecondary,
-	useAddOnAvailabilityStatus,
-	highlightFeatured,
-}: Props ) => {
+const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatured }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const availabilityStatus = useAddOnAvailabilityStatus?.( { selectedSiteId, addOnMeta } );
+	const availabilityStatus = useAddOnPurchaseStatus( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
@@ -129,17 +113,12 @@ const AddOnCard = ( {
 	};
 
 	const shouldRenderLoadingState = addOnMeta.isLoading;
+	const shouldRenderPrimaryAction = availabilityStatus?.available && ! shouldRenderLoadingState;
+	const shouldRenderSecondaryAction = ! availabilityStatus?.available && ! shouldRenderLoadingState;
 
-	// if product is space upgrade choose the action based on the purchased status
-	const shouldRenderPrimaryAction =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? ! addOnMeta.purchased && ! shouldRenderLoadingState
-			: availabilityStatus?.available && ! shouldRenderLoadingState;
-
-	const shouldRenderSecondaryAction =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? addOnMeta.purchased && ! shouldRenderLoadingState
-			: ! availabilityStatus?.available && ! shouldRenderLoadingState;
+	if ( availabilityStatus?.hidden ) {
+		return null;
+	}
 
 	return (
 		<Container>

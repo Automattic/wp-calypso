@@ -1,16 +1,12 @@
-import {
-	getPlan,
-	PlanSlug,
-	PRODUCT_1GB_SPACE,
-	PLAN_MONTHLY_PERIOD,
-} from '@automattic/calypso-products';
+import { getPlan, PlanSlug, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder, Badge } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
+import { ADD_ON_100GB_STORAGE, useAddOnPurchaseStatus } from '@automattic/data-stores/src/add-ons';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { PropsWithChildren, useState } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -195,27 +191,36 @@ const PricingSection = () => {
 	);
 };
 
-function PlanStorageFooter( { children }: PropsWithChildren ) {
+type NeedMoreStorageProps = {
+	addOn: AddOns.AddOnMeta;
+	noLink?: boolean;
+};
+
+function NeedMoreStorage( { addOn, noLink = false }: NeedMoreStorageProps ) {
+	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
-	const wrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
+	const availability = useAddOnPurchaseStatus( { addOnMeta: addOn, selectedSiteId: site?.ID } );
+	const text = translate( 'Need more storage?' );
 
-	if ( wrapperIsLink ) {
-		return <div className="hosting-overview__plan-storage-footer">{ children }</div>;
+	if ( availability.hidden || ! availability.available ) {
+		return null;
+	}
+
+	if ( noLink ) {
+		return text;
 	}
 
 	return (
-		<div className="hosting-overview__plan-storage-footer">
-			<Button
-				plain
-				href={ `/add-ons/${ site?.slug }` }
-				onClick={ () => {
-					dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
-				} }
-			>
-				{ children }
-			</Button>
-		</div>
+		<Button
+			plain
+			href={ `/add-ons/${ site?.slug }` }
+			onClick={ () => {
+				dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
+			} }
+		>
+			{ text }
+		</Button>
 	);
 }
 
@@ -244,11 +249,12 @@ const PlanCard = () => {
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 
-	// Check for storage addons available for purchase.
+	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
-	const storageAddons = addOns.filter(
-		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
-	);
+	// Storage add-ons can be upgraded (i.e., if you already have the 50GB add-on, you can upgrade
+	// to 100GB) but not downgraded. That's why we only check the availability of the largest
+	// storage add-on.
+	const bigStorageAddon = addOns.find( ( addOn ) => addOn?.addOnSlug === ADD_ON_100GB_STORAGE );
 
 	const renderManageButton = () => {
 		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
@@ -333,8 +339,10 @@ const PlanCard = () => {
 							siteId={ site?.ID }
 							storageBarComponent={ PlanStorageBar }
 						>
-							{ storageAddons.length > 0 && ! isAgencyPurchase && (
-								<PlanStorageFooter>{ translate( 'Need more storage?' ) }</PlanStorageFooter>
+							{ bigStorageAddon && (
+								<div className="hosting-overview__plan-storage-footer">
+									<NeedMoreStorage addOn={ bigStorageAddon } noLink={ footerWrapperIsLink } />
+								</div>
 							) }
 						</PlanStorage>
 

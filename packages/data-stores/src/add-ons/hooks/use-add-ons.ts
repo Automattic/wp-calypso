@@ -15,12 +15,10 @@ import {
 	ADD_ON_50GB_STORAGE,
 	ADD_ON_CUSTOM_DESIGN,
 	ADD_ON_UNLIMITED_THEMES,
-	STORAGE_LIMIT,
 } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
-import isStorageAddonEnabled from '../lib/is-storage-addon-enabled';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnPrices from './use-add-on-prices';
@@ -82,7 +80,6 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 						'Make more space for high-quality photos, videos, and other media. '
 					),
 					featured: false,
-					purchased: false,
 					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 50 ),
 				},
 				{
@@ -98,7 +95,6 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 					),
 					featured: false,
-					purchased: false,
 					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 100 ),
 				},
 			] as const,
@@ -118,23 +114,14 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 
 interface Props {
 	selectedSiteId?: number | null | undefined;
-	enableStorageAddOns?: boolean;
 }
 
-const useAddOns = ( {
-	selectedSiteId,
-	enableStorageAddOns,
-}: Props = {} ): ( AddOnMeta | null )[] => {
+const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
-	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
 	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
-	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
-		siteId: selectedSiteId,
-		productSlug: PRODUCT_1GB_SPACE,
-	} );
 
 	return useMemo(
 		() =>
@@ -167,53 +154,6 @@ const useAddOns = ( {
 				}
 
 				/**
-				 * If it's a storage add-on.
-				 */
-				if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-					// if storage add-ons are not enabled in the config or disabled via hook prop, remove them
-					if (
-						( 'boolean' === typeof enableStorageAddOns && ! enableStorageAddOns ) ||
-						( ! isStorageAddonEnabled() && 'boolean' !== typeof enableStorageAddOns )
-					) {
-						return null;
-					}
-
-					/**
-					 * If storage add-on is already purchased.
-					 * TODO: Consider migrating this part to `use-add-on-purchase-status` and attach
-					 * that to the add-on's meta if need to. The intention is to have a single source of truth.
-					 */
-					const isStorageAddOnPurchased = Object.values( spaceUpgradesPurchased ?? [] ).some(
-						( purchase ) => purchase.purchaseRenewalQuantity === addOn.quantity
-					);
-					if ( isStorageAddOnPurchased ) {
-						return {
-							...addOn,
-							name,
-							description,
-							purchased: true,
-						};
-					}
-
-					/**
-					 * If the current storage add-on option is greater than the available upgrade.
-					 * TODO: This is also potentially a candidate for `use-add-on-purchase-status`.
-					 */
-					const currentMaxStorage = mediaStorage.data?.maxStorageBytes
-						? mediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
-						: 0;
-					const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
-					if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
-						return {
-							...addOn,
-							name,
-							description,
-							exceedsSiteStorageLimits: true,
-						};
-					}
-				}
-
-				/**
 				 * Regular product add-ons.
 				 */
 				return {
@@ -224,14 +164,10 @@ const useAddOns = ( {
 			} ),
 		[
 			activeAddOns,
-			enableStorageAddOns,
-			mediaStorage.data?.maxStorageBytes,
 			productsList.data,
 			productsList.isLoading,
-			siteFeatures.data?.active,
 			siteFeatures.isLoading,
 			sitePurchases.isLoading,
-			spaceUpgradesPurchased,
 		]
 	);
 };
