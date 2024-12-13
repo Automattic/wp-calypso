@@ -11,7 +11,7 @@ const useGetGlobalStylesBaseConfig = ( stylesheet: string ) => {
 				// active theme
 				path: `/global-styles-variation/theme`,
 				method: 'GET',
-				apiNamespace: 'wpcom/v2',
+				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( { stylesheet } ).toString(),
 			} ),
 		refetchOnMount: 'always',

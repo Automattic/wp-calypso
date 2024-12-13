@@ -14,7 +14,7 @@ const useColorPaletteVariations = ( stylesheet: string, { enabled = true }: Opti
 			wpcomRequest< GlobalStylesObject[] >( {
 				path: `/global-styles-variation/color-palettes`,
 				method: 'GET',
-				apiNamespace: 'wpcom/v2',
+				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( {
 					stylesheet,
 					...( isEnabled( 'design-picker/use-assembler-styles' )
