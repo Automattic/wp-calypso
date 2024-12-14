@@ -406,6 +406,19 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
+		selectedPlan,
+		hiddenPlans,
+		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+		term,
+		intent,
+		displayedIntervals: filteredDisplayedIntervals,
+		storageAddOns,
+		coupon,
+		siteId,
+		isInSignup,
+	} );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -425,6 +438,7 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -447,6 +461,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		term,
+		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -755,15 +770,6 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
-	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
-		gridPlans: gridPlansForFeaturesGrid ?? [],
-		displayedIntervals: filteredDisplayedIntervals,
-		storageAddOns,
-		coupon,
-		siteId,
-		isInSignup,
-	} );
-
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -863,6 +869,7 @@ const PlansFeaturesMain = ( {
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
 										recordTracksEvent={ recordTracksEvent }
+										reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
 										showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -928,6 +935,7 @@ const PlansFeaturesMain = ( {
 															: undefined
 													}
 													recordTracksEvent={ recordTracksEvent }
+													reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }
 													showUpgradeableStorage={ showUpgradeableStorage }

@@ -30,6 +30,7 @@ interface PlansGridContext {
 	hideUnsupportedFeatures?: boolean;
 	hideFeatureGroupTitles?: boolean;
 	enterpriseFeaturesList?: string[];
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -54,6 +55,7 @@ const PlansGridContextProvider = ( {
 	hideUnsupportedFeatures,
 	hideFeatureGroupTitles,
 	enterpriseFeaturesList,
+	reflectStorageSelectionInPlanPrices,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -87,6 +89,7 @@ const PlansGridContextProvider = ( {
 				hideUnsupportedFeatures,
 				hideFeatureGroupTitles,
 				enterpriseFeaturesList,
+				reflectStorageSelectionInPlanPrices,
 			} }
 		>
 			{ children }
