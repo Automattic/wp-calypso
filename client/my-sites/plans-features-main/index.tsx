@@ -340,9 +340,14 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
-	const isTargetedSignupFlow = isInSignup && flowName === 'onboarding';
-	const isTargetedAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
-	const showSimplifiedFeatures = isTargetedSignupFlow || isTargetedAdminIntent;
+	/**
+	 * showSimplifiedFeatures should be true always and this variable should be removed.
+	 * It exists temporarily till the flows with the following intents are removed.
+	 */
+	const showSimplifiedFeatures = ! (
+		intent &&
+		[ 'plans-newsletter', 'plans-link-in-bio', 'plans-blog-onboarding' ].includes( intent )
+	);
 
 	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
 		useExperiment( 'calypso_pricing_grid_hide_lower_tier_plans', {
