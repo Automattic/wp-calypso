@@ -91,7 +91,6 @@ const isGridPlanVisible = ( {
 	return isVisible;
 };
 
-// TODO: Revisit these export conventions if we continue with this approach
 export const usePlanTypesWithIntent = ( {
 	intent,
 	selectedPlan,
