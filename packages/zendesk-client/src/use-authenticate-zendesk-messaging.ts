@@ -22,8 +22,8 @@ export function useAuthenticateZendeskMessaging(
 	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
-	const currentEnvironment = config( 'env_id' );
-	const isTestMode = currentEnvironment !== 'production';
+	const currentEnvironment = config( 'env_id' ) as string;
+	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 	return useQuery( {
 		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
