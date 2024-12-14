@@ -145,7 +145,7 @@ export default function ConsolidatedViews( {
 							{ translate(
 								'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks. ' +
 									'Payout dates mark the start of processing, which may take a few extra days. Payments scheduled on weekends are processed the next business day. ' +
-									'{{br}}{{/br}}{{a}}Learn more{{/a}} ↗.',
+									'{{br}}{{/br}}{{a}}Learn more{{/a}} ↗',
 								{
 									components: {
 										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
