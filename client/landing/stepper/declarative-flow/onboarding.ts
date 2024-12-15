@@ -11,6 +11,7 @@ import {
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
+import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
@@ -82,6 +83,7 @@ const onboarding: Flow = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
+		const locale = useFlowLocale();
 
 		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -116,9 +118,14 @@ const onboarding: Flow = {
 							// TODO Implement exit to site migration
 							return;
 
-						case SiteIntent.DIFM:
-							// TODO Implement exit to DIFM
-							return;
+						case SiteIntent.DIFM: {
+							const difmFlowLink =
+								locale && locale !== 'en'
+									? `/start/do-it-for-me/${ locale }`
+									: '/start/do-it-for-me';
+
+							return window.location.assign( difmFlowLink );
+						}
 
 						default: {
 							return navigate( 'domains' );
