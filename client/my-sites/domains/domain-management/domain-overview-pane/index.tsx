@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { SiteExcerptData } from '@automattic/sites';
-import { Button } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import * as paths from 'calypso/my-sites/domains/paths';
@@ -12,6 +13,7 @@ import type {
 	ItemData,
 	FeaturePreviewInterface,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+
 import './style.scss';
 
 interface Props {
@@ -57,7 +59,7 @@ const DomainOverviewPane = ( {
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
-		subtitle: selectedDomain,
+		subtitle: site.name || selectedDomain,
 		url: site.URL,
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
@@ -65,8 +67,8 @@ const DomainOverviewPane = ( {
 		withIcon: false,
 		hideEnvDataInHeader: true,
 	};
-
-	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
+	const translate = useTranslate();
+	const { adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 
 	const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane }: BtnProps ) => {
 		const adminButtonRef = useRef< HTMLButtonElement | null >( null );
@@ -77,12 +79,12 @@ const DomainOverviewPane = ( {
 					{ __( 'Close' ) }
 				</Button>
 				<Button
-					variant="primary"
+					primary
 					className="item-preview__admin-button"
 					href={ adminUrl }
 					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
 				>
-					{ adminLabel }
+					{ translate( 'Manage site' ) }
 				</Button>
 			</>
 		);
