@@ -202,6 +202,7 @@ export class FullPostView extends Component {
 		if ( this.scrollableContainer ) {
 			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
 		}
+		this.clearResetScrollTimeout();
 	}
 
 	setReadingStartTime = () => {
@@ -269,8 +270,16 @@ export class FullPostView extends Component {
 		}
 	}
 
+	clearResetScrollTimeout = () => {
+		if ( this.resetScrollTimeout ) {
+			clearTimeout( this.resetScrollTimeout );
+			this.resetScrollTimeout = null;
+		}
+	};
+
 	resetScroll = () => {
-		setTimeout( () => {
+		this.clearResetScrollTimeout();
+		this.resetScrollTimeout = setTimeout( () => {
 			if ( this.scrollableContainer ) {
 				this.scrollableContainer.scrollTo( {
 					top: 0,
