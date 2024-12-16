@@ -227,7 +227,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -418,7 +417,6 @@ const PlansFeaturesMain = ( {
 		term,
 		intent,
 		displayedIntervals: filteredDisplayedIntervals,
-		storageAddOns,
 		coupon,
 		siteId,
 		isInSignup,
@@ -438,7 +436,6 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
@@ -461,7 +458,6 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,

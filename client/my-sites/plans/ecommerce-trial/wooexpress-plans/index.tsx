@@ -53,7 +53,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
 	} );
 
 	const annualPlanMonthlyPrice =
