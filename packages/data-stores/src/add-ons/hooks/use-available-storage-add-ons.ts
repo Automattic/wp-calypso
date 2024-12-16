@@ -14,9 +14,8 @@ interface Props {
  * @param storage Data returned from
  */
 export function isStorageQuantityAvailable( quantity: number, storage: SiteMediaStorage ): boolean {
+	const existingAddOnStorage = storage.maxStorageBytesFromAddOns / Math.pow( 1024, 3 );
 	const currentMaxStorage = storage.maxStorageBytes / Math.pow( 1024, 3 );
-	const maxStorageExcludingAddons = storage.maxStorageBytesExcludingAddons / Math.pow( 1024, 3 );
-	const existingAddOnStorage = currentMaxStorage - maxStorageExcludingAddons;
 	const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
 
 	return existingAddOnStorage < quantity && quantity <= availableStorageUpgrade;
