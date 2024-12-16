@@ -8,22 +8,31 @@ interface Props {
 	selectedSiteId?: number | null;
 }
 
+export enum StorageAddOnAvailability {
+	NotAStorageAddOn,
+	DataLoading,
+	Unavailable,
+	Available,
+}
+
 /**
  * Check if an add-on is a storage add-on, and if so, if the quantity is available for purchase.
  */
 export default function useStorageAddOnAvailability( {
 	addOnMeta,
 	selectedSiteId,
-}: Props ): boolean | undefined {
+}: Props ): StorageAddOnAvailability {
 	const mediaStorage = useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 
 	if ( addOnMeta.productSlug !== PRODUCT_1GB_SPACE ) {
-		return undefined;
+		return StorageAddOnAvailability.NotAStorageAddOn;
 	}
 
 	if ( ! mediaStorage.data ) {
-		return false;
+		return StorageAddOnAvailability.DataLoading;
 	}
 
-	return isStorageQuantityAvailable( addOnMeta.quantity ?? 0, mediaStorage.data );
+	return isStorageQuantityAvailable( addOnMeta.quantity ?? 0, mediaStorage.data )
+		? StorageAddOnAvailability.Available
+		: StorageAddOnAvailability.Unavailable;
 }

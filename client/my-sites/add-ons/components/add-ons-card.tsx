@@ -1,8 +1,8 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Badge, Gridicon, Spinner } from '@automattic/components';
 import {
 	useAddOnPurchaseStatus,
 	useStorageAddOnAvailability,
+	StorageAddOnAvailability,
 } from '@automattic/data-stores/src/add-ons';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader, Button } from '@wordpress/components';
@@ -108,7 +108,7 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const purchaseStatus = useAddOnPurchaseStatus( { selectedSiteId, addOnMeta } );
-	const isStorageAvailable = useStorageAddOnAvailability( { selectedSiteId, addOnMeta } );
+	const storageAvailability = useStorageAddOnAvailability( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
@@ -121,11 +121,9 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 	const shouldRenderPrimaryAction = purchaseStatus?.available && ! shouldRenderLoadingState;
 	const shouldRenderSecondaryAction = ! purchaseStatus?.available && ! shouldRenderLoadingState;
 
-	if (
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE &&
-		! isStorageAvailable &&
-		purchaseStatus.available
-	) {
+	// Return null if the add-on isn't already purchased and the amount of storage isn't available
+	// for purchase
+	if ( storageAvailability === StorageAddOnAvailability.Unavailable && purchaseStatus.available ) {
 		return null;
 	}
 
