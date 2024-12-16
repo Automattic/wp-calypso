@@ -50,11 +50,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
-			setSelectedDesign( getAssemblerDesign() );
-		}
-
 		if ( destination === 'launch-big-sky' ) {
+			setSelectedDesign( getAssemblerDesign() );
 			return;
 		}
 

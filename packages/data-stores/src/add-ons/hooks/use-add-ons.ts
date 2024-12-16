@@ -135,7 +135,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
 				 * that to the add-on's meta if need to.
 				 */
-				if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
+				if ( productsList.isLoading || mediaStorage.isLoading ) {
 					return {
 						...addOn,
 						name,

@@ -1,8 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
-import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -18,7 +16,7 @@ import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
@@ -30,12 +28,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type {
-	OnboardSelect,
-	SiteSelect,
-	UserSelect,
-	StepperInternalSelect,
-} from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -51,20 +44,6 @@ const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
-	useSideEffect( currentStep, navigate ) {
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-
-		useEffect( () => {
-			// Require to start the flow from the first step
-			if ( currentStep === 'pattern-assembler' && ! selectedDesign ) {
-				navigate( 'goals' );
-			}
-		}, [] );
-	},
-
 	useSteps() {
 		const isGoalsAtFrontExperiment = Boolean(
 			useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ]
@@ -76,7 +55,6 @@ const siteSetupFlow: Flow = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -109,11 +87,6 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
-
-		const stepData = useSelect(
-			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
-			[]
-		);
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -288,31 +261,14 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const { selectedDesign: _selectedDesign } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'pattern-assembler' );
-					}
-
 					return navigate( 'processing' );
 				}
-				case 'pattern-assembler':
-					return navigate( 'processing' );
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// End of Pattern Assembler flow
-					if ( isAssemblerDesign( selectedDesign ) ) {
-						const params = new URLSearchParams( {
-							canvas: 'edit',
-							assembler: '1',
-						} );
-
-						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -559,14 +515,6 @@ const siteSetupFlow: Flow = {
 
 				case 'design-choices': {
 					return navigate( 'goals' );
-				}
-
-				case 'pattern-assembler': {
-					if ( stepData?.previousStep ) {
-						return navigate( stepData?.previousStep );
-					}
-
-					return navigate( 'designSetup' );
 				}
 
 				case 'importList':

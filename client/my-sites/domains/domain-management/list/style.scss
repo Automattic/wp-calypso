@@ -328,3 +328,58 @@
 .domains-overview .main.domains-overview__list {
 	max-width: 400px;
 }
+
+main.domains-overview main.domains-overview__list .a4a-layout-column__container {
+	// Header navigation styles
+	.navigation-header {
+		padding: 0;
+
+		.navigation-header__main {
+			padding: 16px 24px;
+			margin: 0;
+		}
+	}
+
+	// Header title styles
+	.formatted-header__title {
+		display: flex;
+		align-items: center;
+		min-height: 40px;
+		font-size: 1.25rem;
+		font-weight: 500;
+		letter-spacing: normal;
+	}
+
+	// Split button styles
+	.navigation-header__main .options-domain-button {
+		&.split-button {
+			--white-separator-color: rgba(255, 255, 255, 0.3);
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.split-button__main,
+		.split-button__toggle {
+			display: inline-flex;
+			align-items: center;
+			height: 28px;
+			padding: 0 12px;
+			font-size: 0.75rem;
+			line-height: 14px;
+		}
+
+		.split-button__main {
+			font-weight: 400;
+			border-radius: 2px 0 0 2px;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.split-button__toggle.button svg.gridicon {
+			position: relative;
+			top: 2px;
+			width: 18px;
+			height: 18px;
+			margin-top: -2px;
+		}
+	}
+}

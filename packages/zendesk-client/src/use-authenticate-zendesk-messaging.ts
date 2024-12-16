@@ -19,11 +19,11 @@ const VERSION = 'v1';
 let isLoggedIn = false;
 
 export function useAuthenticateZendeskMessaging(
-	enabled = true,
+	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
-	const currentEnvironment = config( 'env_id' );
-	const isTestMode = currentEnvironment !== 'production';
+	const currentEnvironment = config( 'env_id' ) as string;
+	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 	return useQuery( {
 		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],

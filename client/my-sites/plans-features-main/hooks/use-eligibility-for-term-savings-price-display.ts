@@ -2,23 +2,37 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
+	TERMS_LIST,
 	URL_FRIENDLY_TERMS_MAPPING,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import { AddOns, Plans } from '@automattic/data-stores';
-import { GridPlan } from '@automattic/plans-grid-next';
+import {
+	HiddenPlans,
+	PlansIntent,
+	usePlansFromTypes,
+	usePlanTypesWithIntent,
+} from '@automattic/plans-grid-next';
 import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 
 const useEligibilityForTermSavingsPriceDisplay = ( {
-	gridPlans,
+	hiddenPlans,
+	intent,
+	isSubdomainNotGenerated,
+	selectedPlan,
+	term,
 	displayedIntervals,
 	coupon,
 	siteId,
 	storageAddOns,
 	isInSignup,
 }: {
-	gridPlans: GridPlan[];
+	hiddenPlans?: HiddenPlans;
+	intent?: PlansIntent;
+	isSubdomainNotGenerated?: boolean;
+	selectedPlan?: PlanSlug;
+	term: ( typeof TERMS_LIST )[ number ];
 	displayedIntervals: UrlFriendlyTermType[];
 	storageAddOns: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
@@ -26,8 +40,18 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	isInSignup?: boolean;
 } ) => {
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
-	const planSlugs = gridPlans.map( ( { planSlug } ) => planSlug );
-	const planSlugsForAllDisplayedIntervals = planSlugs.flatMap(
+	const availablePlanSlugs = usePlansFromTypes( {
+		planTypes: usePlanTypesWithIntent( {
+			intent,
+			selectedPlan,
+			siteId,
+			hiddenPlans,
+			isSubdomainNotGenerated,
+		} ),
+		term,
+		intent,
+	} );
+	const planSlugsForAllDisplayedIntervals = availablePlanSlugs.flatMap(
 		( planSlug ) =>
 			displayedIntervals
 				.map( ( term ) =>

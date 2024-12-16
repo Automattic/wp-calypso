@@ -96,6 +96,21 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Maximizes the support popover.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async maximizePopover(): Promise< void > {
+		const maximizeButton = await this.popup.getByRole( 'button', {
+			name: 'Maximize Help Center',
+			exact: true,
+		} );
+
+		await maximizeButton.click();
+		await this.popup.locator( '.help-center__container-content' ).waitFor( { state: 'visible' } );
+	}
+
+	/**
 	 * Go back to the previous page.
 	 */
 	async goBack(): Promise< void > {
