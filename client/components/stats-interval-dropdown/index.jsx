@@ -101,6 +101,8 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			return;
 		}
 
+		localStorage.setItem( 'jetpack_stats_stored_period', interval );
+
 		page( generateNewLink( interval ) );
 	}
 

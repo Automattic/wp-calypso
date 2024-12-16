@@ -15,6 +15,25 @@ export const DATERANGE_PERIOD = {
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
+export const findShortcutForRange = (
+	supportedShortcutList: DateRangePickerShortcut[],
+	dateRange: { chartStart: string; chartEnd: string }
+) => {
+	if ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) {
+		return null;
+	}
+	// Search the shortcut array for something matching the current date range.
+	// Returns shortcut or null;
+	const shortcut = supportedShortcutList.find( ( element ) => {
+		if ( element.endDate === dateRange.chartEnd && element.startDate === dateRange.chartStart ) {
+			return element;
+		}
+		return null;
+	} );
+
+	return shortcut;
+};
+
 export const getShortcuts = createSelector(
 	(
 		state: object,
@@ -88,28 +107,6 @@ export const getShortcuts = createSelector(
 				}
 			);
 		}
-
-		const findShortcutForRange = (
-			supportedShortcutList: DateRangePickerShortcut[],
-			dateRange: { chartStart: string; chartEnd: string }
-		) => {
-			if ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) {
-				return null;
-			}
-			// Search the shortcut array for something matching the current date range.
-			// Returns shortcut or null;
-			const shortcut = supportedShortcutList.find( ( element ) => {
-				if (
-					element.endDate === dateRange.chartEnd &&
-					element.startDate === dateRange.chartStart
-				) {
-					return element;
-				}
-				return null;
-			} );
-
-			return shortcut;
-		};
 
 		return {
 			selectedShortcut: findShortcutForRange( supportedShortcutList, dateRange ),
