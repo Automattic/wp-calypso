@@ -224,23 +224,24 @@ export default {
 
 		const isOnboardingFlow = flowName === 'onboarding';
 		if ( isOnboardingFlow ) {
-			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_flow_2'
-			);
-			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-				window.location =
-					getStepUrl(
-						flowName,
-						getStepName( context.params ),
-						getStepSectionName( context.params ),
-						localeFromParams ?? localeFromStore,
-						null,
-						'/setup'
-					) +
-					( context.querystring ? '?' + context.querystring : '' ) +
-					( context.hashstring ? '#' + context.hashstring : '' );
-				return;
-			}
+			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
+			// const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
+			// 	'calypso_signup_onboarding_stepper_flow_2'
+			// );
+			// if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
+			// 	window.location =
+			// 		getStepUrl(
+			// 			flowName,
+			// 			getStepName( context.params ),
+			// 			getStepSectionName( context.params ),
+			// 			localeFromParams ?? localeFromStore,
+			// 			null,
+			// 			'/setup'
+			// 		) +
+			// 		( context.querystring ? '?' + context.querystring : '' ) +
+			// 		( context.hashstring ? '#' + context.hashstring : '' );
+			// 	return;
+			// }
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
