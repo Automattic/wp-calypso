@@ -1071,6 +1071,7 @@ class Login extends Component {
 				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
+				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				isJetpack={ isJetpack }
@@ -1091,12 +1092,19 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo, isFromAutomatticForAgenciesPlugin } =
-			this.props;
+		const {
+			isFromAkismet,
+			isJetpack,
+			oauth2Client,
+			locale,
+			isWoo,
+			isFromAutomatticForAgenciesPlugin,
+		} = this.props;
 
 		return (
 			<div
 				className={ clsx( 'login', {
+					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
