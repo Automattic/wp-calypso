@@ -72,7 +72,7 @@ button, a {
 			background-color: var(--color-neutral-0);
 		}
 
-		&.disabled {
+		&.is-disabled {
 			cursor: not-allowed;
 			background-color: var(--color-neutral-0);
 		}
@@ -84,7 +84,7 @@ button, a {
 			justify-content: unset;
 		}
 
-		&.banner {
+		&.is-banner {
 			flex-direction: column;
 			padding-top: 0;
 			gap: 4px;

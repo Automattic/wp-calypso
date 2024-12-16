@@ -31,8 +31,8 @@ const AddNewSiteMenuItem: React.FC< Props > = ( {
 		<Button
 			{ ...buttonProps }
 			className={ clsx( 'add-new-site__popover-button', {
-				banner: isBanner,
-				disabled,
+				'is-banner': isBanner,
+				'is-disabled': disabled,
 			} ) }
 		>
 			<div className={ clsx( 'add-new-site__popover-button-icon', iconClassName ) }>

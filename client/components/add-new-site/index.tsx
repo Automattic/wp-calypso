@@ -21,6 +21,7 @@ const AddNewSite = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
 	}, [] );
 
+	// Render the popover content based on the environment
 	const renderPopoverContent = useMemo( () => {
 		switch ( true ) {
 			case isA8CForAgencies():
@@ -30,6 +31,7 @@ const AddNewSite = () => {
 		}
 	}, [ setMenuVisible ] );
 
+	// Render the modals content based on the environment
 	const renderModalsContent = useMemo( () => {
 		switch ( true ) {
 			case isA8CForAgencies():
