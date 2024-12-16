@@ -27,17 +27,6 @@ type Post = {
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
 
-// Use ellipsis when characters count over the limit
-const textTruncator = ( text: string, limit = 48 ) => {
-	if ( ! text ) {
-		return '';
-	}
-
-	const truncatedText = text.substring( 0, limit );
-
-	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
-};
-
 function truncateWithLimit( text: string, limit: number ): string {
 	// Determine if any processing is needed.
 	const trimmedText = text.trim();
@@ -84,7 +73,6 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title2: textTruncator( getProcessedTitle( post ), POST_STATS_CARD_TITLE_LIMIT ),
 		title: truncateWithLimit( getProcessedTitle( post ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
 	const { supportsEmailStats } = useSelector( ( state ) =>
