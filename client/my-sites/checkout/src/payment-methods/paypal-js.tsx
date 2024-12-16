@@ -114,6 +114,13 @@ function PayPalSubmitButton( {
 		if ( isPayPalJsLoaded && arePayPalButtonsAvailable ) {
 			togglePaymentMethod( 'paypal-js', true );
 		}
+		if ( isPayPalJsLoaded && ! arePayPalButtonsAvailable ) {
+			logStashEvent(
+				'PayPal says the script is loaded but Buttons are not available',
+				{ tags: [ 'paypal-configuration', 'paypal-buttons-missing' ] },
+				'error'
+			);
+		}
 	}, [ isPayPalJsLoaded, arePayPalButtonsAvailable, togglePaymentMethod ] );
 
 	useEffect( () => {
