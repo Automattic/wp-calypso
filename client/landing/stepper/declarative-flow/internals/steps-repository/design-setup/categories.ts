@@ -11,19 +11,14 @@ const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
 	[ Onboard.SiteGoal.Promote ]: [ CATEGORIES.BUSINESS, CATEGORIES.LINK_IN_BIO ],
 	[ Onboard.SiteGoal.CollectDonations ]: [ CATEGORIES.COMMUNITY_NON_PROFIT ],
 	[ Onboard.SiteGoal.Newsletter ]: [ CATEGORIES.NEWSLETTER, CATEGORIES.BLOG ],
-	[ Onboard.SiteGoal.Engagement ]: [
-		CATEGORIES.PODCAST,
-		CATEGORIES.BLOG,
-		CATEGORIES.NEWSLETTER,
-		CATEGORIES.LINK_IN_BIO,
-	],
+	[ Onboard.SiteGoal.Engagement ]: [ CATEGORIES.BLOG, CATEGORIES.LINK_IN_BIO ],
 	[ Onboard.SiteGoal.SellPhysical ]: [ CATEGORIES.STORE ],
 	[ Onboard.SiteGoal.Videos ]: [ CATEGORIES.PORTFOLIO ],
 	[ Onboard.SiteGoal.ContactForm ]: [ CATEGORIES.BUSINESS ],
 	[ Onboard.SiteGoal.BuildNonprofit ]: [ CATEGORIES.COMMUNITY_NON_PROFIT, CATEGORIES.EDUCATION ],
 	[ Onboard.SiteGoal.SellDigital ]: [ CATEGORIES.STORE, CATEGORIES.BUSINESS ],
 
-	// The following goals are deprecated. They are no longer availabe in the goals
+	// The following goals are deprecated. They are no longer available in the goals
 	// signup step, but existing sites still use them.
 	[ Onboard.SiteGoal.Sell ]: [ CATEGORIES.STORE ],
 	[ Onboard.SiteGoal.DIFM ]: [ CATEGORIES.BUSINESS ],
