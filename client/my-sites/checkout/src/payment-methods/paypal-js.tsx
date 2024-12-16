@@ -103,12 +103,18 @@ function PayPalSubmitButton( {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	// Wait for PayPal.js to load before marking this payment method as active.
-	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
+	const [ { isResolved: isPayPalJsLoaded, isPending: isPayPalJsStillLoading } ] =
+		usePayPalScriptReducer();
+	// Sometimes it appears that usePayPalScriptReducer lies about the script
+	// being loaded (or possibly the script does not correctly expose its
+	// Buttons property?) and we get a fatal error when trying to render
+	// PayPalButtons, so we double check before enabling the payment method.
+	const arePayPalButtonsAvailable = Boolean( window?.paypal?.Buttons );
 	useEffect( () => {
-		if ( isResolved ) {
+		if ( isPayPalJsLoaded && arePayPalButtonsAvailable ) {
 			togglePaymentMethod( 'paypal-js', true );
 		}
-	}, [ isResolved, togglePaymentMethod ] );
+	}, [ isPayPalJsLoaded, arePayPalButtonsAvailable, togglePaymentMethod ] );
 
 	useEffect( () => {
 		debug( 'cart changed; rerendering PayPalSubmitButton' );
@@ -126,7 +132,7 @@ function PayPalSubmitButton( {
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = 'paypal-js' === activePaymentMethodId;
 
-	if ( isPending || ! isResolved || ! isActive ) {
+	if ( isPayPalJsStillLoading || ! isPayPalJsLoaded || ! arePayPalButtonsAvailable || ! isActive ) {
 		return <div>Loading</div>;
 	}
 
