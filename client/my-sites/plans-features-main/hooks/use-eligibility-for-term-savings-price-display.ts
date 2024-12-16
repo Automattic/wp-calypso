@@ -62,6 +62,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 	const isAnyGridPlanDiscounted = Object.values( pricingForAllDisplayedIntervals ?? {} ).reduce(
 		( isDiscounted, { discountedPrice, introOffer } ) => {
