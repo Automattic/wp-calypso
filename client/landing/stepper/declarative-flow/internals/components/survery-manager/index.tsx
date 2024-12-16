@@ -1,3 +1,4 @@
+import getTrackingPrefs from '@automattic/calypso-analytics/src/utils/get-tracking-prefs';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	MIGRATION_FLOW,
@@ -19,6 +20,7 @@ const MIGRATION_SURVEY_FLOWS = [
 const SurveyManager = () => {
 	const { params } = useFlowNavigation();
 	const isEnLocale = useIsEnglishLocale();
+	const { ok } = getTrackingPrefs();
 
 	// Skip survey for non-English locales
 	if ( ! isEnLocale ) {
@@ -30,6 +32,10 @@ const SurveyManager = () => {
 	}
 
 	if ( ! MIGRATION_SURVEY_FLOWS.includes( params.flow ) ) {
+		return null;
+	}
+
+	if ( ! ok ) {
 		return null;
 	}
 
