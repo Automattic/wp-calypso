@@ -151,29 +151,21 @@
 		}
 	}
 	.step-container__navigation.action-buttons {
+		background-color: $white;
 		height: 60px;
 		align-items: center;
 		justify-content: space-between;
 		display: flex;
 		font-size: 0.875rem;
+		position: fixed;
 		z-index: 30;
+		inset-inline-start: 0;
+		inset-inline-end: 0;
 		bottom: 0;
+		padding: 0 20px;
 		margin: 0;
 		border-top: none;
-
-		position: absolute;
-		top: 8px;
-		inset-inline-start: 72px;
-		inset-inline-end: 24px;
-		// Align with wordpress logo in signup-header
-		padding: 1px 0 0;
-		background-color: transparent;
-		border: none;
-		box-shadow: none;
-
-		&.has-sticky-nav-buttons-padding {
-			padding-bottom: 48px;
-		}
+		box-shadow: inset 0 1px 0 #e2e4e7;
 
 		&:empty {
 			display: none;
@@ -222,6 +214,22 @@
 
 			@include break-small {
 				display: block;
+			}
+		}
+
+		@include break-small {
+			position: absolute;
+			top: 8px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
+			// Align with wordpress logo in signup-header
+			padding: 1px 0 0;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+
+			&.has-sticky-nav-buttons-padding {
+				padding-bottom: 48px;
 			}
 		}
 	}
