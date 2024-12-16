@@ -79,7 +79,14 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 
 	return (
 		<>
-			<HostingPlanSection className="wpcom-plan-section">
+			<HostingPlanSection
+				className="wpcom-plan-section"
+				heading={
+					referralMode
+						? translate( 'Refer a WordPress.com site to your client' )
+						: translate( 'Purchase sites individually or in bulk, as you need them' )
+				}
+			>
 				{ showWPCOMSlider && (
 					<HostingPlanSection.Banner>
 						<WPCOMPlanSlider

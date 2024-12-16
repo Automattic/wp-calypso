@@ -23,6 +23,10 @@ type AsideProps = BaseProps & {
 	};
 };
 
+type HostingPlanSectionProps = BaseProps & {
+	heading?: string;
+};
+
 function Banner( { children }: BaseProps ) {
 	return <div className="hosting-plan-section__banner">{ children }</div>;
 }
@@ -64,7 +68,11 @@ function Details( { children, heading }: DetailsProps ) {
 	);
 }
 
-export default function HostingPlanSection( { children, className }: BaseProps ) {
+export default function HostingPlanSection( {
+	children,
+	className,
+	heading,
+}: HostingPlanSectionProps ) {
 	const banner = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === Banner
@@ -86,7 +94,7 @@ export default function HostingPlanSection( { children, className }: BaseProps )
 	);
 
 	return (
-		<PageSection className={ clsx( 'hosting-plan-section', className ) }>
+		<PageSection className={ clsx( 'hosting-plan-section', className ) } heading={ heading }>
 			{ banner }
 
 			<div className="hosting-plan-section__content">
