@@ -73,7 +73,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				border-radius: 4px;
 			}
 
-			header.navigation-header {
+			.domains-overview__list .navigation-header {
 				padding-top: 24px;
 
 				.formatted-header {

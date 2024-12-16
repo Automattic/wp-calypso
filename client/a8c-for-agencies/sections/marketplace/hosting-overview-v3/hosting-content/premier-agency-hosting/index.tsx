@@ -10,10 +10,13 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext } from '../../../context';
+import useProductAndPlans from '../../../hooks/use-product-and-plans';
 import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
+import useExistingPressablePlan from '../../../pressable-overview/hooks/use-existing-pressable-plan';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';
+import PressableUsageSection from './pressable-usage-section';
 
 import './style.scss';
 
@@ -32,12 +35,34 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const pressableOwnership = usePressableOwnershipType();
 
+	const { pressablePlans } = useProductAndPlans( {
+		selectedSite: null,
+		productSearchQuery: '',
+	} );
+
+	const {
+		existingPlan,
+		pressablePlan: existingPlanInfo,
+		isReady: isExistingPlanFetched,
+	} = useExistingPressablePlan( {
+		plans: pressablePlans,
+	} );
+
+	const isReferralMode = marketplaceType === 'referral';
+
 	return (
 		<div className="premier-agency-hosting">
+			{ existingPlan && pressableOwnership !== 'regular' && ! isReferralMode && (
+				<PressableUsageSection existingPlan={ existingPlan } />
+			) }
+
 			<PressablePlanSection
 				onSelect={ onAddToCart }
-				isReferralMode={ marketplaceType === 'referral' }
-				pressableOwnership={ marketplaceType === 'referral' ? 'agency' : pressableOwnership }
+				isReferralMode={ isReferralMode }
+				pressableOwnership={ isReferralMode ? 'agency' : pressableOwnership }
+				existingPlan={ existingPlan }
+				existingPlanInfo={ existingPlanInfo }
+				isFetching={ isExistingPlanFetched }
 			/>
 
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
