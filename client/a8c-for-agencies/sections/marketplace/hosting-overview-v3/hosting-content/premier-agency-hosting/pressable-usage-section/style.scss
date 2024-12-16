@@ -1,0 +1,32 @@
+.pressable-usage-section {
+	border-block-end: 1px solid var( --color-neutral-5 );
+	padding-block: 32px;
+
+
+	.page-section__header-title {
+		@include a4a-font-heading-lg;
+		text-align: center;
+	}
+}
+
+.pressable-usage-card {
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 4px;
+	padding: 24px;
+	max-width: 1000px;
+	margin-inline: auto;
+}
+
+.pressable-usage-card__heading {
+	@include a4a-font-heading-xl;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-block-end: 16px;
+	align-items: center;
+
+	.badge.badge--info {
+		@include a4a-font-body-sm;
+		background-color: var( --color-neutral-0 );
+	}
+}

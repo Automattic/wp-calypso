@@ -2,7 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 
 .hosting-plan-section {
-	padding-block-start: 0;
+	padding-block: 32px;
+
+	.page-section__header-title {
+		@include a4a-font-heading-lg;
+		text-align: center;
+	}
 }
 
 .hosting-plan-section__banner {
@@ -89,4 +94,11 @@
 	> * {
 		width: 100%;
 	}
+}
+
+.hosting-plan-section__aside-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
 }

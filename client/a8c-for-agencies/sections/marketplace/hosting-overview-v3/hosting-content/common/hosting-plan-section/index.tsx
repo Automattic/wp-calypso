@@ -20,7 +20,13 @@ type AsideProps = BaseProps & {
 		label: string;
 		onClick?: () => void;
 		disabled?: boolean;
+		href?: string;
+		target?: string;
 	};
+};
+
+type HostingPlanSectionProps = BaseProps & {
+	heading?: string;
 };
 
 function Banner( { children }: BaseProps ) {
@@ -37,9 +43,15 @@ function Aside( { heading, cta, children }: AsideProps ) {
 
 			<footer className="hosting-plan-section__aside-footer">
 				{ cta && (
-					<Button variant={ cta.variant } onClick={ cta.onClick } disabled={ cta.disabled }>
+					<Button
+						className="hosting-plan-section__aside-button"
+						variant={ cta.variant }
+						onClick={ cta.onClick }
+						disabled={ cta.disabled }
+						{ ...( cta.href && { href: cta.href, target: cta.target } ) }
+					>
 						{ cta.label }
-						{ cta.icon && <Icon icon={ cta.icon } /> }
+						{ cta.icon && <Icon icon={ cta.icon } size={ 16 } /> }
 					</Button>
 				) }
 			</footer>
@@ -64,7 +76,11 @@ function Details( { children, heading }: DetailsProps ) {
 	);
 }
 
-export default function HostingPlanSection( { children, className }: BaseProps ) {
+export default function HostingPlanSection( {
+	children,
+	className,
+	heading,
+}: HostingPlanSectionProps ) {
 	const banner = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === Banner
@@ -86,7 +102,7 @@ export default function HostingPlanSection( { children, className }: BaseProps )
 	);
 
 	return (
-		<PageSection className={ clsx( 'hosting-plan-section', className ) }>
+		<PageSection className={ clsx( 'hosting-plan-section', className ) } heading={ heading }>
 			{ banner }
 
 			<div className="hosting-plan-section__content">

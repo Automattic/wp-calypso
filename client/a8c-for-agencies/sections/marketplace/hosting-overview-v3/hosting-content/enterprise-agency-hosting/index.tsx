@@ -35,8 +35,12 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 	};
 
 	return (
-		<>
-			<HostingPlanSection className="enterprise-agency-hosting-v3">
+		<div className="enterprise-agency-hosting-v3">
+			<HostingPlanSection
+				heading={ translate(
+					'Deliver unmatched performance with the highest security standards on our enterprise platform'
+				) }
+			>
 				<HostingPlanSection.Card>
 					<div className="enterprise-agency-hosting__top">
 						<div className="enterprise-agency-hosting__top-heading">
@@ -66,7 +70,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					{ isReferMode && (
 						<div className="enterprise-agency-hosting-v3__top-details-subheading">
 							{ translate(
-								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms ↗{{/a}}',
+								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
 								{
 									components: {
 										a: (
@@ -184,6 +188,6 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 				] }
 				itemBackgroundColor="#F5F2F1"
 			/>
-		</>
+		</div>
 	);
 }
