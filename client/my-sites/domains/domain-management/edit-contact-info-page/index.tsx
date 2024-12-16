@@ -51,7 +51,7 @@ const EditContactInfoPage = ( {
 	};
 
 	const renderHeader = () => {
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || isUnderDomainManagementAll( currentRoute ) ) {
 			return null;
 		}
 
