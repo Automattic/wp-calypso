@@ -746,7 +746,7 @@ class Login extends Component {
 		}
 
 		if ( isFromAkismet ) {
-			headerText = 'Log in to Akismet with WordPress.com';
+			headerText = translate( 'Log in to Akismet with WordPress.com' );
 			preHeader = (
 				<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none">
 					<rect width="44" height="44" fill="#357B49" rx="6" />
