@@ -31,7 +31,7 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 		}
 		if ( section === 'pressable' ) {
 			return {
-				content: <PremierAgencyHosting />,
+				content: <PremierAgencyHosting onAddToCart={ onAddToCart } />,
 				title: isReferMode
 					? translate( 'Refer a variety of plans, or single high-resource sites to your clients' )
 					: translate(

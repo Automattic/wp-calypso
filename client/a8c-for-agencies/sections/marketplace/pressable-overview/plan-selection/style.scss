@@ -136,14 +136,32 @@
 	justify-content: center;
 
 	.pressable-overview-plan-selection__filter-label {
-		font-weight: 600;
-		font-size: 1rem;
+		@include a4a-font-heading-md($font-size: rem(14px));
 		margin: 0;
 	}
 
-	.pressable-overview-plan-selection__filter-buttons {
-		button:first-child {
-			margin-inline-end: 1rem;
+	.pressable-overview-plan-selection__filter-radio-control {
+		.components-base-control__label {
+			display: none;
+		}
+
+		.components-radio-control__group-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			padding: 16px;
+			// stylelint-disable-next-line scales/radii
+			border-radius: 8px;
+			background-color: var(--color-neutral-0);
+
+			@include break-large {
+				flex-direction: row;
+				gap: 24px;
+			}
+		}
+
+		.components-radio-control__input[type="radio"]:checked {
+			background-color: var(--color-primary-50);
 		}
 	}
 

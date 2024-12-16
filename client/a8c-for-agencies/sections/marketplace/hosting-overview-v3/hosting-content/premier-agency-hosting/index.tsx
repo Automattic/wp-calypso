@@ -1,18 +1,27 @@
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import { MarketplaceTypeContext } from '../../../context';
+import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
+import PressablePlanSection from './pressable-plan-section';
 
 import './style.scss';
 
-export default function PremierAgencyHosting() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -20,8 +29,17 @@ export default function PremierAgencyHosting() {
 		dispatch( recordTracksEvent( 'a4a_hosting_premier_jetpack_complete_more_link_click' ) );
 	};
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const pressableOwnership = usePressableOwnershipType();
+
 	return (
 		<div className="premier-agency-hosting">
+			<PressablePlanSection
+				onSelect={ onAddToCart }
+				isReferralMode={ marketplaceType === 'referral' }
+				pressableOwnership={ marketplaceType === 'referral' ? 'agency' : pressableOwnership }
+			/>
+
 			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
 
 			<HostingAdditionalFeaturesSection

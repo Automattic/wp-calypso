@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.pressable-plan-card-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	justify-content: space-between;
+	height: 100%;
+}
+
+.pressable-plan-card-content__logo {
+	width: 175px;
+	height: auto;
+	margin-block-end: 16px
+}
+
+.pressable-plan-card-content__price-actual-value{
+	@include a4a-font-heading-lg;
+	color: var(--color-text);
+}
+
+.pressable-plan-card-content__price-interval {
+	@include a4a-font-body-sm;
+}
+
+.pressable-plan-card-content__cta-button {
+	min-width: 0;
+	width: 100%;
+	min-height: 40px;
+}
+
+.pressable-plan-section__details-two-lists {
+	display: flex;
+	flex-direction: column;
+
+	@include break-large {
+		flex-direction: row;
+		gap: 16px;
+	}
+
+	> * {
+		flex-grow: 1;
+	}
+}

@@ -1,1 +1,1 @@
-export type FilterType = 'install' | 'visits';
+export type FilterType = 'install' | 'visits' | 'storage';

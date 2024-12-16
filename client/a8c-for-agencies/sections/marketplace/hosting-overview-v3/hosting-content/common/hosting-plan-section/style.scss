@@ -16,8 +16,10 @@
 	grid-template-columns: 1fr;
 	gap: 32px;
 
-	@include break-wide {
-		grid-template-columns: 2fr 1fr;
+	&:has( .hosting-plan-section__aside ) {
+		@include break-wide {
+			grid-template-columns: 2fr 1fr;
+		}
 	}
 }
 
@@ -30,8 +32,14 @@
 	grid-template-columns: 1fr;
 	gap: 16px;
 
-	@include break-wide {
-		grid-template-columns: repeat( 2, 1fr );
+	@include break-huge {
+		grid-template-columns: 400px 2fr;
+	}
+
+	&:has( .hosting-plan-section__aside ) {
+		@include break-huge {
+			grid-template-columns: 300px 1fr;
+		}
 	}
 }
 
