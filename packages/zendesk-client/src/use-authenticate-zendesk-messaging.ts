@@ -55,9 +55,9 @@ export function useAuthenticateZendeskMessaging(
 				}
 
 				window.zE( 'messenger', 'loginUser', function ( callback ) {
-					isLoggedIn = true;
 					callback( jwt );
 				} );
+				isLoggedIn = true;
 			}
 			return { isLoggedIn, jwt, externalId: messagingAuth?.user.external_id };
 		},

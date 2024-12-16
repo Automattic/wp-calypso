@@ -902,6 +902,7 @@ const sections = [
 			'/client/subscriptions',
 			'/client/payment-methods',
 			'/client/payment-methods/add',
+			'/client/invoices',
 			'/client/checkout',
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',
