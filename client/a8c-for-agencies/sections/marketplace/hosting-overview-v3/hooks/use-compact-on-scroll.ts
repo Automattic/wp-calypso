@@ -13,6 +13,7 @@ export default function useCompactOnScroll() {
 
 	const onTransitionEnd = useCallback( () => {
 		setIsTransitioning( false );
+		setLastScrollPosition( 0 );
 		ref.current?.removeEventListener( 'transitionend', onTransitionEnd );
 	}, [] );
 

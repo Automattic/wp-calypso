@@ -12,7 +12,7 @@ $tab-background-selected: var(--color-surface);
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 39px;
-	transition: height .35s ease-out;
+	transition: height .2s ease-out;
 
 	&:not(.is-compact) {
 		height: 389px;
@@ -99,11 +99,17 @@ $tab-background-selected: var(--color-surface);
 	}
 
 	&:first-child {
-		border-start-start-radius: 4px;
+		&,
+		.section-nav-tab__link {
+			border-start-start-radius: 4px;
+		}
 	}
 
 	&:last-child {
+		&,
+		.section-nav-tab__link {
 		border-start-end-radius: 4px;
+		}
 	}
 }
 
