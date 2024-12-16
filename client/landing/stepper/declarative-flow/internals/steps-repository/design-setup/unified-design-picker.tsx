@@ -271,7 +271,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		resetPreview,
 	} = useRecipe(
 		allDesigns,
-		pickDesign,
 		pickUnlistedDesign,
 		recordPreviewDesign,
 		recordPreviewStyleVariation

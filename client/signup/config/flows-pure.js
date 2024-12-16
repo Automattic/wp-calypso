@@ -43,7 +43,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
-	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
 	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
@@ -143,15 +142,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'with-theme-assembler',
-			steps: [ userSocialStep, 'domains-theme-preselected', 'plans' ],
-			destination: getChecklistThemeDestination,
-			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
