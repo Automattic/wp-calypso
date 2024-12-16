@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import CheckoutContext from '../checkout-context';
 import type { PaymentMethod, TogglePaymentMethod } from '../../types';
 
@@ -58,23 +58,26 @@ export function useTogglePaymentMethod(): TogglePaymentMethod {
 	if ( ! allPaymentMethods ) {
 		throw new Error( 'useTogglePaymentMethod cannot be used outside of CheckoutProvider' );
 	}
-	return ( paymentMethodId: string, available: boolean ) => {
-		const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
-		if ( ! paymentMethod ) {
-			debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
-			return;
-		}
+	return useCallback(
+		( paymentMethodId: string, available: boolean ) => {
+			const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
+			if ( ! paymentMethod ) {
+				debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
+				return;
+			}
 
-		if ( available && disabledPaymentMethodIds.includes( paymentMethodId ) ) {
-			debug( 'Adding available payment method', paymentMethodId );
-			setDisabledPaymentMethodIds(
-				disabledPaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
-			);
-		}
+			if ( available && disabledPaymentMethodIds.includes( paymentMethodId ) ) {
+				debug( 'Adding available payment method', paymentMethodId );
+				setDisabledPaymentMethodIds(
+					disabledPaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
+				);
+			}
 
-		if ( ! available && ! disabledPaymentMethodIds.includes( paymentMethodId ) ) {
-			debug( 'Removing available payment method', paymentMethodId );
-			setDisabledPaymentMethodIds( [ ...disabledPaymentMethodIds, paymentMethodId ] );
-		}
-	};
+			if ( ! available && ! disabledPaymentMethodIds.includes( paymentMethodId ) ) {
+				debug( 'Removing available payment method', paymentMethodId );
+				setDisabledPaymentMethodIds( [ ...disabledPaymentMethodIds, paymentMethodId ] );
+			}
+		},
+		[ allPaymentMethods, disabledPaymentMethodIds, setDisabledPaymentMethodIds ]
+	);
 }
