@@ -105,6 +105,7 @@ export class FullPostView extends Component {
 		isSuggestedFollowsModalOpen: false,
 		maxScrollDepth: 0, // Track the maximum scroll depth achieved
 		hasCompleted: false, // Track whether the user completed the post
+		fastExit: true, // Track whether the user fast exited the post
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -119,6 +120,7 @@ export class FullPostView extends Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.setReadingStartTime();
+		this.setEstimatedReadingTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
 
@@ -165,7 +167,9 @@ export class FullPostView extends Component {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
+				this.checkFastExit( prevProps.post ); // Check if the user exited early
 				this.setReadingStartTime();
+				this.setEstimatedReadingTime();
 				this.resetScroll();
 			}
 		}
@@ -196,6 +200,7 @@ export class FullPostView extends Component {
 		this.props.enableAppBanner(); // reset the app banner
 		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
 		this.trackReadingTime();
+		this.checkFastExit(); // Check if the user exited early
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 
@@ -252,6 +257,7 @@ export class FullPostView extends Component {
 			this.trackReadingTime();
 			this.trackScrollDepth();
 			this.trackExitBeforeCompletion();
+			this.checkFastExit(); // Check if the user exited early
 			this.resetScroll();
 		}
 	};
@@ -268,6 +274,28 @@ export class FullPostView extends Component {
 				engagement_time: engagementTime / 1000,
 			} );
 		}
+	}
+
+	setEstimatedReadingTime = () => {
+		this.estimatedReadingTime = this.estimateReadingTime(); // In seconds;
+	};
+
+	estimateReadingTime() {
+		const { post } = this.props;
+		if ( ! post ) {
+			return 0;
+		}
+		const averageReadingSpeed = 200; // words per minute
+		const wordsPerSecond = averageReadingSpeed / 60;
+		const wordCount = post.word_count;
+
+		if ( ! wordCount ) {
+			return 0;
+		}
+
+		// Calculate reading time in seconds
+		const readingTime = Math.ceil( wordCount / wordsPerSecond );
+		return readingTime;
 	}
 
 	clearResetScrollTimeout = () => {
@@ -330,6 +358,32 @@ export class FullPostView extends Component {
 				context: 'full-post',
 				scroll_depth: maxScrollDepth,
 			} );
+		}
+	};
+
+	trackFastExit = ( post, elapsedTime, fastExitThreshold ) => {
+		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
+			context: 'full-post',
+			estimated_reading_time: this.estimatedReadingTime,
+			elapsed_time: elapsedTime,
+			fast_exit_threshold: fastExitThreshold,
+		} );
+	};
+
+	checkFastExit = ( post = null ) => {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if ( ! this.readingStartTime || ! post?.ID || ! this.estimatedReadingTime ) {
+			return;
+		}
+
+		const elapsedTime = ( Date.now() - this.readingStartTime ) / 1000; // Convert to seconds
+		const fastExitThreshold = this.estimatedReadingTime * 0.25; // Define a "fast exit" as 25% of estimated time
+
+		if ( elapsedTime < fastExitThreshold ) {
+			this.trackFastExit( post, elapsedTime, fastExitThreshold );
 		}
 	};
 
