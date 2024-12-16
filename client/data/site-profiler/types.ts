@@ -194,6 +194,9 @@ export interface UrlPerformanceInsightsQueryResponse {
 		mobile: PerformanceReport | string;
 		desktop: PerformanceReport | string;
 	};
+	wpscan: {
+		status: string;
+	};
 }
 
 export interface PerformanceMetricsDataQueryResponse {
