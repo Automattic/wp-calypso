@@ -38,6 +38,15 @@ const textTruncator = ( text: string, limit = 48 ) => {
 	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
 };
 
+function getProcessedTitle( post: Post ): string {
+	const title = post?.title || '';
+	if ( ! title || title.length === 0 ) {
+		return '';
+	}
+
+	return decodeEntities( stripHTML( title ) );
+}
+
 export default function PostDetailHighlightsSection( {
 	siteId,
 	postId,
@@ -55,7 +64,7 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
+		title: textTruncator( getProcessedTitle( post ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
