@@ -8,7 +8,6 @@ import {
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
-import * as Purchases from '../../purchases';
 import * as Site from '../../site';
 import {
 	ADD_ON_100GB_STORAGE,
@@ -120,8 +119,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
-	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
-	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
+	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 
 	return useMemo(
 		() =>
@@ -131,7 +129,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 				const description = addOn.description ?? ( product?.description || '' );
 
 				/**
-				 * If siteFeatures, sitePurchases, or productsList are still loading, show the add-on as loading.
+				 * If data required by the `/add-ons` page is still loading, show the add-on as loading.
 				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
 				 * that to the add-on's meta if need to.
 				 */
@@ -162,13 +160,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					description,
 				};
 			} ),
-		[
-			activeAddOns,
-			productsList.data,
-			productsList.isLoading,
-			siteFeatures.isLoading,
-			sitePurchases.isLoading,
-		]
+		[ activeAddOns, mediaStorage.isLoading, productsList.data, productsList.isLoading ]
 	);
 };
 
