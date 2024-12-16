@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { isSiteActive } from 'calypso/a8c-for-agencies/components/form/utils';
+import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsPayload } from '../types';
 
 export const CAPTURE_URL_RGX =
@@ -48,8 +49,10 @@ const useSignupFormValidation = () => {
 				CAPTURE_SOCIAL_URL_RGX.test( payload.agencyUrl ) ||
 				! ( await isSiteActive( payload.agencyUrl ) )
 			) {
-				newValidationError.agencyUrl = translate(
-					`Please enter a live site URL for your business`
+				newValidationError.agencyUrl = preventWidows(
+					translate(
+						"Please enter a valid site URL for your business. If you're experiencing issues contact us at partnerships@automattic.com"
+					)
 				);
 			}
 
