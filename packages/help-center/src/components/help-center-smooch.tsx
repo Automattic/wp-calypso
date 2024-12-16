@@ -57,7 +57,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
-		isHelpCenterShown && isEligibleForChat,
+		isEligibleForChat && enableAuth,
 		isEligibleForChat && enableAuth,
 		true
 	);

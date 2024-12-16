@@ -57,7 +57,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { data } = useSupportStatus();
 	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
 		useGetSupportInteractions( 'help-center' );
-	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
+	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {

@@ -34,7 +34,7 @@ const HelpCenterFeedbackForm = ( {
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
 	const { data } = useSupportStatus();
-	const isUserEligibleForPaidSupport = data?.eligibility.is_user_eligible ?? false;
+	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
 	const { sectionName, site, shouldUseHelpCenterExperience } = useHelpCenterContext();
 	const navigate = useNavigate();
 	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
