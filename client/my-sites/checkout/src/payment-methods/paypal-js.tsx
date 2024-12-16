@@ -115,6 +115,8 @@ function PayPalSubmitButton( {
 			togglePaymentMethod( 'paypal-js', true );
 		}
 		if ( isPayPalJsLoaded && ! arePayPalButtonsAvailable ) {
+			// eslint-disable-next-line no-console
+			console.error( 'PayPal says the script is loaded but Buttons are not available' );
 			logStashEvent(
 				'PayPal says the script is loaded but Buttons are not available',
 				{ tags: [ 'paypal-configuration', 'paypal-buttons-missing' ] },
