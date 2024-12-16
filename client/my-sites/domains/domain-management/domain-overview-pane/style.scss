@@ -87,11 +87,6 @@
     overflow-x: auto;
 }
 
-.item-preview__header-actions .button {
-	border-radius: 4px;
-	height: auto;
-}
-
 .a4a-layout.domains-overview .item-preview__header {
 	.item-preview__header-info .item-preview__header-title-summary .item-preview__header-title {
 		font-family: Recoleta, sans-serif;
@@ -125,16 +120,17 @@
 
 	.item-preview__header-actions .button {
 		border-radius: 4px;
+		height: auto;
 	}
 
 	.item-preview__header-content .item-preview__close-preview {
-		height: 16px;
+		height: 1rem;
 		padding-left: 0;
 		padding-right: 0;
 		color: var(--color-link);
 
 		@include break-medium {
-			height: 32px;
+			height: 2rem;
 		}
 	}
 }
