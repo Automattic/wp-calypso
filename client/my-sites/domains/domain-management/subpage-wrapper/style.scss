@@ -1,6 +1,8 @@
 .subpage-wrapper {
     display: flex;
     justify-content: center;
+	overflow: auto;
+	height: 100%;
 
     .main.is-wide-layout {
         width: 100%;
