@@ -12,6 +12,7 @@ interface Props {
 	stepContent: ReactElement;
 	shouldHideNavButtons?: boolean;
 	hasStickyNavButtonsPadding?: boolean;
+	disableMobileStickyFooter?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
@@ -52,6 +53,7 @@ const StepContainer: React.FC< Props > = ( {
 	stepName,
 	shouldHideNavButtons,
 	hasStickyNavButtonsPadding,
+	disableMobileStickyFooter,
 	hideBack,
 	backLabelText,
 	hideSkip,
@@ -180,6 +182,7 @@ const StepContainer: React.FC< Props > = ( {
 			<ActionButtons
 				className={ clsx( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
+					'disable-mobile-sticky-footer': disableMobileStickyFooter,
 					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,
 				} ) }
 			>

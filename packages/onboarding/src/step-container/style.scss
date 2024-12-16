@@ -217,7 +217,7 @@
 			}
 		}
 
-		@include break-small {
+		@mixin disable-sticky-footer {
 			position: absolute;
 			top: 8px;
 			inset-inline-start: 72px;
@@ -231,6 +231,14 @@
 			&.has-sticky-nav-buttons-padding {
 				padding-bottom: 48px;
 			}
+		}
+
+		@include break-small {
+			@include disable-sticky-footer;
+		}
+
+		&.disable-mobile-sticky-footer {
+			@include disable-sticky-footer;
 		}
 	}
 

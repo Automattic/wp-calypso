@@ -79,6 +79,7 @@ const UserStepComponent: Step = function UserStep( {
 				isLargeSkipLayout={ false }
 				hideBack={ ! navigation.goBack }
 				goBack={ navigation.goBack }
+				disableMobileStickyFooter
 				stepContent={
 					<>
 						<FormattedHeader
