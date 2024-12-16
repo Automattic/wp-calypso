@@ -76,7 +76,13 @@ export function logStashLoadErrorEvent(
 		message: additionalData.message
 			? String( additionalData.message )
 			: convertErrorToString( error ),
-		errorMessage: convertErrorToString( error ),
+		...( additionalData.message
+			? // No need to log the `errorMessage` separately if it's the same as
+			  // the `message` property.
+			  {
+					errorMessage: convertErrorToString( error ),
+			  }
+			: {} ),
 		tags: [ 'checkout-error-boundary' ],
 	} );
 }
@@ -88,15 +94,22 @@ export function logStashEvent(
 	dataForLog: DataForLog,
 	severity: 'error' | 'warning' | 'info' = 'error'
 ): Promise< void > {
+	const tags = dataForLog.tags ?? [];
+	const extra: Record< string, string | string[] > = {
+		env: config( 'env_id' ),
+	};
+	Object.keys( dataForLog ).forEach( ( key ) => {
+		if ( key === 'tags' ) {
+			return;
+		}
+		extra[ key ] = dataForLog[ key ];
+	} );
 	return logToLogstash( {
 		feature: 'calypso_client',
 		message,
 		severity: config( 'env_id' ) === 'production' ? severity : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			...dataForLog,
-		},
-		tags: dataForLog.tags ?? [],
+		extra,
+		tags,
 	} );
 }
 
