@@ -1,5 +1,5 @@
 const PAYOUT_DATES = [
-	{ month: 3, day: 1 }, // March 1
+	{ month: 3, day: 2 }, // March 2
 	{ month: 6, day: 1 }, // June 1
 	{ month: 9, day: 1 }, // September 1
 	{ month: 12, day: 1 }, // December 1
@@ -10,14 +10,9 @@ export const getNextPayoutDate = ( currentDate: Date ): Date => {
 	const currentMonth = currentDate.getMonth() + 1; // Convert to 1-based month
 	const currentDay = currentDate.getDate();
 
-	// For December dates, return March 1st of next year
-	if ( currentMonth === 12 ) {
-		return new Date( currentYear + 1, 2, 1 ); // Month is 0-based, so 2 = March
-	}
-
 	// Find the next payout date that's closest to current date
-	const nextPayout = PAYOUT_DATES.find( ( { month } ) => {
-		return month > currentMonth || ( month === currentMonth && currentDay > 1 );
+	const nextPayout = PAYOUT_DATES.find( ( { month, day } ) => {
+		return month > currentMonth || ( month === currentMonth && day > currentDay );
 	} );
 
 	if ( nextPayout ) {
