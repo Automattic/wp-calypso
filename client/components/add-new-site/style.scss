@@ -20,7 +20,10 @@
 
 .popover.add-new-site__popover {
 	animation: fadeIn 0.2s ease-out;
-	margin-inline-start: 32px;
+
+	@include breakpoint-deprecated(">660px") {
+		margin-inline-start: 32px;
+	}
 
 	.popover__inner {
 		text-align: unset
@@ -38,9 +41,7 @@
 	}
 
 	.add-new-site__popover-column {
-		@include break-large {
-			width: 250px;
-		}
+		width: 250px;
 
 		@include break-xlarge {
 			width: 300px;
@@ -64,8 +65,10 @@ button, a {
 		width: 100%;
 		border-radius: 4px;
 		height: auto;
+		color: var(--color-text-black);
 
 		&:hover {
+			color: var(--color-text-black);
 			background-color: var(--color-neutral-0);
 		}
 
@@ -143,6 +146,16 @@ button, a {
 			line-height: 1.33;
 			color: var(--color-accent);
 			padding-top: 4px;
+		}
+	}
+}
+
+// Remove the focus outline from the button when clicked with the mouse,
+// but retain it for keyboard navigation (e.g., Tab key). */
+html:not(.accessible-focus) button, a {
+	&.components-button.add-new-site__popover-button {
+		&:focus-within {
+			box-shadow: none;
 		}
 	}
 }
