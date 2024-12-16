@@ -20,7 +20,6 @@ import {
 import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
-import isStorageAddonEnabled from '../lib/is-storage-addon-enabled';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnPrices from './use-add-on-prices';
@@ -118,19 +117,13 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 
 interface Props {
 	selectedSiteId?: number | null | undefined;
-	enableStorageAddOns?: boolean;
 }
 
-const useAddOns = ( {
-	selectedSiteId,
-	enableStorageAddOns,
-}: Props = {} ): ( AddOnMeta | null )[] => {
+const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
-	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
-	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
 	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
 		siteId: selectedSiteId,
 		productSlug: PRODUCT_1GB_SPACE,
@@ -148,7 +141,7 @@ const useAddOns = ( {
 				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
 				 * that to the add-on's meta if need to.
 				 */
-				if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
+				if ( productsList.isLoading || mediaStorage.isLoading ) {
 					return {
 						...addOn,
 						name,
@@ -170,14 +163,6 @@ const useAddOns = ( {
 				 * If it's a storage add-on.
 				 */
 				if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-					// if storage add-ons are not enabled in the config or disabled via hook prop, remove them
-					if (
-						( 'boolean' === typeof enableStorageAddOns && ! enableStorageAddOns ) ||
-						( ! isStorageAddonEnabled() && 'boolean' !== typeof enableStorageAddOns )
-					) {
-						return null;
-					}
-
 					/**
 					 * If storage add-on is already purchased.
 					 * TODO: Consider migrating this part to `use-add-on-purchase-status` and attach
@@ -224,13 +209,10 @@ const useAddOns = ( {
 			} ),
 		[
 			activeAddOns,
-			enableStorageAddOns,
 			mediaStorage.data?.maxStorageBytes,
+			mediaStorage.isLoading,
 			productsList.data,
 			productsList.isLoading,
-			siteFeatures.data?.active,
-			siteFeatures.isLoading,
-			sitePurchases.isLoading,
 			spaceUpgradesPurchased,
 		]
 	);

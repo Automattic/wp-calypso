@@ -3,7 +3,6 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
@@ -34,7 +33,7 @@ import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
 const RenderDomainsStepConnect = connect(
-	( state, { flow }: StepProps ) => {
+	( state, { flow, step }: { flow: string; step: ProvidedDependencies } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
@@ -64,6 +63,7 @@ const RenderDomainsStepConnect = connect(
 			positionInFlow: 1,
 			isReskinned: true,
 			stepSectionName,
+			signupDependencies: step,
 		};
 	},
 	{
@@ -80,21 +80,16 @@ const RenderDomainsStepConnect = connect(
 	}
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
+/**
+ * The domains step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
+ * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
+ */
+let mostRecentState: ProvidedDependencies = {};
+
 export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
-
-	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
-
-	const updateSignupStepState = useCallback(
-		( state: ProvidedDependencies, providedDependencies: ProvidedDependencies ) => {
-			setStepState(
-				( mostRecentStateRef.current = { ...stepState, ...providedDependencies, ...state } )
-			);
-		},
-		[ stepState, setStepState ]
-	);
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -102,11 +97,15 @@ export default function DomainsStep( props: StepProps ) {
 				{ ...props }
 				{ ...managedSiteFlowProps }
 				page={ ( url: string ) => window.location.assign( url ) }
-				saveSignupStep={ updateSignupStepState }
-				submitSignupStep={ updateSignupStepState }
+				saveSignupStep={ ( step: ProvidedDependencies ) => {
+					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				} }
+				submitSignupStep={ ( _: never, step: ProvidedDependencies ) => {
+					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				} }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
 					props.navigation.submit?.( {
-						...( mostRecentStateRef.current ?? {} ),
+						...mostRecentState,
 						...state,
 						shouldSkipSubmitTracking: state?.navigateToUseMyDomain ? true : false,
 					} );

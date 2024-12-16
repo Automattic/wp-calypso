@@ -6,13 +6,9 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
-import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
-import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import DiscoverNavigation from './discover-navigation';
 import {
@@ -58,11 +54,6 @@ const DiscoverStream = ( props ) => {
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab;
-	const recommendedSitesSeed =
-		selectedTab === FIRST_POSTS_TAB ? 'discover-new-sites' : 'discover-recommendations';
-	const recommendedSites = useSelector(
-		( state ) => getReaderRecommendedSites( state, recommendedSitesSeed ) || []
-	);
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -97,35 +88,10 @@ const DiscoverStream = ( props ) => {
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
 
-	const streamSidebar = () => {
-		if ( selectedTab === FIRST_POSTS_TAB && recommendedSites?.length ) {
-			return (
-				<ReaderPopularSitesSidebar
-					items={ recommendedSites }
-					followSource={ READER_DISCOVER_POPULAR_SITES }
-					title={ translate( 'New sites' ) }
-				/>
-			);
-		}
-
-		if ( ( isDefaultTab || selectedTab === 'latest' ) && recommendedSites?.length ) {
-			return (
-				<ReaderPopularSitesSidebar
-					items={ recommendedSites }
-					followSource={ READER_DISCOVER_POPULAR_SITES }
-					title={ translate( 'Popular sites' ) }
-				/>
-			);
-		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
-			return <ReaderTagSidebar tag={ selectedTab } showFollow />;
-		}
-	};
-
 	const streamProps = {
 		...props,
 		streamKey,
 		useCompactCards: true,
-		streamSidebar,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
 	};

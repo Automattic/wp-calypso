@@ -12,6 +12,7 @@ import {
 import { AddOns, Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import type { GridPlan } from '../../types';
 
 interface UsePlanBillingDescriptionProps {
@@ -35,7 +36,7 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-
+	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -44,6 +45,7 @@ export default function usePlanBillingDescription( {
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices,
 	} )?.[ yearlyVariantPlanSlug ?? '' ];
 
 	if ( ! pricing ) {

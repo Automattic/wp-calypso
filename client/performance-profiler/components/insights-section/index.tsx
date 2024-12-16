@@ -9,7 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import {
 	filterRecommendations,
-	metricsNames,
+	getMetricsNames,
 	highImpactAudits,
 } from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
@@ -58,6 +58,8 @@ export const InsightsSection = forwardRef(
 				setSelectedFilter( filter );
 			}
 		}, [ selectedFilter, filter ] );
+
+		const metricsNames = getMetricsNames( translate );
 
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
@@ -122,6 +124,8 @@ function getSubtitleText(
 	numRecommendations: number,
 	translate: ReturnType< typeof useTranslate >
 ) {
+	const metricsNames = getMetricsNames( translate );
+
 	if ( numRecommendations ) {
 		if ( selectedFilter === 'all' ) {
 			return translate(
