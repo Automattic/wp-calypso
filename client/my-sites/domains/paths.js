@@ -60,6 +60,10 @@ export function isUnderDomainManagementAll( path ) {
 	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
 }
 
+export function isUnderDomainManagementOverview( path ) {
+	return path?.startsWith( domainManagementOverviewRoot() + '/' );
+}
+
 export function domainAddNew( siteName, searchTerm ) {
 	let path = `/domains/add`;
 
@@ -82,11 +86,11 @@ export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
 
-export function allDomainManagementRoot() {
+export function domainManagementOverviewRoot() {
 	return domainManagementAllRoot() + '/overview';
 }
 
-export function allDomainEmailManagementRoot() {
+export function domainManagementEmailRoot() {
 	return domainManagementAllRoot() + '/email';
 }
 

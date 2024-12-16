@@ -385,7 +385,7 @@ export default function () {
 	);
 
 	page(
-		paths.allDomainManagementRoot() + '/:domain/:site',
+		paths.domainManagementOverviewRoot() + '/:domain/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementV2,
@@ -396,7 +396,7 @@ export default function () {
 	);
 
 	page(
-		paths.allDomainEmailManagementRoot() + '/:domain/:site',
+		paths.domainManagementEmailRoot() + '/:domain/:site',
 		siteSelection,
 		navigation,
 		emailController.emailManagement,

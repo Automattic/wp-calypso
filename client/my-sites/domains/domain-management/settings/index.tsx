@@ -15,6 +15,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -44,6 +45,7 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -111,6 +113,16 @@ const Settings = ( {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const renderHeader = () => {
+		if ( isUnderDomainManagementOverview( currentRoute ) ) {
+			return (
+				<NavigationHeader
+					className="domains-overview__navigation-header"
+					title={ translate( 'Overview' ) }
+					subtitle={ translate( 'Get a quick glance at your domain options and settings.' ) }
+				/>
+			);
+		}
+
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,

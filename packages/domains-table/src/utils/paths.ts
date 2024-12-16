@@ -102,10 +102,6 @@ export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
 
-export function allDomainManagementRoot() {
-	return '/domains/all/manage';
-}
-
 export function domainManagementEditContactInfo(
 	siteName: string,
 	domainName: string,
