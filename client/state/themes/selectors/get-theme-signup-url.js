@@ -1,4 +1,9 @@
-import { FREE_THEME, BUNDLED_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
+import {
+	FREE_THEME,
+	BUNDLED_THEME,
+	MARKETPLACE_THEME,
+	DOT_ORG_THEME,
+} from '@automattic/design-picker';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
@@ -31,6 +36,9 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 				break;
 			case 'partner':
 				themeTypeParam = MARKETPLACE_THEME;
+				break;
+			case 'community':
+				themeTypeParam = DOT_ORG_THEME;
 				break;
 			default:
 				themeTypeParam = themeTier.slug;
