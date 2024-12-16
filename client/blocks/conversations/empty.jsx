@@ -37,7 +37,7 @@ class ConversationsEmptyContent extends Component {
 				title={ this.props.translate( 'Welcome to Conversations' ) }
 				line={ this.props.translate(
 					"When WordPress posts spark lively conversations, they'll appear here. " +
-						'To get started, like or comment on some posts.'
+						'To get started, follow or comment on some posts.'
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }

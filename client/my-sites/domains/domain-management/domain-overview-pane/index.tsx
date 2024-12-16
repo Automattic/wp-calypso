@@ -12,6 +12,7 @@ import type {
 	ItemData,
 	FeaturePreviewInterface,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import './style.scss';
 
 interface Props {
 	selectedDomainPreview: React.ReactNode;

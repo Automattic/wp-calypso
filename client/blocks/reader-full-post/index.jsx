@@ -103,6 +103,8 @@ export class FullPostView extends Component {
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
+		maxScrollDepth: 0, // Track the maximum scroll depth achieved
+		hasCompleted: false, // Track whether the user completed the post
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -136,6 +138,14 @@ export class FullPostView extends Component {
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		const scrollableContainer =
+			document.querySelector( '#primary > div > div.recent-feed > section' ) ||
+			document.querySelector( '#primary > div > div' );
+		if ( scrollableContainer ) {
+			scrollableContainer.addEventListener( 'scroll', this.setScrollDepth );
+			this.scrollableContainer = scrollableContainer; // Save reference for cleanup
+		}
 	}
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
@@ -152,6 +162,8 @@ export class FullPostView extends Component {
 			// If the post being viewed changes, track the reading time.
 			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
 				this.trackReadingTime( prevProps.post );
+				this.trackScrollDepth( prevProps.post );
+				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
 			}
 		}
@@ -184,6 +196,10 @@ export class FullPostView extends Component {
 		this.trackReadingTime();
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		if ( this.scrollableContainer ) {
+			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
+		}
 	}
 
 	setReadingStartTime = () => {
@@ -231,6 +247,8 @@ export class FullPostView extends Component {
 	handleVisibilityChange = () => {
 		if ( document.hidden ) {
 			this.trackReadingTime();
+			this.trackScrollDepth();
+			this.trackExitBeforeCompletion();
 		}
 	};
 
@@ -238,7 +256,7 @@ export class FullPostView extends Component {
 		if ( ! post ) {
 			post = this.props.post;
 		}
-		if ( this.readingStartTime ) {
+		if ( this.readingStartTime && post.ID ) {
 			const endTime = Math.floor( Date.now() );
 			const engagementTime = endTime - this.readingStartTime;
 			recordTrackForPost( 'calypso_reader_article_engaged_time', post, {
@@ -247,6 +265,48 @@ export class FullPostView extends Component {
 			} );
 		}
 	}
+
+	setScrollDepth = () => {
+		if ( this.scrollableContainer ) {
+			const scrollTop = this.scrollableContainer.scrollTop;
+			const scrollHeight = this.scrollableContainer.scrollHeight;
+			const clientHeight = this.scrollableContainer.clientHeight;
+			const scrollDepth = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
+			this.setState( ( prevState ) => ( {
+				maxScrollDepth: Math.max( prevState.maxScrollDepth, scrollDepth ),
+				hasCompleted: prevState.hasCompleted || scrollDepth >= 90,
+			} ) );
+		}
+	};
+
+	trackScrollDepth = ( post = null ) => {
+		const { maxScrollDepth } = this.state;
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if ( this.scrollableContainer && post.ID ) {
+			const roundedDepth = Math.round( maxScrollDepth * 100 ) / 100;
+			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
+				context: 'full-post',
+				scroll_depth: roundedDepth,
+			} );
+		}
+	};
+
+	trackExitBeforeCompletion = ( post = null ) => {
+		const { hasCompleted, maxScrollDepth } = this.state;
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if ( this.scrollableContainer && post.ID && ! hasCompleted ) {
+			recordTrackForPost( 'calypso_reader_article_exit_before_completion', post, {
+				context: 'full-post',
+				scroll_depth: maxScrollDepth,
+			} );
+		}
+	};
 
 	handleBack = ( event ) => {
 		event.preventDefault();
