@@ -6,6 +6,7 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { getConsolidatedData } from '../lib/commissions';
+import { getNextPayoutDate } from '../lib/get-next-payout-date';
 import type { Referral, ReferralInvoice } from '../types';
 
 import './style.scss';
@@ -71,9 +72,14 @@ export default function ConsolidatedViews( {
 	}, [ referrals, data, referralInvoices ] );
 
 	const link =
-		'https://agencieshelp.automattic.com/knowledge-base/about-automattic-for-agencies/#payout-calculation-and-schedule';
+		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
 	const showLoader = isFetching || isFetchingInvoices;
+
+	const nextPayoutDate = getNextPayoutDate( new Date() ).toLocaleString( 'default', {
+		month: 'short',
+		day: 'numeric',
+	} );
 
 	return (
 		<div className="consolidated-view">
@@ -124,6 +130,29 @@ export default function ConsolidatedViews( {
 										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
 									},
 									comment: 'This is a tooltip explaining how the commission is calculated',
+								}
+							) }
+						</div>
+					</InfoIconWithPopover>
+				</div>
+			</Card>
+			<Card compact>
+				<div className="consolidated-view__value">{ nextPayoutDate + '*' }</div>
+				<div className="consolidated-view__label">
+					{ translate( 'Next estimated payout date' ) }
+					<InfoIconWithPopover>
+						<div className="consolidated-view__popover-content">
+							{ translate(
+								'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks. ' +
+									'Payout dates mark the start of processing, which may take a few extra days. Payments scheduled on weekends are processed the next business day. ' +
+									'{{br}}{{/br}}{{a}}Learn more{{/a}} ↗',
+								{
+									components: {
+										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
+										br: <br />,
+									},
+									comment:
+										'This is a tooltip explaining how the commission payout date is calculated',
 								}
 							) }
 						</div>
