@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import {
@@ -12,6 +12,7 @@ import {
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 import useHighlightsQuery from './use-highlights-query';
+import useOnScreen from './use-on-screen';
 import useSiteTypes from './use-site-types';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -20,6 +21,7 @@ import 'animate.css';
 import './style.scss';
 
 const TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD = 'stats_feedback_action_present_persistent_section';
+const TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD = 'stats_feedback_action_view_persistent_section';
 const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
@@ -168,9 +170,20 @@ interface FeedbackCardProps {
 }
 
 function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
+	const inlineFeedbackCardRef = useRef( null );
+	const isVisible = useOnScreen( inlineFeedbackCardRef );
+
 	useEffect( () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
 	}, [] );
+
+	useEffect( () => {
+		if ( isVisible && ! hasFiredViewEvent ) {
+			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD );
+			setHasFiredViewEvent( true );
+		}
+	}, [ isVisible, hasFiredViewEvent ] );
 
 	const handleLeaveReviewFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
@@ -182,7 +195,7 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	};
 
 	return (
-		<div className="stats-feedback-card">
+		<div className="stats-feedback-card" ref={ inlineFeedbackCardRef }>
 			<FeedbackContent
 				onLeaveReview={ handleLeaveReviewFromCard }
 				onSendFeedback={ handleSendFeedbackFromCard }
