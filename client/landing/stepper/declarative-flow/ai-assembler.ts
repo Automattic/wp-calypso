@@ -225,10 +225,6 @@ const withAIAssemblerFlow: Flow = {
 					return exitFlow( selectedSiteId, selectedSiteSlug );
 				}
 
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
-				}
-
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
@@ -273,19 +269,11 @@ const withAIAssemblerFlow: Flow = {
 				case 'domain': {
 					return navigate( 'launchpad' );
 				}
-
-				case 'pattern-assembler': {
-					return navigate( 'site-prompt' );
-				}
 			}
 		};
 
 		const goNext = () => {
 			switch ( _currentStep ) {
-				case 'site-prompt': {
-					return navigate( 'pattern-assembler' );
-				}
-
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: AI_ASSEMBLER_FLOW,
