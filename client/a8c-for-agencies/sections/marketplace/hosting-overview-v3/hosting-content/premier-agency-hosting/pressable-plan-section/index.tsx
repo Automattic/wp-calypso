@@ -4,8 +4,9 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { PLAN_CATEGORY_STANDARD } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
-import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
-import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import getPressablePlan, {
+	PressablePlan,
+} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,12 +21,18 @@ type Props = {
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 	isReferralMode?: boolean;
 	pressableOwnership?: 'agency' | 'regular' | 'none';
+	existingPlan: APIProductFamilyProduct | null;
+	existingPlanInfo: PressablePlan | null;
+	isFetching?: boolean;
 };
 
 export default function PressablePlanSection( {
 	onSelect,
 	isReferralMode,
 	pressableOwnership,
+	existingPlan,
+	existingPlanInfo,
+	isFetching,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -39,14 +46,6 @@ export default function PressablePlanSection( {
 	} );
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
-
-	const {
-		existingPlan,
-		pressablePlan: existingPlanInfo,
-		isReady: isExistingPlanFetched,
-	} = useExistingPressablePlan( {
-		plans: pressablePlans,
-	} );
 
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
@@ -87,7 +86,7 @@ export default function PressablePlanSection( {
 					plans={ pressablePlans }
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ isReferralMode ? null : existingPlanInfo }
-					isLoading={ ! isExistingPlanFetched }
+					isLoading={ ! isFetching }
 					showHighResourceTab
 				/>
 			</HostingPlanSection.Banner>
@@ -98,14 +97,28 @@ export default function PressablePlanSection( {
 		pressablePlans,
 		isReferralMode,
 		existingPlanInfo,
-		isExistingPlanFetched,
+		isFetching,
 	] );
+
+	const heading = useMemo( () => {
+		if ( isReferralMode ) {
+			return translate( 'Refer a variety of plans, or single high-resource sites to your clients' );
+		}
+
+		if ( existingPlan && pressableOwnership !== 'regular' ) {
+			return translate( 'Upgrade your plan' );
+		}
+
+		return translate(
+			'Choose from a variety of plans, or purchase single high-resource sites as add-ons'
+		);
+	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
 	if ( ! selectedPlan ) {
 		return (
-			<HostingPlanSection className="pressable-plan-section">
+			<HostingPlanSection className="pressable-plan-section" heading={ heading }>
 				{ banner }
 
 				<HostingPlanSection.Card>
@@ -179,7 +192,7 @@ export default function PressablePlanSection( {
 	}
 
 	return (
-		<HostingPlanSection className="pressable-plan-section">
+		<HostingPlanSection className="pressable-plan-section" heading={ heading }>
 			{ banner }
 			<HostingPlanSection.Card>
 				<RegularPlanCardContent
