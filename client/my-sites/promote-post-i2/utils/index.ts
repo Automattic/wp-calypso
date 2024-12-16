@@ -132,7 +132,8 @@ export const getCampaignDurationFormatted = (
 	start_date?: string,
 	end_date?: string,
 	is_evergreen = false,
-	status: string = ''
+	status: string = '',
+	format: string = ''
 ) => {
 	if ( ! start_date || ! end_date ) {
 		return '-';
@@ -144,8 +145,10 @@ export const getCampaignDurationFormatted = (
 		return '-';
 	}
 
-	// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
-	const format = _x( 'MMM D', 'shorter date format' );
+	if ( ! format ) {
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		format = _x( 'MMM D', 'shorter date format' );
+	}
 	const dateStartFormatted = moment.utc( start_date ).format( format );
 
 	// A campaign without an "end date", show start -> today (if not ended)
