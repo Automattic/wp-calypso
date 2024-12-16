@@ -67,6 +67,10 @@ const Header = styled.div`
 	align-items: center;
 	justify-content: center;
 	gap: 12px;
+
+	.hundred-year-plan-logo {
+		margin-bottom: 24px;
+	}
 `;
 
 const AnnouncementLink = styled( Button )`
