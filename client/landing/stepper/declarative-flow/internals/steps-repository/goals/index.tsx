@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -55,6 +56,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 	);
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
+
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	useEffect( () => {
 		resetIntent();
@@ -187,14 +190,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
 								{ translate( 'Let us build a custom site for you' ) }
 							</Button>
-							<Button
-								variant="link"
-								onClick={ handleDashboardClick }
-								className="select-goals__link select-goals__dashboard-button"
-							>
-								<DashboardIcon />
-								{ translate( 'Skip to dashboard' ) }
-							</Button>
+							{ ! isGoalsAtFrontExperiment && (
+								<Button
+									variant="link"
+									onClick={ handleDashboardClick }
+									className="select-goals__link select-goals__dashboard-button"
+								>
+									<DashboardIcon />
+									{ translate( 'Skip to dashboard' ) }
+								</Button>
+							) }
 						</div>
 					</>
 				}

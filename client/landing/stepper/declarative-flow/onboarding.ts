@@ -106,12 +106,7 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
-					const { intent, skip } = providedDependencies;
-
-					if ( skip ) {
-						// TODO Implement skipping to dashboard
-						return;
-					}
+					const { intent } = providedDependencies;
 
 					switch ( intent ) {
 						case SiteIntent.Import:
