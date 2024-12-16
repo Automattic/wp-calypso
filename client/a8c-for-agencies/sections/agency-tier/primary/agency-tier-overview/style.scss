@@ -30,7 +30,7 @@ $light-green: #53dc81;
 	.agency-tier-overview__current-tier-container {
 		display: flex;
 
-		@include break-large {
+		@include break-medium {
 			height: 180px;
 		}
 
@@ -54,13 +54,8 @@ $light-green: #53dc81;
 		overflow: hidden;
 		box-sizing: border-box;
 		width: 100%;
-		max-width: 400px;
 		background-color: $color-pink;
 		min-height: 150px;
-
-		@include break-large {
-			max-width: unset;
-		}
 
 		@include break-xlarge {
 			flex: 0 0 70%;
