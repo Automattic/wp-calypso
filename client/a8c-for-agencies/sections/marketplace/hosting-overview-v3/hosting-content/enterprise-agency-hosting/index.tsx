@@ -36,7 +36,12 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 
 	return (
 		<>
-			<HostingPlanSection className="enterprise-agency-hosting-v3">
+			<HostingPlanSection
+				className="enterprise-agency-hosting-v3"
+				heading={ translate(
+					'Deliver unmatched performance with the highest security standards on our enterprise platform'
+				) }
+			>
 				<HostingPlanSection.Card>
 					<div className="enterprise-agency-hosting__top">
 						<div className="enterprise-agency-hosting__top-heading">
