@@ -746,7 +746,7 @@ class Login extends Component {
 		}
 
 		if ( isFromAkismet ) {
-			headerText = 'Log in to Akismet';
+			headerText = 'Log in to Akismet with WordPress.com';
 			preHeader = (
 				<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none">
 					<rect width="44" height="44" fill="#357B49" rx="6" />
@@ -1135,10 +1135,9 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
-		isFromAkismet:
-			'akismet' === get( getCurrentQueryArguments( state ), 'from' ) ||
-			'akismet' ===
-				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+		isFromAkismet: !! new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] )
+			.get( 'back' )
+			?.startsWith( 'https://akismet.com' ),
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
