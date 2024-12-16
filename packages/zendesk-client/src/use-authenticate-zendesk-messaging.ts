@@ -44,16 +44,18 @@ export function useAuthenticateZendeskMessaging(
 				  } as APIFetchOptions ) );
 
 			const jwt = auth?.user?.jwt;
-			await new Promise< void >( ( resolve, reject ) => {
-				if ( ! jwt ) {
-					reject();
+
+			return new Promise< { isLoggedIn: boolean; jwt: string; externalId: string | undefined } >(
+				( resolve, reject ) => {
+					if ( ! jwt ) {
+						reject();
+					}
+					window?.zE?.( 'messenger', 'loginUser', function ( callback ) {
+						callback( jwt );
+						resolve( { isLoggedIn: true, jwt, externalId: auth?.user.external_id } );
+					} );
 				}
-				window?.zE?.( 'messenger', 'loginUser', function ( callback ) {
-					callback( jwt );
-					resolve();
-				} );
-			} );
-			return { isLoggedIn: true, jwt, externalId: auth?.user.external_id };
+			);
 		},
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
