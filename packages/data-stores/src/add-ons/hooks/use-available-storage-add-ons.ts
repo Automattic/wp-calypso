@@ -31,14 +31,14 @@ const useAvailableStorageAddOns = ( { siteId }: Props ): AddOnMeta[] => {
 	const siteMediaStorage = useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
 	return useMemo( () => {
-		const nonNullAddOns = storageAddOns.filter( ( addOn ) => addOn !== null );
+		const nonNullAddOns = storageAddOns.filter( ( addOn ): addOn is AddOnMeta => addOn !== null );
 		const siteMediaStorageData = siteMediaStorage.data;
 
 		if ( ! siteMediaStorageData ) {
 			return nonNullAddOns;
 		}
 
-		return nonNullAddOns.filter( ( addOn ): addOn is AddOnMeta =>
+		return nonNullAddOns.filter( ( addOn ) =>
 			isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorageData )
 		);
 	}, [ siteMediaStorage, storageAddOns ] );
