@@ -1,4 +1,5 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -115,6 +116,14 @@ export default function PressablePlanSection( {
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
+
+	const onScheduleDemo = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_schedule_demo_click' )
+		);
+	}, [ dispatch ] );
+
+	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
 	if ( ! selectedPlan ) {
 		return (
@@ -289,8 +298,11 @@ export default function PressablePlanSection( {
 				heading={ translate( 'Schedule a demo' ) }
 				cta={ {
 					label: translate( 'Schedule a demo' ),
-					onClick: () => {},
+					onClick: onScheduleDemo,
+					href: PRESSABLE_CONTACT_LINK,
+					target: '_blank',
 					variant: 'secondary',
+					icon: external,
 				} }
 			>
 				<p>

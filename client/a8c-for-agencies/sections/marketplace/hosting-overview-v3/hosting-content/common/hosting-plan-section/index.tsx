@@ -20,6 +20,8 @@ type AsideProps = BaseProps & {
 		label: string;
 		onClick?: () => void;
 		disabled?: boolean;
+		href?: string;
+		target?: string;
 	};
 };
 
@@ -41,9 +43,15 @@ function Aside( { heading, cta, children }: AsideProps ) {
 
 			<footer className="hosting-plan-section__aside-footer">
 				{ cta && (
-					<Button variant={ cta.variant } onClick={ cta.onClick } disabled={ cta.disabled }>
+					<Button
+						className="hosting-plan-section__aside-button"
+						variant={ cta.variant }
+						onClick={ cta.onClick }
+						disabled={ cta.disabled }
+						{ ...( cta.href && { href: cta.href, target: cta.target } ) }
+					>
 						{ cta.label }
-						{ cta.icon && <Icon icon={ cta.icon } /> }
+						{ cta.icon && <Icon icon={ cta.icon } size={ 16 } /> }
 					</Button>
 				) }
 			</footer>
