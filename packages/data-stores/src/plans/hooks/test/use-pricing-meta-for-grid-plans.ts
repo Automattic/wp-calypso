@@ -362,6 +362,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
+			reflectStorageSelectionInPlanPrices: true,
 			storageAddOns: STORAGE_ADD_ONS_MOCK,
 			siteId,
 			coupon: undefined,
