@@ -1,5 +1,6 @@
 import { useMemo } from '@wordpress/element';
 import { SiteMediaStorage, useSiteMediaStorage } from '../../site';
+import { STORAGE_LIMIT } from '../constants';
 import { AddOnMeta } from '../types';
 import useStorageAddOns from './use-storage-add-ons';
 
@@ -16,8 +17,9 @@ export function isStorageQuantityAvailable( quantity: number, storage: SiteMedia
 	const currentMaxStorage = storage.maxStorageBytes / Math.pow( 1024, 3 );
 	const maxStorageExcludingAddons = storage.maxStorageBytesExcludingAddons / Math.pow( 1024, 3 );
 	const existingAddOnStorage = currentMaxStorage - maxStorageExcludingAddons;
+	const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
 
-	return existingAddOnStorage < quantity;
+	return existingAddOnStorage < quantity && quantity <= availableStorageUpgrade;
 }
 
 /**
