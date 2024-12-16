@@ -14,11 +14,17 @@ export function createActions() {
 	/**
 	 * ↓ Import subscribers by CSV
 	 */
-	const importCsvSubscribersStart = ( siteId: number, file?: File, emails: string[] = [] ) => ( {
+	const importCsvSubscribersStart = (
+		siteId: number,
+		file?: File,
+		emails: string[] = [],
+		categories: string[] = []
+	) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
 		file,
 		emails,
+		categories,
 	} );
 
 	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
@@ -42,9 +48,10 @@ export function createActions() {
 		siteId: number,
 		file?: File,
 		emails: string[] = [],
+		categories: string[] = [],
 		parseOnly: boolean = false
 	) {
-		yield importCsvSubscribersStart( siteId, file, emails );
+		yield importCsvSubscribersStart( siteId, file, emails, categories );
 
 		try {
 			const token = oauthToken.getToken();
@@ -56,7 +63,7 @@ export function createActions() {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				formData: file && [ [ 'import', file, file.name ] ],
-				body: { emails, parse_only: parseOnly },
+				body: { emails, categories, parse_only: parseOnly },
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );

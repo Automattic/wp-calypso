@@ -90,14 +90,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	const [ selectedCategories, setSelectedCategories ] = useState< string[] >( [] );
 
-	useEffect( () => {
-		if ( newsletterCategoriesData?.newsletterCategories ) {
-			setSelectedCategories(
-				newsletterCategoriesData.newsletterCategories.map( ( cat ) => cat.name )
-			);
-		}
-	}, [ newsletterCategoriesData ] );
-
 	const {
 		addSubscribers,
 		importCsvSubscribers,
@@ -199,7 +191,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} else {
 			// import subscribers proving CSV and manual list of emails
 			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails );
+				importCsvSubscribers( siteId, selectedFile, validEmails, selectedCategories );
 		}
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
