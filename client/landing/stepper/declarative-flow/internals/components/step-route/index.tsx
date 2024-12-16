@@ -59,10 +59,14 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 				kebabCase( step.slug )
 			) }
 		>
-			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
-			{ stepContent }
-			{ stepContent && <SurveyManager /> }
-			{ stepContent && <StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } /> }
+			{ stepContent && (
+				<>
+					<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
+					{ stepContent }
+					<SurveyManager />
+					<StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } />
+				</>
+			) }
 		</div>
 	);
 };

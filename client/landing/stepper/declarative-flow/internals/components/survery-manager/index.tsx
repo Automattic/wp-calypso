@@ -1,4 +1,3 @@
-import getTrackingPrefs from '@automattic/calypso-analytics/src/utils/get-tracking-prefs';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	MIGRATION_FLOW,
@@ -9,6 +8,7 @@ import {
 import { Suspense } from 'react';
 import { useFlowNavigation } from '../../hooks/use-flow-navigation';
 import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
+import { DeferredRender } from '../deferred-render';
 
 const MIGRATION_SURVEY_FLOWS = [
 	MIGRATION_FLOW,
@@ -20,30 +20,22 @@ const MIGRATION_SURVEY_FLOWS = [
 const SurveyManager = () => {
 	const { params } = useFlowNavigation();
 	const isEnLocale = useIsEnglishLocale();
-	const { ok } = getTrackingPrefs();
-
-	// Skip survey for non-English locales
-	if ( ! isEnLocale ) {
-		return null;
-	}
 
 	if ( ! params.flow ) {
 		return null;
 	}
 
-	if ( ! MIGRATION_SURVEY_FLOWS.includes( params.flow ) ) {
-		return null;
+	if ( MIGRATION_SURVEY_FLOWS.includes( params.flow ) && isEnLocale ) {
+		return (
+			<DeferredRender timeMs={ 1000 }>
+				<Suspense>
+					<AsyncMigrationSurvey />
+				</Suspense>
+			</DeferredRender>
+		);
 	}
 
-	if ( ! ok ) {
-		return null;
-	}
-
-	return (
-		<Suspense>
-			<AsyncMigrationSurvey />
-		</Suspense>
-	);
+	return null;
 };
 
 export default SurveyManager;
