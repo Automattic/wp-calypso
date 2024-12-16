@@ -11,20 +11,7 @@ export type RouterContext = Context &
 		queryClient: QueryClient;
 	};
 
-export type AssemblerPattern = {
-	ID: number;
-	name: string;
-	title: string;
-	description?: string;
-	category?: AssemblerCategory;
-	categories: Record< string, AssemblerCategory | undefined >;
-	key?: string;
-	pattern_meta?: Record< string, boolean | undefined >;
-	html?: string;
-	tags: Record< string, AssemblerTag | undefined >;
-};
-
-export type AssemblerCategory = {
+export type PatternCategory = {
 	name?: string;
 	title?: string;
 	slug?: string;
@@ -32,13 +19,23 @@ export type AssemblerCategory = {
 	description?: string;
 };
 
-export type AssemblerTag = {
+export type PatternTag = {
 	slug: string;
 	title: string;
 	description: string;
 };
 
-export type Pattern = AssemblerPattern & {
+export type Pattern = {
+	ID: number;
+	name: string;
+	title: string;
+	description?: string;
+	category?: PatternCategory;
+	categories: Record< string, PatternCategory | undefined >;
+	key?: string;
+	pattern_meta?: Record< string, boolean | undefined >;
+	html?: string;
+	tags: Record< string, PatternTag | undefined >;
 	can_be_copied_without_account?: boolean;
 };
 
