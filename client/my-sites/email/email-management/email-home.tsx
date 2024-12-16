@@ -166,6 +166,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					hideMailPoetUpsell={ isAllDomainManagementContext }
 					selectedSite={ selectedSite }
 					source={ source }
+					context={ context }
 				/>
 			</ContentWithHeader>
 		);

@@ -12,6 +12,7 @@ type Props = React.PropsWithChildren< {
 	addMailboxPath?: string;
 	domain?: ResponseDomain;
 	showIcon?: boolean;
+	disableActions?: boolean;
 } >;
 const MailboxListHeader = ( {
 	accountType = null,
@@ -20,6 +21,7 @@ const MailboxListHeader = ( {
 	addMailboxPath,
 	domain,
 	showIcon,
+	disableActions,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -56,7 +58,9 @@ const MailboxListHeader = ( {
 				}
 			>
 				{ addMailboxPath && (
-					<Button isLink href={ addMailboxPath }>
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
+					<Button href={ addMailboxPath } variant="link" disabled={ !! disableActions }>
 						{ translate( 'Add mailbox' ) }
 					</Button>
 				) }

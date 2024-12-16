@@ -9,12 +9,14 @@ import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 type Props = {
 	account: EmailAccount;
 	mailbox: Mailbox;
+	readonly?: boolean;
 };
-function MailboxLink( { account, mailbox }: Props ) {
+function MailboxLink( { account, mailbox, readonly }: Props ) {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const emailAddress = getEmailAddress( mailbox );
+	const isReadonly = readonly || isEmailForwardAccount( account );
 
-	if ( isEmailForwardAccount( account ) ) {
+	if ( isReadonly ) {
 		return (
 			<div className="email-plan-mailboxes-list__mailbox-list-link">
 				<span>{ emailAddress }</span>
