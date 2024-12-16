@@ -1,5 +1,6 @@
 import { CheckboxControl, SearchControl, Spinner } from '@wordpress/components';
 import { useState, useMemo } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import './style.scss';
 
 interface Category {
@@ -21,6 +22,7 @@ export const CategoryTreeSelector: React.FC< Props > = ( {
 	categories,
 	isLoading,
 } ) => {
+	const { __ } = useI18n();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 
 	const filteredCategories = useMemo( () => {
@@ -70,7 +72,7 @@ export const CategoryTreeSelector: React.FC< Props > = ( {
 						className="category-tree-selector__search"
 						onChange={ setSearchTerm }
 						value={ searchTerm }
-						placeholder="Search categories..."
+						placeholder={ __( 'Search…' ) }
 					/>
 					<div className="category-tree-selector__list">{ renderCategories() }</div>
 				</>
