@@ -14,11 +14,15 @@ interface Props {
 export default function useStorageAddOnAvailability( {
 	addOnMeta,
 	selectedSiteId,
-}: Props ): boolean {
+}: Props ): boolean | undefined {
 	const mediaStorage = useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 
 	if ( addOnMeta.productSlug !== PRODUCT_1GB_SPACE ) {
-		return true;
+		return undefined;
+	}
+
+	if ( ! mediaStorage.data ) {
+		return false;
 	}
 
 	return isStorageQuantityAvailable( addOnMeta.quantity ?? 0, mediaStorage.data );

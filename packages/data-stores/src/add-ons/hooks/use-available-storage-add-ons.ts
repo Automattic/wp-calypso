@@ -12,14 +12,7 @@ interface Props {
  * @param quantity The number of gigabytes the given add-on adds to the site's storage
  * @param storage Data returned from
  */
-export function isStorageQuantityAvailable(
-	quantity: number,
-	storage?: SiteMediaStorage
-): boolean {
-	if ( ! storage ) {
-		return true;
-	}
-
+export function isStorageQuantityAvailable( quantity: number, storage: SiteMediaStorage ): boolean {
 	const currentMaxStorage = storage.maxStorageBytes / Math.pow( 1024, 3 );
 	const maxStorageExcludingAddons = storage.maxStorageBytesExcludingAddons / Math.pow( 1024, 3 );
 	const existingAddOnStorage = currentMaxStorage - maxStorageExcludingAddons;
@@ -30,7 +23,6 @@ export function isStorageQuantityAvailable(
 /**
  * Returns the storage add-ons that are available for purchase considering the current site when present.
  * Conditions:
- * - If the user has not purchased the storage add-on.
  * - If the storage add-on does not exceed the site storage limits.
  * - If the quantity of the storage add-on is less than or equal to the available storage upgrade.
  */
@@ -39,11 +31,16 @@ const useAvailableStorageAddOns = ( { siteId }: Props ): AddOnMeta[] => {
 	const siteMediaStorage = useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
 	return useMemo( () => {
-		return storageAddOns
-			.filter( ( addOn ) => addOn !== null )
-			.filter( ( addOn ): addOn is AddOnMeta =>
-				isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorage.data )
-			);
+		const nonNullAddOns = storageAddOns.filter( ( addOn ) => addOn !== null );
+		const siteMediaStorageData = siteMediaStorage.data;
+
+		if ( ! siteMediaStorageData ) {
+			return nonNullAddOns;
+		}
+
+		return nonNullAddOns.filter( ( addOn ): addOn is AddOnMeta =>
+			isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorageData )
+		);
 	}, [ siteMediaStorage, storageAddOns ] );
 };
 

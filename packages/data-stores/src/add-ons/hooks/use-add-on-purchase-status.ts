@@ -10,7 +10,6 @@ interface Props {
 
 type AddOnPurchaseStatus = {
 	available: boolean;
-	hidden?: boolean;
 	text?: ReturnType< typeof i18n.translate >;
 };
 
