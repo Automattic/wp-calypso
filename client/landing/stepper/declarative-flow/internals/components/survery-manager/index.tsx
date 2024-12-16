@@ -27,7 +27,7 @@ const SurveyManager = () => {
 
 	if ( MIGRATION_SURVEY_FLOWS.includes( params.flow ) && isEnLocale ) {
 		return (
-			<DeferredRender timeMs={ 1000 }>
+			<DeferredRender timeMs={ 2000 }>
 				<Suspense>
 					<AsyncMigrationSurvey />
 				</Suspense>
