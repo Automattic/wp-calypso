@@ -4,8 +4,9 @@
 .add-new-site__button {
 	.gridicon {
 		margin-left: 6px;
-		top: 2px;
 		transition: transform 100ms ease-in-out;
+		height: 18px;
+		width: 18px;
 
 		&.reverse {
 			transform: rotate(180deg);
@@ -13,7 +14,6 @@
 
 		&.mobile {
 			margin-left: 0;
-			top: 2px;
 		}
 	}
 }

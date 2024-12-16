@@ -165,7 +165,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteA4AMenuItemsProps
 										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
 									);
 								} else {
-									// toggleDevSiteConfigurationsModal?.();
+									setVisibleModalType( 'dev-site-configurations' );
 								}
 								setMenuVisible( false );
 							},

@@ -1,9 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-// import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
+import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
@@ -28,19 +29,24 @@ export default function OverviewHeaderActions() {
 
 	return (
 		<div className="overview-header__actions">
-			{ showConfigurationModal && (
-				<SiteConfigurationsModal
-					closeModal={ toggleDevSiteConfigurationsModal }
-					randomSiteName={ randomSiteName }
-					isRandomSiteNameLoading={ isRandomSiteNameLoading }
-					onCreateSiteSuccess={ onCreateSiteSuccess }
-				/>
+			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
+				<AddNewSite />
+			) : (
+				<>
+					{ showConfigurationModal && (
+						<SiteConfigurationsModal
+							closeModal={ toggleDevSiteConfigurationsModal }
+							randomSiteName={ randomSiteName }
+							isRandomSiteNameLoading={ isRandomSiteNameLoading }
+							onCreateSiteSuccess={ onCreateSiteSuccess }
+						/>
+					) }
+					<AddNewSiteButton
+						showMainButtonLabel={ ! isNarrowView }
+						toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+					/>
+				</>
 			) }
-			{ /* <AddNewSiteButton
-				showMainButtonLabel={ ! isNarrowView }
-				toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-			/> */ }
-			<AddNewSite />
 			{ ! isNarrowView && (
 				<Button
 					primary

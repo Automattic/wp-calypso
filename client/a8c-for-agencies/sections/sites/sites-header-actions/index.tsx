@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
@@ -10,6 +11,7 @@ import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/componen
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
+import AddNewSite from 'calypso/components/add-new-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
@@ -40,21 +42,29 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	return (
 		<div className="sites-header__actions">
-			{ showConfigurationModal && (
-				<SiteConfigurationsModal
-					closeModal={ toggleDevSiteConfigurationsModal }
-					randomSiteName={ randomSiteName }
-					isRandomSiteNameLoading={ isRandomSiteNameLoading }
-					onCreateSiteSuccess={ onCreateSiteSuccess }
-				/>
+			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
+				<div ref={ ( ref ) => setTourStepRef( ref ) }>
+					<AddNewSite />
+				</div>
+			) : (
+				<>
+					{ showConfigurationModal && (
+						<SiteConfigurationsModal
+							closeModal={ toggleDevSiteConfigurationsModal }
+							randomSiteName={ randomSiteName }
+							isRandomSiteNameLoading={ isRandomSiteNameLoading }
+							onCreateSiteSuccess={ onCreateSiteSuccess }
+						/>
+					) }
+					<div ref={ ( ref ) => setTourStepRef( ref ) }>
+						<AddNewSiteButton
+							showMainButtonLabel={ ! isMobile }
+							onWPCOMImport={ onWPCOMImport }
+							toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+						/>
+					</div>
+				</>
 			) }
-			<div ref={ ( ref ) => setTourStepRef( ref ) }>
-				<AddNewSiteButton
-					showMainButtonLabel={ ! isMobile }
-					onWPCOMImport={ onWPCOMImport }
-					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-				/>
-			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
 				primary
