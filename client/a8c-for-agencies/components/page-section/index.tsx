@@ -9,7 +9,7 @@ import './style.scss';
 export type PageSectionProps = {
 	className?: string;
 	children: ReactNode;
-	heading: TranslateResult;
+	heading?: TranslateResult;
 	subheading?: TranslateResult;
 	icon?: ReactNode;
 	description?: TranslateResult;
@@ -42,11 +42,14 @@ export default function PageSection( {
 					{ subheading && <span className="page-section__sub-header-title">{ subheading }</span> }
 				</div>
 
-				<div className="page-section__header">
-					<h2 className="page-section__header-title">{ heading }</h2>
+				{ heading && (
+					<div className="page-section__header">
+						<h2 className="page-section__header-title">{ heading }</h2>
 
-					{ description && <p className="page-section__header-description">{ description }</p> }
-				</div>
+						{ description && <p className="page-section__header-description">{ description }</p> }
+					</div>
+				) }
+
 				{ children }
 			</div>
 		</section>

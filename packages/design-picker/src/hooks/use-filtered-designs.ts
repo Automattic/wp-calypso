@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { isBlankCanvasDesign } from '../utils';
+import { isBlankCanvasDesign, getDesignSlug } from '../utils';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
@@ -62,22 +62,38 @@ export const getFilteredDesignsByCategory = (
 	return filteredDesignsByCategory;
 };
 
-export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
+interface UseFilteredDesignsByGroupOptions {
+	excludeDesigns?: Design[];
+}
+
+export const useFilteredDesignsByGroup = (
+	designs: Design[],
+	{ excludeDesigns }: UseFilteredDesignsByGroupOptions = {}
+): { [ key: string ]: Design[] } => {
 	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
+		const excludeDesignSlugs = excludeDesigns
+			? excludeDesigns.map( ( design ) => getDesignSlug( design ) )
+			: [];
+		const excludeDesignSlugsSet = new Set( excludeDesignSlugs );
+		const all =
+			excludeDesignSlugs.length > 0
+				? designs.filter( ( design ) => ! excludeDesignSlugsSet.has( getDesignSlug( design ) ) )
+				: designs;
+
 		if ( selectedCategoriesWithoutDesignTier.length > 0 || selectedDesignTiers.length > 0 ) {
 			return getFilteredDesignsByCategory(
-				designs,
+				all,
 				selectedCategoriesWithoutDesignTier,
 				selectedDesignTiers
 			);
 		}
 
 		return {
-			all: designs,
+			all,
 		};
-	}, [ designs, selectedCategoriesWithoutDesignTier ] );
+	}, [ designs, excludeDesigns, selectedCategoriesWithoutDesignTier, selectedDesignTiers ] );
 
 	return filteredDesigns;
 };

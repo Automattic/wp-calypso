@@ -299,7 +299,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
 	const categories = categorization?.categories || [];
 
@@ -330,6 +329,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		! categorization?.isSelectionsChanged &&
 		recommendedDesigns.length === 3;
 
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
+		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
+	} );
+
 	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
 	const showNoResults =
 		! showRecommendedDesigns &&
@@ -356,7 +359,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				{ categorization && categoryTypes.length && isMultiFilterEnabled && (
 					<DesignPickerFilterGroup title={ translate( 'Type' ) }>
 						<DesignPickerCategoryFilter
-							className="design-picker__category-filter"
 							categories={ categoryTypes }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
@@ -368,7 +370,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				{ categorization && categoryTopics.length && (
 					<DesignPickerFilterGroup title={ isMultiFilterEnabled ? translate( 'Topic' ) : '' } grow>
 						<DesignPickerCategoryFilter
-							className="design-picker__category-filter"
 							categories={ isMultiFilterEnabled ? categoryTopics : categorization.categories }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
@@ -376,8 +377,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				<DesignPickerFilterGroup>
-					{ isBigSkyEligible && (
+				{ isBigSkyEligible && (
+					<DesignPickerFilterGroup>
 						<Button
 							className={ clsx(
 								'design-picker__design-your-own-button',
@@ -389,8 +390,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						>
 							{ translate( 'Design with AI' ) }
 						</Button>
-					) }
-				</DesignPickerFilterGroup>
+					</DesignPickerFilterGroup>
+				) }
 			</div>
 
 			{ showRecommendedDesigns && (

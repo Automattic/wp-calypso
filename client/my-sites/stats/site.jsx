@@ -209,17 +209,14 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( isNewDateFilteringEnabled, bar ) => {
+	barClick = ( shouldForceDefaultDateRange, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-
-		if ( ! isNewDateFilteringEnabled ) {
-			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
-			return;
-		}
 
 		const { period: barPeriod } = this.props.period;
 		// Stop navigation if the bar period is hour.
-		if ( barPeriod === 'hour' ) {
+		// Stop navigation if date control is locked to prevent navigation to hourly stats.
+		// TODO: Determine if we should allow navigation to hourly stats when STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS is locked.
+		if ( barPeriod === 'hour' || shouldForceDefaultDateRange ) {
 			return;
 		}
 
@@ -434,7 +431,7 @@ class StatsSite extends Component {
 		);
 
 		// Force the default date range to be 7 days if the 30-day option is locked.
-		if ( shouldForceDefaultDateRange ) {
+		if ( shouldForceDefaultDateRange && period !== 'hour' ) {
 			// For ChartTabs
 			customChartQuantity = 7;
 
@@ -596,7 +593,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
+								barClick={ this.barClick.bind( this, shouldForceDefaultDateRange ) }
 								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
@@ -614,7 +611,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
+								barClick={ this.barClick.bind( this, shouldForceDefaultDateRange ) }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
