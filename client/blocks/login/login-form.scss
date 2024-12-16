@@ -55,14 +55,12 @@ form {
 }
 
 .layout.is-white-login .login.is-akismet {
-	--akismet-mid-green: #357b49;
-
 	.button.is-primary {
-		background-color: var(--akismet-mid-green);
+		background-color: var(--color-akismet);
 
 		&:hover,
     	&:focus {
-        	background-color: var(--akismet-mid-green);
+        	background-color: var(--color-akismet);
     	}
     }
 }
