@@ -429,6 +429,11 @@ export const useJetpackBlazeVersionCheck = (
 	const blazeAdsVersion =
 		useSelector( ( state ) => getSiteOption( state, siteId, 'blaze_ads_version' ) ) ?? 0;
 
+	// If we don't have a version (Jetpack or Blaze Ads), we must be in a simple site, and we use latest Jetpack version in there.
+	if ( ! siteJetpackVersion && ! blazeAdsVersion ) {
+		return true;
+	}
+
 	return Boolean(
 		( siteJetpackVersion && versionCompare( siteJetpackVersion, minJetpackVersion, '>=' ) ) ||
 			( blazeAdsVersion && versionCompare( siteJetpackVersion, minBlazeAdsVersion, '>=' ) )
