@@ -81,7 +81,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
-		reflectStorageSelectionInPlanPrices,
 	} )?.[ termVariantPlanSlug ?? '' ];
 
 	const termVariantPrice =
