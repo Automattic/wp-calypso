@@ -1,8 +1,8 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@automattic/typography/styles/fonts";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/colors";
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/fonts';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/colors';
 
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
@@ -189,7 +189,7 @@
 	}
 
 	.empty-domains-list-card {
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			box-shadow: none;
 		}
 	}
@@ -326,7 +326,12 @@
 }
 
 .domains-overview .main.domains-overview__list {
+	display: none;
 	max-width: 400px;
+
+	@include break-wide {
+		display: block;
+	}
 }
 
 main.domains-overview main.domains-overview__list .a4a-layout-column__container {

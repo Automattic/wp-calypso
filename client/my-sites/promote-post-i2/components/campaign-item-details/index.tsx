@@ -386,7 +386,13 @@ export default function CampaignItemDetails( props: Props ) {
 		// Data should be an array with at least 2 elements. The reason is the necessity to overcome
 		// uPlot's bug of having an infinite loop https://github.com/leeoniya/uPlot/issues/827.
 		if ( ! Array.isArray( data ) || data.length < 2 ) {
-			return null;
+			return (
+				<div>
+					{ translate(
+						"We couldn't retrieve any data for this time frame. Please check back later, as campaign data may take a few hours to appear."
+					) }
+				</div>
+			);
 		}
 
 		return (
