@@ -1,7 +1,6 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { getUrlParts } from '@automattic/calypso-url';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
@@ -16,8 +15,6 @@ import { ProviderWrappedLayout } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import { tracksEvents } from 'calypso/lib/analytics/tracks';
-import Logger from 'calypso/lib/catch-js-errors';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -25,7 +22,7 @@ import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { checkFormHandler } from 'calypso/lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
-import { getSiteFragment, normalize } from 'calypso/lib/route';
+import { normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
@@ -35,7 +32,7 @@ import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-inter
 import { setupRoutes } from 'calypso/sections-middleware';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import {
@@ -47,7 +44,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { setupErrorLogger } from '../lib/error-logger/setup-error-logger';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
@@ -244,78 +241,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		}
 	}
 };
-
-export function setupErrorLogger( reduxStore ) {
-	// Add a bit of metadata from the redux store to the sentry event.
-	const beforeSend = ( event ) => {
-		const state = reduxStore.getState();
-		const tags = {
-			blog_id: getSelectedSiteId( state ),
-			calypso_section: getSectionName( state ),
-		};
-
-		event.tags = {
-			...tags,
-			...event.tags,
-		};
-
-		return event;
-	};
-
-	// Note that Sentry can disable itself and do some cleanup if needed, so we
-	// run it before the catch-js-errors check. (Otherwise, cleanup would never
-	// never happen.)
-	initSentry( { beforeSend, userId: getCurrentUserId( reduxStore.getState() ) } );
-
-	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
-		return;
-	}
-
-	// At this point, the normal error logger is still set up so that logstash
-	// contains a definitive log of calypso errors.
-	const errorLogger = new Logger();
-
-	// Save errorLogger to a singleton for use in arbitrary logging.
-	require( 'calypso/lib/catch-js-errors/log' ).registerLogger( errorLogger );
-
-	// Save data to JS error logger
-	errorLogger.saveDiagnosticData( {
-		user_id: getCurrentUserId( reduxStore.getState() ),
-		calypso_env: config( 'env_id' ),
-	} );
-
-	errorLogger.saveDiagnosticReducer( function () {
-		const state = reduxStore.getState();
-		return {
-			blog_id: getSelectedSiteId( state ),
-			calypso_section: getSectionName( state ),
-		};
-	} );
-
-	tracksEvents.on( 'record-event', ( eventName, lastTracksEvent ) =>
-		errorLogger.saveExtraData( { lastTracksEvent } )
-	);
-
-	let prevPath;
-	page( '*', function ( context, next ) {
-		const path = context.canonicalPath.replace(
-			getSiteFragment( context.canonicalPath ),
-			':siteId'
-		);
-		// Also save the context to Sentry for easier debugging.
-		addBreadcrumb( {
-			category: 'navigation',
-			data: {
-				from: prevPath ?? path,
-				to: path,
-				should_capture: true, // Hint that this is our own breadcrumb, not the default navigation one.
-			},
-		} );
-		prevPath = path;
-		errorLogger.saveNewPath( path );
-		next();
-	} );
-}
 
 const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	debug( 'Executing Calypso setup middlewares.' );
