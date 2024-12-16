@@ -6,6 +6,7 @@ import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/per
 import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import SurveyManager from '../survery-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, Navigate, StepperStep } from '../../types';
 
@@ -60,6 +61,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 		>
 			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
 			{ stepContent }
+			{ stepContent && <SurveyManager /> }
 			{ stepContent && <StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } /> }
 		</div>
 	);
