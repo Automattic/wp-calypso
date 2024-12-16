@@ -275,7 +275,7 @@ export class FullPostView extends Component {
 				this.scrollableContainer.scrollTo( {
 					top: 0,
 					left: 0,
-					behavior: 'smooth',
+					behavior: 'instant',
 				} );
 			}
 			this.setState( { maxScrollDepth: 0, hasCompleted: false } );
