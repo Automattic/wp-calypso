@@ -45,6 +45,7 @@ export function ThankYouTitanProduct( {
 			<Button
 				key="inbox"
 				variant="primary"
+				target="_blank"
 				href={ inboxPath }
 				onClick={ () => {
 					recordEmailAppLaunchEvent( {
