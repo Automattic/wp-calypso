@@ -51,31 +51,50 @@ function EmailPlanMailboxesList( {
 	}
 
 	if ( isGoogleConfiguring && configuringStateMode === 'message' ) {
-		return (
-			<MailboxListHeader accountType={ accountType }>
-				<MailboxListItem hasNoEmails>
-					<span>
-						{ translate(
-							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
-						) }
-					</span>
-				</MailboxListItem>
-			</MailboxListHeader>
-		);
+		return <MailboxContent type="configuring" />;
 	}
 
 	if ( isNoMailboxes && configuringStateMode === 'message' ) {
+		return <MailboxContent type="no-mailboxes" />;
+	}
+
+	function MailboxItemsEmpty() {
+		return (
+			<MailboxListItem>
+				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+					<div className="email-plan-mailboxes-list__mailbox-list-link">
+						<span>{ domain.domain }</span>
+					</div>
+				</div>
+			</MailboxListItem>
+		);
+	}
+
+	function MailboxContent( { type }: { type: 'configuring' | 'no-mailboxes' } ) {
+		let message;
+
+		switch ( type ) {
+			case 'no-mailboxes':
+				message = translate( 'No mailboxes' );
+				break;
+			case 'configuring':
+				message = translate(
+					'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+				);
+				break;
+		}
+
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
-					<span>{ translate( 'No mailboxes' ) }</span>
+					<span>{ message }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
 	}
 
-	const MailboxItems = () =>
-		mailboxes.map( ( mailbox ) => {
+	function MailboxItems() {
+		return mailboxes.map( ( mailbox ) => {
 			const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 
 			return (
@@ -105,16 +124,7 @@ function EmailPlanMailboxesList( {
 				</>
 			);
 		} );
-
-	const MailboxItemsEmpty = () => (
-		<MailboxListItem>
-			<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-				<div className="email-plan-mailboxes-list__mailbox-list-link">
-					<span>{ domain.domain }</span>
-				</div>
-			</div>
-		</MailboxListItem>
-	);
+	}
 
 	return (
 		<>
