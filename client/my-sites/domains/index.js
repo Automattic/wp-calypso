@@ -397,7 +397,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementEmailRoot() + '/:domain/:site',
+		paths.domainManagementAllEmailRoot() + '/:domain/:site',
 		siteSelection,
 		navigation,
 		emailController.emailManagement,
@@ -408,7 +408,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementEmailRoot() + '/:domain/forwarding/add/:site',
+		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
