@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
@@ -92,9 +91,7 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
-	const shouldUseHelpCenterExperience =
-		config.isEnabled( 'help-center-experience' ) ||
-		isUseHelpCenterExperienceEnabled( props.currentUser?.ID );
+	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled();
 
 	return (
 		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
