@@ -9,6 +9,11 @@ interface Category {
 	parent?: number;
 }
 
+interface CategoryData {
+	lowerName: string;
+	children: Category[];
+}
+
 interface Props {
 	selected: number[];
 	onChange: ( categoryId: number, checked: boolean ) => void;
@@ -30,9 +35,24 @@ export const CategoryTreeSelector: React.FC< Props > = ( {
 			return categories;
 		}
 		const lowerSearchTerm = searchTerm.toLowerCase();
-		return categories.filter( ( category ) =>
-			category.name.toLowerCase().includes( lowerSearchTerm )
-		);
+
+		const categoryData = categories.reduce( ( map, category ) => {
+			map.set( category.id, {
+				lowerName: category.name.toLowerCase(),
+				children: categories.filter( ( child ) => child.parent === category.id ),
+			} );
+			return map;
+		}, new Map< number, CategoryData >() );
+
+		return categories.filter( ( category ) => {
+			const data = categoryData.get( category.id )!;
+			return (
+				data.lowerName.includes( lowerSearchTerm ) ||
+				data.children.some( ( child ) =>
+					categoryData.get( child.id )!.lowerName.includes( lowerSearchTerm )
+				)
+			);
+		} );
 	}, [ categories, searchTerm ] );
 
 	const handleChange = ( categoryId: number ) => ( checked: boolean ) => {
@@ -74,7 +94,13 @@ export const CategoryTreeSelector: React.FC< Props > = ( {
 						value={ searchTerm }
 						placeholder={ __( 'Search…' ) }
 					/>
-					<div className="category-tree-selector__list">{ renderCategories() }</div>
+					<div className="category-tree-selector__list">
+						{ filteredCategories.length > 0 ? (
+							renderCategories()
+						) : (
+							<p>{ __( 'No results. Please try a different search.' ) }</p>
+						) }
+					</div>
 				</>
 			) }
 		</div>
