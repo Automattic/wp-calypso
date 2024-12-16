@@ -2,16 +2,22 @@ import { useTranslate } from 'i18n-calypso';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
+import WPCOMPlanSection from './wpcom-plan-section';
 
-export default function StandardAgencyHosting() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
 		<div className="standard-agency-hosting">
-			<section className="standard-agency-hosting__plan-selector-container">TODO</section>
+			<WPCOMPlanSection onSelect={ onAddToCart } />
 
 			<HostingFeatures heading={ translate( 'Included with every WordPress.com site' ) } />
 

@@ -44,8 +44,14 @@ const useTermVariantPlanSlugForSavings = ( {
 
 const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex, enableTermSavingsPriceDisplay, siteId, coupon, helpers } =
-		usePlansGridContext();
+	const {
+		gridPlansIndex,
+		enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices,
+		siteId,
+		coupon,
+		helpers,
+	} = usePlansGridContext();
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
@@ -76,6 +82,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices,
 	} )?.[ termVariantPlanSlug ?? '' ];
 
 	const termVariantPrice =

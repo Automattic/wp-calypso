@@ -234,6 +234,12 @@ export type GridContextProps = {
 	 * This carries lower precedence than promo/coupon and introductory pricing, irrespective of whether set or not.
 	 */
 	enableTermSavingsPriceDisplay?: boolean;
+
+	/**
+	 * Determine if storage add-on products should be combined with plan costs when
+	 * calculating prices.
+	 */
+	reflectStorageSelectionInPlanPrices?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<
