@@ -6,7 +6,6 @@ import { BackgroundType11 } from 'calypso/a8c-for-agencies/components/page-secti
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.png';
-import CapeGeminiLogo from 'calypso/assets/images/logos/capgemini.svg';
 import MetaLogo from 'calypso/assets/images/logos/meta.svg';
 import NewYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
 import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
@@ -15,6 +14,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import HostingPlanSection from '../common/hosting-plan-section';
 
 import './style.scss';
 
@@ -36,76 +36,87 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 
 	return (
 		<>
-			<div className="enterprise-agency-hosting-v3__top-wrapper">
-				<div className="enterprise-agency-hosting-v3__top">
-					<div className="enterprise-agency-hosting-v3__top-details is-card">
-						<div className="enterprise-agency-hosting-v3__top-details-heading">
+			<HostingPlanSection className="enterprise-agency-hosting-v3">
+				<HostingPlanSection.Card>
+					<div className="enterprise-agency-hosting__top">
+						<div className="enterprise-agency-hosting__top-heading">
 							<VIPLogo width={ 57 } height={ 25 } /> | { translate( 'Enterprise WordPress' ) }
 						</div>
 
-						<div className="enterprise-agency-hosting-v3__top-details-subheading">
+						<div className="enterprise-agency-hosting__top-subheading">
 							{ translate( 'Custom pricing' ) }
 						</div>
-
-						<Button
-							className="enterprise-agency-hosting-v3__top-details-button"
-							href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
-							onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
-							target="_blank"
-							variant="primary"
-						>
-							{ isReferMode ? translate( 'Refer client' ) : translate( 'Request a Demo' ) }
-							<Icon icon={ external } size={ 16 } />
-						</Button>
 					</div>
 
-					<div className="enterprise-agency-hosting-v3__top-details">
-						<div className="enterprise-agency-hosting-v3__top-details-heading">
-							{ translate( 'The platform the biggest brands trust.' ) }
+					<Button
+						className="enterprise-agency-hosting-v3__cta-button"
+						href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
+						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
+						target="_blank"
+						variant="primary"
+					>
+						{ isReferMode ? translate( 'Refer client' ) : translate( 'Request a Demo' ) }
+						<Icon icon={ external } size={ 16 } />
+					</Button>
+				</HostingPlanSection.Card>
+
+				<HostingPlanSection.Details
+					heading={ translate( 'The platform the biggest brands trust.' ) }
+				>
+					{ isReferMode && (
+						<div className="enterprise-agency-hosting-v3__top-details-subheading">
+							{ translate(
+								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms ↗{{/a}}',
+								{
+									components: {
+										a: (
+											<a
+												href="https://automattic.com/for-agencies/program-incentives"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
 						</div>
+					) }
 
-						{ isReferMode && (
-							<div className="enterprise-agency-hosting-v3__top-details-subheading">
-								{ translate(
-									'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms ↗{{/a}}',
-									{
-										components: {
-											a: (
-												<a
-													href="https://automattic.com/for-agencies/program-incentives"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</div>
-						) }
+					<SimpleList
+						items={ [
+							translate( 'Unmatched flexibility to build a customized web experience' ),
+							translate( 'Tools to increase customer engagement' ),
+							translate(
+								'Scalability to ensure top-notch site performance during campaigns or events'
+							),
+						] }
+					/>
 
-						<SimpleList
-							items={ [
-								translate( 'Unmatched flexibility to build a customized web experience' ),
-								translate( 'Tools to increase customer engagement' ),
-								translate(
-									'Scalability to ensure top-notch site performance during campaigns or events'
-								),
-							] }
-						/>
-
-						<div className="enterprise-agency-hosting-v3__logos">
+					<div className="enterprise-agency-hosting-v3__logos">
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<SalesforceLogo />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<img src={ MetaLogo } alt="Meta" />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<SlackLogo />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<img src={ SpotifyLogo } alt="Spotify" />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<CNNLogo />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<img src={ NewsCorpLogo } alt="News Corp" />
-							<img src={ CapeGeminiLogo } alt="Capgemini" />
+						</div>
+						<div className="enterprise-agency-hosting-v3__logos-item">
 							<img src={ NewYorkPostLogo } alt="New York Post" />
 						</div>
 					</div>
-				</div>
-			</div>
+				</HostingPlanSection.Details>
+			</HostingPlanSection>
 
 			<HostingAdditionalFeaturesSection
 				heading={ translate( 'VIP Capabilities ' ) }
