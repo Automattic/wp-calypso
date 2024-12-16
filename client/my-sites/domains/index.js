@@ -18,6 +18,13 @@ import {
 } from './domain-management/domain-overview-pane/constants';
 import * as paths from './paths';
 
+/**
+ * Registers a multi-page route.
+ *
+ * @param {Object} options - The options object.
+ * @param {Array} options.paths - The paths to register.
+ * @param {Array} options.handlers - The handlers to register. These will be applied to each path.
+ */
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }

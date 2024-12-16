@@ -34,6 +34,7 @@ const Wrapper =
 	);
 
 const render = ( { initialEntry = '/setup/some-flow/some-step' } = {} ) => {
+	window.history.replaceState( null, '', initialEntry );
 	return renderHookWithProvider( () => useFlowNavigation(), {
 		wrapper: Wrapper( initialEntry ),
 	} );

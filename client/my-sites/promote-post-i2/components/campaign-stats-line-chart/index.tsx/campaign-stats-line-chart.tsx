@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
-import _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import _, { debounce } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import {
@@ -10,6 +10,7 @@ import {
 } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import 'uplot/dist/uPlot.min.css';
+import { tooltip } from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/tooltip';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
 
 const DEFAULT_DIMENSIONS = {
@@ -26,11 +27,10 @@ type GraphProps = {
 const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
 	const hourly = resolution === ChartResolution.Hour;
+	const tooltipRef = useRef< HTMLDivElement | null >( null );
 
-	const accentColour = getComputedStyle( document.body )
-		.getPropertyValue( '--color-accent' )
-		.trim();
-	const primaryRGB = hexToRgb( accentColour );
+	const accentColor = getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim();
+	const chartColor = hexToRgb( accentColor );
 
 	const updateWidth = () => {
 		const wrapperElement = document.querySelector(
@@ -42,16 +42,18 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 		}
 	};
 
+	const debouncedUpdateWidth = debounce( updateWidth, 200 );
+
 	useEffect( () => {
 		// Set initial width
 		updateWidth();
-		window.addEventListener( 'resize', updateWidth );
+		window.addEventListener( 'resize', debouncedUpdateWidth );
 
 		return () => {
 			// Remove on unmount
-			window.removeEventListener( 'resize', updateWidth );
+			window.removeEventListener( 'resize', debouncedUpdateWidth );
 		};
-	}, [] );
+	}, [ debouncedUpdateWidth ] );
 
 	// Convert ISO date string to Unix timestamp
 	const labels = data.map( ( entry ) => new Date( entry.date_utc ).getTime() / 1000 );
@@ -59,18 +61,33 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 
 	// Convert to uPlot's AlignedData format
 	const uplotData: uPlot.AlignedData = [ new Float64Array( labels ), new Float64Array( values ) ];
+
 	const locale = useLocale();
 
-	const formatDate = ( date: Date, hourly: boolean ) => {
-		const options: Intl.DateTimeFormatOptions = hourly
-			? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-			: { month: 'short', day: 'numeric' };
-		return new Intl.DateTimeFormat( locale, options ).format( date );
-	};
-
 	const options = useMemo( () => {
+		const formatDate = ( date: Date, hourly: boolean ) => {
+			const options: Intl.DateTimeFormatOptions = hourly
+				? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+				: { month: 'short', day: 'numeric' };
+			return new Intl.DateTimeFormat( locale, options ).format( date );
+		};
+
+		const tooltipPlugin = tooltip( tooltipRef, formatDate, hourly, formatValue );
+
+		function formatValue( rawValue: number ) {
+			if ( rawValue == null ) {
+				return '-';
+			}
+
+			if ( source === ChartSourceOptions.Spend ) {
+				return `$${ formatCents( rawValue, 2 ) }`;
+			}
+
+			return rawValue.toLocaleString();
+		}
+
 		return {
-			class: 'blaze-stats-line-chart',
+			class: 'campaign-item-details__uplot-chart',
 			width: width,
 			height: DEFAULT_DIMENSIONS.height,
 			tzDate: ( ts: number ) => new Date( ts * 1000 ),
@@ -83,7 +100,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
@@ -100,7 +117,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 				},
 			],
 			cursor: {
@@ -110,6 +127,17 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					size: 12,
 					width: 3,
 					fill: '#fff',
+				},
+			},
+			legend: {
+				show: false, // This will hide the legend
+			},
+			scales: {
+				y: {
+					range: ( self: uPlot, min: number, max: number ): [ number, number ] => [
+						min,
+						max + ( max - min ) * 0.4, // Increase the scale by 40%, this allows extra space for the tooltip
+					],
 				},
 			},
 			series: [
@@ -124,12 +152,12 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 				},
 				{
 					label: _.capitalize( source ),
-					stroke: accentColour,
+					stroke: accentColor,
 					width: 3,
 					fill: ( self: uPlot ) => {
-						const { r, g, b } = primaryRGB;
+						const { r, g, b } = chartColor;
 
-						//Get the height so we can create a gradient
+						// Get the height so we can create a gradient
 						const height = self?.bbox?.height;
 						if ( ! height || ! isFinite( height ) ) {
 							return `rgba(${ r }, ${ g }, ${ b }, 0.1)`;
@@ -146,23 +174,16 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						return linear?.()( u, seriesIdx, idx0, idx1 ) || null;
 					},
 					points: {
-						show: false,
+						show: true,
 					},
 					value: ( self: uPlot, rawValue: number ) => {
-						if ( rawValue == null ) {
-							return '-';
-						}
-
-						if ( source === ChartSourceOptions.Spend ) {
-							return `$${ formatCents( rawValue, 2 ) }`;
-						}
-
-						return rawValue.toLocaleString();
+						return formatValue( rawValue );
 					},
 				},
 			],
+			plugins: [ tooltipPlugin ],
 		};
-	}, [ width, source, accentColour, formatDate, hourly, primaryRGB ] );
+	}, [ hourly, width, source, accentColor, locale, chartColor ] );
 
 	return (
 		<div style={ { position: 'relative' } }>

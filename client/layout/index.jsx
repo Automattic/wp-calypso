@@ -27,10 +27,10 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { useExperiment } from 'calypso/lib/explat';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
@@ -150,9 +150,6 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-	const [ isLoading, experimentAssignment ] = useExperiment(
-		'calypso_helpcenter_new_support_flow'
-	);
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -173,9 +170,6 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
-			shouldUseHelpCenterExperience={
-				! isLoading && experimentAssignment?.variationName === 'treatment'
-			}
 		/>
 	);
 }
@@ -312,6 +306,7 @@ class Layout extends Component {
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
+			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
 				'woocommerce/core-profiler-passwordless-auth'
 			),
@@ -455,17 +450,11 @@ export default withCurrentRoute(
 		const isWooPasswordlessJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooPasswordlessJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 			state,
 			siteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,

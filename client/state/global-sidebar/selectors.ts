@@ -5,98 +5,71 @@ import isScheduledUpdatesMultisiteRoute, {
 import { isAdminInterfaceWPAdmin } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
-// Calypso pages (section name => route) for which we show the Site Dashboard.
-// Calypso pages not listed here will be shown in nav unification instead.
+// Calypso routes for which we show the Site Dashboard.
+// Calypso routes not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const SITE_DASHBOARD_ROUTES = {
-	'hosting-overview': '/overview/',
-	hosting: '/hosting-config/',
-	'github-deployments': '/github-deployments/',
-	'site-monitoring': '/site-monitoring/',
-	'site-performance': '/sites/performance/',
-	'site-logs': '/site-logs/',
-	'hosting-features': '/hosting-features/',
-	'staging-site': '/staging-site/',
+const SITE_DASHBOARD_ROUTES = [
+	'/overview/',
+	'/hosting-config/',
+	'/github-deployments/',
+	'/site-monitoring/',
+	'/sites/performance/',
+	'/site-logs/',
+	'/hosting-features/',
+	'/staging-site/',
 
 	// New Information Architecture
-	'site-overview': '/sites/overview',
-	'site-marketing': '/sites/marketing',
-	'site-tools': '/sites/tools',
-	'site-settings': '/sites/settings',
+	'/sites/overview',
+	'/sites/marketing',
+	'/sites/tools',
+	'/sites/settings',
 
 	// Domain Management
-	'all-domain-management': '/domains/manage/all/overview',
-	'all-email-management': '/domains/manage/all/email',
-};
-
-function isInSection( sectionName: string, sectionNames: string[] ) {
-	return sectionNames.includes( sectionName );
-}
+	'/domains/manage/all/overview',
+	'/domains/manage/all/email',
+];
 
 function isInRoute( state: AppState, routes: string[] ) {
 	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
 }
 
-function shouldShowSiteDashboard( state: AppState, siteId: number | null, sectionName: string ) {
-	return (
-		!! siteId &&
-		( isInSection( sectionName, Object.keys( SITE_DASHBOARD_ROUTES ) ) ||
-			isInRoute( state, Object.values( SITE_DASHBOARD_ROUTES ) ) )
-	);
+function shouldShowSitesDashboard( state: AppState ) {
+	return isInRoute( state, [ '/sites', '/p2s', ...SITE_DASHBOARD_ROUTES ] );
 }
 
-export const getShouldShowSiteDashboard = (
-	state: AppState,
-	siteId: number | null,
-	sectionGroup: string,
-	sectionName: string
-) => {
-	return sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId, sectionName );
-};
+export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
+	return !! siteId && isInRoute( state, SITE_DASHBOARD_ROUTES );
+}
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
 	siteId: number | null,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
 	const pluginsScheduledUpdates = isScheduledUpdatesMultisiteRoute( state );
 
 	return (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
-		sectionGroup === 'sites-dashboard' ||
+		( sectionGroup === 'sites-dashboard' && shouldShowSitesDashboard( state ) ) ||
 		( sectionGroup === 'sites' && ! siteId ) ||
 		( sectionGroup === 'sites' && pluginsScheduledUpdates ) ||
-		getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName )
+		( sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId ) )
 	);
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number | null,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
-	const isSitesDashboard = sectionGroup === 'sites-dashboard';
-	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
-
-	// A site is just clicked and the global sidebar is in collapsing animation.
-	const isSiteJustSelectedFromSitesDashboard =
-		isSitesDashboard &&
-		!! siteId &&
-		isInRoute( state, [
-			'/sites', // started collapsing when still in sites dashboard
-			...Object.values( SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
-		] );
+	const isSiteDashboard = sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId );
 
 	const isPluginsScheduledUpdatesEditMode =
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	return (
-		isSiteJustSelectedFromSitesDashboard || isSiteDashboard || isPluginsScheduledUpdatesEditMode
-	);
+	return isSiteDashboard || isPluginsScheduledUpdatesEditMode;
 };
 
 export const getShouldShowUnifiedSiteSidebar = (
@@ -109,7 +82,7 @@ export const getShouldShowUnifiedSiteSidebar = (
 		( isAdminInterfaceWPAdmin( state, siteId ) &&
 			sectionGroup === 'sites' &&
 			sectionName !== 'plugins' &&
-			! shouldShowSiteDashboard( state, siteId, sectionName ) ) ||
+			! shouldShowSiteDashboard( state, siteId ) ) ||
 		( isAdminInterfaceWPAdmin( state, siteId ) &&
 			sectionName === 'plugins' &&
 			! isScheduledUpdatesMultisiteRoute( state ) )

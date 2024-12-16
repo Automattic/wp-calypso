@@ -11,9 +11,7 @@ import {
 	READER_STREAMS_CLEAR,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
-
 import 'calypso/state/data-layer/wpcom/read/streams';
-
 import 'calypso/state/reader/init';
 
 /**
@@ -27,6 +25,7 @@ import 'calypso/state/reader/init';
  */
 export function requestPage( {
 	streamKey,
+	feedId,
 	pageHandle,
 	isPoll = false,
 	gap = null,
@@ -43,6 +42,7 @@ export function requestPage( {
 			isPoll,
 			gap,
 			localeSlug,
+			feedId,
 		},
 	};
 }

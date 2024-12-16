@@ -73,6 +73,7 @@ button {
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.onboarding.goals,
 .site-migration,
 .migration,
 .migration-signup,
@@ -121,6 +122,12 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
+			&.domains:not(.copy-site) {
+				margin-top: -60px;
+			}
+		}
+
+		@include break-xlarge {
 			&.domains {
 				margin-top: -60px;
 			}

@@ -67,16 +67,15 @@ const BlazePressStrings = () => {
 	translate( 'Ad creative' );
 	translate( "Use post's media" );
 	translate( 'Site title' );
+	translate( 'Remaining' );
 	translate( 'Loading page title…' );
 	translate( 'Page title' );
 	translate( 'Snippet' );
-	translate(
-		'%(snippetCharactersLeft)s character remaining',
-		'%(snippetCharactersLeft)s characters remaining',
-		{ count: 1 }
-	);
-	translate( 'Loading ad text….' );
+	translate( 'Loading ad text…' );
 	translate( 'Ad text' );
+	translate( 'Call to action' );
+	translate( 'Loading CTA text…' );
+	translate( 'CTA text' );
 	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Apply' );
 	translate( 'Reset' );
@@ -104,17 +103,24 @@ const BlazePressStrings = () => {
 	translate( 'Click or drag an image here to upload.' );
 	translate( 'Upload an image file, or pick one from your media library.' );
 	translate( 'Audience' );
-	translate(
-		'Not enough reach to create a campaign with the current audience configuration. Please, expand your reach by changing or removing some of the audience settings'
-	);
 	translate( 'Language' );
 	translate( 'Location' );
+	translate( 'If you do not specify the location, the campaign will be displayed everywhere.' );
+	translate( 'Interests' );
+	translate( 'Your campaign may not spend the full budget' );
+	translate(
+		'Based on your targeting, your budget may not be fully spent. You can adjust the audience yourself or use the links below:'
+	);
+	translate( 'Remove location targeting' );
+	translate( 'Remove interests targeting' );
+	translate( 'Remove device targeting' );
 	translate( 'All languages' );
 	translate(
 		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
 	);
+	translate( 'Unknown' );
+	translate( 'Select interests' );
 	translate( 'All topics' );
-	translate( 'Interests' );
 	translate( 'Budget and duration' );
 	translate( 'Schedule' );
 	translate( 'Run until I stop it. ' );
@@ -123,36 +129,60 @@ const BlazePressStrings = () => {
 	translate( 'Please select a valid range' );
 	translate( 'Duration (days)' );
 	translate( 'Weekly Total' );
-	translate( 'Total' );
-	translate(
-		'Daily spend for %(durationDays)s-day duration',
-		'Daily spend for %(durationDays)s day duration',
-		{ count: 1 }
-	);
-	translate( 'Estimated people reached per day' );
-	translate( 'days' );
+	translate( 'Daily budget' );
+	translate( 'Total spend for the campaign duration' );
+	translate( 'Weekly click estimate' );
+	translate( 'Estimated clicks for the campaign duration' );
+	translate( 'Daily people reached estimate' );
+	translate( 'Starts and ends at %(time)s' );
+	translate( 'Starts at %(time)s and runs until you stop it' );
+	translate( 'Lasts %(days)s day', 'Lasts %(days)s days', { count: 1 } );
+	translate( '(ending %(lastFour)s)' );
 	translate( 'Credits will be automatically applied to your order when available.' );
 	translate( 'Credits: %(creditsUsed)s (%(remainingCredit)s remain)' );
 	translate( 'Review your campaign' );
 	translate(
 		'We created this campaign to deliver the most valuable traffic, yet you can still make changes before submitting it.'
 	);
+	translate( 'Make changes' );
 	translate( 'Campaign Objective' );
 	translate( 'Change' );
 	translate( 'Start Date' );
 	translate( 'Duration' );
 	translate( 'Budget' );
 	translate( 'day' );
-	translate( ' impressions' );
-	translate( 'Impressions are estimated' );
-	translate( 'Payment' );
+	translate( 'Weekly' );
+	translate( 'Total' );
+	translate( 'Est. weekly clicks' );
+	translate( 'Estimated clicks' );
+	translate( '%(impressionsRange)s people reached weekly' );
+	translate( '%(impressionsRange)s people reached' );
+	translate( 'Est. weekly people reached' );
+	translate( 'Estimated people reached' );
+	translate( 'Payment method' );
+	translate( 'Everywhere' );
+	translate( 'Languages' );
+	translate( 'Devices' );
+	translate( 'Destination' );
 	translate( 'Loading' );
 	translate( 'Start typing country, state or city to see available options' );
 	translate( 'No results found' );
-	translate( 'Search for locations' );
+	translate( 'Search for country, state or city' );
 	translate( 'Good for: ' );
+	translate( 'Traffic' );
+	translate( 'Aims to drive more visitors and increase page views.' );
+	translate( 'E-commerce sites, content-driven websites, startups.' );
+	translate( 'Sales' );
+	translate( 'Converts potential customers into buyers by encouraging purchase.' );
+	translate( 'E-commerce, retailers, subscription services.' );
+	translate( 'Awareness' );
+	translate( 'Focuses on increasing brand recognition and visibility.' );
+	translate( 'New businesses, brands launching new products.' );
+	translate( 'Engagement' );
+	translate( 'Encourages your audience to interact and connect with your brand.' );
+	translate( 'Influencers and community builders looking for followers of the same interest.' );
 	translate( 'Choose campaign objective' );
-	translate( 'Continue' );
+	translate( 'Save' );
 	translate( 'Cancel' );
 	translate( 'Save my selection for future campaigns' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
@@ -171,6 +201,7 @@ const BlazePressStrings = () => {
 	translate(
 		'There was an error with the address. Please, check that the Zip code exists, is valid for the country, and corresponds for the given address'
 	);
+	translate( 'Payment' );
 	translate( 'Use saved card' );
 	translate( 'First Name' );
 	translate( 'Last Name' );
@@ -179,7 +210,6 @@ const BlazePressStrings = () => {
 	translate( 'Save this card for future payments' );
 	translate( 'Saved cards' );
 	translate( 'Add new card' );
-	translate( '(ending %(lastFour)s)' );
 	translate( 'Expires on %(month)s/%(year)s' );
 	translate( 'Card Number' );
 	translate( 'Exp. Date' );
@@ -191,27 +221,27 @@ const BlazePressStrings = () => {
 	translate( 'View' );
 	translate( 'Promote' );
 	translate(
-		'By clicking "Submit campaign" you agree to the {{linkTos}}Terms of Service{{externalLinkIcon/}}{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{externalLinkIcon/}}{{/linkAdvertisingPolicy}}, and authorize your payment method to be charged for the budget and duration you chose. {{linkMoreAboutAds}}Learn more{{externalLinkIcon/}}{{/linkMoreAboutAds}} about how budgets and payments for Promoted Posts work.'
+		'By clicking "Submit campaign" you agree to our {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize charges to your payment method at regular intervals for the specified budget and duration, until cancellation. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}}.'
 	);
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
-	translate( 'Make changes' );
+	translate( 'Content suggested with the help of AI.' );
+	translate( 'Depending on the platform, the ad may look different to the preview.' );
 	translate( 'Ad Preview' );
 	translate( 'Mobile' );
 	translate( 'Tablet' );
 	translate( 'Desktop' );
-	translate( 'Everywhere' );
+	translate( 'Starts on %(date)s at %(time)s and runs until you stop it' );
+	translate( '%(days)s day', '%(days)s days', { count: 1 } );
 	translate( 'Weekly total' );
 	translate( 'Summary' );
 	translate( 'Preview' );
-	translate( 'Depending on the platform, the ad may look different from the preview.' );
-	translate( 'Estimated Impressions' );
-	translate( 'Weekly Budget' );
-	translate( 'Max Budget' );
-	translate( 'Languages' );
-	translate( 'Devices' );
-	translate( 'Destination' );
+	translate( '%(maxBudget)s total per week (7 days)' );
+	translate( 'Total: %(maxBudget)s' );
+	translate( '%(impressionsRange)s weekly people reached' );
+	translate( '%(impressionsRange)s total people reached' );
 	translate( 'Suggested using AI' );
+	translate( 'Browse Ad copy suggestions' );
 	translate( 'Suggested by AI' );
 	translate( 'Oops, something went wrong' );
 	translate( 'Loading site…' );

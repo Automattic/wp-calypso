@@ -247,6 +247,13 @@ button.dns__breadcrumb-button {
 		display: flex;
 		justify-content: center;
 	}
+	.add-record__icon{
+		fill: var(--studio-gray-80);
+
+		@include break-large {
+			fill: var(--studio-white);
+		}
+	}
 }
 
 .dns__breadcrumb-button {

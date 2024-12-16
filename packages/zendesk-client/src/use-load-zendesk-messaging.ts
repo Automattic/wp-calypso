@@ -13,8 +13,8 @@ import type { ZendeskConfigName } from './types';
 
 export function useLoadZendeskMessaging(
 	keyConfigName: ZendeskConfigName,
-	enabled = true,
-	tryAuthenticating = true,
+	enabled = false,
+	tryAuthenticating = false,
 	shouldUseHelpCenterExperience = false
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );

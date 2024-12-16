@@ -21,7 +21,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
+import { PARTNER_PAYPAL_EXPRESS, PARTNER_PAYPAL_PPCP } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
@@ -207,7 +207,10 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	const translate = useTranslate();
 	let text;
 
-	if ( transaction.pay_part === PARTNER_PAYPAL_EXPRESS ) {
+	if (
+		transaction.pay_part === PARTNER_PAYPAL_EXPRESS ||
+		transaction.pay_part === PARTNER_PAYPAL_PPCP
+	) {
 		text = translate( 'PayPal' );
 	} else if ( 'XXXX' !== transaction.cc_num ) {
 		text = translate( '%(cardType)s ending in %(cardNum)s', {

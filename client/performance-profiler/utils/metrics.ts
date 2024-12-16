@@ -1,30 +1,17 @@
-import { translate } from 'i18n-calypso';
 import { Metrics, PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { Valuation } from '../types/performance-metrics';
 
-export const metricsNames = {
+export const getMetricsNames = ( translate: ( text: string ) => string ) => ( {
 	fcp: { name: translate( 'First Contentful Paint' ) },
-	lcp: {
-		name: translate( 'Largest Contentful Paint' ),
-	},
-	cls: {
-		name: translate( 'Cumulative Layout Shift' ),
-	},
-	inp: {
-		name: translate( 'Interaction to Next Paint' ),
-	},
-	ttfb: {
-		name: translate( 'Time to First Byte' ),
-	},
-	tbt: {
-		name: translate( 'Total Blocking Time' ),
-	},
-	overall: {
-		name: translate( 'Performance Score' ),
-	},
-};
+	lcp: { name: translate( 'Largest Contentful Paint' ) },
+	cls: { name: translate( 'Cumulative Layout Shift' ) },
+	inp: { name: translate( 'Interaction to Next Paint' ) },
+	ttfb: { name: translate( 'Time to First Byte' ) },
+	tbt: { name: translate( 'Total Blocking Time' ) },
+	overall: { name: translate( 'Performance Score' ) },
+} );
 
-export const metricValuations = {
+export const getMetricValuations = ( translate: ( text: string ) => string ) => ( {
 	fcp: {
 		good: translate( 'Your site‘s First Contentful Paint is excellent' ),
 		needsImprovement: translate( 'Your site‘s First Contentful Paint needs improvement' ),
@@ -95,7 +82,7 @@ export const metricValuations = {
 			'The performance score is a combined representation of your site‘s individual speed metrics.'
 		),
 	},
-};
+} );
 
 // bad values are only needed as a maximum value on the scales
 export const metricsThresholds = {

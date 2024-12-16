@@ -1,0 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-v3__content {
+	padding-block-start: 32px;
+	overflow: auto;
+}
+
+
+.hosting-v3__content-header {
+	@include a4a-font-heading-lg;
+	text-align: center;
+	margin-block-end: 32px;
+}

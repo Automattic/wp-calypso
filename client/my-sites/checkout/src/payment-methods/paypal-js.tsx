@@ -1,4 +1,4 @@
-import { PayPalProvider } from '@automattic/calypso-paypal';
+import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
 import {
 	useTogglePaymentMethod,
 	type PaymentMethod,
@@ -13,11 +13,20 @@ import {
 } from '@paypal/react-paypal-js';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
+import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
+
+async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
+	return await wp.req.get( {
+		path: `/me/paypal-configuration`,
+		method: 'GET',
+	} );
+}
 
 export function createPayPal(): PaymentMethod {
 	return {
@@ -34,7 +43,7 @@ function PayPalLabel() {
 	return (
 		<>
 			<div>
-				<span>PayPal (A8C-only)</span>
+				<span>PayPal</span>
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
@@ -66,10 +75,18 @@ function PayPalSubmitButtonWrapper( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	return (
-		<PayPalProvider currency={ responseCart.currency }>
+		<PayPalProvider
+			currency={ responseCart.currency }
+			fetchPayPalConfiguration={ fetchPayPalConfiguration }
+			handleError={ handlePayPalConfigurationError }
+		>
 			<PayPalSubmitButton disabled={ disabled } onClick={ onClick } />
 		</PayPalProvider>
 	);
+}
+
+function handlePayPalConfigurationError( error: Error ) {
+	logStashEvent( convertErrorToString( error ), { tags: [ 'paypal-configuration' ] }, 'error' );
 }
 
 function PayPalSubmitButton( {
@@ -81,6 +98,9 @@ function PayPalSubmitButton( {
 } ) {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
+	const [ forceReRender, setForceReRender ] = useState< number >( 0 );
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	// Wait for PayPal.js to load before marking this payment method as active.
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
@@ -89,6 +109,14 @@ function PayPalSubmitButton( {
 			togglePaymentMethod( 'paypal-js', true );
 		}
 	}, [ isResolved, togglePaymentMethod ] );
+
+	useEffect( () => {
+		debug( 'cart changed; rerendering PayPalSubmitButton' );
+		// The PayPalButtons component appears to cache certain data about the
+		// order process and in order to make sure it has the latest data, we
+		// have to use the `forceReRender` prop.
+		setForceReRender( ( val ) => val + 1 );
+	}, [ responseCart ] );
 
 	// We have to wait for the active payment method to switch because the
 	// contents of the `onClick` function will change when the active state
@@ -139,6 +167,10 @@ function PayPalSubmitButton( {
 
 	const onCancel: PayPalButtonsComponentProps[ 'onCancel' ] = async () => {
 		debug( 'order cancelled' );
+		// The PayPalButtons component appears to cache certain data about the
+		// order process and in order to make sure it has the latest data, we
+		// have to use the `forceReRender` prop.
+		setForceReRender( ( val ) => val + 1 );
 		rejectPayPalApprovalPromise(
 			new Error( translate( 'The PayPal transaction was not approved.' ) )
 		);
@@ -176,6 +208,7 @@ function PayPalSubmitButton( {
 	// transaction system that the purchase is complete.
 	return (
 		<PayPalButtons
+			forceReRender={ [ forceReRender ] }
 			disabled={ disabled }
 			style={ { layout: 'horizontal' } }
 			fundingSource="paypal"

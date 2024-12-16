@@ -15,8 +15,11 @@ export type HostingDetails = {
 export type UpgradePlanDetailsProps = {
 	children: React.ReactNode;
 	introOfferAvailable: boolean;
-	pricing?: PricingMetaForGridPlan;
+	pricing?: { [ key: string ]: PricingMetaForGridPlan };
 	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
+	showVariants?: boolean;
+	onCtaClick?: ( planSlug: PlanSlug ) => void;
+	planSlugs: Array< PlanSlug >;
 };
 
 export type UpgradePlanProps = {
@@ -27,9 +30,10 @@ export type UpgradePlanProps = {
 	hideTitleAndSubTitle?: boolean;
 	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;
-	onCtaClick: () => void;
+	onCtaClick: ( planSlug: PlanSlug ) => void;
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
+	showVariants?: boolean;
 	visiblePlan?: PlanSlug;
 };

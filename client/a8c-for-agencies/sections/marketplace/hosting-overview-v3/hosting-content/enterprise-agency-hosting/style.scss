@@ -1,0 +1,49 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.enterprise-agency-hosting-v3 {
+	.hosting-plan-section__main {
+		background-color: #f5f2f1;
+	}
+
+	.hosting-plan-section__card {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 32px;
+	}
+}
+
+.enterprise-agency-hosting__top-heading {
+	@include a4a-font-heading-lg;
+	display: flex;
+	align-items: center;
+	margin-block-end: 16px;
+}
+
+.enterprise-agency-hosting__top-subheading {
+	@include a4a-font-heading-xl;
+}
+
+.theme-a8c-for-agencies .enterprise-agency-hosting-v3__cta-button.components-button.is-primary {
+	margin-block-start: auto;
+
+	background-color: var(--color-text);
+	color: var(--color-text-inverted);
+}
+
+.enterprise-agency-hosting-v3__logos {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: space-between;
+	margin-block: 32px;
+
+	.enterprise-agency-hosting-v3__logos-item {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

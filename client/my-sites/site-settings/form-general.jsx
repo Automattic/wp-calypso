@@ -28,6 +28,7 @@ import {
 	getSiteOption,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
+	isWpcomSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -436,6 +437,7 @@ const connectComponent = connect( ( state ) => {
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		selectedSite: getSelectedSite( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsWpcom: isWpcomSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		timezonesLabels: getTimezonesLabels( state ),
 	};
@@ -448,6 +450,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
+		jetpack_holiday_snow_enabled: false,
 		wpcom_coming_soon: '',
 		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
@@ -471,6 +474,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
+
+		jetpack_holiday_snow_enabled: !! settings.jetpack_holiday_snow_enabled,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,

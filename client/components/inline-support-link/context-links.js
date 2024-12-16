@@ -223,6 +223,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/settings/performance-settings/',
 		post_id: 179952,
 	},
+	personal_plan: {
+		link: 'https://wordpress.com/support/plan-features/personal-plan/',
+		post_id: 294086,
+	},
 	plugins: {
 		link: 'https://wordpress.com/support/plugins/',
 		post_id: 2108,

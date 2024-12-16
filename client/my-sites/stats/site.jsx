@@ -64,7 +64,7 @@ import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
-import StatsFeedbackController from './feedback';
+import StatsFeedbackPresentor from './feedback';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -162,15 +162,18 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
-				activeLegend: activeTab.legendOptions || [],
+				// TODO: remove this when we support hourly visitors.
+				activeLegend: props.period !== 'hour' ? activeTab.legendOptions || [] : [],
 			};
 		}
 		return null;
 	}
 
 	getAvailableLegend() {
+		const { period } = this.props.period;
 		const activeTab = getActiveTab( this.props.chartTab );
-		return activeTab.legendOptions || [];
+		// TODO: remove this when we support hourly visitors.
+		return period !== 'hour' ? activeTab.legendOptions || [] : [];
 	}
 
 	navigationFromChartBar = ( periodStartDate, period ) => {
@@ -190,7 +193,12 @@ class StatsSite extends Component {
 		}
 
 		// Determine the target period for the navigation.
-		const targetPeriod = period === 'day' ? 'hour' : 'day';
+		let targetPeriod = 'day';
+		if ( period === 'day' ) {
+			targetPeriod = 'hour';
+		} else if ( period === 'year' ) {
+			targetPeriod = 'month';
+		}
 
 		const path = `/stats/${ targetPeriod }/${ this.props.slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
@@ -198,17 +206,14 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( isNewDateFilteringEnabled, bar ) => {
+	barClick = ( shouldForceDefaultDateRange, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-
-		if ( ! isNewDateFilteringEnabled ) {
-			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
-			return;
-		}
 
 		const { period: barPeriod } = this.props.period;
 		// Stop navigation if the bar period is hour.
-		if ( barPeriod === 'hour' ) {
+		// Stop navigation if date control is locked to prevent navigation to hourly stats.
+		// TODO: Determine if we should allow navigation to hourly stats when STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS is locked.
+		if ( barPeriod === 'hour' || shouldForceDefaultDateRange ) {
 			return;
 		}
 
@@ -310,7 +315,7 @@ class StatsSite extends Component {
 			momentSiteZone,
 			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' ) || isInternal;
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -387,7 +392,7 @@ class StatsSite extends Component {
 		);
 
 		// Force the default date range to be 7 days if the 30-day option is locked.
-		if ( shouldForceDefaultDateRange ) {
+		if ( shouldForceDefaultDateRange && period !== 'hour' ) {
 			// For ChartTabs
 			customChartQuantity = 7;
 
@@ -431,6 +436,9 @@ class StatsSite extends Component {
 			'stats__flexible-grid-item--full--medium'
 		);
 
+		// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
+		const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -469,7 +477,7 @@ class StatsSite extends Component {
 				) }
 				{ isNewDateFilteringEnabled && (
 					// moves date range block into new location
-					<StickyPanel headerId={ isOdysseyStats ? 'wpadminbar' : 'header' }>
+					<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
@@ -546,7 +554,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
+								barClick={ this.barClick.bind( this, shouldForceDefaultDateRange ) }
 								className="is-date-filtering-enabled"
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
@@ -564,7 +572,7 @@ class StatsSite extends Component {
 								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
+								barClick={ this.barClick.bind( this, shouldForceDefaultDateRange ) }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
 								queryDate={ queryDate }
@@ -727,7 +735,7 @@ class StatsSite extends Component {
 				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
 					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				) }
-				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
+				{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }

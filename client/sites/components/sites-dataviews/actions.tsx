@@ -436,7 +436,8 @@ export function useActions( {
 					const wpAdminUrl = getSiteAdminUrl( site );
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-					if ( isWpAdminInterface ) {
+					const isSelfHostedJetpack = isNotAtomicJetpack( site );
+					if ( isWpAdminInterface || isSelfHostedJetpack ) {
 						window.location.href = `${ wpAdminUrl }plugins.php`;
 					} else {
 						page( getPluginsUrl( site.slug ) );

@@ -11,17 +11,22 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
  */
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
+/**
+ * Bump me when the API response structure goes through a breaking change.
+ */
+const VERSION = 'v1';
+
 let isLoggedIn = false;
 
 export function useAuthenticateZendeskMessaging(
-	enabled = true,
+	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
-	const currentEnvironment = config( 'env_id' );
-	const isTestMode = currentEnvironment !== 'production';
+	const currentEnvironment = config( 'env_id' ) as string;
+	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', type, isTestMode ],
+		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
 		queryFn: () => {
 			const params = { type, test_mode: String( isTestMode ) };
 			const wpcomParams = new URLSearchParams( params );
@@ -50,9 +55,9 @@ export function useAuthenticateZendeskMessaging(
 				}
 
 				window.zE( 'messenger', 'loginUser', function ( callback ) {
-					isLoggedIn = true;
 					callback( jwt );
 				} );
+				isLoggedIn = true;
 			}
 			return { isLoggedIn, jwt, externalId: messagingAuth?.user.external_id };
 		},
