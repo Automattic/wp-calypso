@@ -16,7 +16,7 @@ export default function LayoutTop( { children, withNavigation }: Props ) {
 
 	return (
 		<div
-			className={ clsx( 'a4a-layout__top-wrapper', {
+			className={ clsx( 'multi-sites-dashboard-layout__top-wrapper', {
 				'has-navigation': withNavigation || !! navigation,
 			} ) }
 		>

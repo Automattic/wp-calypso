@@ -9,7 +9,7 @@
 	margin-block-end: 64px;
 }
 
-.a4a-layout__header-breadcrumb {
+.multi-sites-dashboard-layout__header-breadcrumb {
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
