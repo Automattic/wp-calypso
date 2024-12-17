@@ -199,9 +199,7 @@ export const isActionEligible = (
 			};
 		case 'restore':
 			return ( site: SiteExcerptData ) => {
-				const canManageOptions = capabilities[ site.ID ]?.manage_options;
 				if (
-					( ! canManageOptions && ! site?.is_deleted ) ||
 					isP2Site( site ) ||
 					isNotAtomicJetpack( site ) ||
 					isDisconnectedJetpackAndNotAtomic( site )
