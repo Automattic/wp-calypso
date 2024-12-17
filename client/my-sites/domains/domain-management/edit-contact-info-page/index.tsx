@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
@@ -50,8 +51,13 @@ const EditContactInfoPage = ( {
 		return ! getSelectedDomain( { domains, selectedDomainName } ) || isRequestingWhois;
 	};
 
+	const isAllDomainsScreen = useMemo(
+		() => isUnderDomainManagementAll( currentRoute ),
+		[ currentRoute ]
+	);
+
 	const renderHeader = () => {
-		if ( ! selectedSite || isUnderDomainManagementAll( currentRoute ) ) {
+		if ( ! selectedSite || isAllDomainsScreen ) {
 			return null;
 		}
 
@@ -63,9 +69,7 @@ const EditContactInfoPage = ( {
 
 		const items = [
 			{
-				label: isUnderDomainManagementAll( currentRoute )
-					? translate( 'All Domains' )
-					: translate( 'Domains' ),
+				label: isAllDomainsScreen ? translate( 'All Domains' ) : translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					currentRoute,
@@ -93,21 +97,22 @@ const EditContactInfoPage = ( {
 
 	const renderContent = () => {
 		const domain = getSelectedDomain( { domains, selectedDomainName } );
+		let content = null;
 
 		if ( ! domain?.currentUserCanManage ) {
-			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+			content = <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
 		if ( ! domain.canUpdateContactInfo ) {
-			return <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
+			content = <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
 		}
 
 		if ( domain.isPendingWhoisUpdate ) {
-			return <PendingWhoisUpdateCard />;
+			content = <PendingWhoisUpdateCard />;
 		}
 
 		if ( domain.mustRemovePrivacyBeforeContactUpdate && domain.privateDomain && selectedSite ) {
-			return (
+			content = (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ selectedDomainName }
 					selectedSiteSlug={ selectedSite?.slug }
@@ -115,21 +120,25 @@ const EditContactInfoPage = ( {
 			);
 		}
 
-		const backUrl = domainManagementEdit(
-			selectedSite?.slug ?? '',
-			selectedDomainName,
-			currentRoute
-		);
+		if ( ! content ) {
+			const backUrl = domainManagementEdit(
+				selectedSite?.slug ?? '',
+				selectedDomainName,
+				currentRoute
+			);
 
-		return (
-			<EditContactInfoFormCard
-				domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
-				selectedDomain={ domain }
-				selectedSite={ selectedSite }
-				showContactInfoNote={ false }
-				backUrl={ backUrl }
-			/>
-		);
+			content = (
+				<EditContactInfoFormCard
+					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
+					selectedDomain={ domain }
+					selectedSite={ selectedSite }
+					showContactInfoNote={ false }
+					backUrl={ backUrl }
+				/>
+			);
+		}
+
+		return isAllDomainsScreen ? <Card>{ content }</Card> : content;
 	};
 
 	const renderSidebar = () => {
