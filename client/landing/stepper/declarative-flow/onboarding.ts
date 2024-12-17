@@ -135,11 +135,6 @@ const onboarding: Flow = {
 				}
 
 				case 'designSetup': {
-					const { selectedDesign: _selectedDesign } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'pattern-assembler' );
-					}
-
 					return navigate( 'domains' );
 				}
 
