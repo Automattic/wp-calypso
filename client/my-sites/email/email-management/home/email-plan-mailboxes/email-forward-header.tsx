@@ -6,8 +6,9 @@ import React from 'react';
 
 type Props = React.PropsWithChildren< {
 	className?: string;
+	actionPath?: string;
 } >;
-export default function EmailForwardHeader( { className, children }: Props ) {
+export default function EmailForwardHeader( { className, children, actionPath }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -20,7 +21,9 @@ export default function EmailForwardHeader( { className, children }: Props ) {
 					<span className="section-header__label-text">{ translate( 'Destination' ) }</span>
 				</div>
 				<div className="section-header__actions">
-					<Button isLink>{ translate( 'Add forward' ) }</Button>
+					<Button href={ actionPath } isLink>
+						{ translate( 'Add forward' ) }
+					</Button>
 				</div>
 			</CompactCard>
 			{ children }

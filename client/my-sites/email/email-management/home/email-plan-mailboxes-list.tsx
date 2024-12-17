@@ -155,7 +155,10 @@ function EmailPlanMailboxesList( {
 					) }
 
 					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
-						<EmailForwardHeader className="email-plan-mailboxes-list__mailbox-list">
+						<EmailForwardHeader
+							className="email-plan-mailboxes-list__mailbox-list"
+							actionPath={ addMailboxPath }
+						>
 							<MailboxItems />
 						</EmailForwardHeader>
 					) }
