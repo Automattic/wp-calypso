@@ -1,5 +1,4 @@
 import { OnboardSelect, Onboard } from '@automattic/data-stores';
-import { type Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
