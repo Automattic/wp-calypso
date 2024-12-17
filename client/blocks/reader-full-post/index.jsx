@@ -335,11 +335,11 @@ export class FullPostView extends Component {
 		}
 	};
 
-	trackFastExit = ( post, elapsedTime, fastExitThreshold ) => {
+	trackFastExit = ( post, elapsedSeconds, fastExitThreshold ) => {
 		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
 			context: 'full-post',
 			estimated_reading_time: post.minutes_to_read,
-			elapsed_time: elapsedTime,
+			elapsed_seconds: elapsedSeconds,
 			fast_exit_threshold: fastExitThreshold,
 		} );
 	};
