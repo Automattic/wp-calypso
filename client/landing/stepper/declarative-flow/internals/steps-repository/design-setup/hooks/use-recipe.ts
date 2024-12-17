@@ -28,17 +28,22 @@ const useRecipe = (
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isPreviewingDesign = !! searchParams.get( 'theme' );
-	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
-		const { getSelectedDesign, getSelectedStyleVariation } = select(
-			ONBOARD_STORE
-		) as OnboardSelect;
-		return {
-			selectedDesign: getSelectedDesign(),
-			selectedStyleVariation: getSelectedStyleVariation(),
-		};
-	}, [] );
+	const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
+		( select ) => {
+			const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
+				ONBOARD_STORE
+			) as OnboardSelect;
+			return {
+				selectedDesign: getSelectedDesign(),
+				selectedStyleVariation: getSelectedStyleVariation(),
+				selectedGlobalStyles: getSelectedGlobalStyles(),
+			};
+		},
+		[]
+	);
 
-	const { setSelectedDesign, setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setSelectedStyleVariation, setSelectedGlobalStyles } =
+		useDispatch( ONBOARD_STORE );
 
 	const [ selectedColorVariation, setSelectedColorVariation ] =
 		useState< GlobalStylesObject | null >( null );
@@ -52,8 +57,6 @@ const useRecipe = (
 		!! selectedColorVariation,
 		!! selectedFontVariation,
 	].filter( Boolean ).length;
-
-	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
 	/**
 	 * Get the preselect data only when mounting and ignore any changes later.
@@ -183,7 +186,7 @@ const useRecipe = (
 		handleSelectedStyleVariationChange();
 		handleSelectedColorVariationChange( null );
 		handleSelectedFontVariationChange( null );
-		setGlobalStyles( null );
+		setSelectedGlobalStyles( undefined );
 	};
 
 	// Unset the selected design, thus restarting the design picking experience.
@@ -258,14 +261,14 @@ const useRecipe = (
 		selectedColorVariation,
 		selectedFontVariation,
 		numOfSelectedGlobalStyles,
-		globalStyles,
+		globalStyles: selectedGlobalStyles,
 		previewDesign,
 		previewDesignVariation,
 		setSelectedDesign,
 		setSelectedStyleVariation,
 		setSelectedColorVariation: handleSelectedColorVariationChange,
 		setSelectedFontVariation: handleSelectedFontVariationChange,
-		setGlobalStyles,
+		setGlobalStyles: setSelectedGlobalStyles,
 		resetPreview,
 	};
 };
