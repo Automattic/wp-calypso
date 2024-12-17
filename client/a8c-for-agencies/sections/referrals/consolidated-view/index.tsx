@@ -21,7 +21,7 @@ type FooterInfoProps = {
 	wrapperRef: React.RefObject< HTMLElement >;
 	footerText: string;
 };
-const FooterInfo = ( { children, wrapperRef, footerText, title }: FooterInfoProps ) => {
+const CardInfo = ( { children, wrapperRef, footerText, title }: FooterInfoProps ) => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
@@ -131,7 +131,7 @@ export default function ConsolidatedViews( {
 						formatCurrency( consolidatedData.allTimeCommissions, 'USD' )
 					) }
 				</div>
-				<FooterInfo
+				<CardInfo
 					title={ translate( 'Total payouts' ) }
 					wrapperRef={ commissionInfoRef }
 					footerText={ translate( 'All time referral payouts' ) }
@@ -146,7 +146,7 @@ export default function ConsolidatedViews( {
 							}
 						) }
 					</div>
-				</FooterInfo>
+				</CardInfo>
 			</Card>
 			<Card compact ref={ pendingCommissionRef }>
 				<div className="consolidated-view__value">
@@ -156,7 +156,7 @@ export default function ConsolidatedViews( {
 						formatCurrency( consolidatedData.pendingCommission, 'USD' )
 					) }
 				</div>
-				<FooterInfo
+				<CardInfo
 					title={ translate( 'Estimated amount' ) }
 					wrapperRef={ pendingCommissionRef }
 					footerText={ translate( 'Commissions expected' ) }
@@ -173,11 +173,11 @@ export default function ConsolidatedViews( {
 							}
 						) }
 					</div>
-				</FooterInfo>
+				</CardInfo>
 			</Card>
 			<Card compact ref={ nextPayoutDateRef }>
 				<div className="consolidated-view__value">{ nextPayoutDate + '*' }</div>
-				<FooterInfo
+				<CardInfo
 					title={ translate( 'Estimated date' ) }
 					wrapperRef={ nextPayoutDateRef }
 					footerText={ translate( 'Next estimated payout date' ) }
@@ -197,11 +197,11 @@ export default function ConsolidatedViews( {
 							}
 						) }
 					</div>
-				</FooterInfo>
+				</CardInfo>
 			</Card>
 			<Card compact ref={ pendingOrdersRef }>
 				<div className="consolidated-view__value">{ consolidatedData.pendingOrders }</div>
-				<FooterInfo
+				<CardInfo
 					title={ translate( 'Pending orders' ) }
 					wrapperRef={ pendingOrdersRef }
 					footerText={ translate( 'Pending referral orders' ) }
@@ -223,7 +223,7 @@ export default function ConsolidatedViews( {
 							}
 						) }
 					</div>
-				</FooterInfo>
+				</CardInfo>
 			</Card>
 		</div>
 	);
