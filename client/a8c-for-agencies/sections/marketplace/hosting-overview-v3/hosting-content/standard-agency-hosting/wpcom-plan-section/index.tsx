@@ -56,15 +56,15 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 	const plan = getWPCOMCreatorPlan( wpcomPlans ) ?? wpcomPlans[ 0 ];
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	const referralMode = marketplaceType === 'referral';
+	const isReferralMode = marketplaceType === 'referral';
 
 	const ownedPlans = useMemo( () => {
-		if ( referralMode ) {
+		if ( isReferralMode ) {
 			return 0;
 		}
 
 		return count;
-	}, [ count, referralMode ] );
+	}, [ count, isReferralMode ] );
 
 	const [ quantity, setQuantity ] = useState( 1 );
 
@@ -73,13 +73,20 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 	}
 
 	// Show the WPCOM slider if the user has less than 10 plans and is not in referral mode.
-	const showWPCOMSlider = ! referralMode && ownedPlans < MAX_PLANS_FOR_SLIDER;
+	const showWPCOMSlider = ! isReferralMode && ownedPlans < MAX_PLANS_FOR_SLIDER;
 
-	const displayQuantity = referralMode ? 1 : quantity;
+	const displayQuantity = isReferralMode ? 1 : quantity;
 
 	return (
 		<>
-			<HostingPlanSection className="wpcom-plan-section">
+			<HostingPlanSection
+				className="wpcom-plan-section"
+				heading={
+					isReferralMode
+						? translate( 'Refer a WordPress.com site to your client' )
+						: translate( 'Purchase sites individually or in bulk, as you need them' )
+				}
+			>
 				{ showWPCOMSlider && (
 					<HostingPlanSection.Banner>
 						<WPCOMPlanSlider
@@ -96,7 +103,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							plan={ plan }
 							onSelect={ onSelect }
 							ownedPlans={ ownedPlans }
-							referralMode={ referralMode }
+							isReferralMode={ isReferralMode }
 							quantity={ displayQuantity }
 							setQuantity={ setQuantity }
 						/>

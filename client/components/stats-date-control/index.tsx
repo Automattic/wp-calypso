@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
+import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControl from '../date-control';
@@ -148,6 +149,15 @@ const StatsDateControl = ( {
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
+
+		const appliedShortcut = findShortcutForRange( shortcutList, {
+			chartStart: startDate,
+			chartEnd: endDate,
+		} );
+
+		if ( appliedShortcut && appliedShortcut.id ) {
+			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+		}
 
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );

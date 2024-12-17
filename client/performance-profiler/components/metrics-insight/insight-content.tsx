@@ -17,6 +17,7 @@ interface InsightContentProps {
 	data: PerformanceMetricsItemQueryResponse;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
+	isWpscanLoading?: boolean;
 	AIGenerated: boolean;
 	hash: string;
 	url?: string;
@@ -25,7 +26,8 @@ interface InsightContentProps {
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, fullPageScreenshot, isLoading, AIGenerated, hash, url, chatId } = props;
+	const { data, fullPageScreenshot, isLoading, isWpscanLoading, AIGenerated, hash, url, chatId } =
+		props;
 	const { description = '' } = data ?? {};
 	const [ feedbackSent, setFeedbackSent ] = useState( false );
 	const [ feedbackOpen, setFeedbackOpen ] = useState( false );
@@ -98,10 +100,24 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 		);
 	};
 
+	const renderLoadingMessage = () => {
+		if ( isWpscanLoading ) {
+			return (
+				<LLMMessage
+					message={ translate(
+						"We're still checking some details of your site to make the best possible recommendations."
+					) }
+					rotate
+				/>
+			);
+		}
+		return <LLMMessage message={ translate( 'Finding the best solution for your page' ) } rotate />;
+	};
+
 	return (
 		<div className="metrics-insight-content">
-			{ isLoading ? (
-				<LLMMessage message={ translate( 'Finding the best solution for your page' ) } rotate />
+			{ isLoading || isWpscanLoading ? (
+				renderLoadingMessage()
 			) : (
 				<>
 					<div className="description-area">

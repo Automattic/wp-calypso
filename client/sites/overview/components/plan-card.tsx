@@ -83,7 +83,6 @@ const PricingSection = () => {
 		coupon: undefined,
 		planSlugs: [ planSlug ],
 		siteId: site?.ID,
-		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} )?.[ planSlug ];
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
@@ -94,7 +93,6 @@ const PricingSection = () => {
 		planSlug,
 		pricing: pricing ?? null,
 		isMonthlyPlan: pricing?.billingPeriod === PLAN_MONTHLY_PERIOD,
-		storageAddOnsForPlan: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 

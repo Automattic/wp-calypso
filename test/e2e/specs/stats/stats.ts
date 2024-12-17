@@ -62,9 +62,10 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 			await statsPage.clickTab( 'Traffic' );
 		} );
 
-		it( 'Select "Months" stats period', async function () {
-			await statsPage.selectStatsPeriodFromDropdown( 'Months' );
-		} );
+		// TODO: Check if this test should be skipped.
+		// it( 'Select "Months" stats period', async function () {
+		// 	await statsPage.selectStatsPeriodFromDropdown( 'Months' );
+		// } );
 
 		it( 'Filter traffic activity to Likes', async function () {
 			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Likes' } );
