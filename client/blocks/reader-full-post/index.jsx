@@ -120,7 +120,6 @@ export class FullPostView extends Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.setReadingStartTime();
-		this.setEstimatedReadingTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
 
@@ -169,7 +168,6 @@ export class FullPostView extends Component {
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.checkFastExit( prevProps.post ); // Check if the user exited early
 				this.setReadingStartTime();
-				this.setEstimatedReadingTime();
 				this.resetScroll();
 			}
 		}
@@ -276,28 +274,6 @@ export class FullPostView extends Component {
 		}
 	}
 
-	setEstimatedReadingTime = () => {
-		this.estimatedReadingTime = this.estimateReadingTime(); // In seconds;
-	};
-
-	estimateReadingTime() {
-		const { post } = this.props;
-		if ( ! post ) {
-			return 0;
-		}
-		const averageReadingSpeed = 200; // words per minute
-		const wordsPerSecond = averageReadingSpeed / 60;
-		const wordCount = post.word_count;
-
-		if ( ! wordCount ) {
-			return 0;
-		}
-
-		// Calculate reading time in seconds
-		const readingTime = Math.ceil( wordCount / wordsPerSecond );
-		return readingTime;
-	}
-
 	clearResetScrollTimeout = () => {
 		if ( this.resetScrollTimeout ) {
 			clearTimeout( this.resetScrollTimeout );
@@ -364,7 +340,7 @@ export class FullPostView extends Component {
 	trackFastExit = ( post, elapsedTime, fastExitThreshold ) => {
 		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
 			context: 'full-post',
-			estimated_reading_time: this.estimatedReadingTime,
+			estimated_reading_time: post.minutes_to_read,
 			elapsed_time: elapsedTime,
 			fast_exit_threshold: fastExitThreshold,
 		} );
@@ -375,12 +351,18 @@ export class FullPostView extends Component {
 			post = this.props.post;
 		}
 
-		if ( ! this.readingStartTime || ! post?.ID || ! this.estimatedReadingTime ) {
+		if (
+			! this.readingStartTime ||
+			! post?.ID ||
+			! post?.minutes_to_read ||
+			post?.minutes_to_read === 0
+		) {
 			return;
 		}
 
 		const elapsedTime = ( Date.now() - this.readingStartTime ) / 1000; // Convert to seconds
-		const fastExitThreshold = this.estimatedReadingTime * 0.25; // Define a "fast exit" as 25% of estimated time
+		const secondsToRead = post.minutes_to_read * 60;
+		const fastExitThreshold = secondsToRead * 0.25; // Define a "fast exit" as 25% of estimated time
 
 		if ( elapsedTime < fastExitThreshold ) {
 			this.trackFastExit( post, elapsedTime, fastExitThreshold );
