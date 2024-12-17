@@ -719,6 +719,7 @@ function wpcomPages( app ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
+			const coupon = req.query?.coupon;
 
 			if ( queryFor && 'jetpack' === queryFor ) {
 				res.redirect(
@@ -726,8 +727,11 @@ function wpcomPages( app ) {
 				);
 			} else {
 				const pricingPage = 'https://wordpress.com/pricing/';
-				const refQuery = ref ? `?ref=${ ref }` : '';
-				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
+				const queryString = stringify( { ref, coupon } );
+				const pricingPageUrl = localizeUrl(
+					`${ pricingPage }${ queryString ? '?' + queryString : '' }`,
+					locale
+				);
 				res.redirect( pricingPageUrl );
 			}
 		} else {
