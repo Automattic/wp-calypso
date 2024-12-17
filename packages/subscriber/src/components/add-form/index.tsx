@@ -88,7 +88,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		siteId,
 	} );
 
-	const [ selectedCategories, setSelectedCategories ] = useState< string[] >( [] );
+	const [ selectedCategories, setSelectedCategories ] = useState< number[] >( [] );
 
 	const {
 		addSubscribers,

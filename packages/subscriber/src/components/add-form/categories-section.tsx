@@ -1,16 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, Popover, ToggleControl } from '@wordpress/components';
+import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
+import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
 import { info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { CategoryTreeSelector } from './category-tree-selector';
 
 interface Props {
 	siteId: number;
 	newsletterCategories?: Array< { name: string; id: number; parent?: number } >;
-	selectedCategories: string[];
-	setSelectedCategories: ( categories: string[] ) => void;
+	selectedCategories: number[];
+	setSelectedCategories: ( categories: number[] ) => void;
 }
 
 export const CategoriesSection: React.FC< Props > = ( {
@@ -24,18 +24,23 @@ export const CategoriesSection: React.FC< Props > = ( {
 	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
 	const infoButtonRef = useRef< HTMLButtonElement >( null );
 
-	const handleCategoryChange = ( categoryId: number, checked: boolean ) => {
-		const newSelectedCategories = checked
-			? [ ...selectedCategories, categoryId.toString() ]
-			: selectedCategories.filter( ( id ) => id !== categoryId.toString() );
+	const handleCategoryChange = ( tokens: ( string | TokenItem )[] ) => {
+		// Filter out any invalid category names.
+		const validTokens = tokens
+			.map( ( token ) => {
+				const tokenName = typeof token === 'string' ? token : token.value;
+				const category = newsletterCategories.find( ( cat ) => cat.name === tokenName );
+				return category?.id;
+			} )
+			.filter( ( id ): id is number => id !== undefined );
 
 		recordTracksEvent( 'calypso_subscriber_add_form_categories_change', {
 			site_id: siteId,
-			categories_count: newSelectedCategories.length,
-			action: checked ? 'added' : 'removed',
+			categories_count: validTokens.length,
+			action: 'added',
 		} );
 
-		setSelectedCategories( newSelectedCategories );
+		setSelectedCategories( validTokens );
 	};
 
 	const handleToggle = ( value: boolean ) => {
@@ -107,10 +112,16 @@ export const CategoriesSection: React.FC< Props > = ( {
 			/>
 
 			{ showCategories && newsletterCategories && (
-				<CategoryTreeSelector
-					categories={ newsletterCategories }
-					selected={ selectedCategories.map( Number ) }
+				<FormTokenField
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					__experimentalShowHowTo={ false }
+					value={ selectedCategories
+						.map( ( id ) => newsletterCategories.find( ( cat ) => cat.id === id )?.name ?? '' )
+						.filter( ( name ) => name !== '' ) }
+					suggestions={ newsletterCategories.map( ( cat ) => cat.name ) }
 					onChange={ handleCategoryChange }
+					label=""
 				/>
 			) }
 		</div>

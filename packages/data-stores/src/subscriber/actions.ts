@@ -18,7 +18,7 @@ export function createActions() {
 		siteId: number,
 		file?: File,
 		emails: string[] = [],
-		categories: string[] = []
+		categories: number[] = []
 	) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
@@ -48,7 +48,7 @@ export function createActions() {
 		siteId: number,
 		file?: File,
 		emails: string[] = [],
-		categories: string[] = [],
+		categories: number[] = [],
 		parseOnly: boolean = false
 	) {
 		yield importCsvSubscribersStart( siteId, file, emails, categories );
