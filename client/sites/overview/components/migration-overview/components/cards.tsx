@@ -1,3 +1,4 @@
+import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 
