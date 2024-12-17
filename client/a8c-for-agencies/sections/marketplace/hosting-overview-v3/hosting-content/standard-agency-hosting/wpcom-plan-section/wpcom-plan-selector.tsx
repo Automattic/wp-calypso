@@ -74,45 +74,47 @@ export default function WPCOMPlanSelector( {
 
 	return (
 		<div className="wpcom-plan-selector__details">
-			{ ownedPlans > 0 && (
-				<div className="wpcom-plan-selector__owned-plan">
-					{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
-						args: {
+			<div className="wpcom-plan-selector__top">
+				{ ownedPlans > 0 && (
+					<div className="wpcom-plan-selector__owned-plan">
+						{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
+							args: {
+								count: ownedPlans,
+							},
 							count: ownedPlans,
-						},
-						count: ownedPlans,
-						comment: '%(count)s is the number of WordPress.com sites owned by the user',
-					} ) }
-				</div>
-			) }
-
-			<div className="wpcom-plan-selector__plan-name">
-				<img src={ WPCOMLogo } alt="WPCOM" />
-			</div>
-
-			<div className="wpcom-plan-selector__price">
-				<b className="wpcom-plan-selector__price-actual-value">
-					{ formatCurrency( actualPrice, plan.currency ) }
-				</b>
-				{ !! discount && (
-					<>
-						<b className="wpcom-plan-selector__price-original-value">
-							{ formatCurrency( originalPrice, plan.currency ) }
-						</b>
-
-						<span className="wpcom-plan-selector__price-discount">
-							{ translate( 'You save %(discount)s%', {
-								args: {
-									discount: Math.floor( discount * 100 ),
-								},
-								comment: '%(discount)s is the discount percentage.',
-							} ) }
-						</span>
-					</>
+							comment: '%(count)s is the number of WordPress.com sites owned by the user',
+						} ) }
+					</div>
 				) }
-				<div className="wpcom-plan-selector__price-interval">
-					{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
-					{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
+
+				<div className="wpcom-plan-selector__plan-name">
+					<img src={ WPCOMLogo } alt="WPCOM" />
+				</div>
+
+				<div className="wpcom-plan-selector__price">
+					<b className="wpcom-plan-selector__price-actual-value">
+						{ formatCurrency( actualPrice, plan.currency ) }
+					</b>
+					{ !! discount && (
+						<>
+							<b className="wpcom-plan-selector__price-original-value">
+								{ formatCurrency( originalPrice, plan.currency ) }
+							</b>
+
+							<span className="wpcom-plan-selector__price-discount">
+								{ translate( 'You save %(discount)s%', {
+									args: {
+										discount: Math.floor( discount * 100 ),
+									},
+									comment: '%(discount)s is the discount percentage.',
+								} ) }
+							</span>
+						</>
+					) }
+					<div className="wpcom-plan-selector__price-interval">
+						{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
+						{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
+					</div>
 				</div>
 			</div>
 
