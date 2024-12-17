@@ -16,7 +16,6 @@ export default function SiteSettingsForm( {
 	isUnlaunchedSite,
 	isAtomicAndEditingToolkitDeactivated,
 	isWpcomStagingSite,
-	isWPForTeamsSite,
 	fields,
 	updateFields,
 	onChangeField,
@@ -73,7 +72,7 @@ export default function SiteSettingsForm( {
 				urlRef="unlaunched-settings"
 			/>
 
-			{ siteIsWpcom && ! isWPForTeamsSite && (
+			{ siteIsWpcom && (
 				<HolidaySnow
 					fields={ fields }
 					handleToggle={ handleToggle }
