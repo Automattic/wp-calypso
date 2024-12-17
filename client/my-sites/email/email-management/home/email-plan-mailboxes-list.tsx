@@ -21,7 +21,10 @@ type Props = {
 	domain: ResponseDomain;
 	account: EmailAccount;
 	mailboxes: Mailbox[];
-	addMailboxPath: string;
+	actionPathProps?: {
+		disabled: boolean;
+		path: string;
+	};
 	isLoadingEmails: boolean;
 };
 function EmailPlanMailboxesList( {
@@ -29,7 +32,7 @@ function EmailPlanMailboxesList( {
 	domain,
 	account,
 	mailboxes,
-	addMailboxPath,
+	actionPathProps,
 	isLoadingEmails,
 }: Props ) {
 	const translate = useTranslate();
@@ -157,7 +160,7 @@ function EmailPlanMailboxesList( {
 					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
 						<EmailForwardHeader
 							className="email-plan-mailboxes-list__mailbox-list"
-							actionPath={ addMailboxPath }
+							actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
 						>
 							<MailboxItems />
 						</EmailForwardHeader>
@@ -166,8 +169,10 @@ function EmailPlanMailboxesList( {
 					{ accountType !== EMAIL_ACCOUNT_TYPE_FORWARD && (
 						<MailboxListHeader
 							accountType={ accountType }
-							addMailboxPath={ addMailboxPath }
-							showIcon={ !! addMailboxPath }
+							addMailboxPath={
+								( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined
+							}
+							showIcon={ !! actionPathProps }
 							domain={ domain }
 							disableActions={ isGoogleConfiguring }
 						>
@@ -190,8 +195,8 @@ function EmailPlanMailboxesList( {
 			return (
 				<MailboxListHeader
 					accountType={ accountType }
-					addMailboxPath={ addMailboxPath }
-					showIcon={ !! addMailboxPath }
+					addMailboxPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
+					showIcon={ !! actionPathProps }
 					domain={ domain }
 					disableActions={ isGoogleConfiguring }
 				>
