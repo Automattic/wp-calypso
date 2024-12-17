@@ -1,14 +1,21 @@
-import { OnboardSelect } from '@automattic/data-stores';
-import { useStepPersistedState } from '@automattic/onboarding';
+import {
+	ActiveTheme,
+	OnboardSelect,
+	updateLaunchpadSettings,
+	useStarterDesignBySlug,
+} from '@automattic/data-stores';
+import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSelector } from 'calypso/state';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { setActiveTheme } from 'calypso/state/themes/actions';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import { ProvidedDependencies, StepProps } from '../../types';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
@@ -19,21 +26,25 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
-
-	const { siteTitle, domainItem, domainItems } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
 			return {
 				siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 				domainItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				domainItems: select( ONBOARD_STORE ).getDomainCartItems(),
+				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			};
 		},
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
-
-	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
+	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
+	const [ , isGoalFirstExperiment ] = useGoalsFirstExperiment();
+	const { setDomainCartItem, setDomainCartItems, setSiteUrl, setSelectedDesign, setPendingAction } =
+		useWPDispatch( ONBOARD_STORE );
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
 
 	const signupDependencies = {
 		siteSlug,
@@ -59,6 +70,32 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		setPlanInterval( intervalType );
 	};
 
+	const switchPaidDesignToDefault = ( stepInfo: ProvidedDependencies ) => {
+		const hasPaidDesign =
+			( selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free' ) || false;
+		const isOnboarding = isOnboardingFlow( props.flow ) && isGoalFirstExperiment;
+
+		if ( ! hasPaidDesign || ! stepInfo.cartItem || ! isOnboarding ) {
+			return;
+		}
+
+		if ( site ) {
+			updateLaunchpadSettings( site?.ID || '', {
+				checklist_statuses: { design_completed: false },
+			} );
+
+			setPendingAction( () => {
+				return setDesignOnSite( site?.ID, defaultDesign, {
+					styleVariation: defaultDesign?.style_variations?.[ 0 ],
+				} ).then( ( theme: ActiveTheme ) => {
+					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
+				} );
+			} );
+		}
+
+		setSelectedDesign( defaultDesign );
+	};
+
 	return (
 		<UnifiedPlansStep
 			selectedSite={ site ?? undefined }
@@ -80,6 +117,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				}
 			} }
 			goToNextStep={ () => {
+				switchPaidDesignToDefault( mostRecentState );
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
 			step={ stepState }
