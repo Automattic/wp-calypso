@@ -105,7 +105,6 @@ export class FullPostView extends Component {
 		isSuggestedFollowsModalOpen: false,
 		maxScrollDepth: 0, // Track the maximum scroll depth achieved
 		hasCompleted: false, // Track whether the user completed the post
-		fastExit: true, // Track whether the user fast exited the post
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
