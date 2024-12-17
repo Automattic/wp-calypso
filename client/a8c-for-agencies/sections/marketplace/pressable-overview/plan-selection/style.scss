@@ -138,11 +138,16 @@
 	.pressable-overview-plan-selection__filter-label {
 		@include a4a-font-heading-md($font-size: rem(14px));
 		margin: 0;
+
 	}
 
 	.pressable-overview-plan-selection__filter-radio-control {
 		.components-base-control__label {
 			display: none;
+		}
+
+		.components-radio-control__label {
+			text-align: start;
 		}
 
 		.components-radio-control__group-wrapper {
@@ -209,6 +214,10 @@
 }
 
 .pressable-overview-plan-selection__filter {
+	.a4a-slider {
+		margin-block-start: 16px;
+	}
+
 	.a4a-slider__marker-label {
 		height: 0.95rem;
 	}
