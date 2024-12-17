@@ -246,7 +246,7 @@ const DesignCardGroup = ( {
 			{ content }
 			{ isCollapsed && designs.length > collapsedDesignCount && (
 				<div className="design-picker__design-card-group-footer">
-					<Button compact onClick={ () => setIsCollapsed( false ) }>
+					<Button onClick={ () => setIsCollapsed( false ) }>
 						{ translate( 'Show all %s themes', {
 							args: categoryName,
 							comment: '%s will be a name of the theme category. e.g. Blog.',
