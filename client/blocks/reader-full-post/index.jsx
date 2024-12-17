@@ -165,7 +165,6 @@ export class FullPostView extends Component {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
-				this.checkFastExit( prevProps.post ); // Check if the user exited early
 				this.setReadingStartTime();
 				this.resetScroll();
 			}
@@ -197,7 +196,6 @@ export class FullPostView extends Component {
 		this.props.enableAppBanner(); // reset the app banner
 		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
 		this.trackReadingTime();
-		this.checkFastExit(); // Check if the user exited early
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 
@@ -254,7 +252,6 @@ export class FullPostView extends Component {
 			this.trackReadingTime();
 			this.trackScrollDepth();
 			this.trackExitBeforeCompletion();
-			this.checkFastExit(); // Check if the user exited early
 			this.resetScroll();
 		}
 	};
@@ -270,6 +267,8 @@ export class FullPostView extends Component {
 				context: 'full-post',
 				engagement_time: engagementTime / 1000,
 			} );
+			// check if the user exited early
+			this.checkFastExit( post );
 		}
 	}
 
