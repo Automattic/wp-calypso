@@ -9,7 +9,7 @@ export const useDeferredRender = ( { timeMs }: UseDeferredRenderProps ) => {
 	const timeoutId = useRef< number | null >( null );
 
 	useEffect( () => {
-		const id = setTimeout( () => {
+		const id = window.setTimeout( () => {
 			setIsReadyToRender( true );
 		}, timeMs );
 
@@ -17,7 +17,7 @@ export const useDeferredRender = ( { timeMs }: UseDeferredRenderProps ) => {
 
 		return () => {
 			if ( timeoutId.current ) {
-				clearTimeout( timeoutId.current );
+				window.clearTimeout( timeoutId.current );
 			}
 		};
 	}, [ timeMs ] );
