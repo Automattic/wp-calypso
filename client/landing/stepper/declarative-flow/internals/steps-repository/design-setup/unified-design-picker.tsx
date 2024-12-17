@@ -532,26 +532,30 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			forceRedirection: true,
 		} );
 	}
-	function handleCheckout() {
+
+	function goToNextStep() {
+		if ( ! wpcomSiteSlug && ! siteSlug ) {
+			return pickDesign();
+		}
+
+		navigateToCheckout();
+	}
+
+	function handleCheckoutModalConfirmation() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
 			theme_tier: selectedDesign?.design_tier,
 			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
-		if ( siteSlugOrId ) {
-			// We want to display the Eligibility Modal only for externally managed themes
-			// and when no domain was purchased yet.
-			if (
-				selectedDesign?.is_externally_managed &&
-				hasEligibilityMessages &&
-				! didPurchaseDomain
-			) {
-				setShowEligibility( true );
-			} else {
-				navigateToCheckout();
-			}
+		// We want to display the Eligibility Modal only for externally managed themes
+		// and when no domain was purchased yet.
+		if ( selectedDesign?.is_externally_managed && hasEligibilityMessages && ! didPurchaseDomain ) {
+			setShowEligibility( true );
+		} else {
+			goToNextStep();
 		}
+
 		setShowUpgradeModal( false );
 	}
 
@@ -698,6 +702,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				{
 					selectedDesign: _selectedDesign,
 					selectedSiteCategory: categorization.selections?.join( ',' ),
+					plan: requiredPlanSlug,
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
@@ -833,7 +838,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						marketplaceProduct={ selectedMarketplaceProduct }
 						requiredPlan={ requiredPlanSlug }
 						closeModal={ closeUpgradeModal }
-						checkout={ handleCheckout }
+						checkout={ handleCheckoutModalConfirmation }
 					/>
 				) }
 				<QueryEligibility siteId={ site?.ID } />
@@ -849,7 +854,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						setShowEligibility( false );
 					} }
 					handleContinue={ () => {
-						navigateToCheckout();
+						goToNextStep();
 						setShowEligibility( false );
 					} }
 				/>

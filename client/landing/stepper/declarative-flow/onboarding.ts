@@ -133,6 +133,12 @@ const onboarding: Flow = {
 				}
 
 				case 'designSetup': {
+					const { plan } = providedDependencies;
+
+					if ( plan ) {
+						setPlanCartItem( plan );
+					}
+
 					return navigate( 'domains' );
 				}
 
