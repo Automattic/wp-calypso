@@ -412,7 +412,7 @@
 		}
 
 		.multi-sites-dashboard-layout__top-wrapper,
-		.a4a-layout__body {
+		.multi-sites-dashboard-layout__body {
 			> * {
 				@include breakpoint-deprecated(">660px") {
 					max-width: none;

@@ -18,7 +18,7 @@
 
 .wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard {
 	.multi-sites-dashboard-layout__top-wrapper,
-	.a4a-layout__body {
+	.multi-sites-dashboard-layout__body {
 		> * {
 			// dataviews-override: To align with Core's hard-coded device width.
 			// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84

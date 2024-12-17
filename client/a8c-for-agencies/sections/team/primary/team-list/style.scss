@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .team-list {
-	.a4a-layout__body {
+	.multi-sites-dashboard-layout__body {
 		margin-block-end: 16px;
 
 		@include break-medium {
