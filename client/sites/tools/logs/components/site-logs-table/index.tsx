@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { LogType } from '../site-logs';
 import SiteLogsTableRow from './site-logs-table-row';
@@ -29,6 +31,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	const { __ } = useI18n();
 	const columns = useSiteColumns( logs, headerTitles );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
+	const locale = useSelector( getCurrentUserLocale );
 
 	const logsWithKeys = useMemo( () => {
 		return generateRowKeys( logs );
@@ -64,12 +67,61 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		return columnNames[ column ] || column;
 	}
 
+	function calculateTextSize( text: string ): number {
+		const basePadding = 20;
+		const pixelsPerChar = 8;
+		const textWidth = text.length * pixelsPerChar;
+		return textWidth + basePadding;
+	}
+
+	function calculateSeverityContainerSize(): number {
+		const severityStatuses = Array.from(
+			new Set( logs?.map( ( log ) => log.severity as string ) ?? [] )
+		);
+
+		// Define formatted severities with translations
+		const formattedSeverities: Record< string, string > = {
+			User: __( 'User' ),
+			Warning: __( 'Warning' ),
+			Deprecated: __( 'Deprecated' ),
+			'Fatal error': __( 'Fatal error' ),
+		};
+
+		if ( locale !== 'en' ) {
+			// Map severities to their translated values, falling back to original if undefined
+			const translatedSeverityStatuses = severityStatuses.map(
+				( severity ) => formattedSeverities[ severity ] || severity
+			);
+
+			// Calculate the maximum container size required for the text
+			const maximumContainerSize = translatedSeverityStatuses.reduce(
+				( max, status ) => Math.max( max, calculateTextSize( status ) ),
+				0
+			);
+
+			// Return calculated size if it exceeds 80
+			if ( maximumContainerSize > 80 ) {
+				return maximumContainerSize;
+			}
+		}
+
+		// Default container size
+		return 80;
+	}
+
+	const getColumnStyle = ( column: string ) => {
+		if ( column === 'severity' ) {
+			return { width: `${ calculateSeverityContainerSize() }px` };
+		}
+		return {};
+	};
+
 	return (
 		<table className={ clsx( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (
-						<th key={ column } className={ column }>
+						<th key={ column } className={ column } style={ getColumnStyle( column ) }>
 							{ formatColumnName( column ) }
 						</th>
 					) ) }
