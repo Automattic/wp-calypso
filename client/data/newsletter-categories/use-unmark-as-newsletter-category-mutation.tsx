@@ -1,7 +1,7 @@
+import { getNewsletterCategoriesKey } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
 import { NewsletterCategories, NewsletterCategory } from './types';
-import { getNewsletterCategoriesKey } from './use-newsletter-categories-query';
 
 type UnmarkAsNewsletterCategoryResponse = {
 	success: boolean;
