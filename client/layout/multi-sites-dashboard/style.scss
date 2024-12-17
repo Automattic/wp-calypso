@@ -1,8 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-html,
-.theme-a8c-for-agencies {
+html, body {
 	overflow: auto;
 }
 
@@ -50,18 +49,16 @@ html,
 	flex: 1;
 }
 
-.a4a-layout__body {
-	width: 100%;
-	overflow-y: auto;
-	padding-block-start: 16px;
-	padding-block-end: 32px;
-}
-
-.a4a-layout__banner,
-.a4a-layout__top-wrapper,
-.a4a-layout__body {
+.a4a-layout__top-wrapper {
 	margin-inline: 0;
 	max-height: 100%;
+	padding-block-start: 24px;
+	border-bottom: #f1f1f1 1px solid;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 0;
+		border-block-end: 1px solid var(--color-neutral-5);
+	}
 
 	> * {
 		padding-inline: 16px;
@@ -71,16 +68,6 @@ html,
 			margin-inline: auto !important;
 			padding-inline: 64px;
 		}
-	}
-}
-
-.a4a-layout__top-wrapper {
-	padding-block-start: 24px;
-	border-bottom: #f1f1f1 1px solid;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		padding: 0;
-		border-block-end: 1px solid var(--color-neutral-5);
 	}
 
 	.notice-banner {
@@ -316,86 +303,5 @@ html,
 			justify-content: space-between;
 			gap: 8px;
 		}
-	}
-}
-
-
-.a4a-layout__stepper {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	margin-block: 16px 32px;
-}
-
-.a4a-layout__stepper-step {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-
-	.a4a-layout__stepper-step-circle {
-		width: 20px;
-		height: 20px;
-		display: flex;
-		border-radius: 50%;
-		justify-content: center;
-		align-content: center;
-		align-items: center;
-		font-size: 0.75rem;
-	}
-
-	.a4a-layout__stepper-step-name {
-		margin-left: 0.5rem;
-		white-space: nowrap;
-	}
-
-	.a4a-layout__viewport {
-		margin-inline-start: 0;
-	}
-
-	&.is-current > .a4a-layout__stepper-step-circle {
-		background-color: var(--color-neutral-60);
-		border: 2px solid var(--color-neutral-60);
-		color: var(--color-text-inverted);
-	}
-
-	&.is-next > .a4a-layout__stepper-step-circle {
-		border: 2px solid var(--color-neutral-60);
-		color: var(--color-neutral-80);
-	}
-
-	&.is-complete > .a4a-layout__stepper-step-circle {
-		background-color: var(--color-primary-50);
-		border: 2px solid var(--color-primary-50);
-		color: var(--color-text-inverted);
-	}
-
-	&.is-next > .a4a-layout__stepper-step-name {
-		display: none;
-
-		@include break-medium {
-			display: flex;
-		}
-	}
-
-	&.is-complete > .a4a-layout__stepper-step-name,
-	&.is-complete > .a4a-layout__stepper-step-circle,
-	&.is-complete + .a4a-layout__stepper-step-separator {
-		display: none;
-
-		@include break-medium {
-			display: flex;
-		}
-	}
-}
-
-.a4a-layout__stepper-step-separator {
-	border: 1px solid var(--color-neutral-80);
-	width: 20px;
-	height: 0;
-	margin: 0 0.75rem;
-
-	@include break-medium {
-		width: 40px;
-		margin: 0 1.25rem;
 	}
 }
