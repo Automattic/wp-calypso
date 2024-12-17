@@ -109,9 +109,13 @@ const onboarding: Flow = {
 					const { intent } = providedDependencies;
 
 					switch ( intent ) {
-						case SiteIntent.Import:
-							// TODO Implement exit to site migration
-							return;
+						case SiteIntent.Import: {
+							const migrationFlowLink =
+								locale && locale !== 'en'
+									? `/setup/hosted-site-migration/${ locale }`
+									: '/setup/hosted-site-migration';
+							return window.location.assign( migrationFlowLink );
+						}
 
 						case SiteIntent.DIFM: {
 							const difmFlowLink =
