@@ -89,9 +89,8 @@ export function useMaybeSwitchThemeAndUpdateChecklist(
 	siteSlug: string | null
 ): LaunchpadChecklist | null | undefined {
 	const site = useSelector( ( state ) => getSite( state, siteSlug ) );
-	const { hasPaidDesign, selectedDesign } = useSelect(
+	const { selectedDesign } = useSelect(
 		( select ) => ( {
-			hasPaidDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).hasPaidDesign(),
 			selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 		} ),
 		[]
@@ -110,12 +109,9 @@ export function useMaybeSwitchThemeAndUpdateChecklist(
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
-
+	const hasPaidDesign =
+		( selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free' ) || false;
 	if ( ! hasPaidDesign || ! currentSitePlan?.is_free ) {
-		return checklist;
-	}
-
-	if ( selectedDesign?.slug === defaultDesign?.slug ) {
 		return checklist;
 	}
 
