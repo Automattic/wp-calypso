@@ -8,18 +8,14 @@ type Options = {
 	base_variation_stylesheet?: string;
 };
 
-const useFontPairingVariations = (
-	siteId: number | string,
-	stylesheet: string,
-	{ enabled = true }: Options = {}
-) => {
+const useFontPairingVariations = ( stylesheet: string, { enabled = true }: Options = {} ) => {
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
-		queryKey: [ 'global-styles-font-pairings', siteId, stylesheet ],
+		queryKey: [ 'global-styles-font-pairings', stylesheet ],
 		queryFn: async () =>
 			wpcomRequest< GlobalStylesObject[] >( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/global-styles-variation/font-pairings`,
+				path: `/global-styles-variation/font-pairings`,
 				method: 'GET',
-				apiNamespace: 'wpcom/v2',
+				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( {
 					stylesheet,
 					...( isEnabled( 'design-picker/use-assembler-styles' )
@@ -29,7 +25,7 @@ const useFontPairingVariations = (
 			} ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,
-		enabled: !! siteId && !! stylesheet && enabled,
+		enabled: !! stylesheet && enabled,
 	} );
 
 	return data;

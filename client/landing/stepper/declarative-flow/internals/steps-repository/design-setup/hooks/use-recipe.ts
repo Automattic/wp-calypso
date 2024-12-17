@@ -19,7 +19,6 @@ const makeSearchParams = (
 ) => callback( new URLSearchParams( window.location.search ) );
 
 const useRecipe = (
-	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
 	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	pickUnlistedDesign: ( theme: string ) => void,
@@ -82,11 +81,11 @@ const useRecipe = (
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
-	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
+	const colorVariations = useColorPaletteVariations( stylesheet, {
 		enabled: !! preselectedColorVariationTitle,
 	} );
 
-	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
+	const fontVariations = useFontPairingVariations( stylesheet, {
 		enabled: !! preselectedFontVariationTitle,
 	} );
 

@@ -50,6 +50,7 @@ interface StarterDesign {
 	theme_type?: string;
 	screenshot?: string;
 	theme_tier: ThemeTier;
+	demo_uri?: string;
 }
 
 export function useStarterDesignsQuery(
@@ -100,6 +101,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		design_type,
 		screenshot,
 		theme_tier,
+		demo_uri,
 	} = design;
 
 	const is_externally_managed = design.theme_type === 'managed-external';
@@ -124,5 +126,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		theme: '',
 		screenshot,
 		design_tier: theme_tier?.slug,
+		demo_uri,
 	};
 }
