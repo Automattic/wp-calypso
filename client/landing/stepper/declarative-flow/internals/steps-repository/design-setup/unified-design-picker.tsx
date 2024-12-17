@@ -460,7 +460,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
-		! canSiteActivateTheme ||
+		( ! canSiteActivateTheme && ! isGoalsAtFrontExperiment ) ||
 		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
 			! isPremiumThemeAvailable &&
 			! didPurchaseSelectedTheme ) ||
@@ -786,7 +786,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
-		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
+		const themeName = selectedDesign?.title || '';
+		const text =
+			action === upgradePlan && ! isGoalsAtFrontExperiment
+				? translate( 'Unlock theme' )
+				: translate( 'Use %(themeName)s', {
+						args: { themeName },
+				  } );
 
 		return (
 			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
@@ -824,7 +830,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		const stepContent = (
 			<>
-				{ requiredPlanSlug && (
+				{ requiredPlanSlug && ! isGoalsAtFrontExperiment && (
 					<UpgradeModal
 						slug={ selectedDesign.slug }
 						isOpen={ showUpgradeModal }
