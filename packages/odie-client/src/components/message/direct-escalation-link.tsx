@@ -11,7 +11,6 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 	const { trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const navigate = useNavigate();
 
-	const disclaimerText = __( 'Feeling stuck?', __i18n_text_domain__ );
 	const handleClick = useCallback( () => {
 		trackEvent( 'chat_message_direct_escalation_link_click', {
 			message_id: messageId,
@@ -37,7 +36,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 
 	return (
 		<div className="disclaimer">
-			{ disclaimerText }{ ' ' }
+			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 			<button onClick={ handleClick } className="odie-button-link" disabled={ conversationStarted }>
 				{ isUserEligibleForPaidSupport
 					? __( 'Contact our support team.', __i18n_text_domain__ )

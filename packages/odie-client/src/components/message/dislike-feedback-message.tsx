@@ -41,25 +41,21 @@ export const DislikeFeedbackMessage = () => {
 		);
 	};
 
-	const renderRedesignedComponent = () => {
-		return (
-			<>
-				<div className="message-header bot">
-					<WapuuAvatar />
-					<strong className="message-header-name"></strong>
-				</div>
-				<div className="odie-chatbox-dislike-feedback-message">
-					{ isUserEligibleForPaidSupport
-						? renderEligibleUserMessage()
-						: renderNotEligibleUserMessage() }
-				</div>
+	return (
+		<>
+			<div className="message-header bot">
+				<WapuuAvatar />
+				<strong className="message-header-name"></strong>
+			</div>
+			<div className="odie-chatbox-dislike-feedback-message">
+				{ isUserEligibleForPaidSupport
+					? renderEligibleUserMessage()
+					: renderNotEligibleUserMessage() }
+			</div>
 
-				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
-			</>
-		);
-	};
-
-	return renderRedesignedComponent();
+			<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+		</>
+	);
 };
 
 export default DislikeFeedbackMessage;
