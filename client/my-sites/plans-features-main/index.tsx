@@ -227,7 +227,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -340,9 +339,14 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
-	const isTargetedSignupFlow = isInSignup && flowName === 'onboarding';
-	const isTargetedAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
-	const showSimplifiedFeatures = isTargetedSignupFlow || isTargetedAdminIntent;
+	/**
+	 * showSimplifiedFeatures should be true always and this variable should be removed.
+	 * It exists temporarily till the flows with the following intents are removed.
+	 */
+	const showSimplifiedFeatures = ! (
+		intent &&
+		[ 'plans-newsletter', 'plans-link-in-bio', 'plans-blog-onboarding' ].includes( intent )
+	);
 
 	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
 		useExperiment( 'calypso_pricing_grid_hide_lower_tier_plans', {
@@ -413,7 +417,6 @@ const PlansFeaturesMain = ( {
 		term,
 		intent,
 		displayedIntervals: filteredDisplayedIntervals,
-		storageAddOns,
 		coupon,
 		siteId,
 		isInSignup,
@@ -433,7 +436,6 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
@@ -456,7 +458,6 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,

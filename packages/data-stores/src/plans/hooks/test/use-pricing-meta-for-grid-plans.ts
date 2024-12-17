@@ -19,6 +19,9 @@ jest.mock( '../../', () => ( {
 	useIntroOffers: jest.fn(),
 	useCurrentPlan: jest.fn(),
 } ) );
+jest.mock( '../../../add-ons', () => ( {
+	useStorageAddOns: jest.fn(),
+} ) );
 jest.mock( '../../../purchases', () => ( {
 	useSitePurchaseById: jest.fn(),
 } ) );
@@ -29,6 +32,7 @@ jest.mock( '../../../wpcom-plans-ui', () => ( {
 import { PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../../';
+import * as AddOns from '../../../add-ons';
 import { ADD_ON_50GB_STORAGE } from '../../../add-ons/constants';
 import { STORAGE_ADD_ONS_MOCK } from '../../../add-ons/mocks';
 import * as Purchases from '../../../purchases';
@@ -103,6 +107,11 @@ describe( 'usePricingMetaForGridPlans', () => {
 			data: SITE_PLANS,
 		} ) );
 		Plans.useCurrentPlan.mockImplementation( () => undefined );
+		AddOns.useStorageAddOns.mockImplementation( () => STORAGE_ADD_ONS_MOCK );
+	} );
+
+	afterAll( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'should return the original price as the site plan price and discounted price as Null for the current plan', () => {
@@ -113,7 +122,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			storageAddOns: null,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -147,7 +155,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			storageAddOns: null,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -215,7 +222,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			storageAddOns: null,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -263,7 +269,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			storageAddOns: null,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -309,7 +314,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
-			storageAddOns: null,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
@@ -363,7 +367,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_BUSINESS ],
 			reflectStorageSelectionInPlanPrices: true,
-			storageAddOns: STORAGE_ADD_ONS_MOCK,
 			siteId,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,

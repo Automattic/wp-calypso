@@ -228,7 +228,6 @@ const useGridPlans: UseGridPlansType = ( {
 	isInSignup,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
-	storageAddOns,
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
@@ -287,7 +286,6 @@ const useGridPlans: UseGridPlansType = ( {
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
-		storageAddOns,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
