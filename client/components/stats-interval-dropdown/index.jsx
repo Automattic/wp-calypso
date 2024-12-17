@@ -7,6 +7,7 @@ import { capitalize } from 'lodash';
 import qs from 'qs';
 import { useRef } from 'react';
 import './style.scss';
+import LocalStorageCache from 'calypso/lib/local-storage-helper';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 
 const StatsIntervalDropdownListing = ( {
@@ -101,7 +102,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			return;
 		}
 
-		localStorage.setItem( 'jetpack_stats_stored_period', interval );
+		LocalStorageCache.setItem( 'jetpack_stats_stored_period', interval );
 
 		page( generateNewLink( interval ) );
 	}

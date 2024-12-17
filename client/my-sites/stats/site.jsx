@@ -27,6 +27,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
+import LocalStorageCache from 'calypso/lib/local-storage-helper';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	DATE_FORMAT,
@@ -251,7 +252,7 @@ class StatsSite extends Component {
 			const { hasSiteLoadedFeatures, shouldForceDefaultDateRange, supportedShortcutList } =
 				this.props;
 
-			const appliedShortcutId = localStorage.getItem(
+			const appliedShortcutId = LocalStorageCache.getItem(
 				'jetpack_stats_stored_date_range_shortcut_id'
 			);
 			const appliedShortcut = supportedShortcutList.find(
@@ -400,7 +401,7 @@ class StatsSite extends Component {
 		}
 
 		// Use the stored period if it's different from the current period.
-		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		const storedPeriod = LocalStorageCache.getItem( 'jetpack_stats_stored_period' );
 		if (
 			hasSiteLoadedFeatures &&
 			! shouldForceDefaultPeriod &&

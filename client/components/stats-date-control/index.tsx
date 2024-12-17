@@ -6,6 +6,7 @@ import qs from 'qs';
 import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import LocalStorageCache from 'calypso/lib/local-storage-helper';
 import DateControl from '../date-control';
 import { DateRangePickerShortcut } from '../date-range/shortcuts';
 
@@ -156,7 +157,10 @@ const StatsDateControl = ( {
 		} );
 
 		if ( appliedShortcut && appliedShortcut.id ) {
-			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+			LocalStorageCache.setItem(
+				'jetpack_stats_stored_date_range_shortcut_id',
+				appliedShortcut.id
+			);
 		}
 
 		// Update chart via routing.
