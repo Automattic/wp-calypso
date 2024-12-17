@@ -324,10 +324,13 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	}, [ designs, recommendedDesignSlugs ] );
 
 	// Show recommended themes only when the selected categories are never changed.
-	const showRecommendedDesigns =
+	const showRecommendedAtTop =
 		isMultiFilterEnabled &&
 		! categorization?.isSelectionsChanged &&
 		recommendedDesigns.length === 3;
+	const showRecommendedAtBottom =
+		isMultiFilterEnabled && categorization?.isSelectionsChanged && recommendedDesigns.length === 3;
+	const showRecommendedDesigns = showRecommendedAtTop || showRecommendedAtBottom;
 
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
 		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
@@ -394,15 +397,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ showRecommendedDesigns && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Recommended themes' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
-
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
@@ -411,6 +405,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
+			{ showRecommendedAtTop && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
@@ -434,6 +437,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
+
+			{ showRecommendedAtBottom && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
 		</div>
 	);
 };
