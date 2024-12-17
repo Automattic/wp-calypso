@@ -1020,7 +1020,9 @@ describe( 'main app', () => {
 			app.withConfigEnabled( {
 				'jetpack-cloud/connect': false,
 			} );
-			const { response } = await app.run( { request: { url: '/plans?ref=test&coupon=test' } } );
+			const { response } = await app.run( {
+				request: { url: '/plans', query: { ref: 'test', coupon: 'test' } },
+			} );
 			expect( response.redirect ).toHaveBeenCalledWith(
 				'https://wordpress.com/pricing/?ref=test&coupon=test'
 			);
