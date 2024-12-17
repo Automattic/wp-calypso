@@ -40,14 +40,16 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
+function useGoalsAtFrontExperimentQueryParam() {
+	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
+}
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = Boolean(
-			useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ]
-		);
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const steps = [
 			STEPS.GOALS,
@@ -78,9 +80,7 @@ const siteSetupFlow: Flow = {
 		];
 
 		if ( isGoalsAtFrontExperiment ) {
-			// The user has already seen the goals step in the `onboarding` flow
-			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
-			steps.splice( 0, 4 );
+			return [ STEPS.PROCESSING, STEPS.ERROR ];
 		}
 
 		return steps;
