@@ -45,6 +45,9 @@ export const CategoriesSection: React.FC< Props > = ( {
 
 	const handleToggle = ( value: boolean ) => {
 		setShowCategories( value );
+		if ( ! value ) {
+			setSelectedCategories( [] );
+		}
 		recordTracksEvent( 'calypso_subscriber_add_form_categories_toggle', {
 			site_id: siteId,
 			enabled: value,
