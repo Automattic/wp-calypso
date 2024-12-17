@@ -201,7 +201,7 @@ export const isActionEligible = (
 			return ( site: SiteExcerptData ) => {
 				const canManageOptions = capabilities[ site.ID ]?.manage_options;
 				if (
-					! canManageOptions ||
+					( ! canManageOptions && ! site?.is_deleted ) ||
 					isP2Site( site ) ||
 					isNotAtomicJetpack( site ) ||
 					isDisconnectedJetpackAndNotAtomic( site )
