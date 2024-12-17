@@ -13,13 +13,7 @@ import { generateContactOnClickEvent } from './utils';
 
 import './help-center-feedback-form.scss';
 
-interface HelpCenterFeedbackFormProps {
-	postId: number;
-	blogId?: number | null;
-	slug?: string;
-	articleUrl?: string | null | undefined;
-}
-const HelpCenterFeedbackForm = ( { postId }: HelpCenterFeedbackFormProps ) => {
+const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const { __ } = useI18n();
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
