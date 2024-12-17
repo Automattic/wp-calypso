@@ -4,17 +4,22 @@
 .consolidated-view {
 	display: flex;
 	gap: 24px;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
 
-	@include break-large {
-		flex-direction: row;
+	@include break-wide {
+		flex-wrap: nowrap;
+		.card {
+			flex: 1;
+		}
 	}
 
 	.card {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 6px;
+		flex: 0 1 calc(50% - 12px);
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		width: 100%;
-		padding: 24px;
+		padding: 1rem;
 
 		.consolidated-view__value {
 			font-size: rem(24px);
@@ -25,7 +30,49 @@
 		.consolidated-view__label {
 			color: var(--color-accent);
 			font-size: rem(12px);
-			text-wrap: nowrap;
+			text-wrap: balance; // Allow text to wrap naturally
+
+			.consolidated-view__info-text {
+				font-size: rem(12px);
+				color: var(--color-neutral-50);
+				text-decoration: underline;
+			}
+
+			.consolidated-view__info-icon-mobile{
+				fill: var(--color-neutral-50);
+				margin-inline-end: 4px;
+			}
+		}
+
+		.consolidated-view__label-wapper.mobile {
+			display: flex;
+			flex-direction: column;
+			height: 75%;
+			align-items: flex-start;
+
+			.consolidated-view__info-mobile {
+				margin: 0;
+				padding: 0;
+				
+				font-size: rem(12px);
+				color: var(--color-neutral-50);
+				text-decoration: underline;
+				display: flex;
+				margin-block-start: auto;
+	
+				&.components-button:focus:not(:disabled) {
+					outline: none;
+					box-shadow: none;
+				}
+				&.components-button:hover {
+					background: none;
+				}
+	
+				.gridicon {
+					fill: var(--color-neutral-50);
+					margin-inline-end: 4px;
+				}
+			}
 		}
 	}
 }
