@@ -75,12 +75,15 @@ const DomainOverviewPane = ( {
 
 		return (
 			<>
-				<Button onClick={ closeSitePreviewPane } className="item-preview__close-preview-button">
+				<Button
+					onClick={ closeSitePreviewPane }
+					className="button item-preview__close-preview-button"
+				>
 					{ __( 'Close' ) }
 				</Button>
 				<Button
 					primary
-					className="item-preview__admin-button"
+					className="button item-preview__admin-button"
 					href={ adminUrl }
 					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
 				>

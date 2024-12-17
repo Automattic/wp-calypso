@@ -81,3 +81,56 @@
 		}
 	}
 }
+
+.a4a-layout.domains-overview .domains-overview__details .section-nav-tabs__list {
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.a4a-layout.domains-overview .item-preview__header {
+	.item-preview__header-info .item-preview__header-title-summary .item-preview__header-title {
+		font-family: Recoleta, sans-serif;
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: normal;
+	}
+
+	.item-preview__header-content {
+		.item-preview__header-info {
+			flex-wrap: wrap;
+		}
+
+		@media (max-width: $break-large) {
+			padding: 0;
+		}
+	}
+
+	.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		.item-preview__header-summary-link {
+			color: var(--studio-gray-70, #3c434a);
+			text-decoration: none;
+			&:hover {
+				color: var(--color-accent, #3858e9);
+			}
+		}
+	}
+
+	.item-preview__header-actions .button {
+		border-radius: 4px;
+		height: auto;
+	}
+
+	.item-preview__header-content .item-preview__close-preview {
+		height: 1rem;
+		padding-left: 0;
+		padding-right: 0;
+		color: var(--color-link);
+
+		@include break-medium {
+			height: 2rem;
+		}
+	}
+}
