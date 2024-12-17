@@ -592,7 +592,7 @@
 		}
 	}
 
-	div.email-plan-mailboxes-list__mailbox-list-link span,
+	div.email-plan-mailboxes-list__mailbox-list-link span.disabled,
 	.section-header__actions button[disabled] {
 		color: var(--theme-highlight-color-50);
 		opacity: 0.5;

@@ -62,7 +62,7 @@ function EmailPlanMailboxesList( {
 		return (
 			<MailboxListItem>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-					<div className="email-plan-mailboxes-list__mailbox-list-link">
+					<div className="email-plan-mailboxes-list__mailbox-list-link disabled">
 						<span>{ domain.domain }</span>
 					</div>
 				</div>
