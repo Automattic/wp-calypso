@@ -33,6 +33,7 @@ export const getLastLocation = ( state: State ) => state.lastLocation;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedStyleVariation = ( state: State ) => state.selectedStyleVariation;
+export const getSelectedGlobalStyles = ( state: State ) => state.selectedGlobalStyles;
 export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedSite = ( state: State ) => state.selectedSite;

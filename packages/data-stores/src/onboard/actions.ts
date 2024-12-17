@@ -2,7 +2,7 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
-import { Visibility } from '../site/types';
+import { Visibility, GlobalStyles } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
@@ -169,6 +169,11 @@ export const setSelectedStyleVariation = (
 ) => ( {
 	type: 'SET_SELECTED_STYLE_VARIATION' as const,
 	selectedStyleVariation,
+} );
+
+export const setSelectedGlobalStyles = ( selectedGlobalStyles: GlobalStyles | undefined ) => ( {
+	type: 'SET_SELECTED_GLOBAL_STYLES' as const,
+	selectedGlobalStyles,
 } );
 
 export const setSelectedReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) => ( {
@@ -410,6 +415,7 @@ export type OnboardAction = ReturnType<
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
+	| typeof setSelectedGlobalStyles
 	| typeof setSelectedSite
 	| typeof setSelectedReadymadeTemplate
 	| typeof setShowSignupDialog

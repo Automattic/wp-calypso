@@ -10,6 +10,7 @@ import type {
 } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
+import type { GlobalStyles } from '../site';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -128,6 +129,22 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 		return undefined;
 	}
 	return state;
+};
+
+const selectedGlobalStyles: Reducer< GlobalStyles | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_SELECTED_GLOBAL_STYLES':
+			return action.selectedGlobalStyles;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
 };
 
 const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
@@ -629,6 +646,7 @@ const reducer = combineReducers( {
 	storeType,
 	selectedDesign,
 	selectedStyleVariation,
+	selectedGlobalStyles,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,
