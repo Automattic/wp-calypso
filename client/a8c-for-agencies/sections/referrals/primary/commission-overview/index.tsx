@@ -2,12 +2,7 @@ import { FoldableCard } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
@@ -15,6 +10,11 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import Layout from 'calypso/layout/multi-site-dashboard';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/multi-site-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
 import ReferralsFooter from '../footer';
 
 import './style.scss';

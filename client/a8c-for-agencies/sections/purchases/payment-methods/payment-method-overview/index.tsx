@@ -2,14 +2,7 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
-	LayoutHeaderSubtitle as Subtitle,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_PAYMENT_METHODS_ADD_LINK,
@@ -17,6 +10,13 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Pagination from 'calypso/components/pagination';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import Layout from 'calypso/layout/multi-site-dashboard';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
+} from 'calypso/layout/multi-site-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PaymentMethodOverviewContext } from '../context';

@@ -1,15 +1,8 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderSubtitle as Subtitle,
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_PAYMENT_METHODS_LINK,
@@ -17,6 +10,13 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PaymentMethodStripeInfo from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-stripe-info';
 import { usePaymentMethodStepper } from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add-v2/hooks/use-payment-method-stepper';
+import Layout from 'calypso/layout/multi-site-dashboard';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/multi-site-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
 import { isClientView } from '../lib/is-client-view';
 import PaymentMethodForm from './payment-method-form';
 
