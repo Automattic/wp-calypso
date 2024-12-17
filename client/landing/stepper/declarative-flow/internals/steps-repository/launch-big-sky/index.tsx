@@ -8,6 +8,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import '../processing-step/style.scss';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
@@ -120,17 +121,19 @@ const LaunchBigSky: Step = function () {
 
 	function LaunchingBigSky() {
 		return (
-			<div className="processing-step__container">
-				<div className="processing-step">
-					<h1 className="processing-step__progress-step">
-						{ __( 'Launching the AI Website Builder' ) }
-					</h1>
-					{ ! isError && <LoadingEllipsis /> }
-					{ isError && (
-						<p className="processing-step__error">
-							{ __( 'Something unexpected happened. Please go back and try again.' ) }
-						</p>
-					) }
+			<div className="is-big-sky-launching">
+				<div className="processing-step__container">
+					<div className="processing-step">
+						<h1 className="processing-step__progress-step">
+							{ __( 'Launching the AI Website Builder' ) }
+						</h1>
+						{ ! isError && <LoadingEllipsis /> }
+						{ isError && (
+							<p className="processing-step__error">
+								{ __( 'Something unexpected happened. Please go back and try again.' ) }
+							</p>
+						) }
+					</div>
 				</div>
 			</div>
 		);
