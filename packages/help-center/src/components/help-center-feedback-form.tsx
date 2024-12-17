@@ -63,10 +63,6 @@ const HelpCenterFeedbackForm = ( { postId }: HelpCenterFeedbackFormProps ) => {
 		);
 	};
 
-	const FeedbackTextArea = () => {
-		return <p>{ __( 'Great! Thanks.', __i18n_text_domain__ ) }</p>;
-	};
-
 	const handleContactSupportClick = async () => {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
@@ -82,7 +78,9 @@ const HelpCenterFeedbackForm = ( { postId }: HelpCenterFeedbackFormProps ) => {
 	return (
 		<div className="help-center-feedback__form">
 			{ startedFeedback === null && <FeedbackButtons /> }
-			{ startedFeedback !== null && answerValue === 1 && <FeedbackTextArea /> }
+			{ startedFeedback !== null && answerValue === 1 && (
+				<p>{ __( 'Great! Thanks.', __i18n_text_domain__ ) }</p>
+			) }
 			{ startedFeedback !== null && answerValue === 2 && site && (
 				<>
 					<div className="odie-chatbox-dislike-feedback-message">
