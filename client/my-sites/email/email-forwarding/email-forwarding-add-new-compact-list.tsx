@@ -13,12 +13,14 @@ type Props = {
 	onBeforeAddEmailForwards?: () => void;
 	onAddedEmailForwards: () => void;
 	selectedDomainName: string;
+	formHeader?: React.ReactNode;
 };
 
 const EmailForwardingAddNewCompactList = ( {
 	onAddedEmailForwards,
 	onBeforeAddEmailForwards,
 	selectedDomainName,
+	formHeader,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -100,6 +102,7 @@ const EmailForwardingAddNewCompactList = ( {
 							onRemoveEmailForward={ onRemoveEmailForward }
 							onUpdateEmailForward={ onUpdateEmailForward }
 							selectedDomainName={ selectedDomainName }
+							formHeader={ formHeader }
 						/>
 					</div>
 				</Fragment>

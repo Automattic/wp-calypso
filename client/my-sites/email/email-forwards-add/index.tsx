@@ -31,12 +31,19 @@ import './style.scss';
 type EmailForwardsAddProps = {
 	selectedDomainName: string;
 	source?: string;
+	showPageHeader?: boolean;
+	formHeader?: React.ReactNode;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
 
-const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps ) => {
+const EmailForwardsAdd = ( {
+	selectedDomainName,
+	source,
+	showPageHeader = true,
+	formHeader,
+}: EmailForwardsAddProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -97,31 +104,36 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 					onAddedEmailForwards={ onAddedEmailForwards }
 					onBeforeAddEmailForwards={ noop }
 					selectedDomainName={ selectedDomainName }
+					formHeader={ formHeader }
 				/>
 			) }
 		</Card>
 	);
 
 	return (
-		<div className="email-forwards-add">
+		<>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<Main wideLayout>
+			<Main wideLayout className="email-forwards-add">
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
 
-				<EmailHeader />
+				{ showPageHeader && (
+					<>
+						<EmailHeader />
 
-				<HeaderCake onClick={ goToEmail }>
-					{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
-				</HeaderCake>
+						<HeaderCake onClick={ goToEmail }>
+							{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
+						</HeaderCake>
 
-				<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+						<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+					</>
+				) }
 
 				{ content }
 			</Main>
-		</div>
+		</>
 	);
 };
 

@@ -90,7 +90,7 @@ export function domainManagementOverviewRoot() {
 	return domainManagementAllRoot() + '/overview';
 }
 
-export function domainManagementEmailRoot() {
+export function domainManagementAllEmailRoot() {
 	return domainManagementAllRoot() + '/email';
 }
 
