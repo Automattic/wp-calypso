@@ -24,7 +24,7 @@ import {
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
+import { StepContainer, DESIGN_FIRST_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -76,6 +76,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
 	getDesignTypeProps,
@@ -119,6 +120,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isGoalsHoldout = useIsGoalsHoldout( stepName );
 
 	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
+
+	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const { isEligible } = useIsBigSkyEligible();
 	const isBigSkyEligible = isEligible && isGoalCentricFeature;
@@ -265,7 +269,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setGlobalStyles,
 		resetPreview,
 	} = useRecipe(
-		site?.ID,
 		allDesigns,
 		pickDesign,
 		pickUnlistedDesign,
@@ -687,6 +690,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				},
 				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
 			);
+		} else if ( ! isSiteRequired && ! siteSlugOrId && _selectedDesign ) {
+			const positionIndex = designs.findIndex(
+				( design ) => design.slug === _selectedDesign?.slug
+			);
+			handleSubmit(
+				{
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selections?.join( ',' ),
+				},
+				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
+			);
 		}
 	}
 
@@ -784,7 +798,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingDesigns ) {
+	if ( ( ! site && isSiteRequired ) || isLoadingDesigns || isGoalsAtFrontExperimentLoading ) {
 		return <StepperLoader />;
 	}
 
@@ -824,7 +838,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				) }
 				<QueryEligibility siteId={ site?.ID } />
 				<EligibilityWarningsModal
-					site={ site }
+					site={ site ?? undefined }
 					isMarketplace={ selectedDesign?.is_externally_managed }
 					isOpen={ showEligibility }
 					handleClose={ () => {
@@ -871,7 +885,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
-					siteId={ site.ID }
+					siteId={ site?.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }

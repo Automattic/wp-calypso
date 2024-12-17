@@ -57,7 +57,6 @@
 		"global-styles/on-personal-plan": true,
 		"help": true,
 		"help/gpt-response": true,
-		"help-center-experience": false,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,

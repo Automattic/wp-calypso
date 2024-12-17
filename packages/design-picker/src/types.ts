@@ -100,6 +100,7 @@ export interface Design {
 	is_virtual?: boolean;
 	preview_data?: PreviewData;
 	screenshot?: string;
+	demo_uri?: string;
 
 	/** @deprecated TODO: replace both with just stylesheet */
 	stylesheet?: string;

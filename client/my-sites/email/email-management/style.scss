@@ -511,4 +511,55 @@
 	.email-plan-mailboxes-list__mailbox-list-item > div {
 		flex-grow: initial;
 	}
+
+	div.email-plan-mailboxes-list__mailbox-list-link span,
+	.section-header__actions button[disabled] {
+		color: var(--theme-highlight-color-50);
+		opacity: 0.5;
+	}
+
+	.email-plan-mailboxes-list__notice {
+		margin-top: 1rem;
+		margin-bottom: 2rem;
+
+		.email-plan-warnings__container {
+			margin: 0;
+		}
+
+		.email-plan-warnings__warning {
+			display: flex;
+			padding: 0;
+
+			.email-plan-warnings__message,
+			.email-plan-warnings__cta {
+				display: inline;
+			}
+
+			.email-plan-warnings__message {
+				flex-grow: 1;
+
+				span {
+					display: inline-block;
+					max-width: 700px;
+				}
+			}
+
+			.email-plan-warnings__cta {
+				margin: 0;
+				flex-grow: 0;
+				align-self: center;
+				white-space: nowrap;
+
+				svg {
+					height: 14px;
+					vertical-align: middle;
+				}
+
+				a {
+					color: var(--studio-gray-20);
+					text-decoration: none;
+				}
+			}
+		}
+	}
 }

@@ -13,7 +13,7 @@ type Props = {
 	plan: APIProductFamilyProduct;
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 	ownedPlans: number;
-	referralMode?: boolean;
+	isReferralMode?: boolean;
 	quantity: number;
 	setQuantity: ( quantity: number ) => void;
 };
@@ -36,7 +36,7 @@ export default function WPCOMPlanSelector( {
 	plan,
 	onSelect,
 	ownedPlans,
-	referralMode,
+	isReferralMode,
 	quantity,
 	setQuantity,
 }: Props ) {
@@ -45,12 +45,12 @@ export default function WPCOMPlanSelector( {
 	const discountTiers = useWPCOMDiscountTiers();
 
 	const discount = useMemo( () => {
-		if ( referralMode ) {
+		if ( isReferralMode ) {
 			return discountTiers[ 0 ].discount;
 		}
 
 		return calculateTier( discountTiers, quantity + ownedPlans ).discount;
-	}, [ discountTiers, ownedPlans, quantity, referralMode ] );
+	}, [ discountTiers, ownedPlans, quantity, isReferralMode ] );
 
 	const originalPrice = Number( plan?.amount ?? 0 ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
@@ -58,7 +58,7 @@ export default function WPCOMPlanSelector( {
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
 
 	const ctaLabel = useMemo( () => {
-		if ( referralMode ) {
+		if ( isReferralMode ) {
 			return translate( 'Add to referral' );
 		}
 
@@ -70,7 +70,7 @@ export default function WPCOMPlanSelector( {
 			count: quantity,
 			comment: '%(quantity)s is the quantity of plans and %(planName)s is the name of the plan.',
 		} );
-	}, [ planName, quantity, referralMode, translate ] );
+	}, [ planName, quantity, isReferralMode, translate ] );
 
 	return (
 		<div className="wpcom-plan-selector__details">
@@ -126,7 +126,7 @@ export default function WPCOMPlanSelector( {
 						{ ctaLabel }
 					</Button>
 
-					{ ! referralMode && <A4ANumberInputV2 value={ quantity } onChange={ setQuantity } /> }
+					{ ! isReferralMode && <A4ANumberInputV2 value={ quantity } onChange={ setQuantity } /> }
 				</div>
 			</div>
 		</div>
