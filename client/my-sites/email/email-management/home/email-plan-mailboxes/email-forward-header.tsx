@@ -17,13 +17,15 @@ export default function EmailForwardHeader( { className, children, actionPath }:
 				<div className="section-header__label">
 					<span className="section-header__label-text">{ translate( 'Email forwards' ) }</span>
 				</div>
-				<div className="section-header__label">
+				<div className="section-header__label destination">
 					<span className="section-header__label-text">{ translate( 'Destination' ) }</span>
 				</div>
 				<div className="section-header__actions">
-					<Button href={ actionPath } isLink>
-						{ translate( 'Add forward' ) }
-					</Button>
+					{ actionPath && (
+						<Button href={ actionPath } isLink>
+							{ translate( 'Add forward' ) }
+						</Button>
+					) }
 				</div>
 			</CompactCard>
 			{ children }
