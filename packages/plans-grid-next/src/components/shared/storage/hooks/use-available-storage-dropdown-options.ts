@@ -25,7 +25,7 @@ const useAvailableStorageDropdownOptions = ( {
 	} = gridPlansIndex[ planSlug ];
 
 	return useMemo( () => {
-		return storageFeature || availableStorageAddOns
+		return storageFeature || availableStorageAddOns.length
 			? [
 					...( storageFeature ? [ storageFeature?.getSlug() as WPComPlanStorageFeatureSlug ] : [] ),
 					/**
@@ -33,7 +33,7 @@ const useAvailableStorageDropdownOptions = ( {
 					 * But being extra cautious here (in case the call is made elsewhere in the future, where it might not be redundant)
 					 * TODO: Also planning to refactor this closer to the data layer e.g. plans having a "storage-upgradeable" flag.
 					 */
-					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) && availableStorageAddOns
+					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
 						? availableStorageAddOns.map( ( addOn ) => addOn?.addOnSlug as AddOns.StorageAddOnSlug )
 						: [] ),
 			  ]

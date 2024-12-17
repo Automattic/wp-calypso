@@ -92,7 +92,6 @@ const AddOnsMain = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
-	const filteredAddOns = addOns.filter( ( addOn ) => ! addOn?.exceedsSiteStorageLimits );
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
 
@@ -131,8 +130,7 @@ const AddOnsMain = () => {
 				<AddOnsGrid
 					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
-					useAddOnAvailabilityStatus={ AddOns.useAddOnPurchaseStatus }
-					addOns={ filteredAddOns }
+					addOns={ addOns }
 					highlightFeatured
 				/>
 			</ContentWithHeader>

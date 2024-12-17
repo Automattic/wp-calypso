@@ -25,6 +25,7 @@ function useSiteMediaStorage( {
 			} );
 
 			return {
+				maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 				maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
 				storageUsedBytes: Number( mediaStorage.storage_used_bytes ),
 			};
