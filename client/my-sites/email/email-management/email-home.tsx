@@ -30,10 +30,12 @@ import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-type ContentWithHeaderProps = React.PropsWithChildren< {
+type PropsWithClass = {
 	className?: string;
-} >;
-const ContentWithHeader = ( { children, className }: ContentWithHeaderProps ) => {
+};
+type PropsWithClassAndChildren = React.PropsWithChildren< PropsWithClass >;
+
+const ContentWithHeader = ( { children, className }: PropsWithClassAndChildren ) => {
 	const translate = useTranslate();
 
 	return (
@@ -47,10 +49,10 @@ const ContentWithHeader = ( { children, className }: ContentWithHeaderProps ) =>
 	);
 };
 
-const NoAccess = () => {
+const NoAccess = ( { className }: PropsWithClass ) => {
 	const translate = useTranslate();
 	return (
-		<ContentWithHeader>
+		<ContentWithHeader className={ className }>
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -59,9 +61,9 @@ const NoAccess = () => {
 	);
 };
 
-const LoadingPlaceholder = () => {
+const LoadingPlaceholder = ( { className }: PropsWithClass ) => {
 	return (
-		<ContentWithHeader>
+		<ContentWithHeader className={ className }>
 			<SectionHeader className="email-home__section-placeholder is-placeholder" />
 			<Card className="email-home__content-placeholder is-placeholder" />
 		</ContentWithHeader>
@@ -125,11 +127,19 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
-		return <LoadingPlaceholder />;
+		return (
+			<LoadingPlaceholder
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			/>
+		);
 	}
 
 	if ( ! canManageSite ) {
-		return <NoAccess />;
+		return (
+			<NoAccess
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			/>
+		);
 	}
 
 	if ( selectedDomainName ) {
