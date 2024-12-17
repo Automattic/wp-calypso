@@ -55,7 +55,7 @@ export const getEstimatedCommission = (
 				? new Date( purchase.license.revoked_at )
 				: null;
 
-			// Start date is the earliest of the license issued date and activity window start
+			// Start date is the latest of the license issued date and activity window start
 			const start = Math.max( issuedDate.getTime(), activityWindow.start.getTime() );
 			// Finish date is the earliest of the license revoked date and activity window finish
 			const finish = Math.min(
