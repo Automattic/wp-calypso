@@ -116,7 +116,7 @@ describe( 'getEstimatedCommission', () => {
 			},
 		];
 
-		// 9 days * $100 daily price * 50% commission = 500 cents
+		// 9 days * $100 daily price * 50% commission = 450 cents
 		// Convert to dollars by dividing by 100
 		expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 4.5 );
 	} );
