@@ -3,6 +3,8 @@ import {
 	getProductCommissionPercentage,
 	getDailyPrice,
 } from '../get-estimated-commission';
+import type { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
+import type { Referral } from '../../types';
 
 describe( 'getProductCommissionPercentage', () => {
 	it( 'returns 0 for undefined slug', () => {
@@ -25,13 +27,19 @@ describe( 'getProductCommissionPercentage', () => {
 } );
 
 describe( 'getDailyPrice', () => {
-	const mockProduct = {
+	const mockProduct: APIProductFamilyProduct = {
 		product_id: 1,
 		price_per_unit: 100,
 		supported_bundles: [
-			{ quantity: 5, price_per_unit: 90 },
-			{ quantity: 10, price_per_unit: 80 },
+			{ quantity: 5, price_per_unit: 90, amount: '90' },
+			{ quantity: 10, price_per_unit: 80, amount: '80' },
 		],
+		name: 'Mock Product',
+		slug: 'mock-product',
+		currency: 'USD',
+		amount: '100',
+		price_interval: 'month',
+		family_slug: 'mock-family',
 	};
 
 	it( 'returns price_per_unit for quantity of 1', () => {
@@ -48,9 +56,8 @@ describe( 'getDailyPrice', () => {
 	} );
 
 	it( 'handles empty supported_bundles', () => {
-		const productWithoutBundles = {
-			product_id: 1,
-			price_per_unit: 100,
+		const productWithoutBundles: APIProductFamilyProduct = {
+			...mockProduct,
 			supported_bundles: [],
 		};
 
@@ -60,7 +67,7 @@ describe( 'getDailyPrice', () => {
 
 describe( 'getEstimatedCommission', () => {
 	const mockDate = new Date( '2024-03-15' );
-	const mockProduct = {
+	const mockProduct: APIProductFamilyProduct = {
 		product_id: 1,
 		family_slug: 'jetpack-backup',
 		price_per_unit: 100,
@@ -77,8 +84,10 @@ describe( 'getEstimatedCommission', () => {
 	} );
 
 	it( 'calculates commission for active purchase within window', () => {
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'active' ],
+				referralStatuses: [ 'active' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -90,7 +99,7 @@ describe( 'getEstimatedCommission', () => {
 						},
 					},
 				],
-			},
+			} as never,
 		];
 
 		// Payout window is Jan 1 - Mar 31 for the mock date
@@ -100,8 +109,10 @@ describe( 'getEstimatedCommission', () => {
 	} );
 
 	it( 'handles cancelled purchases', () => {
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'cancelled' ],
+				referralStatuses: [ 'cancelled' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -114,7 +125,7 @@ describe( 'getEstimatedCommission', () => {
 					},
 				],
 			},
-		];
+		] as never;
 
 		// 9 days * $100 daily price * 50% commission = 450 cents
 		// Convert to dollars by dividing by 100
@@ -122,8 +133,10 @@ describe( 'getEstimatedCommission', () => {
 	} );
 
 	it( 'skips pending purchases', () => {
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'pending' ],
+				referralStatuses: [ 'pending' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -136,15 +149,17 @@ describe( 'getEstimatedCommission', () => {
 					},
 				],
 			},
-		];
+		] as never;
 
 		// Pending purchases should not contribute to commission
 		expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 0 );
 	} );
 
 	it( 'calculates commission for multiple purchases in single referral', () => {
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'active', 'active' ],
+				referralStatuses: [ 'active' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -166,7 +181,7 @@ describe( 'getEstimatedCommission', () => {
 					},
 				],
 			},
-		];
+		] as never;
 
 		// 30 days * $100 daily price * 50% commission * 2 purchases = 3000 cents
 		// Convert to dollars by dividing by 100
@@ -174,8 +189,10 @@ describe( 'getEstimatedCommission', () => {
 	} );
 
 	it( 'calculates commission for multiple referrals', () => {
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'active' ],
+				referralStatuses: [ 'active' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -189,6 +206,8 @@ describe( 'getEstimatedCommission', () => {
 				],
 			},
 			{
+				purchaseStatuses: [ 'active' ],
+				referralStatuses: [ 'active' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -201,7 +220,7 @@ describe( 'getEstimatedCommission', () => {
 					},
 				],
 			},
-		];
+		] as never;
 
 		// 30 days * $100 daily price * 50% commission * 2 referrals = 3000 cents
 		// Convert to dollars by dividing by 100
@@ -209,13 +228,15 @@ describe( 'getEstimatedCommission', () => {
 	} );
 
 	it( 'calculates commission with bundle pricing', () => {
-		const productWithBundle = {
+		const productWithBundle: APIProductFamilyProduct = {
 			...mockProduct,
-			supported_bundles: [ { quantity: 5, price_per_unit: 90 } ],
+			supported_bundles: [ { quantity: 5, price_per_unit: 90, amount: '90' } ],
 		};
 
-		const referrals = [
+		const referrals: Referral[] = [
 			{
+				purchaseStatuses: [ 'active' ],
+				referralStatuses: [ 'active' ],
 				purchases: [
 					{
 						product_id: 1,
@@ -228,7 +249,7 @@ describe( 'getEstimatedCommission', () => {
 					},
 				],
 			},
-		];
+		] as never;
 
 		// 30 days * $90 daily price * 50% commission = 1350 cents
 		// Convert to dollars by dividing by 100
