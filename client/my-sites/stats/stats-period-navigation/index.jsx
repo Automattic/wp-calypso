@@ -423,8 +423,8 @@ const connectComponent = connect(
 );
 
 export default flowRight(
-	connectComponent,
 	localize,
+	connectComponent,
 	withRtl,
 	withLocalizedMoment,
 	withStatsPurchases
