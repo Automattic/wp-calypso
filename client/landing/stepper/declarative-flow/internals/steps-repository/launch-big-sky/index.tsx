@@ -8,6 +8,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import '../processing-step/style.scss';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
