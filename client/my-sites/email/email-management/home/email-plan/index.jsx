@@ -361,12 +361,12 @@ function EmailPlan( {
 				/>
 			) }
 			<EmailPlanMailboxesList
+				context={ context }
 				account={ getAccount( emailAccounts ) }
 				domain={ domain }
 				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
 				addMailboxPath={ hidePlanActions && getAddMailboxProps()?.path }
-				configuringStateMode={ context === 'domains' && 'notice' }
 			/>
 			{ ! hidePlanActions && (
 				<div className="email-plan__actions">

@@ -3,10 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { isEmailUserAdmin } from 'calypso/lib/emails';
+import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
+import EmailForwardHeader from './email-plan-mailboxes/email-forward-header';
 import EmailForwardSecondaryDetails from './email-plan-mailboxes/email-forward-secondary-details';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
@@ -15,20 +17,20 @@ import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = {
+	context: 'domains' | 'email';
 	domain: ResponseDomain;
 	account: EmailAccount;
 	mailboxes: Mailbox[];
 	addMailboxPath: string;
 	isLoadingEmails: boolean;
-	configuringStateMode?: 'message' | 'notice';
 };
 function EmailPlanMailboxesList( {
+	context,
 	domain,
 	account,
 	mailboxes,
 	addMailboxPath,
 	isLoadingEmails,
-	configuringStateMode = 'message',
 }: Props ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
@@ -38,25 +40,6 @@ function EmailPlanMailboxesList( {
 	const isGoogleConfiguring =
 		isRecentlyRegistered( domain.registrationDate, 45 ) &&
 		getGSuiteSubscriptionStatus( domain ) === 'unknown';
-
-	if ( isLoadingEmails ) {
-		return (
-			<MailboxListHeader isPlaceholder>
-				<MailboxListItem isPlaceholder>
-					<MaterialIcon icon="email" />
-					<span />
-				</MailboxListItem>
-			</MailboxListHeader>
-		);
-	}
-
-	if ( isGoogleConfiguring && configuringStateMode === 'message' ) {
-		return <MailboxContent type="configuring" />;
-	}
-
-	if ( isNoMailboxes && configuringStateMode === 'message' ) {
-		return <MailboxContent type="no-mailboxes" />;
-	}
 
 	function MailboxItemsEmpty() {
 		return (
@@ -106,8 +89,13 @@ function EmailPlanMailboxesList( {
 								mailbox={ mailbox }
 								readonly={ isGoogleConfiguring }
 							/>
-							<EmailForwardSecondaryDetails mailbox={ mailbox } />
+							{ context !== 'domains' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 						</div>
+						{ context === 'domains' && (
+							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+								<EmailForwardSecondaryDetails mailbox={ mailbox } hideIcon />
+							</div>
+						) }
 						{ isEmailUserAdmin( mailbox ) && (
 							<Badge type="info">
 								{ translate( 'Admin', {
@@ -126,39 +114,89 @@ function EmailPlanMailboxesList( {
 		} );
 	}
 
-	return (
-		<>
-			{ ( isGoogleConfiguring || isAccountWarningPresent ) && configuringStateMode === 'notice' && (
-				<Notice
-					className="email-plan-mailboxes-list__notice"
-					status="is-warning"
-					showDismiss={ false }
-				>
-					{ isAccountWarningPresent ? (
-						<EmailPlanWarnings
-							domain={ domain }
-							emailAccount={ account }
-							ctaBtnProps={ { primary: false, plain: true } }
-						/>
-					) : (
-						translate(
-							'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
-						)
-					) }
-				</Notice>
-			) }
-
-			<MailboxListHeader
-				accountType={ accountType }
-				addMailboxPath={ addMailboxPath }
-				showIcon={ !! addMailboxPath }
-				domain={ domain }
-				disableActions={ isGoogleConfiguring }
-			>
-				{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
+	/**
+	 * ↓ Template rendering
+	 */
+	// Common loading placeholder
+	if ( isLoadingEmails ) {
+		return (
+			<MailboxListHeader isPlaceholder>
+				<MailboxListItem isPlaceholder>
+					<MaterialIcon icon="email" />
+					<span />
+				</MailboxListItem>
 			</MailboxListHeader>
-		</>
-	);
+		);
+	}
+
+	// Rendering based on the context
+	switch ( context ) {
+		case 'domains':
+			return (
+				<>
+					{ ( isGoogleConfiguring || isAccountWarningPresent ) && (
+						<Notice
+							className="email-plan-mailboxes-list__notice"
+							status="is-warning"
+							showDismiss={ false }
+						>
+							{ isAccountWarningPresent ? (
+								<EmailPlanWarnings
+									domain={ domain }
+									emailAccount={ account }
+									ctaBtnProps={ { primary: false, plain: true } }
+								/>
+							) : (
+								translate(
+									'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+								)
+							) }
+						</Notice>
+					) }
+
+					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
+						<EmailForwardHeader className="email-plan-mailboxes-list__mailbox-list">
+							<MailboxItems />
+						</EmailForwardHeader>
+					) }
+
+					{ accountType !== EMAIL_ACCOUNT_TYPE_FORWARD && (
+						<MailboxListHeader
+							accountType={ accountType }
+							addMailboxPath={ addMailboxPath }
+							showIcon={ !! addMailboxPath }
+							domain={ domain }
+							disableActions={ isGoogleConfiguring }
+						>
+							{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
+						</MailboxListHeader>
+					) }
+				</>
+			);
+
+		case 'email':
+		default: {
+			if ( isGoogleConfiguring ) {
+				return <MailboxContent type="configuring" />;
+			}
+
+			if ( isNoMailboxes ) {
+				return <MailboxContent type="no-mailboxes" />;
+			}
+
+			return (
+				<MailboxListHeader
+					accountType={ accountType }
+					addMailboxPath={ addMailboxPath }
+					showIcon={ !! addMailboxPath }
+					domain={ domain }
+					disableActions={ isGoogleConfiguring }
+				>
+					{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
+				</MailboxListHeader>
+			);
+		}
+	}
 }
 
 export default EmailPlanMailboxesList;
