@@ -3,14 +3,14 @@
 
 .subpage-wrapper {
 	display: flex;
-    flex-direction: column;
+	flex-direction: column;
 	justify-content: center;
-    height: 100%;
+	height: 100%;
 
-    .email-forwards-add {
-        .card {
-            border-radius: 4px;
-        }
+	.email-forwards-add {
+		.card {
+			border-radius: 4px;
+		}
 
         .card-heading {
             font-size: 1rem;
@@ -20,9 +20,9 @@
             margin-bottom: 16px;
         }
 
-        .form-text-input-with-affixes .form-text-input {
-            border-radius: 2px 0 0 2px;
-        }
+		.form-text-input-with-affixes .form-text-input {
+			border-radius: 2px 0 0 2px;
+		}
 
         .button {
             padding: 10px 24px;
