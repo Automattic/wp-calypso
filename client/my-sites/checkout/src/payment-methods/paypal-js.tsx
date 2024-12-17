@@ -115,11 +115,22 @@ function PayPalSubmitButton( {
 			togglePaymentMethod( 'paypal-js', true );
 		}
 		if ( isPayPalJsLoaded && ! arePayPalButtonsAvailable ) {
+			let paypalObjectString = '';
+			try {
+				paypalObjectString = JSON.stringify( window?.paypal );
+			} catch ( error ) {
+				paypalObjectString = `${ window?.paypal }`;
+			}
 			// eslint-disable-next-line no-console
-			console.error( 'PayPal says the script is loaded but Buttons are not available' );
+			console.error(
+				`PayPal says the script is loaded but Buttons are not available. The paypal object is ${ paypalObjectString }`
+			);
 			logStashEvent(
 				'PayPal says the script is loaded but Buttons are not available',
-				{ tags: [ 'paypal-configuration', 'paypal-buttons-missing' ] },
+				{
+					paypal: paypalObjectString,
+					tags: [ 'paypal-configuration', 'paypal-buttons-missing' ],
+				},
 				'error'
 			);
 		}
