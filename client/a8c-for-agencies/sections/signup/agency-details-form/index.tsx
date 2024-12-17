@@ -131,14 +131,14 @@ export default function AgencyDetailsForm( {
 	);
 
 	const handleSubmit = useCallback(
-		( e: React.SyntheticEvent ) => {
+		async ( e: React.SyntheticEvent ) => {
 			e.preventDefault();
 
 			if ( ! showCountryFields || isLoading ) {
 				return;
 			}
 
-			const error = validate( payload );
+			const error = await validate( payload );
 			if ( error ) {
 				// Scrolling only for fields positioned on top
 				if ( error.firstName || error.lastName || error.agencyName || error.agencyUrl ) {
