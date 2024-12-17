@@ -46,6 +46,8 @@ export function register(): typeof STORE_KEY {
 			'planProductId',
 			'randomizedDesigns',
 			'selectedDesign',
+			'selectedStyleVariation',
+			'selectedGlobalStyles',
 			'selectedFeatures',
 			'selectedSite',
 			'readymadeTemplate',
