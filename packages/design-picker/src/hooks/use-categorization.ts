@@ -41,8 +41,8 @@ export function useCategorization(
 	const { selectedCategories, setSelectedCategories } = useDesignPickerFilters();
 	const isSelectionsChanged = useMemo(
 		() =>
-			defaultSelections.length === selectedCategories.length &&
-			defaultSelections.every( ( selection ) => selectedCategories.includes( selection ) ),
+			defaultSelections.length !== selectedCategories.length ||
+			! defaultSelections.every( ( selection ) => selectedCategories.includes( selection ) ),
 		[ defaultSelections, selectedCategories ]
 	);
 
