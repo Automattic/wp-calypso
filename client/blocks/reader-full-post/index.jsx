@@ -268,7 +268,7 @@ export class FullPostView extends Component {
 				engagement_time: engagementTime / 1000,
 			} );
 			// check if the user exited early
-			this.checkFastExit( post );
+			this.checkFastExit( post, engagementTime );
 		}
 	}
 
@@ -344,7 +344,7 @@ export class FullPostView extends Component {
 		} );
 	};
 
-	checkFastExit = ( post = null ) => {
+	checkFastExit = ( post = null, engagementTime ) => {
 		if ( ! post ) {
 			post = this.props.post;
 		}
@@ -358,12 +358,12 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		const elapsedTime = ( Date.now() - this.readingStartTime ) / 1000; // Convert to seconds
-		const secondsToRead = post.minutes_to_read * 60;
-		const fastExitThreshold = secondsToRead * 0.25; // Define a "fast exit" as 25% of estimated time
+		const elapsedSeconds = engagementTime / 1000;
+		const estimatedSecondsToRead = post.minutes_to_read * 60;
+		const fastExitThreshold = estimatedSecondsToRead * 0.25; // Define a "fast exit" as 25% of estimated time
 
-		if ( elapsedTime < fastExitThreshold ) {
-			this.trackFastExit( post, elapsedTime, fastExitThreshold );
+		if ( elapsedSeconds < fastExitThreshold ) {
+			this.trackFastExit( post, elapsedSeconds, fastExitThreshold );
 		}
 	};
 
