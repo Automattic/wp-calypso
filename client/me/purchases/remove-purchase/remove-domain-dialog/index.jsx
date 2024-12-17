@@ -1,5 +1,4 @@
-import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
-import { Icon, trash } from '@wordpress/icons';
+import { Dialog, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -10,8 +9,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getName } from 'calypso/lib/purchases';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit, domainManagementTransferOut } from 'calypso/my-sites/domains/paths';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -28,7 +27,6 @@ class RemoveDomainDialog extends Component {
 	state = {
 		step: 1,
 		domainValidated: false,
-		showErrors: false,
 	};
 
 	renderDomainDeletionWarning( productName ) {
@@ -63,6 +61,7 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
+				<p>{ translate( 'Do you still want to continue with deleting your domain?' ) }</p>
 			</Fragment>
 		);
 	}
@@ -130,23 +129,6 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					} ) }
 				</FormSectionHeading>
-				<FormFieldset>
-					<FormLabel htmlFor="remove-domain-dialog__form-domain">
-						{ translate( 'Type your domain name to proceed', { context: 'Domain name' } ) }
-					</FormLabel>
-					<FormTextInput
-						name="domain"
-						id="remove-domain-dialog__form-domain"
-						isError={ this.state.showErrors && ! this.state.domainValidated }
-						onChange={ this.onDomainChange }
-					/>
-					{ this.state.showErrors && ! this.state.domainValidated && (
-						<FormInputValidation
-							text={ translate( 'The domain name you entered does not match.' ) }
-							isError
-						/>
-					) }
-				</FormFieldset>
 				<p>
 					{ translate(
 						'{{strong}}%(domain)s{{/strong}} will be deleted. Any services related to it will stop working. Are you sure you want to proceed?',
@@ -156,55 +138,37 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
+				<FormFieldset>
+					<FormLabel htmlFor="remove-domain-dialog__form-domain">
+						{ translate( 'Type your domain name to proceed', { context: 'Domain name' } ) }
+					</FormLabel>
+					<FormTextInput
+						name="domain"
+						id="remove-domain-dialog__form-domain"
+						onChange={ this.onDomainChange }
+					/>
+				</FormFieldset>
 			</Fragment>
 		);
 	}
 
-	async isWpComEmailBasedOnDomain() {
-		this.setState( {
-			isCheckingEmail: true,
-		} );
-
-		const { purchase } = this.props;
-		const productName = getName( purchase );
-		const { email } = await wpcom.me().get();
-
-		this.setState( {
-			isCheckingEmail: false,
-		} );
-
-		return email.endsWith( productName );
-	}
-
-	nextStep = async ( closeDialog ) => {
+	nextStep = ( closeDialog ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}
-		const isEmailBasedOnDomain = await this.isWpComEmailBasedOnDomain();
+
+		const productName = getName( this.props.purchase );
+		const isEmailBasedOnDomain = this.props.userEmail.endsWith( productName );
+
 		switch ( this.state.step ) {
 			case 1:
-				this.setState( {
-					step: isEmailBasedOnDomain ? 2 : 3,
-				} );
+				this.setState( { step: isEmailBasedOnDomain ? 2 : 3 } );
 				break;
 			case 2:
-				if ( isEmailBasedOnDomain ) {
-					break;
-				}
-				this.setState( {
-					step: 3,
-				} );
+				this.setState( { step: 3 } );
 				break;
 			case 3:
-				if ( isEmailBasedOnDomain ) {
-					this.setState( { step: 2 } );
-					break;
-				}
-				if ( this.state.domainValidated ) {
-					this.props.removePurchase( closeDialog );
-				} else {
-					this.setState( { showErrors: true } );
-				}
+				this.props.removePurchase( closeDialog );
 				break;
 		}
 	};
@@ -214,36 +178,36 @@ class RemoveDomainDialog extends Component {
 			return;
 		}
 		this.props.closeDialog();
-		this.setState( { step: 1 } );
+		this.setState( { domainValidated: false, step: 1 } );
 	};
 
 	render() {
 		const { purchase, translate, chatButton } = this.props;
 		const productName = getName( purchase );
+
 		const buttons = [
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
-				label: this.state.step === 3 ? translate( 'Nevermind' ) : translate( 'Cancel' ),
+				label: this.state.step === 3 ? translate( 'Never mind' ) : translate( 'Cancel' ),
 			},
-			{
-				action: 'remove',
-				additionalClassNames: [
-					this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
-					'dialog__button--domains-remove',
-				],
-				isPrimary: true,
-				label:
-					this.state.step === 3 ? (
-						<>
-							<Icon icon={ trash } size={ 18 } />
-							{ translate( 'Delete this domain' ) }
-						</>
-					) : (
-						translate( 'Continue' )
-					),
-				onClick: this.nextStep,
-			},
+			...( this.state.step !== 2
+				? [
+						{
+							action: 'remove',
+							additionalClassNames: [
+								this.props.isRemoving ? 'is-busy' : '',
+								this.state.step === 3 ? 'is-scary' : '',
+								'dialog__button--domains-remove',
+							],
+							isPrimary: true,
+							disabled: this.state.step === 3 && ! this.state.domainValidated,
+							label:
+								this.state.step === 3 ? translate( 'Delete this domain' ) : translate( 'Continue' ),
+							onClick: this.nextStep,
+						},
+				  ]
+				: [] ),
 		];
 
 		if ( ! purchase ) {
@@ -278,6 +242,7 @@ export default connect( ( state, ownProps ) => {
 		isGravatarDomain: selectedDomain?.isGravatarDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
+		userEmail: getCurrentUserEmail( state ),
 		slug: getSiteSlug( state, ownProps.purchase.siteId ),
 	};
 } )( localize( RemoveDomainDialog ) );
