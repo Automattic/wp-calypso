@@ -686,15 +686,20 @@ const siteSetupFlow: Flow = {
 		const { siteSlugOrId, siteId } = useSiteData();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
-		const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
-			const { getSelectedDesign, getSelectedStyleVariation } = select(
-				ONBOARD_STORE
-			) as OnboardSelect;
-			return {
-				selectedDesign: getSelectedDesign(),
-				selectedStyleVariation: getSelectedStyleVariation(),
-			};
-		}, [] );
+		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
+			( select ) => {
+				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
+					ONBOARD_STORE
+				) as OnboardSelect;
+				return {
+					selectedDesign: getSelectedDesign(),
+					selectedStyleVariation: getSelectedStyleVariation(),
+					selectedGlobalStyles: getSelectedGlobalStyles(),
+				};
+			},
+			[]
+		);
+
 		const dispatch = reduxDispatch();
 
 		useEffect( () => {
@@ -713,7 +718,7 @@ const siteSetupFlow: Flow = {
 
 				return setDesignOnSite( siteSlugOrId, selectedDesign, {
 					styleVariation: selectedStyleVariation,
-					globalStyles: {},
+					globalStyles: selectedGlobalStyles,
 				} ).then( ( theme: ActiveTheme ) => {
 					return dispatch( setActiveTheme( siteId, theme ) );
 				} );
@@ -727,6 +732,7 @@ const siteSetupFlow: Flow = {
 			setPendingAction,
 			dispatch,
 			selectedStyleVariation,
+			selectedGlobalStyles,
 		] );
 	},
 };
