@@ -1,5 +1,17 @@
-import { type SiteDetails, type ChecklistStatuses } from '@automattic/data-stores';
+import {
+	type SiteDetails,
+	type ChecklistStatuses,
+	OnboardSelect,
+	useStarterDesignBySlug,
+	updateLaunchpadSettings,
+	ActiveTheme,
+} from '@automattic/data-stores';
 import { isBlogOnboardingFlow, isSiteAssemblerFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getSite, getSitePlan } from 'calypso/state/sites/selectors';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, Task } from './types';
 
@@ -70,4 +82,59 @@ export function areLaunchpadTasksCompleted(
 	}
 
 	return lastTask?.completed;
+}
+
+export function useMaybeSwitchThemeAndUpdateChecklist(
+	checklist: LaunchpadChecklist | null | undefined,
+	siteSlug: string | null
+): LaunchpadChecklist | null | undefined {
+	const site = useSelector( ( state ) => getSite( state, siteSlug ) );
+	const { hasPaidDesign, selectedDesign } = useSelect(
+		( select ) => ( {
+			hasPaidDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).hasPaidDesign(),
+			selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		} ),
+		[]
+	);
+
+	const reduxDispatch = useReduxDispatch();
+
+	const currentSitePlan = useSelector( ( state ) => {
+		if ( ! site ) {
+			return null;
+		}
+		return getSitePlan( state, site.ID );
+	} );
+
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+
+	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
+
+	if ( ! hasPaidDesign || ! currentSitePlan?.is_free ) {
+		return checklist;
+	}
+
+	if ( selectedDesign?.slug === defaultDesign?.slug ) {
+		return checklist;
+	}
+
+	updateLaunchpadSettings( site?.ID || '', {
+		checklist_statuses: { design_completed: false },
+	} );
+
+	setDesignOnSite( site?.ID, defaultDesign, {
+		styleVariation: defaultDesign?.style_variations?.[ 0 ],
+	} ).then( ( theme: ActiveTheme ) => {
+		return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
+	} );
+
+	setSelectedDesign( defaultDesign );
+
+	return ( checklist ?? [] ).map( ( task ) => {
+		if ( task.id === 'design_selected' ) {
+			return { ...task, completed: false };
+		}
+		return task;
+	} );
 }

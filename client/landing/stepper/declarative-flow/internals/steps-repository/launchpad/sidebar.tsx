@@ -27,6 +27,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-definitions';
+import { useMaybeSwitchThemeAndUpdateChecklist } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 
 type SidebarProps = {
@@ -107,13 +108,15 @@ const Sidebar = ( {
 
 	const displayGlobalStylesWarning = globalStylesInUse && shouldLimitGlobalStyles;
 
+	const checklist = useMaybeSwitchThemeAndUpdateChecklist( launchpadChecklist, siteSlug );
+
 	const enhancedTasks: Task[] | null = useMemo( () => {
 		if ( ! site ) {
 			return null;
 		}
 
 		return getEnhancedTasks( {
-			tasks: launchpadChecklist,
+			tasks: checklist,
 			siteSlug,
 			site,
 			submit,
