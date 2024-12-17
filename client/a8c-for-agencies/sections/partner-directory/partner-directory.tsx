@@ -10,12 +10,12 @@ import {
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,

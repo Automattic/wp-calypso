@@ -8,11 +8,11 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import {
 	SubscriptionAction,

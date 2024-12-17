@@ -10,12 +10,12 @@ import {
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';

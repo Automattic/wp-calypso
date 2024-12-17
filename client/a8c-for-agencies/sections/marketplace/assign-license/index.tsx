@@ -17,13 +17,13 @@ import SearchCard from 'calypso/components/search-card';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import areLicenseKeysAssignableToMultisite from 'calypso/jetpack-cloud/sections/partner-portal/lib/are-license-keys-assignable-to-multisite';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';

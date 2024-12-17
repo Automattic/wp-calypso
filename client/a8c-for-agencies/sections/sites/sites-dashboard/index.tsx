@@ -19,16 +19,16 @@ import {
 	AgencyDashboardFilter,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import Layout from 'calypso/layout/multi-site-dashboard';
-import LayoutColumn from 'calypso/layout/multi-site-dashboard/column';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-site-dashboard/header';
+} from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
-} from 'calypso/layout/multi-site-dashboard/nav';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/nav';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';

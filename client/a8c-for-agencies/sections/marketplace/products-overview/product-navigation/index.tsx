@@ -6,7 +6,7 @@ import LayoutNavigation, {
 	LayoutNavigationItemProps,
 	LayoutNavigationTabs,
 	buildNavItems,
-} from 'calypso/layout/multi-site-dashboard/nav';
+} from 'calypso/layout/multi-sites-dashboard/nav';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

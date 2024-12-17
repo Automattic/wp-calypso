@@ -2,16 +2,16 @@ import { useTranslate } from 'i18n-calypso';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SETTINGS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
+} from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutNavigation, {
 	buildNavItems,
 	LayoutNavigationItemProps,
 	LayoutNavigationTabs,
-} from 'calypso/layout/multi-site-dashboard/nav';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/nav';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AgencyProfile from './agency-profile';

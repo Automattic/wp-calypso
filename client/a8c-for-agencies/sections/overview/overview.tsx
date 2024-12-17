@@ -3,12 +3,12 @@ import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar'
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';

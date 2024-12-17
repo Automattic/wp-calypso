@@ -18,13 +18,13 @@ import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import Layout from 'calypso/layout/multi-site-dashboard';
-import LayoutColumn from 'calypso/layout/multi-site-dashboard/column';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {

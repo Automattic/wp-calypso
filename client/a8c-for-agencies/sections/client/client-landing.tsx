@@ -7,11 +7,11 @@ import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import Layout from 'calypso/layout/multi-site-dashboard';
+import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useSelector } from 'calypso/state';
 import { hasAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 

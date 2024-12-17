@@ -9,12 +9,12 @@ import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use
 import useFetchDashboardSites, {
 	FetchDashboardSitesArgsInterface,
 } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import LayoutColumn from 'calypso/layout/multi-site-dashboard/column';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle,
 	LayoutHeaderActions,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import AtomicSitesSelector from './atomic-sites-selector';
 import './styles.scss';
 

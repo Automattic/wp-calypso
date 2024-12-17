@@ -22,13 +22,13 @@ import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
-import Layout from 'calypso/layout/multi-site-dashboard';
-import LayoutColumn from 'calypso/layout/multi-site-dashboard/column';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-site-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-site-dashboard/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
