@@ -49,7 +49,7 @@ function truncateWithLimit( text: string, limit: number ): string {
 
 function getProcessedTitle( post: Post ): string {
 	const title = post?.title || '';
-	if ( ! title || title.length === 0 ) {
+	if ( ! title ) {
 		return '';
 	}
 
