@@ -597,4 +597,28 @@
 		color: var(--theme-highlight-color-50);
 		opacity: 0.5;
 	}
+
+	.email-plan-mailboxes-list__email-forward {
+		.section-header__label,
+		.email-plan-mailboxes-list__mailbox-list-item-main {
+			flex: 1 1 0;
+		}
+
+		.section-header__actions,
+		.email-mailbox-action-menu__main {
+			flex: 0 0 auto;
+		}
+
+		.email-plan-mailboxes-list__mailbox-list-item {
+			padding-right: 110px;
+		}
+
+		.section-header__label {
+			font-weight: 500;
+		}
+
+		.email-plan-mailboxes-list__mailbox-list-item-main {
+			font-size: 0.875rem;
+		}
+	}
 }

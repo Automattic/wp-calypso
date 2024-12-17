@@ -11,7 +11,7 @@ export default function EmailForwardHeader( { className, children }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div className={ clsx( className, 'email-plan-mailboxes-list__email-forward-header' ) }>
+		<div className={ clsx( className, 'email-plan-mailboxes-list__email-forward' ) }>
 			<CompactCard className="section-header">
 				<div className="section-header__label">
 					<span className="section-header__label-text">{ translate( 'Email forwards' ) }</span>
