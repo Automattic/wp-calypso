@@ -85,11 +85,14 @@ const onboarding: Flow = {
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin } = useSelect(
+		const { planCartItem, signupDomainOrigin, selectedDesign, selectedStyleVariation } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				signupDomainOrigin: select( ONBOARD_STORE ).getSignupDomainOrigin(),
+				selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+				selectedStyleVariation: select( ONBOARD_STORE ).getSelectedStyleVariation(),
+				selectedGlobalStyles: select( ONBOARD_STORE ).getSelectedGlobalStyles(),
 			} ),
 			[]
 		);
@@ -232,7 +235,15 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: isGoalsAtFrontExperiment
+									? pathToUrl(
+											addQueryArgs( '/setup/onboarding/designSetup', {
+												siteSlug,
+												theme: selectedDesign?.slug,
+												style_variation: selectedStyleVariation?.slug,
+											} )
+									  )
+									: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
 								coupon,
 							} )
 						);
@@ -272,6 +283,11 @@ const onboarding: Flow = {
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'domains' );
+				case 'designSetup':
+					if ( isGoalsAtFrontExperiment ) {
+						return navigate( 'goals' );
+					}
+					return;
 				default:
 					return;
 			}
