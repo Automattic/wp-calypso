@@ -111,9 +111,6 @@ class StatModuleFollowers extends Component {
 					data={ data.map( ( dataPoint ) => ( {
 						...dataPoint,
 						value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
-						url: dataPoint.login
-							? `${ subscriberManagementUrl }/${ dataPoint.ID }`
-							: `${ subscriberManagementUrl }/external/${ dataPoint.ID }`,
 					} ) ) }
 					usePlainCard
 					hasNoBackground
