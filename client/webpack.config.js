@@ -184,6 +184,7 @@ const webpackConfig = {
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
+		'entry-experiment-dispatcher': [ path.join( __dirname, 'experiment-dispatcher' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 	} ),
