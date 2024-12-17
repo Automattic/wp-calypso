@@ -1,6 +1,11 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { SUPPORT_URL, INSIGHTS_SUPPORT_URL } from 'calypso/my-sites/stats/const';
+import {
+	SUPPORT_URL,
+	INSIGHTS_SUPPORT_URL,
+	JETPACK_SUPPORT_URL_TRAFFIC,
+	JETPACK_SUPPORT_VIDEOPRESS_URL_STATS,
+} from 'calypso/my-sites/stats/const';
 import {
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_UTM_STATS,
@@ -21,6 +26,16 @@ import {
 	STAT_TYPE_TAGS,
 	STAT_TYPE_COMMENTS,
 } from '../constants';
+
+const jetpackTrafficSupportLinkWithAnchor = ( anchor: string ) => {
+	return (
+		<a
+			href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#${ anchor }` ) }
+			target="_blank"
+			rel="noopenner noreferrer"
+		/>
+	);
+};
 
 const trafficSupportLinkWithAnchor = ( anchor: string ) => {
 	return (
@@ -49,7 +64,7 @@ const getUpsellCopy = ( statType: string ) => {
 				'Learn what {{link}}external links{{/link}} your visitors click on your site to reveal their areas of interest.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'clicks' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'clicks' ),
 					},
 				}
 			);
@@ -58,20 +73,14 @@ const getUpsellCopy = ( statType: string ) => {
 				'Discover where your {{link}}visitors are located{{/link}} and identify where your traffic is coming from.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'countries' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'countries' ),
 					},
 				}
 			);
 		case STAT_TYPE_FILE_DOWNLOADS:
 			return translate( 'Discover the most {{link}}downloaded files{{/link}} by your visitors.', {
 				components: {
-					link: (
-						<a
-							href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
+					link: trafficSupportLinkWithAnchor( 'file-downloads' ),
 				},
 			} );
 		case STAT_TYPE_REFERRERS:
@@ -79,7 +88,7 @@ const getUpsellCopy = ( statType: string ) => {
 				'Find out where your {{link}}visitors come from{{/link}} to optimize your content strategy.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'referrers' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'referrers' ),
 					},
 				}
 			);
@@ -88,7 +97,7 @@ const getUpsellCopy = ( statType: string ) => {
 				'Discover the {{link}}terms and phrases{{/link}} your visitors use to find your site.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'search-terms' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'search-terms' ),
 					},
 				}
 			);
@@ -97,7 +106,7 @@ const getUpsellCopy = ( statType: string ) => {
 				'Identify your audience’s {{link}}favorite writers{{/link}} and perspectives.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'authors' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'authors' ),
 					},
 				}
 			);
@@ -106,7 +115,7 @@ const getUpsellCopy = ( statType: string ) => {
 				'Discover your {{link}}post and pages{{/link}} traffic in detail and learn what content resonates the most.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'posts-amp-pages' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'analyzing-popular-posts-and-pages' ),
 					},
 				}
 			);
@@ -115,18 +124,33 @@ const getUpsellCopy = ( statType: string ) => {
 				'Discover your {{link}}most popular videos{{/link}} and find out how they performed.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'videos' ),
+						link: (
+							<a
+								href={ localizeUrl( JETPACK_SUPPORT_VIDEOPRESS_URL_STATS ) }
+								target="_blank"
+								rel="noopenner noreferrer"
+							/>
+						),
 					},
 				}
 			);
 		case STATS_FEATURE_DATE_CONTROL:
-			return translate( 'Compare different time periods to analyze your site’s growth.' );
+			return translate(
+				'Compare different {{link}}time periods{{/link}} to analyze your site’s growth.',
+				{
+					components: {
+						link: jetpackTrafficSupportLinkWithAnchor( 'using-date-filters' ),
+					},
+				}
+			);
 		case STATS_FEATURE_UTM_STATS:
 			return translate(
 				'Generate UTM parameters and track your {{link}}campaign performance data{{/link}}.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'utm' ),
+						link: jetpackTrafficSupportLinkWithAnchor(
+							'harnessing-utm-stats-for-precision-tracking'
+						),
 					},
 				}
 			);
@@ -135,19 +159,16 @@ const getUpsellCopy = ( statType: string ) => {
 				'See which {{link}}devices, browsers and OS{{/link}} your visitors are using.',
 				{
 					components: {
-						link: trafficSupportLinkWithAnchor( 'devices' ),
+						link: jetpackTrafficSupportLinkWithAnchor( 'devices-stats' ),
 					},
 				}
 			);
 		case STAT_TYPE_EMAILS_SUMMARY:
-			return translate(
-				'View information about {{link}}emails{{/link}} sent to your subscribers.',
-				{
-					components: {
-						link: trafficSupportLinkWithAnchor( 'emails' ),
-					},
-				}
-			);
+			return translate( 'Learn about the performance of the emails you sent to your subscribers.', {
+				components: {
+					link: trafficSupportLinkWithAnchor( 'emails' ),
+				},
+			} );
 		case STAT_TYPE_INSIGHTS_ALL_TIME_STATS:
 			return translate( 'All-time {{link}}website insights{{/link}}.', {
 				components: {
