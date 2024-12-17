@@ -7,11 +7,14 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { ProvidedDependencies, StepProps } from '../../types';
+import { getThemeType } from 'calypso/state/themes/selectors';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
+import type { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
 
@@ -19,19 +22,26 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
+	const [ isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
-	const { siteTitle, domainItem, domainItems } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
+			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
+				select( ONBOARD_STORE );
 			return {
-				siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-				domainItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				domainItems: select( ONBOARD_STORE ).getDomainCartItems(),
+				siteTitle: getSelectedSiteTitle(),
+				domainItem: getDomainCartItem(),
+				domainItems: getDomainCartItems(),
+				selectedDesign: getSelectedDesign(),
 			};
 		},
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
+	const selectedThemeType = useSelector( ( state ) =>
+		selectedDesign ? getThemeType( state, selectedDesign.slug ) : ''
+	);
 
 	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
@@ -42,11 +52,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		coupon,
 		domainItem,
 		domainCart: domainItems,
+		selectedThemeType,
 	};
 
 	const site = useSite();
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -61,6 +73,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 
 	return (
 		<UnifiedPlansStep
+			{ ...hidePlanProps }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
@@ -96,6 +109,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
+			isGoalsAtFrontExperiment={ isGoalsAtFrontExperiment }
 		/>
 	);
 }

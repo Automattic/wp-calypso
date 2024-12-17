@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
@@ -42,6 +41,7 @@ import { StepState } from 'calypso/state/signup/progress/schema';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './unified-plans-step-styles.scss';
+import type { SiteDetails } from '@automattic/data-stores';
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
@@ -92,6 +92,7 @@ export interface UnifiedPlansStepProps {
 		username?: string | null;
 		coupon?: string | null;
 		segmentationSurveyAnswers?: SurveyData;
+		selectedThemeType?: string;
 	};
 	onPlanIntervalUpdate: ( path: string ) => void;
 
@@ -168,6 +169,11 @@ export interface UnifiedPlansStepProps {
 	 * Used only in "onboarding-pm" flow (old Signup/Start)
 	 */
 	isCustomDomainAllowedOnFreePlan?: boolean;
+
+	/**
+	 * Whether the user should have the "goals first" onboarding experience
+	 */
+	isGoalsAtFrontExperiment?: boolean;
 }
 
 /**
@@ -216,6 +222,7 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
+	isGoalsAtFrontExperiment,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = useDispatch();
@@ -460,8 +467,15 @@ function UnifiedPlansStep( {
 				: undefined
 		);
 
-	const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
-		signupDependencies;
+	const {
+		siteUrl,
+		domainItem,
+		siteTitle,
+		username,
+		coupon,
+		segmentationSurveyAnswers,
+		selectedThemeType,
+	} = signupDependencies;
 
 	const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
@@ -536,6 +550,8 @@ function UnifiedPlansStep( {
 										'onboarding/interval-dropdown'
 									) }
 									onPlanIntervalUpdate={ onPlanIntervalUpdate }
+									selectedThemeType={ selectedThemeType }
+									isGoalsAtFrontExperiment={ isGoalsAtFrontExperiment }
 								/>
 							</div>
 						}

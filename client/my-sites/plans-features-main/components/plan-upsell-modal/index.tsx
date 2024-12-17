@@ -20,6 +20,8 @@ export type ModalType =
 export type DomainPlanDialogProps = {
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	selectedThemeType?: string;
+	isGoalsAtFrontExperiment?: boolean;
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
@@ -47,7 +49,7 @@ function getDisplayedModal( modalType: ModalType, dialogProps: DomainPlanDialogP
 	}
 }
 
-export default function ModalContainer( props: ModalContainerProps ) {
+export default function PlanUpsellModal( props: ModalContainerProps ) {
 	const { isModalOpen, modalType } = props;
 
 	if ( ! modalType ) {
