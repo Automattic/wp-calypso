@@ -13,7 +13,6 @@ import {
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
@@ -23,6 +22,7 @@ import {
 	MARKETPLACE_TYPE_REFERRAL,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,

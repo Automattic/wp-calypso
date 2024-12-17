@@ -2,12 +2,12 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/multi-sites-dashboard/header';

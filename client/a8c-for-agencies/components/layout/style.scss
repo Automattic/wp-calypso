@@ -1,15 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.a4a-layout__body {
-	width: 100%;
-	overflow-y: auto;
-	padding-block-start: 16px;
-	padding-block-end: 32px;
-}
-
-.a4a-layout__banner,
-.a4a-layout__body {
+.a4a-layout__banner {
 	margin-inline: 0;
 	max-height: 100%;
 

@@ -3,7 +3,6 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -11,6 +10,7 @@ import {
 	A4A_TEAM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
