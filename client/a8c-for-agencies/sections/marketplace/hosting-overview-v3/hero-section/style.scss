@@ -12,7 +12,7 @@ $tab-background-selected: var(--color-surface);
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 39px;
-	transition: height .2s ease-out;
+	transition: height .25s ease-out;
 
 	&:not(.is-compact) {
 		height: 389px;
