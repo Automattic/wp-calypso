@@ -85,14 +85,11 @@ const onboarding: Flow = {
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, selectedDesign, selectedStyleVariation } = useSelect(
+		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-				signupDomainOrigin: select( ONBOARD_STORE ).getSignupDomainOrigin(),
-				selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
-				selectedStyleVariation: select( ONBOARD_STORE ).getSelectedStyleVariation(),
-				selectedGlobalStyles: select( ONBOARD_STORE ).getSelectedGlobalStyles(),
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
 		);
@@ -235,15 +232,7 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: isGoalsAtFrontExperiment
-									? pathToUrl(
-											addQueryArgs( '/setup/onboarding/designSetup', {
-												siteSlug,
-												theme: selectedDesign?.slug,
-												style_variation: selectedStyleVariation?.slug,
-											} )
-									  )
-									: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
 								coupon,
 							} )
 						);
