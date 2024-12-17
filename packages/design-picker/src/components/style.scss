@@ -22,23 +22,41 @@
 		flex-grow: 1;
 	}
 
+	.components-toolbar {
+		background-color: transparent;
+	}
+
 	.design-picker__design-card-group {
 		.design-picker__design-card-title {
 			position: sticky;
 			top: 0;
-			padding: 16px 12px;
-			margin: -16px -12px 8px;
+			padding: 16px 12px 12px;
+			margin: -16px -12px 0;
 			color: var(--studio-black);
 			background-color: var(--color-body-background);
-			font-size: $font-body;
+			font-size: $font-title-small;
 			font-style: normal;
 			font-weight: 500;
 			line-height: 24px;
 			z-index: 10;
+
+			@include break-small {
+				padding: 24px 24px 16px;
+				margin: -24px -24px 0;
+			}
 		}
 
 		.design-picker__grid {
-			margin-bottom: 24px;
+			margin-bottom: 32px;
+		}
+
+		.theme-card__info {
+			margin-top: 8px;
+			height: auto;
+
+			@include break-small {
+				margin-top: 12px;
+			}
 		}
 	}
 
