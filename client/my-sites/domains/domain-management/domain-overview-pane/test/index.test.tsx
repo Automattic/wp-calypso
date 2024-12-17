@@ -110,7 +110,7 @@ describe( 'DomainOverviewPane', () => {
 
 	it( 'renders admin button with correct label', () => {
 		renderComponent();
-		expect( screen.getByText( 'WP Admin' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Manage site' ) ).toBeInTheDocument();
 	} );
 
 	it( 'handles tab switching', () => {
