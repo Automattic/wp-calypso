@@ -14,6 +14,7 @@ import {
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
+import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -32,7 +33,7 @@ import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-
 import { SurveyData } from 'calypso/signup/steps/initial-intent/types';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
@@ -222,7 +223,7 @@ function UnifiedPlansStep( {
 	shouldHideNavButtons,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
-	const dispatch = useDispatch();
+	const dispatch = reduxUseDispatch();
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>

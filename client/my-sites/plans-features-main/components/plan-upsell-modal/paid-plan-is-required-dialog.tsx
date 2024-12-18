@@ -20,7 +20,7 @@ export const PaidPlanIsRequiredDialog = ( {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
-	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType );
+	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	const getUpsellTitle = () => {
 		if ( isPaidTheme && paidDomainName ) {
@@ -53,7 +53,6 @@ export const PaidPlanIsRequiredDialog = ( {
 			<ButtonContainer>
 				<SuggestedPlanSection
 					{ ...hidePlanProps }
-					paidDomainName={ paidDomainName }
 					isBusy={ isBusy }
 					onPlanSelected={ onPlanSelected }
 				/>
