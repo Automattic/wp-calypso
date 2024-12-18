@@ -1,5 +1,4 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -7,10 +6,11 @@ import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import PrePurchaseNotice from './prepurchase-notice';
+import type { Product } from '@automattic/calypso-products';
 
 const getMessage = (
 	translate: LocalizeProps[ 'translate' ],
-	product: ResponseCartProduct,
+	product: Product,
 	siteVersion: number | string | undefined,
 	minVersion: number | string
 ) => {
@@ -50,8 +50,8 @@ const JetpackPluginRequiredVersionNotice = ( {
 	product,
 	minVersion,
 }: {
-	product: ResponseCartProduct;
-	minVersion: number;
+	product: Product;
+	minVersion: string | number;
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
