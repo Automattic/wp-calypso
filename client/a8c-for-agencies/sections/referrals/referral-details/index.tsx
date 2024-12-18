@@ -27,7 +27,6 @@ const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 export default function ReferralDetails( {
 	referral,
 	closeSitePreviewPane,
-	referralInvoices,
 	isArchiveView,
 }: Props ) {
 	const translate = useTranslate();
@@ -55,10 +54,6 @@ export default function ReferralDetails( {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const clientReferralInvoices = referralInvoices.filter(
-		( invoice ) => invoice.clientId === referral.client.id
-	);
-
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -79,10 +74,10 @@ export default function ReferralDetails( {
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralCommissions referral={ referral } referralInvoices={ clientReferralInvoices } />
+				<ReferralCommissions referral={ referral } />
 			),
 		],
-		[ translate, selectedReferralTab, isDesktop, referral, clientReferralInvoices ]
+		[ translate, selectedReferralTab, isDesktop, referral ]
 	);
 
 	return (
