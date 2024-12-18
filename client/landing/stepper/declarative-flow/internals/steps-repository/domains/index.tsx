@@ -10,7 +10,6 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	isSiteAssemblerFlow,
-	isOnboardingFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -283,14 +282,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) || isOnboardingFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) || isOnboardingFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
