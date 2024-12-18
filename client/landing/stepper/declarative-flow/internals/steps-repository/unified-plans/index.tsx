@@ -70,12 +70,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		setPlanInterval( intervalType );
 	};
 
+	/**
+	 *  Plan step switches the selected theme to default twentytwentyfour when the plan is free
+	 *  but the selected design requires a paid plan.
+	 */
 	const switchPaidDesignToDefault = ( stepInfo: ProvidedDependencies ) => {
 		const hasPaidDesign =
 			( selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free' ) || false;
 		const isOnboarding = isOnboardingFlow( props.flow ) && isGoalFirstExperiment;
 
-		if ( ! hasPaidDesign || ! stepInfo.cartItem || ! isOnboarding ) {
+		if ( ! hasPaidDesign || !! stepInfo.cartItems || ! isOnboarding ) {
 			return;
 		}
 
