@@ -42,7 +42,7 @@ import { getPathWithUpdatedQueryString } from '../utils';
 import './style.scss';
 
 const pageTitles = {
-	opens: translate( 'Email opens' ),
+	opens: translate( 'Newsletter' ),
 	clicks: translate( 'Email clicks' ),
 };
 
@@ -295,6 +295,9 @@ class StatsEmailDetail extends Component {
 								/>
 
 								{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+
+								<h3>{ translate( 'Performance' ) }</h3>
+
 								<div className="stats__module-list">
 									<StatsEmailModule
 										path="countries"
@@ -304,7 +307,14 @@ class StatsEmailDetail extends Component {
 										period={ PERIOD_ALL_TIME }
 										date={ queryDate }
 									/>
-
+									<StatsEmailModule
+										path="links"
+										statType={ statType }
+										postId={ postId }
+										siteId={ siteId }
+										period={ PERIOD_ALL_TIME }
+										date={ queryDate }
+									/>
 									<StatsEmailModule
 										path="devices"
 										statType={ statType }
@@ -313,7 +323,6 @@ class StatsEmailDetail extends Component {
 										period={ PERIOD_ALL_TIME }
 										date={ queryDate }
 									/>
-
 									<StatsEmailModule
 										path="clients"
 										statType={ statType }
@@ -322,16 +331,6 @@ class StatsEmailDetail extends Component {
 										period={ PERIOD_ALL_TIME }
 										date={ queryDate }
 									/>
-									{ statType === 'clicks' && (
-										<StatsEmailModule
-											path="links"
-											statType={ statType }
-											postId={ postId }
-											siteId={ siteId }
-											period={ PERIOD_ALL_TIME }
-											date={ queryDate }
-										/>
-									) }
 								</div>
 							</div>
 						</>

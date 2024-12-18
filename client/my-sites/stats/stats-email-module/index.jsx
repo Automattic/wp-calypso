@@ -59,6 +59,7 @@ class StatsEmailModule extends Component {
 								postId={ postId }
 								query={ query }
 								isLoading={ isLoading }
+								label={ translate( 'Opens' ) }
 							/>
 						)
 					}
