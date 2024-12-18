@@ -108,6 +108,10 @@ button, a {
 					padding: 8px 8px 0 8px;
 				}
 			}
+
+			.add-new-site__popover-button-heading {
+				@include a4a-font-body-md($font-weight: 500);
+			}
 		}
 
 		.add-new-site__popover-button-icon {
@@ -124,26 +128,12 @@ button, a {
 			}
 		}
 
-		// This is a workaround to make all the buttons the same dimensions
-		// .site-selector-and-importer__popover-button-wp-icon {
-		// 	.sidebar__menu-icon {
-		// 		width: 36px;
-		// 		height: 36px;
-		// 		position: relative;
-		// 		left: 6px;
-		// 		top: -6px;
-		// 		margin-left: -12px;
-		// 	}
-		// }
-
 		.add-new-site__popover-button-heading {
-			font-size: rem(14px);
-			font-weight: 600;
+			@include a4a-font-body-md;
 		}
 
 		.add-new-site__popover-button-description {
-			font-size: rem(12px);
-			line-height: 1.33;
+			@include a4a-font-body-sm;
 			color: var(--color-accent);
 			padding-top: 4px;
 		}

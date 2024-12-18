@@ -52,10 +52,23 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 
 	return (
 		<>
-			<AddNewSitePopoverColumn heading={ translate( 'Add existing sites' ) }>
+			<AddNewSitePopoverColumn heading={ translate( 'Import existing sites' ) }>
+				<AddNewSiteMenuItem
+					icon={ <WordPressLogo /> }
+					heading={ translate( 'Via WordPress.com connection' ) }
+					description={ preventWidows(
+						translate( 'Import connected WordPress.com or Jetpack sites' )
+					) }
+					buttonProps={ {
+						onClick: () => {
+							setVisibleModalType( 'import-from-wpcom' );
+							setMenuVisible( false );
+						},
+					} }
+				/>
 				<AddNewSiteMenuItem
 					icon={ <A4ALogo /> }
-					heading={ translate( 'Via the Automattic plugin' ) }
+					heading={ translate( 'Via the Automattic plugin ' ) }
 					description={ preventWidows(
 						translate( 'Connect with the Automattic for Agencies plugin' )
 					) }
@@ -67,23 +80,10 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					} }
 				/>
 				<AddNewSiteMenuItem
-					icon={ <WordPressLogo /> }
-					heading={ translate( 'Via WordPress.com' ) }
-					description={ preventWidows(
-						translate( 'Add sites already connected to WordPress.com' )
-					) }
-					buttonProps={ {
-						onClick: () => {
-							setVisibleModalType( 'import-from-wpcom' );
-							setMenuVisible( false );
-						},
-					} }
-				/>
-				<AddNewSiteMenuItem
 					icon={ <JetpackLogo /> }
-					heading={ translate( 'Via Jetpack' ) }
+					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
-						translate( 'Add a site by remotely installing the Jetpack plugin' )
+						translate( 'Install the Jetpack plugin on an existing site' )
 					) }
 					buttonProps={ {
 						onClick: () => {
@@ -93,12 +93,24 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					} }
 				/>
 			</AddNewSitePopoverColumn>
-			<AddNewSitePopoverColumn heading={ translate( 'Add new sites' ) }>
+			<AddNewSitePopoverColumn heading={ translate( 'Add a new production site' ) }>
+				<AddNewSiteMenuItem
+					icon={ <img src={ pressableIcon } alt="Pressable" /> }
+					heading={ translate( 'Pressable' ) }
+					description={ translate( 'Bring your theme, plugins, and content to WordPress.com.' ) }
+					buttonProps={ {
+						href:
+							pressableOwnership === 'regular'
+								? 'https://my.pressable.com/agency/auth'
+								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+						target: pressableOwnership === 'regular' ? '_blank' : '_self',
+					} }
+				/>
 				<AddNewSiteMenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
 					description={ preventWidows(
-						translate( 'Optimized and hassle-free hosting for business websites' )
+						translate( 'Use a backup file to import your content into a new site.' )
 					) }
 					buttonProps={ {
 						href: hasPendingWPCOMSites
@@ -123,32 +135,16 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 						) : undefined
 					}
 				/>
-				<AddNewSiteMenuItem
-					icon={ <img src={ pressableIcon } alt="Pressable" /> }
-					heading={ translate( 'Pressable' ) }
-					description={ translate( 'Best for large-scale businesses and major eCommerce sites' ) }
-					buttonProps={ {
-						href:
-							pressableOwnership === 'regular'
-								? 'https://my.pressable.com/agency/auth'
-								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-						target: pressableOwnership === 'regular' ? '_blank' : '_self',
-					} }
-				/>
 			</AddNewSitePopoverColumn>
 			{ devSitesEnabled && (
 				<AddNewSitePopoverColumn>
 					<AddNewSiteMenuItem
 						isBanner
-						icon={ <img src={ devSiteBanner } alt="Start Building for Free" /> }
-						heading={ translate( 'Start Building for Free' ) }
+						icon={ <img src={ devSiteBanner } alt="Start building for free" /> }
+						heading={ translate( 'Start building for free' ) }
 						description={ preventWidows(
 							translate(
-								'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
-								{
-									components: { br: <br />, nbsp: <>&nbsp;</> },
-									comment: 'br is a line break, nbsp is a non-breaking space character',
-								}
+								'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
 							)
 						) }
 						disabled={ ! hasAvailableDevSites }
