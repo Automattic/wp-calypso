@@ -61,8 +61,8 @@ export const PaidPlanIsRequiredDialog = ( {
 					<div>
 						<PlanName>{ translate( 'Free' ) }</PlanName>
 						<PlanDescription>
-							{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
-							{ generatedWPComSubdomain.result && (
+							{ paidDomainName && generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
+							{ paidDomainName && generatedWPComSubdomain.result && (
 								<div>{ generatedWPComSubdomain.result.domain_name }</div>
 							) }
 							{ translate( 'Switch to our free default theme' ) }
