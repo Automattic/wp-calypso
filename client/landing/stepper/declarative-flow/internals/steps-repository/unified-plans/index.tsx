@@ -85,13 +85,14 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		}
 
 		if ( site ) {
-			setPendingAction( () => {
+			setPendingAction( async () => {
+				await updateLaunchpadSettings( site?.ID || '', {
+					checklist_statuses: { design_completed: false },
+				} );
+
 				return setDesignOnSite( site?.ID, defaultDesign, {
 					styleVariation: defaultDesign?.style_variations?.[ 0 ],
 				} ).then( async ( theme: ActiveTheme ) => {
-					await updateLaunchpadSettings( site?.ID || '', {
-						checklist_statuses: { design_completed: false },
-					} );
 					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
 				} );
 			} );

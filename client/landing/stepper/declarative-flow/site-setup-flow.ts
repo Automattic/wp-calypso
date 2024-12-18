@@ -714,15 +714,16 @@ const siteSetupFlow: Flow = {
 					return;
 				}
 
+				const design_completed = selectedDesign?.default ? false : true;
+				await updateLaunchpadSettings( siteSlugOrId, {
+					checklist_statuses: { design_completed: design_completed },
+				} );
+
 				return setDesignOnSite( siteSlugOrId, selectedDesign, {
 					styleVariation: selectedStyleVariation,
 					globalStyles: selectedGlobalStyles,
 				} )
 					.then( async ( theme: ActiveTheme ) => {
-						await updateLaunchpadSettings( siteSlugOrId, {
-							checklist_statuses: { design_completed: true },
-						} );
-
 						return dispatch( setActiveTheme( siteId, theme ) );
 					} )
 					.catch( ( error: Error ) => {
