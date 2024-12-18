@@ -96,16 +96,27 @@ const Sidebar = ( {
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow, hasSkippedCheckout );
 
-	const { planCartItem, domainCartItem, productCartItems } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems, selectedDesign } = useSelect(
 		( select ) => ( {
 			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+			selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 		} ),
 		[]
 	);
 
 	const displayGlobalStylesWarning = globalStylesInUse && shouldLimitGlobalStyles;
+
+	let checklist = launchpadChecklist;
+	if ( selectedDesign?.default ) {
+		checklist = ( launchpadChecklist ?? [] ).map( ( task ) => {
+			if ( task.id === 'design_selected' ) {
+				return { ...task, completed: false };
+			}
+			return task;
+		} );
+	}
 
 	const enhancedTasks: Task[] | null = useMemo( () => {
 		if ( ! site ) {
@@ -113,7 +124,7 @@ const Sidebar = ( {
 		}
 
 		return getEnhancedTasks( {
-			tasks: launchpadChecklist,
+			tasks: checklist,
 			siteSlug,
 			site,
 			submit,

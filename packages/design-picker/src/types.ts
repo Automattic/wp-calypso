@@ -101,6 +101,7 @@ export interface Design {
 	preview_data?: PreviewData;
 	screenshot?: string;
 	demo_uri?: string;
+	default?: boolean;
 
 	/** @deprecated TODO: replace both with just stylesheet */
 	stylesheet?: string;

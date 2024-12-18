@@ -1,18 +1,26 @@
-import { OnboardSelect } from '@automattic/data-stores';
-import { useStepPersistedState } from '@automattic/onboarding';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	ActiveTheme,
+	OnboardSelect,
+	updateLaunchpadSettings,
+	useStarterDesignBySlug,
+} from '@automattic/data-stores';
+import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import StepperLoader from '../../components/stepper-loader';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
@@ -40,6 +48,12 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
+	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
+	const [ , isGoalFirstExperiment ] = useGoalsFirstExperiment();
+	const { setDomainCartItem, setDomainCartItems, setSiteUrl, setSelectedDesign, setPendingAction } =
+		useWPDispatch( ONBOARD_STORE );
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
 
 	const theme = useSelector( ( state ) =>
 		selectedDesign ? getTheme( state, 'wpcom', selectedDesign.slug ) : null
@@ -48,8 +62,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		theme ? getThemeType( state, theme.id ) : ''
 	);
 	const isLoadingSelectedTheme = selectedDesign && ! theme;
-
-	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
 	const signupDependencies = {
 		siteSlug,
@@ -80,6 +92,39 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		setPlanInterval( intervalType );
 	};
 
+	/**
+	 *  Plan step switches the selected theme to default twentytwentyfour when the plan is free
+	 *  but the selected design requires a paid plan.
+	 */
+	const switchPaidDesignToDefault = ( stepInfo: ProvidedDependencies ) => {
+		const hasPaidDesign = Boolean(
+			selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free'
+		);
+		const isOnboarding = isOnboardingFlow( props.flow ) && isGoalFirstExperiment;
+
+		if ( ! hasPaidDesign || !! stepInfo.cartItems || ! isOnboarding ) {
+			return;
+		}
+
+		if ( site ) {
+			setPendingAction( async () => {
+				return setDesignOnSite( site?.ID, defaultDesign, {
+					styleVariation: defaultDesign?.style_variations?.[ 0 ],
+				} ).then( async ( theme: ActiveTheme ) => {
+					await updateLaunchpadSettings( site?.ID || '', {
+						checklist_statuses: { design_completed: false },
+					} );
+					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
+				} );
+			} );
+		}
+		setSelectedDesign( { ...defaultDesign, default: true } );
+
+		recordTracksEvent( 'calypso_paid_theme_auto_switch', {
+			from: selectedDesign?.slug,
+			to: defaultDesign?.slug,
+		} );
+	};
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
 	if ( isLoadingSelectedTheme ) {
@@ -108,6 +153,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				}
 			} }
 			goToNextStep={ () => {
+				switchPaidDesignToDefault( mostRecentState );
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
 			step={ stepState }

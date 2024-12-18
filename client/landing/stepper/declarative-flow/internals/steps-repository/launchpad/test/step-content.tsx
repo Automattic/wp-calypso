@@ -81,6 +81,10 @@ jest.mock( '@wordpress/data', () => {
 							is_free: false,
 							product_slug: 'mydomain.com',
 						} ),
+						getSelectedDesign: () => ( {
+							slug: 'design-slug',
+							default: false,
+						} ),
 					};
 				}
 

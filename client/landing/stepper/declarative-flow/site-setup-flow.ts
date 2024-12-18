@@ -247,7 +247,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipSelectedDesign' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -721,8 +721,9 @@ const siteSetupFlow: Flow = {
 				}
 
 				// Complete the "Select a design" task only when there is a selected design.
+				const design_completed = selectedDesign?.default ? false : true;
 				await updateLaunchpadSettings( siteSlugOrId, {
-					checklist_statuses: { design_completed: true },
+					checklist_statuses: { design_completed },
 				} );
 
 				if ( selectedDesign?.is_virtual ) {
@@ -750,10 +751,10 @@ const siteSetupFlow: Flow = {
 					globalStyles: selectedGlobalStyles,
 				} )
 					.then( async ( theme: ActiveTheme ) => {
+						const design_completed = selectedDesign?.default ? false : true;
 						await updateLaunchpadSettings( siteSlugOrId, {
-							checklist_statuses: { design_completed: true },
+							checklist_statuses: { design_completed },
 						} );
-
 						return dispatch( setActiveTheme( siteId, theme ) );
 					} )
 					.catch( ( error: Error ) => {
