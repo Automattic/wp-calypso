@@ -35,6 +35,7 @@ export * from './queries/use-site-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
 export * from './queries/use-bulk-domain-update-status-query';
 export * from './site-reset';
+export { useNewsletterCategories } from './newsletter-categories';
 
 const { SubscriptionManager } = Reader;
 
