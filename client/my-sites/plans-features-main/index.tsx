@@ -177,6 +177,8 @@ export interface PlansFeaturesMainProps {
 	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
 	 */
 	deemphasizeFreePlan?: boolean;
+
+	selectedThemeType?: string;
 }
 
 const PlansFeaturesMain = ( {
@@ -220,6 +222,7 @@ const PlansFeaturesMain = ( {
 	showPlanTypeSelectorDropdown = false,
 	coupon,
 	onPlanIntervalUpdate,
+	selectedThemeType,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -250,6 +253,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
+		selectedThemeType,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -783,6 +787,7 @@ const PlansFeaturesMain = ( {
 					paidDomainName={ paidDomainName }
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
+					selectedThemeType={ selectedThemeType }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {

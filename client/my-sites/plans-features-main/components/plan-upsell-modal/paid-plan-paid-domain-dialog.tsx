@@ -1,5 +1,4 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -8,15 +7,15 @@ import {
 	ButtonContainer,
 	DialogContainer,
 	Heading,
+	SubHeading,
 	Row,
 	RowWithBorder,
-	SubHeading,
 	DomainName,
 } from './components';
 import PaidDomainSuggestedPlanSection from './components/paid-domain-suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
-export function FreePlanPaidDomainDialog( {
+export function PaidPlanPaidDomainDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
 	onFreePlanSelected,
@@ -27,38 +26,25 @@ export function FreePlanPaidDomainDialog( {
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
-			dialog_type: 'custom_domain_and_free_plan',
+			dialog_type: 'paid_plan_is_required',
 		} );
 	}, [] );
 
-	function handleFreePlanClick() {
+	function handleFreeDomainClick() {
 		setIsBusy( true );
-		onFreePlanSelected( true );
+		onFreePlanSelected();
 	}
+
+	const upsellDescription = translate(
+		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+	);
 
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
-				{ translate( 'A paid plan is required for a custom primary domain.' ) }
+				{ translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
-			<SubHeading id="plan-upsell-modal-description">
-				{ translate(
-					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual paid plan. For more details, please read {{a}}our support document{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/domains/set-a-primary-address/'
-									) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-					}
-				) }
-			</SubHeading>
+			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
 					<PaidDomainSuggestedPlanSection
@@ -70,20 +56,14 @@ export function FreePlanPaidDomainDialog( {
 				<Row>
 					<DomainName>
 						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
-						{ generatedWPComSubdomain.result &&
-							paidDomainName &&
-							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
-								args: {
-									paidDomainName,
-									wpcomFreeDomain: generatedWPComSubdomain.result.domain_name,
-								},
-								comment: '%(wpcomFreeDomain)s is a WordPress.com subdomain, e.g. foo.wordpress.com',
-							} ) }
+						{ generatedWPComSubdomain.result && (
+							<div>{ generatedWPComSubdomain.result.domain_name }</div>
+						) }
 					</DomainName>
 					<PlanButton
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
-						onClick={ handleFreePlanClick }
+						onClick={ handleFreeDomainClick }
 					>
 						{ translate( 'Continue with Free plan' ) }
 					</PlanButton>

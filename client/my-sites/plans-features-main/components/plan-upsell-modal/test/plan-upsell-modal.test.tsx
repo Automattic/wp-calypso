@@ -6,7 +6,7 @@ import { screen, renderHook } from '@testing-library/react';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
-	PAID_PLAN_IS_REQUIRED_DIALOG,
+	PAID_PLAN_PAID_DOMAIN_DIALOG,
 } from '..';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import { useModalResolutionCallback } from '../hooks/use-modal-resolution-callback';
@@ -65,7 +65,7 @@ describe( 'PlanUpsellModal tests', () => {
 			expect( screen.queryByText( /DIALOG/i ) ).toBeNull();
 		} );
 
-		test( 'A paid domain should show the PAID_PLAN_IS_REQUIRED_DIALOG without custom domains enabled for the Free plan', () => {
+		test( 'A paid domain should show the PAID_PLAN_PAID_DOMAIN_DIALOG without custom domains enabled for the Free plan', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain
 					flowName="onboarding"
@@ -74,7 +74,7 @@ describe( 'PlanUpsellModal tests', () => {
 				/>
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
-				PAID_PLAN_IS_REQUIRED_DIALOG
+				PAID_PLAN_PAID_DOMAIN_DIALOG
 			);
 		} );
 
@@ -124,7 +124,7 @@ describe( 'PlanUpsellModal tests', () => {
 			expect( queryByText4( /DIALOG/i ) ).toBeNull();
 		} );
 
-		test( 'A paid domain with Jetpack App intent should show the PAID_PLAN_IS_REQUIRED_DIALOG', () => {
+		test( 'A paid domain with Jetpack App intent should show the PAID_PLAN_PAID_DOMAIN_DIALOG', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain
 					selectedPlan={ PLAN_FREE }
@@ -133,7 +133,7 @@ describe( 'PlanUpsellModal tests', () => {
 				/>
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
-				PAID_PLAN_IS_REQUIRED_DIALOG
+				PAID_PLAN_PAID_DOMAIN_DIALOG
 			);
 		} );
 

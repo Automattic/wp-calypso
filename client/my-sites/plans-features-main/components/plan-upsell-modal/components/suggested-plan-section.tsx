@@ -1,51 +1,68 @@
-import { type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import styled from '@emotion/styled';
+import {
+	type PlanSlug,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import PlanUpsellButton from './plan-upsell-button';
-import { DomainName } from '.';
+import PlanItem from './plan-item';
+import { RowWithBorder } from '.';
 
-const FreeDomainText = styled.div`
-	font-size: 14px;
-	line-height: 20px;
-	letter-spacing: -0.15px;
-	color: var( --studio-green-50 );
-	margin-top: 4px;
-`;
-
-export default function SuggestedPlanSection( props: {
-	paidDomainName?: string;
-	onPlanSelected: ( planSlug: PlanSlug ) => void;
+interface Props {
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
 	isBusy: boolean;
-} ) {
+	onPlanSelected: ( planSlug: PlanSlug ) => void;
+}
+
+/**
+ * List the suggested plan for paid features.
+ */
+export default function SuggestedPlanSection( {
+	hidePersonalPlan,
+	hidePremiumPlan,
+	isBusy,
+	onPlanSelected,
+}: Props ) {
 	const translate = useTranslate();
-	const { paidDomainName, onPlanSelected, isBusy } = props;
+	const suggestedPlans = [
+		{
+			planSlug: PLAN_PERSONAL,
+			description: translate( 'Domain credit, some premium themes' ),
+			disabled: hidePersonalPlan,
+		},
+		{
+			planSlug: PLAN_PREMIUM,
+			description: translate( 'Domain credit, all premium themes' ),
+			disabled: hidePremiumPlan,
+		},
+		{
+			planSlug: PLAN_BUSINESS,
+			description: translate( 'Domain credit, plugins, all premium themes' ),
+		},
+		{
+			planSlug: PLAN_ECOMMERCE,
+			description: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+		},
+	];
 
 	return (
 		<>
-			{ paidDomainName && (
-				<DomainName>
-					<div>{ paidDomainName }</div>
-					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
-				</DomainName>
-			) }
-			<PlanUpsellButton
-				planSlug={ PLAN_PERSONAL }
-				onPlanSelected={ onPlanSelected }
-				isBusy={ isBusy }
-			/>
-			{ paidDomainName && (
-				<DomainName>
-					<div>{ paidDomainName }</div>
-					<FreeDomainText>
-						{ translate( 'Free for one year. Includes Premium themes.' ) }
-					</FreeDomainText>
-				</DomainName>
-			) }
-			<PlanUpsellButton
-				planSlug={ PLAN_PREMIUM }
-				onPlanSelected={ onPlanSelected }
-				isBusy={ isBusy }
-			/>
+			{ suggestedPlans
+				.filter( ( plan ) => ! plan.disabled )
+				.slice( 0, 2 )
+				.map( ( { planSlug, description } ) => (
+					<RowWithBorder>
+						<PlanItem
+							key={ planSlug }
+							planSlug={ planSlug as PlanSlug }
+							description={ description }
+							isBusy={ isBusy }
+							onPlanSelected={ onPlanSelected }
+						/>
+					</RowWithBorder>
+				) ) }
 		</>
 	);
 }
