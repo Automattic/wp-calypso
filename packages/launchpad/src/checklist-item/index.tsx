@@ -60,6 +60,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 		>
 			{ isPrimaryAction ? (
 				<ButtonElement
+					variant="primary"
 					className={ clsx( 'checklist-item__checklist-primary-button', buttonClassName ) }
 					data-task={ id }
 					onClick={ onClickHandler }
