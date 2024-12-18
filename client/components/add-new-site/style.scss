@@ -42,6 +42,9 @@
 
 	.add-new-site__popover-column {
 		width: 260px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 }
 
@@ -49,7 +52,6 @@
 	color: var(--color-accent-40);
 	font-size: rem(12px);
 	font-weight: 500;
-	margin-block-end: 8px;
 }
 
 button, a {
@@ -82,12 +84,12 @@ button, a {
 
 		&.is-banner {
 			flex-direction: column;
-			padding-top: 0;
 			gap: 4px;
 			background-color: var(--color-neutral-0);
 
 			@include break-large {
 				padding: 16px;
+				padding-top: 0;
 			}
 
 			.add-new-site__popover-button-icon {
