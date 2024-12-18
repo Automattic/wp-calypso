@@ -100,7 +100,7 @@ describe( 'EditContactInfoPageContent', () => {
 		);
 	} );
 
-	it( 'should render the edit form', () => {
+	it( 'should render the edit form when the user can edit', () => {
 		const { container } = renderComponent( {
 			domains: [
 				buildDomainResponse( {
