@@ -135,7 +135,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				<CardInfo
 					title={ translate( 'Estimated amount' ) }
 					wrapperRef={ pendingCommissionRef }
-					footerText={ translate( 'Commissions expected' ) }
+					footerText={ translate( 'Next estimated payout amount' ) }
 				>
 					<div className="consolidated-view__popover-content">
 						{ translate(
