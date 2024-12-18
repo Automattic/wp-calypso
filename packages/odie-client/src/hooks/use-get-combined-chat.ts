@@ -87,6 +87,8 @@ export const useGetCombinedChat = (
 		odieId,
 		currentSupportInteraction,
 		shouldUseHelpCenterExperience,
+		canConnectToZendesk,
+		getZendeskConversation,
 	] );
 
 	return { mainChatState, setMainChatState };
