@@ -111,3 +111,33 @@ export const itemLinkMatches = ( path, currentPath ) => {
 
 	return fragmentIsEqual( path, currentPath, 1 );
 };
+
+/**
+ * Checks if the current menu item should be selected for a given path.
+ * @param {Object} menuItem The current menu item.
+ * @param {string} path The path to check against.
+ * @param {string} site The current site.
+ * @param {boolean} isP2Site True if this site is a P2, false otherwise.
+ * @returns {boolean} True if the current menu item should be selected, false otherwise.
+ */
+export const isItemSelected = ( menuItem, path, site, isP2Site = false ) => {
+	let isSelected = menuItem?.url && itemLinkMatches( menuItem.url, path );
+
+	if (
+		isSelected ||
+		! [ 'sites', 'sites-p2' ].includes( menuItem.slug ) ||
+		! site ||
+		path.startsWith( '/domains' )
+	) {
+		return isSelected;
+	}
+
+	// Ensure the Sites and P2s icons are selected as appropriate.
+	if ( menuItem.slug === 'sites' && ! isP2Site ) {
+		isSelected = true;
+	} else if ( menuItem.slug === 'sites-p2' && isP2Site ) {
+		isSelected = true;
+	}
+
+	return isSelected;
+};

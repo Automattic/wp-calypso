@@ -13,7 +13,7 @@ import {
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
-import { itemLinkMatches } from './utils';
+import { isItemSelected } from './utils';
 import 'calypso/state/admin-menu/init';
 
 import './style.scss';
@@ -43,12 +43,7 @@ export const MySitesSidebarUnifiedBody = ( {
 		<>
 			{ menuItems &&
 				menuItems.map( ( item, i ) => {
-					const isSelected =
-						( item?.url && itemLinkMatches( item.url, path ) ) ||
-						// Keep the Sites icon selected when there is a selected site.
-						( item.slug === 'sites' && site && ! isP2Site && ! path.startsWith( '/p2s' ) ) ||
-						// Keep the P2s icon selected when there is a selected site and that site is a P2.
-						( item.slug === 'sites-p2' && site && isP2Site && ! path.startsWith( '/sites' ) );
+					const isSelected = isItemSelected( item, path, site, isP2Site );
 
 					if ( 'current-site' === item?.type ) {
 						return (
