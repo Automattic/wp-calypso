@@ -33,7 +33,9 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 	} );
 };
 
-export const AttachmentButton: React.FC = () => {
+export const AttachmentButton: React.FC< {
+	attachmentButtonRef?: React.RefObject< HTMLElement >;
+} > = ( { attachmentButtonRef } ) => {
 	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
