@@ -65,7 +65,7 @@ describe( 'Onboarding Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( '/start/do-it-for-me' );
 		} );
 
-		it( 'should navigate to domains step for other intents', async () => {
+		it( 'should navigate to designSetup step for other intents', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			runUseStepNavigationSubmit( {
@@ -75,7 +75,7 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
-			expect( getFlowLocation().path ).toBe( '/domains' );
+			expect( getFlowLocation().path ).toBe( '/designSetup' );
 		} );
 	} );
 } );
