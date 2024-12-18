@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { Children, ReactNode } from 'react';
-import PendingPaymentNotification from '../../a8c-for-agencies/components/pending-payment-notification';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import LayoutNavigation from './nav';
 
 type Props = {
