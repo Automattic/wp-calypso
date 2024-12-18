@@ -202,6 +202,7 @@ export class FullPostView extends Component {
 		if ( this.scrollableContainer ) {
 			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
 		}
+		this.clearResetScrollTimeout();
 	}
 
 	setReadingStartTime = () => {
@@ -266,11 +267,21 @@ export class FullPostView extends Component {
 				context: 'full-post',
 				engagement_time: engagementTime / 1000,
 			} );
+			// check if the user exited early
+			this.checkFastExit( post, engagementTime );
 		}
 	}
 
+	clearResetScrollTimeout = () => {
+		if ( this.resetScrollTimeout ) {
+			clearTimeout( this.resetScrollTimeout );
+			this.resetScrollTimeout = null;
+		}
+	};
+
 	resetScroll = () => {
-		setTimeout( () => {
+		this.clearResetScrollTimeout();
+		this.resetScrollTimeout = setTimeout( () => {
 			if ( this.scrollableContainer ) {
 				this.scrollableContainer.scrollTo( {
 					top: 0,
@@ -321,6 +332,38 @@ export class FullPostView extends Component {
 				context: 'full-post',
 				scroll_depth: maxScrollDepth,
 			} );
+		}
+	};
+
+	trackFastExit = ( post, elapsedSeconds, fastExitThreshold ) => {
+		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
+			context: 'full-post',
+			estimated_reading_time: post.minutes_to_read,
+			elapsed_seconds: elapsedSeconds,
+			fast_exit_threshold: fastExitThreshold,
+		} );
+	};
+
+	checkFastExit = ( post = null, engagementTime ) => {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if (
+			! this.readingStartTime ||
+			! post?.ID ||
+			! post?.minutes_to_read ||
+			post?.minutes_to_read === 0
+		) {
+			return;
+		}
+
+		const elapsedSeconds = engagementTime / 1000;
+		const estimatedSecondsToRead = post.minutes_to_read * 60;
+		const fastExitThreshold = estimatedSecondsToRead * 0.25; // Define a "fast exit" as 25% of estimated time
+
+		if ( elapsedSeconds < fastExitThreshold ) {
+			this.trackFastExit( post, elapsedSeconds, fastExitThreshold );
 		}
 	};
 

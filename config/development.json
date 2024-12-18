@@ -238,7 +238,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"untangling/hosting-menu": true,
+		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
 		"videomaker-trial": true,
 		"woop": false,

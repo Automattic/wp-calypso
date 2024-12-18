@@ -6,10 +6,10 @@ import {
 } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
+import * as AddOns from '../../add-ons';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
 import { COST_OVERRIDE_REASONS } from '../constants';
-import type { AddOnMeta } from '../../add-ons/types';
 
 export type UseCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
@@ -46,11 +46,6 @@ interface Props {
 	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 
 	/**
-	 * `storageAddOmns` TODO: should become a required prop.
-	 */
-	storageAddOns: ( AddOnMeta | null )[] | null;
-
-	/**
 	 * Whether to include discounts from plan proration.
 	 * This is applicable only if a siteId is passed to this hook.
 	 * If true, the pricing includes discounts from upgrade credits.
@@ -84,7 +79,6 @@ const usePricingMetaForGridPlans = ( {
 	siteId,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-	storageAddOns,
 	withProratedDiscounts,
 	reflectStorageSelectionInPlanPrices = false,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
@@ -92,6 +86,7 @@ const usePricingMetaForGridPlans = ( {
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
 	const sitePlans = Plans.useSitePlans( { coupon, siteId } );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {

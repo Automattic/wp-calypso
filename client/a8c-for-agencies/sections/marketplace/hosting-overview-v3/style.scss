@@ -1,7 +1,7 @@
 $background-color: #05374A;
 
-.hosting-overview-v3.main.a4a-layout {
-	.a4a-layout__body {
+.hosting-overview-v3.main.multi-sites-dashboard-layout {
+	.multi-sites-dashboard-layout__body {
 		max-height: auto;
 		padding: 0;
 
@@ -12,13 +12,13 @@ $background-color: #05374A;
 		}
 	}
 
-	.a4a-layout__container {
+	.multi-sites-dashboard-layout__container {
 		height: auto;
 		overflow: auto;
 		display: block;
 	}
 
-	.a4a-layout__top-wrapper {
+	.multi-sites-dashboard-layout__top-wrapper {
 		max-height: auto;
 		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
         border-block-end: none;
@@ -28,7 +28,7 @@ $background-color: #05374A;
 		z-index: 100;
     }
 
-	.a4a-layout__header-breadcrumb {
+	.multi-sites-dashboard-layout__header-breadcrumb {
 		color: var(--color-neutral-40);
 		fill: var(--color-neutral-40);
 
@@ -37,7 +37,7 @@ $background-color: #05374A;
 		}
 	}
 
-	.a4a-layout__header-actions {
+	.multi-sites-dashboard-layout__header-actions {
 		background-color: var(--color-surface);
 		border-radius: 8px; /* stylelint-disable-line */
 		padding: 8px 16px;

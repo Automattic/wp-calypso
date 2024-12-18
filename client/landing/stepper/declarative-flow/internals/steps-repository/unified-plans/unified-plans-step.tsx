@@ -2,17 +2,19 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
+import { FREE_THEME } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
 	isOnboardingGuidedFlow,
+	ONBOARDING_FLOW,
 	ONBOARDING_GUIDED_FLOW,
 } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
+import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -31,7 +33,7 @@ import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-
 import { SurveyData } from 'calypso/signup/steps/initial-intent/types';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
@@ -40,8 +42,10 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { StepState } from 'calypso/state/signup/progress/schema';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './unified-plans-step-styles.scss';
+import type { SiteDetails } from '@automattic/data-stores';
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
@@ -92,6 +96,7 @@ export interface UnifiedPlansStepProps {
 		username?: string | null;
 		coupon?: string | null;
 		segmentationSurveyAnswers?: SurveyData;
+		selectedThemeType?: string;
 	};
 	onPlanIntervalUpdate: ( path: string ) => void;
 
@@ -218,7 +223,7 @@ function UnifiedPlansStep( {
 	shouldHideNavButtons,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
-	const dispatch = useDispatch();
+	const dispatch = reduxUseDispatch();
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
@@ -241,6 +246,20 @@ function UnifiedPlansStep( {
 	const isDomainOnlySite = useSelector( ( state ) =>
 		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
 	);
+
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+
+	const {
+		siteUrl,
+		domainItem,
+		siteTitle,
+		username,
+		coupon,
+		segmentationSurveyAnswers,
+		selectedThemeType,
+	} = signupDependencies;
+
+	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -273,6 +292,10 @@ function UnifiedPlansStep( {
 
 	const handleUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			if ( isPaidTheme && cartItems === null ) {
+				setSelectedDesign( null );
+			}
+
 			buildUpgradeFunction(
 				{
 					additionalStepData,
@@ -443,7 +466,7 @@ function UnifiedPlansStep( {
 			};
 
 			if (
-				( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
+				( ONBOARDING_FLOW === flowName || 'onboarding-pm' === flowName ) &&
 				undefined === previousStep?.providedDependencies?.domainItem
 			) {
 				backUrl = getStepUrl( flowName, 'domains' );
@@ -455,13 +478,10 @@ function UnifiedPlansStep( {
 		intervalType ||
 		getIntervalType(
 			path,
-			flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
+			flowName === ONBOARDING_FLOW && longerPlanTermDefaultExperiment?.term
 				? longerPlanTermDefaultExperiment.term
 				: undefined
 		);
-
-	const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
-		signupDependencies;
 
 	const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
@@ -484,7 +504,8 @@ function UnifiedPlansStep( {
 	}
 
 	const deemphasizeFreePlan =
-		( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
+		( [ ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW ].includes( flowName ) &&
+			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
 	return (
@@ -524,7 +545,7 @@ function UnifiedPlansStep( {
 									plansWithScroll={ isDesktop }
 									intent={ intent || surveyedIntent }
 									flowName={ flowName }
-									hideFreePlan={ hideFreePlan }
+									hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }
 									hidePremiumPlan={ hidePremiumPlan }
 									hideEcommercePlan={ shouldHideEcommercePlan() }
@@ -536,6 +557,7 @@ function UnifiedPlansStep( {
 										'onboarding/interval-dropdown'
 									) }
 									onPlanIntervalUpdate={ onPlanIntervalUpdate }
+									selectedThemeType={ selectedThemeType }
 								/>
 							</div>
 						}
