@@ -29,7 +29,7 @@ window.AppBoot = async () => {
 	const experimentManifest = getManifestFromUrl();
 
 	try {
-		const assignment = await loadExperimentAssignment( experimentManifest.experiment_explat_id );
+		const assignment = await loadExperimentAssignment( experimentManifest.experiment_explat_name );
 
 		// Redirect to control for null assignment.
 		if ( ! assignment.variationName ) {

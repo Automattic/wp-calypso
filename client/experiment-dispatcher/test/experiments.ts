@@ -14,6 +14,15 @@ describe( 'Checking experiments validity', () => {
 			).toBe( 1 );
 		} );
 
+		it( `experiment_explat_name should be defined and unique: ${ slug }.`, () => {
+			expect( experimentValue.experiment_explat_id ).toBeDefined();
+			expect(
+				experiments.filter(
+					( [ , e ] ) => e.experiment_explat_name === experimentValue.experiment_explat_name
+				).length
+			).toBe( 1 );
+		} );
+
 		it( `experiment should have at least two variants: ${ slug }.`, () => {
 			expect( Object.keys( experimentValue.variants ).length ).toBeGreaterThanOrEqual( 2 );
 		} );

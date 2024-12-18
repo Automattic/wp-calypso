@@ -33,6 +33,10 @@ export type ExperimentManifest = {
 	 */
 	experiment_explat_id: string;
 	/**
+	 * The experiment slug as defined in ExPlat.
+	 */
+	experiment_explat_name: string;
+	/**
 	 * The variants of the experiment.
 	 */
 	variants: Variants;
