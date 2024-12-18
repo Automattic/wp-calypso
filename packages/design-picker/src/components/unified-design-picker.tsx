@@ -206,7 +206,7 @@ const DesignCardGroup = ( {
 }: DesignCardGroup ) => {
 	const translate = useTranslate();
 	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
-	const collapsedDesignCount = 9;
+	const collapsedDesignCount = 6;
 	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
 
 	const content = (
