@@ -4,14 +4,9 @@ import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	ButtonContainer,
-	DialogContainer,
-	Heading,
-	Row,
-	RowWithBorder,
-	DomainName,
-} from './components';
+import { getHidePlanPropsBasedOnThemeType } from '../utils/utils';
+import { ButtonContainer, DialogContainer, Heading, Row, RowWithBorder } from './components';
+import { PlanName, PlanDescription } from './components/plan-item';
 import SuggestedPlanSection from './components/suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
@@ -25,14 +20,15 @@ export const PaidPlanIsRequiredDialog = ( {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType );
 
 	const getUpsellTitle = () => {
 		if ( isPaidTheme && paidDomainName ) {
-			return translate( 'Custom domains and paid themes are only available with a paid plan' );
+			return translate( 'Custom domains and premium themes are only available with a paid plan' );
 		}
 
 		if ( isPaidTheme ) {
-			return translate( 'Paid themes are only available with a paid plan' );
+			return translate( 'Premium themes are only available with a paid plan' );
 		}
 
 		return translate( 'Custom domains are only available with a paid plan' );
@@ -57,18 +53,23 @@ export const PaidPlanIsRequiredDialog = ( {
 			<ButtonContainer>
 				<RowWithBorder>
 					<SuggestedPlanSection
+						{ ...hidePlanProps }
 						paidDomainName={ paidDomainName }
 						isBusy={ isBusy }
 						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>
-					<DomainName>
-						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
-						{ generatedWPComSubdomain.result && (
-							<div>{ generatedWPComSubdomain.result.domain_name }</div>
-						) }
-					</DomainName>
+					<div>
+						<PlanName>{ translate( 'Free' ) }</PlanName>
+						<PlanDescription>
+							{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
+							{ generatedWPComSubdomain.result && (
+								<div>{ generatedWPComSubdomain.result.domain_name }</div>
+							) }
+							{ translate( 'Switch to our free default theme' ) }
+						</PlanDescription>
+					</div>
 					<PlanButton
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }

@@ -12,7 +12,7 @@ import {
 	RowWithBorder,
 	DomainName,
 } from './components';
-import SuggestedPlanSection from './components/suggested-plan-section';
+import PaidDomainSuggestedPlanSection from './components/paid-domain-suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
 export function PaidPlanPaidDomainDialog( {
@@ -47,7 +47,7 @@ export function PaidPlanPaidDomainDialog( {
 			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
-					<SuggestedPlanSection
+					<PaidDomainSuggestedPlanSection
 						paidDomainName={ paidDomainName }
 						isBusy={ isBusy }
 						onPlanSelected={ onPlanSelected }
