@@ -376,7 +376,6 @@ const SitesDashboard = ( {
 			) }
 			wide
 			title={ selectedSite ? null : dashboardTitle }
-			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
 

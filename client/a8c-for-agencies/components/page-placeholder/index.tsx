@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import Layout from 'calypso/layout/multi-sites-dashboard';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
