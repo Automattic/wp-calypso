@@ -109,7 +109,7 @@ export interface APIProductFamilyProduct {
 	currency: string;
 	amount: string;
 	price_interval: string;
-	price_per_unit: number; // price per day in cents
+	price_per_unit?: number; // price per day in cents
 	price_per_unit_display?: string;
 	family_slug: string;
 	supported_bundles: APIProductFamilyProductBundlePrice[];
