@@ -82,33 +82,16 @@
 /packages/languages @Automattic/i18n
 
 # Domains
-/client/components/data/domain-management @Automattic/nomado
-/client/components/data/query-countries/domains.jsx @Automattic/nomado
-/client/components/domains @Automattic/nomado
 /client/data/domains @Automattic/nomado
-/client/document/domains-landing.jsx @Automattic/nomado
-/client/landing/domains @Automattic/nomado
-/client/lib/domains @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domain-mapping-details.jsx @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domain-registration-details.jsx @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domains @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-contact-details.tsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-refund-policy.jsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-registration-agreement.jsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-registration-hsts.jsx @Automattic/nomado
-/client/my-sites/current-site/domain-warnings.jsx @Automattic/nomado
-/client/my-sites/domains @Automattic/nomado
-/client/signup/steps/domains @Automattic/nomado
-/client/signup/steps/site-or-domain/domain-image.jsx @Automattic/nomado
 /client/state/data-layer/wpcom/domains @Automattic/nomado
 /client/state/domains @Automattic/nomado
 /client/state/sites/domains @Automattic/nomado
 /packages/data-stores/src/domain-suggestions @Automattic/nomado
-/packages/domain-picker @Automattic/nomado
 /packages/wpcom.js/src/lib/domain.dns.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domain.email.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domain.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech-decepticons
