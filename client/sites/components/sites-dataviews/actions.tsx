@@ -239,7 +239,9 @@ export const isActionEligible = (
 		case 'delete-site':
 			return ( site: SiteExcerptData ) => {
 				const canManageOptions = capabilities[ site.ID ]?.manage_options;
-				return ! site.is_deleted && canManageOptions && site.jetpack;
+				return (
+					! site.is_deleted && canManageOptions && ( ! site.jetpack || !! site.is_wpcom_atomic )
+				);
 			};
 		default:
 			return () => true;
@@ -569,7 +571,7 @@ export function useActions( {
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					page( `/sites/settings/administration/${ site.slug }/delete-site` );
+					page( `/settings/delete-site/${ site.slug }` );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
 				},
 				isEligible: isActionEligible( 'delete-site', capabilities ),
