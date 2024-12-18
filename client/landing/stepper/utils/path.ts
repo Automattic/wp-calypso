@@ -98,6 +98,7 @@ export const useLoginUrl = ( {
 	extra?: Record< string, string | number >;
 } ): string => {
 	const currentLocale = useFlowLocale();
+
 	return getLoginUrl( {
 		variationName,
 		redirectTo,
