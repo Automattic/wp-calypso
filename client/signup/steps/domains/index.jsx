@@ -92,6 +92,7 @@ export class RenderDomainsStep extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
+		goBack: PropTypes.func,
 		isDomainOnly: PropTypes.bool.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
@@ -103,7 +104,6 @@ export class RenderDomainsStep extends Component {
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
 		recordTracksEvent: PropTypes.func,
-		navigation: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -1303,7 +1303,7 @@ export class RenderDomainsStep extends Component {
 			userSiteCount,
 			previousStepName,
 			useStepperWrapper,
-			navigation: { goBack },
+			goBack,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
