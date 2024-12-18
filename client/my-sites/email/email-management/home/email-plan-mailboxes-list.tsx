@@ -1,4 +1,5 @@
 import { Badge, MaterialIcon } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
@@ -38,6 +39,7 @@ function EmailPlanMailboxesList( {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
+	const isDesktopResolution = useDesktopBreakpoint();
 	const isNoMailboxes = ! mailboxes || mailboxes.length < 1;
 	const isAccountWarningPresent = !! account?.warnings.length;
 	const isGoogleConfiguring =
@@ -96,7 +98,10 @@ function EmailPlanMailboxesList( {
 						</div>
 						{ context === 'domains' && (
 							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-								<EmailForwardSecondaryDetails mailbox={ mailbox } hideIcon />
+								<EmailForwardSecondaryDetails
+									mailbox={ mailbox }
+									hideIcon={ isDesktopResolution }
+								/>
 							</div>
 						) }
 						{ isEmailUserAdmin( mailbox ) && (
