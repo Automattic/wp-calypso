@@ -5,6 +5,7 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
+	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -1349,6 +1350,11 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingGuidedFlow( flowName ) ) {
 			// Let the framework decide the back url.
 			backUrl = undefined;
+		} else if ( isOnboardingFlow( flowName ) ) {
+			const searchParams = new URLSearchParams( window.location.search );
+			const existingParams = Object.fromEntries( searchParams.entries() );
+			backUrl = getStepUrl( flowName, 'designSetup', null, this.getLocale(), existingParams );
+			backLabelText = translate( 'Back' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
