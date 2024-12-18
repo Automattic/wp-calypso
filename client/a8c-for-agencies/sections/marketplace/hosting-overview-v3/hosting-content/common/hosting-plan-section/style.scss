@@ -24,6 +24,16 @@
 	&:has( .hosting-plan-section__aside ) {
 		@include break-wide {
 			grid-template-columns: 2fr 1fr;
+
+			.hosting-plan-section__main {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@include break-huge {
+			.hosting-plan-section__main {
+				grid-template-columns: 400px 1fr;
+			}
 		}
 	}
 }
@@ -43,14 +53,12 @@
 		padding: 32px;
 	}
 
-	@include break-huge {
-		grid-template-columns: 400px 2fr;
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
 	}
 
-	&:has( .hosting-plan-section__aside ) {
-		@include break-huge {
-			grid-template-columns: 300px 1fr;
-		}
+	@include break-huge {
+		grid-template-columns: 400px 2fr;
 	}
 }
 

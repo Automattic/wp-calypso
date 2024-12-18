@@ -1,7 +1,8 @@
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
 import useWPCOMDiscountTiers from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-wpcom-discount-tiers';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
@@ -44,6 +45,8 @@ export default function WPCOMPlanSelector( {
 
 	const discountTiers = useWPCOMDiscountTiers();
 
+	const [ isCompact, setIsCompact ] = useState( false );
+
 	const discount = useMemo( () => {
 		if ( isReferralMode ) {
 			return discountTiers[ 0 ].discount;
@@ -72,8 +75,29 @@ export default function WPCOMPlanSelector( {
 		} );
 	}, [ planName, quantity, isReferralMode, translate ] );
 
+	const containerRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( ! containerRef.current ) {
+			return;
+		}
+
+		const resizeObserver = new ResizeObserver( ( entry ) => {
+			setIsCompact( entry[ 0 ].contentRect.width < 300 );
+		} );
+
+		resizeObserver.observe( containerRef.current );
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, [ containerRef ] );
+
 	return (
-		<div className="wpcom-plan-selector__details">
+		<div
+			className={ clsx( 'wpcom-plan-selector__details', { 'is-compact': isCompact } ) }
+			ref={ containerRef }
+		>
 			<div className="wpcom-plan-selector__top">
 				{ ownedPlans > 0 && (
 					<div className="wpcom-plan-selector__owned-plan">

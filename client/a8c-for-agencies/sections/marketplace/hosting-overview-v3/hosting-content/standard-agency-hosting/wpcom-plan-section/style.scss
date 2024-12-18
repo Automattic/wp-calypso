@@ -94,6 +94,11 @@
 	height: 100%;
 }
 
+.wpcom-plan-selector__details.is-compact .wpcom-plan-selector__cta-component {
+	flex-direction: column;
+	align-items: stretch;
+}
+
 
 .wpcom-plan-selector__details.is-placeholder {
 	display: flex;
