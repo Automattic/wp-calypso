@@ -786,13 +786,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
-		const themeName = selectedDesign?.title || '';
 		const text =
 			action === upgradePlan && ! isGoalsAtFrontExperiment
 				? translate( 'Unlock theme' )
-				: translate( 'Use %(themeName)s', {
-						args: { themeName },
-				  } );
+				: translate( 'Continue' );
 
 		return (
 			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
