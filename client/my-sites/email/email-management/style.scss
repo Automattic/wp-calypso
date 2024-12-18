@@ -657,3 +657,35 @@
 		}
 	}
 }
+
+.email-plan-mailboxes-list__email-upgrade-notice {
+	margin-top: 1rem;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	.components-notice__content {
+		display: flex;
+		margin-left: 0.25rem;
+		margin-right: 0.75rem;
+		align-items: center;
+	}
+
+	p {
+		margin: 0;
+		font-size: 0.75rem;
+		color: var(--studio-gray-70);
+	}
+
+	.icon {
+		svg {
+			fill: #fff;
+			padding: 4px;
+			border-radius: 100%;
+			background: var(--color-accent-60);
+		}
+	}
+
+	.content {
+		flex: 1 1 auto;
+		margin: 0 0.75rem;
+	}
+}
