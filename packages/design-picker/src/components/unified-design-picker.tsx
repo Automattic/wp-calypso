@@ -176,7 +176,6 @@ interface DesignCardGroup {
 	designs: Design[];
 	locale: string;
 	category?: string | null;
-	categoryName?: string;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
@@ -192,7 +191,6 @@ const DesignCardGroup = ( {
 	title,
 	designs,
 	category,
-	categoryName,
 	locale,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
@@ -204,14 +202,9 @@ const DesignCardGroup = ( {
 	onPreview,
 	getBadge,
 }: DesignCardGroup ) => {
-	const translate = useTranslate();
-	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
-	const collapsedDesignCount = 6;
-	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
-
 	const content = (
 		<div className="design-picker__grid">
-			{ visibleDesigns.map( ( design, index ) => {
+			{ designs.map( ( design, index ) => {
 				return (
 					<DesignCard
 						key={ design.recipe?.slug ?? design.slug ?? index }
@@ -236,24 +229,16 @@ const DesignCardGroup = ( {
 		return null;
 	}
 
+	if ( ! title || designs.length === 0 ) {
+		return content;
+	}
+
 	return (
 		<div className="design-picker__design-card-group">
-			{ title && designs.length > 0 && (
-				<div className="design-picker__design-card-title">
-					{ title } ({ designs.length })
-				</div>
-			) }
+			<div className="design-picker__design-card-title">
+				{ title } ({ designs.length })
+			</div>
 			{ content }
-			{ isCollapsed && designs.length > collapsedDesignCount && (
-				<div className="design-picker__design-card-group-footer">
-					<Button onClick={ () => setIsCollapsed( false ) }>
-						{ translate( 'Show all %s themes', {
-							args: categoryName,
-							comment: '%s will be a name of the theme category. e.g. Blog.',
-						} ) }
-					</Button>
-				</div>
-			) }
 		</div>
 	);
 };
@@ -448,7 +433,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								: ''
 						}
 						category={ categorySlug }
-						categoryName={ isMultiFilterEnabled ? getCategoryName( categorySlug ) : '' }
 						designs={ categoryDesigns }
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
