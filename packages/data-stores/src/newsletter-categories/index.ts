@@ -28,14 +28,6 @@ export const getNewsletterCategoriesKey = ( siteId?: string | number ) =>
 	[ 'newsletter-categories', siteId ] as const; // Make tuple readonly for better caching
 
 /**
- * Converts API response to correct data structure.
- */
-const convertResponse = ( response: NewsletterCategoryResponse ): NewsletterCategories => ( {
-	enabled: response.enabled,
-	newsletterCategories: response.newsletter_categories,
-} );
-
-/**
  * React hook to fetch newsletter categories for a site.
  */
 export const useNewsletterCategories = ( {
@@ -52,7 +44,10 @@ export const useNewsletterCategories = ( {
 					apiVersion: '2',
 					apiNamespace: 'wpcom/v2',
 				} );
-				return convertResponse( response );
+				return {
+					enabled: response.enabled,
+					newsletterCategories: response.newsletter_categories,
+				};
 			} catch ( e ) {
 				return {
 					enabled: false,
