@@ -1,7 +1,5 @@
-import {
-	TooltipContent,
-	TrendComparison,
-} from '@automattic/components/src/highlight-cards/count-comparison-card';
+import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
+import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import Popover from '@automattic/components/src/popover';
 import clsx from 'clsx';
@@ -111,7 +109,11 @@ class StatsTabsTab extends Component {
 								position="bottom right"
 								context={ this.tooltipRef.current }
 							>
-								<TooltipContent count={ value } previousCount={ previousValue } />
+								<TooltipContent
+									value={ value }
+									label={ label.toLocaleLowerCase() }
+									previousValue={ previousValue }
+								/>
 							</Popover>
 						</div>
 					) }

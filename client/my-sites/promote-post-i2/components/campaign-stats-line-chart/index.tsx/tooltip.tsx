@@ -28,6 +28,7 @@ export function tooltip(
 					const { left } = u.over.getBoundingClientRect();
 					const mouseLeft = e.clientX - left;
 					const activePoint = u.posToIdx( mouseLeft );
+					const scaleFactor = window.devicePixelRatio || 1;
 
 					// If a point is active, update the tooltip
 					if ( activePoint >= 0 && tooltipRef.current ) {
@@ -44,9 +45,9 @@ export function tooltip(
 								return;
 							}
 
-							// Find where that is on the page
-							const xPos = Math.round( u.valToPos( xPoint, 'x', true ) );
-							const yPos = Math.round( u.valToPos( yPoint, 'y', true ) );
+							// Find where that is on the page, adjust for High DPI
+							const xPos = Math.round( u.valToPos( xPoint, 'x', true ) ) / scaleFactor;
+							const yPos = Math.round( u.valToPos( yPoint, 'y', true ) ) / scaleFactor;
 
 							// Get the date / data value
 							const date = u.data[ 0 ][ activePoint ];

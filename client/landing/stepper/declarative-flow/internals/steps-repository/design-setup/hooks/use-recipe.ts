@@ -12,8 +12,13 @@ import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/da
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
+// The `currentSearchParams` parameter from the callback of the `setSearchParams` function
+// might not have the latest query parameter on multiple calls at the same time.
+const makeSearchParams = (
+	callback: ( currentSearchParams: URLSearchParams ) => URLSearchParams
+) => callback( new URLSearchParams( window.location.search ) );
+
 const useRecipe = (
-	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
 	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	pickUnlistedDesign: ( theme: string ) => void,
@@ -22,17 +27,22 @@ const useRecipe = (
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isPreviewingDesign = !! searchParams.get( 'theme' );
-	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
-		const { getSelectedDesign, getSelectedStyleVariation } = select(
-			ONBOARD_STORE
-		) as OnboardSelect;
-		return {
-			selectedDesign: getSelectedDesign(),
-			selectedStyleVariation: getSelectedStyleVariation(),
-		};
-	}, [] );
+	const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
+		( select ) => {
+			const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
+				ONBOARD_STORE
+			) as OnboardSelect;
+			return {
+				selectedDesign: getSelectedDesign(),
+				selectedStyleVariation: getSelectedStyleVariation(),
+				selectedGlobalStyles: getSelectedGlobalStyles(),
+			};
+		},
+		[]
+	);
 
-	const { setSelectedDesign, setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setSelectedStyleVariation, setSelectedGlobalStyles } =
+		useDispatch( ONBOARD_STORE );
 
 	const [ selectedColorVariation, setSelectedColorVariation ] =
 		useState< GlobalStylesObject | null >( null );
@@ -46,8 +56,6 @@ const useRecipe = (
 		!! selectedColorVariation,
 		!! selectedFontVariation,
 	].filter( Boolean ).length;
-
-	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
 	/**
 	 * Get the preselect data only when mounting and ignore any changes later.
@@ -73,11 +81,11 @@ const useRecipe = (
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
-	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
+	const colorVariations = useColorPaletteVariations( stylesheet, {
 		enabled: !! preselectedColorVariationTitle,
 	} );
 
-	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
+	const fontVariations = useFontPairingVariations( stylesheet, {
 		enabled: !! preselectedFontVariationTitle,
 	} );
 
@@ -92,22 +100,24 @@ const useRecipe = (
 		}
 
 		if ( theme !== searchParams.get( 'theme' ) ) {
-			setSearchParams( ( currentSearchParams ) => {
-				if ( theme ) {
-					currentSearchParams.set( 'theme', theme );
-				} else {
-					currentSearchParams.delete( 'theme' );
-				}
+			setSearchParams(
+				makeSearchParams( ( currentSearchParams ) => {
+					if ( theme ) {
+						currentSearchParams.set( 'theme', theme );
+					} else {
+						currentSearchParams.delete( 'theme' );
+					}
 
-				return currentSearchParams;
-			} );
+					return currentSearchParams;
+				} )
+			);
 		}
 	};
 
 	const handleSelectedStyleVariationChange = ( variation?: StyleVariation ) => {
 		setSelectedStyleVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation ) {
 					currentSearchParams.set( 'style_variation', variation.slug );
 				} else {
@@ -115,7 +125,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};
@@ -123,7 +133,7 @@ const useRecipe = (
 	const handleSelectedColorVariationChange = ( variation: GlobalStyles | null ) => {
 		setSelectedColorVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation && variation.title ) {
 					currentSearchParams.set( 'color_variation_title', variation.title );
 				} else {
@@ -131,7 +141,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};
@@ -139,7 +149,7 @@ const useRecipe = (
 	const handleSelectedFontVariationChange = ( variation: GlobalStyles | null ) => {
 		setSelectedFontVariation( variation );
 		setSearchParams(
-			( currentSearchParams ) => {
+			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation && variation.title ) {
 					currentSearchParams.set( 'font_variation_title', variation.title );
 				} else {
@@ -147,7 +157,7 @@ const useRecipe = (
 				}
 
 				return currentSearchParams;
-			},
+			} ),
 			{ replace: true }
 		);
 	};
@@ -175,7 +185,7 @@ const useRecipe = (
 		handleSelectedStyleVariationChange();
 		handleSelectedColorVariationChange( null );
 		handleSelectedFontVariationChange( null );
-		setGlobalStyles( null );
+		setSelectedGlobalStyles( undefined );
 	};
 
 	// Unset the selected design, thus restarting the design picking experience.
@@ -250,14 +260,14 @@ const useRecipe = (
 		selectedColorVariation,
 		selectedFontVariation,
 		numOfSelectedGlobalStyles,
-		globalStyles,
+		globalStyles: selectedGlobalStyles,
 		previewDesign,
 		previewDesignVariation,
 		setSelectedDesign,
 		setSelectedStyleVariation,
 		setSelectedColorVariation: handleSelectedColorVariationChange,
 		setSelectedFontVariation: handleSelectedFontVariationChange,
-		setGlobalStyles,
+		setGlobalStyles: setSelectedGlobalStyles,
 		resetPreview,
 	};
 };

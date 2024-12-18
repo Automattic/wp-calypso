@@ -16,14 +16,14 @@ import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter, matchPath } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
-import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -43,6 +43,7 @@ import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
+import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -78,13 +79,6 @@ interface AppWindow extends Window {
 }
 
 const DEFAULT_FLOW = 'site-setup';
-
-const getFlowFromURL = () => {
-	const fromPath = matchPath( { path: '/setup/:flow/*' }, window.location.pathname )?.params?.flow;
-	// backward support the old Stepper URL structure (?flow=something)
-	const fromQuery = new URLSearchParams( window.location.search ).get( 'flow' );
-	return fromPath || fromQuery;
-};
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
@@ -158,7 +152,8 @@ window.AppBoot = async () => {
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
-	await geolocateCurrencySymbol();
+	// No need to await this, it's not critical to the boot process and will slow booting down.
+	geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
@@ -179,7 +174,6 @@ window.AppBoot = async () => {
 						/>
 					</BrowserRouter>
 					<AsyncHelpCenter />
-
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

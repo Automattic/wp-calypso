@@ -2,42 +2,51 @@ import { OnboardSelect } from '@automattic/data-stores';
 import { useStepPersistedState } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
-import { localize } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { PlansStep } from 'calypso/signup/steps/plans';
-import { getIntervalType } from 'calypso/signup/steps/plans/util';
+import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { ProvidedDependencies, StepProps } from '../../types';
+import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import StepperLoader from '../../components/stepper-loader';
+import UnifiedPlansStep from './unified-plans-step';
+import { getIntervalType } from './util';
+import type { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
-
-export const LocalizedPlanStep = localize( PlansStep );
 
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
 
-	const { siteTitle, domainItem, domainItems } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
+			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
+				select( ONBOARD_STORE );
 			return {
-				siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-				domainItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				domainItems: select( ONBOARD_STORE ).getDomainCartItems(),
+				siteTitle: getSelectedSiteTitle(),
+				domainItem: getDomainCartItem(),
+				domainItems: getDomainCartItems(),
+				selectedDesign: getSelectedDesign(),
 			};
 		},
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
-	const coupon = undefined;
+	const coupon = useQuery().get( 'coupon' ) ?? undefined;
+
+	const theme = useSelector( ( state ) =>
+		selectedDesign ? getTheme( state, 'wpcom', selectedDesign.slug ) : null
+	);
+	const selectedThemeType = useSelector( ( state ) =>
+		theme ? getThemeType( state, theme.id ) : ''
+	);
+	const isLoadingSelectedTheme = selectedDesign && ! theme;
 
 	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
@@ -48,13 +57,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		coupon,
 		domainItem,
 		domainCart: domainItems,
+		selectedThemeType,
 	};
 
 	const site = useSite();
-	const customerType = useQuery().get( 'customerType' );
-	const dispatch = useDispatch();
-
+	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -67,24 +76,31 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		setPlanInterval( intervalType );
 	};
 
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
+
+	if ( isLoadingSelectedTheme ) {
+		return <StepperLoader />;
+	}
+
 	return (
-		<LocalizedPlanStep
-			selectedSite={ site }
-			saveSignupStep={ ( state: ProvidedDependencies ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+		<UnifiedPlansStep
+			{ ...hidePlanProps }
+			selectedSite={ site ?? undefined }
+			saveSignupStep={ ( step ) => {
+				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 			} }
-			submitSignupStep={ ( state: ProvidedDependencies ) => {
+			submitSignupStep={ ( stepInfo ) => {
 				/* The plans step removes paid domains when the user picks a free plan
 				   after picking a paid domain */
-				if ( state.stepName === 'domains' ) {
-					if ( state.isPurchasingItem === false ) {
+				if ( stepInfo.stepName === 'domains' ) {
+					if ( stepInfo.isPurchasingItem === false ) {
 						setDomainCartItem( undefined );
 						setDomainCartItems( undefined );
-					} else if ( state.siteUrl ) {
-						setSiteUrl( state.siteUrl );
+					} else if ( stepInfo.siteUrl ) {
+						setSiteUrl( stepInfo.siteUrl );
 					}
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
 				}
 			} }
 			goToNextStep={ () => {
@@ -92,20 +108,14 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			} }
 			step={ stepState }
 			customerType={ customerType }
-			errorNotice={ ( message: string ) => dispatch( errorNotice( message ) ) }
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			recordTracksEvent={ ( name: string, props: unknown ) => {
-				dispatch( recordTracksEvent( name, props ) );
-			} }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
 				hideBack: isMobile,
 				goBack: props.navigation.goBack,
-				recordTracksEvent: ( name: string, props: unknown ) =>
-					dispatch( recordTracksEvent( name, props ) ),
 				isFullLayout: true,
 				isExtraWideLayout: false,
 			} }

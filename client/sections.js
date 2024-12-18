@@ -39,6 +39,9 @@ const sections = [
 	},
 	{
 		name: 'account-close',
+		// /me/account/closed enables account restoration for logged-out users
+		// Parent route is private so enableLoggedOut flag won't work here
+		// Redirection is handled in redirectLoggedOut
 		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'calypso/me/account-close',
 		group: 'me',
@@ -899,6 +902,7 @@ const sections = [
 			'/client/subscriptions',
 			'/client/payment-methods',
 			'/client/payment-methods/add',
+			'/client/invoices',
 			'/client/checkout',
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',

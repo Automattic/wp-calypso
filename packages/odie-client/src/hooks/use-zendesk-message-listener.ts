@@ -1,7 +1,7 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
@@ -25,12 +25,8 @@ export const useZendeskMessageListener = () => {
 		( event ) => event.event_source === 'zendesk'
 	)?.event_external_id;
 
-	useEffect( () => {
-		if ( ! isChatLoaded ) {
-			return;
-		}
-
-		Smooch.on( 'message:received', ( message, data ) => {
+	const messageListener = useCallback(
+		( message: unknown, data: { conversation: { id: string } } ) => {
 			const zendeskMessage = message as ZendeskMessage;
 
 			if ( data.conversation.id === chat.conversationId ) {
@@ -42,11 +38,27 @@ export const useZendeskMessageListener = () => {
 				} ) );
 				Smooch.markAllAsRead( data.conversation.id );
 			}
-		} );
+		},
+		[ chat.conversationId, setChat ]
+	);
+
+	useEffect( () => {
+		if ( ! isChatLoaded ) {
+			return;
+		}
+
+		Smooch.on( 'message:received', messageListener );
 
 		return () => {
 			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off( 'message:received' );
+			Smooch?.off?.( 'message:received', messageListener );
 		};
-	}, [ isChatLoaded, currentZendeskConversationId, chat, setChat, currentSupportInteraction ] );
+	}, [
+		isChatLoaded,
+		currentZendeskConversationId,
+		chat,
+		setChat,
+		currentSupportInteraction,
+		messageListener,
+	] );
 };

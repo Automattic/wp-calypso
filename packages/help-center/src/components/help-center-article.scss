@@ -37,19 +37,6 @@
 		}
 
 		.help-center-article-content__main {
-			h2 {
-				font-size: $font-title-small;
-			}
-
-			h3,
-			h4 {
-				font-size: $font-body;
-			}
-
-			h5 {
-				font-size: $font-body-small;
-			}
-
 			h2,
 			h3,
 			h4,
@@ -213,16 +200,24 @@
 				margin: 0 0 16px;
 			}
 
+			h2 {
+				font-size: rem(20px);
+			}
+
 			h3 {
-				font-size: $font-title-small;
+				font-size: rem(15px);
 				font-weight: 600;
 				margin: 0 0 8px;
 			}
 
 			h4 {
-				font-size: $font-title-small;
+				font-size: rem(13px);
 				font-weight: 600;
 				margin: 0 0 8px;
+			}
+
+			h5 {
+				font-size: rem(11px);
 			}
 
 			p,
@@ -457,7 +452,7 @@
 					margin-left: auto;
 					margin-right: auto;
 				}
-				
+
 				.wpsupport3-tab__tablist {
 					display: flex;
 					align-items: center;
@@ -468,7 +463,7 @@
 
 					.wpsupport3-tab__title {
 						padding: 8px 0;
-			
+
 						color: var( --blue-blue-50, #0675c4 );
 						font-size: $font-body;
 						line-height: 24px;
@@ -484,7 +479,7 @@
 						&:hover {
 							text-decoration: none;
 						}
-			
+
 						&[aria-selected='true'] {
 							color: var( --gray-gray-100, #101517 );
 							border-bottom: 1px solid var( --gray-gray-100, #101517 );
@@ -492,21 +487,21 @@
 					}
 				}
 			}
-			
+
 			.wp-block-wpsupport3-tab {
 				margin-top: 32px;
 				display: none;
-				
+
 				&:not( [aria-hidden='true'] ) {
 					display: block;
 					animation: fadeIn 0.5s;
 				}
-			
+
 				@keyframes fadeIn {
 					from {
 						opacity: 0;
 					}
-			
+
 					to {
 						opacity: 1;
 					}

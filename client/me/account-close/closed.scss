@@ -1,10 +1,45 @@
-.account-close__spinner {
-	padding-top: 120px;
-	text-align: center;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	.account-close__spinner-text {
-		font-size: $font-body-small;
-		font-weight: 400;
-		margin-top: 8px;
+.account-deleted {
+	&.blank-canvas {
+		display: flex;
+		flex-direction: column;
+	}
+	&.blank-canvas .formatted-header .formatted-header__title {
+		font-size: 2rem;
+	}
+	&.blank-canvas .formatted-header .formatted-header__subtitle {
+		font-size: 0.875rem;
+	}
+	.blank-canvas__content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		flex-grow: 1;
+		@include break-small {
+			max-width: 450px;
+			margin: -4rem auto 0;
+		}
+	}
+	.blank-canvas__header {
+		justify-content: space-between;
+	}
+	.blank-canvas__header-title {
+		position: relative;
+	}
+
+	.account-deleted__button-link {
+		color: var( --studio-gray-100 );
+		font-weight: 500;
+	}
+	.account-deleted__buttons {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+		@include break-small {
+			align-items: center;
+		}
 	}
 }

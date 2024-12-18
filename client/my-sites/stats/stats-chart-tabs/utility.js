@@ -127,18 +127,21 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 				className: 'is-views',
 				icon: <Icon className="gridicon" icon={ eye } />,
 			} );
-			tooltipData.push( {
-				label: translate( 'Visitors' ),
-				value: numberFormat( item.data.visitors ),
-				className: 'is-visitors',
-				icon: <Icon className="gridicon" icon={ people } />,
-			} );
-			tooltipData.push( {
-				label: translate( 'Views Per Visitor' ),
-				value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
-				className: 'is-views-per-visitor',
-				icon: <Icon className="gridicon" icon={ chevronRight } />,
-			} );
+
+			if ( Number.isFinite( item.data.visitors ) ) {
+				tooltipData.push( {
+					label: translate( 'Visitors' ),
+					value: numberFormat( item.data.visitors ),
+					className: 'is-visitors',
+					icon: <Icon className="gridicon" icon={ people } />,
+				} );
+				tooltipData.push( {
+					label: translate( 'Views Per Visitor' ),
+					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
+					className: 'is-views-per-visitor',
+					icon: <Icon className="gridicon" icon={ chevronRight } />,
+				} );
+			}
 
 			if ( item.data.post_titles && item.data.post_titles.length ) {
 				// only show two post titles

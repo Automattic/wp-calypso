@@ -2,113 +2,133 @@
 @import "@automattic/onboarding/styles/variables";
 @import "@automattic/typography/styles/fonts";
 
-$design-picker-category-filter-text-color: #3c434a;
-$design-picker-category-filter-text-color-active: var(--studio-gray-100);
+.design-picker__filters {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 24px;
 
-.design-picker-category-filter {
-	@include break-small {
-		flex: 0 245px;
-		padding-right: 1rem;
+	@include break-medium {
+		flex-direction: row;
+		align-items: flex-end;
+		gap: 24px;
 	}
 
-	button.components-button.design-picker-category-filter__menu-item {
-		padding: 0;
-		color: $design-picker-category-filter-text-color;
-		display: block;
-		width: auto;
-		font-size: 1rem;
+	button.components-button.responsive-toolbar-group__button-item,
+	button.components-button.responsive-toolbar-group__swipe-item {
+		padding: 8px 16px;
+		margin-inline-start: -4px;
+		margin-inline-end: 4px;
+		font-size: rem(13px);
 
-		&:hover:not(:disabled),
-		&:active:not(:disabled) {
-			box-shadow: none;
-			background: transparent;
-			.design-picker-category-filter__item-name {
-				text-decoration: underline;
-				color: $design-picker-category-filter-text-color-active;
-			}
+		&::before {
+			left: 4px;
+			right: 4px;
+			height: 36px;
+			border-radius: 4px;
+			background-color: var(--studio-gray-0);
 		}
 
 		&.is-pressed {
-			.design-picker-category-filter__item-name {
-				text-decoration: underline;
-				font-weight: 500;
-				color: $design-picker-category-filter-text-color-active;
-
-				&:hover:not(:disabled) {
-					color: $design-picker-category-filter-text-color-active;
-				}
-			}
-			background: transparent;
-
-			&:focus:not(:disabled),
-			&:focus-visible:not(:disabled) {
-				box-shadow:
-					inset 0 0 0 1px #fff,
-					0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+			&::before {
+				background-color: var(--studio-wordpress-blue);
 			}
 
-			&:focus:not(:disabled):not(:focus-visible) {
-				box-shadow: none;
+			&:hover {
+				opacity: 0.95;
 			}
-		}
 
-		.design-picker-category-filter__recommended-badge {
-			display: inline-block;
-			font-size: 0.75rem;
-			padding: 0 10px;
-			line-height: 20px;
-			margin-left: 12px;
-			background-color: #b8e6bf;
-			color: #00450c;
-			border-radius: 4px;
-		}
-
-		.components-menu-item__item {
-			min-width: auto;
+			&:active {
+				opacity: 0.9;
+			}
 		}
 	}
-}
 
-.design-picker-category-filter__sidebar {
-	display: none;
+	button.components-button.responsive-toolbar-group__menu-item {
+		height: 36px;
+		padding: 8px 12px;
+		border-radius: 4px;
+		line-height: 20px;
+		background-color: var(--studio-gray-0);
+		font-size: rem(13px);
 
-	@include break-small {
-		display: block;
+		&:not(:first-child) {
+			margin-top: 8px;
+		}
+
+		&.is-selected {
+			background-color: var(--studio-wordpress-blue);
+
+			&:hover {
+				opacity: 0.95;
+			}
+
+			&:active {
+				opacity: 0.9;
+			}
+		}
 	}
-}
 
-.design-picker-category-filter__dropdown {
-	@include break-small {
+	.design-picker__category-group {
+		display: flex;
+		flex-direction: column;
+		&.grow {
+			flex-grow: 1;
+		}
+
+		.design-picker__category-group-content {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px 16px;
+		}
+	}
+
+	.design-picker__category-group-label {
+		text-transform: uppercase;
+		font-size: rem(13px);
+		font-weight: 500;
+	}
+
+	.design-picker__tier-filter {
+		height: 40px; // match button height
+		margin-bottom: 6px;
+	}
+
+	.design-picker__design-your-own-button {
+		flex-shrink: 0;
+		margin-bottom: 6px;
+	}
+
+	.design-picker__design-with-ai {
 		display: none;
+		
+		@include break-small {
+			display: block;
+		}
 	}
 
-	font-family: $sans;
-	font-size: $font-body-small;
-	line-height: 24px;
-	font-weight: 500;
-	border-radius: 4px;
-	border: 1px solid #c3c4c7;
-	padding: 0 35px 0 10px;
-	margin-bottom: 32px;
-	min-height: 44px;
-	height: 44px;
-	width: 100%;
-	-webkit-appearance: none;
-	appearance: none;
-	background:
-		transparent
-		url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+PGc+PHBhdGggZmlsbD0iI2MzYzRjNyIgZD0iTTIwIDlsLTggOC04LTggMS40MTQtMS40MTRMMTIgMTQuMTcybDYuNTg2LTYuNTg2eiIvPjwvZz48L3N2Zz4=)
-		no-repeat right 12px top 50%;
-	background-size: 20px;
-
-	&:focus,
-	&:focus-visible {
-		outline: none;
-		box-shadow: 0 0 0 2px var(--color-primary-light);
+	.design-picker__design-your-own-button-without-categories {
+		margin-left: auto;
+		margin-top: -60px;
 	}
 
-	&:focus:not(:focus-visible) {
-		outline: none;
-		box-shadow: none;
+	.design-picker__category-filter.responsive-toolbar-group__dropdown {
+		width: 100%;
+		padding-bottom: 0;
+
+		.responsive-toolbar-group__grouped-list {
+			justify-content: flex-start;
+			border: none;
+
+			> div:first-of-type {
+				margin-inline-start: 0;
+			}
+	
+			> div:last-of-type {
+				margin-inline-end: 0;
+			}
+		}
 	}
 }

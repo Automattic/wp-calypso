@@ -21,6 +21,10 @@
 			button {
 				color: var(--studio-white);
 			}
+
+			.help-center-header__text > svg {
+				fill: var(--studio-white);
+			}
 		}
 
 		>div {
@@ -106,7 +110,7 @@
 			fill: var(--studio-white);
 		}
 	}
-	
+
 	button {
 		display: flex;
 		align-items: center;

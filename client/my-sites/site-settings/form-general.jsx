@@ -28,6 +28,7 @@ import {
 	getSiteOption,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
+	isWpcomSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -436,6 +437,7 @@ const connectComponent = connect( ( state ) => {
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		selectedSite: getSelectedSite( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsWpcom: isWpcomSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		timezonesLabels: getTimezonesLabels( state ),
 	};

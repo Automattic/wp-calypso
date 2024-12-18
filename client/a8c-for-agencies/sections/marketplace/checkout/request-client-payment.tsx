@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -144,16 +145,16 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		translate,
 	] );
 
+	const { isFeedbackShown } = useShowFeedback( 'referral-complete' );
 	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				isProductFeedbackEnabled
+				isProductFeedbackEnabled && ! isFeedbackShown
 					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
 							args: { email },
-							redirectArgs: { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email },
 					  } ) + '#feedback'
 					: addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
 			);
@@ -161,7 +162,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 			setMessage( '' );
 			onClearCart();
 		}
-	}, [ email, isProductFeedbackEnabled, isSuccess, onClearCart ] );
+	}, [ email, isProductFeedbackEnabled, isSuccess, onClearCart, isFeedbackShown ] );
 
 	return (
 		<>

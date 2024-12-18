@@ -14,6 +14,7 @@ export interface AgencyTierInfo {
 	fullTitle: string;
 	subtitle: string;
 	description: string;
+	learnMoreLink: string;
 	logo: string;
 	includedTiers: string[];
 	celebrationModal?: AgencyTierCelebrationModal;

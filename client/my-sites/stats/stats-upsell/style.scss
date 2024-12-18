@@ -9,6 +9,7 @@
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-5);
 	font-family: $font-sf-pro-text;
+	overflow: hidden;
 
 	.components-modal__content {
 		padding: 0;
@@ -29,15 +30,39 @@
 			flex-direction: row;
 		}
 	}
-	.stats-upsell__left-inner,
-	.stats-upsell__right {
+	.stats-upsell__left-inner {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		min-width: 279px;
+	}
+
+	.stats-upsell__right {
+		min-width: 279px;
+		overflow: hidden;
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 60px;
+			background: linear-gradient(to top, #FFF, rgba(255, 255, 255, 0));
+		}
+
+		@include break-wide {
+			flex: 1;
+		}
 		img {
 			border-radius: 4px;
+			width: 100%;
 		}
+	}
+
+	.stats-upsell_collapsed {
+		max-height: 570px;
 	}
 
 	.stats-upsell__left {
@@ -48,17 +73,6 @@
 			@include break-wide {
 				padding: 48px;
 			}
-		}
-	}
-
-	.stats-upsell__right {
-		gap: 8px;
-		@include break-wide {
-			flex: 1;
-		}
-
-		img {
-			height: 100%;
 		}
 	}
 
@@ -127,6 +141,28 @@
 	.stats-upsell__buttons {
 		padding-top: 8px;
 		display: flex;
-		gap: 16px;
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+		max-width: 400px;
+		button {
+			display: block;
+		}
+	}
+
+	.stats-upsell__expand {
+		width: 100%;
+		max-width: 400px;
+		display: flex;
+		button {
+			justify-content: space-between;
+			width: 100%;
+			padding: 0;
+			color: var(--color-link);
+		}
+		.components-button:focus:not(:disabled) {
+			box-shadow: none;
+			color: var(--color-link);
+		}
 	}
 }

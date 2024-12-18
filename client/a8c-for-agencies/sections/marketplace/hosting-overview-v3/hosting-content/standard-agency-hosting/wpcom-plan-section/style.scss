@@ -1,0 +1,124 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.wpcom-plan-section .a4a-slider {
+	position: relative;
+	z-index: 1;
+}
+.wpcom-plan-section .a4a-number-input-v2 {
+	width: 100%;
+
+	@include break-medium {
+		width: auto;
+	}
+}
+
+.wpcom-plan-selector__price-actual-value,
+.wpcom-plan-selector__price-original-value {
+	@include a4a-font-heading-lg;
+	color: var(--color-text);
+}
+
+.wpcom-plan-selector__price-original-value {
+	display: inline-block;
+	text-decoration: line-through;
+	margin-inline: 8px;
+}
+
+.wpcom-plan-selector__price-discount {
+	@include a4a-font-body-md;
+	color: var(--color-success);
+	text-wrap: nowrap;
+}
+
+.wpcom-plan-selector__price-interval {
+	@include a4a-font-body-sm;
+}
+
+.wpcom-plan-selector__cta {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 16px;
+	margin-block-start: 24px;
+}
+
+.wpcom-plan-selector__owned-plan {
+	@include a4a-font-heading-md;
+
+	display: inline-block;
+	border: 1px solid var(--color-neutral-5);
+	background-color: var(--color-neutral-0);
+	padding: 4px 16px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 16px;
+	margin-block-end: 8px;
+}
+
+.wpcom-plan-selector__cta-component {
+	display: flex;
+	flex-direction: column;
+	justify-content: stretch;
+	gap: 16px;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.wpcom-plan-selector__cta-button {
+	min-width: 0;
+	width: 100%;
+	min-height: 40px;
+}
+
+.wpcom-plan-selector__details.is-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	.wpcom-plan-selector__owned-plan,
+	.wpcom-plan-selector__plan-name,
+	.wpcom-plan-selector__price,
+	.wpcom-plan-selector__price-interval,
+	.wpcom-plan-selector__cta-label,
+	.wpcom-plan-selector__cta-component {
+		@include placeholder( --color-neutral-10 );
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+
+	.wpcom-plan-selector__owned-plan {
+		width: 150px;
+	}
+
+	.wpcom-plan-selector__plan-name {
+		height: 30px;
+		margin-block-end: 4px;
+		width: 200px;
+	}
+
+	.wpcom-plan-selector__price {
+		width: 260px;
+		margin-block-end: 2px;
+	}
+
+	.wpcom-plan-selector__price-interval {
+		width: 50px;
+		height: 14px;
+	}
+
+	.wpcom-plan-selector__cta {
+		gap: 16px;
+	}
+
+	.wpcom-plan-selector__cta-label {
+		width: 250px;
+	}
+
+	.wpcom-plan-selector__cta-component {
+		width: 436px;
+		height: 36px;
+	}
+}
