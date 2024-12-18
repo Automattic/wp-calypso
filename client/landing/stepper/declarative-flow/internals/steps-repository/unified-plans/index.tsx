@@ -9,17 +9,22 @@ import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding'
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
+import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import { ProvidedDependencies, StepProps } from '../../types';
+import StepperLoader from '../../components/stepper-loader';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
+import type { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
 
@@ -27,13 +32,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
+
 	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
+			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
+				select( ONBOARD_STORE );
 			return {
-				siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-				domainItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				domainItems: select( ONBOARD_STORE ).getDomainCartItems(),
-				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+				siteTitle: getSelectedSiteTitle(),
+				domainItem: getDomainCartItem(),
+				domainItems: getDomainCartItems(),
+				selectedDesign: getSelectedDesign(),
 			};
 		},
 		[]
@@ -47,6 +55,14 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 
+	const theme = useSelector( ( state ) =>
+		selectedDesign ? getTheme( state, 'wpcom', selectedDesign.slug ) : null
+	);
+	const selectedThemeType = useSelector( ( state ) =>
+		theme ? getThemeType( state, theme.id ) : ''
+	);
+	const isLoadingSelectedTheme = selectedDesign && ! theme;
+
 	const signupDependencies = {
 		siteSlug,
 		siteTitle,
@@ -54,11 +70,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		coupon,
 		domainItem,
 		domainCart: domainItems,
+		selectedThemeType,
 	};
 
-	const site = useSite();
+	const postSignUpSiteSlugParam = getSignupCompleteSlug();
+	const postSignUpSiteIdParam = getSignupCompleteSiteID();
+
+	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -76,8 +97,9 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	 *  but the selected design requires a paid plan.
 	 */
 	const switchPaidDesignToDefault = ( stepInfo: ProvidedDependencies ) => {
-		const hasPaidDesign =
-			( selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free' ) || false;
+		const hasPaidDesign = Boolean(
+			selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free'
+		);
 		const isOnboarding = isOnboardingFlow( props.flow ) && isGoalFirstExperiment;
 
 		if ( ! hasPaidDesign || !! stepInfo.cartItems || ! isOnboarding ) {
@@ -103,9 +125,15 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			to: defaultDesign?.slug,
 		} );
 	};
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
+
+	if ( isLoadingSelectedTheme ) {
+		return <StepperLoader />;
+	}
 
 	return (
 		<UnifiedPlansStep
+			{ ...hidePlanProps }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );

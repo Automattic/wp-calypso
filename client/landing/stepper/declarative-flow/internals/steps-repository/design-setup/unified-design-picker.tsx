@@ -460,13 +460,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
-		( ! canSiteActivateTheme && ! isGoalsAtFrontExperiment ) ||
-		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
-			! isPremiumThemeAvailable &&
-			! didPurchaseSelectedTheme ) ||
-		( selectedDesign?.is_externally_managed &&
-			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-		( ! isPluginBundleEligible && isBundled );
+		// The exp moves the Design Picker step in front of the plan selection so people can unlock theme later.
+		! isGoalsAtFrontExperiment &&
+		( ! canSiteActivateTheme ||
+			( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
+				! isPremiumThemeAvailable &&
+				! didPurchaseSelectedTheme ) ||
+			( selectedDesign?.is_externally_managed &&
+				( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
+			( ! isPluginBundleEligible && isBundled ) );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 

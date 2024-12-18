@@ -1,12 +1,12 @@
 import { JetpackLogo, WooLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutNavigation, {
 	LayoutNavigationItemProps,
 	LayoutNavigationTabs,
 	buildNavItems,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+} from 'calypso/layout/multi-sites-dashboard/nav';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

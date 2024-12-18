@@ -8,11 +8,13 @@ function PlanUpsellButton( {
 	onPlanSelected,
 	disabled = false,
 	isBusy = false,
+	hidePrice = false,
 }: {
 	planSlug: PlanSlug;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	disabled?: boolean;
 	isBusy?: boolean;
+	hidePrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const planUpsellInfo = usePlanUpsellInfo( { planSlug } );
@@ -26,13 +28,20 @@ function PlanUpsellButton( {
 				onPlanSelected( planSlug );
 			} }
 		>
-			{ translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-				comment: 'Eg: Get Personal $4/month',
-				args: {
-					planTitle: planUpsellInfo.title,
-					planPrice: planUpsellInfo.formattedPriceMonthly,
-				},
-			} ) }
+			{ ! hidePrice
+				? translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+						comment: 'Eg: Get Personal $4/month',
+						args: {
+							planTitle: planUpsellInfo.title,
+							planPrice: planUpsellInfo.formattedPriceMonthly,
+						},
+				  } )
+				: translate( 'Get %(planTitle)s', {
+						comment: 'Eg: Get Personal',
+						args: {
+							planTitle: planUpsellInfo.title,
+						},
+				  } ) }
 		</PlanButton>
 	);
 }

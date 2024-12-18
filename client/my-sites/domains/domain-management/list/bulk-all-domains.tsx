@@ -230,13 +230,17 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
-			.domains-overview__list.a4a-layout-column,
-			.domains-overview__list .a4a-layout-column__container,
-			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+			.domains-overview__list.multi-sites-dashboard-layout-column,
+			.domains-overview__list .multi-sites-dashboard-layout-column__container,
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
 				height: 100%;
 			}
 
-			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
 				display: flex;
 				flex-direction: column;
 				padding-bottom: 0;
