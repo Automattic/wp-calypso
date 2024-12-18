@@ -97,9 +97,12 @@ const EditContactInfoPage = ( {
 
 	const renderContent = () => {
 		const domain = getSelectedDomain( { domains, selectedDomainName } );
-		let content = null;
+		if ( ! domain ) {
+			return;
+		}
 
-		if ( ! domain?.currentUserCanManage ) {
+		let content = null;
+		if ( ! domain.currentUserCanManage ) {
 			content = <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
