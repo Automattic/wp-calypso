@@ -67,7 +67,7 @@ body.is-section-plugins {
 		}
 	}
 
-	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
+	.is-logged-in main:not(.multi-sites-dashboard-layout):not(.multi-sites-dashboard-layout-column) {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
 			padding-inline: 48px;
@@ -94,11 +94,11 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column {
+	.multi-sites-dashboard-layout-column {
 		overflow: auto;
 	}
 
-	.a4a-layout-column.scheduled-updates-list-compact {
+	.multi-sites-dashboard-layout-column.scheduled-updates-list-compact {
 		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
@@ -135,7 +135,7 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column.scheduled-updates-list {
+	.multi-sites-dashboard-layout-column.scheduled-updates-list {
 		.plugins-update-manager-multisite__header,
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
@@ -165,8 +165,8 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column.scheduled-updates-edit,
-	.a4a-layout-column.scheduled-updates-create {
+	.multi-sites-dashboard-layout-column.scheduled-updates-edit,
+	.multi-sites-dashboard-layout-column.scheduled-updates-create {
 		padding: 3rem;
 
 		@include breakpoint-deprecated( "<660px" ) {

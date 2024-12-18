@@ -12597,7 +12597,7 @@
 							"line": 0,
 							"column": 23704
 						},
-						"selector": ".main.a4a-layout.sites-dashboard thead .dataviews-view-table__row th span",
+						"selector": ".main.multi-sites-dashboard-layout.sites-dashboard thead .dataviews-view-table__row th span",
 						"coverage": "0.19%",
 						"fontSize": "11px"
 					},

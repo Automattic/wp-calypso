@@ -3,19 +3,19 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderTitle as Title,
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,

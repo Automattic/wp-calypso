@@ -1,4 +1,4 @@
-body:has(.wpcom-site .main.a4a-layout.sites-dashboard) .guided-tour__popover {
+body:has(.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard) .guided-tour__popover {
 	z-index: z-index("root", ".layout__secondary") - 1;
 
 	.popover__arrow::before {

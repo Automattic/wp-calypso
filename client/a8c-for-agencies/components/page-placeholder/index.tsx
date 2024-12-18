@@ -1,10 +1,10 @@
 import clsx from 'clsx';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 
 import './style.scss';
 

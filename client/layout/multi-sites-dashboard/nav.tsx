@@ -82,9 +82,9 @@ export default function LayoutNavigation( {
 	children,
 }: LayoutNavigationProps ) {
 	return (
-		<div className="a4a-layout__navigation-wrapper">
+		<div className="multi-sites-dashboard-layout__navigation-wrapper">
 			<SectionNav
-				className={ clsx( 'a4a-layout__navigation', className ) }
+				className={ clsx( 'multi-sites-dashboard-layout__navigation', className ) }
 				applyUpdatedStyles
 				selectedText={
 					<span>

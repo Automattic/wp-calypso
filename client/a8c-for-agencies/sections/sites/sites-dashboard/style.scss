@@ -2,19 +2,19 @@
 @import "@wordpress/base-styles/mixins";
 
 
-.main.a4a-layout.sites-dashboard {
+.main.multi-sites-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
-	.a4a-layout__header-actions {
+	.multi-sites-dashboard-layout__header-actions {
 		white-space: nowrap;
 	}
 
-	.site-preview-pane .a4a-layout-column__container {
+	.site-preview-pane .multi-sites-dashboard-layout-column__container {
 		display: flex;
 	}
 
-	.a4a-layout-column {
-		.a4a-layout-column__container {
+	.multi-sites-dashboard-layout-column {
+		.multi-sites-dashboard-layout-column__container {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
@@ -39,7 +39,7 @@
 		margin: -10px 0;
 	}
 
-	.a4a-layout__top-wrapper:not(.preview-hidden) {
+	.multi-sites-dashboard-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
 		@include breakpoint-deprecated( "<660px" ) {
 			padding-block-start: 0;
@@ -97,7 +97,7 @@
 	}
 
 	@media (max-width: 660px) {
-		.a4a-layout__header-main {
+		.multi-sites-dashboard-layout__header-main {
 			display: none;
 		}
 	}
@@ -213,7 +213,7 @@
 					padding-inline: 16px;
 				}
 
-				.a4a-layout__header-title {
+				.multi-sites-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 				}
@@ -345,10 +345,10 @@
 	&.sites-dashboard__layout:not(.preview-hidden) {
 
 
-		.a4a-layout__top-wrapper {
+		.multi-sites-dashboard-layout__top-wrapper {
 			padding-block-start: 16px;
 
-			.a4a-layout__header {
+			.multi-sites-dashboard-layout__header {
 				padding: 0;
 			}
 		}
@@ -358,7 +358,7 @@
 		}
 	}
 
-	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
+	&.sites-dashboard__layout:not(.preview-hidden) .multi-sites-dashboard-layout__navigation-wrapper {
 		display: none;
 	}
 
@@ -411,8 +411,8 @@
 			}
 		}
 
-		.a4a-layout__top-wrapper,
-		.a4a-layout__body {
+		.multi-sites-dashboard-layout__top-wrapper,
+		.multi-sites-dashboard-layout__body {
 			> * {
 				@include breakpoint-deprecated(">660px") {
 					max-width: none;

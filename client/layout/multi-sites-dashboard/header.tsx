@@ -11,15 +11,15 @@ type Props = {
 };
 
 export function LayoutHeaderTitle( { children }: Props ) {
-	return <h1 className="a4a-layout__header-title">{ children }</h1>;
+	return <h1 className="multi-sites-dashboard-layout__header-title">{ children }</h1>;
 }
 
 export function LayoutHeaderSubtitle( { children }: Props ) {
-	return <h2 className="a4a-layout__header-subtitle">{ children }</h2>;
+	return <h2 className="multi-sites-dashboard-layout__header-subtitle">{ children }</h2>;
 }
 
 export function LayoutHeaderActions( { children, className, useColumnAlignment }: Props ) {
-	const wrapperClass = clsx( className, 'a4a-layout__header-actions', {
+	const wrapperClass = clsx( className, 'multi-sites-dashboard-layout__header-actions', {
 		'is-column-flex-align': useColumnAlignment,
 	} );
 	return <div className={ wrapperClass }>{ children }</div>;
@@ -34,7 +34,7 @@ export function LayoutHeaderBreadcrumb( {
 } ) {
 	return (
 		<div
-			className={ clsx( 'a4a-layout__header-breadcrumb', {
+			className={ clsx( 'multi-sites-dashboard-layout__header-breadcrumb', {
 				'is-hidden-on-mobile': hideOnMobile,
 			} ) }
 		>
@@ -101,15 +101,15 @@ export default function LayoutHeader( { showStickyContent, children, className }
 		>
 			<div
 				className={ clsx( {
-					'a4a-layout__sticky-header': showStickyContent && hasCrossed,
+					'multi-sites-dashboard-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ clsx( 'a4a-layout__header', {
+					className={ clsx( 'multi-sites-dashboard-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>
-					<div className="a4a-layout__header-main">
+					<div className="multi-sites-dashboard-layout__header-main">
 						{ headerBreadcrumb }
 						{ headerTitle }
 						{ headerSubtitle }
