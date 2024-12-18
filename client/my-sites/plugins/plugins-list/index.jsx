@@ -248,12 +248,6 @@ export class PluginsList extends Component {
 	}
 
 	bulkActionDialog = ( actionName, selectedPlugins ) => {
-		if ( this.props.newBulkPluginManagement ) {
-			this.setState( {
-				selectedPlugins,
-			} );
-		}
-
 		const { plugins, allSites, showPluginActionDialog } = this.props;
 
 		if ( ! this.props.newBulkPluginManagement ) {
@@ -282,6 +276,12 @@ export class PluginsList extends Component {
 					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
 				);
 				return { ...plugin, sites: filteredSites };
+			} );
+		}
+
+		if ( this.props.newBulkPluginManagement ) {
+			this.setState( {
+				selectedPlugins,
 			} );
 		}
 
