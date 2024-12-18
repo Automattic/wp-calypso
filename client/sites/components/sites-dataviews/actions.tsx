@@ -199,9 +199,10 @@ export const isActionEligible = (
 			};
 		case 'restore':
 			return ( site: SiteExcerptData ) => {
-				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				// For deleted sites, the `manage_options` capability is not returned so we  don't check for it here
+				// But this setting is guarded in the backend:
+				// https://github.a8c.com/Automattic/wpcom/blob/4508b82936f1502b580d49574b63aad3b6dc1c5a/wp-content/rest-api-plugins/endpoints/site-restore.php#L47
 				if (
-					! canManageOptions ||
 					isP2Site( site ) ||
 					isNotAtomicJetpack( site ) ||
 					isDisconnectedJetpackAndNotAtomic( site )
