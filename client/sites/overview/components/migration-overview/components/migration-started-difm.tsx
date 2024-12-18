@@ -11,10 +11,10 @@ export const MigrationStartedDIFM = ( { site }: { site?: SiteDetails } ) => {
 
 	const title = translate( 'Your migration is underway' );
 	const subTitle = translate(
-		"Sit back as {{strong}}%(siteUrl)s{{/strong}} transfers to its new home. Here's what you can expect.",
+		"Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Here's what you can expect.",
 		{
 			components: { strong: <strong /> },
-			args: { siteUrl: migrationSourceSiteDomain ?? translate( 'your site' ) },
+			args: { siteName: migrationSourceSiteDomain ?? translate( 'your site' ) },
 		}
 	) as string;
 

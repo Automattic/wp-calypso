@@ -10,10 +10,10 @@ export const MigrationStartedDIY = ( { site }: { site: SiteDetails } ) => {
 		: translate( 'your site' );
 
 	const subTitle = translate(
-		'Sit back as {{strong}}%(siteUrl)s{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
+		'Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
 		{
 			components: { strong: <strong /> },
-			args: { siteUrl: migrationSourceSiteDomain },
+			args: { siteName: migrationSourceSiteDomain },
 		}
 	) as string;
 
