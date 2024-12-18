@@ -192,6 +192,7 @@
 		"press-this": true,
 		"promote-post/widget-i2": true,
 		"publicize-preview": true,
+		"purchases/billing-history-data-view": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
 		"reader": true,

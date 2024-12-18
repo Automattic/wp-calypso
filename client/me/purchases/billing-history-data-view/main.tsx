@@ -9,7 +9,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
-import BillingHistoryListDataView from 'calypso/me/purchases/billing-history-data-view/billing-history-list';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
@@ -17,6 +16,7 @@ import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 
 import './style.scss';
+import '@wordpress/dataviews/build-style/style.css';
 
 export function BillingHistoryContent( {
 	siteId = null,
@@ -25,19 +25,9 @@ export function BillingHistoryContent( {
 	siteId: number | null;
 	getReceiptUrlFor: ( receiptId: string | number ) => string;
 } ) {
-	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
-
 	return (
 		<Card className="billing-history__receipts">
-			{ useDataViewBillingHistoryList ? (
-				<BillingHistoryListDataView
-					header
-					siteId={ siteId }
-					getReceiptUrlFor={ getReceiptUrlFor }
-				/>
-			) : (
-				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
-			) }
+			<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 		</Card>
 	);
 }
@@ -80,7 +70,7 @@ function BillingHistory() {
 					}
 				) }
 			/>
-			<QueryBillingTransactions transactionType="past" page={ 0 } sortColumn="" sortOrder="desc" />
+			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
 
