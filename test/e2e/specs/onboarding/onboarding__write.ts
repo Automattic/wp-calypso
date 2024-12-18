@@ -85,6 +85,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( 'Select theme', async function () {
+			await startSiteFlow.clickButton( 'Show all Blog themes' );
 			await startSiteFlow.selectTheme( themeName );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
