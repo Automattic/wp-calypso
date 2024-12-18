@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
@@ -24,26 +23,13 @@ export type MessageIndicators = {
 	isLastMessage: boolean;
 };
 
-const MessageAvatarHeader = ( {
-	message,
-}: {
-	message: Message;
-	currentUser: CurrentUser;
-	wapuuAvatarClasses: string;
-	isFullscreen: boolean;
-	handleFullscreenToggle: () => void;
-} ) => {
+const MessageAvatarHeader = ( { message }: { message: Message } ) => {
 	return message.role === 'bot' ? (
-		<>
-			<WapuuAvatar />
-			<strong className="message-header-name"></strong>
-		</>
+		<WapuuAvatar />
 	) : (
-		<>
-			{ message.role === 'business' && (
-				<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
-			) }
-		</>
+		message.role === 'business' && (
+			<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
+		)
 	);
 };
 
@@ -62,10 +48,6 @@ const ChatMessage = ( {
 		setIsFullscreen( false );
 	};
 
-	const handleFullscreenToggle = () => {
-		setIsFullscreen( ! isFullscreen );
-	};
-
 	const handleContentClick = ( event: MouseEvent | React.MouseEvent< HTMLDivElement > ) => {
 		event.stopPropagation();
 	};
@@ -74,19 +56,9 @@ const ChatMessage = ( {
 		return null;
 	}
 
-	const wapuuAvatarClasses = clsx( 'odie-chatbox-message-avatar', {
-		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
-	} );
-
 	const messageHeader = (
 		<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
-			<MessageAvatarHeader
-				currentUser={ currentUser }
-				isFullscreen={ isFullscreen }
-				handleFullscreenToggle={ handleFullscreenToggle }
-				message={ message }
-				wapuuAvatarClasses={ wapuuAvatarClasses }
-			/>
+			<MessageAvatarHeader message={ message } />
 		</div>
 	);
 

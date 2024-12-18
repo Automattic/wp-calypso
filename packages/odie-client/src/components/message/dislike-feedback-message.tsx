@@ -45,7 +45,6 @@ export const DislikeFeedbackMessage = () => {
 		<>
 			<div className="message-header bot">
 				<WapuuAvatar />
-				<strong className="message-header-name"></strong>
 			</div>
 			<div className="odie-chatbox-dislike-feedback-message">
 				{ isUserEligibleForPaidSupport
