@@ -8,8 +8,8 @@ import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import 'calypso/components/environment-badge/style.scss';
-import { redirectWithParams, getManifestFromUrl } from './utils';
+import { redirectWithParamsAndLocale, getManifestFromUrl } from './utils';
+import './style.scss';
 
 window.AppBoot = async () => {
 	/**
@@ -33,7 +33,7 @@ window.AppBoot = async () => {
 
 		// Redirect to control for null assignment.
 		if ( ! assignment.variationName ) {
-			redirectWithParams( experimentManifest.variants[ 'control' ].url );
+			redirectWithParamsAndLocale( experimentManifest.variants[ 'control' ].url );
 			return;
 		}
 
@@ -41,14 +41,14 @@ window.AppBoot = async () => {
 			alert(
 				`Variation ${ assignment.variationName } not found in experiment ${ experimentManifest.title }`
 			);
-			redirectWithParams( experimentManifest.variants[ 'control' ].url );
+			redirectWithParamsAndLocale( experimentManifest.variants[ 'control' ].url );
 			return;
 		}
 
 		// Redirect to treatment.
-		redirectWithParams( experimentManifest.variants[ assignment.variationName ].url );
+		redirectWithParamsAndLocale( experimentManifest.variants[ assignment.variationName ].url );
 	} catch ( e ) {
 		// In case anything goes wrong, don't leave users stranded and go to control.
-		redirectWithParams( experimentManifest.variants[ 'control' ].url );
+		redirectWithParamsAndLocale( experimentManifest.variants[ 'control' ].url );
 	}
 };
