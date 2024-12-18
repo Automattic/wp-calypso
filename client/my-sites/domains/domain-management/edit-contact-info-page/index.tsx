@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -10,9 +9,7 @@ import Main from 'calypso/components/main';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {
 	domainManagementEdit,
@@ -22,9 +19,7 @@ import {
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import { IAppState } from 'calypso/state/types';
-import EditContactInfoFormCard from '../edit-contact-info/form-card';
-import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
-import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
+import EditContactInfoPageContent from '../edit-contact-info-page/edit-contact-info-page-content';
 import { EditContactInfoPageProps } from './types';
 
 import './style.scss';
@@ -95,54 +90,15 @@ const EditContactInfoPage = ( {
 		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
-	const renderContent = () => {
-		const domain = getSelectedDomain( { domains, selectedDomainName } );
-		if ( ! domain ) {
-			return;
-		}
-
-		let content = null;
-		if ( ! domain.currentUserCanManage ) {
-			content = <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
-		}
-
-		if ( ! domain.canUpdateContactInfo ) {
-			content = <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
-		}
-
-		if ( domain.isPendingWhoisUpdate ) {
-			content = <PendingWhoisUpdateCard />;
-		}
-
-		if ( domain.mustRemovePrivacyBeforeContactUpdate && domain.privateDomain && selectedSite ) {
-			content = (
-				<EditContactInfoPrivacyEnabledCard
-					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSite?.slug }
-				/>
-			);
-		}
-
-		if ( ! content ) {
-			const backUrl = domainManagementEdit(
-				selectedSite?.slug ?? '',
-				selectedDomainName,
-				currentRoute
-			);
-
-			content = (
-				<EditContactInfoFormCard
-					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
-					selectedDomain={ domain }
-					selectedSite={ selectedSite }
-					showContactInfoNote={ false }
-					backUrl={ backUrl }
-				/>
-			);
-		}
-
-		return isAllDomainManagementScreen ? <Card>{ content }</Card> : content;
-	};
+	const renderContent = () => (
+		<EditContactInfoPageContent
+			currentRoute={ currentRoute }
+			domains={ domains }
+			selectedDomainName={ selectedDomainName }
+			selectedSite={ selectedSite }
+			isCard={ isAllDomainManagementScreen }
+		/>
+	);
 
 	const renderSidebar = () => {
 		const supportLink = (
