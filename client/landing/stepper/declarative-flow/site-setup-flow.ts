@@ -734,6 +734,7 @@ const siteSetupFlow: Flow = {
 						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
 							return;
 						}
+						throw error;
 					} );
 			} );
 		}, [
