@@ -9,6 +9,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
@@ -60,7 +61,10 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		selectedThemeType,
 	};
 
-	const site = useSite();
+	const postSignUpSiteSlugParam = getSignupCompleteSlug();
+	const postSignUpSiteIdParam = getSignupCompleteSiteID();
+
+	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
