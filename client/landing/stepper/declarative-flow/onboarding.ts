@@ -272,11 +272,14 @@ const onboarding: Flow = {
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'domains' );
+				case 'domains':
+					if ( isGoalsAtFrontExperiment ) {
+						return navigate( 'designSetup' );
+					}
 				case 'designSetup':
 					if ( isGoalsAtFrontExperiment ) {
 						return navigate( 'goals' );
 					}
-					return;
 				default:
 					return;
 			}
