@@ -230,6 +230,11 @@ class NotificationSubscriptions extends Component {
 									) }
 								</span>
 							</FormLabel>
+							<FormSettingExplanation>
+								{ this.props.translate(
+									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						{ isAutomattician && (
