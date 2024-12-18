@@ -17,7 +17,7 @@ const useCanvasMode = () => {
 		} );
 
 		return () => unsubscribe();
-	} );
+	}, [ isSiteEditor ] );
 
 	return canvasMode;
 };
