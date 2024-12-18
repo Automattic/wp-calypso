@@ -51,13 +51,13 @@ const EditContactInfoPage = ( {
 		return ! getSelectedDomain( { domains, selectedDomainName } ) || isRequestingWhois;
 	};
 
-	const isAllDomainsScreen = useMemo(
+	const isAllDomainManagementScreen = useMemo(
 		() => isUnderDomainManagementAll( currentRoute ),
 		[ currentRoute ]
 	);
 
 	const renderHeader = () => {
-		if ( ! selectedSite || isAllDomainsScreen ) {
+		if ( ! selectedSite || isAllDomainManagementScreen ) {
 			return null;
 		}
 
@@ -69,7 +69,7 @@ const EditContactInfoPage = ( {
 
 		const items = [
 			{
-				label: isAllDomainsScreen ? translate( 'All Domains' ) : translate( 'Domains' ),
+				label: isAllDomainManagementScreen ? translate( 'All Domains' ) : translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					currentRoute,
@@ -141,7 +141,7 @@ const EditContactInfoPage = ( {
 			);
 		}
 
-		return isAllDomainsScreen ? <Card>{ content }</Card> : content;
+		return isAllDomainManagementScreen ? <Card>{ content }</Card> : content;
 	};
 
 	const renderSidebar = () => {
