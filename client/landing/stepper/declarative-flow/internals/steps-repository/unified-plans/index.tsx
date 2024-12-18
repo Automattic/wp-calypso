@@ -3,6 +3,7 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -10,7 +11,8 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { getThemeType } from 'calypso/state/themes/selectors';
+import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import StepperLoader from '../../components/stepper-loader';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, StepProps } from '../../types';
@@ -37,9 +39,14 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
-	const selectedThemeType = useSelector( ( state ) =>
-		selectedDesign ? getThemeType( state, selectedDesign.slug ) : ''
+
+	const theme = useSelector( ( state ) =>
+		selectedDesign ? getTheme( state, 'wpcom', selectedDesign.slug ) : null
 	);
+	const selectedThemeType = useSelector( ( state ) =>
+		theme ? getThemeType( state, theme.id ) : ''
+	);
+	const isLoadingSelectedTheme = selectedDesign && ! theme;
 
 	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
@@ -68,6 +75,12 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		const intervalType = getIntervalType( path );
 		setPlanInterval( intervalType );
 	};
+
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
+
+	if ( isLoadingSelectedTheme ) {
+		return <StepperLoader />;
+	}
 
 	return (
 		<UnifiedPlansStep

@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlanUpsellInfo } from '../hooks/use-plan-upsell-info';
 import PlanUpsellButton from './plan-upsell-button';
@@ -23,6 +24,7 @@ const PlanInfoContainer = styled.div`
 `;
 
 const PlanPrice = styled.span`
+	margin-inline-start: 8px;
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.15px;
@@ -39,11 +41,11 @@ export const PlanName = styled.span`
 `;
 
 export const PlanDescription = styled.div`
+	margin-top: 4px;
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.15px;
 	color: var( --studio-gray-50 );
-	margin-top: 4px;
 `;
 
 const PlanInfo = ( { planSlug, description, isBusy, onPlanSelected }: Props ) => {
@@ -54,7 +56,7 @@ const PlanInfo = ( { planSlug, description, isBusy, onPlanSelected }: Props ) =>
 		<>
 			<PlanInfoContainer>
 				<div>
-					<PlanName>{ paidDomainName }</PlanName>
+					<PlanName>{ planUpsellInfo.title }</PlanName>
 					<PlanPrice>
 						{ translate( '%(planPrice)s/month', {
 							comment: 'Eg: $4/month',
@@ -66,7 +68,12 @@ const PlanInfo = ( { planSlug, description, isBusy, onPlanSelected }: Props ) =>
 				</div>
 				<PlanDescription>{ description }</PlanDescription>
 			</PlanInfoContainer>
-			<PlanUpsellButton planSlug={ planSlug } isBusy={ isBusy } onPlanSelected={ onPlanSelected } />
+			<PlanUpsellButton
+				planSlug={ planSlug }
+				isBusy={ isBusy }
+				hidePrice
+				onPlanSelected={ onPlanSelected }
+			/>
 		</>
 	);
 };

@@ -5,7 +5,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getHidePlanPropsBasedOnThemeType } from '../utils/utils';
-import { ButtonContainer, DialogContainer, Heading, Row, RowWithBorder } from './components';
+import { ButtonContainer, DialogContainer, Heading, Row } from './components';
 import { PlanName, PlanDescription } from './components/plan-item';
 import SuggestedPlanSection from './components/suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
@@ -51,14 +51,12 @@ export const PaidPlanIsRequiredDialog = ( {
 				{ getUpsellTitle() }
 			</Heading>
 			<ButtonContainer>
-				<RowWithBorder>
-					<SuggestedPlanSection
-						{ ...hidePlanProps }
-						paidDomainName={ paidDomainName }
-						isBusy={ isBusy }
-						onPlanSelected={ onPlanSelected }
-					/>
-				</RowWithBorder>
+				<SuggestedPlanSection
+					{ ...hidePlanProps }
+					paidDomainName={ paidDomainName }
+					isBusy={ isBusy }
+					onPlanSelected={ onPlanSelected }
+				/>
 				<Row>
 					<div>
 						<PlanName>{ translate( 'Free' ) }</PlanName>
@@ -75,7 +73,7 @@ export const PaidPlanIsRequiredDialog = ( {
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>
-						{ translate( 'Continue with Free plan' ) }
+						{ translate( 'Continue with Free' ) }
 					</PlanButton>
 				</Row>
 			</ButtonContainer>

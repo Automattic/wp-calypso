@@ -2,11 +2,13 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { FREE_THEME } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
 	isOnboardingGuidedFlow,
+	ONBOARDING_FLOW,
 	ONBOARDING_GUIDED_FLOW,
 } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
@@ -444,7 +446,7 @@ function UnifiedPlansStep( {
 			};
 
 			if (
-				( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
+				( ONBOARDING_FLOW === flowName || 'onboarding-pm' === flowName ) &&
 				undefined === previousStep?.providedDependencies?.domainItem
 			) {
 				backUrl = getStepUrl( flowName, 'domains' );
@@ -456,7 +458,7 @@ function UnifiedPlansStep( {
 		intervalType ||
 		getIntervalType(
 			path,
-			flowName === 'onboarding' && longerPlanTermDefaultExperiment?.term
+			flowName === ONBOARDING_FLOW && longerPlanTermDefaultExperiment?.term
 				? longerPlanTermDefaultExperiment.term
 				: undefined
 		);
@@ -491,8 +493,10 @@ function UnifiedPlansStep( {
 		freeWPComSubdomain = siteUrl;
 	}
 
+	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 	const deemphasizeFreePlan =
-		( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
+		( [ ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW ].includes( flowName ) &&
+			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
 	return (
@@ -532,7 +536,7 @@ function UnifiedPlansStep( {
 									plansWithScroll={ isDesktop }
 									intent={ intent || surveyedIntent }
 									flowName={ flowName }
-									hideFreePlan={ hideFreePlan }
+									hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }
 									hidePremiumPlan={ hidePremiumPlan }
 									hideEcommercePlan={ shouldHideEcommercePlan() }

@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import PlanItem from './plan-item';
+import { RowWithBorder } from '.';
 
 interface Props {
 	hidePersonalPlan?: boolean;
@@ -52,13 +53,15 @@ export default function SuggestedPlanSection( {
 				.filter( ( plan ) => ! plan.disabled )
 				.slice( 0, 2 )
 				.map( ( { planSlug, description } ) => (
-					<PlanItem
-						key={ planSlug }
-						planSlug={ plan }
-						description={ description }
-						isBusy={ isBusy }
-						onPlanSelected={ onPlanSelected }
-					/>
+					<RowWithBorder>
+						<PlanItem
+							key={ planSlug }
+							planSlug={ planSlug as PlanSlug }
+							description={ description }
+							isBusy={ isBusy }
+							onPlanSelected={ onPlanSelected }
+						/>
+					</RowWithBorder>
 				) ) }
 		</>
 	);
