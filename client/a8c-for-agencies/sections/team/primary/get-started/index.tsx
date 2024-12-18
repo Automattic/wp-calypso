@@ -1,3 +1,4 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -21,7 +22,9 @@ export default function GetStarted() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Manage team members' );
+	const isDesktop = useDesktopBreakpoint();
+
+	const title = isDesktop ? translate( 'Manage team members' ) : translate( 'Team' );
 
 	const onInviteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' ) );
