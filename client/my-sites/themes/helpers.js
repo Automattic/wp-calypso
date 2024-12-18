@@ -122,9 +122,14 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 			return false;
 		}
 
+		const { name = '', id = '' } = theme;
+		if ( ! name || ! id ) {
+			return false;
+		}
+
 		return (
-			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
-			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
+			name.toLowerCase() === searchTerm?.toLowerCase() ||
+			id.toLowerCase() === searchTerm?.toLowerCase()
 		);
 	};
 
