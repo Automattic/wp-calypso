@@ -5,12 +5,14 @@ import Notice from 'calypso/components/notice';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { isEmailUserAdmin } from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
-import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
+import { getGSuiteSubscriptionStatus, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailForwardHeader from './email-plan-mailboxes/email-forward-header';
 import EmailForwardSecondaryDetails from './email-plan-mailboxes/email-forward-secondary-details';
+import EmailUpgradeNotice from './email-plan-mailboxes/email-upgrade-notice';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
 import MailboxLink from './email-plan-mailboxes/list-item-link';
@@ -26,6 +28,7 @@ type Props = {
 		disabled: boolean;
 		path: string;
 	};
+	purchaseNewEmailAccountPath?: string;
 	isLoadingEmails: boolean;
 };
 function EmailPlanMailboxesList( {
@@ -34,6 +37,7 @@ function EmailPlanMailboxesList( {
 	account,
 	mailboxes,
 	actionPathProps,
+	purchaseNewEmailAccountPath,
 	isLoadingEmails,
 }: Props ) {
 	const translate = useTranslate();
@@ -163,12 +167,17 @@ function EmailPlanMailboxesList( {
 					) }
 
 					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
-						<EmailForwardHeader
-							className="email-plan-mailboxes-list__mailbox-list"
-							actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
-						>
-							<MailboxItems />
-						</EmailForwardHeader>
+						<>
+							<EmailForwardHeader
+								className="email-plan-mailboxes-list__mailbox-list"
+								actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
+							>
+								<MailboxItems />
+							</EmailForwardHeader>
+							{ ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) && (
+								<EmailUpgradeNotice path={ purchaseNewEmailAccountPath } />
+							) }
+						</>
 					) }
 
 					{ accountType !== EMAIL_ACCOUNT_TYPE_FORWARD && (

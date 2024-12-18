@@ -367,6 +367,11 @@ function EmailPlan( {
 				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
 				actionPathProps={ hidePlanActions && getAddMailboxProps() }
+				purchaseNewEmailAccountPath={ getPurchaseNewEmailAccountPath(
+					selectedSite.slug,
+					domain.name,
+					currentRoute
+				) }
 			/>
 			{ ! hidePlanActions && (
 				<div className="email-plan__actions">

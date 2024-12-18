@@ -2,7 +2,10 @@ import { Button, Notice } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 
-export default function EmailUpgradeNotice() {
+type Props = {
+	path?: string;
+};
+export default function EmailUpgradeNotice( { path }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -22,9 +25,11 @@ export default function EmailUpgradeNotice() {
 					) }
 				</p>
 			</div>
-			<Button variant="primary" size="compact">
-				{ translate( 'Compare options' ) }
-			</Button>
+			{ path && (
+				<Button variant="primary" size="compact" href={ path }>
+					{ translate( 'Compare options' ) }
+				</Button>
+			) }
 		</Notice>
 	);
 }
