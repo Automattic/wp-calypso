@@ -22,12 +22,6 @@ type NewsletterCategoryResponse = {
 };
 
 /**
- * Key generator for newsletter categories cache.
- */
-export const getNewsletterCategoriesKey = ( siteId?: string | number ) =>
-	[ 'newsletter-categories', siteId ] as const; // Make tuple readonly for better caching
-
-/**
  * React hook to fetch newsletter categories for a site.
  */
 export const useNewsletterCategories = ( {
@@ -36,7 +30,7 @@ export const useNewsletterCategories = ( {
 	siteId?: string | number;
 } ): UseQueryResult< NewsletterCategories > => {
 	return useQuery( {
-		queryKey: getNewsletterCategoriesKey( siteId ),
+		queryKey: [ 'newsletter-categories', siteId ] as const, // Make tuple readonly for better caching.
 		queryFn: async () => {
 			try {
 				const response = await request< NewsletterCategoryResponse >( {
