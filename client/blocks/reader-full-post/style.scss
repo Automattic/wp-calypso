@@ -126,6 +126,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__story {
+	flex: 1;
 	max-width: var( --reader-full-post-story-max-width );
 	padding: 32px var( --reader-full-post-story-padding );
 	margin: 0 auto;

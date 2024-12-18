@@ -103,7 +103,7 @@ const MarketplaceThankYou = ( {
 		allThemesFetched &&
 		isAtomicTransferCheckComplete &&
 		isLoadedPlugins &&
-		isLoadedThemes;
+		( ! hasThemes || isLoadedThemes );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );

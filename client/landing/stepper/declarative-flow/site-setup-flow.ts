@@ -1,6 +1,11 @@
-import { Onboard } from '@automattic/data-stores';
+import {
+	Onboard,
+	updateLaunchpadSettings,
+	getThemeIdFromStylesheet,
+} from '@automattic/data-stores';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -10,6 +15,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
+import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
@@ -29,6 +35,9 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -40,14 +49,16 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
+function useGoalsAtFrontExperimentQueryParam() {
+	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
+}
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = Boolean(
-			useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ]
-		);
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const steps = [
 			STEPS.GOALS,
@@ -78,9 +89,7 @@ const siteSetupFlow: Flow = {
 		];
 
 		if ( isGoalsAtFrontExperiment ) {
-			// The user has already seen the goals step in the `onboarding` flow
-			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
-			steps.splice( 0, 4 );
+			return [ STEPS.PROCESSING, STEPS.ERROR ];
 		}
 
 		return steps;
@@ -676,6 +685,101 @@ const siteSetupFlow: Flow = {
 		}
 
 		return result;
+	},
+
+	useSideEffect() {
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
+		const { siteSlugOrId, siteId } = useSiteData();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
+		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
+			( select ) => {
+				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
+					ONBOARD_STORE
+				) as OnboardSelect;
+				return {
+					selectedDesign: getSelectedDesign(),
+					selectedStyleVariation: getSelectedStyleVariation(),
+					selectedGlobalStyles: getSelectedGlobalStyles(),
+				};
+			},
+			[]
+		);
+
+		const dispatch = reduxDispatch();
+
+		const skippedCheckout = useQuery().get( 'skippedCheckout' );
+
+		useEffect( () => {
+			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
+				return;
+			}
+
+			setPendingAction( async () => {
+				if ( ! selectedDesign ) {
+					return;
+				}
+
+				// Complete the "Select a design" task only when there is a selected design.
+				await updateLaunchpadSettings( siteSlugOrId, {
+					checklist_statuses: { design_completed: true },
+				} );
+
+				if ( selectedDesign?.is_virtual ) {
+					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
+					return Promise.resolve()
+						.then( () =>
+							dispatch(
+								activateOrInstallThenActivate( themeId ?? '', siteId, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+							)
+						)
+						.then( ( activeThemeStylesheet: string ) =>
+							assembleSite( siteSlugOrId, activeThemeStylesheet, {
+								homeHtml: selectedDesign.recipe?.pattern_html,
+								headerHtml: selectedDesign.recipe?.header_html,
+								footerHtml: selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} )
+						);
+				}
+
+				return setDesignOnSite( siteSlugOrId, selectedDesign, {
+					styleVariation: selectedStyleVariation,
+					globalStyles: selectedGlobalStyles,
+				} )
+					.then( async ( theme: ActiveTheme ) => {
+						await updateLaunchpadSettings( siteSlugOrId, {
+							checklist_statuses: { design_completed: true },
+						} );
+
+						return dispatch( setActiveTheme( siteId, theme ) );
+					} )
+					.catch( ( error: Error ) => {
+						// We attempt to set the design on the site anyway even when the checkout is skipped.
+						// That's because the user might have selected a free design, and there's no reason
+						// we shouldn't set that design on the site when the checkout is skipped.
+						// If the ThemeNotPurchasedError is thrown we know that they actually selected a
+						// paid theme and we're unable to apply it.
+						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
+							return;
+						}
+						throw error;
+					} );
+			} );
+		}, [
+			isGoalsAtFrontExperiment,
+			siteSlugOrId,
+			siteId,
+			setDesignOnSite,
+			selectedDesign,
+			setPendingAction,
+			dispatch,
+			selectedStyleVariation,
+			selectedGlobalStyles,
+			skippedCheckout,
+		] );
 	},
 };
 

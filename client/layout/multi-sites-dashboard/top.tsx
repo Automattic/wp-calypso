@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { Children, ReactNode } from 'react';
-import PendingPaymentNotification from '../pending-payment-notification';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import LayoutNavigation from './nav';
 
 type Props = {
@@ -16,7 +16,7 @@ export default function LayoutTop( { children, withNavigation }: Props ) {
 
 	return (
 		<div
-			className={ clsx( 'a4a-layout__top-wrapper', {
+			className={ clsx( 'multi-sites-dashboard-layout__top-wrapper', {
 				'has-navigation': withNavigation || !! navigation,
 			} ) }
 		>

@@ -28,6 +28,7 @@ const HorizontalBarListItem = ( {
 	usePlainCard,
 	isLinkUnderlined,
 	hasNoBackground,
+	formatValue,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -103,6 +104,16 @@ const HorizontalBarListItem = ( {
 		</span>
 	);
 
+	const renderValue = () => {
+		if ( useShortNumber ) {
+			return <ShortenedNumber value={ value } />;
+		}
+		if ( formatValue ) {
+			return formatValue( value );
+		}
+		return usePlainCard ? value : numberFormat( value, 0 );
+	};
+
 	return (
 		<>
 			<li
@@ -157,11 +168,7 @@ const HorizontalBarListItem = ( {
 						<div className={ `${ BASE_CLASS_NAME }-item--additional` }>{ additionalColumns }</div>
 					) }
 				</div>
-				<div className="value">
-					{ usePlainCard ? value : null }
-					{ ! usePlainCard &&
-						( ! useShortNumber ? numberFormat( value, 0 ) : <ShortenedNumber value={ value } /> ) }
-				</div>
+				<div className="value">{ renderValue() }</div>
 			</li>
 			{ itemChildren && open && (
 				<li>
