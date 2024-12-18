@@ -9,13 +9,13 @@
 	padding-bottom: 0;
 }
 
-.wpcom-site .a4a-layout-with-columns__container {
+.wpcom-site .multi-sites-dashboard-layout-with-columns__container {
 	background: var(--color-sidebar-background);
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard {
-	.a4a-layout__top-wrapper,
-	.a4a-layout__body {
+.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard {
+	.multi-sites-dashboard-layout__top-wrapper,
+	.multi-sites-dashboard-layout__body {
 		> * {
 			padding-inline: 48px;
 			// Override the max-width set in a8c-for-agencies/components/layout/style.scss
@@ -25,26 +25,26 @@
 		}
 	}
 
-	.a4a-layout__header {
+	.multi-sites-dashboard-layout__header {
 		align-items: center;
 	}
 
-	.a4a-layout__header-main {
+	.multi-sites-dashboard-layout__header-main {
 		display: block;
 	}
 
-	.a4a-layout__header-title {
+	.multi-sites-dashboard-layout__header-title {
 		display: block;
 	}
 
-	.a4a-layout__header-subtitle {
+	.multi-sites-dashboard-layout__header-subtitle {
 		font-size: 0.875rem;
 		margin: 4px 0 0 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
 	}
 
-	.a4a-layout__header-actions {
+	.multi-sites-dashboard-layout__header-actions {
 		width: auto;
 		a {
 			font-weight: normal;
@@ -58,10 +58,10 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
 
-	.a4a-layout__top-wrapper {
+	.multi-sites-dashboard-layout__top-wrapper {
 		border-block-end: none;
 
 		@include break-medium {
@@ -91,7 +91,7 @@
 
 	}
 
-	.a4a-layout__header {
+	.multi-sites-dashboard-layout__header {
 		flex-wrap: nowrap;
 	}
 }
@@ -210,21 +210,21 @@
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.a4a-layout__header {
+		.multi-sites-dashboard-layout__header {
 			align-items: center !important;
 		}
 
 		.sites-manage-all-domains-button,
-		.a4a-layout__header-subtitle {
+		.multi-sites-dashboard-layout__header-subtitle {
 			display: none;
 		}
 
-		.a4a-layout__viewport {
+		.multi-sites-dashboard-layout__viewport {
 			width: 360px;
 			justify-content: space-between;
 		}
 
-		.a4a-layout__viewport > div:first-child {
+		.multi-sites-dashboard-layout__viewport > div:first-child {
 			width: 100%;
 		}
 
@@ -235,7 +235,7 @@
 }
 
 // Styles for site preview pane.
-.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+.wpcom-site .multi-sites-dashboard-layout.sites-dashboard .site-preview-pane {
 	.hosting-features__icon {
 		display: inline-block;
 		height: 18px;
@@ -361,9 +361,9 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout,
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .a4a-layout-with-columns__container .a4a-layout-column {
-	.a4a-layout-column__container {
+.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout .multi-sites-dashboard-layout-with-columns__container .multi-sites-dashboard-layout-column {
+	.multi-sites-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -371,31 +371,31 @@
 }
 
 // Use flexbox to structure of fly-out panel.
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
-	&.a4a-layout,
-	.a4a-layout-column,
-	.a4a-layout-with-columns__container {
+.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.multi-sites-dashboard-layout,
+	.multi-sites-dashboard-layout-column,
+	.multi-sites-dashboard-layout-with-columns__container {
 		overflow: visible;
 		height: calc(100vh - 32px - var(--masterbar-height));
 	}
 
-	.a4a-layout-column__container {
+	.multi-sites-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
 		height: calc(100vh - 32px);
 
-		.a4a-layout__top-wrapper {
+		.multi-sites-dashboard-layout__top-wrapper {
 			display: flex;
 			margin-bottom: 0;
 			padding: 0;
 
-			.a4a-layout__viewport {
+			.multi-sites-dashboard-layout__viewport {
 				display: flex;
 				margin: 0;
 				padding: 16px 24px;
 			}
 
-			.a4a-layout__header {
+			.multi-sites-dashboard-layout__header {
 				margin: 0;
 			}
 		}
@@ -421,7 +421,7 @@
 			padding-left: calc(var(--sidebar-width-max));
 			padding-right: 16px;
 
-			.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+			.main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
 		}
@@ -434,7 +434,7 @@
 }
 
 .is-mobile-app-view {
-	.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+	.wpcom-site .multi-sites-dashboard-layout.sites-dashboard .site-preview-pane {
 		.item-preview__header {
 			padding: 0;
 		}

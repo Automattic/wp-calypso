@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useEffect, useState } from 'react';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { useEffect, useMemo, useState } from 'react';
+import { getFlowFromURL } from '../../utils/get-flow-from-url';
 
 /**
  * Check whether the user should have the "goals first" onboarding experience.
@@ -12,9 +14,12 @@ import { useEffect, useState } from 'react';
  * i.e. when the feature flag is disabled.
  */
 export function useGoalsFirstExperiment(): [ boolean, boolean ] {
+	const flow = useMemo( () => getFlowFromURL(), [] );
+	const isEligible = isEnabled( 'onboarding/goals-first' ) && flow === ONBOARDING_FLOW;
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
-		if ( ! isEnabled( 'onboarding/goals-first' ) ) {
+		if ( ! isEligible ) {
 			return;
 		}
 
@@ -22,9 +27,9 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 		return () => {
 			clearTimeout( id );
 		};
-	}, [] );
+	}, [ isEligible ] );
 
-	if ( ! isEnabled( 'onboarding/goals-first' ) ) {
+	if ( ! isEligible ) {
 		return [ false, false ];
 	}
 

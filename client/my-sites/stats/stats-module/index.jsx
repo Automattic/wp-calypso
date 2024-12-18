@@ -46,11 +46,14 @@ class StatsModule extends Component {
 		gateDownloads: PropTypes.bool,
 		hasNoBackground: PropTypes.bool,
 		skipQuery: PropTypes.bool,
+		valueField: PropTypes.string,
+		formatValue: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
 		query: {},
+		valueField: 'value',
 	};
 
 	state = {
@@ -123,7 +126,6 @@ class StatsModule extends Component {
 			summary,
 			siteId,
 			path,
-			data,
 			moduleStrings,
 			statType,
 			query,
@@ -139,7 +141,19 @@ class StatsModule extends Component {
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
+			valueField,
+			formatValue,
 		} = this.props;
+
+		let data = this.props.data;
+
+		// If valueField is specified and data exists, remap data to use that field as the value
+		if ( valueField && data ) {
+			data = data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -204,6 +218,7 @@ class StatsModule extends Component {
 							/>
 						)
 					}
+					formatValue={ formatValue }
 				/>
 				{ isAllTime && (
 					<div className={ footerClass }>

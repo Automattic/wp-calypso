@@ -18,6 +18,7 @@ class EmailForwardingAddNewCompact extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		onUpdateEmailForward: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
+		formHeader: PropTypes.element,
 	};
 
 	isMounted = false;
@@ -89,7 +90,7 @@ class EmailForwardingAddNewCompact extends Component {
 	}
 
 	renderFormFields() {
-		const { translate, selectedDomainName, index, fields } = this.props;
+		const { translate, selectedDomainName, index, fields, formHeader } = this.props;
 		const isValidMailbox = this.isValid( 'mailbox' );
 		const isValidDestination = this.isValid( 'destination' );
 		const { mailbox, destination } = fields;
@@ -98,6 +99,7 @@ class EmailForwardingAddNewCompact extends Component {
 
 		return (
 			<div className="email-forwarding__form-content">
+				{ formHeader ? <>{ formHeader }</> : null }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Emails sent to' ) }</FormLabel>
 					<FormTextInputWithAffixes

@@ -11,6 +11,7 @@ import {
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
+import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
@@ -65,8 +66,8 @@ const onboarding: Flow = {
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
-			// This step is not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS );
+			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
+			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP );
 		}
 
 		return steps;
@@ -82,6 +83,7 @@ const onboarding: Flow = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
+		const locale = useFlowLocale();
 
 		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -104,26 +106,34 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
-					const { intent, skip } = providedDependencies;
-
-					if ( skip ) {
-						// TODO Implement skipping to dashboard
-						return;
-					}
+					const { intent } = providedDependencies;
 
 					switch ( intent ) {
-						case SiteIntent.Import:
-							// TODO Implement exit to site migration
-							return;
+						case SiteIntent.Import: {
+							const migrationFlowLink =
+								locale && locale !== 'en'
+									? `/setup/hosted-site-migration/${ locale }`
+									: '/setup/hosted-site-migration';
+							return window.location.assign( migrationFlowLink );
+						}
 
-						case SiteIntent.DIFM:
-							// TODO Implement exit to DIFM
-							return;
+						case SiteIntent.DIFM: {
+							const difmFlowLink =
+								locale && locale !== 'en'
+									? `/start/do-it-for-me/${ locale }`
+									: '/start/do-it-for-me';
+
+							return window.location.assign( difmFlowLink );
+						}
 
 						default: {
-							return navigate( 'domains' );
+							return navigate( 'designSetup' );
 						}
 					}
+				}
+
+				case 'designSetup': {
+					return navigate( 'domains' );
 				}
 
 				case 'domains':
@@ -262,6 +272,11 @@ const onboarding: Flow = {
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'domains' );
+				case 'designSetup':
+					if ( isGoalsAtFrontExperiment ) {
+						return navigate( 'goals' );
+					}
+					return;
 				default:
 					return;
 			}

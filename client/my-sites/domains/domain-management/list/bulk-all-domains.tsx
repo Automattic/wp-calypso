@@ -73,7 +73,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				border-radius: 4px;
 			}
 
-			header.navigation-header {
+			.domains-overview__list .navigation-header {
 				padding-top: 24px;
 
 				.formatted-header {
@@ -230,6 +230,49 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
+			.domains-overview__list.multi-sites-dashboard-layout-column,
+			.domains-overview__list .multi-sites-dashboard-layout-column__container,
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
+				height: 100%;
+			}
+
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
+				display: flex;
+				flex-direction: column;
+				padding-bottom: 0;
+
+				.domains-table {
+					flex-grow: 1;
+					margin-top: 0;
+					overflow: auto;
+					padding-bottom: 0;
+					width: 100%;
+
+					table {
+						max-height: unset;
+					}
+				}
+			}
+
+			.domains-overview__list {
+				.domains-table__row {
+					.gridicons-ellipsis {
+						rotate: 90deg;
+						visibility: hidden;
+					}
+
+					&:hover {
+						.gridicons-ellipsis {
+							visibility: visible;
+						}
+					}
+				}
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
@@ -269,6 +312,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				.domains-overview__list .domains-table {
 					table {
 						grid-template-columns: 4fr auto;
+						max-height: 100%;
 
 						.domains-table__domain-name {
 							overflow-wrap: anywhere;
@@ -360,7 +404,13 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 	const isDomainsEmpty = isFetched && domains.length === 0;
 	const buttons = ! isDomainsEmpty
-		? [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ]
+		? [
+				<OptionsDomainButton
+					key="breadcrumb_button_1"
+					allDomainsList
+					sidebarMode={ props.sidebarMode }
+				/>,
+		  ]
 		: [];
 	const purchaseActions = usePurchaseActions();
 

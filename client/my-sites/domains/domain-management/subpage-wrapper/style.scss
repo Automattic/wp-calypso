@@ -1,0 +1,32 @@
+.subpage-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .main.is-wide-layout {
+        width: 100%;
+        margin: 32px 48px 0;
+    }
+
+    .email-forwards-add {
+        .card {
+            border-radius: 4px;
+        }
+
+        .card-heading {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 24px;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .form-text-input-with-affixes .form-text-input {
+            border-radius: 2px 0 0 2px;
+        }
+
+        .button {
+            padding: 10px 24px;
+            border-radius: 4px;
+        }
+    }
+}

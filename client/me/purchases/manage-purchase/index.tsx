@@ -288,7 +288,9 @@ class ManagePurchase extends Component<
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 		const isSitelessRenewal =
-			isAkismetTemporarySitePurchase( purchase ) || isMarketplaceTemporarySitePurchase( purchase );
+			purchase &&
+			( isAkismetTemporarySitePurchase( purchase ) ||
+				isMarketplaceTemporarySitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
@@ -1657,7 +1659,6 @@ const WrappedManagePurchase = (
 		planSlugs: [ relatedMonthlyPlanSlug as PlanSlug ],
 		siteId,
 		coupon: undefined,
-		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
@@ -1711,10 +1712,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 		),
-		hasCompletedCancelPurchaseSurvey: getPreference(
-			state,
-			getCancelPurchaseSurveyCompletedPreferenceKey( purchase?.id )
-		),
+		hasCompletedCancelPurchaseSurvey: purchase
+			? getPreference( state, getCancelPurchaseSurveyCompletedPreferenceKey( purchase.id ) )
+			: false,
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,

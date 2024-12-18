@@ -6,10 +6,10 @@ import {
 } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
+import * as AddOns from '../../add-ons';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
 import { COST_OVERRIDE_REASONS } from '../constants';
-import type { AddOnMeta } from '../../add-ons/types';
 
 export type UseCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
@@ -46,16 +46,18 @@ interface Props {
 	useCheckPlanAvailabilityForPurchase: UseCheckPlanAvailabilityForPurchase;
 
 	/**
-	 * `storageAddOmns` TODO: should become a required prop.
-	 */
-	storageAddOns: ( AddOnMeta | null )[] | null;
-
-	/**
 	 * Whether to include discounts from plan proration.
 	 * This is applicable only if a siteId is passed to this hook.
 	 * If true, the pricing includes discounts from upgrade credits.
 	 */
 	withProratedDiscounts?: boolean;
+
+	/**
+	 * Storage add-on products ( e.g. increase site storage by 50GB ) can be purchased alongside plans. If true,
+	 * storage add-on selections will be included in final plan price calculations. Otherwise, omit the add-ons
+	 * from the final price.
+	 */
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -77,13 +79,14 @@ const usePricingMetaForGridPlans = ( {
 	siteId,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-	storageAddOns,
 	withProratedDiscounts,
+	reflectStorageSelectionInPlanPrices = false,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
 	const sitePlans = Plans.useSitePlans( { coupon, siteId } );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
@@ -131,11 +134,12 @@ const usePricingMetaForGridPlans = ( {
 				const plan = plans.data?.[ planSlug ];
 				const sitePlan = sitePlans.data?.[ planSlug ];
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = selectedStorageOption
-					? storageAddOns?.find( ( addOn ) => {
-							return addOn?.addOnSlug === selectedStorageOption;
-					  } )
-					: null;
+				const selectedStorageAddOn =
+					selectedStorageOption && reflectStorageSelectionInPlanPrices
+						? storageAddOns?.find( ( addOn ) => {
+								return addOn?.addOnSlug === selectedStorageOption;
+						  } )
+						: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 

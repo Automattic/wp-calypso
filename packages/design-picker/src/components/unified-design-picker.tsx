@@ -176,6 +176,7 @@ interface DesignCardGroup {
 	designs: Design[];
 	locale: string;
 	category?: string | null;
+	categoryName?: string;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
@@ -191,6 +192,7 @@ const DesignCardGroup = ( {
 	title,
 	designs,
 	category,
+	categoryName,
 	locale,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
@@ -202,9 +204,14 @@ const DesignCardGroup = ( {
 	onPreview,
 	getBadge,
 }: DesignCardGroup ) => {
+	const translate = useTranslate();
+	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
+	const collapsedDesignCount = 6;
+	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
+
 	const content = (
 		<div className="design-picker__grid">
-			{ designs.map( ( design, index ) => {
+			{ visibleDesigns.map( ( design, index ) => {
 				return (
 					<DesignCard
 						key={ design.recipe?.slug ?? design.slug ?? index }
@@ -229,16 +236,24 @@ const DesignCardGroup = ( {
 		return null;
 	}
 
-	if ( ! title || designs.length === 0 ) {
-		return content;
-	}
-
 	return (
 		<div className="design-picker__design-card-group">
-			<div className="design-picker__design-card-title">
-				{ title } ({ designs.length })
-			</div>
+			{ title && designs.length > 0 && (
+				<div className="design-picker__design-card-title">
+					{ title } ({ designs.length })
+				</div>
+			) }
 			{ content }
+			{ isCollapsed && designs.length > collapsedDesignCount && (
+				<div className="design-picker__design-card-group-footer">
+					<Button onClick={ () => setIsCollapsed( false ) }>
+						{ translate( 'Show all %s themes', {
+							args: categoryName,
+							comment: '%s will be a name of the theme category. e.g. Blog.',
+						} ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };
@@ -299,7 +314,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
 	const categories = categorization?.categories || [];
 
@@ -325,10 +339,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	}, [ designs, recommendedDesignSlugs ] );
 
 	// Show recommended themes only when the selected categories are never changed.
-	const showRecommendedDesigns =
+	const showRecommendedAtTop =
 		isMultiFilterEnabled &&
 		! categorization?.isSelectionsChanged &&
 		recommendedDesigns.length === 3;
+	const showRecommendedAtBottom =
+		isMultiFilterEnabled && categorization?.isSelectionsChanged && recommendedDesigns.length === 3;
+	const showRecommendedDesigns = showRecommendedAtTop || showRecommendedAtBottom;
+
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
+		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
+	} );
 
 	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
 	const showNoResults =
@@ -356,7 +377,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				{ categorization && categoryTypes.length && isMultiFilterEnabled && (
 					<DesignPickerFilterGroup title={ translate( 'Type' ) }>
 						<DesignPickerCategoryFilter
-							className="design-picker__category-filter"
 							categories={ categoryTypes }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
@@ -368,7 +388,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				{ categorization && categoryTopics.length && (
 					<DesignPickerFilterGroup title={ isMultiFilterEnabled ? translate( 'Topic' ) : '' } grow>
 						<DesignPickerCategoryFilter
-							className="design-picker__category-filter"
 							categories={ isMultiFilterEnabled ? categoryTopics : categorization.categories }
 							onSelect={ categorization.onSelect }
 							selectedSlugs={ categorization.selections }
@@ -376,8 +395,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				<DesignPickerFilterGroup>
-					{ isBigSkyEligible && (
+				{ isBigSkyEligible && (
+					<DesignPickerFilterGroup>
 						<Button
 							className={ clsx(
 								'design-picker__design-your-own-button',
@@ -389,18 +408,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						>
 							{ translate( 'Design with AI' ) }
 						</Button>
-					) }
-				</DesignPickerFilterGroup>
+					</DesignPickerFilterGroup>
+				) }
 			</div>
-
-			{ showRecommendedDesigns && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Recommended themes' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
@@ -410,6 +420,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
+			{ showRecommendedAtTop && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
@@ -429,10 +448,20 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								: ''
 						}
 						category={ categorySlug }
+						categoryName={ isMultiFilterEnabled ? getCategoryName( categorySlug ) : '' }
 						designs={ categoryDesigns }
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
+
+			{ showRecommendedAtBottom && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
 		</div>
 	);
 };

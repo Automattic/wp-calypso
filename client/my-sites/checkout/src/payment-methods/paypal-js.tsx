@@ -1,4 +1,4 @@
-import { PayPalProvider } from '@automattic/calypso-paypal';
+import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
 import {
 	useTogglePaymentMethod,
 	type PaymentMethod,
@@ -14,10 +14,19 @@ import {
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
+import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
+
+async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
+	return await wp.req.get( {
+		path: `/me/paypal-configuration`,
+		method: 'GET',
+	} );
+}
 
 export function createPayPal(): PaymentMethod {
 	return {
@@ -66,10 +75,18 @@ function PayPalSubmitButtonWrapper( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	return (
-		<PayPalProvider currency={ responseCart.currency }>
+		<PayPalProvider
+			currency={ responseCart.currency }
+			fetchPayPalConfiguration={ fetchPayPalConfiguration }
+			handleError={ handlePayPalConfigurationError }
+		>
 			<PayPalSubmitButton disabled={ disabled } onClick={ onClick } />
 		</PayPalProvider>
 	);
+}
+
+function handlePayPalConfigurationError( error: Error ) {
+	logStashEvent( convertErrorToString( error ), { tags: [ 'paypal-configuration' ] }, 'error' );
 }
 
 function PayPalSubmitButton( {
@@ -86,12 +103,38 @@ function PayPalSubmitButton( {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	// Wait for PayPal.js to load before marking this payment method as active.
-	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
+	const [ { isResolved: isPayPalJsLoaded, isPending: isPayPalJsStillLoading } ] =
+		usePayPalScriptReducer();
+	// Sometimes it appears that usePayPalScriptReducer lies about the script
+	// being loaded (or possibly the script does not correctly expose its
+	// Buttons property?) and we get a fatal error when trying to render
+	// PayPalButtons, so we double check before enabling the payment method.
+	const arePayPalButtonsAvailable = Boolean( window?.paypal?.Buttons );
 	useEffect( () => {
-		if ( isResolved ) {
+		if ( isPayPalJsLoaded && arePayPalButtonsAvailable ) {
 			togglePaymentMethod( 'paypal-js', true );
 		}
-	}, [ isResolved, togglePaymentMethod ] );
+		if ( isPayPalJsLoaded && ! arePayPalButtonsAvailable ) {
+			let paypalObjectString = '';
+			try {
+				paypalObjectString = JSON.stringify( window?.paypal );
+			} catch ( error ) {
+				paypalObjectString = `${ window?.paypal }`;
+			}
+			// eslint-disable-next-line no-console
+			console.error(
+				`PayPal says the script is loaded but Buttons are not available. The paypal object is ${ paypalObjectString }`
+			);
+			logStashEvent(
+				'PayPal says the script is loaded but Buttons are not available',
+				{
+					paypal: paypalObjectString,
+					tags: [ 'paypal-configuration', 'paypal-buttons-missing' ],
+				},
+				'error'
+			);
+		}
+	}, [ isPayPalJsLoaded, arePayPalButtonsAvailable, togglePaymentMethod ] );
 
 	useEffect( () => {
 		debug( 'cart changed; rerendering PayPalSubmitButton' );
@@ -109,7 +152,7 @@ function PayPalSubmitButton( {
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = 'paypal-js' === activePaymentMethodId;
 
-	if ( isPending || ! isResolved || ! isActive ) {
+	if ( isPayPalJsStillLoading || ! isPayPalJsLoaded || ! arePayPalButtonsAvailable || ! isActive ) {
 		return <div>Loading</div>;
 	}
 

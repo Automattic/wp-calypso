@@ -15,16 +15,16 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderTitle as Title,
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
@@ -38,6 +38,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import { useTracksEventOnFilterChange } from '../hooks/use-tracks-event-on-filter-change';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -323,6 +324,8 @@ const SitesDashboard = ( {
 			} );
 		}
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
+
+	useTracksEventOnFilterChange( dataViewsState.filters ?? [] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = () => {
