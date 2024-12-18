@@ -46,7 +46,7 @@ function EmailPlanMailboxesList( {
 		isRecentlyRegistered( domain.registrationDate, 45 ) &&
 		getGSuiteSubscriptionStatus( domain ) === 'unknown';
 
-	function MailboxItemsEmpty() {
+	function MailboxListEmpty() {
 		return (
 			<MailboxListItem>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
@@ -58,7 +58,7 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	function MailboxContent( { type }: { type: 'configuring' | 'no-mailboxes' } ) {
+	function MailboxContentInfo( { type }: { type: 'configuring' | 'no-mailboxes' } ) {
 		let message;
 
 		switch ( type ) {
@@ -181,7 +181,7 @@ function EmailPlanMailboxesList( {
 							domain={ domain }
 							disableActions={ isGoogleConfiguring }
 						>
-							{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
+							{ isNoMailboxes ? <MailboxListEmpty /> : <MailboxItems /> }
 						</MailboxListHeader>
 					) }
 				</>
@@ -190,11 +190,11 @@ function EmailPlanMailboxesList( {
 		case 'email':
 		default: {
 			if ( isGoogleConfiguring ) {
-				return <MailboxContent type="configuring" />;
+				return <MailboxContentInfo type="configuring" />;
 			}
 
 			if ( isNoMailboxes ) {
-				return <MailboxContent type="no-mailboxes" />;
+				return <MailboxContentInfo type="no-mailboxes" />;
 			}
 
 			return (
@@ -205,7 +205,7 @@ function EmailPlanMailboxesList( {
 					domain={ domain }
 					disableActions={ isGoogleConfiguring }
 				>
-					{ isNoMailboxes ? <MailboxItemsEmpty /> : <MailboxItems /> }
+					{ isNoMailboxes ? <MailboxListEmpty /> : <MailboxItems /> }
 				</MailboxListHeader>
 			);
 		}
