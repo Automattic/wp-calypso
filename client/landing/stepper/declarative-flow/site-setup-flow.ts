@@ -720,6 +720,11 @@ const siteSetupFlow: Flow = {
 					return;
 				}
 
+				// Complete the "Select a design" task only when there is a selected design.
+				await updateLaunchpadSettings( siteSlugOrId, {
+					checklist_statuses: { design_completed: true },
+				} );
+
 				if ( selectedDesign?.is_virtual ) {
 					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
 					return Promise.resolve()
