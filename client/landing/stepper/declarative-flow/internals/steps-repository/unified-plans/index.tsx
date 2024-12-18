@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	ActiveTheme,
 	OnboardSelect,
@@ -98,6 +99,11 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		}
 
 		setSelectedDesign( defaultDesign );
+
+		recordTracksEvent( 'calypso_paid_theme_auto_switch', {
+			from: selectedDesign?.slug,
+			to: defaultDesign?.slug,
+		} );
 	};
 
 	return (
