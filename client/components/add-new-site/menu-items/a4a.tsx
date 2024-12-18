@@ -22,14 +22,11 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { AddNewSiteContext } from '../context';
 import AddNewSiteMenuItem from '../menu-item';
 import AddNewSitePopoverColumn from '../popover-column';
+import type { AddNewSiteMenuItemsProps } from '../types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 
-export interface AddNewSiteA4AMenuItemsProps {
-	setMenuVisible: ( isVisible: boolean ) => void;
-}
-
-const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteA4AMenuItemsProps ) => {
+const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) => {
 	const translate = useTranslate();
 
 	const { setVisibleModalType } = useContext( AddNewSiteContext );

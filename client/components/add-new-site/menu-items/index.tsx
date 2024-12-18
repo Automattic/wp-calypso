@@ -1,16 +1,18 @@
-import React from 'react';
-import AddNewSiteA4AMenuItems, { AddNewSiteA4AMenuItemsProps } from './a4a';
+import { useMemo } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import AddNewSiteA4AMenuItems from './a4a';
+import type { AddNewSiteMenuItemsProps } from '../types';
 
-type Props = {
-	children: React.ReactNode;
+const AddNewSiteMenuItems = ( props: AddNewSiteMenuItemsProps ) => {
+	const renderContent = useMemo( () => {
+		switch ( true ) {
+			case isA8CForAgencies():
+				return <AddNewSiteA4AMenuItems { ...props } />;
+			default:
+				return null;
+		}
+	}, [ props ] );
+	return renderContent;
 };
-
-const AddNewSiteMenuItems = ( { children }: Props ) => {
-	return children;
-};
-
-AddNewSiteMenuItems.A4A = ( props: AddNewSiteA4AMenuItemsProps ) => (
-	<AddNewSiteA4AMenuItems { ...props } />
-);
 
 export default AddNewSiteMenuItems;

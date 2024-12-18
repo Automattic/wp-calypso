@@ -1,6 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useRef, useState, useCallback, useMemo } from 'react';
-import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useRef, useState, useCallback } from 'react';
 import AddNewSiteButton from './button';
 import { AddNewSiteContext } from './context';
 import AddNewSiteMenuItems from './menu-items';
@@ -21,26 +20,6 @@ const AddNewSite = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
 	}, [] );
 
-	// Render the popover content based on the environment
-	const renderPopoverContent = useMemo( () => {
-		switch ( true ) {
-			case isA8CForAgencies():
-				return <AddNewSiteMenuItems.A4A setMenuVisible={ setMenuVisible } />;
-			default:
-				return null;
-		}
-	}, [ setMenuVisible ] );
-
-	// Render the modals content based on the environment
-	const renderModalsContent = useMemo( () => {
-		switch ( true ) {
-			case isA8CForAgencies():
-				return <AddNewSiteModals.A4A />;
-			default:
-				return null;
-		}
-	}, [] );
-
 	return (
 		<AddNewSiteContext.Provider value={ { visibleModalType, setVisibleModalType } }>
 			<AddNewSiteButton
@@ -54,9 +33,9 @@ const AddNewSite = () => {
 				toggleMenu={ toggleMenu }
 				popoverMenuContext={ popoverMenuContext }
 			>
-				{ renderPopoverContent }
+				<AddNewSiteMenuItems setMenuVisible={ setMenuVisible } />
 			</AddNewSitePopover>
-			{ renderModalsContent }
+			<AddNewSiteModals />
 		</AddNewSiteContext.Provider>
 	);
 };
