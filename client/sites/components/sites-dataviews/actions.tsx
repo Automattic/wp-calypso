@@ -238,7 +238,8 @@ export const isActionEligible = (
 			};
 		case 'delete-site':
 			return ( site: SiteExcerptData ) => {
-				return ! site.is_deleted && ! isNotAtomicJetpack( site );
+				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				return ! site.is_deleted && canManageOptions && site.jetpack;
 			};
 		default:
 			return () => true;
