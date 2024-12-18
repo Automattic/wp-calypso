@@ -169,11 +169,6 @@ export interface UnifiedPlansStepProps {
 	 * Used only in "onboarding-pm" flow (old Signup/Start)
 	 */
 	isCustomDomainAllowedOnFreePlan?: boolean;
-
-	/**
-	 * Whether the user should have the "goals first" onboarding experience
-	 */
-	isGoalsAtFrontExperiment?: boolean;
 }
 
 /**
@@ -222,7 +217,6 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
-	isGoalsAtFrontExperiment,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = useDispatch();
@@ -551,7 +545,6 @@ function UnifiedPlansStep( {
 									) }
 									onPlanIntervalUpdate={ onPlanIntervalUpdate }
 									selectedThemeType={ selectedThemeType }
-									isGoalsAtFrontExperiment={ isGoalsAtFrontExperiment }
 								/>
 							</div>
 						}

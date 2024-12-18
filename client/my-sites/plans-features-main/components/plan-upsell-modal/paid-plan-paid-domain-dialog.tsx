@@ -1,5 +1,4 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { FREE_THEME } from '@automattic/design-picker';
 import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +7,7 @@ import {
 	ButtonContainer,
 	DialogContainer,
 	Heading,
+	SubHeading,
 	Row,
 	RowWithBorder,
 	DomainName,
@@ -15,33 +15,14 @@ import {
 import SuggestedPlanSection from './components/suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 
-export const PaidPlanIsRequiredDialog = ( {
+export function PaidPlanPaidDomainDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	selectedThemeType,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps ) => {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
-
-	const getUpsellTitle = () => {
-		if ( isPaidTheme && paidDomainName ) {
-			return translate( 'Custom domains and paid themes are only available with a paid plan' );
-		}
-
-		if ( isPaidTheme ) {
-			return translate( 'Paid themes are only available with a paid plan' );
-		}
-
-		return translate( 'Custom domains are only available with a paid plan' );
-	};
-
-	const handleFreeDomainClick = () => {
-		setIsBusy( true );
-		onFreePlanSelected();
-	};
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -49,11 +30,21 @@ export const PaidPlanIsRequiredDialog = ( {
 		} );
 	}, [] );
 
+	function handleFreeDomainClick() {
+		setIsBusy( true );
+		onFreePlanSelected();
+	}
+
+	const upsellDescription = translate(
+		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+	);
+
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
-				{ getUpsellTitle() }
+				{ translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
+			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
 					<SuggestedPlanSection
@@ -80,4 +71,4 @@ export const PaidPlanIsRequiredDialog = ( {
 			</ButtonContainer>
 		</DialogContainer>
 	);
-};
+}

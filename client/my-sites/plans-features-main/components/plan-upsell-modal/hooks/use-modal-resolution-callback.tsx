@@ -5,8 +5,9 @@ import { useCallback } from '@wordpress/element';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
-	ModalType,
+	PAID_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
+	ModalType,
 } from '..';
 
 type Props = {
@@ -52,7 +53,7 @@ export function useModalResolutionCallback( {
 						intent || ''
 					) )
 			) {
-				return PAID_PLAN_IS_REQUIRED_DIALOG;
+				return PAID_PLAN_PAID_DOMAIN_DIALOG;
 			}
 
 			return null;

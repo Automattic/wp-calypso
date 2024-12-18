@@ -179,11 +179,6 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 
 	selectedThemeType?: string;
-
-	/**
-	 * Whether the user should have the "goals first" onboarding experience
-	 */
-	isGoalsAtFrontExperiment?: boolean;
 }
 
 const PlansFeaturesMain = ( {
@@ -228,7 +223,6 @@ const PlansFeaturesMain = ( {
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
-	isGoalsAtFrontExperiment,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -794,7 +788,6 @@ const PlansFeaturesMain = ( {
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
-					isGoalsAtFrontExperiment={ isGoalsAtFrontExperiment }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {

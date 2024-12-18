@@ -11,7 +11,6 @@ import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-feature
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getThemeType } from 'calypso/state/themes/selectors';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, StepProps } from '../../types';
@@ -22,7 +21,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
-	const [ isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -109,7 +107,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
-			isGoalsAtFrontExperiment={ isGoalsAtFrontExperiment }
 		/>
 	);
 }
