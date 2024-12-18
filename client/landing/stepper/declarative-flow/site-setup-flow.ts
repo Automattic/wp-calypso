@@ -730,7 +730,7 @@ const siteSetupFlow: Flow = {
 					return Promise.resolve()
 						.then( () =>
 							dispatch(
-								activateOrInstallThenActivate( themeId ?? '', siteSlugOrId, {
+								activateOrInstallThenActivate( themeId ?? '', siteId, {
 									source: 'assembler',
 								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)
