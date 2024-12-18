@@ -166,6 +166,7 @@ const StatsDateControl = ( {
 	// handler for shortcut clicks
 	const onShortcutClickHandler = ( shortcut: DateRangePickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
 		if ( shortcut.isGated ) {
 			onGatedHandler &&
 				onGatedHandler(
@@ -173,6 +174,8 @@ const StatsDateControl = ( {
 					event_from,
 					shortcut.statType ?? shortcut.id
 				);
+		} else {
+			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
 		}
 	};
 

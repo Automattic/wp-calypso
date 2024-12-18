@@ -1,16 +1,11 @@
-import {
-	getPlan,
-	PlanSlug,
-	PRODUCT_1GB_SPACE,
-	PLAN_MONTHLY_PERIOD,
-} from '@automattic/calypso-products';
+import { getPlan, PlanSlug, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder, Badge } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { PropsWithChildren, useState } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -193,27 +188,30 @@ const PricingSection = () => {
 	);
 };
 
-function PlanStorageFooter( { children }: PropsWithChildren ) {
+type NeedMoreStorageProps = {
+	noLink?: boolean;
+};
+
+function NeedMoreStorage( { noLink = false }: NeedMoreStorageProps ) {
+	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
-	const wrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
+	const text = translate( 'Need more storage?' );
 
-	if ( wrapperIsLink ) {
-		return <div className="hosting-overview__plan-storage-footer">{ children }</div>;
+	if ( noLink ) {
+		return text;
 	}
 
 	return (
-		<div className="hosting-overview__plan-storage-footer">
-			<Button
-				plain
-				href={ `/add-ons/${ site?.slug }` }
-				onClick={ () => {
-					dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
-				} }
-			>
-				{ children }
-			</Button>
-		</div>
+		<Button
+			plain
+			href={ `/add-ons/${ site?.slug }` }
+			onClick={ () => {
+				dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
+			} }
+		>
+			{ text }
+		</Button>
 	);
 }
 
@@ -242,11 +240,8 @@ const PlanCard = () => {
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 
-	// Check for storage addons available for purchase.
-	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
-	const storageAddons = addOns.filter(
-		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
-	);
+	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: site?.ID } );
 
 	const renderManageButton = () => {
 		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
@@ -331,9 +326,11 @@ const PlanCard = () => {
 							siteId={ site?.ID }
 							storageBarComponent={ PlanStorageBar }
 						>
-							{ storageAddons.length > 0 && ! isAgencyPurchase && (
-								<PlanStorageFooter>{ translate( 'Need more storage?' ) }</PlanStorageFooter>
-							) }
+							{ availableStorageAddOns.length && ! isAgencyPurchase ? (
+								<div className="hosting-overview__plan-storage-footer">
+									<NeedMoreStorage noLink={ footerWrapperIsLink } />
+								</div>
+							) : null }
 						</PlanStorage>
 
 						{ site && (

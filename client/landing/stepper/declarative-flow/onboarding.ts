@@ -66,8 +66,8 @@ const onboarding: Flow = {
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
-			// This step is not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS );
+			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
+			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP );
 		}
 
 		return steps;
@@ -127,9 +127,13 @@ const onboarding: Flow = {
 						}
 
 						default: {
-							return navigate( 'domains' );
+							return navigate( 'designSetup' );
 						}
 					}
+				}
+
+				case 'designSetup': {
+					return navigate( 'domains' );
 				}
 
 				case 'domains':
