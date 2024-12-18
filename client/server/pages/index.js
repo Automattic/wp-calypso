@@ -965,6 +965,16 @@ export default function pages() {
 		);
 	}
 
+	/**
+	 * This has to be before the section definitions because it's a suburl of the signup section that is registered below.
+	 * If this is registered after the signup section, the signup section will take precedence and this route will never be hit.
+	 */
+	handleSectionPath(
+		EXPERIMENT_DISPATCHER_SECTION,
+		'/start/assign/*',
+		'entry-experiment-dispatcher'
+	);
+
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.filter( isSectionEnabled )
@@ -984,8 +994,6 @@ export default function pages() {
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
-
-	handleSectionPath( EXPERIMENT_DISPATCHER_SECTION, '/assign/*', 'entry-experiment-dispatcher' );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );

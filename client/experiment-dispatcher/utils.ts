@@ -39,7 +39,7 @@ export function redirectWithParamsAndLocale( target: string ) {
  * Gets the experiment manifest by determining its slug from the URL then retrieving it from the catalog.
  */
 export function getManifestFromUrl() {
-	const slug = window.location.pathname.split( '/' )[ 2 ] as keyof typeof experimentsCatalog;
+	const slug = window.location.pathname.split( '/' )[ 3 ] as keyof typeof experimentsCatalog;
 	const experiment = slug in experimentsCatalog && experimentsCatalog[ slug ];
 	if ( ! experiment ) {
 		throw new Error( `Experiment with slug ${ slug } not found` );
@@ -52,7 +52,7 @@ export function getManifestFromUrl() {
  */
 export function getLocaleFromUrl() {
 	const allowedLocales = config( 'magnificent_non_en_locales' ) as string[];
-	const locale = window.location.pathname.split( '/' )[ 3 ] || '';
+	const locale = window.location.pathname.split( '/' )[ 4 ] || '';
 	if ( allowedLocales.includes( locale ) ) {
 		return locale;
 	}
