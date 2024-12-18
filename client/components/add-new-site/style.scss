@@ -41,11 +41,7 @@
 	}
 
 	.add-new-site__popover-column {
-		width: 250px;
-
-		@include break-xlarge {
-			width: 300px;
-		}
+		width: 260px;
 	}
 }
 
@@ -98,7 +94,7 @@ button, a {
 				height: 78px;
 
 				.sidebar__menu-icon {
-					width: 249px;
+					width: 228px;
 					height: auto;
 				}
 			}
