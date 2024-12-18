@@ -47,6 +47,8 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
 
+	const redirectTo = encodeURIComponent( window.location.href );
+
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
 		closeModal();
@@ -57,10 +59,10 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 			const checkoutProductUrl = new URL(
 				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
 			);
-			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
+			checkoutProductUrl.searchParams.set( 'redirect_to', redirectTo );
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ planSlug }` );
+			page( `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }` );
 		}
 	};
 
