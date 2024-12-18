@@ -235,7 +235,7 @@ export async function assignNewCardProcessor(
 			city,
 			organization,
 			address,
-			setupKey: String( setupKey ),
+			setupKey,
 		} );
 
 		return makeSuccessResponse( result );
