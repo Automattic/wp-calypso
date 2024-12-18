@@ -36,12 +36,12 @@ function MainLayout( {
 		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
 	);
 	const layoutContainerClassname = hasLayoutColumns
-		? 'a4a-layout-with-columns__container'
-		: 'a4a-layout__container';
+		? 'multi-sites-dashboard-layout-with-columns__container'
+		: 'multi-sites-dashboard-layout__container';
 
 	return (
 		<Main
-			className={ clsx( 'a4a-layout', className, {
+			className={ clsx( 'multi-sites-dashboard-layout', className, {
 				'is-with-border': withBorder,
 			} ) }
 			fullWidthLayout={ wide }

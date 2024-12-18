@@ -9,14 +9,14 @@ import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/ho
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

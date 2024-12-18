@@ -15,14 +15,14 @@ type Props = {
 export default function LayoutColumn( { children, className, wide, withBorder, compact }: Props ) {
 	return (
 		<Main
-			className={ clsx( 'a4a-layout-column', className, {
+			className={ clsx( 'multi-sites-dashboard-layout-column', className, {
 				'is-with-border': withBorder,
 				'is-compact': compact,
 			} ) }
 			fullWidthLayout={ wide }
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
 		>
-			<div className="a4a-layout-column__container">{ children }</div>
+			<div className="multi-sites-dashboard-layout-column__container">{ children }</div>
 		</Main>
 	);
 }

@@ -4,13 +4,6 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
@@ -19,6 +12,13 @@ import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
+import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
+} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';

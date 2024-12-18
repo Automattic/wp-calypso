@@ -94,7 +94,7 @@ const getAgencyTierInfo = (
 				logo: AgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congrats! You've reached the Agency Partner Tier." ),
+					title: translate( "Congrats! You've reached the Agency Partner tier!" ),
 					description: translate(
 						"You've reached at least $1,200 in influenced revenue and have unlocked these additional benefits:"
 					),
@@ -130,7 +130,7 @@ const getAgencyTierInfo = (
 				logo: ProAgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congratulations, you've reached the Pro Partner Tier!" ),
+					title: translate( "Congratulations, you've reached the Pro Agency Partner tier!" ),
 					description: translate(
 						"You've reached top-tier status and unlocked these additional benefits:"
 					),
