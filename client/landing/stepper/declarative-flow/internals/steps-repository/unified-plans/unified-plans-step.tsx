@@ -41,6 +41,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { StepState } from 'calypso/state/signup/progress/schema';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './unified-plans-step-styles.scss';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -245,6 +246,20 @@ function UnifiedPlansStep( {
 		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
 	);
 
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+
+	const {
+		siteUrl,
+		domainItem,
+		siteTitle,
+		username,
+		coupon,
+		segmentationSurveyAnswers,
+		selectedThemeType,
+	} = signupDependencies;
+
+	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
 			submitSignupStepFromProps ??
@@ -276,6 +291,10 @@ function UnifiedPlansStep( {
 
 	const handleUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			if ( isPaidTheme && cartItems === null ) {
+				setSelectedDesign( null );
+			}
+
 			buildUpgradeFunction(
 				{
 					additionalStepData,
@@ -463,16 +482,6 @@ function UnifiedPlansStep( {
 				: undefined
 		);
 
-	const {
-		siteUrl,
-		domainItem,
-		siteTitle,
-		username,
-		coupon,
-		segmentationSurveyAnswers,
-		selectedThemeType,
-	} = signupDependencies;
-
 	const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
 	const surveyedIntent = shouldBasePlansOnSegment(
@@ -493,7 +502,6 @@ function UnifiedPlansStep( {
 		freeWPComSubdomain = siteUrl;
 	}
 
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 	const deemphasizeFreePlan =
 		( [ ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW ].includes( flowName ) &&
 			( paidDomainName != null || isPaidTheme ) ) ||
