@@ -241,12 +241,12 @@ export function blogListing( context, next ) {
 export function userListing( context, next ) {
 	const userId = context.params.user_id;
 
-	if ( ! parseInt( userId, 10 ) ) {
+	if ( userId.trim().length === 0 ) {
 		next();
 		return;
 	}
 
-	const basePath = '/read/user/:user_id';
+	const basePath = '/read/users/:user_id';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId;
 	const mcKey = 'blog';
 
@@ -258,7 +258,7 @@ export function userListing( context, next ) {
 			require="calypso/reader/user-stream"
 			key={ 'user-' + userId }
 			streamKey={ 'user:' + userId }
-			userId={ +userId }
+			userId={ userId }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,
