@@ -67,6 +67,10 @@ body.is-section-domains.is-domain-plan-package-flow {
 }
 
 .domains-overview {
+	.item-preview__header-info {
+		flex-wrap: wrap;
+	}
+
 	.domain-settings-page {
 		max-width: 1200px;
 		margin-left: 0;
