@@ -29,7 +29,6 @@ import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependenc
 import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
@@ -91,7 +90,6 @@ export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -114,7 +112,6 @@ export default function DomainsStep( props: StepProps ) {
 				} }
 				step={ stepState }
 				flowName={ props.flow }
-				goBack={ isGoalsAtFrontExperiment ? props.navigation.goBack : undefined }
 				useStepperWrapper
 			/>
 		</CalypsoShoppingCartProvider>
