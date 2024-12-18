@@ -1,17 +1,22 @@
 import { Icon, link, linkOff, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+import { PluginActionTypes } from 'calypso/my-sites/plugins/plugin-management-v2/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
-import { Plugin } from 'calypso/state/plugins/installed/types';
+import { Plugin, PluginSite } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 
 export function useActions(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void
 ) {
 	const dispatch = useDispatch();
-
 	const recordIntentionEvent = ( plugins: Array< Plugin >, action: string ) => {
 		/**
 		 * There's currently no better way to differentiate between bulk and single action clicks.
@@ -22,6 +27,16 @@ export function useActions(
 				: 'calypso_plugins_manage_list_action_click';
 
 		dispatch( recordTracksEvent( eventName, { action } ) );
+	};
+
+	const actionInProgress = ( plugin: Plugin, action: PluginActionTypes ) => {
+		return plugin?.allStatuses?.find(
+			( status ) => status.action === action && status.status === 'inProgress'
+		);
+	};
+
+	const someSiteHasStatus = ( plugin: Plugin, field: keyof PluginSite, value: boolean ) => {
+		return Object.values( plugin.sites )?.some( ( site ) => site[ field ] === value );
 	};
 
 	const actions = [
@@ -47,7 +62,10 @@ export function useActions(
 			label: translate( 'Activate' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.INACTIVE ) ?? true;
+				return (
+					! actionInProgress( plugin, ACTIVATE_PLUGIN ) &&
+					someSiteHasStatus( plugin, 'active', false )
+				);
 			},
 			supportsBulk: true,
 			icon: <Icon icon={ link } />,
@@ -62,7 +80,10 @@ export function useActions(
 			label: translate( 'Deactivate' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.ACTIVE ) ?? true;
+				return (
+					! actionInProgress( plugin, DEACTIVATE_PLUGIN ) &&
+					someSiteHasStatus( plugin, 'active', true )
+				);
 			},
 			supportsBulk: true,
 			icon: <Icon icon={ linkOff } />,
@@ -77,7 +98,10 @@ export function useActions(
 			label: translate( 'Enable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_DISABLED ) ?? true;
+				return (
+					! actionInProgress( plugin, ENABLE_AUTOUPDATE_PLUGIN ) &&
+					someSiteHasStatus( plugin, 'autoupdate', false )
+				);
 			},
 			supportsBulk: true,
 		},
@@ -91,7 +115,10 @@ export function useActions(
 			label: translate( 'Disable auto-updates' ),
 			isExternalLink: true,
 			isEligible( plugin: Plugin ) {
-				return plugin.status?.includes( PLUGINS_STATUS.AUTOUPDATE_ENABLED ) ?? true;
+				return (
+					! actionInProgress( plugin, DISABLE_AUTOUPDATE_PLUGIN ) &&
+					someSiteHasStatus( plugin, 'autoupdate', true )
+				);
 			},
 			supportsBulk: true,
 		},
