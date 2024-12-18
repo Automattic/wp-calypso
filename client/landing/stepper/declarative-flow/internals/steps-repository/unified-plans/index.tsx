@@ -85,20 +85,18 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		}
 
 		if ( site ) {
-			updateLaunchpadSettings( site?.ID || '', {
-				checklist_statuses: { design_completed: false },
-			} );
-
 			setPendingAction( () => {
 				return setDesignOnSite( site?.ID, defaultDesign, {
 					styleVariation: defaultDesign?.style_variations?.[ 0 ],
-				} ).then( ( theme: ActiveTheme ) => {
+				} ).then( async ( theme: ActiveTheme ) => {
+					await updateLaunchpadSettings( site?.ID || '', {
+						checklist_statuses: { design_completed: false },
+					} );
 					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
 				} );
 			} );
 		}
-
-		setSelectedDesign( defaultDesign );
+		setSelectedDesign( { ...defaultDesign, default: true } );
 
 		recordTracksEvent( 'calypso_paid_theme_auto_switch', {
 			from: selectedDesign?.slug,
