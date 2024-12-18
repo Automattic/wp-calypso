@@ -726,6 +726,11 @@ const siteSetupFlow: Flow = {
 						return dispatch( setActiveTheme( siteId, theme ) );
 					} )
 					.catch( ( error: Error ) => {
+						// We attempt to set the design on the site anyway even when the checkout is skipped.
+						// That's because the user might have selected a free design, and there's no reason
+						// we shouldn't set that design on the site when the checkout is skipped.
+						// If the ThemeNotPurchasedError is thrown we know that they actually selected a
+						// paid theme and we're unable to apply it.
 						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
 							return;
 						}
