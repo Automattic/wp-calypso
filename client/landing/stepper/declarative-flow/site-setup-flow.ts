@@ -1,4 +1,8 @@
-import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
+import {
+	Onboard,
+	updateLaunchpadSettings,
+	getThemeIdFromStylesheet,
+} from '@automattic/data-stores';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -11,7 +15,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
-import { setActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
@@ -32,6 +36,8 @@ import {
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -685,7 +691,7 @@ const siteSetupFlow: Flow = {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const { siteSlugOrId, siteId } = useSiteData();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { setDesignOnSite } = useDispatch( SITE_STORE );
+		const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
 			( select ) => {
 				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
@@ -712,6 +718,31 @@ const siteSetupFlow: Flow = {
 			setPendingAction( async () => {
 				if ( ! selectedDesign ) {
 					return;
+				}
+
+				// Complete the "Select a design" task only when there is a selected design.
+				await updateLaunchpadSettings( siteSlugOrId, {
+					checklist_statuses: { design_completed: true },
+				} );
+
+				if ( selectedDesign?.is_virtual ) {
+					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
+					return Promise.resolve()
+						.then( () =>
+							dispatch(
+								activateOrInstallThenActivate( themeId ?? '', siteId, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+							)
+						)
+						.then( ( activeThemeStylesheet: string ) =>
+							assembleSite( siteSlugOrId, activeThemeStylesheet, {
+								homeHtml: selectedDesign.recipe?.pattern_html,
+								headerHtml: selectedDesign.recipe?.header_html,
+								footerHtml: selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} )
+						);
 				}
 
 				return setDesignOnSite( siteSlugOrId, selectedDesign, {
