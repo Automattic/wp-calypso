@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -28,8 +28,6 @@ interface HostingDetailsWithIconsProps {
 		description: string;
 	}[];
 }
-
-const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
 
 const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
 	const translate = useTranslate();
@@ -95,6 +93,12 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		isFetching,
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
+
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_site_migration_flow_202501_v1'
+	);
+
+	const isMigrationExperimentEnabled = 'treatment' === experimentAssignment?.variationName;
 
 	useEffect( () => {
 		if ( siteInfo ) {

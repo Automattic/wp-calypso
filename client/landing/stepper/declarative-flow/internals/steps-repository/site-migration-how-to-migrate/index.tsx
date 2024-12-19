@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
@@ -13,6 +12,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import FlowCard from '../components/flow-card';
@@ -27,7 +27,10 @@ interface Props extends StepProps {
 
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const { navigation, headerText, stepName, subHeaderText } = props;
-	const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_site_migration_flow_202501_v1'
+	);
+	const isMigrationExperimentEnabled = 'treatment' === experimentAssignment?.variationName;
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();

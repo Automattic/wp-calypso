@@ -8,7 +8,6 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { useExperiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -108,18 +107,6 @@ const siteMigration: Flow = {
 			true
 		);
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
-
-		const [ , experimentAssignment ] = useExperiment(
-			'calypso_signup_onboarding_site_migration_flow_202501_v1'
-		);
-
-		// Enable the feature flag if the user is in the treatment group.
-		if (
-			'treatment' === experimentAssignment?.variationName &&
-			! config.isEnabled( 'migration-flow/experiment' )
-		) {
-			config.enable( 'migration-flow/experiment' );
-		}
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );

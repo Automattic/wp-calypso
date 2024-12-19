@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -19,6 +18,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { StepProps } from '../../types';
 import './style.scss';
@@ -39,7 +39,10 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	customizedActionButtons,
 	...props
 } ) => {
-	const showVariants = config.isEnabled( 'migration-flow/experiment' );
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_site_migration_flow_202501_v1'
+	);
+	const showVariants = 'treatment' === experimentAssignment?.variationName;
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
