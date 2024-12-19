@@ -249,8 +249,13 @@
 			width: 100%;
 
 			p {
+				font-size: 0.875rem;
 				margin: 0;
 			}
+		}
+
+		.components-button {
+			border: none;
 		}
 	}
 }
