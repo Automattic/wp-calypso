@@ -1,23 +1,23 @@
 import { useMemo } from '@wordpress/element';
 import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
-import { type AddOnPriceKey, getAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
+import { type AddOnPriceComponent, createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 
 type AddOnDisplayCost = {
 	[ key in string ]: TranslateResult;
 };
 
-const useAddOnDisplayCost = ( priceKeys: AddOnPriceKey[] ) => {
+const useAddOnDisplayCost = ( priceComps: AddOnPriceComponent[] ) => {
 	const translate = useTranslate();
-	const addOnPrices = useAddOnPrices( priceKeys );
-	const productSlugs = priceKeys.map( ( { productSlug } ) => productSlug );
+	const addOnPrices = useAddOnPrices( priceComps );
+	const productSlugs = priceComps.map( ( { productSlug } ) => productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 
 	return useMemo( () => {
-		return priceKeys.reduce< AddOnDisplayCost >( ( accum, priceKey ) => {
-			const { productSlug } = priceKey;
+		return priceComps.reduce< AddOnDisplayCost >( ( accum, priceComp ) => {
+			const { productSlug } = priceComp;
 			const product = productsList.data?.[ productSlug ];
-			const key = getAddOnPriceKey( priceKey );
+			const key = createAddOnPriceKey( priceComp );
 			const prices = addOnPrices[ key ];
 			const formattedCost = prices?.formattedMonthlyPrice || '';
 			if ( product?.term === 'month' ) {

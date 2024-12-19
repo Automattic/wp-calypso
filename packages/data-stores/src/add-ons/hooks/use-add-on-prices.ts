@@ -2,7 +2,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useMemo } from '@wordpress/element';
 import * as ProductsList from '../../products-list';
 
-export type AddOnPriceKey = {
+export type AddOnPriceComponent = {
 	productSlug: ProductsList.StoreProductSlug;
 	quantity?: number;
 };
@@ -16,17 +16,17 @@ type AddOnPrices = {
 	} | null;
 };
 
-export const getAddOnPriceKey = ( { productSlug, quantity }: AddOnPriceKey ) => {
+export const createAddOnPriceKey = ( { productSlug, quantity }: AddOnPriceComponent ) => {
 	return `${ productSlug }_${ quantity ?? 0 }`;
 };
 
-export const useAddOnPrices = ( priceKeys: AddOnPriceKey[] ) => {
-	const productSlugs = priceKeys.map( ( { productSlug } ) => productSlug );
+export const useAddOnPrices = ( priceComps: AddOnPriceComponent[] ) => {
+	const productSlugs = priceComps.map( ( { productSlug } ) => productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 
 	return useMemo( () => {
-		return priceKeys.reduce< AddOnPrices >( ( accum, priceKey ) => {
-			const { productSlug, quantity } = priceKey;
+		return priceComps.reduce< AddOnPrices >( ( accum, priceComp ) => {
+			const { productSlug, quantity } = priceComp;
 			const product = productsList.data?.[ productSlug ];
 			let cost = product?.costSmallestUnit;
 
@@ -75,7 +75,7 @@ export const useAddOnPrices = ( priceKeys: AddOnPriceKey[] ) => {
 			}
 
 			return {
-				[ getAddOnPriceKey( priceKey ) ]: {
+				[ createAddOnPriceKey( priceComp ) ]: {
 					monthlyPrice,
 					yearlyPrice,
 					formattedMonthlyPrice: formatCurrency( monthlyPrice, product?.currencyCode, {

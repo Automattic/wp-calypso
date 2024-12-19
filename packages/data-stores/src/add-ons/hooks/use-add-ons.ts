@@ -20,7 +20,7 @@ import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
-import { getAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
+import { createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 import type { AddOnMeta } from '../types';
 
 const getActiveAddOns = (): AddOnMeta[] => {
@@ -70,12 +70,12 @@ interface Props {
 const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const checkoutLink = useAddOnCheckoutLink();
 	const activeAddOns = getActiveAddOns();
-	const addOnPriceKeys = activeAddOns.map( ( { productSlug, quantity } ) => ( {
+	const addOnPriceComps = activeAddOns.map( ( { productSlug, quantity } ) => ( {
 		productSlug,
 		quantity,
 	} ) );
-	const addOnPrices = useAddOnPrices( addOnPriceKeys );
-	const addOnDisplayCosts = useAddOnDisplayCost( addOnPriceKeys );
+	const addOnPrices = useAddOnPrices( addOnPriceComps );
+	const addOnDisplayCosts = useAddOnDisplayCost( addOnPriceComps );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
@@ -84,7 +84,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 		() =>
 			activeAddOns.map( ( addOnMeta ) => {
 				const { productSlug, quantity } = addOnMeta;
-				const key = getAddOnPriceKey( { productSlug, quantity } );
+				const key = createAddOnPriceKey( { productSlug, quantity } );
 
 				// TODO: can we not specify the product slug here for the storage add-on?
 				const isLoading =
@@ -114,7 +114,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 			} ),
 		[
 			addOnPrices,
-			addOnPriceKeys,
+			addOnPriceComps,
 			addOnDisplayCosts,
 			productsList.data,
 			productsList.isLoading,
