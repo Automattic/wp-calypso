@@ -31,6 +31,10 @@
 		padding: 0;
 		color: var(--studio-gray-80);
 		margin: 0;
+
+		.design-picker-design-title__container & {
+			color: var(--studio-white);
+		}
 	}
 
 	.badge--info {
