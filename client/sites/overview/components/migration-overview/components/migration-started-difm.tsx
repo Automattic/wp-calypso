@@ -14,7 +14,7 @@ export const MigrationStartedDIFM = ( { site }: { site?: SiteDetails } ) => {
 		"Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Here's what you can expect.",
 		{
 			components: { strong: <strong /> },
-			args: { siteName: migrationSourceSiteDomain ?? translate( 'your site' ) },
+			args: { siteName: migrationSourceSiteDomain },
 		}
 	) as string;
 
