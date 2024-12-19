@@ -97,9 +97,6 @@ export default async function () {
 		);
 
 		// User stream
-		// page( '/read/blog/user/:user_id', legacyRedirects );
-		// page( '/read/users/:user_id/posts', incompleteUrlRedirects );
-
 		if ( config.isEnabled( 'reader/user-profile' ) ) {
 			page(
 				'/read/users/:user_id',
