@@ -551,6 +551,16 @@
 					}
 				}
 			}
+
+			.wp-block-newspack-blocks-homepage-articles {
+				.entry-wrapper {
+					.entry-title {
+						a {
+							text-decoration: underline;
+						}
+					}
+				}
+			}
 		}
 	}
 
