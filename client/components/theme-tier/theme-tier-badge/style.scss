@@ -26,10 +26,14 @@
 		}
 	}
 
-	&__without-background{
+	&__without-background {
 		background: transparent;
 		padding: 0;
 		color: var(--studio-gray-80);
+
+		.premium-badge__logo {
+			margin-top: 0;
+		}
 	}
 
 	.badge--info {
