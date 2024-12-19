@@ -53,26 +53,30 @@ body.is-section-domains.is-domain-plan-package-flow {
 	}
 }
 
-.domains-overview .multi-sites-dashboard-layout-with-columns__container {
-    background: var(--color-sidebar-background);
-}
-
-.domains-overview .item-preview__pane {
-    flex-grow: 1;
-    width: auto;
-    transition: flex-grow 0.2s;
-    background: var(--color-light-backdrop);
-    max-height: calc(100vh - 32px - var(--masterbar-height));
-    border-radius: 8px; /* stylelint-disable-line scales/radii */
-}
-
 .domains-overview {
-	.domain-settings-page {
-		max-width: 1200px;
-		margin-left: 0;
+	.multi-sites-dashboard-layout-with-columns__container {
+		background: var(--color-sidebar-background);
 	}
-	
+
+	.item-preview__pane {
+		background: var(--color-light-backdrop);
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		flex-grow: 1;
+		max-height: calc(100vh - 32px - var(--masterbar-height));
+		transition: flex-grow 0.2s;
+		width: auto;
+	}
+
+	.item-preview__header-info {
+		flex-wrap: wrap;
+	}
+
 	.item-preview__content div {
 		flex-grow: 1;
+	}
+
+	.domain-settings-page {
+		margin-left: 0;
+		max-width: 1200px;
 	}
 }
