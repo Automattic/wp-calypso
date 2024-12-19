@@ -88,7 +88,6 @@ export default function PressablePlanSection( {
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ isReferralMode ? null : existingPlanInfo }
 					isLoading={ ! isFetching }
-					showHighResourceTab
 				/>
 			</HostingPlanSection.Banner>
 		);
@@ -125,94 +124,29 @@ export default function PressablePlanSection( {
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
-	if ( ! selectedPlan ) {
-		return (
-			<HostingPlanSection className="pressable-plan-section" heading={ heading }>
-				{ banner }
-
-				<HostingPlanSection.Card>
-					<CustomPlanCardContent isReferralMode={ isReferralMode } />
-				</HostingPlanSection.Card>
-
-				<HostingPlanSection.Details
-					heading={
-						isReferralMode
-							? translate( 'Refer High Resource Sites' )
-							: translate( 'High Resource Sites' )
-					}
-				>
-					<p>
-						{ translate(
-							'Single site plan add-ons designed to offer completely custom traffic and storage limits for your high profile clients that need more resources than the rest of your portfolio.'
-						) }
-					</p>
-
-					<div className="pressable-plan-section__details-two-lists">
-						<SimpleList
-							items={ [
-								translate( '{{b}}1 WordPress install{{/b}}', {
-									components: {
-										b: <b />,
-									},
-								} ),
-								translate( '{{b}}1 staging site{{/b}}', {
-									components: {
-										b: <b />,
-									},
-								} ),
-								translate( '{{b}}Custom visits{{/b}} per month', {
-									components: {
-										b: <b />,
-									},
-								} ),
-							] }
-						/>
-
-						<SimpleList
-							items={ [
-								translate( '{{b}}Custom storage{{/b}} per month', {
-									components: {
-										b: <b />,
-									},
-								} ),
-								translate( '{{b}}Unmetered bandwidth{{/b}}', {
-									components: {
-										b: <b />,
-									},
-								} ),
-
-								translate( '{{b}}Custom{{/b}} PHP & CPU usage', {
-									components: {
-										b: <b />,
-									},
-								} ),
-							] }
-						/>
-					</div>
-
-					<span className="pressable-plan-section__details-footnote">
-						{ translate(
-							`*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month.`
-						) }
-					</span>
-				</HostingPlanSection.Details>
-			</HostingPlanSection>
-		);
-	}
+	const isCustomPlan = ! selectedPlan;
 
 	return (
 		<HostingPlanSection className="pressable-plan-section" heading={ heading }>
 			{ banner }
 			<HostingPlanSection.Card>
-				<RegularPlanCardContent
-					plan={ selectedPlan }
-					onSelect={ onPlanAddToCart }
-					isReferralMode={ isReferralMode }
-					pressableOwnership={ pressableOwnership }
-				/>
+				{ isCustomPlan ? (
+					<CustomPlanCardContent isReferralMode={ isReferralMode } />
+				) : (
+					<RegularPlanCardContent
+						plan={ selectedPlan }
+						onSelect={ onPlanAddToCart }
+						isReferralMode={ isReferralMode }
+						pressableOwnership={ pressableOwnership }
+					/>
+				) }
 			</HostingPlanSection.Card>
 
-			<HostingPlanSection.Details heading={ selectedPlan.name.replace( /Pressable/g, '' ) }>
+			<HostingPlanSection.Details
+				heading={
+					isCustomPlan ? translate( 'Custom' ) : selectedPlan.name.replace( /Pressable/g, '' )
+				}
+			>
 				{ isReferralMode ? (
 					<p>
 						{ translate(
@@ -231,61 +165,86 @@ export default function PressablePlanSection( {
 					</p>
 				) }
 
-				<SimpleList
-					items={ [
-						translate(
-							'Up to {{b}}%(count)d WordPress install{{/b}}',
-							'Up to {{b}}%(count)d WordPress installs{{/b}}',
-							{
+				{ isCustomPlan ? (
+					<SimpleList
+						items={ [
+							translate( 'Custom WordPress installs' ),
+							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
-									count: selectedPlanInfo?.install ?? 0,
+									count: translate( 'Custom' ),
 								},
-								count: selectedPlanInfo?.install ?? 0,
+								components: { b: <b /> },
+								comment: '%(count)s is the number of visits per month.',
+							} ),
+							translate( '{{b}}%(size)s{{/b}} storage per month*', {
+								args: {
+									size: translate( 'Custom' ),
+								},
+								components: { b: <b /> },
+								comment: '%(size)s is the amount of storage in gigabytes.',
+							} ),
+							translate( '{{b}}Unmetered{{/b}} bandwidth', {
+								components: { b: <b /> },
+							} ),
+						] }
+					/>
+				) : (
+					<SimpleList
+						items={ [
+							translate(
+								'Up to {{b}}%(count)d WordPress install{{/b}}',
+								'Up to {{b}}%(count)d WordPress installs{{/b}}',
+								{
+									args: {
+										count: selectedPlanInfo?.install ?? 0,
+									},
+									count: selectedPlanInfo?.install ?? 0,
+									components: {
+										b: <b />,
+									},
+									comment: '%(count)d is the number of WordPress installs.',
+								}
+							),
+							translate(
+								'Up to {{b}}%(count)d staging site{{/b}}',
+								'Up to {{b}}%(count)d staging sites{{/b}}',
+								{
+									args: {
+										count: selectedPlanInfo?.install ?? 0,
+									},
+									count: selectedPlanInfo?.install ?? 0,
+									components: {
+										b: <b />,
+									},
+									comment: '%(count)d is the number of staging sites.',
+								}
+							),
+							translate( '{{b}}%(count)s visits{{/b}} per month*', {
+								args: {
+									count: formatNumber( selectedPlanInfo?.visits ?? 0 ),
+								},
 								components: {
 									b: <b />,
 								},
-								comment: '%(count)d is the number of WordPress installs.',
-							}
-						),
-						translate(
-							'Up to {{b}}%(count)d staging site{{/b}}',
-							'Up to {{b}}%(count)d staging sites{{/b}}',
-							{
+								comment: '%(count)d is the number of visits.',
+							} ),
+							translate( '{{b}}%(storageSize)dGB of storage*{{/b}}', {
 								args: {
-									count: selectedPlanInfo?.install ?? 0,
+									storageSize: selectedPlanInfo?.storage ?? 0,
 								},
-								count: selectedPlanInfo?.install ?? 0,
 								components: {
 									b: <b />,
 								},
-								comment: '%(count)d is the number of staging sites.',
-							}
-						),
-						translate( '{{b}}%(count)s visits{{/b}} per month*', {
-							args: {
-								count: formatNumber( selectedPlanInfo?.visits ?? 0 ),
-							},
-							components: {
-								b: <b />,
-							},
-							comment: '%(count)d is the number of visits.',
-						} ),
-						translate( '{{b}}%(storageSize)dGB of storage*{{/b}}', {
-							args: {
-								storageSize: selectedPlanInfo?.storage ?? 0,
-							},
-							components: {
-								b: <b />,
-							},
-							comment: '%(storageSize)d is the size of storage in GB.',
-						} ),
-						translate( '{{b}}Unmetered bandwidth{{/b}}', {
-							components: {
-								b: <b />,
-							},
-						} ),
-					] }
-				/>
+								comment: '%(storageSize)d is the size of storage in GB.',
+							} ),
+							translate( '{{b}}Unmetered bandwidth{{/b}}', {
+								components: {
+									b: <b />,
+								},
+							} ),
+						] }
+					/>
+				) }
 
 				<span className="pressable-plan-section__details-footnote">
 					{ translate(

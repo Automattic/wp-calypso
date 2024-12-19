@@ -43,6 +43,12 @@
 
 	background-color: var(--color-text);
 	color: var(--color-text-inverted);
+
+	&:hover:not( :disabled ),
+	&:focus:not( :disabled ) {
+		background-color: #d8a45f;
+		color: var(--color-text);
+	}
 }
 
 .enterprise-agency-hosting-v3__logos {

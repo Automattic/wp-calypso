@@ -5,7 +5,20 @@
 .wpcom-plan-section .a4a-slider {
 	position: relative;
 	z-index: 1;
+
+	.a4a-slider__label-container {
+		display: none;
+	}
+
+	@include break-medium {
+		align-items: flex-end;
+
+		.a4a-slider__label-container {
+			display: block;
+		}
+	}
 }
+
 .wpcom-plan-section .a4a-number-input-v2 {
 	width: 100%;
 
@@ -72,6 +85,20 @@
 	width: 100%;
 	min-height: 40px;
 }
+
+.wpcom-plan-selector__details {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	justify-content: space-between;
+	height: 100%;
+}
+
+.wpcom-plan-selector__details.is-compact .wpcom-plan-selector__cta-component {
+	flex-direction: column;
+	align-items: stretch;
+}
+
 
 .wpcom-plan-selector__details.is-placeholder {
 	display: flex;

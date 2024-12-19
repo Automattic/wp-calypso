@@ -57,7 +57,7 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 						) }
 					</span>
 
-					<Button className="a4a-migration-offer-v3__view-toggle-mobile" onClick={ onToggleView }>
+					<Button className="a4a-migration-offer-v3__view-toggle-mobile">
 						<Icon icon={ chevronDown } size={ 24 } />
 					</Button>
 				</h3>

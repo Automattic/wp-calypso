@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -47,14 +48,17 @@ export default function PlanSelectionFilter( {
 	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
+	const isMobile = useMobileBreakpoint();
+
 	const standardOptions = useMemo(
 		() =>
 			getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_STANDARD
+				PLAN_CATEGORY_STANDARD,
+				isMobile
 			),
-		[ filterType, plans ]
+		[ filterType, isMobile, plans ]
 	);
 
 	const enterpriseOptions = useMemo(
@@ -62,7 +66,8 @@ export default function PlanSelectionFilter( {
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_ENTERPRISE
+				PLAN_CATEGORY_ENTERPRISE,
+				isMobile
 			),
 			...( showHighResourceTab
 				? []
@@ -74,7 +79,7 @@ export default function PlanSelectionFilter( {
 						},
 				  ] ),
 		],
-		[ filterType, plans, showHighResourceTab, translate ]
+		[ filterType, isMobile, plans, showHighResourceTab, translate ]
 	);
 
 	const onSelectOption = useCallback(
@@ -183,7 +188,10 @@ export default function PlanSelectionFilter( {
 				options={ [
 					{ label: translate( 'WordPress installs' ), value: FILTER_TYPE_INSTALL },
 					{ label: translate( 'Traffic' ), value: FILTER_TYPE_VISITS },
-					{ label: translate( 'Storage' ), value: FILTER_TYPE_STORAGE },
+					{
+						label: isMobile ? translate( 'Storage (GB)' ) : translate( 'Storage' ),
+						value: FILTER_TYPE_STORAGE,
+					},
 				] }
 				onChange={ ( value ) => onSelectFilterType( value as FilterType ) }
 			/>

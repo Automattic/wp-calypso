@@ -24,6 +24,16 @@
 	&:has( .hosting-plan-section__aside ) {
 		@include break-wide {
 			grid-template-columns: 2fr 1fr;
+
+			.hosting-plan-section__main {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@include break-huge {
+			.hosting-plan-section__main {
+				grid-template-columns: 400px 1fr;
+			}
 		}
 	}
 }
@@ -31,20 +41,24 @@
 .hosting-plan-section__main {
 	border-radius: 8px; // stylelint-disable-line scales/radii
 	background-color: var(--color-primary-0);
-	padding: 32px;
+	padding: 24px;
+	max-width: 100%;
+	overflow: hidden;
 
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 16px;
 
-	@include break-huge {
-		grid-template-columns: 400px 2fr;
+	@include break-mobile {
+		padding: 32px;
 	}
 
-	&:has( .hosting-plan-section__aside ) {
-		@include break-huge {
-			grid-template-columns: 300px 1fr;
-		}
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@include break-huge {
+		grid-template-columns: 400px 2fr;
 	}
 }
 
@@ -53,6 +67,8 @@
 	box-shadow: 0 3px 1px 0 #0000000A;
 	padding: 32px;
 	background-color: var(--color-surface);
+	max-width: 100%;
+	overflow: hidden;
 }
 
 .hosting-plan-section__details {
@@ -64,11 +80,16 @@
 .hosting-plan-section__aside {
 	border-radius: 8px; // stylelint-disable-line scales/radii
 	border: 1px solid var(--color-neutral-5);
-	padding: 32px;
+	padding: 24px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	gap: 32px;
+	gap: 16px;
+
+	@include break-mobile {
+		padding: 32px;
+		gap: 32px;
+	}
 }
 
 .hosting-plan-section__details-heading,

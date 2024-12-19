@@ -2,8 +2,14 @@ import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -13,6 +19,7 @@ import { MarketplaceTypeContext } from '../../../context';
 import useProductAndPlans from '../../../hooks/use-product-and-plans';
 import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../../../pressable-overview/hooks/use-existing-pressable-plan';
+import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';
@@ -50,16 +57,36 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const isReferralMode = marketplaceType === 'referral';
 
+	const { data } = useFetchLicenses(
+		LicenseFilter.NotRevoked,
+		'pressable',
+		LicenseSortField.IssuedAt,
+		LicenseSortDirection.Descending,
+		1,
+		100
+	);
+
+	const licenses = data?.items;
+
+	// Find the first occurrence for of Pressable license with its referral as null
+	const agencyPressableLicense = licenses?.find(
+		( license ) => license.licenseKey.startsWith( 'pressable' ) && ! license.referral
+	);
+
+	const agencyPressablePlan = useGetPressablePlanByProductId( {
+		product_id: agencyPressableLicense ? agencyPressableLicense.productId : 0,
+	} );
+
 	return (
 		<div className="premier-agency-hosting">
-			{ existingPlan && pressableOwnership !== 'regular' && ! isReferralMode && (
-				<PressableUsageSection existingPlan={ existingPlan } />
+			{ agencyPressablePlan && ! isReferralMode && (
+				<PressableUsageSection existingPlan={ agencyPressablePlan } />
 			) }
 
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
-				pressableOwnership={ isReferralMode ? 'agency' : pressableOwnership }
+				pressableOwnership={ isReferralMode || agencyPressablePlan ? 'agency' : pressableOwnership }
 				existingPlan={ existingPlan }
 				existingPlanInfo={ existingPlanInfo }
 				isFetching={ isExistingPlanFetched }

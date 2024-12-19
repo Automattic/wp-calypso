@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
 import NavItem from 'calypso/components/section-nav/item';
+import { preventWidows } from 'calypso/lib/formatting';
 import { SectionProps } from '..';
 
 import './style.scss';
@@ -88,13 +89,15 @@ export function HeroSection(
 		<div className={ clsx( 'hosting-v3-hero-section', { 'is-compact': isCompact } ) } ref={ ref }>
 			<div className="hosting-v3-hero-section__content">
 				<div className="hosting-v3-hero-section__heading">
-					{ translate(
-						'High Performance, Highly-Secure{{br/}}Managed WordPress Hosting for Agencies',
-						{
-							components: {
-								br: <br />,
-							},
-						}
+					{ preventWidows(
+						translate(
+							'High Performance, Highly-Secure{{br/}}Managed WordPress Hosting for Agencies',
+							{
+								components: {
+									br: <br />,
+								},
+							}
+						)
 					) }
 				</div>
 

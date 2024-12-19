@@ -6,7 +6,8 @@ import { PressablePlan } from './get-pressable-plan';
 export default function getSliderOptions(
 	type: FilterType,
 	plans: PressablePlan[],
-	category?: string
+	category?: string,
+	compact?: boolean
 ) {
 	return plans
 		.filter( ( plan ) => plan !== undefined )
@@ -20,7 +21,7 @@ export default function getSliderOptions(
 			} else if ( type === FILTER_TYPE_VISITS ) {
 				label = `${ formatNumber( plan.visits ) }`;
 			} else if ( type === FILTER_TYPE_STORAGE ) {
-				label = `${ plan.storage }GB`;
+				label = `${ plan.storage }${ compact ? '' : 'GB' }`;
 			}
 
 			return {
