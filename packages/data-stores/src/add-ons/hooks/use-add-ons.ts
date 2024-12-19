@@ -6,7 +6,7 @@ import {
 	WPCOM_FEATURES_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
 import {
@@ -20,75 +20,74 @@ import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
-import useAddOnPrices from './use-add-on-prices';
+import { getAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 import type { AddOnMeta } from '../types';
 
-const partialAddOnMetas: AddOnMeta[] = [
-	{
-		addOnSlug: ADD_ON_UNLIMITED_THEMES,
-		productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-		featureSlugs: [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ] as string[],
-		icon: unlimitedThemesIcon,
-		featured: true,
-	},
-	{
-		addOnSlug: ADD_ON_CUSTOM_DESIGN,
-		productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-		featureSlugs: [ WPCOM_FEATURES_CUSTOM_DESIGN ] as string[],
-		icon: customDesignIcon,
-	},
-	{
-		addOnSlug: ADD_ON_50GB_STORAGE,
-		productSlug: PRODUCT_1GB_SPACE,
-		featureSlugs: null,
-		icon: spaceUpgradeIcon,
-		quantity: 50,
-		name: translate( '50 GB Storage' ),
-		description: translate( 'Make more space for high-quality photos, videos, and other media. ' ),
-	},
-	{
-		addOnSlug: ADD_ON_100GB_STORAGE,
-		productSlug: PRODUCT_1GB_SPACE,
-		featureSlugs: null,
-		icon: spaceUpgradeIcon,
-		quantity: 100,
-		name: translate( '100 GB Storage' ),
-		description: translate(
-			'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
-		),
-	},
-];
+const getActiveAddOns = (): AddOnMeta[] => {
+	return [
+		{
+			addOnSlug: ADD_ON_UNLIMITED_THEMES,
+			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
+			featureSlugs: [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ] as string[],
+			icon: unlimitedThemesIcon,
+			featured: true,
+		},
+		{
+			addOnSlug: ADD_ON_CUSTOM_DESIGN,
+			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
+			featureSlugs: [ WPCOM_FEATURES_CUSTOM_DESIGN ] as string[],
+			icon: customDesignIcon,
+		},
+		{
+			addOnSlug: ADD_ON_50GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 50,
+			name: i18n.translate( '50 GB Storage' ),
+			description: i18n.translate(
+				'Make more space for high-quality photos, videos, and other media. '
+			),
+		},
+		{
+			addOnSlug: ADD_ON_100GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 100,
+			name: i18n.translate( '100 GB Storage' ),
+			description: i18n.translate(
+				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+			),
+		},
+	];
+};
 
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const checkoutLink = useAddOnCheckoutLink();
-
-	/*
-	 * TODO: `useAddOnDisplayCost` be refactored instead to return an index of `{ [ slug ]: "display cost" }`
-	 */
-	const displayCostUnlimitedThemes = useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES );
-	const displayCostCustomDesign = useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN );
-	const displayCost1GBSpace50 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 );
-	const displayCost1GBSpace100 = useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 );
-
-	/*
-	 * TODO: `useAddOnPrices` be refactored instead to return an index of `{ [ slug ]: AddOnPrice }`
-	 */
-	const addOnPrices1GBSpace50 = useAddOnPrices( PRODUCT_1GB_SPACE, 50 );
-	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
+	const activeAddOns = getActiveAddOns();
+	const addOnPriceKeys = activeAddOns.map( ( { productSlug, quantity } ) => ( {
+		productSlug,
+		quantity,
+	} ) );
+	const addOnPrices = useAddOnPrices( addOnPriceKeys );
+	const addOnDisplayCosts = useAddOnDisplayCost( addOnPriceKeys );
 
 	return useMemo(
-		() => partialAddOnMetas,
-		[
-			addOnPrices1GBSpace100,
-			addOnPrices1GBSpace50,
-			checkoutLink,
-			displayCost1GBSpace100,
-			displayCost1GBSpace50,
-			displayCostCustomDesign,
-			displayCostUnlimitedThemes,
-			selectedSiteId,
-			translate,
-		]
+		() =>
+			activeAddOns.map( ( addOnMeta ) => {
+				const { productSlug, quantity } = addOnMeta;
+				const key = getAddOnPriceKey( { productSlug, quantity } );
+				return {
+					prices: addOnPrices[ key ],
+					displayCost: addOnDisplayCosts[ key ],
+					...( !! quantity && {
+						checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
+					} ),
+					...addOnMeta,
+				};
+			} ),
+		[ addOnPrices, addOnPriceKeys, addOnDisplayCosts, checkoutLink, selectedSiteId ]
 	);
 };
 

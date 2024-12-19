@@ -1,28 +1,48 @@
-import { useTranslate } from 'i18n-calypso';
+import { useMemo } from '@wordpress/element';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
-import useAddOnPrices from './use-add-on-prices';
+import { type AddOnPriceKey, getAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 
-const useAddOnDisplayCost = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
+type AddOnDisplayCost = {
+	[ key in string ]: TranslateResult;
+};
+
+const useAddOnDisplayCost = ( priceKeys: AddOnPriceKey[] ) => {
 	const translate = useTranslate();
-	const prices = useAddOnPrices( productSlug, quantity );
-	const formattedCost = prices?.formattedMonthlyPrice || '';
-	const productsList = ProductsList.useProducts( [ productSlug ] );
-	const product = productsList.data?.[ productSlug ];
-	if ( product?.term === 'month' ) {
-		/* Translators: %(formattedCost)s: monthly price formatted with currency */
-		return translate( '%(formattedCost)s/month, billed monthly', {
-			args: {
-				formattedCost,
-			},
-		} );
-	}
+	const addOnPrices = useAddOnPrices( priceKeys );
+	const productSlugs = priceKeys.map( ( { productSlug } ) => productSlug );
+	const productsList = ProductsList.useProducts( productSlugs );
 
-	/* Translators: %(monthlyCost)s: monthly price formatted with currency */
-	return translate( '%(monthlyCost)s/month, billed yearly', {
-		args: {
-			monthlyCost: formattedCost,
-		},
-	} );
+	return useMemo( () => {
+		return priceKeys.reduce< AddOnDisplayCost >( ( accum, priceKey ) => {
+			const { productSlug } = priceKey;
+			const product = productsList.data?.[ productSlug ];
+			const key = getAddOnPriceKey( priceKey );
+			const prices = addOnPrices[ key ];
+			const formattedCost = prices?.formattedMonthlyPrice || '';
+			if ( product?.term === 'month' ) {
+				/* Translators: %(formattedCost)s: monthly price formatted with currency */
+				return {
+					[ key ]: translate( '%(formattedCost)s/month, billed monthly', {
+						args: {
+							formattedCost,
+						},
+					} ),
+					...accum,
+				};
+			}
+
+			/* Translators: %(monthlyCost)s: monthly price formatted with currency */
+			return {
+				[ key ]: translate( '%(monthlyCost)s/month, billed yearly', {
+					args: {
+						monthlyCost: formattedCost,
+					},
+				} ),
+				...accum,
+			};
+		}, {} );
+	}, [ addOnPrices, translate ] );
 };
 
 export default useAddOnDisplayCost;
