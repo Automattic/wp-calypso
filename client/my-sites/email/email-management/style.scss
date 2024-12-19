@@ -474,10 +474,13 @@
 	/* Mailboxes */
 	.email-plan-mailboxes-list {
 		&__mailbox-list {
-			border: solid 1px var(--color-border-subtle);
-			border-radius: 4px;
 			margin-top: 0;
 			padding-bottom: 1.875rem;
+
+			@include break-medium {
+				border: solid 1px var(--color-border-subtle);
+				border-radius: 4px;
+			}
 
 			.card {
 				box-shadow: none;
