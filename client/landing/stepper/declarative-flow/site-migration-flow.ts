@@ -301,23 +301,16 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
-							return navigate(
-								addQueryArgs(
-									{
-										siteSlug,
-										from: fromQueryParam,
-										siteId,
-									},
-									STEPS.SITE_MIGRATION_CREDENTIALS.slug
-								)
-							);
-						}
-
-						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
-							siteId,
-							siteSlug,
-						} );
+						return navigate(
+							addQueryArgs(
+								{
+									siteSlug,
+									from: fromQueryParam,
+									siteId,
+								},
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
 					}
 
 					// Continue with the migration flow.
@@ -346,14 +339,7 @@ const siteMigration: Flow = {
 							providedDependencies?.userAcceptedDeal ||
 							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 						) {
-							if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
-							} else if ( ! fromQueryParam ) {
-								// If the user selected "Do it for me" but has not given us a source site, we should take them to the source URL step.
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_SOURCE_URL.slug;
-							} else {
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
-							}
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 
 						const destination = addQueryArgs(
