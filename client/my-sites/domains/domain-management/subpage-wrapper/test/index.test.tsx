@@ -6,10 +6,16 @@ import React from 'react';
 import SubpageWrapper from '../index';
 import { ADD_FOWARDING_EMAIL } from '../subpages';
 
+jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
+
 describe( 'SubpageWrapper', () => {
 	it( 'should render the children', () => {
 		render(
-			<SubpageWrapper subpageKey={ ADD_FOWARDING_EMAIL }>
+			<SubpageWrapper
+				subpageKey={ ADD_FOWARDING_EMAIL }
+				selectedDomainName="example.com"
+				selectedSiteSlug="example"
+			>
 				<span>Hello</span>
 			</SubpageWrapper>
 		);
@@ -19,7 +25,11 @@ describe( 'SubpageWrapper', () => {
 
 	it( 'should render the children with the subpage header', () => {
 		render(
-			<SubpageWrapper subpageKey={ ADD_FOWARDING_EMAIL }>
+			<SubpageWrapper
+				subpageKey={ ADD_FOWARDING_EMAIL }
+				selectedDomainName="example.com"
+				selectedSiteSlug="example"
+			>
 				<span>Hello</span>
 			</SubpageWrapper>
 		);
@@ -32,7 +42,11 @@ describe( 'SubpageWrapper', () => {
 
 	it( 'should render the children without the subpage header', () => {
 		render(
-			<SubpageWrapper subpageKey="non-existent">
+			<SubpageWrapper
+				subpageKey="non-existent"
+				selectedDomainName="example.com"
+				selectedSiteSlug="example"
+			>
 				<span>Hello</span>
 			</SubpageWrapper>
 		);

@@ -4,25 +4,45 @@ import './style.scss';
 
 type SubpageWrapperProps = {
 	children: React.ReactNode;
+	selectedDomainName: string;
+	selectedSiteSlug: string;
 	subpageKey: string;
 };
 
-const SubpageWrapper = ( { children, subpageKey }: SubpageWrapperProps ) => {
-	const subpageParams = getSubpageParams( subpageKey );
+const SubpageWrapper = ( {
+	children,
+	selectedDomainName,
+	selectedSiteSlug,
+	subpageKey,
+}: SubpageWrapperProps ) => {
+	const { CustomHeader, title, subtitle } = getSubpageParams( subpageKey ) || {};
 
-	return subpageParams ? (
-		<div className="subpage-wrapper">
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ subpageParams.title }
-				subtitle={ subpageParams.subtitle }
-				className="subpage-wrapper__header"
-			/>
-			<div className="subpage-wrapper__content">{ children }</div>
-		</div>
-	) : (
-		<>{ children }</>
-	);
+	if ( CustomHeader ) {
+		return (
+			<div className="subpage-wrapper">
+				<CustomHeader
+					selectedDomainName={ selectedDomainName }
+					selectedSiteSlug={ selectedSiteSlug }
+				/>
+				<div className="subpage-wrapper__content">{ children }</div>
+			</div>
+		);
+	}
+
+	if ( title ) {
+		return (
+			<>
+				<NavigationHeader
+					className="subpage-wrapper__header"
+					title={ title }
+					subtitle={ subtitle }
+				/>
+				<div className="subpage-wrapper__content">{ children }</div>
+			</>
+		);
+	}
+
+	return <>{ children }</>;
 };
 
 export default SubpageWrapper;
