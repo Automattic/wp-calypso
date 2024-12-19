@@ -1,10 +1,12 @@
-import { __ } from '@wordpress/i18n';
-import CardHeading from 'calypso/components/card-heading';
+import { translate } from 'i18n-calypso';
+import { CardHeading } from 'calypso/devdocs/design/component-examples';
+import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
+import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 
 type SubpageWrapperParamsType = {
-	subPageKey: string;
-	title: string;
-	subtitle?: string;
+	CustomHeader?: CustomHeaderComponentType;
+	title?: string | React.ReactNode;
+	subtitle?: string | React.ReactNode;
 	[ key: string ]: unknown;
 };
 
@@ -15,16 +17,15 @@ export const EDIT_CONTACT_INFO = 'edit-contact-info';
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	[ ADD_FOWARDING_EMAIL ]: {
-		subPageKey: ADD_FOWARDING_EMAIL,
-		title: __( 'Add new email forwarding' ),
-		subtitle: __( 'Seamlessly redirect your messages to where you need them.' ),
+		CustomHeader: AddForwardingEmailHeader,
+		showFormHeader: true,
 		showPageHeader: false,
-		formHeader: <CardHeading>{ __( 'New email forwarding address' ) }</CardHeading>,
+		formHeader: <CardHeading>{ translate( 'New email forwarding address' ) }</CardHeading>,
 	},
 	[ EDIT_CONTACT_INFO ]: {
 		subPageKey: EDIT_CONTACT_INFO,
-		title: __( 'Contact information' ),
-		subtitle: __( "Manage your domain's contact details." ),
+		title: translate( 'Contact information' ),
+		subtitle: translate( "Manage your domain's contact details." ),
 	},
 };
 
