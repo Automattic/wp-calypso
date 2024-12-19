@@ -13,7 +13,7 @@ export const useDeferredRender = ( { timeMs }: UseDeferredRenderProps ) => {
 			setIsReadyToRender( true );
 		}, timeMs );
 
-		timeoutId.current = id as unknown as number;
+		timeoutId.current = id;
 
 		return () => {
 			if ( timeoutId.current ) {
