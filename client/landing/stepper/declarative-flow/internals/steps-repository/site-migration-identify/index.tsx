@@ -9,9 +9,9 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -94,11 +94,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
-	const [ , experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_site_migration_flow_202501_v1'
-	);
-
-	const isMigrationExperimentEnabled = 'treatment' === experimentAssignment?.variationName;
+	const isMigrationExperimentEnabled = useMigrationExperiment();
 
 	useEffect( () => {
 		if ( siteInfo ) {

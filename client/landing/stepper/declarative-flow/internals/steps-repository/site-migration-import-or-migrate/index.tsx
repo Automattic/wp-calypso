@@ -11,7 +11,7 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
+import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
@@ -29,11 +29,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 	let options;
 
-	const [ , experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_site_migration_flow_202501_v1'
-	);
-
-	const isMigrationExperimentEnabled = 'treatment' === experimentAssignment?.variationName;
+	const isMigrationExperimentEnabled = useMigrationExperiment();
 
 	if ( isMigrationExperimentEnabled ) {
 		const badgeText = isBusinessPlan
