@@ -109,9 +109,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					isLoading,
 					prices: addOnPrices[ key ],
 					displayCost: addOnDisplayCosts[ key ],
-					...( !! quantity && {
-						checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
-					} ),
+					checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
 				};
 			} ),
 		[
