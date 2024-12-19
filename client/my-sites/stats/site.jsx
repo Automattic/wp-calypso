@@ -889,6 +889,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isOdyssey = config.isEnabled( 'is_odyssey' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -918,7 +919,8 @@ export default connect(
 			supportUserFeedback,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
-		const hasSiteLoadedFeatures = hasLoadedSiteFeatures( state, siteId );
+		// Odyssey Stats does not need loading features to determine gated features.
+		const hasSiteLoadedFeatures = hasLoadedSiteFeatures( state, siteId ) || isOdyssey;
 		// Determine if the default date range should be forced to 7 days.
 		const shouldForceDefaultDateRange = shouldGateStats(
 			state,
