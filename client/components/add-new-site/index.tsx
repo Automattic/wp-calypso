@@ -1,10 +1,8 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useRef, useState, useCallback, useMemo } from 'react';
 import AddNewSiteButton from './button';
+import AddNewSiteContent from './content';
 import AddNewSiteContext from './context';
-import AddNewSiteMenuItems from './menu-items';
-import AddNewSiteModals from './modals';
-import AddNewSitePopover from './popover';
 
 import './style.scss';
 
@@ -29,6 +27,13 @@ const AddNewSite = () => {
 		[ visibleModalType, setVisibleModalType ]
 	);
 
+	const props = {
+		isMenuVisible,
+		toggleMenu,
+		popoverMenuContext,
+		setMenuVisible,
+	};
+
 	return (
 		<AddNewSiteContext.Provider value={ contextValue }>
 			<AddNewSiteButton
@@ -37,14 +42,7 @@ const AddNewSite = () => {
 				toggleMenu={ toggleMenu }
 				popoverMenuContext={ popoverMenuContext }
 			/>
-			<AddNewSitePopover
-				isMenuVisible={ isMenuVisible }
-				toggleMenu={ toggleMenu }
-				popoverMenuContext={ popoverMenuContext }
-			>
-				<AddNewSiteMenuItems setMenuVisible={ setMenuVisible } />
-			</AddNewSitePopover>
-			<AddNewSiteModals />
+			<AddNewSiteContent { ...props } />
 		</AddNewSiteContext.Provider>
 	);
 };
