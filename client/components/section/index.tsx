@@ -23,7 +23,6 @@ interface SectionHeaderProps {
 // https://github.com/Automattic/wp-calypso/pull/93425
 export const SectionContainer = styled.div< SectionContainerProps >`
 	padding: 56px 0;
-	position: relative;
 	z-index: 1;
 
 	::before {
