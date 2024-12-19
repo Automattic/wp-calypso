@@ -142,12 +142,7 @@ const useTransferTimeTracking = (
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
 export const usePrepareSiteForMigration = ( siteId?: number ) => {
-	const isWhiteLabeledPluginEnabled = config.isEnabled(
-		'migration-flow/enable-white-labeled-plugin'
-	);
-	const plugin = isWhiteLabeledPluginEnabled
-		? { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' }
-		: { name: 'migrate-guru/migrateguru', slug: 'migrate-guru' };
+	const plugin = { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' };
 	const siteTransferState = useSiteTransfer( siteId );
 	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
 		enabled: Boolean( siteTransferState.completed ),
