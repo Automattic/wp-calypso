@@ -1,4 +1,8 @@
-import { domainManagementAllOverview, isUnderDomainManagementOverview } from '../paths';
+import {
+	domainManagementAllEditContactInfo,
+	domainManagementAllOverview,
+	isUnderDomainManagementOverview,
+} from '../paths';
 
 describe( 'isUnderDomainManagementOverview', () => {
 	it.each( [
@@ -15,6 +19,14 @@ describe( 'domainManagementAllOverview', () => {
 	it( 'should return the expected path', () => {
 		expect( domainManagementAllOverview( 'site.com', 'domain.com' ) ).toEqual(
 			'/domains/manage/all/overview/domain.com/site.com'
+		);
+	} );
+} );
+
+describe( 'domainManagementAllEditContactInfo', () => {
+	it( 'should return the expected path', () => {
+		expect( domainManagementAllEditContactInfo( 'site.com', 'domain.com' ) ).toEqual(
+			'/domains/manage/all/domain.com/contact-info/edit/site.com'
 		);
 	} );
 } );

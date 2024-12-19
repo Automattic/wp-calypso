@@ -146,8 +146,12 @@ export function domainManagementAllOverview( siteName, domainName ) {
 	return domainManagementOverviewRoot() + '/' + domainName + '/' + siteName;
 }
 
-export function domainManagementAllEditContactInfo() {
-	return domainManagementAllRoot() + '/edit-contact-info';
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ */
+export function domainManagementAllEditContactInfo( siteName, domainName ) {
+	return domainManagementAllRoot() + '/' + domainName + '/contact-info/edit/' + siteName;
 }
 
 export function domainManagementAllEditSelectedContactInfo() {

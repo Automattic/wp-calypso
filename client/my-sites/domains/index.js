@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -67,8 +66,6 @@ function getCommonHandlers( {
 }
 
 export default function () {
-	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
-
 	page( '/domains*', recordSiftScienceUser );
 
 	// These redirects are work-around in response to an issue where navigating back after a
@@ -103,24 +100,10 @@ export default function () {
 		domainManagementController.domainManagementRedirectSettings
 	);
 
-	if ( isAllDomainManagementEnabled ) {
-		page(
-			paths.domainManagementAllRoot() + '/:domain/edit-contact-info/:site',
-			siteSelection,
-			navigation,
-			domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
-			domainManagementController.domainManagementEditContactInfo,
-			domainManagementController.domainManagementSubpageView,
-			domainManagementController.domainDashboardLayout,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		registerStandardDomainManagementPages(
-			paths.domainManagementEditContactInfo,
-			domainManagementController.domainManagementEditContactInfo
-		);
-	}
+	registerStandardDomainManagementPages(
+		paths.domainManagementEditContactInfo,
+		domainManagementController.domainManagementEditContactInfo
+	);
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementManageConsent,
@@ -432,6 +415,18 @@ export default function () {
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
 		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllRoot() + '/:domain/contact-info/edit/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
+		domainManagementController.domainManagementEditContactInfo,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,
