@@ -169,14 +169,19 @@
 			}
 
 			.callout .wp-block-column {
+
+				$callout-border: #dcdcde;
+				$callout-background: #fff;
+				$callout-large-font-size: 40px;
+
 				padding: .5em;
 				border-radius: 4px;
-				border: 1px solid var(--color-neutral-5, #dcdcde);
-				background: #fff;
+				border: 1px solid $callout-border;
+				background: $callout-background;
 
 				.wp-block-quote {
 					margin: 0;
-					background: #fff;
+					background: $callout-background;
 				}
 
 				.has-text-align-center {
@@ -184,8 +189,7 @@
 				}
 
 				.has-large-font-size {
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					font-size: 40px;
+					font-size: $callout-large-font-size;
 					line-height: 48px;
 				}
 
