@@ -2,14 +2,18 @@ import { getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { THEME_TIERS } from '../constants';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
-export default function ThemeTierUpgradeBadge() {
+export default function ThemeTierPlanUpgradeBadge() {
 	const translate = useTranslate();
 	const { themeId } = useThemeTierBadgeContext();
 	const themeTier = useThemeTierForTheme( themeId );
@@ -21,6 +25,16 @@ export default function ThemeTierUpgradeBadge() {
 	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
 	const plans = Plans.usePlans( { coupon: undefined } );
 	const planName = plans?.data?.[ mappedPlan.getStoreSlug() ]?.productNameShort;
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const user = useSelector( getCurrentUser );
+	const labelText =
+		isGoalsAtFrontExperiment && ! user
+			? translate( 'Available on %(planName)s', {
+					args: {
+						planName: planName,
+					},
+			  } )
+			: translate( 'Upgrade' );
 
 	const tooltipContent = (
 		<>
@@ -42,10 +56,12 @@ export default function ThemeTierUpgradeBadge() {
 
 	return (
 		<PremiumBadge
-			className="theme-tier-badge__content"
+			className={ clsx( 'theme-tier-badge__content', {
+				'theme-tier-badge__without-background': isGoalsAtFrontExperiment && ! user,
+			} ) }
 			focusOnShow={ false }
 			isClickable
-			labelText={ translate( 'Upgrade' ) }
+			labelText={ labelText }
 			tooltipClassName="theme-tier-badge-tooltip"
 			tooltipContent={ tooltipContent }
 			tooltipPosition="top"

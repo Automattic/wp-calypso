@@ -26,8 +26,14 @@
 		}
 	}
 
-	.badge--info-blue {
-		background-color: var(--studio-wordpress-blue);
+	&__without-background{
+		background: transparent;
+		padding: 0;
+		color: var(--studio-gray-80);
+	}
+
+	.badge--info {
+		color: var(--studio-wordpress-blue);
 	}
 }
 
