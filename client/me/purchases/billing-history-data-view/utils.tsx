@@ -121,7 +121,7 @@ export function TransactionAmount( {
 			<>
 				{ formatCurrency( transaction.amount_integer, transaction.currency, {
 					isSmallestUnit: true,
-					stripZeros: true,
+					stripZeros: false,
 				} ) }
 			</>
 		);
@@ -132,7 +132,7 @@ export function TransactionAmount( {
 				args: {
 					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
 						isSmallestUnit: true,
-						stripZeros: true,
+						stripZeros: false,
 					} ),
 					taxName,
 				},
@@ -143,7 +143,7 @@ export function TransactionAmount( {
 				args: {
 					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
 						isSmallestUnit: true,
-						stripZeros: true,
+						stripZeros: false,
 					} ),
 				},
 				comment: 'taxAmount is a localized price, like $12.34',

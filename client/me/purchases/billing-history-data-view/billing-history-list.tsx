@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
@@ -76,7 +78,8 @@ class BillingHistoryListDataView extends Component<
 						} }
 						fields={ this.getFields() }
 						view={ this.getView() }
-						search={ false }
+						search
+						searchLabel="Search receipts"
 						onChangeView={ ( newView: { page?: number } ) => {
 							const newPage = typeof newView.page === 'number' ? newView.page : 1;
 							if ( newView.page !== this.props.page ) {
@@ -110,25 +113,48 @@ class BillingHistoryListDataView extends Component<
 	};
 
 	getFields = () => {
+		const SERVICES = [
+			{ value: 'WordPress.com', label: 'WordPress.com' },
+			{ value: 'Jetpack', label: 'Jetpack' },
+			{ value: 'WooCommerce', label: 'WooCommerce' },
+		];
+
 		return [
 			{
 				id: 'date',
 				label: 'Date',
+				type: 'datetime',
+				enableGlobalSearch: true,
+				enableHiding: false,
+				getValue: ( { item }: { item: BillingTransaction } ) => {
+					return item.date;
+				},
 				render: ( { item }: { item: BillingTransaction } ) => {
-					const date = this.props.moment( item.date ).format( 'll' );
-					return <time>{ date }</time>;
+					return <time>{ this.props.moment( item.date ).format( 'll' ) }</time>;
 				},
 			},
 			{
 				id: 'service',
-				label: 'Service',
+				label: 'Summary',
+				type: 'text',
+				elements: SERVICES,
+				enableGlobalSearch: true,
+				enableHiding: false,
 				render: ( { item }: { item: BillingTransaction } ) => {
 					return <div>{ this.serviceName( item ) }</div>;
+				},
+				getValue: ( { item }: { item: BillingTransaction } ) => {
+					return item.service;
+				},
+				filterBy: {
+					operators: [ 'isAny', 'is', 'isAny' ],
 				},
 			},
 			{
 				id: 'amount',
 				label: 'Amount',
+				type: 'text',
+				enableGlobalSearch: true,
 				render: ( { item }: { item: BillingTransaction } ) => {
 					return <TransactionAmount transaction={ item } />;
 				},
@@ -142,6 +168,8 @@ class BillingHistoryListDataView extends Component<
 			{
 				id: 'view-receipt',
 				label: 'View receipt',
+				isPrimary: true,
+				icon: <Gridicon icon="pages" />,
 				callback: ( items: BillingTransaction[] ) => {
 					const item = items[ 0 ];
 					page.redirect( getReceiptUrlFor( item.id ) );
@@ -150,6 +178,8 @@ class BillingHistoryListDataView extends Component<
 			{
 				id: 'email-receipt',
 				label: 'Email receipt',
+				isPrimary: true,
+				icon: <Gridicon icon="mail" />,
 				callback: ( items: BillingTransaction[] ) => {
 					const item = items[ 0 ];
 					this.recordClickEvent( 'Email Receipt in Billing History' );
