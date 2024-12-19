@@ -12,6 +12,7 @@ import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
+	userListing,
 	following,
 	incompleteUrlRedirects,
 	legacyRedirects,
@@ -94,6 +95,20 @@ export default async function () {
 			makeLayout,
 			clientRender
 		);
+
+		// User stream
+		if ( config.isEnabled( 'reader/user-profile' ) ) {
+			page(
+				'/read/users/:user_id',
+				blogDiscoveryByFeedId,
+				redirectLoggedOutToSignup,
+				updateLastRoute,
+				sidebar,
+				userListing,
+				makeLayout,
+				clientRender
+			);
+		}
 
 		// Old full post view
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );

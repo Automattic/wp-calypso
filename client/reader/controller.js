@@ -238,6 +238,43 @@ export function blogListing( context, next ) {
 	next();
 }
 
+export function userListing( context, next ) {
+	const userId = context.params.user_id;
+
+	if ( userId.trim().length === 0 ) {
+		next();
+		return;
+	}
+
+	const basePath = '/read/users/:user_id';
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId;
+	const mcKey = 'blog';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_user_profile', { user_id: userId } );
+
+	context.primary = (
+		<AsyncLoad
+			require="calypso/reader/user-stream"
+			key={ 'user-' + userId }
+			streamKey={ 'user:' + userId }
+			userId={ userId }
+			trackScrollPage={ trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			suppressSiteNameLink
+			showBack={ userHasHistory( context ) }
+			placeholder={ null }
+		/>
+	);
+	next();
+}
+
 export function readA8C( context, next ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
