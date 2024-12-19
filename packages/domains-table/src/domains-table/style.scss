@@ -460,6 +460,6 @@ main.domains-overview main.domains-overview__list .multi-sites-dashboard-layout-
 
 	.domains-table__row.is-selected > td {
 		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
-		color: #1e1e1e;
+		color: var(--theme-base-color);
 	}
 }
