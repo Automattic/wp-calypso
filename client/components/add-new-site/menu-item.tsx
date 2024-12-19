@@ -7,25 +7,23 @@ import React from 'react';
 const ICON_SIZE = 32;
 
 type Props = {
-	icon: JSX.Element;
-	iconClassName?: string;
-	heading: string;
-	description: string | TranslateResult;
-	isBanner?: boolean;
-	disabled?: boolean;
 	buttonProps?: React.ComponentProps< typeof Button >;
-	extraContent?: JSX.Element;
+	children?: JSX.Element;
+	description: TranslateResult;
+	disabled?: boolean;
+	heading: string;
+	icon: JSX.Element;
+	isBanner?: boolean;
 };
 
 const AddNewSiteMenuItem: React.FC< Props > = ( {
-	icon,
-	iconClassName,
-	heading,
-	description,
-	isBanner,
-	disabled,
 	buttonProps,
-	extraContent,
+	children,
+	description,
+	disabled,
+	heading,
+	icon,
+	isBanner,
 } ) => {
 	return (
 		<Button
@@ -35,13 +33,13 @@ const AddNewSiteMenuItem: React.FC< Props > = ( {
 				'is-disabled': disabled,
 			} ) }
 		>
-			<div className={ clsx( 'add-new-site__popover-button-icon', iconClassName ) }>
+			<div className="add-new-site__popover-button-icon">
 				<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
 			</div>
 			<div className="add-new-site__popover-button-content">
 				<div className="add-new-site__popover-button-heading">{ heading }</div>
 				<div className="add-new-site__popover-button-description">{ description }</div>
-				{ extraContent }
+				{ children }
 			</div>
 		</Button>
 	);

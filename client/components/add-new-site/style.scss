@@ -89,7 +89,6 @@ button, a {
 
 			@include break-large {
 				padding: 16px;
-				padding-top: 0;
 			}
 
 			.add-new-site__popover-button-icon {
@@ -108,7 +107,8 @@ button, a {
 			}
 
 			.add-new-site__popover-button-heading {
-				@include a4a-font-body-md($font-weight: 500);
+				font-size: rem(14px);
+				font-weight: 500;
 			}
 		}
 
@@ -127,11 +127,12 @@ button, a {
 		}
 
 		.add-new-site__popover-button-heading {
-			@include a4a-font-body-md;
+			font-size: rem(14px);
 		}
 
 		.add-new-site__popover-button-description {
-			@include a4a-font-body-sm;
+			font-size: rem(12px);
+			font-weight: 400;
 			color: var(--color-accent);
 			padding-top: 4px;
 		}

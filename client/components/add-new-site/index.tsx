@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import AddNewSiteButton from './button';
-import { AddNewSiteContext } from './context';
+import AddNewSiteContext from './context';
 import AddNewSiteMenuItems from './menu-items';
 import AddNewSiteModals from './modals';
 import AddNewSitePopover from './popover';
@@ -20,8 +20,17 @@ const AddNewSite = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
 	}, [] );
 
+	// Memoize the context value to avoid unnecessary re-renders
+	const contextValue = useMemo(
+		() => ( {
+			visibleModalType,
+			setVisibleModalType,
+		} ),
+		[ visibleModalType, setVisibleModalType ]
+	);
+
 	return (
-		<AddNewSiteContext.Provider value={ { visibleModalType, setVisibleModalType } }>
+		<AddNewSiteContext.Provider value={ contextValue }>
 			<AddNewSiteButton
 				showMainButtonLabel={ ! isNarrowView }
 				isMenuVisible={ isMenuVisible }

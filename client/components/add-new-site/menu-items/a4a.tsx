@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
+import { useContext, useCallback } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
@@ -19,7 +19,7 @@ import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/paymen
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { preventWidows } from 'calypso/lib/formatting';
-import { AddNewSiteContext } from '../context';
+import AddNewSiteContext from '../context';
 import AddNewSiteMenuItem from '../menu-item';
 import AddNewSitePopoverColumn from '../popover-column';
 import type { AddNewSiteMenuItemsProps } from '../types';
@@ -50,6 +50,14 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
+	const handleOnClick = useCallback(
+		( modalType: string ) => {
+			setVisibleModalType( modalType );
+			setMenuVisible( false );
+		},
+		[ setVisibleModalType, setMenuVisible ]
+	);
+
 	return (
 		<>
 			<AddNewSitePopoverColumn heading={ translate( 'Import existing sites' ) }>
@@ -61,21 +69,19 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					) }
 					buttonProps={ {
 						onClick: () => {
-							setVisibleModalType( 'import-from-wpcom' );
-							setMenuVisible( false );
+							handleOnClick( 'import-from-wpcom' );
 						},
 					} }
 				/>
 				<AddNewSiteMenuItem
 					icon={ <A4ALogo /> }
-					heading={ translate( 'Via the Automattic plugin ' ) }
+					heading={ translate( 'Via the Automattic plugin' ) }
 					description={ preventWidows(
 						translate( 'Connect with the Automattic for Agencies plugin' )
 					) }
 					buttonProps={ {
 						onClick: () => {
-							setVisibleModalType( 'a4a-connection' );
-							setMenuVisible( false );
+							handleOnClick( 'a4a-connection' );
 						},
 					} }
 				/>
@@ -87,8 +93,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					) }
 					buttonProps={ {
 						onClick: () => {
-							setVisibleModalType( 'jetpack-connection' );
-							setMenuVisible( false );
+							handleOnClick( 'jetpack-connection' );
 						},
 					} }
 				/>
@@ -96,7 +101,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 			<AddNewSitePopoverColumn heading={ translate( 'Add a new production site' ) }>
 				<AddNewSiteMenuItem
 					icon={ <img src={ pressableIcon } alt="Pressable" /> }
-					heading={ translate( 'Pressable' ) }
+					heading="Pressable"
 					description={ translate( 'Bring your theme, plugins, and content to WordPress.com.' ) }
 					buttonProps={ {
 						href:
@@ -108,7 +113,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				/>
 				<AddNewSiteMenuItem
 					icon={ <WordPressLogo /> }
-					heading={ translate( 'WordPress.com' ) }
+					heading="WordPress.com"
 					description={ preventWidows(
 						translate( 'Use a backup file to import your content into a new site.' )
 					) }
@@ -117,24 +122,19 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 							? A4A_SITES_LINK_NEEDS_SETUP
 							: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 					} }
-					extraContent={
-						hasPendingWPCOMSites ? (
-							<div className="add-new-site-popover__count">
-								{ translate(
-									'%(pendingSites)d site available',
-									'%(pendingSites)d sites available',
-									{
-										args: {
-											pendingSites: allAvailableSites.length,
-										},
-										count: allAvailableSites.length,
-										comment: '%(pendingSites)s is the number of sites available.',
-									}
-								) }
-							</div>
-						) : undefined
-					}
-				/>
+				>
+					{ hasPendingWPCOMSites ? (
+						<div className="add-new-site-popover__count">
+							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
+								args: {
+									pendingSites: allAvailableSites.length,
+								},
+								count: allAvailableSites.length,
+								comment: '%(pendingSites)s is the number of sites available.',
+							} ) }
+						</div>
+					) : undefined }
+				</AddNewSiteMenuItem>
 			</AddNewSitePopoverColumn>
 			{ devSitesEnabled && (
 				<AddNewSitePopoverColumn>
@@ -163,26 +163,25 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 								setMenuVisible( false );
 							},
 						} }
-						extraContent={
-							<div>
-								<div className="add-new-site-popover__count">
-									{ translate( '%(pendingSites)d of 5 free licenses available', {
-										args: {
-											pendingSites: availableDevSites,
-										},
-										comment: '%(pendingSites)s is the number of free licenses available.',
-									} ) }
-								</div>
-								<div
-									className={ clsx( 'add-new-site-popover__cta', {
-										disabled: ! hasAvailableDevSites,
-									} ) }
-								>
-									{ translate( 'Create a site now →' ) }
-								</div>
+					>
+						<div>
+							<div className="add-new-site-popover__count">
+								{ translate( '%(pendingSites)d of 5 free licenses available', {
+									args: {
+										pendingSites: availableDevSites,
+									},
+									comment: '%(pendingSites)s is the number of free licenses available.',
+								} ) }
 							</div>
-						}
-					/>
+							<div
+								className={ clsx( 'add-new-site-popover__cta', {
+									disabled: ! hasAvailableDevSites,
+								} ) }
+							>
+								{ translate( 'Create a site now →' ) }
+							</div>
+						</div>
+					</AddNewSiteMenuItem>
 				</AddNewSitePopoverColumn>
 			) }
 		</>

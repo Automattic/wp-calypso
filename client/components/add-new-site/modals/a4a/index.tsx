@@ -6,7 +6,7 @@ import JetpackConnectionModal from 'calypso/a8c-for-agencies/components/add-new-
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
-import { AddNewSiteContext } from '../../context';
+import AddNewSiteContext from '../../context';
 
 const AddNewSitesA4AModals = () => {
 	const { visibleModalType, setVisibleModalType } = useContext( AddNewSiteContext );
@@ -28,25 +28,26 @@ const AddNewSitesA4AModals = () => {
 
 	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
-	return (
-		<>
-			{ visibleModalType === 'a4a-connection' && <A4AConnectionModal onClose={ handleOnClose } /> }
-			{ visibleModalType === 'jetpack-connection' && (
-				<JetpackConnectionModal onClose={ handleOnClose } />
-			) }
-			{ visibleModalType === 'import-from-wpcom' && (
-				<ImportFromWPCOMModal onClose={ handleOnClose } />
-			) }
-			{ visibleModalType === 'dev-site-configurations' && (
-				<SiteConfigurationsModal
-					closeModal={ handleOnClose }
-					randomSiteName={ randomSiteName }
-					isRandomSiteNameLoading={ isRandomSiteNameLoading }
-					onCreateSiteSuccess={ onCreateSiteSuccess }
-				/>
-			) }
-		</>
-	);
+	if ( visibleModalType === 'a4a-connection' ) {
+		return <A4AConnectionModal onClose={ handleOnClose } />;
+	}
+	if ( visibleModalType === 'jetpack-connection' ) {
+		return <JetpackConnectionModal onClose={ handleOnClose } />;
+	}
+	if ( visibleModalType === 'import-from-wpcom' ) {
+		return <ImportFromWPCOMModal onClose={ handleOnClose } />;
+	}
+	if ( visibleModalType === 'dev-site-configurations' ) {
+		return (
+			<SiteConfigurationsModal
+				closeModal={ handleOnClose }
+				randomSiteName={ randomSiteName }
+				isRandomSiteNameLoading={ isRandomSiteNameLoading }
+				onCreateSiteSuccess={ onCreateSiteSuccess }
+			/>
+		);
+	}
+	return null;
 };
 
 export default AddNewSitesA4AModals;
