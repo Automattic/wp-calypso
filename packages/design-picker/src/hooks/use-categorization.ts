@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
+import { useEffect, useMemo, useCallback, useRef } from 'react';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Category } from '../types';
 
@@ -28,7 +28,6 @@ export function useCategorization(
 	}: UseCategorizationOptions
 ): Categorization {
 	const isInitRef = useRef( false );
-	const [ isSelectionsChanged, setIsSelectionsChanged ] = useState( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -40,6 +39,12 @@ export function useCategorization(
 	}, [ categoryMap, sort ] );
 
 	const { selectedCategories, setSelectedCategories } = useDesignPickerFilters();
+	const isSelectionsChanged = useMemo(
+		() =>
+			defaultSelections.length !== selectedCategories.length ||
+			! defaultSelections.every( ( selection ) => selectedCategories.includes( selection ) ),
+		[ defaultSelections, selectedCategories ]
+	);
 
 	const onSelect = useCallback(
 		( value: string ) => {
@@ -47,10 +52,6 @@ export function useCategorization(
 				handleSelect?.( value );
 				setSelectedCategories( [ value ] );
 				return;
-			}
-
-			if ( ! isSelectionsChanged ) {
-				setIsSelectionsChanged( true );
 			}
 
 			const index = selectedCategories.findIndex( ( selection ) => selection === value );
@@ -72,7 +73,6 @@ export function useCategorization(
 			setSelectedCategories,
 			handleSelect,
 			handleDeselect,
-			setIsSelectionsChanged,
 		]
 	);
 

@@ -176,6 +176,7 @@ interface DesignCardGroup {
 	designs: Design[];
 	locale: string;
 	category?: string | null;
+	categoryName?: string;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
@@ -191,6 +192,7 @@ const DesignCardGroup = ( {
 	title,
 	designs,
 	category,
+	categoryName,
 	locale,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
@@ -202,9 +204,14 @@ const DesignCardGroup = ( {
 	onPreview,
 	getBadge,
 }: DesignCardGroup ) => {
+	const translate = useTranslate();
+	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
+	const collapsedDesignCount = 6;
+	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
+
 	const content = (
 		<div className="design-picker__grid">
-			{ designs.map( ( design, index ) => {
+			{ visibleDesigns.map( ( design, index ) => {
 				return (
 					<DesignCard
 						key={ design.recipe?.slug ?? design.slug ?? index }
@@ -229,16 +236,24 @@ const DesignCardGroup = ( {
 		return null;
 	}
 
-	if ( ! title || designs.length === 0 ) {
-		return content;
-	}
-
 	return (
 		<div className="design-picker__design-card-group">
-			<div className="design-picker__design-card-title">
-				{ title } ({ designs.length })
-			</div>
+			{ title && designs.length > 0 && (
+				<div className="design-picker__design-card-title">
+					{ title } ({ designs.length })
+				</div>
+			) }
 			{ content }
+			{ isCollapsed && designs.length > collapsedDesignCount && (
+				<div className="design-picker__design-card-group-footer">
+					<Button onClick={ () => setIsCollapsed( false ) }>
+						{ translate( 'Show all %s themes', {
+							args: categoryName,
+							comment: '%s will be a name of the theme category. e.g. Blog.',
+						} ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };
@@ -324,10 +339,13 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	}, [ designs, recommendedDesignSlugs ] );
 
 	// Show recommended themes only when the selected categories are never changed.
-	const showRecommendedDesigns =
+	const showRecommendedAtTop =
 		isMultiFilterEnabled &&
 		! categorization?.isSelectionsChanged &&
 		recommendedDesigns.length === 3;
+	const showRecommendedAtBottom =
+		isMultiFilterEnabled && categorization?.isSelectionsChanged && recommendedDesigns.length === 3;
+	const showRecommendedDesigns = showRecommendedAtTop || showRecommendedAtBottom;
 
 	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
 		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
@@ -394,15 +412,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ showRecommendedDesigns && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Recommended themes' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
-
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
@@ -411,6 +420,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					designs={ best }
 				/>
 			) }
+			{ showRecommendedAtTop && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
+
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
@@ -430,10 +448,20 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								: ''
 						}
 						category={ categorySlug }
+						categoryName={ isMultiFilterEnabled ? getCategoryName( categorySlug ) : '' }
 						designs={ categoryDesigns }
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
+
+			{ showRecommendedAtBottom && (
+				<DesignCardGroup
+					{ ...designCardProps }
+					title={ translate( 'Trending for your goals' ) }
+					category="recommended"
+					designs={ recommendedDesigns }
+				/>
+			) }
 		</div>
 	);
 };

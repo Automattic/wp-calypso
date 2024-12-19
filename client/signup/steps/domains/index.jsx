@@ -5,6 +5,7 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
+	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -91,6 +92,7 @@ export class RenderDomainsStep extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
+		goBack: PropTypes.func,
 		isDomainOnly: PropTypes.bool.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
@@ -101,6 +103,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
+		recordTracksEvent: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -1300,6 +1303,7 @@ export class RenderDomainsStep extends Component {
 			userSiteCount,
 			previousStepName,
 			useStepperWrapper,
+			goBack,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1349,6 +1353,9 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingGuidedFlow( flowName ) ) {
 			// Let the framework decide the back url.
 			backUrl = undefined;
+		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
+			backUrl = null;
+			backLabelText = translate( 'Back' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
@@ -1408,6 +1415,8 @@ export class RenderDomainsStep extends Component {
 					hideSkip
 					align="center"
 					isWideLayout
+					goBack={ goBack }
+					recordTracksEvent={ this.props.recordTracksEvent }
 				/>
 			);
 		}

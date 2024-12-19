@@ -219,12 +219,12 @@
 			display: none;
 		}
 
-		.a4a-layout__viewport {
+		.multi-sites-dashboard-layout__viewport {
 			width: 360px;
 			justify-content: space-between;
 		}
 
-		.a4a-layout__viewport > div:first-child {
+		.multi-sites-dashboard-layout__viewport > div:first-child {
 			width: 100%;
 		}
 
@@ -389,7 +389,7 @@
 			margin-bottom: 0;
 			padding: 0;
 
-			.a4a-layout__viewport {
+			.multi-sites-dashboard-layout__viewport {
 				display: flex;
 				margin: 0;
 				padding: 16px 24px;
