@@ -12,7 +12,7 @@ import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
-	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
+	openPluginSitesPane: ( plugin: Plugin ) => void
 ) {
 	const dispatch = useDispatch();
 
@@ -68,7 +68,7 @@ export function useFields(
 								className="sites-manage-plugin-status-button"
 								onClick={ () => {
 									trackPluginNameClick();
-									toggleDialogForPlugin( item );
+									openPluginSitesPane( item );
 								} }
 							>
 								<PluginActionStatus
@@ -84,7 +84,7 @@ export function useFields(
 							<Button
 								onClick={ () => {
 									trackPluginNameClick();
-									toggleDialogForPlugin( item );
+									openPluginSitesPane( item );
 								} }
 								className="plugin-name-button"
 							>
@@ -119,7 +119,7 @@ export function useFields(
 									} )
 								);
 
-								toggleDialogForPlugin( item );
+								openPluginSitesPane( item );
 							} }
 						>
 							{ numberOfSites }
@@ -163,7 +163,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog, toggleDialogForPlugin ]
+		[ bulkActionDialog, openPluginSitesPane ]
 	);
 
 	return fields;
