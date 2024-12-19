@@ -1,0 +1,167 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.add-new-site__button {
+	.gridicon {
+		margin-left: 6px;
+		transition: transform 100ms ease-in-out;
+		height: 18px;
+		width: 18px;
+
+		&.reverse {
+			transform: rotate(180deg);
+		}
+
+		&.mobile {
+			margin-left: 0;
+		}
+	}
+}
+
+.popover.add-new-site__popover {
+	animation: fadeIn 0.2s ease-out;
+
+	@include breakpoint-deprecated(">660px") {
+		margin-inline-start: 32px;
+	}
+
+	.popover__inner {
+		text-align: unset
+	}
+}
+
+.add-new-site__popover-content {
+	display: flex;
+	flex-direction: column;
+	padding: 28px 32px;
+	gap: 32px;
+
+	@include break-large {
+		flex-direction: row;
+	}
+
+	.add-new-site__popover-column {
+		width: 260px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+}
+
+.add-new-site__popover-column-heading {
+	color: var(--color-accent-40);
+	font-size: rem(12px);
+	font-weight: 500;
+}
+
+button, a {
+	&.components-button.add-new-site__popover-button {
+		padding: 8px;
+		white-space: unset;
+		text-align: unset;
+		margin-block: 0;
+		width: 100%;
+		border-radius: 4px;
+		height: auto;
+		color: var(--color-text-black);
+
+		&:hover {
+			color: var(--color-text-black);
+			background-color: var(--color-neutral-0);
+		}
+
+		&.is-disabled {
+			cursor: not-allowed;
+			background-color: var(--color-neutral-0);
+		}
+
+		@include break-large {
+			display: flex;
+			gap: 8px;
+			align-items: unset;
+			justify-content: unset;
+		}
+
+		&.is-banner {
+			flex-direction: column;
+			gap: 4px;
+			background-color: var(--color-neutral-0);
+
+			@include break-large {
+				padding: 16px;
+			}
+
+			.add-new-site__popover-button-icon {
+				height: 78px;
+
+				.sidebar__menu-icon {
+					width: 228px;
+					height: auto;
+				}
+			}
+
+			.add-new-site__popover-button-content {
+				@include break-large {
+					padding: 8px 8px 0 8px;
+				}
+			}
+
+			.add-new-site__popover-button-heading {
+				font-size: rem(14px);
+				font-weight: 500;
+			}
+		}
+
+		.add-new-site__popover-button-icon {
+			display: none;
+
+			@include break-large {
+				display: block;
+			}
+
+			.sidebar__menu-icon {
+				width: 24px;
+				height: 24px;
+				max-width: fit-content;
+			}
+		}
+
+		.add-new-site__popover-button-heading {
+			font-size: rem(14px);
+		}
+
+		.add-new-site__popover-button-description {
+			font-size: rem(12px);
+			font-weight: 400;
+			color: var(--color-accent);
+			padding-top: 4px;
+		}
+	}
+}
+
+// Remove the focus outline from the button when clicked with the mouse,
+// but retain it for keyboard navigation (e.g., Tab key). */
+html:not(.accessible-focus) button, a {
+	&.components-button.add-new-site__popover-button {
+		&:focus-within {
+			box-shadow: none;
+		}
+	}
+}
+
+.add-new-site-popover__count {
+	font-size: rem(12px);
+	font-style: italic;
+	color: var(--color-accent-100);
+	padding-top: 4px;
+}
+
+.add-new-site-popover__cta {
+	padding-top: 12px;
+	font-size: rem(12px);
+	font-weight: 600;
+
+	&.disabled {
+		color: var(--color-accent-20);
+	}
+}
