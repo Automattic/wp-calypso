@@ -5,7 +5,7 @@ import JetpackConnectionModal from 'calypso/a8c-for-agencies/components/add-new-
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
-import AddNewSiteContext from '../context';
+import AddNewSiteContext from 'calypso/components/add-new-site/context';
 
 const AddNewSitesA4AModals = () => {
 	const { visibleModalType, setVisibleModalType } = useContext( AddNewSiteContext );

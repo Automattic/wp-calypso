@@ -50,19 +50,17 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
-				<div ref={ ( ref ) => setTourStepRef( ref ) }>
+			<div ref={ ( ref ) => setTourStepRef( ref ) }>
+				{ isEnabled( 'a4a-updated-add-new-site' ) ? (
 					<AddNewSite />
-				</div>
-			) : (
-				<div ref={ ( ref ) => setTourStepRef( ref ) }>
+				) : (
 					<AddNewSiteButton
 						showMainButtonLabel={ ! isMobile }
 						onWPCOMImport={ onWPCOMImport }
 						toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
 					/>
-				</div>
-			) }
+				) }
+			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
 				primary

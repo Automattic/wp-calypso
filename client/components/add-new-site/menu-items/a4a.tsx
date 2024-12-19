@@ -18,11 +18,11 @@ import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketp
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import AddNewSiteContext from 'calypso/components/add-new-site/context';
+import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
+import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
 import { preventWidows } from 'calypso/lib/formatting';
-import AddNewSiteContext from '../context';
-import AddNewSiteMenuItem from '../menu-item';
-import AddNewSitePopoverColumn from '../popover-column';
-import type { AddNewSiteMenuItemsProps } from '../types';
+import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 

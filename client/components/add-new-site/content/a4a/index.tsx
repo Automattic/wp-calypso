@@ -1,7 +1,7 @@
-import AddNewSiteA4AMenuItems from '../../menu-items/a4a';
-import AddNewSitesA4AModals from '../../modals/a4a';
-import AddNewSitePopover from '../../popover';
-import type { AddNewSiteContentProps } from '../../types';
+import AddNewSiteA4AMenuItems from 'calypso/components/add-new-site/menu-items/a4a';
+import AddNewSitesA4AModals from 'calypso/components/add-new-site/modals/a4a';
+import AddNewSitePopover from 'calypso/components/add-new-site/popover';
+import type { AddNewSiteContentProps } from 'calypso/components/add-new-site/types';
 
 const AddNewSiteA4A = ( {
 	isMenuVisible,
