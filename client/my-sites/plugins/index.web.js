@@ -10,6 +10,7 @@ import {
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
+	renderPluginSitesPane,
 	browsePlugins,
 	browsePluginsOrPlugin,
 	renderPluginWarnings,
@@ -116,6 +117,19 @@ export default function ( router ) {
 		navigation,
 		redirectTrialSites,
 		plans,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/manage/:slug/sites`,
+		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		navigation,
+		redirectTrialSites,
+		renderPluginsSidebar,
+		renderPluginSitesPane,
 		makeLayout,
 		clientRender
 	);

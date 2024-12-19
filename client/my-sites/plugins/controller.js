@@ -25,9 +25,9 @@ import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginNotFound from './plugin-not-found';
+import PluginSitesPane from './plugin-sites-pane';
 import PluginBrowser from './plugins-browser';
 import { RelatedPluginsPage } from './related-plugins-page';
-
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
@@ -410,4 +410,13 @@ export function renderPluginsSidebar( context, next ) {
 	}
 
 	next();
+}
+
+export function renderPluginSitesPane( slug ) {
+	return ( context, next ) => {
+		context.primary = (
+			<PluginSitesPane pluginSlug={ slug } fullPlugin={ {} } sitesWithPlugins={ [] } />
+		);
+		next();
+	};
 }

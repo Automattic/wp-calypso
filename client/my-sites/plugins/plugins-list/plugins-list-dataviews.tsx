@@ -1,3 +1,4 @@
+import pagejs from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
@@ -6,11 +7,11 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
-import { useSitesDialog } from './use-sites-dialog';
 import './style.scss';
 
 interface Props {
@@ -23,6 +24,13 @@ interface Props {
 
 const defaultLayouts = { table: {} };
 
+const openPluginSitesPane = ( plugin: Plugin ) => {
+	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
+		plugin: plugin.slug,
+	} );
+	pagejs.show( `/plugins/manage/${ plugin.slug }/sites` );
+};
+
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,
@@ -34,8 +42,8 @@ export default function PluginsListDataViews( {
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
-	const { sitesDialog, toggleDialogForPlugin } = useSitesDialog();
-	const fields = useFields( bulkActionDialog, toggleDialogForPlugin );
+
+	const fields = useFields( bulkActionDialog, openPluginSitesPane );
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
@@ -141,7 +149,6 @@ export default function PluginsListDataViews( {
 				defaultLayouts={ defaultLayouts }
 				header={ header }
 			/>
-			{ sitesDialog }
 		</>
 	);
 }
