@@ -6,7 +6,7 @@ import {
 	WPCOM_FEATURES_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
 import {
@@ -23,8 +23,43 @@ import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '../types';
 
+const partialAddOnMetas: AddOnMeta[] = [
+	{
+		addOnSlug: ADD_ON_UNLIMITED_THEMES,
+		productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
+		featureSlugs: [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ] as string[],
+		icon: unlimitedThemesIcon,
+		featured: true,
+	},
+	{
+		addOnSlug: ADD_ON_CUSTOM_DESIGN,
+		productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
+		featureSlugs: [ WPCOM_FEATURES_CUSTOM_DESIGN ] as string[],
+		icon: customDesignIcon,
+	},
+	{
+		addOnSlug: ADD_ON_50GB_STORAGE,
+		productSlug: PRODUCT_1GB_SPACE,
+		featureSlugs: null,
+		icon: spaceUpgradeIcon,
+		quantity: 50,
+		name: translate( '50 GB Storage' ),
+		description: translate( 'Make more space for high-quality photos, videos, and other media. ' ),
+	},
+	{
+		addOnSlug: ADD_ON_100GB_STORAGE,
+		productSlug: PRODUCT_1GB_SPACE,
+		featureSlugs: null,
+		icon: spaceUpgradeIcon,
+		quantity: 100,
+		name: translate( '100 GB Storage' ),
+		description: translate(
+			'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+		),
+	},
+];
+
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
-	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 
 	/*
@@ -42,61 +77,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
 
 	return useMemo(
-		() =>
-			[
-				{
-					addOnSlug: ADD_ON_UNLIMITED_THEMES,
-					productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-					featureSlugs: [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ] as string[],
-					icon: unlimitedThemesIcon,
-					overrides: null,
-					displayCost: displayCostUnlimitedThemes,
-					featured: true,
-					name: undefined,
-					description: undefined,
-				},
-				{
-					addOnSlug: ADD_ON_CUSTOM_DESIGN,
-					productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-					featureSlugs: [ WPCOM_FEATURES_CUSTOM_DESIGN ] as string[],
-					icon: customDesignIcon,
-					overrides: null,
-					displayCost: displayCostCustomDesign,
-					featured: false,
-					name: undefined,
-					description: undefined,
-				},
-				{
-					addOnSlug: ADD_ON_50GB_STORAGE,
-					productSlug: PRODUCT_1GB_SPACE,
-					featureSlugs: null,
-					icon: spaceUpgradeIcon,
-					quantity: 50,
-					name: translate( '50 GB Storage' ),
-					displayCost: displayCost1GBSpace50,
-					prices: addOnPrices1GBSpace50,
-					description: translate(
-						'Make more space for high-quality photos, videos, and other media. '
-					),
-					featured: false,
-					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 50 ),
-				},
-				{
-					addOnSlug: ADD_ON_100GB_STORAGE,
-					productSlug: PRODUCT_1GB_SPACE,
-					featureSlugs: null,
-					icon: spaceUpgradeIcon,
-					quantity: 100,
-					name: translate( '100 GB Storage' ),
-					displayCost: displayCost1GBSpace100,
-					prices: addOnPrices1GBSpace100,
-					description: translate(
-						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
-					),
-					featured: false,
-					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 100 ),
-				},
-			] as const,
+		() => partialAddOnMetas,
 		[
 			addOnPrices1GBSpace100,
 			addOnPrices1GBSpace50,
