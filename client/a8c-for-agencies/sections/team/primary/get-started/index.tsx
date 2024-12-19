@@ -1,6 +1,8 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
@@ -20,7 +22,9 @@ export default function GetStarted() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Manage team members' );
+	const isDesktop = useDesktopBreakpoint();
+
+	const title = isDesktop ? translate( 'Manage team members' ) : translate( 'Team' );
 
 	const onInviteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' ) );
@@ -36,6 +40,7 @@ export default function GetStarted() {
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
+						<MobileSidebarNavigation />
 						<Button variant="primary" onClick={ onInviteClick } href={ A4A_TEAM_INVITE_LINK }>
 							{ translate( 'Invite a team member' ) }
 						</Button>
