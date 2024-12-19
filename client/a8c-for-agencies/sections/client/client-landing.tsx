@@ -3,7 +3,7 @@ import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification.tsx';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_OVERVIEW_LINK,
