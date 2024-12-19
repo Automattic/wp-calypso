@@ -1,6 +1,10 @@
 import { translate } from 'i18n-calypso';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
+import DNSRecordsHeader, {
+	dnsRecordsTitle,
+	dnsRecordsSubtitle,
+} from './headers/dns-records-header';
 
 type SubpageWrapperParamsType = {
 	CustomHeader?: CustomHeaderComponentType;
@@ -11,6 +15,7 @@ type SubpageWrapperParamsType = {
 
 // Subpage keys
 export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
+export const DNS_RECORDS = 'dns-records';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
 
 // Subpage params map
@@ -19,6 +24,13 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		CustomHeader: AddForwardingEmailHeader,
 		showFormHeader: true,
 		showPageHeader: false,
+	},
+	[ DNS_RECORDS ]: {
+		CustomHeader: DNSRecordsHeader,
+		titleOverride: dnsRecordsTitle,
+		subtitleOverride: dnsRecordsSubtitle,
+		showBreadcrumb: false,
+		showDetails: false,
 	},
 	[ EDIT_CONTACT_INFO ]: {
 		subPageKey: EDIT_CONTACT_INFO,
