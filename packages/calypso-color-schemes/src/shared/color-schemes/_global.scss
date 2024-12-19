@@ -163,6 +163,7 @@ WPCom Global theme, Modern theme adjusted for use in calypso non site contexts
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color); /* $menu-submenu-focus-text */
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-hover-text);
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--theme-highlight-color);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

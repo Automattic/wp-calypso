@@ -44,3 +44,5 @@ export function isBlankCanvasDesign( design?: Design ): boolean {
 	}
 	return /blank-canvas/i.test( design.slug ) && ! design.is_virtual;
 }
+
+export const getDesignSlug = ( design: Design ) => design.recipe?.slug || design.slug;

@@ -455,7 +455,7 @@ class Login extends Component {
 				} else if ( this.props.twoFactorEnabled ) {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 				} else if ( currentQuery.lostpassword_flow ) {
-					headerText = null;
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate(
@@ -482,8 +482,8 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					const poweredByWpCom = (
 						<>
-							{ translate( 'Log in with your WordPress.com account.' ) }
-							<br />
+							{ translate( 'Log in with your WordPress.com account.' ) }{ ' ' }
+							<br className="hide-on-desktop" />
 						</>
 					);
 
@@ -884,14 +884,16 @@ class Login extends Component {
 		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
 			return (
 				<Fragment>
-					<AsyncLoad
-						require="calypso/blocks/login/lost-password-form"
-						redirectToAfterLoginUrl={ this.props.redirectTo }
-						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
-						locale={ locale }
-						isWooPasswordlessJPC={ isWooPasswordlessJPC }
-						from={ get( currentQuery, 'from' ) }
-					/>
+					<div className="login__lost-password-form-wrapper">
+						<AsyncLoad
+							require="calypso/blocks/login/lost-password-form"
+							redirectToAfterLoginUrl={ this.props.redirectTo }
+							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
+							locale={ locale }
+							isWooPasswordlessJPC={ isWooPasswordlessJPC }
+							from={ get( currentQuery, 'from' ) }
+						/>
+					</div>
 					{ ! isWooPasswordlessJPC && ! isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">

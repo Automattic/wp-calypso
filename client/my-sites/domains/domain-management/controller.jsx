@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import SubpageWrapper from 'calypso/my-sites/domains/domain-management/subpage-wrapper';
 import {
 	domainManagementAllEditSelectedContactInfo,
 	domainManagementEditSelectedContactInfo,
@@ -25,7 +26,9 @@ import {
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSubpageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
 
 export default {
@@ -319,6 +322,75 @@ export default {
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
 			/>
+		);
+		next();
+	},
+
+	// The main layout that wraps all the domain management pages.
+	domainDashboardLayout( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagement.DomainDashboardLayout
+				innerContent={ pageContext.primary }
+				selectedDomainName={ selectedDomainName }
+			/>
+		);
+
+		next();
+	},
+
+	// The domain overview page. For the All Domains view.
+	domainManagementV2( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot( ':domain' ) }
+				analyticsTitle="Domain Management"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				selectedDomainName={ selectedDomainName }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	// The domain overview pane. Has a tabbed layout with the domain overview and email management.
+	domainManagementPaneView( feature ) {
+		return ( pageContext, next ) => {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const site = getSite( state, siteSlug );
+			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
+			pageContext.primary = (
+				<DomainManagement.DomainOverviewPane
+					selectedDomainPreview={ pageContext.primary }
+					selectedDomain={ selectedDomainName }
+					selectedFeature={ feature }
+					siteSlug={ siteSlug }
+					site={ site }
+				/>
+			);
+
+			next();
+		};
+	},
+
+	domainManagementSubpageParams( subPageKey ) {
+		return ( pageContext, next ) => {
+			pageContext.params = getSubpageParams( subPageKey );
+			next();
+		};
+	},
+
+	domainManagementSubpageView( pageContext, next ) {
+		pageContext.primary = (
+			<SubpageWrapper subpageKey={ pageContext.params.subPageKey }>
+				{ pageContext.primary }
+			</SubpageWrapper>
 		);
 		next();
 	},

@@ -71,7 +71,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
@@ -864,22 +864,39 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { isPremium, isThemePurchased, shouldLimitGlobalStyles, styleVariations } = this.props;
+		const {
+			isPremium,
+			isFreePlan,
+			isThemePurchased,
+			themeTier,
+			shouldLimitGlobalStyles,
+			styleVariations,
+			isExternallyManagedTheme,
+			isBundledSoftwareSet,
+		} = this.props;
 
-		const splitDefaultVariation =
-			! this.props.isExternallyManagedTheme &&
-			! this.props.isBundledSoftwareSet &&
+		const isGlobalStylesEnabled = isEnabled( 'global-styles/on-personal-plan' );
+
+		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
+		const hasLimitedFeatures =
+			! isExternallyManagedTheme &&
+			! isBundledSoftwareSet &&
 			! isThemePurchased &&
+			! isGlobalStylesEnabled &&
 			! isPremium &&
 			shouldLimitGlobalStyles;
 
-		const needsUpgrade = shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
+		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
+
+		const needsUpgrade = isGlobalStylesEnabled
+			? isFreePlan
+			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
 		return (
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitDefaultVariation={ splitDefaultVariation }
+					splitDefaultVariation={ shouldSplitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }
@@ -1612,6 +1629,8 @@ export default connect(
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const currentPlan = getCurrentPlan( state, siteId );
+		const isFreePlan = currentPlan?.productSlug === 'free_plan';
 		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
 		const productionSite = getProductionSiteForWpcomStaging( state, siteId );
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
@@ -1649,6 +1668,7 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
+			isFreePlan,
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),

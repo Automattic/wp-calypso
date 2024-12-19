@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
 import { ResponseDomain } from './types';
@@ -16,6 +17,12 @@ export function domainManagementLink(
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
 		// Note they are encoded twice since page.js decodes the path by default.
 		domain = encodeURIComponent( encodeURIComponent( domain ) );
+	}
+
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
+	if ( isAllDomainManagementEnabled && isAllSitesView ) {
+		return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
 	}
 
 	if ( isAllSitesView ) {

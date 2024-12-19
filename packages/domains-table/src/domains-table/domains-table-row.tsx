@@ -1,8 +1,11 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
@@ -47,7 +50,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		sslStatus,
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
+	const { canSelectAnyDomains, domainsTableColumns, isCompact, currentlySelectedDomainName } =
+		useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -89,13 +93,22 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
+		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
+		if ( isAllDomainManagementEnabled && isAllSitesView ) {
+			page.show( domainManagementLink );
+			return;
+		}
+
 		window.location.href = domainManagementLink;
 	};
 
 	return (
 		<tr
 			key={ domain.domain }
-			className="domains-table__row"
+			className={ clsx( 'domains-table__row', {
+				'is-selected': currentlySelectedDomainName === domain.domain,
+			} ) }
 			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (

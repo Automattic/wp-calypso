@@ -31,6 +31,7 @@ class MediaLibraryExternalHeader extends Component {
 		photosPickerApiEnabled: PropTypes.bool,
 		photosPickerSession: PropTypes.object,
 		createPhotosPickerSession: PropTypes.func,
+		isCreatingPhotosPickerSession: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -99,15 +100,21 @@ class MediaLibraryExternalHeader extends Component {
 			this.props;
 
 		deletePhotosPickerSession && deletePhotosPickerSession( photosPickerSession?.id );
-		createPhotosPickerSession && createPhotosPickerSession();
+		createPhotosPickerSession &&
+			createPhotosPickerSession( {
+				onSuccess: ( session ) => {
+					session?.pickerUri && window.open( session.pickerUri, '_blank' );
+				},
+			} );
 	};
 
 	renderChangeSelectionButton() {
-		const { photosPickerSession, translate } = this.props;
+		const { photosPickerSession, isCreatingPhotosPickerSession, translate } = this.props;
 
 		return (
 			<Button
 				compact
+				busy={ isCreatingPhotosPickerSession }
 				onClick={ this.onChangeSelection }
 				disable={ ! photosPickerSession?.mediaItemsSet }
 			>

@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -52,9 +51,11 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
+			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+			STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -107,7 +108,6 @@ const siteMigration: Flow = {
 			true
 		);
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
-		const isEnglishLocale = useIsEnglishLocale();
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -411,9 +411,16 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from } = providedDependencies as {
-						action: 'skip' | 'submit' | 'already-wpcom' | 'site-is-not-using-wordpress';
+					const { action, from, authorizationUrl } = providedDependencies as {
+						action:
+							| 'skip'
+							| 'submit'
+							| 'application-passwords-approval'
+							| 'credentials-required'
+							| 'already-wpcom'
+							| 'site-is-not-using-wordpress';
 						from: string;
+						authorizationUrl: string;
 					};
 
 					if ( action === 'skip' ) {
@@ -425,7 +432,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( isEnglishLocale && action === 'already-wpcom' ) {
+					if ( action === 'already-wpcom' ) {
 						return navigate(
 							addQueryArgs(
 								{ siteId, from: from || fromQueryParam, siteSlug },
@@ -434,7 +441,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( isEnglishLocale && action === 'site-is-not-using-wordpress' ) {
+					if ( action === 'site-is-not-using-wordpress' ) {
 						return navigate(
 							addQueryArgs(
 								{
@@ -444,6 +451,52 @@ const siteMigration: Flow = {
 									platform: providedDependencies.platform as string,
 								},
 								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
+							)
+						);
+					}
+
+					if ( action === 'application-passwords-approval' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									from: from || fromQueryParam,
+									siteSlug,
+									authorizationUrl,
+								},
+								STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
+							)
+						);
+					}
+
+					if ( action === 'credentials-required' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
+							)
+						);
+					}
+
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+
+				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
+					const { action, from } = providedDependencies as {
+						action: 'skip' | 'submit';
+						from: string;
+					};
+
+					if ( action === 'skip' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
+								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
 					}
@@ -494,6 +547,43 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: fromQueryParam, siteSlug },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+
+				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
+					const { action, authorizationUrl, from } = providedDependencies as {
+						action: string;
+						from: string;
+						authorizationUrl: string;
+					};
+
+					if ( action === 'authorization' ) {
+						const currentUrl = window.location.href;
+						const successUrl = encodeURIComponent( currentUrl );
+						window.location.href = authorizationUrl + `&success_url=${ successUrl }`;
+						return;
+					}
+
+					if ( action === 'fallback-credentials' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									siteSlug,
+									authorizationUrl,
+									backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+									from: fromQueryParam,
+								},
+								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
+							)
+						);
+					}
+
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
 							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);
@@ -556,6 +646,23 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
+					if (
+						urlQueryParams.get( 'backTo' ) ===
+						STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
+					) {
+						return navigate(
+							`${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }?${ urlQueryParams }`
+						);
+					}
+
+					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
 					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
 				}
 			}

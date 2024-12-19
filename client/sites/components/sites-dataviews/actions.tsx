@@ -1,13 +1,13 @@
-import { FEATURE_SFTP, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
+import { FEATURE_SFTP, getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import {
-	SiteExcerptData,
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
+	SiteExcerptData,
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
-import { drawerLeft, wordpress, external } from '@wordpress/icons';
+import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -20,10 +20,10 @@ import {
 	getSiteAdminUrl,
 	getSiteMonitoringUrl,
 	isCustomDomain,
+	isDisconnectedJetpackAndNotAtomic,
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
-	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -199,9 +199,10 @@ export const isActionEligible = (
 			};
 		case 'restore':
 			return ( site: SiteExcerptData ) => {
-				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				// For deleted sites, the `manage_options` capability is not returned so we  don't check for it here
+				// But this setting is guarded in the backend:
+				// https://github.a8c.com/Automattic/wpcom/blob/4508b82936f1502b580d49574b63aad3b6dc1c5a/wp-content/rest-api-plugins/endpoints/site-restore.php#L47
 				if (
-					! canManageOptions ||
 					isP2Site( site ) ||
 					isNotAtomicJetpack( site ) ||
 					isDisconnectedJetpackAndNotAtomic( site )
@@ -235,6 +236,16 @@ export const isActionEligible = (
 				}
 
 				return isNotAtomicJetpack( site ) || !! isDisconnectedJetpackAndNotAtomic( site );
+			};
+		case 'delete-site':
+			return ( site: SiteExcerptData ) => {
+				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				return (
+					! site.is_deleted &&
+					canManageOptions &&
+					( ! site.jetpack || !! site.is_wpcom_atomic ) &&
+					! site.is_vip
+				);
 			};
 		default:
 			return () => true;
@@ -436,7 +447,8 @@ export function useActions( {
 					const wpAdminUrl = getSiteAdminUrl( site );
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-					if ( isWpAdminInterface ) {
+					const isSelfHostedJetpack = isNotAtomicJetpack( site );
+					if ( isWpAdminInterface || isSelfHostedJetpack ) {
 						window.location.href = `${ wpAdminUrl }plugins.php`;
 					} else {
 						page( getPluginsUrl( site.slug ) );
@@ -454,6 +466,7 @@ export function useActions( {
 					page(
 						addQueryArgs( `/setup/copy-site`, {
 							sourceSlug: site.slug,
+							plan: getPlanPath( site.plan?.product_slug ?? 'business' ),
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
@@ -555,6 +568,17 @@ export function useActions( {
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
 				},
 				isEligible: isActionEligible( 'migrate-to-wpcom', capabilities ),
+			},
+
+			{
+				id: 'delete-site',
+				label: __( 'Delete site' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					page( `/settings/delete-site/${ site.slug }` );
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
+				},
+				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
 		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]

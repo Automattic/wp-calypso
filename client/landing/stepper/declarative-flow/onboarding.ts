@@ -1,19 +1,26 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, Onboard } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
+import { useFlowLocale } from '../hooks/use-flow-locale';
+import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
-import { Flow, ProvidedDependencies } from './internals/types';
+import { STEPS } from './internals/steps';
+import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
+
+const SiteIntent = Onboard.SiteIntent;
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -32,7 +39,10 @@ const onboarding: Flow = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useSteps() {
-		return stepsWithRequiredLogin( [
+		// We have already checked the value has loaded in useAssertConditions
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
+		const steps = stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
@@ -54,6 +64,13 @@ const onboarding: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
 		] );
+
+		if ( isGoalsAtFrontExperiment ) {
+			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
+			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP );
+		}
+
+		return steps;
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
@@ -66,6 +83,7 @@ const onboarding: Flow = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
+		const locale = useFlowLocale();
 
 		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -75,15 +93,49 @@ const onboarding: Flow = {
 			} ),
 			[]
 		);
+		const coupon = useQuery().get( 'coupon' );
 
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
+		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
+				case 'goals': {
+					const { intent } = providedDependencies;
+
+					switch ( intent ) {
+						case SiteIntent.Import: {
+							const migrationFlowLink =
+								locale && locale !== 'en'
+									? `/setup/hosted-site-migration/${ locale }`
+									: '/setup/hosted-site-migration';
+							return window.location.assign( migrationFlowLink );
+						}
+
+						case SiteIntent.DIFM: {
+							const difmFlowLink =
+								locale && locale !== 'en'
+									? `/start/do-it-for-me/${ locale }`
+									: '/start/do-it-for-me';
+
+							return window.location.assign( difmFlowLink );
+						}
+
+						default: {
+							return navigate( 'designSetup' );
+						}
+					}
+				}
+
+				case 'designSetup': {
+					return navigate( 'domains' );
+				}
+
 				case 'domains':
 					setSiteUrl( providedDependencies.siteUrl );
 					setDomain( providedDependencies.suggestion );
@@ -159,13 +211,14 @@ const onboarding: Flow = {
 						}
 					}
 					setSignupCompleteFlowName( flowName );
-					return navigate( 'create-site', undefined, true );
+					return navigate( 'create-site', undefined, false );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = addQueryArgs( '/setup/site-setup/goals', {
+					const destination = addQueryArgs( '/setup/site-setup', {
 						siteSlug: providedDependencies.siteSlug,
+						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -179,6 +232,8 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
+								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								coupon,
 							} )
 						);
 					} else {
@@ -217,12 +272,27 @@ const onboarding: Flow = {
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'domains' );
+				case 'domains':
+					if ( isGoalsAtFrontExperiment ) {
+						return navigate( 'designSetup' );
+					}
+				case 'designSetup':
+					if ( isGoalsAtFrontExperiment ) {
+						return navigate( 'goals' );
+					}
 				default:
 					return;
 			}
 		};
 
 		return { goBack, submit };
+	},
+	useAssertConditions() {
+		const [ isLoading ] = useGoalsFirstExperiment();
+
+		return {
+			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
+		};
 	},
 };
 

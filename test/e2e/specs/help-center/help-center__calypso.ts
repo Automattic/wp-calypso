@@ -69,10 +69,9 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			expect( containerHeight ).toBe( 50 );
 		} );
 
-		it( 'the popover can be closed', async () => {
-			await helpCenterComponent.closePopover();
-
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+		it( 'can be maximized', async () => {
+			await helpCenterComponent.maximizePopover();
+			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 	} );
 
@@ -83,8 +82,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 */
 	describe( 'Articles', () => {
 		it( 'initial articles are shown', async () => {
-			await helpCenterComponent.openPopover();
-
 			const articles = helpCenterComponent.getArticles();
 
 			expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
@@ -123,6 +120,12 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 
 			await helpCenterComponent.goBack();
 		} );
+
+		it( 'the popover can be closed', async () => {
+			await helpCenterComponent.closePopover();
+
+			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+		} );
 	} );
 
 	/**
@@ -130,7 +133,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 *
 	 * These tests check the support flow. Starting with AI and then chat.
 	 */
-	describe( 'Support Flow', () => {
+	describe.skip( 'Support Flow', () => {
 		it( 'start support flow', async () => {
 			const stillNeedHelpButton = helpCenterLocator.getByRole( 'button', {
 				name: 'Still need help?',

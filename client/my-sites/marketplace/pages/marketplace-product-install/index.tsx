@@ -195,15 +195,14 @@ const MarketplaceProductInstall = ( {
 			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
 			! isPluginUploadFlow &&
 			! initializeInstallFlow &&
-			( wporgPlugin || wpOrgTheme ) &&
-			selectedSite
+			( wporgPlugin || wpOrgTheme )
 		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 			};
 
-			if ( selectedSite.jetpack ) {
+			if ( isJetpack || isAtomic ) {
 				if ( wpOrgTheme ) {
 					// initilize theme activating
 					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
@@ -230,7 +229,6 @@ const MarketplaceProductInstall = ( {
 		directInstallationAllowed,
 		isPluginUploadFlow,
 		initializeInstallFlow,
-		selectedSite,
 		siteId,
 		wporgPlugin,
 		wpOrgTheme,
@@ -238,6 +236,8 @@ const MarketplaceProductInstall = ( {
 		themeSlug,
 		dispatch,
 		hasAtomicFeature,
+		isAtomic,
+		isJetpack,
 	] );
 
 	// Validate completion of atomic transfer flow

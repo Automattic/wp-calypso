@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -151,7 +151,16 @@ class StatModuleChartTabs extends Component {
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState />
+					<StatsEmptyState
+						headingText={
+							selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
+						}
+						infoText={
+							selectedPeriod === 'hour'
+								? translate( 'Try selecting a different time frame.' )
+								: null
+						}
+					/>
 				</Chart>
 				<StatTabs
 					data={ this.props.counts }
@@ -280,7 +289,14 @@ const connectComponent = connect(
 		}
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			isNewDateFilteringEnabled ? customRange : {}
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 

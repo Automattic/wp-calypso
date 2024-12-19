@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
@@ -74,6 +74,7 @@ import PlansPageSubheader from './components/plans-page-subheader';
 import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
+import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -176,6 +177,8 @@ export interface PlansFeaturesMainProps {
 	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
 	 */
 	deemphasizeFreePlan?: boolean;
+
+	selectedThemeType?: string;
 }
 
 const PlansFeaturesMain = ( {
@@ -219,6 +222,7 @@ const PlansFeaturesMain = ( {
 	showPlanTypeSelectorDropdown = false,
 	coupon,
 	onPlanIntervalUpdate,
+	selectedThemeType,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -226,7 +230,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -250,6 +253,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
+		selectedThemeType,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -339,9 +343,14 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
-	const isTargetedSignupFlow = isInSignup && flowName === 'onboarding';
-	const isTargetedAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
-	const showSimplifiedFeatures = isTargetedSignupFlow || isTargetedAdminIntent;
+	/**
+	 * showSimplifiedFeatures should be true always and this variable should be removed.
+	 * It exists temporarily till the flows with the following intents are removed.
+	 */
+	const showSimplifiedFeatures = ! (
+		intent &&
+		[ 'plans-newsletter', 'plans-link-in-bio', 'plans-blog-onboarding' ].includes( intent )
+	);
 
 	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
 		useExperiment( 'calypso_pricing_grid_hide_lower_tier_plans', {
@@ -405,6 +414,18 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
+		selectedPlan,
+		hiddenPlans,
+		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+		term,
+		intent,
+		displayedIntervals: filteredDisplayedIntervals,
+		coupon,
+		siteId,
+		isInSignup,
+	} );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -419,11 +440,11 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -441,11 +462,11 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
-		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		term,
+		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -766,6 +787,7 @@ const PlansFeaturesMain = ( {
 					paidDomainName={ paidDomainName }
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
+					selectedThemeType={ selectedThemeType }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {
@@ -853,6 +875,7 @@ const PlansFeaturesMain = ( {
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
 										recordTracksEvent={ recordTracksEvent }
+										reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
 										showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -870,11 +893,7 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
-										enableTermSavingsPriceDisplay={
-											( isEnabled( 'plans/term-savings-price-display' ) ||
-												longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-											isInSignup
-										}
+										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -922,6 +941,7 @@ const PlansFeaturesMain = ( {
 															: undefined
 													}
 													recordTracksEvent={ recordTracksEvent }
+													reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }
 													showUpgradeableStorage={ showUpgradeableStorage }
@@ -934,11 +954,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={
-														( isEnabled( 'plans/term-savings-price-display' ) ||
-															longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-														isInSignup
-													}
+													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 												/>
 											) }
 											<ComparisonGridToggle

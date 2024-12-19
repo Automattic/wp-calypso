@@ -16,51 +16,34 @@ const DateControl = ( {
 	onDateControlClick,
 	tooltip,
 	dateRange,
-	shortcutList,
 	overlay,
+	shortcutList,
 	// Temporary prop to enable new date filtering UI.
 	isNewDateFilteringEnabled = false,
 }: DateControlProps ) => {
 	const moment = useLocalizedMoment();
 	const siteToday = useMomentSiteZone();
 
-	const getShortcutForRange = () => {
-		// Search the shortcut array for something matching the current date range.
-		// Returns shortcut or null;
-		const today = siteToday.format( 'YYYY-MM-DD' );
-		const yesterday = siteToday.clone().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
-		const shortcut = shortcutList.find( ( element ) => {
-			if (
-				yesterday === dateRange.chartEnd &&
-				dateRange.daysInRange === element.range + 1 &&
-				element.id === 'yesterday'
-			) {
-				return element;
-			}
-			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
-				return element;
-			}
-			return null;
-		} );
-		return shortcut;
-	};
-
 	const getButtonLabel = () => {
-		// Test for a shortcut match.
-		const shortcut = getShortcutForRange();
-		if ( shortcut ) {
-			return shortcut.label;
-		}
-		// Generate a full date range for the label.
-		const startDate = moment( dateRange.chartStart ).format( 'LL' );
-		const endDate = moment( dateRange.chartEnd ).format( 'LL' );
+		const localizedStartDate = moment( dateRange.chartStart );
+		const localizedEndDate = moment( dateRange.chartEnd );
 
-		// If start and end are the same, then just show one date.
-		if ( startDate === endDate ) {
-			return startDate;
+		// If it's the same day, show single date.
+		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
+			return localizedStartDate.format( 'LL' );
 		}
 
-		return `${ startDate } - ${ endDate }`;
+		// Only show year for the second date.
+		if (
+			localizedStartDate.year() === localizedEndDate.year() &&
+			localizedStartDate.isSame( moment(), 'year' )
+		) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
+				`MMM D, YYYY`
+			) }`;
+		}
+
+		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	};
 
 	return (
@@ -101,6 +84,7 @@ const DateControl = ( {
 				useArrowNavigation
 				customTitle="Date Range"
 				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+				shortcutList={ shortcutList }
 				onShortcutClick={ onShortcutClick }
 				isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 				trackExternalDateChanges

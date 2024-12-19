@@ -107,11 +107,21 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
 		const { siteId, siteSlug, uploadError, isJetpack } = this.props;
-		if ( siteId && siteSlug && prevProps.isJetpack !== isJetpack ) {
+		if (
+			siteId &&
+			siteSlug &&
+			prevProps.isJetpack !== undefined &&
+			prevProps.isJetpack !== isJetpack
+		) {
 			this.continueToActivate();
 		}
 
-		if ( siteId && uploadError && prevProps.uploadError !== uploadError ) {
+		if (
+			siteId &&
+			uploadError &&
+			prevProps.uploadError !== undefined &&
+			prevProps.uploadError !== uploadError
+		) {
 			setTimeout( () => {
 				this.initiateTransfer();
 			}, 2000 );

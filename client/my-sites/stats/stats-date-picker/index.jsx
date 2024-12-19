@@ -3,6 +3,7 @@ import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getSiteStatsQueryDate,
@@ -57,14 +58,17 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForCustomRange( startDate, endDate ) {
-		const { moment, translate } = this.props;
+		const { moment } = this.props;
 
+		// Generate a full date range for the label.
 		const localizedStartDate = moment( startDate );
 		const localizedEndDate = moment( endDate );
 
 		// If it's the same day, show single date.
 		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
-			return localizedStartDate.format( 'LL' );
+			return localizedStartDate.isSame( moment(), 'year' )
+				? localizedStartDate.format( 'MMM D' )
+				: localizedStartDate.format( 'll' );
 		}
 
 		// If it's a full month.
@@ -85,20 +89,20 @@ class StatsDatePicker extends Component {
 			return localizedStartDate.format( 'YYYY' );
 		}
 
-		// Default to date range
-		const firstFormatString =
-			localizedStartDate.year() === localizedEndDate.year() ? 'MMM D' : 'll';
+		if ( localizedStartDate.year() === localizedEndDate.year() ) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format( `MMM D` ) }${
+				localizedStartDate.isSame( moment(), 'year' ) ? '' : localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
+			}`;
+		}
 
-		return translate( '%(startDate)s ~ %(endDate)s', {
-			context: 'Date range for which stats are being displayed',
-			args: {
-				startDate: localizedStartDate.format( firstFormatString ),
-				endDate: localizedEndDate.format( `${ firstFormatString }, YYYY` ),
-			},
-		} );
+		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	dateForDisplay() {
+	dateForDisplay( selectedShortcut = null ) {
+		if ( selectedShortcut?.label && selectedShortcut?.id !== 'custom_date_range' ) {
+			return selectedShortcut.label;
+		}
+
 		const { date, moment, period, translate, isShort, dateRange } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
@@ -141,11 +145,9 @@ class StatsDatePicker extends Component {
 
 	renderQueryDate() {
 		const { query, queryDate, moment, translate } = this.props;
-		let content;
 
-		if ( ! queryDate || ! isAutoRefreshAllowedForQuery( query ) ) {
-			content = null;
-		} else {
+		let content = '';
+		if ( queryDate && isAutoRefreshAllowedForQuery( query ) ) {
 			const today = moment();
 			const date = moment( queryDate );
 			const isToday = today.isSame( date, 'day' );
@@ -171,8 +173,24 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort } = this.props;
+		const {
+			summary,
+			translate,
+			query,
+			showQueryDate,
+			isActivity,
+			isShort,
+			dateRange,
+			reduxState,
+			isNewDateFilteringEnabled,
+		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
+		const { selectedShortcut } = getShortcuts(
+			reduxState,
+			dateRange,
+			translate,
+			isNewDateFilteringEnabled
+		);
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
@@ -181,7 +199,9 @@ class StatsDatePicker extends Component {
 						period: (
 							<span className="period">
 								<span className="date">
-									{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }
+									{ isSummarizeQuery
+										? this.dateForSummarize()
+										: this.dateForDisplay( selectedShortcut ) }
 								</span>
 							</span>
 						),
@@ -194,7 +214,9 @@ class StatsDatePicker extends Component {
 						period: (
 							<span className="period">
 								<span className="date">
-									{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }
+									{ isSummarizeQuery
+										? this.dateForSummarize()
+										: this.dateForDisplay( selectedShortcut ) }
 								</span>
 							</span>
 						),
@@ -207,7 +229,7 @@ class StatsDatePicker extends Component {
 		if ( isShort ) {
 			sectionTitle = (
 				<span className="period">
-					<span className="date">{ this.dateForDisplay() }</span>
+					<span className="date">{ this.dateForDisplay( selectedShortcut ) }</span>
 				</span>
 			);
 		}
@@ -234,6 +256,7 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 		requesting: showQueryDate
 			? isRequestingSiteStatsForQuery( state, siteId, statsType, query )
 			: false,
+		reduxState: state,
 	};
 } );
 

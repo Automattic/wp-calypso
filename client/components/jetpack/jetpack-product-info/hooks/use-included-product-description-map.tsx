@@ -10,9 +10,10 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
-	JETPACK_COMPLETE_PLANS,
 	JETPACK_STATS_PRODUCTS,
 	JETPACK_CREATOR_PRODUCTS,
+	isJetpackCompleteSlug,
+	isJetpackGrowthSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -123,13 +124,22 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			} ),
 		};
 
-		const productMap = ( () => {
-			const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
-				productSlug
-			);
+		const INCLUDED_PRODUCT_DESCRIPTION_GROWTH_MAP: Record< string, ProductDescription > = {
+			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
+			...INCLUDED_PRODUCT_DESCRIPTION_T2_MAP,
 
-			if ( isJetpackCompletePlan ) {
+			// overvrite stats description
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
+				value: statsDescription,
+				calloutText: translate( '10k views/mo' ),
+			} ),
+		};
+
+		const productMap = ( () => {
+			if ( isJetpackCompleteSlug( productSlug ) ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
+			} else if ( isJetpackGrowthSlug( productSlug ) ) {
+				return INCLUDED_PRODUCT_DESCRIPTION_GROWTH_MAP;
 			}
 
 			return INCLUDED_PRODUCT_DESCRIPTION_T1_MAP;

@@ -675,6 +675,7 @@ export interface AssembleSiteOptions {
  * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
  */
 export interface RawSiteMediaStorage {
+	max_storage_bytes_from_add_ons: number;
 	max_storage_bytes: number;
 	storage_used_bytes: number;
 }
@@ -683,6 +684,7 @@ export interface RawSiteMediaStorage {
  * Site media storage transformed for frontend use
  */
 export interface SiteMediaStorage {
+	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
 }

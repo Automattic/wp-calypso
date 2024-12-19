@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SiteProfiler from './components/site-profiler';
 import SiteProfilerV2 from './components/site-profiler-v2';
@@ -44,6 +45,7 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
+				<BodySectionCssClass bodyClass={ [ 'is-global' ] } />
 				<SiteProfilerComponent routerDomain={ routerDomain } />
 			</Main>
 
@@ -63,6 +65,7 @@ export const siteProfilerReportContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
+				<BodySectionCssClass bodyClass={ [ 'is-global' ] } />
 				<SiteProfilerComponent
 					routerDomain={ routerDomain }
 					hash={ context.params.hash }

@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
-import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -17,6 +16,8 @@ import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-ver
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import { LoadingScreen } from '../loading-screen';
 
+import './style.scss';
+
 type PerformanceProfilerDashboardProps = {
 	url: string;
 	tab: TabType;
@@ -28,16 +29,16 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const translate = useTranslate();
 	const { url, tab, hash, filter } = props;
 	const isSavedReport = useRef( !! hash );
-	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const {
 		data: basicMetrics,
 		isError: isBasicMetricsError,
 		isFetched,
-	} = useUrlBasicMetricsQuery( url, hash, true );
+	} = useUrlBasicMetricsQuery( url, hash, true, translate.localeSlug );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights, isError: isPerformanceInsightsError } =
-		useUrlPerformanceInsightsQuery( url, hash );
+	const { data, isError: isPerformanceInsightsError } = useUrlPerformanceInsightsQuery( url, hash );
+	const performanceInsights = data?.pagespeed;
+
 	const isError =
 		isBasicMetricsError ||
 		isPerformanceInsightsError ||
@@ -49,11 +50,11 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const siteUrl = new URL( url );
 
 	if ( isFetched && finalUrl ) {
+		performance.mark( 'test-started' );
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
 			version: profilerVersion(),
 		} );
-		testStartTime.current = Date.now();
 	}
 
 	// Append hash to the URL if it's not there to avoid losing it on page reload
@@ -80,16 +81,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		activeTab === TabType.mobile
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
-
-	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
-		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
-			url: siteUrl.href,
-			duration: Date.now() - testStartTime.current,
-			mobile_score: mobileReport?.overall_score,
-			desktop_score: desktopReport?.overall_score,
-			version: profilerVersion(),
-		} );
-	}
 
 	return (
 		<div className="peformance-profiler-dashboard-container">

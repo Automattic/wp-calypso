@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -86,12 +85,7 @@ class ConfirmDisconnection extends Component {
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }
-					stayConnectedHref={
-						stayConnectedHref ??
-						( isEnabled( 'untangling/hosting-menu' )
-							? '/sites/settings/administration/' + siteSlug + '/manage-connection'
-							: '/settings/manage-connection/' + siteSlug )
-					}
+					stayConnectedHref={ stayConnectedHref ?? '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
 					<NavigationLink href={ backHref } direction="back" />

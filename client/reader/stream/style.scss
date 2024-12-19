@@ -5,7 +5,7 @@
 // Overrides default 720px width
 .is-reader-page .following.main,
 .is-reader-page .tag-stream__main.main {
-	max-width: 600px;
+	max-width: 768px;
 
 	&.reader-two-column {
 		max-width: 968px;
@@ -604,7 +604,7 @@
 	align-items: flex-start;
 	display: flex;
 	flex-wrap: nowrap;
-	gap: 80px;
+	gap: 40px;
 	justify-content: flex-start;
 }
 
@@ -742,7 +742,7 @@
 			line-height: 20px;
 		}
 	}
-	/* @holdercp TODO: This can be removed once calypso/reader/stream/reader-list-followed-sites is removed */
+
 	.sidebar-streams__following-load-more {
 		color: var(--color-neutral-100);
 		font-size: $font-body-small;
@@ -858,6 +858,10 @@
 
 	.reader-feed-header__seen-button {
 		margin-bottom: 24px;
+	}
+
+	.reader-subscription-list-item .follow-button__label {
+		display: none;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {

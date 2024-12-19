@@ -7,6 +7,9 @@ $custom-stats-tab-mobile-break: $break-medium;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
+	@media (max-width: $custom-mobile-breakpoint) {
+		padding-top: 0;
+	}
 }
 
 // For modernized main charts with tabs inside the Traffic, Store, and Ads pages
@@ -25,6 +28,8 @@ $custom-stats-tab-mobile-break: $break-medium;
 		width: 100%;
 		padding: 24px 0 16px;
 		border: 0;
+		// Use border radius of its parent; otherwise it'd break the parent corner.
+		border-radius: 4px;
 		box-sizing: border-box;
 
 		display: flex;
@@ -40,6 +45,10 @@ $custom-stats-tab-mobile-break: $break-medium;
 		@media (max-width: $custom-stats-tab-mobile-break) {
 			display: block;
 			padding: 24px 0 16px;
+		}
+
+		@media (min-width: $custom-stats-tab-mobile-break) {
+			padding: 24px;
 		}
 
 		&.is-enabled {
@@ -83,7 +92,7 @@ $custom-stats-tab-mobile-break: $break-medium;
 			.gridicon {
 				@media (max-width: $custom-stats-tab-mobile-break) {
 					float: left;
-					margin: 3px 8px 0 20px;
+					margin: 0;
 				}
 			}
 
@@ -94,13 +103,14 @@ $custom-stats-tab-mobile-break: $break-medium;
 				border-radius: 4px;
 				overflow: hidden;
 				color: var(--studio-black);
-				padding: 10px 6px;
+				padding: 10px 24px;
 
 				@media (max-width: $custom-stats-tab-mobile-break) {
 					display: grid;
 					grid-template-columns: 2fr 2fr 3fr;
 					align-items: center;
 					justify-content: space-between;
+					border-radius: 0;
 				}
 
 				&:hover {

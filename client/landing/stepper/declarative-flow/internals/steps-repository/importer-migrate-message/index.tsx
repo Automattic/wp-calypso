@@ -15,6 +15,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToDomainAndPath } from 'calypso/lib/url';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -130,7 +131,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		<div className="migration-message__cta-wrapper">
 			<Button
 				className="migration-message__cta"
-				href="/sites"
+				href={ '/sites/overview/' + siteSlug }
 				variant="primary"
 				onClick={ () =>
 					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
@@ -160,7 +161,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 									),
 									{
 										email: user?.email,
-										webSite: fromUrl,
+										// Strip protocol and trailing slash.
+										webSite: urlToDomainAndPath( fromUrl ),
 									}
 								),
 								{

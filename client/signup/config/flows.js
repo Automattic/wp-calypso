@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
@@ -12,21 +11,9 @@ import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
-
-function constructBackUrlFromPath( path ) {
-	if ( config( 'env' ) !== 'production' ) {
-		const protocol = config( 'protocol' ) ?? 'https';
-		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
-		const hostName = config( 'hostname' );
-
-		return `${ protocol }://${ hostName }${ port }${ path }`;
-	}
-
-	return `https://${ config( 'hostname' ) }${ path }`;
-}
 
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -47,7 +34,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
 	const checkoutBackUrl = isURL( destination )
 		? destination
-		: constructBackUrlFromPath( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
+		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
 	return addQueryArgs(
 		{

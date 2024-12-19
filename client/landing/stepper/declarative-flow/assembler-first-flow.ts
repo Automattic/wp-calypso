@@ -1,12 +1,14 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { getAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -20,6 +22,9 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -66,7 +71,6 @@ const assemblerFirstFlow: Flow = {
 			STEPS.NEW_OR_EXISTING_SITE,
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
@@ -82,45 +86,21 @@ const assemblerFirstFlow: Flow = {
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
+		const reduxDispatch = useReduxDispatch();
+		const selectedTheme = getAssemblerDesign().slug;
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
-			const selectedSiteId = providedDependencies?.siteId as string;
-			const isNewSite = providedDependencies?.isNewSite === 'true';
+			const selectedSiteId = providedDependencies?.siteId as number;
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.AssemblerFirst );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
-			// Check whether to go to the assembler. If not, go to the site editor directly
-			let params;
-			if ( ! isAssemblerSupported() ) {
-				params = new URLSearchParams( {
-					canvas: 'edit',
-					assembler: '1',
-				} );
+			setPendingAction(
+				enableAssemblerTheme( selectedTheme, selectedSiteId, selectedSiteSlug, reduxDispatch )
+			);
 
-				return `/site-editor/${ selectedSiteSlug }?${ params }`;
-			}
-
-			// Carry over the current search parameters
-			params = new URLSearchParams( window.location.search );
-			params.set( 'siteSlug', selectedSiteSlug );
-			params.set( 'siteId', selectedSiteId );
-			if ( isNewSite ) {
-				params.set( 'isNewSite', 'true' );
-			}
-
-			return navigate( `pattern-assembler?${ params }` );
+			navigate( 'processing' );
 		};
 
 		const submit = async (
@@ -183,16 +163,7 @@ const assemblerFirstFlow: Flow = {
 						return;
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
-				}
-
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
+					return;
 				}
 
 				case 'launchpad': {
@@ -237,14 +208,6 @@ const assemblerFirstFlow: Flow = {
 				case 'freePostSetup':
 				case 'domains': {
 					return navigate( 'launchpad' );
-				}
-
-				case 'pattern-assembler': {
-					const params = new URLSearchParams( window.location.search );
-					params.delete( 'siteSlug' );
-					params.delete( 'siteId' );
-					setSelectedSite( null );
-					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
@@ -292,5 +255,31 @@ const assemblerFirstFlow: Flow = {
 		return result;
 	},
 };
+
+function enableAssemblerTheme(
+	themeId: string,
+	siteId: number,
+	siteSlug: string,
+	reduxDispatch: CalypsoDispatch
+) {
+	const params = new URLSearchParams( {
+		canvas: 'edit',
+		assembler: '1',
+	} );
+
+	return () =>
+		Promise.resolve()
+			.then( () =>
+				reduxDispatch(
+					activateOrInstallThenActivate( themeId, siteId, { source: 'assembler' } ) as ThunkAction<
+						PromiseLike< string >,
+						any,
+						any,
+						AnyAction
+					>
+				)
+			)
+			.then( () => window.location.assign( `/site-editor/${ siteSlug }?${ params }` ) );
+}
 
 export default assemblerFirstFlow;

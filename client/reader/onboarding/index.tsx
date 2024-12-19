@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
@@ -38,6 +39,7 @@ const ReaderOnboarding = ( {
 
 	const shouldShowOnboarding =
 		forceShow ||
+		isEnabled( 'reader/force-onboarding' ) ||
 		( preferencesLoaded &&
 			! hasCompletedOnboarding &&
 			userRegistrationDate &&

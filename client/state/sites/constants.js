@@ -40,6 +40,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'allowed_file_types',
 	'anchor_podcast',
 	'created_at',
+	'default_category',
 	'default_comment_status',
 	'default_ping_status',
 	'default_post_format',

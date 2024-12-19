@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -85,7 +86,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
 	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
-		source: 'hosting-config',
+		source: isEnabled( 'untangling/hosting-menu' ) ? 'sites/tools/sftp-ssh' : 'hosting-config',
 		siteSlug,
 	} );
 

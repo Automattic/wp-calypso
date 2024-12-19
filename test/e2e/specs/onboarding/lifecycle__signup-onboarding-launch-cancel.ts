@@ -9,7 +9,7 @@ import {
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
-	GeneralSettingsPage,
+	SiteSettingsPage,
 	CartCheckoutPage,
 	StartSiteFlow,
 	SecretsManager,
@@ -143,9 +143,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } );
 		} );
 
-		it( 'Select "Sell" goal', async function () {
-			await startSiteFlow.selectGoal( 'Sell' );
-			await startSiteFlow.clickButton( 'Continue' );
+		it( 'Select "Sell services or digital goods" goal', async function () {
+			await startSiteFlow.selectGoal( 'Sell services or digital goods' );
+			await startSiteFlow.clickButton( 'Next' );
 		} );
 	} );
 
@@ -188,9 +188,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Start site launch', async function () {
-			const generalSettingsPage = new GeneralSettingsPage( page );
-			await generalSettingsPage.visit( newSiteDetails.blog_details.site_slug );
-			await generalSettingsPage.launchSite();
+			const siteSettingsPage = new SiteSettingsPage( page );
+			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug );
+			await siteSettingsPage.launchSite();
 		} );
 
 		it( 'Skip domain purchase', async function () {
