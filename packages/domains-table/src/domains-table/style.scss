@@ -425,7 +425,7 @@ a.domains-table-view-email-button {
 	}
 }
 
-main.domains-overview main.domains-overview__list .a4a-layout-column__container {
+main.domains-overview main.domains-overview__list .multi-sites-dashboard-layout-column__container {
 	.domains-table {
 		margin-top: 0;
 	}
@@ -456,5 +456,10 @@ main.domains-overview main.domains-overview__list .a4a-layout-column__container 
 	.domains-table__row td.domains-table-row__actions {
 		padding: 16px 24px;
 		margin-inline-start: 0;
+	}
+
+	.domains-table__row.is-selected > td {
+		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		color: var(--theme-base-color);
 	}
 }

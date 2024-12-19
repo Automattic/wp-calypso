@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .licenses-overview {
-	.a4a-layout__body {
+	.multi-sites-dashboard-layout__body {
 		padding-block-start: 32px;
 	}
 
@@ -30,7 +30,7 @@
 	}
 }
 
-.a4a-layout__navigation-wrapper {
+.multi-sites-dashboard-layout__navigation-wrapper {
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-block-end: 1rem;
 	}

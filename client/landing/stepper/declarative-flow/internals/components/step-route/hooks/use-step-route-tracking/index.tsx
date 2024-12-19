@@ -16,7 +16,7 @@ import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
-	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteFlowName,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -78,7 +78,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			return;
 		}
 
-		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteFlowName = getSignupCompleteFlowName();
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
 		const isReEnteringStepAfterSignupComplete =
 			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
