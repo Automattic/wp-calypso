@@ -19,7 +19,6 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import SurveyManager from './components/survery-manager';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
@@ -212,7 +211,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<SurveyManager />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route
