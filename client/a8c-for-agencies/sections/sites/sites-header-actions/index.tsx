@@ -42,28 +42,26 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	return (
 		<div className="sites-header__actions">
+			{ showConfigurationModal && (
+				<SiteConfigurationsModal
+					closeModal={ toggleDevSiteConfigurationsModal }
+					randomSiteName={ randomSiteName }
+					isRandomSiteNameLoading={ isRandomSiteNameLoading }
+					onCreateSiteSuccess={ onCreateSiteSuccess }
+				/>
+			) }
 			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
 				<div ref={ ( ref ) => setTourStepRef( ref ) }>
 					<AddNewSite />
 				</div>
 			) : (
-				<>
-					{ showConfigurationModal && (
-						<SiteConfigurationsModal
-							closeModal={ toggleDevSiteConfigurationsModal }
-							randomSiteName={ randomSiteName }
-							isRandomSiteNameLoading={ isRandomSiteNameLoading }
-							onCreateSiteSuccess={ onCreateSiteSuccess }
-						/>
-					) }
-					<div ref={ ( ref ) => setTourStepRef( ref ) }>
-						<AddNewSiteButton
-							showMainButtonLabel={ ! isMobile }
-							onWPCOMImport={ onWPCOMImport }
-							toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-						/>
-					</div>
-				</>
+				<div ref={ ( ref ) => setTourStepRef( ref ) }>
+					<AddNewSiteButton
+						showMainButtonLabel={ ! isMobile }
+						onWPCOMImport={ onWPCOMImport }
+						toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+					/>
+				</div>
 			) }
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button

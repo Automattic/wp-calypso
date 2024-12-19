@@ -29,23 +29,21 @@ export default function OverviewHeaderActions() {
 
 	return (
 		<div className="overview-header__actions">
+			{ showConfigurationModal && (
+				<SiteConfigurationsModal
+					closeModal={ toggleDevSiteConfigurationsModal }
+					randomSiteName={ randomSiteName }
+					isRandomSiteNameLoading={ isRandomSiteNameLoading }
+					onCreateSiteSuccess={ onCreateSiteSuccess }
+				/>
+			) }
 			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
 				<AddNewSite />
 			) : (
-				<>
-					{ showConfigurationModal && (
-						<SiteConfigurationsModal
-							closeModal={ toggleDevSiteConfigurationsModal }
-							randomSiteName={ randomSiteName }
-							isRandomSiteNameLoading={ isRandomSiteNameLoading }
-							onCreateSiteSuccess={ onCreateSiteSuccess }
-						/>
-					) }
-					<AddNewSiteButton
-						showMainButtonLabel={ ! isNarrowView }
-						toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-					/>
-				</>
+				<AddNewSiteButton
+					showMainButtonLabel={ ! isNarrowView }
+					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+				/>
 			) }
 			{ ! isNarrowView && (
 				<Button
