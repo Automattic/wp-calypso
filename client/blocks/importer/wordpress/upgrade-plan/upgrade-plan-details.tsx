@@ -276,7 +276,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 						<Title className="plan-title" tagName="h2">
 							{ PLAN_BUSINESS_MONTHLY === planSlug
 								? translate( 'Monthly' )
-								: translate( 'Biennially' ) }
+								: translate( 'Every 2 years' ) }
 						</Title>
 					</div>
 
@@ -287,7 +287,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							<NextButton variant="secondary" onClick={ () => onCtaClick?.( planSlug ) }>
 								{ PLAN_BUSINESS_MONTHLY === planSlug
 									? translate( 'Get Monthly' )
-									: translate( 'Get Biennial' ) }
+									: translate( 'Get Every 2 years' ) }
 							</NextButton>
 						</div>
 					</div>
