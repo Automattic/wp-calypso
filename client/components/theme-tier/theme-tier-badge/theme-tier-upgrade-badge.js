@@ -5,8 +5,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { THEME_TIERS } from '../constants';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
@@ -26,15 +24,13 @@ export default function ThemeTierPlanUpgradeBadge() {
 	const plans = Plans.usePlans( { coupon: undefined } );
 	const planName = plans?.data?.[ mappedPlan.getStoreSlug() ]?.productNameShort;
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-	const user = useSelector( getCurrentUser );
-	const labelText =
-		isGoalsAtFrontExperiment && ! user
-			? translate( 'Available on %(planName)s', {
-					args: {
-						planName: planName,
-					},
-			  } )
-			: translate( 'Upgrade' );
+	const labelText = isGoalsAtFrontExperiment
+		? translate( 'Available on %(planName)s', {
+				args: {
+					planName: planName,
+				},
+		  } )
+		: translate( 'Upgrade' );
 
 	const tooltipContent = (
 		<>
@@ -57,15 +53,15 @@ export default function ThemeTierPlanUpgradeBadge() {
 	return (
 		<PremiumBadge
 			className={ clsx( 'theme-tier-badge__content', {
-				'theme-tier-badge__without-background': isGoalsAtFrontExperiment && ! user,
+				'theme-tier-badge__without-background': isGoalsAtFrontExperiment,
 			} ) }
 			focusOnShow={ false }
 			labelText={ labelText }
 			tooltipClassName="theme-tier-badge-tooltip"
 			tooltipContent={ tooltipContent }
 			tooltipPosition="top"
-			shouldHideTooltip={ isGoalsAtFrontExperiment && ! user }
-			isClickable={ ! ( isGoalsAtFrontExperiment && ! user ) }
+			shouldHideTooltip={ isGoalsAtFrontExperiment }
+			isClickable={ ! isGoalsAtFrontExperiment }
 		/>
 	);
 }

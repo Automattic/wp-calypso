@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
@@ -21,7 +20,6 @@ export default function ThemeTierBundledBadge() {
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-	const user = useSelector( getCurrentUser );
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	if ( ! bundleSettings ) {
@@ -50,33 +48,32 @@ export default function ThemeTierBundledBadge() {
 		</>
 	);
 
-	const labelText =
-		isGoalsAtFrontExperiment && ! user
-			? translate( 'Available on %(businessPlanName)s', {
-					args: {
-						businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-					},
-			  } )
-			: translate( 'Upgrade' );
+	const labelText = isGoalsAtFrontExperiment
+		? translate( 'Available on %(businessPlanName)s', {
+				args: {
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+				},
+		  } )
+		: translate( 'Upgrade' );
 
 	return (
 		<div className="theme-tier-badge">
 			{ showUpgradeBadge && ! isThemeIncluded && (
 				<PremiumBadge
 					className={ clsx( 'theme-tier-badge__content', {
-						'theme-tier-badge__without-background': isGoalsAtFrontExperiment && ! user,
+						'theme-tier-badge__without-background': isGoalsAtFrontExperiment,
 					} ) }
 					focusOnShow={ false }
 					labelText={ labelText }
 					tooltipClassName="theme-tier-badge-tooltip"
 					tooltipContent={ tooltipContent }
 					tooltipPosition="top"
-					shouldHideTooltip={ isGoalsAtFrontExperiment && ! user }
-					isClickable={ ! ( isGoalsAtFrontExperiment && ! user ) }
+					shouldHideTooltip={ isGoalsAtFrontExperiment }
+					isClickable={ ! isGoalsAtFrontExperiment }
 				/>
 			) }
 
-			{ ! ( isGoalsAtFrontExperiment && ! user ) && (
+			{ ! isGoalsAtFrontExperiment && (
 				<BundledBadge
 					className="theme-tier-badge__content"
 					color={ bundleSettings.color }

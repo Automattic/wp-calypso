@@ -2,7 +2,6 @@ import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/des
 import clsx from 'clsx';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
@@ -31,11 +30,10 @@ export default function ThemeTierBadge( {
 	);
 	const themeTier = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
-	const user = useSelector( getCurrentUser );
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	const getBadge = () => {
-		if ( isGoalsAtFrontExperiment && ! user && 'free' === themeTier?.slug ) {
+		if ( isGoalsAtFrontExperiment && 'free' === themeTier?.slug ) {
 			return <ThemeTierFreeBadge />;
 		}
 
@@ -52,7 +50,7 @@ export default function ThemeTierBadge( {
 		}
 
 		if (
-			! ( isGoalsAtFrontExperiment && ! user ) &&
+			! isGoalsAtFrontExperiment &&
 			( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType )
 		) {
 			return <ThemeTierPartnerBadge />;
