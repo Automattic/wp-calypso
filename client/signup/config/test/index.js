@@ -31,8 +31,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'No flow should have the name `assign`', () => {
-		// This slug is reserved for the experiment dispatcher. See: #97555.
-		expect( flows.getFlows().some( ( f ) => f.name === 'assign' ) ).toBe( false );
+		const allFlows = flows.getFlows() ?? {};
+		expect( Object.values( allFlows ).some( ( f ) => f.name === 'assign' ) ).toBe( false );
 	} );
 
 	test( 'All step components should have a step definition', () => {
