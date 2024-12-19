@@ -19,8 +19,6 @@ const Container = styled.div`
 		color: var( --studio-green-50 );
 	}
 
-	font-weight: 500;
-
 	.title {
 		margin-right: 4px;
 		line-height: 20px;
