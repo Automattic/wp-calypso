@@ -662,7 +662,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareSubtitle() }
 								</span>
 							) }
-							{ hasFeature && ! featureLabel && <Gridicon icon="checkmark" color="#3858e9" /> }
+							{ hasFeature && ! featureLabel && (
+								<Gridicon icon="checkmark" color="var(--studio-wordpress-blue-50)" />
+							) }
 							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
 						</>
 					) }
