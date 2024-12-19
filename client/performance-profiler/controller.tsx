@@ -65,7 +65,7 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 	if ( ! isLoggedIn ) {
 		const logInUrl = getLoginUrl( {
 			variationName: 'performance-profiler-weekly-report-subscribe',
-			redirectTo: encodeURIComponent( context.path ),
+			redirectTo: `${ window.location.protocol }//${ window.location.host }${ context.path }`,
 			locale: getCurrentLocaleSlug( context.store.getState() ),
 		} );
 
