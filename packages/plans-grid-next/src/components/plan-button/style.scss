@@ -1,62 +1,74 @@
 @import "@automattic/onboarding/styles/mixins";
 
-.plan-features-2023-grid__actions-button {
+.button.plan-features-2023-grid__actions-button {
 	line-height: 20px;
 	border-radius: 4px;
 	padding: 10px 12px;
 	border: unset;
 	text-align: center;
-	flex: 1;
 	width: 100%;
+	color: var(--color-text-inverted);
 
 	&:hover {
-		opacity: 0.85;
-		transition: 0.7s;
+		color: var(--color-text-inverted);
 	}
 
 	&.is-free-plan {
-		background-color: var(--studio-blue-50);
-		color: var(--studio-blue-0);
+		background-color: var(--studio-wordpress-blue-50);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-50);
 		}
+
+		&:hover {
+			background-color: var(--studio-wordpress-blue-60);
+		}
+
 	}
 
 	&.is-personal-plan {
-		background-color: var(--studio-blue-60);
-		color: var(--studio-blue-0);
+		background-color: var(--studio-wordpress-blue-60);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-60);
+		}
+
+		&:hover {
+			background-color: var(--studio-wordpress-blue-70);
 		}
 	}
 
 	&.is-premium-plan {
-		background-color: #004687;
-		color: var(--studio-blue-0);
+		background-color: var(--studio-wordpress-blue-70);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #004687;
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-70);
+		}
+
+		&:hover {
+			background-color: var(--studio-wordpress-blue-80);
 		}
 	}
 
 	&.is-business-plan {
-		background-color: #7f54b3;
-		color: var(--studio-purple-0);
+		background-color: var(--studio-woocommerce-purple-50);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
+		}
+
+		&:hover {
+			background-color: var(--studio-woocommerce-purple-70);
 		}
 
 		+ .button.is-borderless {
 			background: transparent;
 			font-size: $font-body-small;
-			color: #7f54b3;
+			color: var(--studio-woocommerce-purple-50);
 			text-decoration: none;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
 			}
 		}
 	}
@@ -89,20 +101,26 @@
 	}
 
 	&.is-ecommerce-plan {
-		background-color: #55347d;
-		color: var(--studio-purple-0);
+		background-color: var(--studio-woocommerce-purple-70);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #55347d;
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-70);
+		}
+
+		&:hover {
+			background-color: var(--studio-woocommerce-purple-80);
 		}
 	}
 
 	&.is-wpcom-enterprise-grid-plan {
 		background-color: var(--studio-gray-80);
-		color: var(--studio-gray-0);
 
 		&:focus {
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
+		}
+
+		&:hover {
+			background-color: var(--studio-gray-90);
 		}
 	}
 
@@ -132,6 +150,7 @@
 
 		&:hover {
 			box-shadow: inset 0 0 0 1px var(--studio-gray-80);
+			background-color: var(--studio-white);
 		}
 	}
 
