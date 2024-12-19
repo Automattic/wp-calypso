@@ -25,6 +25,10 @@
 			text-overflow: ellipsis;
 		}
 	}
+
+	.badge--info-blue {
+		background-color: var(--studio-wordpress-blue);
+	}
 }
 
 .theme-tier-badge-tooltip,
