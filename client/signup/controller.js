@@ -223,25 +223,43 @@ export default {
 		store.set( 'signup-locale', localeFromParams );
 
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow ) {
+		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected=true' ) ) {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
-			// const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-			// 	'calypso_signup_onboarding_stepper_flow_2'
-			// );
-			// if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-			// 	window.location =
-			// 		getStepUrl(
-			// 			flowName,
-			// 			getStepName( context.params ),
-			// 			getStepSectionName( context.params ),
-			// 			localeFromParams ?? localeFromStore,
-			// 			null,
-			// 			'/setup'
-			// 		) +
-			// 		( context.querystring ? '?' + context.querystring : '' ) +
-			// 		( context.hashstring ? '#' + context.hashstring : '' );
-			// 	return;
-			// }
+
+			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_stepper_flow_confidence_check'
+			);
+
+			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
+				window.location.replace(
+					getStepUrl(
+						flowName,
+						getStepName( context.params ),
+						getStepSectionName( context.params ),
+						localeFromParams ?? localeFromStore,
+						null,
+						'/setup'
+					) +
+						( context.querystring ? '?' + context.querystring : '' ) +
+						( context.hashstring ? '#' + context.hashstring : '' )
+				);
+				return;
+			}
+
+			window.location.replace(
+				getStepUrl(
+					flowName,
+					getStepName( context.params ),
+					getStepSectionName( context.params ),
+					localeFromParams ?? localeFromStore,
+					null,
+					'/start'
+				) +
+					'?redirected=true' +
+					( context.querystring ? '&' + context.querystring : '' ) +
+					( context.hashstring ? '#' + context.hashstring : '' )
+			);
+			return;
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
