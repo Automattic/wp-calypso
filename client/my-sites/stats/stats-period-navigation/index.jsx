@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
-import { localize, translate, withRtl } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import qs from 'qs';
@@ -363,7 +363,7 @@ const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
 } );
 
 const connectComponent = connect(
-	( state, { period, isNewDateFilteringEnabled } ) => {
+	( state, { period, isNewDateFilteringEnabled, translate } ) => {
 		const siteId = getSelectedSiteId( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
 		const gatePeriodInterval = shouldGateStats(
@@ -378,7 +378,7 @@ const connectComponent = connect(
 		const { supportedShortcutList } = getShortcuts(
 			state,
 			{},
-			undefined,
+			translate,
 			isNewDateFilteringEnabled
 		);
 		const shortcutList = supportedShortcutList.map( addIsGatedFor( state, siteId ) );
@@ -423,8 +423,8 @@ const connectComponent = connect(
 );
 
 export default flowRight(
-	connectComponent,
 	localize,
+	connectComponent,
 	withRtl,
 	withLocalizedMoment,
 	withStatsPurchases
