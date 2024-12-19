@@ -226,9 +226,13 @@ export function site( context, next ) {
 }
 
 export function redirectToDaySummary( context ) {
-	page.redirect(
-		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`
-	);
+	// Query string from window.location.search differs depending on environment.
+	// Make sure to append the query if we are working inside wp-admin otherwise it will be lost.
+	const isWpAdmin = context.canonicalPath.includes( '/wp-admin/' );
+	const query =
+		isWpAdmin && context.query ? `&${ new URLSearchParams( context.query ).toString() }` : '';
+	const url = `/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }${ query }`;
+	page.redirect( url );
 }
 
 export function summary( context, next ) {
