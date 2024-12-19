@@ -157,10 +157,10 @@ export default function PressablePlanSection( {
 					<p>
 						{ isStandardPlan
 							? translate(
-									'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
 							  )
 							: translate(
-									'With Signature Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Enterprise Plans, your traffic & storage limits are shared amongst your total sites.'
 							  ) }
 					</p>
 				) }
