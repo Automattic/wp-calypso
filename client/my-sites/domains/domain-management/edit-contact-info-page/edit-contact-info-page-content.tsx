@@ -1,7 +1,11 @@
 import { getSelectedDomain } from 'calypso/lib/domains';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementAllOverview,
+	domainManagementEdit,
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
@@ -39,11 +43,9 @@ const EditContactInfoPageContent = ( {
 		);
 	}
 
-	const backUrl = domainManagementEdit(
-		selectedSite?.slug ?? '',
-		selectedDomainName,
-		currentRoute
-	);
+	const backUrl = isUnderDomainManagementAll( currentRoute )
+		? domainManagementAllOverview( selectedSite?.slug ?? '', selectedDomainName )
+		: domainManagementEdit( selectedSite?.slug ?? '', selectedDomainName, currentRoute );
 
 	return (
 		<EditContactInfoFormCard

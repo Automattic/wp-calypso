@@ -138,6 +138,14 @@ export function domainManagementEditContactInfo( siteName, domainName, relativeT
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ */
+export function domainManagementAllOverview( siteName, domainName ) {
+	return domainManagementOverviewRoot() + '/' + domainName + '/' + siteName;
+}
+
 export function domainManagementAllEditContactInfo() {
 	return domainManagementAllRoot() + '/edit-contact-info';
 }
