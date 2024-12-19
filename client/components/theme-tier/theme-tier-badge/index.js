@@ -51,7 +51,10 @@ export default function ThemeTierBadge( {
 			return <ThemeTierCommunityBadge />;
 		}
 
-		if ( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType ) {
+		if (
+			! ( isGoalsAtFrontExperiment && ! user ) &&
+			( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType )
+		) {
 			return <ThemeTierPartnerBadge />;
 		}
 
