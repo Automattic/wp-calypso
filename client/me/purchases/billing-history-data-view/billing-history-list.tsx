@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { DataViews } from '@wordpress/dataviews';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
@@ -143,7 +144,7 @@ class BillingHistoryListDataView extends Component<
 				label: 'View receipt',
 				callback: ( items: BillingTransaction[] ) => {
 					const item = items[ 0 ];
-					window.location.href = getReceiptUrlFor( item.id );
+					page.redirect( getReceiptUrlFor( item.id ) );
 				},
 			},
 			{
