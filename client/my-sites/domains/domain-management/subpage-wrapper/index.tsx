@@ -31,14 +31,14 @@ const SubpageWrapper = ( {
 
 	if ( title ) {
 		return (
-			<>
+			<div className="subpage-wrapper">
 				<NavigationHeader
 					className="subpage-wrapper__header"
 					title={ title }
 					subtitle={ subtitle }
 				/>
 				<div className="subpage-wrapper__content">{ children }</div>
-			</>
+			</div>
 		);
 	}
 
