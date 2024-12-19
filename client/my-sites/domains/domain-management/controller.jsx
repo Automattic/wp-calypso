@@ -391,8 +391,15 @@ export default {
 	},
 
 	domainManagementSubpageView( pageContext, next ) {
+		const state = pageContext.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+
 		pageContext.primary = (
-			<SubpageWrapper subpageKey={ pageContext.params.subPageKey }>
+			<SubpageWrapper
+				subpageKey={ pageContext.params.subPageKey }
+				selectedDomainName={ pageContext.params.domain }
+				selectedSiteSlug={ siteSlug }
+			>
 				{ pageContext.primary }
 			</SubpageWrapper>
 		);
