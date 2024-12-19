@@ -18,6 +18,13 @@
 			max-width: 100%;
 		}
 
+		&.odie-chat-message-input-container__attachment-button-visible {
+			.odie-send-message-input-spinner {
+				/* stylelint-disable-next-line length-zero-no-unit */
+				margin: 0px 61px 0px 0px;
+			}
+		}
+
 		.odie-send-message-input {
 			&:disabled {
 				-webkit-text-fill-color: var(--color-neutral-20);
