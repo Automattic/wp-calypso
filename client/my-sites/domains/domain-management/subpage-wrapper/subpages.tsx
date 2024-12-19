@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { CardHeading } from 'calypso/devdocs/design/component-examples';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 
@@ -20,7 +19,6 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		CustomHeader: AddForwardingEmailHeader,
 		showFormHeader: true,
 		showPageHeader: false,
-		formHeader: <CardHeading>{ translate( 'New email forwarding address' ) }</CardHeading>,
 	},
 	[ EDIT_CONTACT_INFO ]: {
 		subPageKey: EDIT_CONTACT_INFO,
