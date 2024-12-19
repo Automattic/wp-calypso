@@ -250,10 +250,8 @@ body.is-section-stepper .domains__step-content,
 .onboarding {
 	&.domains {
 		&.step-route {
-			padding: 48px 0 0;
-			@include break-mobile {
-				padding: 48px 12px 0 12px;
-			}
+			padding: 60px 12px 0 12px;
+
 			.step-container {
 				.step-container__header {
 					margin: 36px 0 24px 0;
@@ -262,12 +260,6 @@ body.is-section-stepper .domains__step-content,
 					}
 					@include break-large {
 						margin: 48px 0 40px;
-					}
-				}
-
-				.action-buttons.step-container__navigation {
-					@media (max-width: $break-mobile) {
-						display: none;
 					}
 				}
 			}
