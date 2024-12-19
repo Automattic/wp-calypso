@@ -108,7 +108,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 							pressableOwnership === 'regular'
 								? 'https://my.pressable.com/agency/auth'
 								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-						target: pressableOwnership === 'regular' ? '_blank' : '_self',
+						target: pressableOwnership === 'regular' ? '_blank' : undefined,
 					} }
 				/>
 				<AddNewSiteMenuItem
