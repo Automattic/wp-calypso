@@ -28,6 +28,7 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 	sidebarMode?: boolean;
+	selectedDomainName?: string;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -265,7 +266,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						visibility: hidden;
 					}
 
-					&:hover {
+					&:hover,
+					&.is-selected {
 						.gridicons-ellipsis {
 							visibility: visible;
 						}
@@ -439,6 +441,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
 						sidebarMode={ props.sidebarMode }
+						selectedDomainName={ props.selectedDomainName }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

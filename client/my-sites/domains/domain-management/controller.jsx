@@ -328,8 +328,13 @@ export default {
 
 	// The main layout that wraps all the domain management pages.
 	domainDashboardLayout( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+
 		pageContext.primary = (
-			<DomainManagement.DomainDashboardLayout innerContent={ pageContext.primary } />
+			<DomainManagement.DomainDashboardLayout
+				innerContent={ pageContext.primary }
+				selectedDomainName={ selectedDomainName }
+			/>
 		);
 
 		next();

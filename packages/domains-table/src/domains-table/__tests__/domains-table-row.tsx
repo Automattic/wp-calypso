@@ -340,6 +340,26 @@ test( `Doesn't strip parentheses used in the name portion of the owner field`, a
 	await waitFor( () => expect( screen.queryByText( 'Joe (Danger) Blogs' ) ).toBeInTheDocument() );
 } );
 
+describe( 'selected domain', () => {
+	test( 'when a domain is selected, the row should have the is-selected class', () => {
+		const partialDomain = testPartialDomain( { domain: 'example1.com' } );
+		render( <DomainsTableRow domain={ partialDomain } />, {
+			selectedDomainName: 'example1.com',
+		} );
+
+		expect( screen.getByRole( 'row' ) ).toHaveClass( 'is-selected' );
+	} );
+
+	test( 'when a domain is not selected, the row should not have the is-selected class', () => {
+		const partialDomain = testPartialDomain( { domain: 'example1.com' } );
+		render( <DomainsTableRow domain={ partialDomain } />, {
+			selectedDomainName: 'example2.com',
+		} );
+
+		expect( screen.getByRole( 'row' ) ).not.toHaveClass( 'is-selected' );
+	} );
+} );
+
 describe( 'site linking ctas', () => {
 	beforeAll( () => {
 		global.ResizeObserver = require( 'resize-observer-polyfill' );

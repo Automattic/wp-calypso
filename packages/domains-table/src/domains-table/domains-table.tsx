@@ -69,6 +69,7 @@ interface BaseDomainsTableProps {
 	deleteBulkActionStatus?: () => Promise< void >;
 	currentUserCanBulkUpdateContactInfo?: boolean;
 	sidebarMode?: boolean;
+	selectedDomainName?: string;
 }
 
 export type DomainsTableProps =
@@ -124,6 +125,7 @@ type Value = {
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
 	isCompact: boolean;
+	currentlySelectedDomainName?: string;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -146,6 +148,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
 		sidebarMode = false,
+		selectedDomainName,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -446,6 +449,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo,
 		isCompact,
+		currentlySelectedDomainName: selectedDomainName,
 	};
 
 	return value;
