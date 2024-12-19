@@ -123,7 +123,7 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
-			&.domains:not(.copy-site) {
+			&.domains:not(.copy-site):not(.onboarding) {
 				margin-top: -60px;
 			}
 		}

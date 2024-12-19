@@ -6,7 +6,6 @@ import {
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
 import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -31,7 +30,6 @@ import './style.scss';
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
-	const isMobile = useMobileBreakpoint();
 
 	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -164,7 +162,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
-				hideBack: isMobile,
+				hideBack: false,
 				goBack: props.navigation.goBack,
 				isFullLayout: true,
 				isExtraWideLayout: false,

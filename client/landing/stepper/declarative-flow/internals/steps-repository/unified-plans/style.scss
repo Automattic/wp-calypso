@@ -1,7 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .step-route.plans {
-	padding: 48px 0 0;
+	padding: 60px 0 0;
 	@include break-xlarge {
 		padding: 0;
 	}
