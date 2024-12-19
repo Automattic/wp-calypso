@@ -76,15 +76,17 @@ export default function ThemeTierBundledBadge() {
 				/>
 			) }
 
-			<BundledBadge
-				className="theme-tier-badge__content"
-				color={ bundleSettings.color }
-				icon={ <BadgeIcon /> }
-				isClickable={ false }
-				shouldHideTooltip
-			>
-				{ bundleName }
-			</BundledBadge>
+			{ ! ( isGoalsAtFrontExperiment && ! user ) && (
+				<BundledBadge
+					className="theme-tier-badge__content"
+					color={ bundleSettings.color }
+					icon={ <BadgeIcon /> }
+					isClickable={ false }
+					shouldHideTooltip
+				>
+					{ bundleName }
+				</BundledBadge>
+			) }
 		</div>
 	);
 }
