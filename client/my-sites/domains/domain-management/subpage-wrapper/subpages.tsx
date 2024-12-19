@@ -25,8 +25,6 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subPageKey: EDIT_CONTACT_INFO,
 		title: __( 'Contact information' ),
 		subtitle: __( "Manage your domain's contact details." ),
-		showPageHeader: false,
-		formHeader: <CardHeading>{ __( 'New email forwarding address' ) }</CardHeading>,
 	},
 };
 
