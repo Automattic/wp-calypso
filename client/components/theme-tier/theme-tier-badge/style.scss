@@ -10,10 +10,6 @@
 	overflow: hidden;
 	white-space: nowrap;
 
-	&.theme-tier-badge--free .badge {
-		font-size: $font-body-extra-small;
-	}
-
 	.theme-tier-badge__content {
 		margin: 0 8px 4px 0;
 		max-width: 100%;
@@ -30,18 +26,16 @@
 		}
 	}
 
-	&__without-background {
+	&__without-background.theme-tier-badge__content {
 		background: transparent;
 		padding: 0;
 		color: var(--studio-gray-80);
-
-		.premium-badge__logo {
-			margin-top: 0;
-		}
+		margin: 0;
 	}
 
 	.badge--info {
 		color: var(--studio-wordpress-blue);
+		background-color: #EBEEFC; /* 50% of wordpress-blue-10 */
 	}
 }
 
