@@ -10,6 +10,10 @@
 	overflow: hidden;
 	white-space: nowrap;
 
+	&.theme-tier-badge--free .badge {
+		font-size: $font-body-extra-small;
+	}
+
 	.theme-tier-badge__content {
 		margin: 0 8px 4px 0;
 		max-width: 100%;
