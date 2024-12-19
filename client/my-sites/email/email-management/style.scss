@@ -446,13 +446,23 @@
  */
 .context-all-domain-management {
 	&.main {
+		margin-left: 0;
 		width: 100%;
 
-		.email-header .navigation-header {
-			border-block-end: none;
+		.domains-email__navigation-header.navigation-header {
+			border: 0;
+			padding: 1.5rem;
+
+			@include break-medium {
+				padding: 0 0 1.5rem 0;
+			}
+
+			@include break-large {
+				padding-bottom: 2rem;
+			}
 
 			.navigation-header__main {
-				padding-inline: 0 !important;
+				padding-inline: 0;
 
 				.navigation-header__actions {
 					flex-grow: 0;
@@ -461,108 +471,130 @@
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list {
-		border: solid 1px var(--color-border-subtle);
-		border-radius: 4px;
+	/* Mailboxes */
+	.email-plan-mailboxes-list {
+		&__mailbox-list {
+			margin-top: 0;
+			padding-bottom: 1.875rem;
 
-		.card {
-			box-shadow: none;
-			background: none;
+			@include break-medium {
+				border: solid 1px var(--color-border-subtle);
+				border-radius: 4px;
+			}
+
+			.card {
+				box-shadow: none;
+				background: none;
+			}
+
+			.card.section-header {
+				margin: 0 1.5rem;
+				padding: 1.75rem 0 1.25em 0;
+			}
+
+			.section-header__label-text {
+				display: flex;
+				align-items: center;
+				font-size: 1rem;
+				color: var(--studio-gray-100);
+			}
+
+			.section-header__actions {
+				flex: none;
+
+				.components-button {
+					font-size: 0.875rem;
+				}
+
+				.components-button.is-link {
+					text-decoration: none;
+				}
+			}
+
+			&-item.card.is-compact {
+				border-top: solid 1px var(--color-border-subtle);
+				margin: 0 1.5rem;
+				padding: 1.375rem 0;
+
+				&:last-child {
+					padding-bottom: 0;
+				}
+			}
+
+			&-item > div {
+				flex-grow: initial;
+			}
+
+			.email-mailbox-action-menu__main {
+				right: 0;
+				top: 18px;
+			}
 		}
 
-		.card.section-header {
-			padding: 1.5rem 0 1rem 0;
-			margin: 0 1.5rem;
-			border-bottom: solid 1px var(--color-border-subtle);
-		}
-
-		.section-header__label-text {
+		&__mailbox-header-icon {
 			display: flex;
-			align-items: center;
-			font-size: 1rem;
-			color: var(--studio-gray-100);
-		}
+			margin-inline-end: 0.5rem;
+			width: 24px;
 
-		.section-header__actions {
-			flex: none;
-
-			.components-button {
-				font-size: 0.875rem;
+			img {
+				height: 24px;
 			}
 
-			.components-button.is-link {
-				text-decoration: none;
+			svg {
+				height: 24px;
+				fill: var(--color-accent);
 			}
 		}
-	}
 
-	.email-plan-mailboxes-list__mailbox-header-icon {
-		display: flex;
-		margin-inline-end: 0.5rem;
-		width: 24px;
+		&__notice {
+			margin-top: 1rem;
+			margin-bottom: 2rem;
 
-		img {
-			height: 24px;
+			.email-plan-warnings__container {
+				margin: 0;
+			}
+
+			.email-plan-warnings__warning {
+				display: flex;
+				padding: 0;
+
+				.email-plan-warnings__message,
+				.email-plan-warnings__cta {
+					display: inline;
+				}
+
+				.email-plan-warnings__message {
+					flex-grow: 1;
+
+					span {
+						display: inline-block;
+						max-width: 700px;
+					}
+				}
+
+				.email-plan-warnings__cta {
+					margin: 0;
+					flex-grow: 0;
+					align-self: center;
+					white-space: nowrap;
+
+					svg {
+						height: 14px;
+						vertical-align: middle;
+					}
+
+					a {
+						color: var(--studio-gray-20);
+						text-decoration: none;
+					}
+				}
+			}
 		}
-
-		svg {
-			height: 24px;
-			fill: var(--color-accent);
-		}
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-item > div {
-		flex-grow: initial;
 	}
 
 	div.email-plan-mailboxes-list__mailbox-list-link span,
 	.section-header__actions button[disabled] {
 		color: var(--theme-highlight-color-50);
 		opacity: 0.5;
-	}
-
-	.email-plan-mailboxes-list__notice {
-		margin-top: 1rem;
-		margin-bottom: 2rem;
-
-		.email-plan-warnings__container {
-			margin: 0;
-		}
-
-		.email-plan-warnings__warning {
-			display: flex;
-			padding: 0;
-
-			.email-plan-warnings__message,
-			.email-plan-warnings__cta {
-				display: inline;
-			}
-
-			.email-plan-warnings__message {
-				flex-grow: 1;
-
-				span {
-					display: inline-block;
-					max-width: 700px;
-				}
-			}
-
-			.email-plan-warnings__cta {
-				margin: 0;
-				flex-grow: 0;
-				align-self: center;
-				white-space: nowrap;
-
-				svg {
-					height: 14px;
-					vertical-align: middle;
-				}
-
-				a {
-					color: var(--studio-gray-20);
-					text-decoration: none;
-				}
-			}
-		}
 	}
 }

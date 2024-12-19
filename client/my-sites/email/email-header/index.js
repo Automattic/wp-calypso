@@ -10,6 +10,7 @@ export default function EmailHeader() {
 	return (
 		<div className="email-header">
 			<NavigationHeader
+				className="domains-email__navigation-header"
 				navigationItems={ [] }
 				title={ translate( 'Emails' ) }
 				subtitle={ translate(
