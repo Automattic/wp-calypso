@@ -116,7 +116,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 						<div className="consolidated-view__popover-content">
 							{ translate(
 								'The exact amount your agency has been paid out for referrals.' +
-									'{{br/}}{{a}}Learn more{{/a}} ↗',
+									'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 								{
 									components: {
 										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
@@ -143,7 +143,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 								'We estimate the commission based on the active use for the current month. ' +
 								'{{br/}}{{br}}{{/br}}The next payout range is for:' +
 								'{{br/}}{{span}}%(nextPayoutActivityWindow)s{{/span}}' +
-								'{{br/}}{{a}}Learn more{{/a}} ↗',
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
@@ -170,7 +170,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 						{ translate(
 							'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks. ' +
 								'Payout dates mark the start of processing, which may take a few extra days. Payments scheduled on weekends are processed the next business day. ' +
-								'{{br/}}{{a}}Learn more{{/a}} ↗',
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
@@ -193,7 +193,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 					<div className="consolidated-view__popover-content">
 						{ translate(
 							'These are the number of pending referrals (unpaid carts). ' +
-								'{{br/}}{{a}}Learn more{{/a}} ↗',
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
