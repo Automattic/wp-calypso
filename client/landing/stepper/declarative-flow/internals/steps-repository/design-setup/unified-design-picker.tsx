@@ -54,6 +54,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getProductBillingSlugByThemeId,
 	getProductsByBillingSlug,
@@ -104,6 +105,7 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
+
 const SiteIntent = Onboard.SiteIntent;
 
 const EMPTY_ARRAY: Design[] = [];
@@ -135,6 +137,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
+
+	const user = useSelector( getCurrentUser );
 
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
@@ -971,7 +975,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				getBadge={ getBadge }
+				// We may want to modify the ThemeCard component once the experiment is completed
+				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
+				getBadge={ isGoalsAtFrontExperiment && ! user ? undefined : getBadge }
+				getOptionsMenu={ isGoalsAtFrontExperiment && ! user ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }

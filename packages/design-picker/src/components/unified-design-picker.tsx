@@ -108,7 +108,8 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 	isActive: boolean;
 }
@@ -122,6 +123,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	isActive,
 } ) => {
@@ -157,7 +159,8 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
-			badge={ getBadge( design.slug, isLocked ) }
+			optionsMenu={ getOptionsMenu && getOptionsMenu( design.slug, isLocked ) }
+			badge={ getBadge && getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onStyleVariationClick={ ( variation ) => {
@@ -185,7 +188,8 @@ interface DesignCardGroup {
 	showNoResults?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignCardGroup = ( {
@@ -203,6 +207,7 @@ const DesignCardGroup = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	getOptionsMenu,
 }: DesignCardGroup ) => {
 	const translate = useTranslate();
 	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
@@ -223,6 +228,7 @@ const DesignCardGroup = ( {
 						onChangeVariation={ onChangeVariation }
 						onPreview={ onPreview }
 						getBadge={ getBadge }
+						getOptionsMenu={ getOptionsMenu }
 						oldHighResImageLoading={ oldHighResImageLoading }
 						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
 					/>
@@ -286,7 +292,8 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
@@ -305,6 +312,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
@@ -366,6 +374,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		onChangeVariation,
 		onPreview,
 		getBadge,
+		getOptionsMenu,
 		oldHighResImageLoading,
 		showActiveThemeBadge,
 		siteActiveTheme,
@@ -477,7 +486,8 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
@@ -498,6 +508,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
@@ -525,6 +536,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
+					getOptionsMenu={ getOptionsMenu }
 					oldHighResImageLoading={ oldHighResImageLoading }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
