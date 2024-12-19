@@ -67,11 +67,12 @@ export default function ThemeTierBundledBadge() {
 						'theme-tier-badge__without-background': isGoalsAtFrontExperiment && ! user,
 					} ) }
 					focusOnShow={ false }
-					isClickable
 					labelText={ labelText }
 					tooltipClassName="theme-tier-badge-tooltip"
 					tooltipContent={ tooltipContent }
 					tooltipPosition="top"
+					shouldHideTooltip={ isGoalsAtFrontExperiment && ! user }
+					isClickable={ ! ( isGoalsAtFrontExperiment && ! user ) }
 				/>
 			) }
 
