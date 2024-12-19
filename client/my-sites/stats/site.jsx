@@ -84,7 +84,7 @@ import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
-import { getPathWithUpdatedQueryString } from './utils';
+import { parseQueryStringForOdysseyRedirect, getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -326,6 +326,7 @@ class StatsSite extends Component {
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
+			isOdyssey,
 			context,
 			moduleSettings,
 			supportsPlanUsage,
@@ -395,7 +396,13 @@ class StatsSite extends Component {
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
 		if ( period === 'day' && daysInRange === 1 ) {
-			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
+			page.redirect(
+				parseQueryStringForOdysseyRedirect(
+					`/stats/hour/${ slug }${ window.location.search }`,
+					isOdyssey,
+					context.query
+				)
+			);
 			return;
 		}
 
@@ -949,6 +956,7 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
+			isOdyssey,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
