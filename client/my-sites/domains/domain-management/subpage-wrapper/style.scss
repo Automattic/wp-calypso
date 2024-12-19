@@ -1,3 +1,4 @@
+@import "@automattic/color-studio/dist/color-variables";
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
@@ -5,6 +6,11 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+    .button:not(.is-borderless) {
+        padding: 10px 14px;
+        border-radius: 4px;
+    }
 
 	.subpage-wrapper__header.navigation-header {
 		padding: 24px;
@@ -54,4 +60,37 @@
 	.edit-contact-info-page .contact-details-form-fields {
 		padding: 0;
 	}
+}
+
+.is-bulk-all-domains-page .layout__content .main {
+    .navigation-header {
+        &__breadcrumb,
+        &__title {
+            border-block-end: none;
+        }
+
+        &__breadcrumb {
+            @media ( max-width: $break-medium ) {
+                padding-top: 16px;
+            }
+        }
+
+        &__title {
+            padding-bottom: 0;
+            padding-top: 32px;
+
+            .navigation-header__main {
+                max-width: calc(1040px + 92px) !important;
+                margin: 0 auto;
+            }
+
+            @media ( max-width: $break-medium ) {
+                padding-top: 24px;
+
+                .navigation-header__main {
+                    padding-inline: 24px !important;
+                }
+            }
+        }
+    }
 }
