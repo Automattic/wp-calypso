@@ -86,6 +86,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'theme_slug',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
+	'migration_source_site_domain',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
 	'can_blaze',
