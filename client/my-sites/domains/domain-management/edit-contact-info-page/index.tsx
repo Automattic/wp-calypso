@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -90,15 +91,18 @@ const EditContactInfoPage = ( {
 		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
-	const renderContent = () => (
-		<EditContactInfoPageContent
-			currentRoute={ currentRoute }
-			domains={ domains }
-			selectedDomainName={ selectedDomainName }
-			selectedSite={ selectedSite }
-			isCard={ isAllDomainManagementScreen }
-		/>
-	);
+	const renderContent = () => {
+		const pageContent = (
+			<EditContactInfoPageContent
+				currentRoute={ currentRoute }
+				domains={ domains }
+				selectedDomainName={ selectedDomainName }
+				selectedSite={ selectedSite }
+			/>
+		);
+
+		return isAllDomainManagementScreen ? <Card>{ pageContent }</Card> : pageContent;
+	};
 
 	const renderSidebar = () => {
 		const supportLink = (

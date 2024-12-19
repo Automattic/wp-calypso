@@ -116,22 +116,4 @@ describe( 'EditContactInfoPageContent', () => {
 
 		expect( container.firstChild.tagName ).toBe( 'FORM' );
 	} );
-
-	it( 'should render a card when the card flag is true', () => {
-		const { container } = renderComponent( {
-			isCard: true,
-			domains: [
-				buildDomainResponse( {
-					currentUserCanManage: true,
-					canUpdateContactInfo: true,
-					mustRemovePrivacyBeforeContactUpdate: false,
-					domainRegistrationAgreementUrl: 'url',
-					name: 'mydomain',
-				} ),
-			],
-			selectedDomainName: 'mydomain',
-		} );
-
-		expect( container.firstChild ).toHaveClass( 'card' );
-	} );
 } );

@@ -13,5 +13,4 @@ export type EditContactInfoPageContentProps = {
 	domains: ResponseDomain[];
 	selectedDomainName: string;
 	selectedSite: SiteDetails | null;
-	isCard: boolean;
 };

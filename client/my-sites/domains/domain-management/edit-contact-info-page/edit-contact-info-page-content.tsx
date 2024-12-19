@@ -1,5 +1,3 @@
-import { Card } from '@automattic/components';
-import { ReactElement, useCallback } from 'react';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -14,38 +12,26 @@ const EditContactInfoPageContent = ( {
 	domains,
 	selectedDomainName,
 	selectedSite,
-	isCard,
 }: EditContactInfoPageContentProps ) => {
-	const maybeShowAsCard = useCallback(
-		( content: ReactElement ) => {
-			return isCard ? <Card>{ content }</Card> : content;
-		},
-		[ isCard ]
-	);
-
 	const domain = getSelectedDomain( { domains, selectedDomainName } );
 	if ( ! domain ) {
 		return;
 	}
 
 	if ( ! domain.currentUserCanManage ) {
-		return maybeShowAsCard(
-			<NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />
-		);
+		return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 	}
 
 	if ( ! domain.canUpdateContactInfo ) {
-		return maybeShowAsCard(
-			<InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />
-		);
+		return <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
 	}
 
 	if ( domain.isPendingWhoisUpdate ) {
-		return maybeShowAsCard( <PendingWhoisUpdateCard /> );
+		return <PendingWhoisUpdateCard />;
 	}
 
 	if ( domain.mustRemovePrivacyBeforeContactUpdate && domain.privateDomain && selectedSite ) {
-		return maybeShowAsCard(
+		return (
 			<EditContactInfoPrivacyEnabledCard
 				selectedDomainName={ selectedDomainName }
 				selectedSiteSlug={ selectedSite?.slug }
@@ -59,7 +45,7 @@ const EditContactInfoPageContent = ( {
 		currentRoute
 	);
 
-	return maybeShowAsCard(
+	return (
 		<EditContactInfoFormCard
 			domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 			selectedDomain={ domain }
