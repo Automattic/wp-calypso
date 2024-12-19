@@ -6,6 +6,7 @@ import {
 	DOMAIN_EXPIRATION_AUCTION,
 } from '@automattic/urls';
 import moment from 'moment';
+import InlineSupportLink from 'calypso/components/inline-support-link'; //eslint-disable-line no-restricted-imports
 import {
 	gdprConsentStatus,
 	transferStatus,
@@ -503,29 +504,31 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
-				const ctaLink = domain.hasWpcomNameservers
-					? domainMagementDNS( siteSlug as string, domain.domain )
-					: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-							nameservers: true,
-					  } );
-
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
 					status: translate( 'Active' ),
 					icon: 'info',
 					noticeText: translate(
-						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{a}}point it to WordPress.com name servers.{{/a}}',
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{cta}}point it to WordPress.com servers.{{/cta}}',
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ ctaLink } onClick={ ( e ) => e.stopPropagation() } />,
+								cta: domain.hasWpcomNameservers ? (
+									<InlineSupportLink
+										supportContext="nameservers"
+										showSupportModal
+										showIcon={ false }
+									/>
+								) : (
+									<a href={ domainMagementDNS( siteSlug as string, domain.domain ) } />
+								),
 							},
 						}
 					),
 					callToAction: domain.hasWpcomNameservers
-						? editDNSRecordsCallToAction
-						: editNameserversCallToAction,
+						? editNameserversCallToAction
+						: editDNSRecordsCallToAction,
 					listStatusWeight: 600,
 				};
 			}

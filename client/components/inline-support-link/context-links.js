@@ -187,6 +187,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/menus/',
 		post_id: 59580,
 	},
+	nameservers: {
+		link: 'https://wordpress.com/support/domains/change-name-servers/#changing-name-servers-to-point-to-word-press-com',
+		post_id: 41383,
+	},
 	pages: {
 		link: 'https://wordpress.com/support/pages/',
 		post_id: 86,
