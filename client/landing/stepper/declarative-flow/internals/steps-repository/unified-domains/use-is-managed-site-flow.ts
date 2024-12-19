@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	getSignupCompleteFlowName,
 	retrieveSignupDestination,
 	wasSignupCheckoutPageUnloaded,
 	clearSignupDestinationCookie,
 	getSignupCompleteSlug,
+	getSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 
 export const useIsManagedSiteFlowProps = () => {
-	const [ props, setProps ] = useState( {} );
-	const signupSlug = getSignupCompleteSlug();
+	const postSignUpSiteSlugParam = getSignupCompleteSlug();
+	const postSignUpSiteIdParam = getSignupCompleteSiteID();
+
+	const selectedSite = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 
 	useEffect( () => {
 		const signupDestinationCookieExists = retrieveSignupDestination();
@@ -21,16 +25,15 @@ export const useIsManagedSiteFlowProps = () => {
 			clearSignupDestinationCookie();
 			return;
 		}
+	}, [] );
 
-		if ( signupSlug ) {
-			return setProps( {
-				selectedSite: { slug: signupSlug },
-				showExampleSuggestions: false,
-				showSkipButton: true,
-				includeWordPressDotCom: false,
-			} );
-		}
-	}, [ signupSlug ] );
-
-	return props;
+	if ( selectedSite ) {
+		return {
+			selectedSite,
+			showExampleSuggestions: false,
+			showSkipButton: true,
+			includeWordPressDotCom: false,
+		};
+	}
+	return {};
 };
