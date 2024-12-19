@@ -45,6 +45,8 @@ class DnsRecords extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		nameservers: PropTypes.array || null,
+		titleOverride: PropTypes.string,
+		subtitleOverride: PropTypes.string,
 	};
 
 	hasDefaultCnameRecord = () => {
@@ -96,6 +98,7 @@ class DnsRecords extends Component {
 
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
+		const { showBreadcrumb, titleOverride, subtitleOverride } = this.props.context?.params || {};
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 
 		const items = [
@@ -166,10 +169,12 @@ class DnsRecords extends Component {
 
 		return (
 			<DomainHeader
-				items={ items }
-				mobileItem={ mobileItem }
+				items={ showBreadcrumb ? items : [] }
+				mobileItem={ showBreadcrumb ? mobileItem : null }
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
+				titleOverride={ titleOverride }
+				subtitleOverride={ subtitleOverride }
 			/>
 		);
 	};
@@ -256,6 +261,7 @@ class DnsRecords extends Component {
 
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
+		const { showDetails } = this.props.context?.params || {};
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const headerText = translate( 'DNS Records' );
 
@@ -266,7 +272,7 @@ class DnsRecords extends Component {
 				{ this.renderHeader() }
 				{ selectedDomain?.canManageDnsRecords ? (
 					<>
-						<DnsDetails />
+						{ showDetails && <DnsDetails /> }
 						{ this.renderNotice() }
 						<DnsRecordsList
 							dns={ dns }
