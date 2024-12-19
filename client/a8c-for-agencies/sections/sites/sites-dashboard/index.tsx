@@ -3,7 +3,6 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState, useRef } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -13,6 +12,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import GuidedTour from 'calypso/components/guided-tour';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';

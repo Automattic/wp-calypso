@@ -3,7 +3,6 @@ import { Icon, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
-import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import {
@@ -14,6 +13,7 @@ import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-fa
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';

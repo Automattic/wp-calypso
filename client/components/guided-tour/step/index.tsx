@@ -2,7 +2,7 @@ import { Button, Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
-import { GuidedTourContext } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import { GuidedTourContext } from 'calypso/components/guided-tour/data/guided-tour-context';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
