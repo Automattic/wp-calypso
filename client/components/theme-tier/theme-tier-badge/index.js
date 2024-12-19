@@ -8,6 +8,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
+import ThemeTierFreeBadge from './theme-tier-free-badge';
 import ThemeTierPartnerBadge from './theme-tier-partner-badge';
 import ThemeTierStyleVariationBadge from './theme-tier-style-variation-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
@@ -30,6 +31,10 @@ export default function ThemeTierBadge( {
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
 	const getBadge = () => {
+		if ( 'free' === themeTier?.slug ) {
+			return <ThemeTierFreeBadge />;
+		}
+
 		if ( BUNDLED_THEME === themeType ) {
 			return <ThemeTierBundledBadge />;
 		}
