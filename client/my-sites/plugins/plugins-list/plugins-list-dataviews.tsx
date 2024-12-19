@@ -28,7 +28,7 @@ const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
 		plugin: plugin.slug,
 	} );
-	pagejs.show( `/plugins/manage/${ plugin.slug }/sites` );
+	pagejs.show( `/plugins/manage/sites/${ plugin.slug }` );
 };
 
 export default function PluginsListDataViews( {

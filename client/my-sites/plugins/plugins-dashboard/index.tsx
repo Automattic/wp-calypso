@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
@@ -19,6 +20,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
+import UrlSearch from 'calypso/lib/url-search';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	SitesDashboardQueryParams,
@@ -38,6 +40,7 @@ import type { View } from '@wordpress/dataviews';
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
+	doSearch: ( query: string ) => void; // prop coming from UrlSearch
 	fullPlugin: object;
 	showPlaceholder: boolean;
 	isMarketplaceProduct: boolean;
@@ -88,10 +91,11 @@ export function showPluginsDashboardPage( route: string ) {
 	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
 }
 
-const PluginsDashboard = ( { pluginSlug }: PluginsDashboardProps ) => {
+const PluginsDashboard = ( { pluginSlug, doSearch }: PluginsDashboardProps ) => {
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
-	const currentPlugins = useSelector( ( state ) => getPlugins( state, siteIds, '' ) );
+	const currentPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) );
+	console.log( currentPlugins );
 	const isLoading = useSelector( ( state ) => isRequestingForAllSites( state ) );
 
 	const bulkActionDialog = ( actionName, selectedPlugins ) => {
@@ -142,11 +146,12 @@ const PluginsDashboard = ( { pluginSlug }: PluginsDashboardProps ) => {
 			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
+			<QueryPlugins />
 
 			<LayoutColumn className="plugins-overview" wide>
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
-						<Title>{ dashboardTitle }</Title>
+						<Title>{ translate( 'Manage Plugins' ) }</Title>
 						<Subtitle>{ translate( 'Manage plugins installed on all sites' ) }</Subtitle>
 						<Actions>
 							<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
@@ -159,20 +164,29 @@ const PluginsDashboard = ( { pluginSlug }: PluginsDashboardProps ) => {
 
 				<PluginsListDataViews
 					currentPlugins={ currentPlugins }
-					initialSearch=""
+					initialSearch={ undefined }
 					isLoading={ isLoading }
-					onSearch={ () => {} }
+					onSearch={ doSearch }
 					bulkActionDialog={ bulkActionDialog }
 				/>
 			</LayoutColumn>
 
 			{ pluginSlug && (
 				<LayoutColumn className="site-preview-pane" wide>
-					Test
+					<LayoutTop withNavigation={ false }>
+						<LayoutHeader>
+							<Title>
+								{ translate( `Manage %(pluginSlug)s in all sites`, { args: { pluginSlug } } ) }
+							</Title>
+							<Actions>
+								<Button href="/plugins/manage/sites">{ translate( 'Close' ) }</Button>
+							</Actions>
+						</LayoutHeader>
+					</LayoutTop>
 				</LayoutColumn>
 			) }
 		</Layout>
 	);
 };
 
-export default PluginsDashboard;
+export default UrlSearch( PluginsDashboard );
