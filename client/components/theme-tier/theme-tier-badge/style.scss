@@ -24,13 +24,17 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-	}
 
-	&__without-background.theme-tier-badge__content {
-		background: transparent;
-		padding: 0;
-		color: var(--studio-gray-80);
-		margin: 0;
+		&.theme-tier-badge__without-background {
+			background: transparent;
+			padding: 0;
+			color: var(--studio-gray-80);
+			margin: 0;
+
+			.premium-badge__logo {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.badge--info {
