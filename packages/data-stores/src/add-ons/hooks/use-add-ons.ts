@@ -63,7 +63,11 @@ const getActiveAddOns = (): AddOnMeta[] => {
 	];
 };
 
-const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
+interface Props {
+	selectedSiteId?: number | null | undefined;
+}
+
+const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const checkoutLink = useAddOnCheckoutLink();
 	const activeAddOns = getActiveAddOns();
 	const addOnPriceKeys = activeAddOns.map( ( { productSlug, quantity } ) => ( {
@@ -72,55 +76,22 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	} ) );
 	const addOnPrices = useAddOnPrices( addOnPriceKeys );
 	const addOnDisplayCosts = useAddOnDisplayCost( addOnPriceKeys );
-
-	return useMemo(
-		() =>
-			activeAddOns.map( ( addOnMeta ) => {
-				const { productSlug, quantity } = addOnMeta;
-				const key = getAddOnPriceKey( { productSlug, quantity } );
-				return {
-					prices: addOnPrices[ key ],
-					displayCost: addOnDisplayCosts[ key ],
-					...( !! quantity && {
-						checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
-					} ),
-					...addOnMeta,
-				};
-			} ),
-		[ addOnPrices, addOnPriceKeys, addOnDisplayCosts, checkoutLink, selectedSiteId ]
-	);
-};
-
-interface Props {
-	selectedSiteId?: number | null | undefined;
-}
-
-const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
-	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 
 	return useMemo(
 		() =>
-			activeAddOns.map( ( addOn ) => {
-				const product = productsList.data?.[ addOn.productSlug ];
-				const name = addOn.name ? addOn.name : product?.name || '';
-				const description = addOn.description ?? ( product?.description || '' );
+			activeAddOns.map( ( addOnMeta ) => {
+				const { productSlug, quantity } = addOnMeta;
+				const key = getAddOnPriceKey( { productSlug, quantity } );
 
-				/**
-				 * If data required by the `/add-ons` page is still loading, show the add-on as loading.
-				 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
-				 * that to the add-on's meta if need to.
-				 */
-				if ( productsList.isLoading || mediaStorage.isLoading ) {
-					return {
-						...addOn,
-						name,
-						description,
-						isLoading: true,
-					};
-				}
+				// TODO: can we not specify the product slug here for the storage add-on?
+				const isLoading =
+					productsList.isLoading || ( productSlug === PRODUCT_1GB_SPACE && mediaStorage.isLoading );
+				const product = productsList.data?.[ productSlug ];
+				const name = addOnMeta.name ? addOnMeta.name : product?.name || '';
+				const description = addOnMeta.description ?? ( product?.description || '' );
 
 				/**
 				 * If the product is not found in the products list, remove the add-on.
@@ -131,16 +102,27 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					return null;
 				}
 
-				/**
-				 * Regular product add-ons.
-				 */
 				return {
-					...addOn,
+					...addOnMeta,
 					name,
 					description,
+					isLoading,
+					prices: addOnPrices[ key ],
+					displayCost: addOnDisplayCosts[ key ],
+					...( !! quantity && {
+						checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
+					} ),
 				};
 			} ),
-		[ activeAddOns, mediaStorage.isLoading, productsList.data, productsList.isLoading ]
+		[
+			addOnPrices,
+			addOnPriceKeys,
+			addOnDisplayCosts,
+			productsList.data,
+			productsList.isLoading,
+			checkoutLink,
+			selectedSiteId,
+		]
 	);
 };
 
