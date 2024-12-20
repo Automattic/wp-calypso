@@ -1,25 +1,36 @@
 import { __ } from '@wordpress/i18n';
-import CardHeading from 'calypso/components/card-heading';
+import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
+import { CustomHeaderComponentType } from './headers/custom-header-component-type';
+import DNSRecordsHeader, {
+	dnsRecordsTitle,
+	dnsRecordsSubtitle,
+} from './headers/dns-records-header';
 
 type SubpageWrapperParamsType = {
-	subPageKey: string;
-	title: string;
-	subtitle?: string;
+	CustomHeader?: CustomHeaderComponentType;
+	title?: string | React.ReactNode;
+	subtitle?: string | React.ReactNode;
 	[ key: string ]: unknown;
 };
 
 // Subpage keys
 export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
+export const DNS_RECORDS = 'dns-records';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
 
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	[ ADD_FOWARDING_EMAIL ]: {
-		subPageKey: ADD_FOWARDING_EMAIL,
-		title: __( 'Add new email forwarding' ),
-		subtitle: __( 'Seamlessly redirect your messages to where you need them.' ),
+		CustomHeader: AddForwardingEmailHeader,
+		showFormHeader: true,
 		showPageHeader: false,
-		formHeader: <CardHeading>{ __( 'New email forwarding address' ) }</CardHeading>,
+	},
+	[ DNS_RECORDS ]: {
+		CustomHeader: DNSRecordsHeader,
+		titleOverride: dnsRecordsTitle,
+		subtitleOverride: dnsRecordsSubtitle,
+		showBreadcrumb: false,
+		showDetails: false,
 	},
 	[ EDIT_CONTACT_INFO ]: {
 		subPageKey: EDIT_CONTACT_INFO,
