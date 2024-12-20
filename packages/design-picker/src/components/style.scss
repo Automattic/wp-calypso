@@ -381,6 +381,10 @@
 			opacity: 1;
 		}
 	}
+
+	.theme-tier-badge--free .badge {
+		font-size: $font-body-extra-small;
+	}
 }
 
 .design-picker.design-picker__unified {

@@ -104,6 +104,7 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
+
 const SiteIntent = Onboard.SiteIntent;
 
 const EMPTY_ARRAY: Design[] = [];
@@ -971,7 +972,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				getBadge={ getBadge }
+				// We may want to modify the ThemeCard component once the experiment is completed
+				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
+				getBadge={ isGoalsAtFrontExperiment ? undefined : getBadge }
+				getOptionsMenu={ isGoalsAtFrontExperiment ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }
