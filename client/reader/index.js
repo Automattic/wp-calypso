@@ -12,7 +12,6 @@ import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
-	userListing,
 	following,
 	incompleteUrlRedirects,
 	legacyRedirects,
@@ -27,6 +26,13 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 } from './controller';
+import {
+	userPosts,
+	userComments,
+	userLikes,
+	userReposts,
+	userLists,
+} from './user-stream/controller';
 
 import './style.scss';
 
@@ -104,7 +110,47 @@ export default async function () {
 				redirectLoggedOutToSignup,
 				updateLastRoute,
 				sidebar,
-				userListing,
+				userPosts,
+				makeLayout,
+				clientRender
+			);
+			page(
+				'/read/users/:user_id/comments',
+				blogDiscoveryByFeedId,
+				redirectLoggedOutToSignup,
+				updateLastRoute,
+				sidebar,
+				userComments,
+				makeLayout,
+				clientRender
+			);
+			page(
+				'/read/users/:user_id/likes',
+				blogDiscoveryByFeedId,
+				redirectLoggedOutToSignup,
+				updateLastRoute,
+				sidebar,
+				userLikes,
+				makeLayout,
+				clientRender
+			);
+			page(
+				'/read/users/:user_id/reposts',
+				blogDiscoveryByFeedId,
+				redirectLoggedOutToSignup,
+				updateLastRoute,
+				sidebar,
+				userReposts,
+				makeLayout,
+				clientRender
+			);
+			page(
+				'/read/users/:user_id/lists',
+				blogDiscoveryByFeedId,
+				redirectLoggedOutToSignup,
+				updateLastRoute,
+				sidebar,
+				userLists,
 				makeLayout,
 				clientRender
 			);
