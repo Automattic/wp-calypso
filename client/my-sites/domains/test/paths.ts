@@ -26,7 +26,7 @@ describe( 'domainManagementAllOverview', () => {
 describe( 'domainManagementAllEditContactInfo', () => {
 	it( 'should return the expected path', () => {
 		expect( domainManagementAllEditContactInfo( 'site.com', 'domain.com' ) ).toEqual(
-			'/domains/manage/all/domain.com/contact-info/edit/site.com'
+			'/domains/manage/all/contact-info/edit/domain.com/site.com'
 		);
 	} );
 } );
