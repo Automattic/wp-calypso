@@ -3,13 +3,11 @@ import { Button, Count } from '@automattic/components';
 import { type SiteExcerptData, SitesSortKey } from '@automattic/sites';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
@@ -19,13 +17,8 @@ import LayoutHeader, {
 } from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isP2Theme } from 'calypso/lib/site/utils';
 import UrlSearch from 'calypso/lib/url-search';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import {
-	SitesDashboardQueryParams,
-	handleQueryParamChange,
-} from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
 import {
 	getPlugins,
