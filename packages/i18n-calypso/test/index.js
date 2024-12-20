@@ -19,6 +19,7 @@ describe( 'I18n', function () {
 	} );
 
 	afterEach( function () {
+		jest.clearAllMocks();
 		i18n.configure(); // ensure everything is reset
 	} );
 
@@ -280,6 +281,55 @@ describe( 'I18n', function () {
 			expect( translate( 'red' ) ).toBe( 'edra' );
 			expect( translate( 'grey' ) ).toBe( 'reyga' );
 			expect( translate( 'green', { context: 'color' } ) ).toBe( 'cursus' );
+		} );
+	} );
+
+	describe( 'fixMe', () => {
+		it( 'should throw an error if text, translation, or fallback are missing', () => {
+			expect( () => i18n.fixMe( {} ) ).toThrow(
+				'fixMe() requires an object with proper text, translation, and fallback properties'
+			);
+		} );
+
+		it( 'should return translation if locale is en', () => {
+			i18n.getLocale = jest.fn().mockReturnValue( 'en' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				translation: 'hello',
+				fallback: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return translation if locale is en-gb', () => {
+			i18n.getLocale = jest.fn().mockReturnValue( 'en-gb' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				translation: 'hello',
+				fallback: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return translation if text has a translation', () => {
+			i18n.hasTranslation = jest.fn().mockReturnValue( true );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				translation: 'bonjour',
+				fallback: 'hi',
+			} );
+			expect( result ).toBe( 'bonjour' );
+		} );
+
+		it( 'should return fallback if text does not have a translation and locale is not English', () => {
+			i18n.getLocale = jest.fn().mockReturnValue( 'fr' );
+			i18n.hasTranslation = jest.fn().mockReturnValue( false );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				translation: 'bonjour',
+				fallback: 'hi',
+			} );
+			expect( result ).toBe( 'hi' );
 		} );
 	} );
 } );
