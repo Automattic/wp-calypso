@@ -2,6 +2,8 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { Fragment } from 'react';
 
+import './style.scss';
+
 type Props = {
 	steps: string[];
 	current: number;
