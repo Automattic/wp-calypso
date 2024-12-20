@@ -1,11 +1,5 @@
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
-import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import useGuidedTours from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
-import {
-	A4A_ONBOARDING_TOURS_PREFERENCE_NAME,
-	A4A_ONBOARDING_TOURS_EVENT_NAMES,
-} from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import LayoutColumn from './column';
@@ -23,7 +17,7 @@ type Props = {
 	onScroll?: ( e: React.UIEvent< HTMLDivElement > ) => void;
 };
 
-function MainLayout( {
+export default function Layout( {
 	children,
 	className,
 	title,
@@ -55,29 +49,4 @@ function MainLayout( {
 			</div>
 		</Main>
 	);
-}
-
-function MainLayoutWithGuidedTour( { ...props }: Props ) {
-	const guidedTours = useGuidedTours();
-
-	return (
-		<GuidedTourContextProvider
-			guidedTours={ guidedTours }
-			preferenceNames={ A4A_ONBOARDING_TOURS_PREFERENCE_NAME }
-			eventNames={ A4A_ONBOARDING_TOURS_EVENT_NAMES }
-		>
-			<MainLayout { ...props } />
-		</GuidedTourContextProvider>
-	);
-}
-
-export default function Layout( {
-	disableGuidedTour = false,
-	...props
-}: Props & { disableGuidedTour?: boolean } ) {
-	if ( disableGuidedTour ) {
-		return <MainLayout { ...props } />;
-	}
-
-	return <MainLayoutWithGuidedTour { ...props } />;
 }

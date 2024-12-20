@@ -2,8 +2,8 @@ import { Card, Badge } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,

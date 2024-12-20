@@ -14,9 +14,9 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
+import GuidedTour from 'calypso/components/guided-tour';
+import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
@@ -376,7 +376,6 @@ const SitesDashboard = ( {
 			) }
 			wide
 			title={ selectedSite ? null : dashboardTitle }
-			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
 

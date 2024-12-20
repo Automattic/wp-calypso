@@ -3,6 +3,7 @@ import { Button, Card, WordPressLogo } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_REFERRALS_BANK_DETAILS_LINK,
@@ -13,7 +14,6 @@ import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hook
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
-import Layout from 'calypso/layout/multi-sites-dashboard';
 import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,

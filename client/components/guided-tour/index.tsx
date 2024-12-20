@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react';
-import { GuidedTourContext } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import { GuidedTourContext } from 'calypso/components/guided-tour/data/guided-tour-context';
 
 const GuidedTour = ( { defaultTourId }: { defaultTourId: string } ) => {
 	const { currentTourId, currentStep, startTour } = useContext( GuidedTourContext );

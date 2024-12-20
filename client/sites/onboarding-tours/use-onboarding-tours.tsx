@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { TourStep } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import type { TourStep } from 'calypso/components/guided-tour/data/guided-tour-context';
 
 const useSiteManagementPanelTour = (): TourStep[] => {
 	return [

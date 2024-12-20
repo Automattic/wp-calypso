@@ -3,7 +3,7 @@ import { useMergeRefs } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
-import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
