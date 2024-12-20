@@ -338,6 +338,34 @@ export default function PromotedPosts( { tab }: Props ) {
 				</Notice>
 			) }
 
+			{ ! isLoadingBillingSummary && data?.debt !== undefined && parseFloat( data.debt ) > 0 && (
+				<Notice
+					isReskinned
+					showDismiss={ false }
+					status="is-error"
+					icon="notice-outline"
+					className="promote-post-i2__payment-blocked-notice"
+				>
+					{ translate(
+						'Your account currently shows an outstanding balance of $%(debtAmount)s. Please contact our {{wpcomSupport}}support team{{/wpcomSupport}} to resolve this issue.',
+						{
+							args: {
+								debtAmount: data?.debt,
+							},
+							components: {
+								wpcomSupport: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</Notice>
+			) }
+
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
 				<>
