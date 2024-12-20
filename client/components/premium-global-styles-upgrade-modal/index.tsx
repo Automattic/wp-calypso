@@ -86,7 +86,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							{ description ?? (
 								<>
 									<p>{ translations.description }</p>
-									<p>{ tryStyle ? translations.promotion : translations.promotionNoTry }</p>
+									<p>{ translations.promotion }</p>
 								</>
 							) }
 							{ featureList }
