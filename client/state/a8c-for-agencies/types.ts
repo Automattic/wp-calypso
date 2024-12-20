@@ -98,6 +98,7 @@ export interface Agency {
 		features: string[];
 	};
 	approval_status: ApprovalStatus | '';
+	created_at: string;
 }
 
 export interface AgencyStore {

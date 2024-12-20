@@ -27,6 +27,15 @@ const A4AAgencyApprovalNotice = () => {
 		return null;
 	}
 
+	// If approved, only show banner for 1 week after signup
+	if (
+		agency?.approval_status === ApprovalStatus.APPROVED &&
+		agency?.created_at &&
+		new Date( agency.created_at ) < new Date( Date.now() - 7 * 24 * 60 * 60 * 1000 ) // 7 days
+	) {
+		return null;
+	}
+
 	const availableBannerDetails = {
 		[ ApprovalStatus.PENDING ]: {
 			text: translate(
@@ -41,7 +50,6 @@ const A4AAgencyApprovalNotice = () => {
 			),
 			level: 'success',
 			hideCloseButton: false,
-			// maybe don't show if signup date is older than x days
 		},
 		[ ApprovalStatus.REJECTED ]: {
 			text: translate(
