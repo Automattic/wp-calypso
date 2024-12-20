@@ -223,7 +223,7 @@ export default {
 		store.set( 'signup-locale', localeFromParams );
 
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected=true' ) ) {
+		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected_1220=true' ) ) {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
 
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
@@ -240,7 +240,8 @@ export default {
 						null,
 						'/setup'
 					) +
-						( context.querystring ? '?' + context.querystring : '' ) +
+						'?redirected_1220=true' +
+						( context.querystring ? '&' + context.querystring : '' ) +
 						( context.hashstring ? '#' + context.hashstring : '' )
 				);
 				return;
@@ -255,7 +256,7 @@ export default {
 					null,
 					'/start'
 				) +
-					'?redirected=true' +
+					'?redirected_1220=true' +
 					( context.querystring ? '&' + context.querystring : '' ) +
 					( context.hashstring ? '#' + context.hashstring : '' )
 			);
