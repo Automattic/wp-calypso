@@ -102,7 +102,7 @@ export default function PressablePlanSection( {
 
 	const heading = useMemo( () => {
 		if ( isReferralMode ) {
-			return translate( 'Refer a variety of plans, or single high-resource sites to your clients' );
+			return translate( 'Refer a variety of plans to your clients' );
 		}
 
 		if ( existingPlan && pressableOwnership !== 'regular' ) {
