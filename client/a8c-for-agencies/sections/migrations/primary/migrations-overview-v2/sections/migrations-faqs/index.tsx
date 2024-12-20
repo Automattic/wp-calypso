@@ -80,12 +80,35 @@ export default function MigrationsFAQs() {
 			answer: (
 				<>
 					{ translate(
-						'From now until the end of 2024, you’ll receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000*. If you’re a WP Engine customer, we’ll also credit the costs to set you free.'
+						'Receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000.* If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href="https://automattic.com/for-agencies/program-incentives"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
 					) }
 					<br />
 					<br />
 					{ translate(
-						'* The migration limit is $10,000 for WP Engine and $3,000 for other hosts.'
+						'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts. Offer valid until %(endDate)s',
+						{
+							args: {
+								endDate: new Date( '2025-01-31T00:00:00' ).toLocaleDateString(
+									translate.localeSlug,
+									{
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric',
+									}
+								),
+							},
+						}
 					) }
 				</>
 			),
