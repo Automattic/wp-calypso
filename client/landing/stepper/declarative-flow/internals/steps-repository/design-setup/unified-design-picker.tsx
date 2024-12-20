@@ -631,11 +631,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
-			if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
-				closePremiumGlobalStylesModal();
-			} else {
-				pickDesign();
-			}
+			pickDesign();
 		}
 	}
 
@@ -863,8 +859,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
-					tryStyle={ tryPremiumGlobalStyles }
 					numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
+					{ ...( ! isLockedTheme && { tryStyle: tryPremiumGlobalStyles } ) }
 				/>
 				<AsyncLoad
 					require="@automattic/design-preview"
