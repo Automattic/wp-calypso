@@ -3,9 +3,10 @@ import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+
+import './style.scss';
 
 const AGENCY_APPROVAL_DISMISS_PREFERENCE = 'a4a-agency-approval-notice-dismissed';
 
@@ -16,7 +17,6 @@ const A4AAgencyApprovalNotice = () => {
 
 	const dismissNotice = () => {
 		dispatch( savePreference( AGENCY_APPROVAL_DISMISS_PREFERENCE, true ) );
-		dispatch( recordTracksEvent( 'calypso_a4a_payment_delayed_notice_dismissed' ) );
 	};
 
 	const isDismissed = useSelector( ( state ) =>
@@ -33,12 +33,14 @@ const A4AAgencyApprovalNotice = () => {
 				'Your application to Automattic for Agencies is under review. You won’t be able to make any purchases until you have been approved.'
 			),
 			level: 'warning',
+			hideCloseButton: true,
 		},
 		[ ApprovalStatus.APPROVED ]: {
 			text: translate(
 				'Welcome to Automattic for Agencies. Your application has been approved! You can now make purchases in the portal.'
 			),
 			level: 'success',
+			hideCloseButton: false,
 			// maybe don't show if signup date is older than x days
 		},
 		[ ApprovalStatus.REJECTED ]: {
@@ -51,6 +53,7 @@ const A4AAgencyApprovalNotice = () => {
 				}
 			),
 			level: 'error',
+			hideCloseButton: true,
 		},
 	};
 
@@ -68,7 +71,8 @@ const A4AAgencyApprovalNotice = () => {
 		<LayoutBanner
 			level={ bannerDetails.level as 'warning' | 'success' | 'error' }
 			onClose={ dismissNotice }
-			className="a4a-payment-delayed-notice"
+			className="a4a-agency-approval-notice"
+			hideCloseButton={ bannerDetails.hideCloseButton }
 		>
 			<div>{ bannerDetails.text }</div>
 		</LayoutBanner>
