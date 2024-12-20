@@ -457,4 +457,9 @@ main.domains-overview main.domains-overview__list .multi-sites-dashboard-layout-
 		padding: 16px 24px;
 		margin-inline-start: 0;
 	}
+
+	.domains-table__row.is-selected > td {
+		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		color: var(--theme-base-color);
+	}
 }

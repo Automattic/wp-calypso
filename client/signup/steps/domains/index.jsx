@@ -1321,7 +1321,8 @@ export class RenderDomainsStep extends Component {
 		const shouldHideBack =
 			! userSiteCount &&
 			previousStepName?.startsWith( 'user' ) &&
-			stepSectionName !== 'use-your-domain';
+			stepSectionName !== 'use-your-domain' &&
+			! ( isOnboardingFlow( flowName ) && !! goBack );
 
 		const hideBack = flowName === 'domain' || shouldHideBack;
 
