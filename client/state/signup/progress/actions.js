@@ -136,13 +136,15 @@ export function submitSignupStep( step, providedDependencies, optionalProps ) {
 		const lastUpdated = Date.now();
 		const { intent } = getSignupDependencyStore( getState() );
 
-		dispatch(
-			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
-				intent,
-				...optionalProps,
-				...( step.wasSkipped && { was_skipped: step.wasSkipped } ),
-			} )
-		);
+		if ( ! step.skipSubmitEvent ) {
+			dispatch(
+				recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
+					intent,
+					...optionalProps,
+					...( step.wasSkipped && { was_skipped: step.wasSkipped } ),
+				} )
+			);
+		}
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,

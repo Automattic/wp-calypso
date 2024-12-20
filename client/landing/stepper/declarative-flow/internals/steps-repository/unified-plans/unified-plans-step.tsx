@@ -76,6 +76,7 @@ export interface UnifiedPlansStepProps {
 			isPurchasingItem?: boolean;
 			stepSectionName?: string;
 			siteUrl?: string;
+			skipSubmitEvent?: boolean;
 		},
 		domainInfo: object
 	) => void;
@@ -335,6 +336,7 @@ function UnifiedPlansStep( {
 				domainItem,
 				isPurchasingItem: false,
 				stepSectionName: undefined,
+				skipSubmitEvent: true,
 			},
 			{
 				domainItem,
