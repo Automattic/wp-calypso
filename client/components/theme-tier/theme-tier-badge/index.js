@@ -22,6 +22,7 @@ export default function ThemeTierBadge( {
 	isLockedStyleVariation,
 	showUpgradeBadge = true,
 	themeId,
+	showPartnerPrice = false,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
@@ -60,7 +61,7 @@ export default function ThemeTierBadge( {
 			return null;
 		}
 
-		return <ThemeTierUpgradeBadge />;
+		return <ThemeTierUpgradeBadge showPartnerPrice={ showPartnerPrice } />;
 	};
 
 	const badge = getBadge();
