@@ -1,4 +1,3 @@
-import { DataViewsPaginationInfo } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DUMMY_DATA_VIEW_PREFIX } from './constants';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -14,7 +13,10 @@ export function mapFieldIdToSortKey( fieldId: string ) {
 export function getSitesPagination(
 	allSites: SiteExcerptData[],
 	perPage: number
-): DataViewsPaginationInfo {
+): {
+	totalItems: number;
+	totalPages: number;
+} {
 	const totalItems = allSites.length;
 	const totalPages = Math.ceil( totalItems / perPage );
 
