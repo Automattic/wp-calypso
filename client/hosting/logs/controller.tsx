@@ -1,5 +1,5 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { SiteLogs } from 'calypso/sites/tools/logs/components/site-logs';
+import { SiteLogs } from 'calypso/sites/tools/logs';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Context as PageJSContext, Callback } from '@automattic/calypso-router';
 

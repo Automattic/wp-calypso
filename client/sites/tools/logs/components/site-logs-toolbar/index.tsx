@@ -9,8 +9,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { navigate } from 'calypso/lib/navigate';
+import { LogType } from 'calypso/sites/tools/logs';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
@@ -26,7 +26,7 @@ type Props = {
 	onRequestStatusChange: ( requestStatus: string ) => void;
 	onAutoRefreshChange: ( isChecked: boolean ) => void;
 	autoRefresh: boolean;
-	logType: SiteLogsTab;
+	logType: LogType;
 	startDateTime: Moment;
 	endDateTime: Moment;
 	severity: string;

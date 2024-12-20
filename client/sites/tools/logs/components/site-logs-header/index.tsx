@@ -2,9 +2,8 @@ import { Button } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
-import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
-import { buildFilterParam } from '../site-logs';
+import { buildFilterParam, LogType } from 'calypso/sites/tools/logs';
+import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import type { Moment } from 'moment';
 
 import './style.scss';
@@ -36,7 +35,7 @@ const SiteLogsToolbarDownloadProgress = ( {
 
 type SiteLogsHeaderProps = {
 	endDateTime: Moment;
-	logType: SiteLogsTab;
+	logType: LogType;
 	requestStatus: string;
 	requestType: string;
 	severity: string;
