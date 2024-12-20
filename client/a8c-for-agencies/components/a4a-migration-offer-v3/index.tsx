@@ -103,7 +103,18 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 							</Button>
 
 							<span className="a4a-migration-offer-v3__body-actions-footnote">
-								{ translate( '* Offer valid until the end of 2024' ) }
+								{ translate( '* offer valid until %(endDate)s', {
+									args: {
+										endDate: new Date( '2025-01-31T00:00:00' ).toLocaleDateString(
+											translate.localeSlug,
+											{
+												year: 'numeric',
+												month: 'long',
+												day: 'numeric',
+											}
+										),
+									},
+								} ) }
 							</span>
 						</div>
 					</div>
