@@ -388,7 +388,11 @@ export default {
 
 	domainManagementSubpageView( pageContext, next ) {
 		pageContext.primary = (
-			<SubpageWrapper subpageKey={ pageContext.params.subPageKey }>
+			<SubpageWrapper
+				subpageKey={ pageContext.params.subPageKey }
+				siteName={ pageContext.params.site }
+				domainName={ pageContext.params.domain }
+			>
 				{ pageContext.primary }
 			</SubpageWrapper>
 		);

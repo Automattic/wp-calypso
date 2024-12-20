@@ -16,6 +16,11 @@
 
 		.navigation-header__main {
 			padding: 0;
+			flex-direction: column;
+
+			.breadcrumbs {
+				padding-bottom: 24px;
+			}
 		}
 	}
 
