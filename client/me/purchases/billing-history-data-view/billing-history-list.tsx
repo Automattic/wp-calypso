@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import pageRedirect from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { DataViews, Operator } from '@wordpress/dataviews';
