@@ -36,6 +36,7 @@ const SiteDataField = ( {
 			<SiteFavicon
 				blogId={ site.blog_id }
 				fallback={ site.is_atomic ? 'wordpress-logo' : 'color' }
+				className="sites-dataviews__site-favicon"
 			/>
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
