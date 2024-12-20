@@ -3,6 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState, useRef } from 'react';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -246,6 +247,7 @@ export default function SitesDashboard() {
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ navItems.length > 1 }>
 					<ProvisioningSiteNotification />
+					<A4AAgencyApprovalNotice />
 
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>
