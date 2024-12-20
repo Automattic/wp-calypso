@@ -3,6 +3,7 @@ import { eye } from '@automattic/components/src/icons';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
@@ -13,7 +14,7 @@ import {
 import TopCard from './top-card';
 import './style.scss';
 
-export default function StatsEmailTopRow( { siteId, postId, statType, className } ) {
+export default function StatsEmailTopRow( { siteId, postId, statType, className, date } ) {
 	const translate = useTranslate();
 
 	const counts = useSelector( ( state ) =>
@@ -22,6 +23,16 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 	const isRequesting = useSelector( ( state ) =>
 		isRequestingEmailStats( state, siteId, postId, PERIOD_ALL_TIME, statType )
 	);
+
+	/**
+	 * Only show some email stats if post published more than 5 minutes ago.
+	 * As part of this, we fix the date sometimes object having wrong time of day
+	 * and normalize to utc to account for time zones differences.
+	 */
+	const correctedPostDateWithTime = moment.parseZone( date._i ).utc();
+	const now = moment().utc();
+	const minutesSincePublishing = now.diff( correctedPostDateWithTime, 'minutes' );
+	const emailIsSending = minutesSincePublishing < 5;
 
 	const boxes = useMemo( () => {
 		switch ( statType ) {
@@ -33,6 +44,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 							value={ counts?.total_sends ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Gridicon icon="mail" /> }
+							emailIsSending={ emailIsSending }
 						/>
 						{ counts?.unique_opens ? (
 							<TopCard
@@ -53,6 +65,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 							value={ counts?.opens_rate ? `${ Math.round( counts?.opens_rate * 100 ) }%` : null }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'opens_rate' ) }
 							icon={ <Gridicon icon="trending" /> }
+							emailIsSending={ emailIsSending }
 						/>
 					</>
 				);
@@ -82,7 +95,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 			default:
 				return null;
 		}
-	}, [ statType, counts, translate, isRequesting ] );
+	}, [ statType, counts, translate, isRequesting, emailIsSending ] );
 
 	return (
 		<div className={ clsx( 'stats-email-open-top-row', className ?? null ) }>
