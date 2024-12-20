@@ -6,6 +6,8 @@ import React from 'react';
 import SubpageWrapper from '../index';
 import { ADD_FOWARDING_EMAIL } from '../subpages';
 
+jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
+
 describe( 'SubpageWrapper', () => {
 	it( 'should render the children', () => {
 		render(
