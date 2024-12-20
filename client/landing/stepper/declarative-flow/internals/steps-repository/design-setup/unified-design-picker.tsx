@@ -21,7 +21,6 @@ import {
 	useDesignPickerFilters,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
-	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, DESIGN_FIRST_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
@@ -631,11 +630,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
-			if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
-				closePremiumGlobalStylesModal();
-			} else {
-				pickDesign();
-			}
+			pickDesign();
 		}
 	}
 
@@ -778,10 +773,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			return () => pickDesign();
 		}
 
-		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
-			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
+			// If the theme is locked, we should show the plan upgrade modal.
+			return upgradePlan;
 		}
 
 		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
