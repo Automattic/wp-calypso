@@ -1,10 +1,9 @@
 /* eslint-disable prettier/prettier */
-import page from '@automattic/calypso-router';
+import pageRedirect from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { DataViews, Operator } from '@wordpress/dataviews';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -30,6 +29,54 @@ import {
 import '@wordpress/dataviews/build-style/style.css';
 import './style.scss';
 
+const SERVICES = [
+	{ value: 'WordPress.com', label: 'WordPress.com' },
+	{ value: 'Jetpack', label: 'Jetpack' },
+	{ value: 'WooCommerce', label: 'WooCommerce' },
+];
+
+const recordClickEvent = ( eventAction: string ) => {
+	recordGoogleEvent( 'Me', eventAction );
+};
+
+const serviceNameDescription = (
+	transaction: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
+) => {
+	const plan = capitalPDangit( transaction.variation );
+	const termLabel = getTransactionTermLabel( transaction, translate );
+	return (
+		<div>
+			<strong>{ plan }</strong>
+			{ transaction.domain && <small>{ transaction.domain }</small> }
+			{ termLabel && <small>{ termLabel }</small> }
+			{ transaction.licensed_quantity && (
+				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>
+			) }
+		</div>
+	);
+};
+
+const serviceName = (
+	transaction: BillingTransaction,
+	translate: LocalizeProps[ 'translate' ]
+) => {
+	const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
+		transaction.items,
+		translate
+	);
+
+	if ( moreTransactionItems.length > 0 ) {
+		return <strong>{ translate( 'Multiple items' ) }</strong>;
+	}
+
+	if ( transactionItem.product === transactionItem.variation ) {
+		return transactionItem.product;
+	}
+
+	return serviceNameDescription( transactionItem, translate );
+};
+
 export interface BillingHistoryListProps {
 	header?: boolean;
 	siteId?: string | number | null;
@@ -50,179 +97,129 @@ export interface BillingHistoryListConnectedProps {
 	setPage: ( transactionType: string, page: number ) => void;
 }
 
-class BillingHistoryListDataView extends Component<
-	BillingHistoryListProps & BillingHistoryListConnectedProps & LocalizeProps
-> {
-	static displayName = 'BillingHistoryList';
+type Props = BillingHistoryListProps & BillingHistoryListConnectedProps & LocalizeProps;
 
-	static defaultProps = {
-		header: false,
-	};
-
-	onChangeView = ( newView: { page?: number } ) => {
+const BillingHistoryListDataView: React.FC< Props > = ( {
+	getReceiptUrlFor,
+	page,
+	pageSize,
+	total,
+	transactions = [],
+	sendBillingReceiptEmail,
+	setPage,
+	translate,
+	moment,
+} ) => {
+	const onChangeView = ( newView: { page?: number } ) => {
 		const newPage = typeof newView.page === 'number' ? newView.page : 1;
-		if ( newView.page !== this.props.page ) {
-			this.props.setPage( 'past', newPage );
+		if ( newView.page !== page ) {
+			setPage( 'past', newPage );
 		}
 	};
 
-	render() {
-		const transactions = this.props.transactions || [];
+	const getFields = () => [
+		{
+			id: 'date',
+			label: 'Date',
+			type: 'datetime' as const,
+			enableGlobalSearch: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				return item.date;
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <time>{ moment( item.date ).format( 'll' ) }</time>;
+			},
+		},
+		{
+			id: 'service',
+			label: 'Summary',
+			type: 'text' as const,
+			elements: SERVICES,
+			enableGlobalSearch: true,
+			enableHiding: false,
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <div>{ serviceName( item, translate ) }</div>;
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				return item.service;
+			},
+			filterBy: {
+				operators: [ 'isAny', 'is', 'isAny' ] as Operator[],
+			},
+		},
+		{
+			id: 'amount',
+			label: 'Amount',
+			type: 'text' as const,
+			enableGlobalSearch: true,
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <TransactionAmount transaction={ item } />;
+			},
+		},
+	];
 
-		return (
-			<div className="billing-history">
-				<div className="dataviews-wrapper">
-					<DataViews
-						data={ transactions }
-						paginationInfo={ {
-							totalItems: this.props.total,
-							totalPages: Math.ceil( this.props.total / this.props.pageSize ),
-						} }
-						fields={ this.getFields() }
-						view={ this.getView() }
-						search
-						searchLabel="Search receipts"
-						onChangeView={ this.onChangeView }
-						defaultLayouts={ { table: {} } }
-						actions={ this.getActions() }
-						isLoading={ false }
-					/>
-				</div>
+	const getView = () => ( {
+		type: 'table' as const,
+		search: '',
+		filters: [],
+		page,
+		perPage: pageSize,
+		sort: {
+			field: 'date',
+			direction: 'desc' as const,
+		},
+		titleField: 'title',
+		fields: [ 'date', 'service', 'amount' ],
+		layout: {},
+	} );
+
+	const getActions = () => [
+		{
+			id: 'view-receipt',
+			label: 'View receipt',
+			isPrimary: true,
+			icon: <Gridicon icon="pages" />,
+			callback: ( items: BillingTransaction[] ) => {
+				const item = items[ 0 ];
+				pageRedirect.redirect( getReceiptUrlFor( item.id ) );
+			},
+		},
+		{
+			id: 'email-receipt',
+			label: 'Email receipt',
+			isPrimary: true,
+			icon: <Gridicon icon="mail" />,
+			callback: ( items: BillingTransaction[] ) => {
+				const item = items[ 0 ];
+				recordClickEvent( 'Email Receipt in Billing History' );
+				sendBillingReceiptEmail( item.id );
+			},
+		},
+	];
+
+	return (
+		<div className="billing-history">
+			<div className="dataviews-wrapper">
+				<DataViews
+					data={ transactions || [] }
+					paginationInfo={ {
+						totalItems: total,
+						totalPages: Math.ceil( total / pageSize ),
+					} }
+					fields={ getFields() }
+					view={ getView() }
+					search
+					searchLabel="Search receipts"
+					onChangeView={ onChangeView }
+					defaultLayouts={ { table: {} } }
+					actions={ getActions() }
+					isLoading={ false }
+				/>
 			</div>
-		);
-	}
-
-	serviceName = ( transaction: BillingTransaction ) => {
-		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
-			transaction.items,
-			this.props.translate
-		);
-
-		if ( moreTransactionItems.length > 0 ) {
-			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
-		}
-
-		if ( transactionItem.product === transactionItem.variation ) {
-			return transactionItem.product;
-		}
-
-		return this.serviceNameDescription( transactionItem );
-	};
-
-	getFields = () => {
-		const SERVICES = [
-			{ value: 'WordPress.com', label: 'WordPress.com' },
-			{ value: 'Jetpack', label: 'Jetpack' },
-			{ value: 'WooCommerce', label: 'WooCommerce' },
-		];
-
-		return [
-			{
-				id: 'date',
-				label: 'Date',
-				type: 'datetime' as const,
-				enableGlobalSearch: true,
-				enableHiding: false,
-				getValue: ( { item }: { item: BillingTransaction } ) => {
-					return item.date;
-				},
-				render: ( { item }: { item: BillingTransaction } ) => {
-					return <time>{ this.props.moment( item.date ).format( 'll' ) }</time>;
-				},
-			},
-			{
-				id: 'service',
-				label: 'Summary',
-				type: 'text' as const,
-				elements: SERVICES,
-				enableGlobalSearch: true,
-				enableHiding: false,
-				render: ( { item }: { item: BillingTransaction } ) => {
-					return <div>{ this.serviceName( item ) }</div>;
-				},
-				getValue: ( { item }: { item: BillingTransaction } ) => {
-					return item.service;
-				},
-				filterBy: {
-					operators: [ 'isAny', 'is', 'isAny' ] as Operator[],
-				},
-			},
-			{
-				id: 'amount',
-				label: 'Amount',
-				type: 'text' as const,
-				enableGlobalSearch: true,
-				render: ( { item }: { item: BillingTransaction } ) => {
-					return <TransactionAmount transaction={ item } />;
-				},
-			},
-		];
-	};
-
-	getActions = () => {
-		const { getReceiptUrlFor, sendBillingReceiptEmail } = this.props;
-		return [
-			{
-				id: 'view-receipt',
-				label: 'View receipt',
-				isPrimary: true,
-				icon: <Gridicon icon="pages" />,
-				callback: ( items: BillingTransaction[] ) => {
-					const item = items[ 0 ];
-					page.redirect( getReceiptUrlFor( item.id ) );
-				},
-			},
-			{
-				id: 'email-receipt',
-				label: 'Email receipt',
-				isPrimary: true,
-				icon: <Gridicon icon="mail" />,
-				callback: ( items: BillingTransaction[] ) => {
-					const item = items[ 0 ];
-					this.recordClickEvent( 'Email Receipt in Billing History' );
-					sendBillingReceiptEmail( item.id );
-				},
-			},
-		];
-	};
-
-	getView = () => {
-		const { page, pageSize } = this.props;
-		return {
-			type: 'table' as const,
-			search: '',
-			filters: [],
-			page: page,
-			perPage: pageSize,
-			sort: {
-				field: 'date',
-				direction: 'desc' as const,
-			},
-			titleField: 'title',
-			fields: [ 'date', 'service', 'amount', 'actions' ],
-			layout: {},
-		};
-	};
-
-	serviceNameDescription = ( transaction: BillingTransactionItem ) => {
-		const plan = capitalPDangit( transaction.variation );
-		const termLabel = getTransactionTermLabel( transaction, this.props.translate );
-		return (
-			<div>
-				<strong>{ plan }</strong>
-				{ transaction.domain && <small>{ transaction.domain }</small> }
-				{ termLabel && <small>{ termLabel }</small> }
-				{ transaction.licensed_quantity && (
-					<small>{ renderTransactionQuantitySummary( transaction, this.props.translate ) }</small>
-				) }
-			</div>
-		);
-	};
-
-	recordClickEvent = ( eventAction: string ) => {
-		recordGoogleEvent( 'Me', eventAction );
-	};
-}
+		</div>
+	);
+};
 
 function getIsSendingReceiptEmail( state: IAppState ) {
 	return function isSendingBillingReceiptEmailForReceiptId( receiptId: number ) {
