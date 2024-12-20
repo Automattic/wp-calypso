@@ -151,7 +151,7 @@ export function domainManagementAllOverview( siteName, domainName ) {
  * @param {string} domainName
  */
 export function domainManagementAllEditContactInfo( siteName, domainName ) {
-	return domainManagementAllRoot() + '/' + domainName + '/contact-info/edit/' + siteName;
+	return domainManagementAllRoot() + '/contact-info/edit/' + domainName + '/' + siteName;
 }
 
 export function domainManagementAllEditSelectedContactInfo() {

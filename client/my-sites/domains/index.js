@@ -422,7 +422,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementAllRoot() + '/:domain/contact-info/edit/:site',
+		paths.domainManagementAllRoot() + '/contact-info/edit/:domain/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
