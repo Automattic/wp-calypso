@@ -5,6 +5,7 @@ import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -63,11 +64,6 @@ function getWordAdsFilters( siteId ) {
 			period: 'year',
 		},
 	];
-}
-
-function getMomentSiteZone( state, siteId ) {
-	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export function redirectToActivity( context ) {
