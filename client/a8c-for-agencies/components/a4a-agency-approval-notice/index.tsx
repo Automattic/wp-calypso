@@ -36,6 +36,10 @@ const A4AAgencyApprovalNotice = () => {
 		return null;
 	}
 
+	if ( ! agency?.approval_status ) {
+		return null;
+	}
+
 	const availableBannerDetails = {
 		[ ApprovalStatus.PENDING ]: {
 			text: translate(
@@ -64,10 +68,6 @@ const A4AAgencyApprovalNotice = () => {
 			hideCloseButton: true,
 		},
 	};
-
-	if ( ! agency?.approval_status ) {
-		return null;
-	}
 
 	const bannerDetails = availableBannerDetails[ agency?.approval_status ];
 
