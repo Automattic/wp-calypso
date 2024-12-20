@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -16,7 +17,6 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/multi-sites-dashboard/nav';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TAB_ACTIVE_MEMBERS, TAB_INVITED_MEMBERS } from '../../constants';

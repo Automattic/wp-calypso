@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SETTINGS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
@@ -11,7 +12,6 @@ import LayoutNavigation, {
 	LayoutNavigationItemProps,
 	LayoutNavigationTabs,
 } from 'calypso/layout/multi-sites-dashboard/nav';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AgencyProfile from './agency-profile';

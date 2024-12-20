@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
@@ -12,7 +13,6 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

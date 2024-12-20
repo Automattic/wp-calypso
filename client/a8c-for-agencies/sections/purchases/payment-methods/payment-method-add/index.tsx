@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
@@ -16,7 +17,6 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { isClientView } from '../lib/is-client-view';
 import PaymentMethodForm from './payment-method-form';
 

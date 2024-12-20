@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -15,7 +16,6 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';

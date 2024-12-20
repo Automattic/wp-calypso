@@ -9,6 +9,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -28,7 +29,6 @@ import LayoutHeader, {
 import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/layout/multi-sites-dashboard/nav';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
