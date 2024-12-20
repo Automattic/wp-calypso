@@ -61,6 +61,20 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+function setReferrerPolicy() {
+	// Remove existing <meta> tags with name="referrer"
+	const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+	existingMetaTags.forEach( ( tag ) => tag.remove() );
+
+	// Create a new <meta> element
+	const metaReferrer = document.createElement( 'meta' );
+	metaReferrer.name = 'referrer';
+	metaReferrer.content = 'strict-origin-when-cross-origin';
+
+	// Append the new <meta> element to the <head> section
+	document.head.appendChild( metaReferrer );
+}
+
 export const addVideoPressSignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -229,6 +243,8 @@ export default {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_stepper_flow_confidence_check'
 			);
+
+			setReferrerPolicy();
 
 			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
 				window.location.replace(
