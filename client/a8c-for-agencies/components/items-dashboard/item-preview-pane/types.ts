@@ -1,5 +1,5 @@
 import React from 'react';
-import { SiteFaviconFallback } from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
+import { SiteFaviconFallback } from 'calypso/blocks/site-favicon';
 
 export interface FeaturePreviewInterface {
 	id: string;

@@ -1,6 +1,6 @@
 import { Badge, Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
+import SiteFavicon from 'calypso/blocks/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { Site, SiteError } from '../types';
 import SiteDataFieldErrorIndicator from './site-data-field-error-indicator';
