@@ -392,9 +392,15 @@ class StatsSite extends Component {
 
 		customChartRange.daysInRange = daysInRange;
 
+		// Redirect to the daily views if the period dropdown is locked.
+		if ( shouldForceDefaultPeriod && period !== 'day' ) {
+			page.redirect( `/stats/day/${ slug }${ window.location.search }` );
+			return;
+		}
+
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
-		if ( period === 'day' && daysInRange === 1 ) {
+		if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
 			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
 			return;
 		}
