@@ -174,6 +174,8 @@ export default function CampaignItemDetails( props: Props ) {
 		format,
 		budget_cents,
 		type,
+		display_delivery_estimate,
+		display_clicks_estimate,
 		is_evergreen = false,
 	} = campaign || {};
 
@@ -189,6 +191,35 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_rate,
 		conversion_last_currency_found,
 	} = campaign_stats || {};
+
+	// check if delivery outperformed
+	// for impressions
+	const deliveryEstimates = ( display_delivery_estimate || '' ).split( ':' );
+	let medianImpressions = 0;
+	if ( deliveryEstimates && deliveryEstimates.length >= 2 ) {
+		const [ minImpressions, maxImpressions ] = deliveryEstimates.map( Number );
+		medianImpressions = ( minImpressions + maxImpressions ) / 2;
+	}
+	let impressionsOutperformedPercentage = 0;
+	if ( impressions_total > medianImpressions && medianImpressions > 0 ) {
+		impressionsOutperformedPercentage = Math.round(
+			( ( impressions_total - medianImpressions ) / medianImpressions ) * 100
+		);
+	}
+
+	// for clicks
+	const clickEstimates = ( display_clicks_estimate || '' ).split( ':' );
+	let medianClicks = 0;
+	if ( clickEstimates && clickEstimates.length >= 2 ) {
+		const [ minClicks, maxClicks ] = clickEstimates.map( Number );
+		medianClicks = ( minClicks + maxClicks ) / 2;
+	}
+	let clicksOutperformedPercentage = 0;
+	if ( clicks_total > medianClicks && medianClicks > 0 ) {
+		clicksOutperformedPercentage = Math.round(
+			( ( clicks_total - medianClicks ) / medianClicks ) * 100
+		);
+	}
 
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
@@ -822,17 +853,49 @@ export default function CampaignItemDetails( props: Props ) {
 											<span className="campaign-item-details__label">
 												{ translate( 'Clicks' ) }
 											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+											<span className="campaign-item-details__text">
+												<span className="wp-brand-font">
+													{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+												</span>
+												{ !! clicksOutperformedPercentage && (
+													<span className="campaign-item-details__outperformed">
+														{ translate( 'Outperformed' ) }
+													</span>
+												) }
 											</span>
+											{ !! clicksOutperformedPercentage && (
+												<span>
+													{ translate( '%(percentage)s% more than estimated', {
+														args: {
+															percentage: clicksOutperformedPercentage,
+														},
+													} ) }
+												</span>
+											) }
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'People reached' ) }
 											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+											<span className="campaign-item-details__text">
+												<span className="wp-brand-font">
+													{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+												</span>
+												{ !! impressionsOutperformedPercentage && (
+													<span className="campaign-item-details__outperformed">
+														{ translate( 'Outperformed' ) }
+													</span>
+												) }
 											</span>
+											{ !! impressionsOutperformedPercentage && (
+												<span>
+													{ translate( '%(percentage)s% more than estimated', {
+														args: {
+															percentage: impressionsOutperformedPercentage,
+														},
+													} ) }
+												</span>
+											) }
 										</div>
 										{ isWooStore && status !== 'created' && (
 											<>
