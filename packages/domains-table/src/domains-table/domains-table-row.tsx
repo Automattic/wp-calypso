@@ -50,8 +50,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		sslStatus,
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns, isCompact, currentlySelectedDomainName } =
-		useDomainsTable();
+	const {
+		canSelectAnyDomains,
+		domainsTableColumns,
+		isCompact,
+		currentlySelectedDomainName,
+		selectedFeature,
+	} = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -75,7 +80,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
+		? getDomainManagementLink( domain, siteSlug, isAllSitesView, selectedFeature )
 		: '';
 
 	const renderOwnerCell = () => {

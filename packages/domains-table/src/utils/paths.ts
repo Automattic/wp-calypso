@@ -8,7 +8,8 @@ export const emailManagementAllSitesPrefix = '/email/all';
 export function domainManagementLink(
 	{ domain, type }: Pick< ResponseDomain, 'domain' | 'type' >,
 	siteSlug: string,
-	isAllSitesView: boolean
+	isAllSitesView: boolean,
+	feature?: string
 ) {
 	const viewSlug = domainManagementViewSlug( type );
 
@@ -22,6 +23,10 @@ export function domainManagementLink(
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
 	if ( isAllDomainManagementEnabled && isAllSitesView ) {
+		if ( feature && 'email-management' === feature ) {
+			return `/domains/manage/all/email/${ domain }/${ siteSlug }`;
+		}
+
 		return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
 	}
 

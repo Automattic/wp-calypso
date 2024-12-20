@@ -126,6 +126,7 @@ type Value = {
 	currentUserCanBulkUpdateContactInfo: boolean;
 	isCompact: boolean;
 	currentlySelectedDomainName?: string;
+	selectedFeature?: string;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -149,6 +150,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		currentUserCanBulkUpdateContactInfo = false,
 		sidebarMode = false,
 		selectedDomainName,
+		selectedFeature,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -450,6 +452,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		currentUserCanBulkUpdateContactInfo,
 		isCompact,
 		currentlySelectedDomainName: selectedDomainName,
+		selectedFeature,
 	};
 
 	return value;
