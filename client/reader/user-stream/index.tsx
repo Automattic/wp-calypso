@@ -56,7 +56,9 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
 	const renderContent = (): React.ReactNode => {
-		switch ( currentPath ) {
+		const basePath = currentPath.split( '?' )[ 0 ];
+
+		switch ( basePath ) {
 			case `/read/users/${ userId }`:
 				return <UserPosts streamKey={ streamKey as string } />;
 			case `/read/users/${ userId }/comments`:
