@@ -6,7 +6,6 @@ import {
 	DOMAIN_EXPIRATION_AUCTION,
 } from '@automattic/urls';
 import moment from 'moment';
-import InlineSupportLink from 'calypso/components/inline-support-link'; //eslint-disable-line no-restricted-imports
 import {
 	gdprConsentStatus,
 	transferStatus,
@@ -112,15 +111,11 @@ export function resolveDomainStatus(
 			nameservers: true,
 		} ),
 		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
 	};
 
 	const editDNSRecordsCallToAction = {
 		href: domainMagementDNS( siteSlug as string, domain.domain ),
 		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
 	};
 
 	switch ( domain.type ) {
@@ -515,20 +510,20 @@ export function resolveDomainStatus(
 							components: {
 								strong: <strong />,
 								cta: domain.hasWpcomNameservers ? (
-									<InlineSupportLink
-										supportContext="nameservers"
-										showSupportModal
-										showIcon={ false }
-									/>
-								) : (
 									<a href={ domainMagementDNS( siteSlug as string, domain.domain ) } />
+								) : (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+											nameservers: true,
+										} ) }
+									/>
 								),
 							},
 						}
 					),
 					callToAction: domain.hasWpcomNameservers
-						? editNameserversCallToAction
-						: editDNSRecordsCallToAction,
+						? editDNSRecordsCallToAction
+						: editNameserversCallToAction,
 					listStatusWeight: 600,
 				};
 			}
