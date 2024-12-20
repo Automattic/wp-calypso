@@ -22,7 +22,8 @@ export function domainManagementLink(
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
 	if ( isAllDomainManagementEnabled && isAllSitesView ) {
-		return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
+		const pathSlug = window.location.pathname.includes( 'manage/all/email' ) ? 'email' : 'overview';
+		return `/domains/manage/all/${ pathSlug }/${ domain }/${ siteSlug }`;
 	}
 
 	if ( isAllSitesView ) {
