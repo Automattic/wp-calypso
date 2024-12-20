@@ -83,7 +83,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 	return (
 		<Layout
 			className="hosting-overview-v3"
-			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
+			title={ isNarrowView ? '' : translate( 'Hosting Marketplace' ) }
 			onScroll={ onScroll }
 			wide
 		>

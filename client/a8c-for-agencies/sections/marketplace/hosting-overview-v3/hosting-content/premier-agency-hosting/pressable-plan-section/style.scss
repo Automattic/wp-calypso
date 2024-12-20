@@ -24,10 +24,13 @@
 	@include a4a-font-body-sm;
 }
 
-.pressable-plan-card-content__cta-button {
+// We need to do this specifically to override the white-space.
+.pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button {
 	min-width: 0;
 	width: 100%;
 	min-height: 40px;
+	max-width: 100%;
+	white-space: normal;
 }
 
 .pressable-plan-section__details-two-lists {
