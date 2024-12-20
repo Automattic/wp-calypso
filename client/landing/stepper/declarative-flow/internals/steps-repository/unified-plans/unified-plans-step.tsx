@@ -113,7 +113,7 @@ export interface UnifiedPlansStepProps {
 	 * Passed from Stepper for @automattic/onboarding step-container
 	 */
 	wrapperProps?: {
-		hideBack: boolean;
+		hideBack?: boolean;
 		goBack: NavigationControls[ 'goBack' ];
 		isFullLayout: boolean;
 		isExtraWideLayout: boolean;

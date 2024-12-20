@@ -1,5 +1,6 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import clsx from 'clsx';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { useSelector } from 'calypso/state';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
@@ -8,6 +9,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
+import ThemeTierFreeBadge from './theme-tier-free-badge';
 import ThemeTierPartnerBadge from './theme-tier-partner-badge';
 import ThemeTierStyleVariationBadge from './theme-tier-style-variation-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
@@ -20,6 +22,7 @@ export default function ThemeTierBadge( {
 	isLockedStyleVariation,
 	showUpgradeBadge = true,
 	themeId,
+	showPartnerPrice = false,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
@@ -28,8 +31,13 @@ export default function ThemeTierBadge( {
 	);
 	const themeTier = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	const getBadge = () => {
+		if ( isGoalsAtFrontExperiment && 'free' === themeTier?.slug ) {
+			return <ThemeTierFreeBadge />;
+		}
+
 		if ( BUNDLED_THEME === themeType ) {
 			return <ThemeTierBundledBadge />;
 		}
@@ -42,7 +50,10 @@ export default function ThemeTierBadge( {
 			return <ThemeTierCommunityBadge />;
 		}
 
-		if ( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType ) {
+		if (
+			! isGoalsAtFrontExperiment &&
+			( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType )
+		) {
 			return <ThemeTierPartnerBadge />;
 		}
 
@@ -50,7 +61,7 @@ export default function ThemeTierBadge( {
 			return null;
 		}
 
-		return <ThemeTierUpgradeBadge />;
+		return <ThemeTierUpgradeBadge showPartnerPrice={ showPartnerPrice } />;
 	};
 
 	const badge = getBadge();

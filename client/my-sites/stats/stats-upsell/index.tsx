@@ -58,6 +58,7 @@ export default function StatsUpsell( {
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const redirectTo = encodeURIComponent( window.location.href );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
@@ -66,11 +67,11 @@ export default function StatsUpsell( {
 		} );
 		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
-				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
+				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }`
 			);
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ planSlug }` );
+			page( `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }` );
 		}
 	};
 
