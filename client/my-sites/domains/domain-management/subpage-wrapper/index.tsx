@@ -12,6 +12,9 @@ type SubpageWrapperProps = {
 
 const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: SubpageWrapperProps ) => {
 	const subpageParams = getSubpageParams( subpageKey );
+	if ( ! subpageParams ) {
+		return children;
+	}
 
 	const breadcrumbItems = [
 		{
@@ -23,7 +26,7 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 		},
 	];
 
-	return subpageParams ? (
+	return (
 		<div className="subpage-wrapper">
 			<NavigationHeader
 				navigationItems={ breadcrumbItems }
@@ -34,8 +37,6 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 			/>
 			<div className="subpage-wrapper__content">{ children }</div>
 		</div>
-	) : (
-		<>{ children }</>
 	);
 };
 
