@@ -5,6 +5,7 @@ import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import SiteFavicon from 'calypso/blocks/site-favicon';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -15,7 +16,6 @@ import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-ho
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
 import './style.scss';
