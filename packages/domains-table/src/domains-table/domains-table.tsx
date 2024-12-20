@@ -70,6 +70,7 @@ interface BaseDomainsTableProps {
 	currentUserCanBulkUpdateContactInfo?: boolean;
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
+	selectedFeature?: string;
 }
 
 export type DomainsTableProps =
