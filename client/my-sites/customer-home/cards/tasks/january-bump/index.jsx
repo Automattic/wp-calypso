@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import januaryBumpIllustration from 'calypso/assets/images/customer-home/illustration--january-bump.png';
 import { TASK_JANUARY_BUMP } from 'calypso/my-sites/customer-home/cards/constants';
@@ -19,7 +20,9 @@ const JanuaryBump = () => {
 			title={ title }
 			description={ description }
 			actionText={ translate( 'Start today' ) }
-			actionUrl="/pricing/january-bump?ref=january-bump-my-home"
+			actionUrl={ localizeUrl(
+				'https://wordpress.com/pricing/start-your-someday-project?ref=my-home-card'
+			) }
 			completeOnStart={ false }
 			illustration={ januaryBumpIllustration }
 			taskId={ TASK_JANUARY_BUMP }
