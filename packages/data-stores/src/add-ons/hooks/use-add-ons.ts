@@ -6,7 +6,7 @@ import {
 	WPCOM_FEATURES_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import i18n from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
 import {
@@ -19,7 +19,6 @@ import customDesignIcon from '../icons/custom-design';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
-import useAddOnDisplayCost from './use-add-on-display-cost';
 import { createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 import type { AddOnMeta } from '../types';
 
@@ -68,6 +67,7 @@ interface Props {
 }
 
 const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
+	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 	const activeAddOns = getActiveAddOns();
 	const addOnPriceComps = activeAddOns.map( ( { productSlug, quantity } ) => ( {
@@ -75,7 +75,6 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 		quantity,
 	} ) );
 	const addOnPrices = useAddOnPrices( addOnPriceComps );
-	const addOnDisplayCosts = useAddOnDisplayCost( addOnPriceComps );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
@@ -102,20 +101,36 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					return null;
 				}
 
+				const prices = addOnPrices[ key ];
+				const formattedCost = prices?.formattedMonthlyPrice || '';
+				const displayCost =
+					product.term === 'month'
+						? /* Translators: %(formattedCost)s: monthly price formatted with currency */
+						  translate( '%(formattedCost)s/month, billed monthly', {
+								args: {
+									formattedCost,
+								},
+						  } )
+						: /* Translators: %(monthlyCost)s: monthly price formatted with currency */
+						  translate( '%(monthlyCost)s/month, billed yearly', {
+								args: {
+									monthlyCost: formattedCost,
+								},
+						  } );
+
 				return {
 					...addOnMeta,
 					name,
 					description,
 					isLoading,
-					prices: addOnPrices[ key ],
-					displayCost: addOnDisplayCosts[ key ],
+					prices,
+					displayCost,
 					checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
 				};
 			} ),
 		[
 			addOnPrices,
 			addOnPriceComps,
-			addOnDisplayCosts,
 			productsList.data,
 			productsList.isLoading,
 			checkoutLink,
