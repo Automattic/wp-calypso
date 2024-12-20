@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, Operator } from '@wordpress/dataviews';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
@@ -64,6 +64,13 @@ class BillingHistoryListDataView extends Component<
 		this.props.setPage( 'past', page );
 	};
 
+	onChangeView = ( newView: { page?: number } ) => {
+		const newPage = typeof newView.page === 'number' ? newView.page : 1;
+		if ( newView.page !== this.props.page ) {
+			this.props.setPage( 'past', newPage );
+		}
+	};
+
 	render() {
 		const transactions = this.props.transactions || [];
 
@@ -80,12 +87,7 @@ class BillingHistoryListDataView extends Component<
 						view={ this.getView() }
 						search
 						searchLabel="Search receipts"
-						onChangeView={ ( newView: { page?: number } ) => {
-							const newPage = typeof newView.page === 'number' ? newView.page : 1;
-							if ( newView.page !== this.props.page ) {
-								this.props.setPage( 'past', newPage );
-							}
-						} }
+						onChangeView={ this.onChangeView }
 						defaultLayouts={ { table: {} } }
 						actions={ this.getActions() }
 						isLoading={ false }
@@ -123,7 +125,7 @@ class BillingHistoryListDataView extends Component<
 			{
 				id: 'date',
 				label: 'Date',
-				type: 'datetime',
+				type: 'datetime' as const,
 				enableGlobalSearch: true,
 				enableHiding: false,
 				getValue: ( { item }: { item: BillingTransaction } ) => {
@@ -136,7 +138,7 @@ class BillingHistoryListDataView extends Component<
 			{
 				id: 'service',
 				label: 'Summary',
-				type: 'text',
+				type: 'text' as const,
 				elements: SERVICES,
 				enableGlobalSearch: true,
 				enableHiding: false,
@@ -147,13 +149,13 @@ class BillingHistoryListDataView extends Component<
 					return item.service;
 				},
 				filterBy: {
-					operators: [ 'isAny', 'is', 'isAny' ],
+					operators: [ 'isAny', 'is', 'isAny' ] as Operator[],
 				},
 			},
 			{
 				id: 'amount',
 				label: 'Amount',
-				type: 'text',
+				type: 'text' as const,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: BillingTransaction } ) => {
 					return <TransactionAmount transaction={ item } />;
@@ -192,14 +194,14 @@ class BillingHistoryListDataView extends Component<
 	getView = () => {
 		const { page, pageSize } = this.props;
 		return {
-			type: 'table',
+			type: 'table' as const,
 			search: '',
 			filters: [],
 			page: page,
 			perPage: pageSize,
 			sort: {
 				field: 'date',
-				direction: 'desc',
+				direction: 'desc' as const,
 			},
 			titleField: 'title',
 			fields: [ 'date', 'service', 'amount', 'actions' ],
