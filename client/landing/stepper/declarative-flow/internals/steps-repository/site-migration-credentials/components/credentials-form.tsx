@@ -28,8 +28,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
-		useCredentialsForm( onSubmit );
+	const {
+		control,
+		errors,
+		accessMethod,
+		isBusy,
+		submitHandler,
+		canBypassVerification,
+		clearErrors,
+	} = useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
@@ -59,10 +66,16 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		return translate( 'Continue' );
 	};
 
+	const onSubmitLocal = ( e: React.FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+		clearErrors();
+		submitHandler();
+	};
+
 	const showSpecialInstructions = ! applicationPasswordEnabled || accessMethod === 'backup';
 
 	return (
-		<form className="site-migration-credentials__form" onSubmit={ submitHandler }>
+		<form className="site-migration-credentials__form" onSubmit={ onSubmitLocal }>
 			{ errorMessage && (
 				<Notice
 					className="site-migration-credentials__error-notice"
