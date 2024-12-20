@@ -9,6 +9,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -62,17 +63,19 @@ const removeWhiteBackground = function () {
 };
 
 function setReferrerPolicy() {
-	// Remove existing <meta> tags with name="referrer"
-	const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
-	existingMetaTags.forEach( ( tag ) => tag.remove() );
+	try {
+		// Remove existing <meta> tags with name="referrer"
+		const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+		existingMetaTags.forEach( ( tag ) => tag.remove() );
 
-	// Create a new <meta> element
-	const metaReferrer = document.createElement( 'meta' );
-	metaReferrer.name = 'referrer';
-	metaReferrer.content = 'strict-origin-when-cross-origin';
+		// Create a new <meta> element
+		const metaReferrer = document.createElement( 'meta' );
+		metaReferrer.name = 'referrer';
+		metaReferrer.content = 'strict-origin-when-cross-origin';
 
-	// Append the new <meta> element to the <head> section
-	document.head.appendChild( metaReferrer );
+		// Append the new <meta> element to the <head> section
+		document.head.appendChild( metaReferrer );
+	} catch ( e ) {}
 }
 
 export const addVideoPressSignupClassName = () => {
@@ -245,38 +248,24 @@ export default {
 			);
 
 			setReferrerPolicy();
-
-			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-				window.location.replace(
-					getStepUrl(
-						flowName,
-						getStepName( context.params ),
-						getStepSectionName( context.params ),
-						localeFromParams ?? localeFromStore,
-						null,
-						'/setup'
-					) +
-						'?redirected_1220=true' +
-						( context.querystring ? '&' + context.querystring : '' ) +
-						( context.hashstring ? '#' + context.hashstring : '' )
-				);
-				return;
-			}
-
-			window.location.replace(
+			let url =
 				getStepUrl(
 					flowName,
 					getStepName( context.params ),
 					getStepSectionName( context.params ),
 					localeFromParams ?? localeFromStore,
 					null,
-					'/start'
+					stepperOnboardingExperimentAssignment.variationName === 'stepper' ? '/setup' : '/start'
 				) +
-					'?redirected_1220=true' +
-					( context.querystring ? '&' + context.querystring : '' ) +
-					( context.hashstring ? '#' + context.hashstring : '' )
-			);
-			return;
+				'?redirected_1220=true' +
+				( context.querystring ? '&' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+
+			if ( document.referrer ) {
+				url = addQueryArgs( { start_ref: document.referrer }, url );
+			}
+
+			window.location.replace( url );
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
