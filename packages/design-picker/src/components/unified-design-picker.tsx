@@ -224,7 +224,11 @@ const DesignCardGroup = ( {
 						onPreview={ onPreview }
 						getBadge={ getBadge }
 						oldHighResImageLoading={ oldHighResImageLoading }
-						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+						isActive={
+							showActiveThemeBadge &&
+							design.recipe?.stylesheet === siteActiveTheme &&
+							! design.is_virtual
+						}
 					/>
 				);
 			} ) }
