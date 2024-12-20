@@ -495,7 +495,7 @@ const siteMigration: Flow = {
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
+								{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
