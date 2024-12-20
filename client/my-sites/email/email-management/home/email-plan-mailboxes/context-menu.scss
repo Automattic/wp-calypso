@@ -1,0 +1,20 @@
+.email-plan-mailboxes-list__mailbox-context-menu {
+	.button {
+		float: none !important;
+		margin: 0 0 0 1rem !important;
+		padding: 0;
+	}
+}
+
+.email-plan-mailboxes-list__mailbox-context-menu-popover {
+	.popover__menu-item {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+
+		svg {
+			width: 24px;
+			height: auto;
+		}
+	}
+}
