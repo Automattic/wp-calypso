@@ -23,10 +23,12 @@ type HeaderProps = {
 	shareLink: string;
 };
 
-export enum TabType {
-	mobile = 'mobile',
-	desktop = 'desktop',
-}
+export const TabTypes = {
+	mobile: 'mobile',
+	desktop: 'desktop',
+};
+
+export type TabType = ( typeof TabTypes )[ keyof typeof TabTypes ];
 
 const SocialServices = [
 	{
@@ -95,15 +97,15 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 					<SectionNav className="profiler-navigation-tabs">
 						<NavTabs enforceTabsView>
 							<NavItem
-								onClick={ () => onTabChange( TabType.mobile ) }
-								selected={ activeTab === TabType.mobile }
+								onClick={ () => onTabChange( TabTypes.mobile ) }
+								selected={ activeTab === TabTypes.mobile }
 							>
 								<Icon icon={ mobile } />
 								<span>{ translate( 'Mobile' ) }</span>
 							</NavItem>
 							<NavItem
-								onClick={ () => onTabChange( TabType.desktop ) }
-								selected={ activeTab === TabType.desktop }
+								onClick={ () => onTabChange( TabTypes.desktop ) }
+								selected={ activeTab === TabTypes.desktop }
 							>
 								<Icon icon={ desktop } />
 								<span>{ translate( 'Desktop' ) }</span>

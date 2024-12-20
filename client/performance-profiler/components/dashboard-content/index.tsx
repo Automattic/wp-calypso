@@ -4,7 +4,7 @@ import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
-import { TabType } from 'calypso/performance-profiler/components/header';
+import { TabType, TabTypes } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
@@ -34,7 +34,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	filter,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
-	activeTab = TabType.mobile,
+	activeTab = TabTypes.mobile,
 	overallScoreIsTab = false,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
