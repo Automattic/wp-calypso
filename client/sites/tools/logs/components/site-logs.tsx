@@ -1,4 +1,3 @@
-import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useState } from 'react';
@@ -7,6 +6,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
+import { SiteLogsHeader } from 'calypso/sites/tools/logs/components/site-logs-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -201,48 +201,53 @@ export const SiteLogs = ( {
 			: [ 'request_type', 'date', 'status', 'request_url' ];
 
 	return (
-		<div className="site-logs-container">
-			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
-			<SiteLogsToolbar
-				logType={ logType }
-				startDateTime={ dateRange.startTime }
+		<>
+			<SiteLogsHeader
 				endDateTime={ dateRange.endTime }
-				onDateTimeChange={ handleDateTimeChange }
-				onSeverityChange={ handleSeverityChange }
-				onRequestTypeChange={ handleRequestTypeChange }
-				onRequestStatusChange={ handleRequestStatusChange }
-				severity={ severity }
-				requestType={ requestType }
-				requestStatus={ requestStatus }
-			>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					className="site-logs__auto-refresh"
-					label={ __( 'Auto-refresh' ) }
-					checked={ autoRefresh }
-					onChange={ handleAutoRefreshClick }
-				/>
-			</SiteLogsToolbar>
-			<SiteLogsTable
-				logs={ data?.logs }
-				isLoading={ isFetching }
-				headerTitles={ headerTitles }
 				logType={ logType }
-				latestLogType={ latestLogType }
+				requestStatus={ requestStatus }
+				requestType={ requestType }
+				severity={ severity }
+				startDateTime={ dateRange.startTime }
 			/>
-			{ paginationText && (
-				<div className="site-monitoring__pagination-text">{ paginationText }</div>
-			) }
-			{ !! data?.total_results && (
-				<div className="site-monitoring__pagination-click-guard">
-					<Pagination
-						page={ currentPageIndex + 1 }
-						perPage={ pageSize }
-						total={ data.total_results }
-						pageClick={ handlePageClick }
-					/>
-				</div>
-			) }
-		</div>
+
+			<div className="site-logs-container">
+				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+				<SiteLogsToolbar
+					onDateTimeChange={ handleDateTimeChange }
+					onSeverityChange={ handleSeverityChange }
+					onRequestTypeChange={ handleRequestTypeChange }
+					onRequestStatusChange={ handleRequestStatusChange }
+					onAutoRefreshChange={ handleAutoRefreshClick }
+					logType={ logType }
+					startDateTime={ dateRange.startTime }
+					endDateTime={ dateRange.endTime }
+					autoRefresh={ autoRefresh }
+					severity={ severity }
+					requestType={ requestType }
+					requestStatus={ requestStatus }
+				/>
+				<SiteLogsTable
+					logs={ data?.logs }
+					isLoading={ isFetching }
+					headerTitles={ headerTitles }
+					logType={ logType }
+					latestLogType={ latestLogType }
+				/>
+				{ paginationText && (
+					<div className="site-monitoring__pagination-text">{ paginationText }</div>
+				) }
+				{ !! data?.total_results && (
+					<div className="site-monitoring__pagination-click-guard">
+						<Pagination
+							page={ currentPageIndex + 1 }
+							perPage={ pageSize }
+							total={ data.total_results }
+							pageClick={ handlePageClick }
+						/>
+					</div>
+				) }
+			</div>
+		</>
 	);
 };
