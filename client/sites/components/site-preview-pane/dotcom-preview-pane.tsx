@@ -181,8 +181,8 @@ const DotcomPreviewPane = ( {
 				],
 			},
 			{
-				label: hasEnTranslation( 'Server Settings 4' )
-					? __( 'Server Settings 23' )
+				label: hasEnTranslation( 'Server Settings' )
+					? __( 'Server Settings' )
 					: __( 'Server Config' ),
 				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
