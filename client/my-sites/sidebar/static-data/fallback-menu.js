@@ -604,7 +604,7 @@ export default function buildFallbackResponse( {
 					slug: 'options-hosting-configuration-php',
 					title:
 						isAtomic && ! isPlanExpired
-							? translate( 'Server Settings' )
+							? translate( 'Server Settings 92' )
 							: translate( 'Hosting Features' ),
 					type: 'submenu-item',
 					url: `/hosting-config/${ siteDomain }`,

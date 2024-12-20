@@ -229,7 +229,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	);
 
 	const getPageTitle = () => {
-		return translate( 'Server Settings' );
+		return translate( 'Server Settings 1' );
 	};
 
 	const getUpgradeBanner = () => {

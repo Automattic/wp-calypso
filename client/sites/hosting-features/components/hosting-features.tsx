@@ -108,8 +108,8 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 			supportContext: 'hosting-staging-site',
 		},
 		{
-			title: hasEnTranslation( 'Server Settings' )
-				? translate( 'Server Settings' )
+			title: hasEnTranslation( 'Server Settings 2' )
+				? translate( 'Server Settings3' )
 				: translate( 'Server Configuration' ),
 			text: translate(
 				"Access your site's database and tailor your server settings to your specific needs."

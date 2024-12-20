@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { useParams } from 'react-router-dom';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -9,13 +8,24 @@ import UserLikes from './views/likes';
 import UserLists from './views/lists';
 import UserPosts from './views/posts';
 import UserReposts from './views/reposts';
+import './style.scss';
 
-const UserStream = ( { streamKey } ) => {
+interface NavigationItem {
+	label: string;
+	path: string;
+	selected: boolean;
+}
+
+interface UserStreamProps {
+	streamKey?: string;
+	userId: string;
+}
+
+const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 	const translate = useTranslate();
-	const { user_id: userId } = useParams();
 	const currentPath = page.current;
 
-	const navigationItems = [
+	const navigationItems: NavigationItem[] = [
 		{
 			label: translate( 'Posts' ),
 			path: `/read/users/${ userId }`,
@@ -43,26 +53,27 @@ const UserStream = ( { streamKey } ) => {
 		},
 	];
 
-	const renderContent = () => {
-		const streamType = streamKey?.split( ':' )[ 0 ];
+	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
-		switch ( streamType ) {
-			case 'user-comments':
+	const renderContent = (): React.ReactNode => {
+		switch ( currentPath ) {
+			case `/read/users/${ userId }`:
+				return <UserPosts streamKey={ streamKey as string } />;
+			case `/read/users/${ userId }/comments`:
 				return <UserComments />;
-			case 'user-likes':
+			case `/read/users/${ userId }/likes`:
 				return <UserLikes />;
-			case 'user-reposts':
+			case `/read/users/${ userId }/reposts`:
 				return <UserReposts />;
-			case 'user-lists':
+			case `/read/users/${ userId }/lists`:
 				return <UserLists />;
-			default:
-				return <UserPosts />;
 		}
 	};
 
 	return (
-		<div>
-			<SectionNav>
+		<div className="user-stream">
+			<h1 className="user-stream__header">User Profile</h1>
+			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
 						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
@@ -71,7 +82,7 @@ const UserStream = ( { streamKey } ) => {
 					) ) }
 				</NavTabs>
 			</SectionNav>
-			{ renderContent() }
+			<div className="user-stream__content">{ renderContent() }</div>
 		</div>
 	);
 };
