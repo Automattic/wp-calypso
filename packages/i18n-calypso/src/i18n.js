@@ -347,6 +347,13 @@ I18N.prototype.hasTranslation = function () {
 
 /**
  * Returns `translation` if given `text` is translated or locale is English, otherwise returns the `fallback`.
+ * ------------------
+ * Important - Usage:
+ * ------------------
+ * `translation` prop should be an actual `i18n.translate()` call from the consuming end.
+ * This is the only way currently to ensure that it is picked up by our string extraction mechanism
+ * and propagate into GlotPress for translation.
+ * ------------------
  * @param {Object} options
  * @param {string} options.text - The text to check for translation.
  * @param {string | Object} options.translation - The translation to return if the text is translated.
