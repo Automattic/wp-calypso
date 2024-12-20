@@ -338,6 +338,8 @@ class Layout extends Component {
 			// There is a custom command palette in the "Switch site" page, so we disable it.
 			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
 
+		const shouldDisableGlobalNotifications = this.props.disableGlobalNotifications;
+
 		return (
 			<div className={ sectionClass }>
 				<WhatsNewLoader
@@ -427,7 +429,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				<GlobalNotifications />
+				{ ! shouldDisableGlobalNotifications && <GlobalNotifications /> }
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
@@ -475,6 +477,8 @@ export default withCurrentRoute(
 				[ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
+		// Currently, we only want to disable global notifications for A4A.
+		const disableGlobalNotifications = isA8CForAgencies();
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
@@ -545,6 +549,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			disableGlobalNotifications,
 		};
 	} )( Layout )
 );
