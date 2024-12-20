@@ -26,7 +26,6 @@ import {
 	TransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
-import type { MouseEvent } from 'react';
 
 import '@wordpress/dataviews/build-style/style.css';
 import './style.scss';
@@ -58,10 +57,6 @@ class BillingHistoryListDataView extends Component<
 
 	static defaultProps = {
 		header: false,
-	};
-
-	onPageClick = ( page: number ) => {
-		this.props.setPage( 'past', page );
 	};
 
 	onChangeView = ( newView: { page?: number } ) => {
@@ -226,53 +221,6 @@ class BillingHistoryListDataView extends Component<
 
 	recordClickEvent = ( eventAction: string ) => {
 		recordGoogleEvent( 'Me', eventAction );
-	};
-
-	handleReceiptLinkClick = () => {
-		return this.recordClickEvent( 'View Receipt in Billing History' );
-	};
-
-	getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
-		const { sendBillingReceiptEmail } = this.props;
-
-		return ( event: MouseEvent< HTMLButtonElement > ) => {
-			event.preventDefault();
-			this.recordClickEvent( 'Email Receipt in Billing History' );
-			sendBillingReceiptEmail( receiptId );
-		};
-	};
-
-	renderEmailAction = ( receiptId: string ) => {
-		const { translate, sendingBillingReceiptEmail } = this.props;
-
-		if ( sendingBillingReceiptEmail( receiptId ) ) {
-			return translate( 'Emailing receipt…' );
-		}
-
-		return (
-			<button
-				className="billing-history__email-button"
-				onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }
-			>
-				{ translate( 'Email receipt' ) }
-			</button>
-		);
-	};
-
-	renderActions = ( transaction: BillingTransaction ) => {
-		const { translate, getReceiptUrlFor } = this.props;
-
-		return (
-			<div className="billing-history__transaction-links">
-				<a
-					className="billing-history__view-receipt"
-					href={ getReceiptUrlFor( transaction.id ) }
-					onClick={ this.handleReceiptLinkClick }
-				>
-					{ translate( 'View receipt' ) }
-				</a>
-			</div>
-		);
 	};
 }
 
