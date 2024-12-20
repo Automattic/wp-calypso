@@ -655,6 +655,31 @@
 		.email-plan-mailboxes-list__mailbox-secondary-details svg {
 			width: 1rem;
 		}
+
+		.email-mailbox-warnings {
+			.email-mailbox-warnings__warning,
+			.email-mailbox-warnings__action {
+				display: inline-block;
+				border: none;
+				padding: 0;
+				margin: 0;
+			}
+
+			.email-mailbox-warnings__action {
+				button {
+					padding: 0;
+				}
+			}
+
+			.email-mailbox-warnings__warning {
+				margin-left: 0;
+				margin-right: 0.75rem;
+
+				svg {
+					fill: var(--color-error);
+				}
+			}
+		}
 	}
 }
 

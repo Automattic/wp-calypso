@@ -88,17 +88,18 @@ function EmailPlanMailboxesList( {
 	function MailboxItems() {
 		return mailboxes.map( ( mailbox ) => {
 			const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
+			const showErrorStyling = context === 'email' && mailboxHasWarnings;
 
 			return (
 				<>
-					<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
+					<MailboxListItem key={ mailbox.mailbox } isError={ showErrorStyling }>
 						<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 							<MailboxLink
 								account={ account }
 								mailbox={ mailbox }
 								readonly={ isGoogleConfiguring }
 							/>
-							{ context !== 'domains' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
+							{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 						</div>
 						{ context === 'domains' && (
 							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
@@ -106,6 +107,15 @@ function EmailPlanMailboxesList( {
 									mailbox={ mailbox }
 									hideIcon={ isDesktopResolution }
 								/>
+								{ mailboxHasWarnings && (
+									<div className="email-mailbox-warnings">
+										<EmailMailboxWarnings
+											account={ account }
+											mailbox={ mailbox }
+											ctaProps={ { primary: true, borderless: true, compact: false } }
+										/>
+									</div>
+								) }
 							</div>
 						) }
 						{ isEmailUserAdmin( mailbox ) && (
@@ -116,7 +126,9 @@ function EmailPlanMailboxesList( {
 							</Badge>
 						) }
 
-						<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+						{ context === 'email' && (
+							<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+						) }
 						{ ! mailbox.temporary && ! isGoogleConfiguring && (
 							<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
 						) }
