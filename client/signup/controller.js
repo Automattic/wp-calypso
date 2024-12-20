@@ -9,6 +9,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -60,6 +61,22 @@ const removeWhiteBackground = function () {
 
 	document.body.classList.remove( 'is-white-signup' );
 };
+
+function setReferrerPolicy() {
+	try {
+		// Remove existing <meta> tags with name="referrer"
+		const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+		existingMetaTags.forEach( ( tag ) => tag.remove() );
+
+		// Create a new <meta> element
+		const metaReferrer = document.createElement( 'meta' );
+		metaReferrer.name = 'referrer';
+		metaReferrer.content = 'strict-origin-when-cross-origin';
+
+		// Append the new <meta> element to the <head> section
+		document.head.appendChild( metaReferrer );
+	} catch ( e ) {}
+}
 
 export const addVideoPressSignupClassName = () => {
 	if ( ! document ) {
@@ -223,25 +240,32 @@ export default {
 		store.set( 'signup-locale', localeFromParams );
 
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow ) {
+		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected_1220=true' ) ) {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
-			// const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-			// 	'calypso_signup_onboarding_stepper_flow_2'
-			// );
-			// if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-			// 	window.location =
-			// 		getStepUrl(
-			// 			flowName,
-			// 			getStepName( context.params ),
-			// 			getStepSectionName( context.params ),
-			// 			localeFromParams ?? localeFromStore,
-			// 			null,
-			// 			'/setup'
-			// 		) +
-			// 		( context.querystring ? '?' + context.querystring : '' ) +
-			// 		( context.hashstring ? '#' + context.hashstring : '' );
-			// 	return;
-			// }
+
+			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_stepper_flow_confidence_check'
+			);
+
+			setReferrerPolicy();
+			let url =
+				getStepUrl(
+					flowName,
+					getStepName( context.params ),
+					getStepSectionName( context.params ),
+					localeFromParams ?? localeFromStore,
+					null,
+					stepperOnboardingExperimentAssignment.variationName === 'stepper' ? '/setup' : '/start'
+				) +
+				'?redirected_1220=true' +
+				( context.querystring ? '&' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+
+			if ( document.referrer ) {
+				url = addQueryArgs( { start_ref: document.referrer }, url );
+			}
+
+			window.location.replace( url );
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
