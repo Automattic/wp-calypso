@@ -346,7 +346,7 @@ const streamApis = {
 	user: {
 		path: ( { streamKey } ) => `/users/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
-		apiVersion: '1.1',
+		apiVersion: '1',
 	},
 };
 

@@ -3,7 +3,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
 import type { AppState } from 'calypso/types';
 
-// Define interfaces
 interface Context {
 	params: {
 		user_id: string;
