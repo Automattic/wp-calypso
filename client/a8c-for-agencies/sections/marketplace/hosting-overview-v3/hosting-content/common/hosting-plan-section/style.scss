@@ -8,6 +8,12 @@
 		@include a4a-font-heading-lg;
 		text-align: center;
 	}
+
+	&.page-section-wrapper {
+		@include break-medium {
+			padding: 40px 0;
+		}
+	}
 }
 
 .hosting-plan-section__banner {
