@@ -70,11 +70,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 	const activeAddOns = getActiveAddOns();
-	const addOnPriceComps = activeAddOns.map( ( { productSlug, quantity } ) => ( {
-		productSlug,
-		quantity,
-	} ) );
-	const addOnPrices = useAddOnPrices( addOnPriceComps );
+	const addOnPrices = useAddOnPrices( activeAddOns );
 	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
@@ -83,7 +79,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 		() =>
 			activeAddOns.map( ( addOnMeta ) => {
 				const { productSlug, quantity } = addOnMeta;
-				const key = createAddOnPriceKey( { productSlug, quantity } );
+				const key = createAddOnPriceKey( addOnMeta );
 
 				// TODO: can we not specify the product slug here for the storage add-on?
 				const isLoading =
@@ -128,14 +124,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					checkoutLink: checkoutLink( selectedSiteId ?? null, productSlug, quantity ),
 				};
 			} ),
-		[
-			addOnPrices,
-			addOnPriceComps,
-			productsList.data,
-			productsList.isLoading,
-			checkoutLink,
-			selectedSiteId,
-		]
+		[ addOnPrices, productsList.data, productsList.isLoading, checkoutLink, selectedSiteId ]
 	);
 };
 
