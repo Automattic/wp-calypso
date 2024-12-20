@@ -28,6 +28,7 @@ export const calculateCommissions = ( referral: Referral, products: APIProductFa
 		.reduce( ( acc, current ) => acc + current, 0 );
 };
 
+// TODO: Remove this file once we establish new commission logic works properly
 export const getConsolidatedData = (
 	referrals: Referral[],
 	products: APIProductFamilyProduct[],

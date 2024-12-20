@@ -55,7 +55,6 @@ export default function LayoutBodyContent( {
 	dataViewsState,
 	setDataViewsState,
 	referralInvoices,
-	isFetchingInvoices,
 	isArchiveView,
 	onReferralRefetch,
 }: Props ) {
@@ -128,8 +127,7 @@ export default function LayoutBodyContent( {
 				{ ! dataViewsState.selectedItem && ! isArchiveView && (
 					<ConsolidatedViews
 						referrals={ referrals }
-						referralInvoices={ referralInvoices }
-						isFetchingInvoices={ isFetchingInvoices }
+						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
 					/>
 				) }
 				<ReferralList

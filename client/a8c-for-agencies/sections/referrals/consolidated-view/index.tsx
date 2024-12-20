@@ -4,14 +4,13 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { getConsolidatedData } from '../lib/commissions';
-import { getNextPayoutDate } from '../lib/get-next-payout-date';
+import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import InfoModal from './info-modal';
-import type { Referral, ReferralInvoice } from '../types';
+import type { Referral } from '../types';
 
 import './style.scss';
 
@@ -80,94 +79,79 @@ const CardInfo = ( { children, wrapperRef, footerText, title }: FooterInfoProps 
 	);
 };
 
-export default function ConsolidatedViews( {
-	referrals,
-	referralInvoices,
-	isFetchingInvoices,
-}: {
+type ConsolidatedViewsProps = {
 	referrals: Referral[];
-	referralInvoices: ReferralInvoice[];
-	isFetchingInvoices?: boolean;
-} ) {
+	totalPayouts?: number;
+};
+
+export default function ConsolidatedViews( { referrals, totalPayouts }: ConsolidatedViewsProps ) {
 	const translate = useTranslate();
 
-	const { data, isFetching } = useProductsQuery( false, false, true );
-
-	const [ consolidatedData, setConsolidatedData ] = useState( {
-		allTimeCommissions: 0,
-		pendingOrders: 0,
-		pendingCommission: 0,
-	} );
+	const { data: productsData, isFetching } = useProductsQuery( false, false, true );
 
 	const commissionInfoRef = useRef< HTMLDivElement | null >( null );
 	const pendingOrdersRef = useRef< HTMLDivElement | null >( null );
 	const nextPayoutDateRef = useRef< HTMLDivElement | null >( null );
 	const pendingCommissionRef = useRef< HTMLDivElement | null >( null );
 
-	useEffect( () => {
-		if ( data?.length ) {
-			const consolidatedData = getConsolidatedData( referrals, data || [], referralInvoices );
-			setConsolidatedData( consolidatedData );
-		}
-	}, [ referrals, data, referralInvoices ] );
+	// Logic is moved to the hook for better readability
+	const { expectedCommission, pendingOrders, nextPayoutActivityWindow, nextPayoutDate } =
+		useGetConsolidatedPayoutData( referrals, productsData );
 
 	const link =
 		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
-	const showLoader = isFetching || isFetchingInvoices;
-
-	const nextPayoutDate = getNextPayoutDate( new Date() ).toLocaleString( 'default', {
-		month: 'short',
-		day: 'numeric',
-	} );
+	const showLoader = isFetching;
 
 	return (
 		<div className="consolidated-view">
-			<Card compact ref={ commissionInfoRef }>
-				<div className="consolidated-view__value">
-					{ showLoader ? (
-						<TextPlaceholder />
-					) : (
-						formatCurrency( consolidatedData.allTimeCommissions, 'USD' )
-					) }
-				</div>
-				<CardInfo
-					title={ translate( 'Total payouts' ) }
-					wrapperRef={ commissionInfoRef }
-					footerText={ translate( 'All time referral payouts' ) }
-				>
-					<div className="consolidated-view__popover-content">
-						{ translate(
-							'Every 60 days, we pay out commissions. {{a}}Learn more about payouts and commissions{{/a}}.',
-							{
-								components: {
-									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
-								},
-							}
-						) }
-					</div>
-				</CardInfo>
-			</Card>
+			{ totalPayouts !== undefined && (
+				<Card compact ref={ commissionInfoRef }>
+					<div className="consolidated-view__value">{ formatCurrency( totalPayouts, 'USD' ) }</div>
+					<CardInfo
+						title={ translate( 'Total payouts' ) }
+						wrapperRef={ commissionInfoRef }
+						footerText={ translate( 'All time referral payouts' ) }
+					>
+						<div className="consolidated-view__popover-content">
+							{ translate(
+								'The exact amount your agency has been paid out for referrals.' +
+									'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
+								{
+									components: {
+										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
+										br: <br />,
+									},
+								}
+							) }
+						</div>
+					</CardInfo>
+				</Card>
+			) }
 			<Card compact ref={ pendingCommissionRef }>
 				<div className="consolidated-view__value">
-					{ showLoader ? (
-						<TextPlaceholder />
-					) : (
-						formatCurrency( consolidatedData.pendingCommission, 'USD' )
-					) }
+					{ showLoader ? <TextPlaceholder /> : formatCurrency( expectedCommission, 'USD' ) }
 				</div>
 				<CardInfo
 					title={ translate( 'Estimated amount' ) }
 					wrapperRef={ pendingCommissionRef }
-					footerText={ translate( 'Commissions expected' ) }
+					footerText={ translate( 'Next estimated payout amount' ) }
 				>
 					<div className="consolidated-view__popover-content">
 						{ translate(
-							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately.' +
-								' We estimate the commission based on the active use for the current month. {{a}}Learn more about payouts and commissions{{/a}}.',
+							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. ' +
+								'We estimate the commission based on the active use for the current month. ' +
+								'{{br/}}{{br}}{{/br}}The next payout range is for:' +
+								'{{br/}}{{span}}%(nextPayoutActivityWindow)s{{/span}}' +
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
+									br: <br />,
+									span: <span className="consolidated-view__popover-content-activity-dates" />,
+								},
+								args: {
+									nextPayoutActivityWindow,
 								},
 								comment: 'This is a tooltip explaining how the commission is calculated',
 							}
@@ -186,7 +170,7 @@ export default function ConsolidatedViews( {
 						{ translate(
 							'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks. ' +
 								'Payout dates mark the start of processing, which may take a few extra days. Payments scheduled on weekends are processed the next business day. ' +
-								'{{br}}{{/br}}{{a}}Learn more{{/a}} ↗',
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
@@ -200,7 +184,7 @@ export default function ConsolidatedViews( {
 				</CardInfo>
 			</Card>
 			<Card compact ref={ pendingOrdersRef }>
-				<div className="consolidated-view__value">{ consolidatedData.pendingOrders }</div>
+				<div className="consolidated-view__value">{ pendingOrders }</div>
 				<CardInfo
 					title={ translate( 'Pending orders' ) }
 					wrapperRef={ pendingOrdersRef }
@@ -208,15 +192,12 @@ export default function ConsolidatedViews( {
 				>
 					<div className="consolidated-view__popover-content">
 						{ translate(
-							'These are the number of pending referrals (unpaid carts).' +
-								'{{br}}{{/br}}{{a}}Learn more{{/a}} ↗',
+							'These are the number of pending referrals (unpaid carts). ' +
+								'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 							{
 								components: {
 									a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
 									br: <br />,
-								},
-								args: {
-									estimatedCommission: 154,
 								},
 								comment:
 									'This is a tooltip explaining how the commission payout date is calculated',
