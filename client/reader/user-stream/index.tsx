@@ -1,8 +1,11 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import wpcom from 'calypso/lib/wp';
 import UserComments from './views/comments';
 import UserLikes from './views/likes';
 import UserLists from './views/lists';
@@ -21,9 +24,31 @@ interface UserStreamProps {
 	userId: string;
 }
 
+const requestsInFlight = new Set();
+function fetchUser( userId ) {
+	if ( requestsInFlight.has( userId ) ) {
+		return;
+	}
+
+	requestsInFlight.add( userId );
+	function removeKey() {
+		requestsInFlight.delete( userId );
+	}
+	return wpcom.req
+		.get( `/users/${ encodeURIComponent( userId ) }/` )
+		.then( ( data ) => {
+			removeKey();
+			return data;
+		} )
+		.catch( () => {
+			removeKey();
+		} );
+}
+
 const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 	const translate = useTranslate();
 	const currentPath = page.current;
+	const [ user, setUser ] = useState( null );
 
 	const navigationItems: NavigationItem[] = [
 		{
@@ -72,9 +97,20 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 		}
 	};
 
+	useEffect( () => {
+		fetchUser( userId ).then( ( data ) => {
+			const userData = {
+				...data,
+				has_avatar: true,
+			};
+			setUser( userData );
+		} );
+	}, [ userId ] );
+
 	return (
 		<div className="user-stream">
 			<h1 className="user-stream__header">User Profile</h1>
+			<ReaderAvatar author={ user } />
 			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
