@@ -38,7 +38,11 @@ export default function ContextMenu( { className }: Props ) {
 	];
 
 	return (
-		<EllipsisMenu className={ className } popoverClassName={ `${ className }-popover` }>
+		<EllipsisMenu
+			className={ className }
+			popoverClassName={ `${ className }-popover` }
+			position="bottom"
+		>
 			{ options.map( ( option, key ) => (
 				<PopoverMenuItem key={ key } { ...option }>
 					{ option.label }

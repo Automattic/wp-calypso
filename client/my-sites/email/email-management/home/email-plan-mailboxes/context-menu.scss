@@ -16,5 +16,12 @@
 			width: 24px;
 			height: auto;
 		}
+
+		&:hover,
+		&:focus {
+			svg {
+				fill: var(--color-text-inverted);
+			}
+		}
 	}
 }
