@@ -38,10 +38,7 @@ export default function ContextMenu( { className }: Props ) {
 	];
 
 	return (
-		<EllipsisMenu
-			className={ className }
-			popoverClassName="email-plan-mailboxes-list__mailbox-context-menu-popover"
-		>
+		<EllipsisMenu className={ className } popoverClassName={ `${ className }-popover` }>
 			{ options.map( ( option, key ) => (
 				<PopoverMenuItem key={ key } { ...option }>
 					{ option.label }
