@@ -1,11 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -155,21 +153,6 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-						<div className="stats-module__footer-actions--summary-tall">
-							<UpsellNudge
-								title={ translate( 'Add Google Analytics' ) }
-								description={ translate(
-									'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
-									{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
-								) }
-								event="googleAnalytics-stats-countries"
-								feature={ FEATURE_GOOGLE_ANALYTICS }
-								plan={ PLAN_PREMIUM }
-								tracksImpressionName="calypso_upgrade_nudge_impression"
-								tracksClickName="calypso_upgrade_nudge_cta_click"
-								showIcon
-							/>
-						</div>
 					</Fragment>
 				);
 				break;
