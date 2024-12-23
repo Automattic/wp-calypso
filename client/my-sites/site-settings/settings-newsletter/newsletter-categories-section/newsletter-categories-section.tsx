@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
 import './style.scss';
@@ -44,6 +45,11 @@ const NewsletterCategoriesSection = ( {
 				) }
 				aria-hidden={ ! newsletterCategoriesEnabled }
 			>
+				<FormLegend>
+					{ translate(
+						'Which categories will you use for newsletter subscribers? Select all that apply:'
+					) }
+				</FormLegend>
 				<TermTreeSelector
 					taxonomy="category"
 					addTerm
