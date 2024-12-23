@@ -1,6 +1,5 @@
-import { Button, TextControl } from '@wordpress/components';
-import { Icon, lineSolid, plus } from '@wordpress/icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
 
 import './style.scss';
 
@@ -19,46 +18,21 @@ export default function A4ANumberInputV2( {
 	maximum,
 	increment = 1,
 }: Props ) {
-	const inputRef = useRef< HTMLInputElement >( null );
-	const [ dirtyValue, setDirtyValue ] = useState( '' );
-
-	const onDecrement = useCallback( () => {
-		onChange( Math.max( value - increment, minimum ) );
-	}, [ increment, minimum, onChange, value ] );
-
-	const onIncrement = useCallback( () => {
-		onChange( maximum ? Math.min( value + increment, maximum ) : value + increment );
-	}, [ increment, maximum, onChange, value ] );
-
-	const onBlur = useCallback( () => {
-		const next = Number( dirtyValue );
-		if ( ! isNaN( next ) && next >= minimum && ( ! maximum || next <= maximum ) ) {
-			onChange( next );
-		} else {
-			setDirtyValue( `${ value }` );
-		}
-	}, [ dirtyValue, maximum, minimum, onChange, value ] );
-
-	useEffect( () => {
-		setDirtyValue( `${ value }` );
-	}, [ value ] );
+	const handleOnChange = ( newValue: unknown ) => {
+		onChange( newValue as number );
+	};
 
 	return (
-		<div className="a4a-number-input-v2">
-			<TextControl
-				ref={ inputRef }
-				value={ dirtyValue }
-				onChange={ ( newValue ) => setDirtyValue( newValue ) }
-				onBlur={ onBlur }
-				onFocus={ () => inputRef.current?.select() }
-				type="number"
-			/>
-			<Button onMouseDown={ onIncrement }>
-				<Icon icon={ plus } size={ 18 } />
-			</Button>
-			<Button onMouseDown={ onDecrement }>
-				<Icon icon={ lineSolid } size={ 18 } />
-			</Button>
-		</div>
+		<NumberControl
+			className="a4a-number-input-v2"
+			__next40pxDefaultSize
+			isShiftStepEnabled
+			min={ minimum }
+			max={ maximum }
+			step={ increment }
+			value={ value }
+			onChange={ handleOnChange }
+			spinControls="custom"
+		/>
 	);
 }

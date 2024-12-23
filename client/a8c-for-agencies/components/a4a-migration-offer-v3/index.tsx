@@ -6,7 +6,6 @@ import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from '../a4a-contact-support-widget';
-import { A4A_MIGRATIONS_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 import SimpleList from '../simple-list';
 
 import './style.scss';
@@ -96,7 +95,9 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 
 							<Button
 								variant="secondary"
-								href={ A4A_MIGRATIONS_OVERVIEW_LINK }
+								href="https://automattic.com/for-agencies/program-incentives/"
+								target="_blank"
+								rel="noopener noreferrer"
 								onClick={ onSeeFullTermClick }
 							>
 								{ translate( 'See full terms ↗' ) }
