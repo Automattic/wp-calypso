@@ -36,7 +36,7 @@ const TopCard = ( { heading, icon, value, isLoading, emailIsSending = false } ) 
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
-			<div className={ `highlight-card-count ${ emailIsSending ? 'sending-email' : '' }` }>
+			<div className={ `highlight-card-count ${ emailIsSending ? 'is-sending-email' : '' }` }>
 				<TopCardValue
 					value={ emailIsSending ? translate( 'Still sending emails.' ) : value }
 					isLoading={ isLoading }
