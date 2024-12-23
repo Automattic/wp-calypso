@@ -4,7 +4,7 @@ This is a [`AddNewSite` component](../../components/add-new-site/index.tsx)
 
 ## Overview
 
-The [AddNewSite](../../components/add-new-site/index.tsx) component is designed with a focus on modularity and environment agnosticism. Our approach centralizes component functionality to ensure a single implementation serves all environments. Environment-specific behaviors are managed internally using the env the component is rendered on, keeping the component adaptable and reusable across different contexts. Additionally, the component leverages asynchronous loading for dynamic content, ensuring that environment-specific data is fetched and rendered only when needed. This strategy optimizes performance and guarantees the most relevant data is presented to the user. For more details, refer to [PR #97499](https://github.com/Automattic/wp-calypso/pull/97499).
+The [AddNewSite](../../components/add-new-site/index.tsx) component is designed with a focus on modularity and environment agnosticism. Our approach centralizes component functionality to ensure a single implementation serves all environments. Environment-specific behaviors are managed internally using the environment the component is rendered in, keeping the component adaptable and reusable across different contexts. Additionally, the component leverages asynchronous loading for dynamic content, ensuring that environment-specific data is fetched and rendered only when needed. This strategy optimizes performance and guarantees the most relevant data is presented to the user. For more details, refer to [PR #97499](https://github.com/Automattic/wp-calypso/pull/97499).
 
 ## Usage
 
