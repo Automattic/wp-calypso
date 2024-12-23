@@ -90,9 +90,9 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 	} );
 
-	describe( 'Subscribers', function () {
-		it( 'Click on Subscribers tab', async function () {
-			await statsPage.clickTab( 'Subscribers' );
+	describe( 'Newsletter', function () {
+		it( 'Click on Newsletter tab', async function () {
+			await statsPage.clickTab( 'Newsletter' );
 		} );
 	} );
 

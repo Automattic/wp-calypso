@@ -3,7 +3,7 @@ import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
-export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store';
+export type StatsTabs = 'Traffic' | 'Insights' | 'Newsletter' | 'Store';
 type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
 type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Value';
 // Discriminated Union type.
