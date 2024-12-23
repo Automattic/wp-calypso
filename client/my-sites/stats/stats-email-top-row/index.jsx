@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Icon, send, seen, link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -15,6 +16,7 @@ import './style.scss';
 
 export default function StatsEmailTopRow( { siteId, postId, statType, className, post } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const counts = useSelector( ( state ) =>
 		getEmailStatsNormalizedData( state, siteId, postId, PERIOD_ALL_TIME, statType, '', 'rate' )
@@ -35,7 +37,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 				return (
 					<>
 						<TopCard
-							heading={ translate( 'Total emails sent' ) }
+							heading={
+								hasEnTranslation( 'Total emails sent' )
+									? translate( 'Total emails sent' )
+									: translate( 'Recipients' )
+							}
 							value={ counts?.total_sends ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Icon icon={ send } /> }
