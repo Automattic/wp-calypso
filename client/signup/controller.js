@@ -266,6 +266,9 @@ export default {
 			}
 
 			window.location.replace( url );
+			// skip the rest to avoid the `page.redirect` call below.
+			next();
+			return;
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
