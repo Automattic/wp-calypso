@@ -251,7 +251,7 @@ class StatsEmailDetail extends Component {
 									siteId={ siteId }
 									postId={ postId }
 									statType={ statType }
-									date={ date }
+									post={ post }
 								/>
 
 								<StatsPeriodHeader>

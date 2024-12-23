@@ -14,7 +14,7 @@ import {
 import TopCard from './top-card';
 import './style.scss';
 
-export default function StatsEmailTopRow( { siteId, postId, statType, className, date } ) {
+export default function StatsEmailTopRow( { siteId, postId, statType, className, post } ) {
 	const translate = useTranslate();
 
 	const counts = useSelector( ( state ) =>
@@ -25,14 +25,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 	);
 
 	/**
-	 * Only show some email stats if post published more than 5 minutes ago.
-	 * As part of this, we fix the date sometimes object having wrong time of day
-	 * and normalize to utc to account for time zones differences.
+	 * Only show email stats if post was published more than 5 minutes ago.
 	 */
-	const correctedPostDateWithTime = moment.parseZone( date._i ).utc();
-	const now = moment().utc();
-	const minutesSincePublishing = now.diff( correctedPostDateWithTime, 'minutes' );
-	const emailIsSending = minutesSincePublishing < 5;
+	const now = moment();
+	const emailIsSending = post?.date ? now.diff( moment( post?.date ), 'minutes' ) < 5 : false;
 
 	const boxes = useMemo( () => {
 		switch ( statType ) {
