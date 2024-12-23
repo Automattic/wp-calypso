@@ -125,7 +125,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 					suggestions={ newsletterCategories.map( ( cat ) => cat.name ) }
 					onChange={ handleCategoryChange }
 					label=""
-					placeholder={ __( 'Add categories' ) }
+					placeholder={ __( 'Search…' ) }
 				/>
 			) }
 		</div>
