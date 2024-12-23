@@ -974,7 +974,19 @@ export const normalizers = {
 		const emailsData = get( data, [ 'posts' ], [] );
 
 		return emailsData.map(
-			( { id, href, date, title, type, opens, clicks, opens_rate, clicks_rate } ) => {
+			( {
+				id,
+				href,
+				date,
+				title,
+				type,
+				opens,
+				clicks,
+				opens_rate,
+				clicks_rate,
+				opens_unique,
+				clicks_unique,
+			} ) => {
 				const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
 				return {
 					id,
@@ -982,11 +994,13 @@ export const normalizers = {
 					date,
 					label: title,
 					type,
-					value: clicks || '0',
+					value: clicks_rate || '0',
 					opens: opens || '0',
 					clicks: clicks || '0',
 					opens_rate: opens_rate || '0',
 					clicks_rate: clicks_rate || '0',
+					opens_unique: opens_unique || '0',
+					clicks_unique: clicks_unique || '0',
 					page: detailPage,
 					actions: [
 						{

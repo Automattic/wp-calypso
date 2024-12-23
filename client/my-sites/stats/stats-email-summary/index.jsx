@@ -1,4 +1,6 @@
+import { Tooltip } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -12,6 +14,30 @@ import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
 
 const StatsStrings = statsStringsFactory();
+
+const TooltipWrapper = ( { value, item, renderContent } ) => {
+	const triggerRef = useRef( null );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	const formattedValue =
+		typeof value === 'number' ? Number( value ).toFixed( 2 ) : value.replace( '%', '' ).trim();
+
+	return (
+		<span className="stats-email__tooltip-wrapper">
+			<span
+				ref={ triggerRef }
+				className="stats-email__tooltip-trigger"
+				onMouseEnter={ () => setShowTooltip( true ) }
+				onMouseLeave={ () => setShowTooltip( false ) }
+			>
+				{ `${ formattedValue }%` }
+			</span>
+			<Tooltip position="top" context={ triggerRef.current } isVisible={ showTooltip }>
+				{ renderContent( item ) }
+			</Tooltip>
+		</span>
+	);
+};
 
 const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	// Navigation settings. One of the following, depending on the summary view.
@@ -36,6 +62,46 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 		backLink += domain;
 	}
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+
+	const renderTooltipContent = ( item ) => {
+		const opensUnique = parseInt( item.opens_unique, 10 ) || 0;
+		const clicksUnique = parseInt( item.clicks_unique, 10 ) || 0;
+		const opens = parseInt( item.opens, 10 ) || 0;
+		const clicks = parseInt( item.clicks, 10 ) || 0;
+		const opensRate = parseFloat( item.opens_rate ) || 0;
+		const clicksRate = parseFloat( item.clicks_rate ) || 0;
+
+		return (
+			<div className="stats-email__tooltip">
+				<div>{ translate( 'Total Opens: %(opens)d', { args: { opens } } ) }</div>
+				<div>
+					{ translate( 'Unique Opens: %(uniqueOpens)d', {
+						args: { uniqueOpens: opensUnique },
+					} ) }
+				</div>
+				<div>
+					{ translate( 'Open Rate: %(openRate).2f%%', {
+						args: { openRate: opensRate },
+					} ) }
+				</div>
+				<div>
+					{ translate( 'Total Clicks: %(clicks)d', {
+						args: { clicks },
+					} ) }
+				</div>
+				<div>
+					{ translate( 'Unique Clicks: %(uniqueClicks)d', {
+						args: { uniqueClicks: clicksUnique },
+					} ) }
+				</div>
+				<div>
+					{ translate( 'Click Rate: %(clickRate).2f%%', {
+						args: { clickRate: clicksRate },
+					} ) }
+				</div>
+			</div>
+		);
+	};
 
 	return (
 		<Main className="has-fixed-nav" wideLayout>
@@ -64,9 +130,11 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							</>
 						),
 						body: ( item ) => (
-							<>
-								<span>{ `${ item.opens_rate }%` }</span>
-							</>
+							<TooltipWrapper
+								value={ `${ item.opens_rate }%` }
+								item={ item }
+								renderContent={ renderTooltipContent }
+							/>
 						),
 					} }
 					path="emails"
@@ -78,7 +146,18 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					hideSummaryLink
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
-					formatValue={ ( value ) => `${ value }%` }
+					formatValue={ ( value, item ) => {
+						if ( item?.opens !== undefined ) {
+							return (
+								<TooltipWrapper
+									value={ `${ value }%` }
+									item={ item }
+									renderContent={ renderTooltipContent }
+								/>
+							);
+						}
+						return <span>{ `${ value }%` }</span>;
+					} }
 					listItemClassName="stats__summary--narrow-mobile"
 				/>
 				<JetpackColophon />
