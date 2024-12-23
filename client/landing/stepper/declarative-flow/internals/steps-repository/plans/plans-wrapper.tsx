@@ -138,6 +138,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} else {
 			recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: 'default',
+				flow: flowName,
 			} );
 		}
 

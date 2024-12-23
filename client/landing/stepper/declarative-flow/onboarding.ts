@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -10,7 +10,10 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
+import {
+	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+} from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE } from '../stores';
@@ -38,6 +41,19 @@ const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
+	useTracksEventProps() {
+		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+
+		return useMemo(
+			() => ( {
+				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
+					is_goals_first: isGoalsAtFrontExperiment.toString(),
+					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+				},
+			} ),
+			[ isGoalsAtFrontExperiment ]
+		);
+	},
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();

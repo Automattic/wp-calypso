@@ -90,6 +90,7 @@ export const buildUpgradeFunction = (
 	} else {
 		recordTracksEvent( 'calypso_signup_free_plan_select', {
 			from_section: stepSectionName ? stepSectionName : 'default',
+			flow: flowName,
 		} );
 	}
 
