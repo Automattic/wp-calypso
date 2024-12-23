@@ -1,6 +1,5 @@
 import pagejs from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
-import { type SiteExcerptData, SitesSortKey } from '@automattic/sites';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -16,7 +15,6 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UrlSearch from 'calypso/lib/url-search';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { useSelector } from 'calypso/state';
@@ -30,6 +28,8 @@ import {
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 import type { View } from '@wordpress/dataviews';
+
+import './style.scss';
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
@@ -130,9 +130,9 @@ const PluginsDashboard = ( { pluginSlug, doSearch }: PluginsDashboardProps ) => 
 	return (
 		<Layout
 			className={ clsx(
-				'plugins-dashboard',
-				'plugins-dashboard__layout',
-				! pluginSlug && 'plugin-sites-hidden'
+				'sites-dashboard',
+				'sites-dashboard__layout',
+				! pluginSlug && 'preview-hidden'
 			) }
 			wide
 			title={ dashboardTitle }
@@ -141,7 +141,7 @@ const PluginsDashboard = ( { pluginSlug, doSearch }: PluginsDashboardProps ) => 
 			<DocumentHead title={ dashboardTitle } />
 			<QueryPlugins />
 
-			<LayoutColumn className="plugins-overview" wide>
+			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
