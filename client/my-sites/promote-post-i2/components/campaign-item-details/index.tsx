@@ -193,33 +193,30 @@ export default function CampaignItemDetails( props: Props ) {
 	} = campaign_stats || {};
 
 	// check if delivery outperformed
+	const calculateOutperformPercentage = ( estimates: string, total: number ): number => {
+		const tempValues = ( estimates || '' ).split( ':' );
+		let median = 0;
+		if ( tempValues && tempValues.length >= 2 ) {
+			const [ minValue, maxValue ] = tempValues.map( Number );
+			median = ( minValue + maxValue ) / 2;
+		}
+		if ( total > median && median > 0 ) {
+			return Math.round( ( ( total - median ) / median ) * 100 );
+		}
+		return 0;
+	};
+
 	// for impressions
-	const deliveryEstimates = ( display_delivery_estimate || '' ).split( ':' );
-	let medianImpressions = 0;
-	if ( deliveryEstimates && deliveryEstimates.length >= 2 ) {
-		const [ minImpressions, maxImpressions ] = deliveryEstimates.map( Number );
-		medianImpressions = ( minImpressions + maxImpressions ) / 2;
-	}
-	let impressionsOutperformedPercentage = 0;
-	if ( impressions_total > medianImpressions && medianImpressions > 0 ) {
-		impressionsOutperformedPercentage = Math.round(
-			( ( impressions_total - medianImpressions ) / medianImpressions ) * 100
-		);
-	}
+	const impressionsOutperformedPercentage = calculateOutperformPercentage(
+		display_delivery_estimate,
+		impressions_total
+	);
 
 	// for clicks
-	const clickEstimates = ( display_clicks_estimate || '' ).split( ':' );
-	let medianClicks = 0;
-	if ( clickEstimates && clickEstimates.length >= 2 ) {
-		const [ minClicks, maxClicks ] = clickEstimates.map( Number );
-		medianClicks = ( minClicks + maxClicks ) / 2;
-	}
-	let clicksOutperformedPercentage = 0;
-	if ( clicks_total > medianClicks && medianClicks > 0 ) {
-		clicksOutperformedPercentage = Math.round(
-			( ( clicks_total - medianClicks ) / medianClicks ) * 100
-		);
-	}
+	const clicksOutperformedPercentage = calculateOutperformPercentage(
+		display_clicks_estimate,
+		clicks_total
+	);
 
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
