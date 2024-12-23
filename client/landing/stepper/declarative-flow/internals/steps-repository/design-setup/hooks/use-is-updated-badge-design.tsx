@@ -11,7 +11,7 @@ const useIsUpdatedBadgeDesign = () => {
 
 	const step = useMemo( () => getStepFromURL(), [] );
 
-	return isEligible ? step === 'designSetup' : false;
+	return isEligible ? step?.toLowerCase() === 'designsetup' : false;
 };
 
 export default useIsUpdatedBadgeDesign;
