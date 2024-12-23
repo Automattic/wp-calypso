@@ -39,7 +39,7 @@ class StatsEmailModule extends Component {
 		const moduleStrings = statsStrings()[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
-		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : null;
+		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
 
 		return (
 			<>
@@ -59,6 +59,7 @@ class StatsEmailModule extends Component {
 								postId={ postId }
 								query={ query }
 								isLoading={ isLoading }
+								numberLabel={ metricLabel }
 							/>
 						)
 					}
