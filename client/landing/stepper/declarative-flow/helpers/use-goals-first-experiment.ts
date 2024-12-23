@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { getFlowFromURL } from '../../utils/get-flow-from-url';
 
-export const EXPERIMENT_NAME = 'calypso_onboarding_goals_first_holdout_20250106';
+export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_flow_holdout_20241220';
 
 /**
  * Check whether the user should have the "goals first" onboarding experience.
@@ -18,14 +18,13 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	} );
 
 	/**
-	 * If the user is not eligible, we'll treat them as if they were in the holdout group
-	 * so we can provide the existing experience.
+	 * If the user is not eligible, we'll treat them as if they were in the
+	 * holdout/control group so we can provide the existing experience.
 	 *
 	 * This fallback is necessary because experimentAssignment returns null when the user
-	 * is not eligible, and we're using this hook within steps that are used by other
-	 * flows.
+	 * is not eligible, and we're using this hook within steps that are used by other flows.
 	 */
-	const variationName = experimentAssignment?.variationName ?? 'holdout';
+	const variationName = experimentAssignment?.variationName ?? 'control';
 
-	return [ isLoading, variationName === 'control' ];
+	return [ isLoading, variationName === 'treatment' ];
 }
