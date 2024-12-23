@@ -90,9 +90,14 @@ export function useFields(
 								className="plugin-name-button"
 							>
 								{ item.icon ? (
-									<PluginIcon image={ item.icon } size={ 35 } />
+									<PluginIcon className="plugin-icon" image={ item.icon } size={ 35 } />
 								) : (
-									<Icon size={ 32 } icon={ plugins } className="plugin-icon" />
+									<Icon
+										size={ 32 }
+										icon={ plugins }
+										className="plugin-icon"
+										style={ { maxWidth: '35px', maxHeight: '35px' } }
+									/>
 								) }
 								{ item.name }
 							</Button>
