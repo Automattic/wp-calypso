@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 @import "../../style";
 
 body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
@@ -163,6 +164,31 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			.campaign-item-details__text {
 				color: var(--studio-gray-100);
 				line-height: 1.25;
+			}
+
+			.campaign-item-details__text {
+				display: flex;
+				align-items: center;
+				@media (max-width: $break-medium) {
+					flex-direction: column;
+					align-items: start;
+				}
+			}
+
+			.campaign-item-details__outperformed {
+				display: inline-block;
+				font-size: 0.75rem;
+				line-height: 0.75;
+				font-weight: 500;
+				border: 1px solid var(--studio-celadon-0);
+				color: var(--studio-celadon-50);
+				padding: 5px 10px;
+				border-radius: 4px;
+				margin-left: 12px;
+				@media (max-width: $break-medium) {
+					margin-left: 0;
+					margin-top: 8px;
+				}
 			}
 		}
 
