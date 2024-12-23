@@ -613,11 +613,6 @@
 		.email-mailbox-action-menu__main {
 			text-align: end;
 
-			svg {
-				width: 1rem;
-				height: 1rem;
-			}
-
 			@include break-xlarge {
 				position: static;
 			}
@@ -635,21 +630,12 @@
 			}
 		}
 
-		.email-plan-mailboxes-list__mailbox-list-item {
-			gap: 5px;
-			border-bottom: solid 1px var(--color-border-subtle);
-			padding-left: 0;
-			padding-right: 0;
-			margin-left: 1.5rem;
-			margin-right: 1.5rem;
-
-			&:last-child {
-				border-bottom: none;
-			}
-		}
-
 		.email-plan-mailboxes-list__mailbox-list-item-main {
 			font-size: 0.875rem;
+
+			span {
+				align-self: center;
+			}
 		}
 
 		.email-plan-mailboxes-list__mailbox-secondary-details svg {
