@@ -18,6 +18,7 @@ type PostThumbnail = {
 
 type Post = {
 	date: string | null;
+	dont_email_post_to_subs: boolean | null;
 	title: string;
 	type: string | null;
 	like_count: number | null;
@@ -80,10 +81,11 @@ export default function PostDetailHighlightsSection( {
 	);
 
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
-	// TODO: remove the (post?.date && new Date(post?.date) >= new Date("2023-05-30")) check when the Newsletter Stats data is backfilled.
 	const isEmailTabsAvailable =
 		postId > 0 &&
+		! post?.dont_email_post_to_subs &&
 		post?.date &&
+		// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
 		new Date( post?.date ) >= new Date( '2023-05-30' ) &&
 		supportsEmailStats;
 
