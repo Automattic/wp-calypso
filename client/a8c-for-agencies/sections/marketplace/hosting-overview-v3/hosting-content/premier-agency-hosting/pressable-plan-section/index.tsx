@@ -109,9 +109,7 @@ export default function PressablePlanSection( {
 			return translate( 'Upgrade your plan' );
 		}
 
-		return translate(
-			'Choose from a variety of plans, or purchase single high-resource sites as add-ons'
-		);
+		return translate( 'Choose from a variety of high performance hosting plans' );
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
