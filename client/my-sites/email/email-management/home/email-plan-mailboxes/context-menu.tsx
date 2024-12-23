@@ -20,7 +20,7 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './context-menu.scss';
 
-const VIEW_BILLING_PAYMENTS = 'view_billing_payments';
+const CONTEXT_VIEW_BILLING_PAYMENTS = 'view_billing_payments';
 
 type Props = {
 	className?: string;
@@ -64,7 +64,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			disabled: disableItem,
 		},
 		{
-			context: VIEW_BILLING_PAYMENTS,
+			context: CONTEXT_VIEW_BILLING_PAYMENTS,
 			icon: <Icon icon={ payment } />,
 			label: translate( 'View billing and payments' ),
 		},
@@ -83,7 +83,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			}
 
 			switch ( context ) {
-				case VIEW_BILLING_PAYMENTS:
+				case CONTEXT_VIEW_BILLING_PAYMENTS:
 					return `/purchases/subscriptions/${ domain.name }/${ selectedSiteId }`;
 
 				default:
