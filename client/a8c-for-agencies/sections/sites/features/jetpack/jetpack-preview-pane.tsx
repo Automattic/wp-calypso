@@ -1,9 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import ItemPreviewPane, {
-	createFeaturePreview,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -15,6 +11,10 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
+import ItemPreviewPane, {
+	createFeaturePreview,
+} from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
+import { ItemData } from 'calypso/layout/multi-sites-dashboard/item-preview-pane/types';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
 import { JetpackBackupPreview } from './backup';

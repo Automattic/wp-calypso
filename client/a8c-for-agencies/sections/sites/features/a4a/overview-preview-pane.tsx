@@ -3,10 +3,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { A4ARequestWPAdminAccess } from 'calypso/a8c-for-agencies/components/a4a-request-wp-admin-access';
-import ItemPreviewPane, {
-	createFeaturePreview,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import useWPAdminAccessControl from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
@@ -23,6 +19,10 @@ import {
 import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/types';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
+import ItemPreviewPane, {
+	createFeaturePreview,
+} from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
+import { ItemData } from 'calypso/layout/multi-sites-dashboard/item-preview-pane/types';
 import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';

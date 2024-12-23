@@ -3,14 +3,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+} from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
 import ArchivedStatus from './components/archived-status';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral, ReferralInvoice } from '../types';
-import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import type { ItemData } from 'calypso/layout/multi-sites-dashboard/item-preview-pane/types';
 
 import './style.scss';
 
