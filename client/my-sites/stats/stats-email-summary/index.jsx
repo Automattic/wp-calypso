@@ -64,40 +64,38 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
 	const renderTooltipContent = ( item ) => {
-		const opensUnique = parseInt( item.opens_unique, 10 ) || 0;
-		const clicksUnique = parseInt( item.clicks_unique, 10 ) || 0;
-		const opens = parseInt( item.opens, 10 ) || 0;
-		const clicks = parseInt( item.clicks, 10 ) || 0;
-		const opensRate = parseFloat( item.opens_rate ) || 0;
-		const clicksRate = parseFloat( item.clicks_rate ) || 0;
+		const opensUnique = parseInt( item.opens_unique, 10 );
+		const clicksUnique = parseInt( item.clicks_unique, 10 );
+		const opens = parseInt( item.opens, 10 );
+		const clicks = parseInt( item.clicks, 10 );
+		const opensRate = parseFloat( item.opens_rate );
+		const clicksRate = parseFloat( item.clicks_rate );
+		const totalSends = parseInt( item.total_sends, 10 );
 
 		return (
 			<div className="stats-email__tooltip">
-				<div>{ translate( 'Total Opens: %(opens)d', { args: { opens } } ) }</div>
 				<div>
-					{ translate( 'Unique Opens: %(uniqueOpens)d', {
-						args: { uniqueOpens: opensUnique },
+					{ translate( 'Subscribers reached: %(sends)d', {
+						args: { sends: totalSends },
 					} ) }
 				</div>
 				<div>
-					{ translate( 'Open Rate: %(openRate).2f%%', {
-						args: { openRate: opensRate },
-					} ) }
+					{ opensUnique
+						? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
+								args: { uniqueOpens: opensUnique, openRate: opensRate },
+						  } )
+						: translate( 'Opens: %(opens)d)', {
+								args: { opens },
+						  } ) }
 				</div>
 				<div>
-					{ translate( 'Total Clicks: %(clicks)d', {
-						args: { clicks },
-					} ) }
-				</div>
-				<div>
-					{ translate( 'Unique Clicks: %(uniqueClicks)d', {
-						args: { uniqueClicks: clicksUnique },
-					} ) }
-				</div>
-				<div>
-					{ translate( 'Click Rate: %(clickRate).2f%%', {
-						args: { clickRate: clicksRate },
-					} ) }
+					{ clicksUnique
+						? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
+								args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
+						  } )
+						: translate( 'Clicks: %(clicks)d ', {
+								args: { clicks },
+						  } ) }
 				</div>
 			</div>
 		);
