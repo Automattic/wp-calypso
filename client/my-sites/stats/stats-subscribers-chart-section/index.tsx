@@ -125,15 +125,10 @@ export default function SubscribersChartSection( {
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
-	const subscribers = {
-		label: 'Subscribers',
-		path: `/stats/subscribers/`,
-	};
-
 	const slugPath = slug ? `/${ slug }` : '';
-	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
+	const pathTemplate = `/stats/subscribers/{{ interval }}${ slugPath }`;
 
-	const subscribersUrl = isOdysseyStats
+	const manageSubscribersUrl = isOdysseyStats
 		? `https://cloud.jetpack.com/subscribers/${ slug }`
 		: `/subscribers/${ slug }`;
 
@@ -144,7 +139,7 @@ export default function SubscribersChartSection( {
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
 					<small>
-						<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
+						<a className="highlight-cards-heading-wrapper" href={ manageSubscribersUrl }>
 							{ translate( 'View all subscribers' ) }
 						</a>
 					</small>

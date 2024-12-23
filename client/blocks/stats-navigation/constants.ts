@@ -67,11 +67,9 @@ const insights = {
 	paywall: true,
 } as NavItem;
 
-// TODO: Consider adding subscriber counts into this nav item in the future.
-// See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
 	get label() {
-		return translate( 'Subscribers' );
+		return translate( 'Newsletter' );
 	},
 	path: '/stats/subscribers',
 	showIntervals: false,
