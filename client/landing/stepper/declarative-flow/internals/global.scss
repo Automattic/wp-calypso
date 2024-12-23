@@ -129,6 +129,7 @@ button {
 		}
 
 		@include break-xlarge {
+			&.goals,
 			&.domains {
 				margin-top: -60px;
 			}
