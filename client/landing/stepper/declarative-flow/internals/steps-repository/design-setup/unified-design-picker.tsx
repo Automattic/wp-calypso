@@ -89,6 +89,7 @@ import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import { EligibilityWarningsModal } from './eligibility-warnings-modal';
+import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -124,6 +125,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
+
+	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
 	const { isEligible } = useIsBigSkyEligible();
 	const isBigSkyEligible = isEligible && isGoalCentricFeature;
@@ -962,10 +965,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				// We may want to modify the ThemeCard component once the experiment is completed
+				// TODO: Update the ThemeCard component once the new design is rolled out completely
 				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
-				getBadge={ isGoalsAtFrontExperiment ? undefined : getBadge }
-				getOptionsMenu={ isGoalsAtFrontExperiment ? getBadge : undefined }
+				getBadge={ isUpdatedBadgeDesign ? undefined : getBadge }
+				getOptionsMenu={ isUpdatedBadgeDesign ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }
