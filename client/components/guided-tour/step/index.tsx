@@ -69,12 +69,16 @@ export function GuidedTourStep( {
 		);
 	}, [ dispatch, tourId, preference, id ] );
 
-	const completeStep = () => {
-		nextStep( currentStep );
-		if ( isLastStep ) {
-			endTour();
-		}
-	};
+	const completeStep = useCallback(
+		( event: MouseEvent | React.MouseEvent< HTMLElement > ) => {
+			event.stopPropagation();
+			nextStep( currentStep );
+			if ( isLastStep ) {
+				endTour();
+			}
+		},
+		[ currentStep, nextStep, isLastStep, endTour ]
+	);
 
 	// Record an event when the tour starts
 	useEffect( () => {
