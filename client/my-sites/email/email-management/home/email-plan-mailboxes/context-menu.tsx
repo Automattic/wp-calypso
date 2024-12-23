@@ -33,7 +33,13 @@ export default function ContextMenu( { className, domain }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const disableItem = ! isDesktop();
 
-	const options = [
+	const viewBillingPaymentsOption = {
+		context: CONTEXT_VIEW_BILLING_PAYMENTS,
+		icon: <Icon icon={ payment } />,
+		label: translate( 'View billing and payments' ),
+	};
+
+	const manageTitanOptions = [
 		{
 			context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
 			icon: <Icon icon={ desktop } />,
@@ -63,11 +69,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			label: translate( 'Set up internal forwarding' ),
 			disabled: disableItem,
 		},
-		{
-			context: CONTEXT_VIEW_BILLING_PAYMENTS,
-			icon: <Icon icon={ payment } />,
-			label: translate( 'View billing and payments' ),
-		},
+		viewBillingPaymentsOption,
 	];
 
 	const onClick = useCallback( ( context: string ) => {
@@ -101,7 +103,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			popoverClassName={ `${ className }-popover` }
 			position="bottom"
 		>
-			{ options.map( ( option, key ) => (
+			{ manageTitanOptions.map( ( option, key ) => (
 				<PopoverMenuItem
 					key={ key }
 					{ ...option }
