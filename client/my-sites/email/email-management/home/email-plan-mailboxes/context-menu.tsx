@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { getGoogleAdminUrl, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
@@ -21,6 +22,7 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './context-menu.scss';
 
 const CONTEXT_VIEW_BILLING_PAYMENTS = 'view_billing_payments';
+const CONTEXT_GOOGLE_WORKSPACE = 'google_workspace';
 
 type Props = {
 	className?: string;
@@ -33,6 +35,9 @@ export default function ContextMenu( { className, domain }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const disableItem = ! isDesktop();
 
+	/**
+	 * Options
+	 */
 	const viewBillingPaymentsOption = {
 		context: CONTEXT_VIEW_BILLING_PAYMENTS,
 		icon: <Icon icon={ payment } />,
@@ -72,6 +77,20 @@ export default function ContextMenu( { className, domain }: Props ) {
 		viewBillingPaymentsOption,
 	];
 
+	const manageGoogleOptions = [
+		{
+			context: CONTEXT_GOOGLE_WORKSPACE,
+			icon: <Icon icon={ settings } />,
+			label: translate( 'Manage Google Workspace' ),
+		},
+		viewBillingPaymentsOption,
+	];
+
+	const contextMenuOptions = hasGSuiteWithUs( domain ) ? manageGoogleOptions : manageTitanOptions;
+
+	/**
+	 * Callbacks
+	 */
 	const onClick = useCallback( ( context: string ) => {
 		recordTracksEvent( 'calypso_email_management_titan_manage_mailboxes_link_click', {
 			context: context,
@@ -88,6 +107,9 @@ export default function ContextMenu( { className, domain }: Props ) {
 				case CONTEXT_VIEW_BILLING_PAYMENTS:
 					return `/purchases/subscriptions/${ domain.name }/${ selectedSiteId }`;
 
+				case CONTEXT_GOOGLE_WORKSPACE:
+					return getGoogleAdminUrl( domain.name );
+
 				default:
 					return getTitanControlPanelRedirectPath( selectedSiteSlug, domain.name, currentRoute, {
 						context,
@@ -97,13 +119,16 @@ export default function ContextMenu( { className, domain }: Props ) {
 		[ currentRoute, domain, selectedSiteId, selectedSiteSlug ]
 	);
 
+	/**
+	 * Template render
+	 */
 	return (
 		<EllipsisMenu
 			className={ className }
 			popoverClassName={ `${ className }-popover` }
 			position="bottom"
 		>
-			{ manageTitanOptions.map( ( option, key ) => (
+			{ contextMenuOptions.map( ( option, key ) => (
 				<PopoverMenuItem
 					key={ key }
 					{ ...option }
