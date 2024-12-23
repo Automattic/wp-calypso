@@ -2,7 +2,7 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
@@ -15,6 +15,7 @@ import { useFields } from './use-fields';
 import './style.scss';
 
 interface Props {
+	pluginSlug: string | null;
 	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
 	isLoading: boolean;
@@ -24,6 +25,16 @@ interface Props {
 
 const defaultLayouts = { table: {} };
 
+const pluginsListFields = [ 'plugins', 'sites', 'update' ];
+const pluginViewFields = [ 'plugins' ];
+
+const getFieldsPerView = ( pluginSlug: string | null ) => {
+	if ( pluginSlug ) {
+		return pluginViewFields;
+	}
+	return pluginsListFields;
+};
+
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
 		plugin: plugin.slug,
@@ -32,6 +43,7 @@ const openPluginSitesPane = ( plugin: Plugin ) => {
 };
 
 export default function PluginsListDataViews( {
+	pluginSlug,
 	currentPlugins,
 	initialSearch,
 	isLoading,
@@ -50,7 +62,7 @@ export default function PluginsListDataViews( {
 		...initialDataViewsState,
 		perPage: 15,
 		search: initialSearch,
-		fields: [ 'plugins', 'sites', 'update' ],
+		fields: getFieldsPerView( pluginSlug ),
 		layout: {
 			styles: {
 				plugins: {
