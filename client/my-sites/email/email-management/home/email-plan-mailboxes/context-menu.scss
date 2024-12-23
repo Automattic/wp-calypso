@@ -12,9 +12,17 @@
 		gap: 0.5rem;
 		align-items: center;
 
+		.label {
+			flex: 1;
+		}
+
 		svg {
 			width: 24px;
 			height: auto;
+		}
+
+		svg.gridicons-external {
+			width: 14px;
 		}
 
 		&:hover,

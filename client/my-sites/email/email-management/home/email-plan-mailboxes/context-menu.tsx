@@ -50,29 +50,34 @@ export default function ContextMenu( { className, domain }: Props ) {
 			icon: <Icon icon={ desktop } />,
 			label: translate( 'Configure desktop app' ),
 			disabled: disableItem,
+			isExternalLink: true,
 		},
 		{
 			context: TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
 			icon: <Icon icon={ mobile } />,
 			label: translate( 'Get mobile app' ),
+			isExternalLink: true,
 		},
 		{
 			context: TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
 			icon: <Icon icon={ cloudUpload } />,
 			label: translate( 'Import email data' ),
 			disabled: disableItem,
+			isExternalLink: true,
 		},
 		{
 			context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
 			icon: <Icon icon={ settings } />,
 			label: translate( 'Configure catch-all email' ),
 			disabled: disableItem,
+			isExternalLink: true,
 		},
 		{
 			context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING,
 			icon: <Icon icon={ login } />,
 			label: translate( 'Set up internal forwarding' ),
 			disabled: disableItem,
+			isExternalLink: true,
 		},
 		viewBillingPaymentsOption,
 	];
@@ -82,6 +87,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			context: CONTEXT_GOOGLE_WORKSPACE,
 			icon: <Icon icon={ settings } />,
 			label: translate( 'Manage Google Workspace' ),
+			isExternalLink: true,
 		},
 		viewBillingPaymentsOption,
 	];
@@ -135,7 +141,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 					onClick={ onClick }
 					href={ getPath( option.context ) }
 				>
-					{ option.label }
+					<span className="label">{ option.label }</span>
 				</PopoverMenuItem>
 			) ) }
 		</EllipsisMenu>
