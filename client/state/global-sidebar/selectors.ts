@@ -27,6 +27,7 @@ const SITE_DASHBOARD_ROUTES = [
 	// Domain Management
 	'/domains/manage/all/overview',
 	'/domains/manage/all/email',
+	'/domains/manage/all/contact-info',
 ];
 
 function isInRoute( state: AppState, routes: string[] ) {

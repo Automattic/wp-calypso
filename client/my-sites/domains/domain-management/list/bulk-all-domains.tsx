@@ -233,6 +233,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 			.domains-overview__list.multi-sites-dashboard-layout-column,
 			.domains-overview__list .multi-sites-dashboard-layout-column__container,
+			.domains-overview__details .multi-sites-dashboard-layout-column__container,
 			.multi-sites-dashboard-layout-column.domains-overview__list.main
 				.multi-sites-dashboard-layout-column__container
 				.main {
