@@ -74,6 +74,9 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyProps > = ( {
 						{ copied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 					</ClipboardButton>
 				</div>
+				<div className="jetpack-license-key-clipboard__helper-text">
+					{ translate( 'We sent the license key to your email inbox too.' ) }
+				</div>
 			</div>
 		</>
 	);
