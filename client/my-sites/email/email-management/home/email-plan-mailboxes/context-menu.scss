@@ -23,5 +23,11 @@
 				fill: var(--color-text-inverted);
 			}
 		}
+
+		&[disabled] {
+			svg {
+				fill: var(--color-neutral-20) !important;
+			}
+		}
 	}
 }
