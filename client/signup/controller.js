@@ -244,7 +244,7 @@ export default {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
 
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_flow_confidence_check'
+				'calypso_signup_onboarding_stepper_flow_confidence_check_2'
 			);
 
 			setReferrerPolicy();
