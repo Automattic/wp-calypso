@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';

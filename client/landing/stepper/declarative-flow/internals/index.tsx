@@ -19,7 +19,6 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import SurveyManager from './components/survery-manager';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
@@ -175,12 +174,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
+			const lastPreAuthWalledStepIndex =
+				flowSteps.findIndex( ( step ) => step.slug === 'user' ) - 1;
+			const lastPreAuthWalledStep =
+				lastPreAuthWalledStepIndex < 0 ? null : flowSteps[ lastPreAuthWalledStepIndex ];
+
 			return (
 				<StepComponent
 					navigation={ {
 						submit() {
 							navigate( firstAuthWalledStep.slug, undefined, true );
 						},
+						...( lastPreAuthWalledStep && {
+							goBack() {
+								navigate( lastPreAuthWalledStep.slug, undefined, true );
+							},
+						} ),
 					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
@@ -212,7 +221,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<SurveyManager />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route

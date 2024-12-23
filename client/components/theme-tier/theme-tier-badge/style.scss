@@ -25,6 +25,23 @@
 			text-overflow: ellipsis;
 		}
 	}
+
+	&__without-background.theme-tier-badge__content {
+		background: transparent;
+		padding: 0;
+		color: var(--studio-gray-80);
+		margin: 0;
+
+		.design-picker-design-title__container & {
+			color: var(--studio-white);
+		}
+	}
+
+	.badge--info {
+		color: var(--studio-wordpress-blue);
+		background-color: #EBEEFC; /* 50% of wordpress-blue-10 */
+		font-family: $sans;
+	}
 }
 
 .theme-tier-badge-tooltip,

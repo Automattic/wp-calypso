@@ -47,7 +47,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 
 	return (
 		<MultisitePluginUpdateManagerContextProvider>
-			<Layout title={ title } wide disableGuidedTour>
+			<Layout title={ title } wide>
 				{ context === 'create' || context === 'edit' ? (
 					<LayoutColumn className="scheduled-updates-list-compact">
 						<ScheduleList

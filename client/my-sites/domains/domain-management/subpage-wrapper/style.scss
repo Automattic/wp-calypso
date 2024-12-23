@@ -1,32 +1,57 @@
-.subpage-wrapper {
-    display: flex;
-    justify-content: center;
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
-    .main.is-wide-layout {
-        width: 100%;
-        margin: 32px 48px 0;
-    }
+.domains-overview.main .subpage-wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 
-    .email-forwards-add {
-        .card {
-            border-radius: 4px;
-        }
+	.subpage-wrapper__header.navigation-header {
+		padding: 24px;
+		border-block-end: 1px solid var(--color-border-secondary);
 
-        .card-heading {
-            font-size: 1rem;
-            font-weight: 500;
-            line-height: 24px;
-            margin-top: 0;
-            margin-bottom: 16px;
-        }
+		@include break-medium {
+			padding: 24px 48px;
+		}
 
-        .form-text-input-with-affixes .form-text-input {
-            border-radius: 2px 0 0 2px;
-        }
+		.navigation-header__main {
+			padding: 0;
+		}
+	}
 
-        .button {
-            padding: 10px 24px;
-            border-radius: 4px;
-        }
-    }
+	.subpage-wrapper__content {
+		padding: 24px;
+		overflow: auto;
+
+		@include break-medium {
+			padding: 32px 48px 48px;
+		}
+	}
+
+	.email-forwards-add {
+		.card {
+			border-radius: 4px;
+		}
+
+		.card-heading {
+			font-size: 1rem;
+			font-weight: 500;
+			line-height: 24px;
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+
+		.form-text-input-with-affixes .form-text-input {
+			border-radius: 2px 0 0 2px;
+		}
+
+		.button {
+			padding: 10px 24px;
+			border-radius: 4px;
+		}
+	}
+
+	.edit-contact-info-page .contact-details-form-fields {
+		padding: 0;
+	}
 }

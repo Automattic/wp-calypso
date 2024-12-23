@@ -247,7 +247,12 @@ class StatsEmailDetail extends Component {
 							<div className="stats__email-wrapper">
 								<h3 className="highlight-cards-heading">{ this.getTitle( statType ) }</h3>
 
-								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
+								<StatsEmailTopRow
+									siteId={ siteId }
+									postId={ postId }
+									statType={ statType }
+									post={ post }
+								/>
 
 								<StatsPeriodHeader>
 									<StatsPeriodNavigation

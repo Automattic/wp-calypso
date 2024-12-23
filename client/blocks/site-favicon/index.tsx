@@ -1,11 +1,11 @@
 import { WordPressLogo } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import MigrationFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon/migration-favicon';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { getFirstGrapheme } from 'calypso/lib/string';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
+import MigrationFavicon from './migration-favicon';
 
 import './style.scss';
 

@@ -1,7 +1,9 @@
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { BundledBadge, PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
@@ -18,6 +20,7 @@ export default function ThemeTierBundledBadge() {
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	if ( ! bundleSettings ) {
 		return;
@@ -45,29 +48,42 @@ export default function ThemeTierBundledBadge() {
 		</>
 	);
 
+	const labelText = isGoalsAtFrontExperiment
+		? translate( 'Available on %(businessPlanName)s', {
+				args: {
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+				},
+		  } )
+		: translate( 'Upgrade' );
+
 	return (
 		<div className="theme-tier-badge">
 			{ showUpgradeBadge && ! isThemeIncluded && (
 				<PremiumBadge
-					className="theme-tier-badge__content"
+					className={ clsx( 'theme-tier-badge__content', {
+						'theme-tier-badge__without-background': isGoalsAtFrontExperiment,
+					} ) }
 					focusOnShow={ false }
-					isClickable
-					labelText={ translate( 'Upgrade' ) }
+					labelText={ labelText }
 					tooltipClassName="theme-tier-badge-tooltip"
 					tooltipContent={ tooltipContent }
 					tooltipPosition="top"
+					shouldHideTooltip={ isGoalsAtFrontExperiment }
+					isClickable={ ! isGoalsAtFrontExperiment }
 				/>
 			) }
 
-			<BundledBadge
-				className="theme-tier-badge__content"
-				color={ bundleSettings.color }
-				icon={ <BadgeIcon /> }
-				isClickable={ false }
-				shouldHideTooltip
-			>
-				{ bundleName }
-			</BundledBadge>
+			{ ! isGoalsAtFrontExperiment && (
+				<BundledBadge
+					className="theme-tier-badge__content"
+					color={ bundleSettings.color }
+					icon={ <BadgeIcon /> }
+					isClickable={ false }
+					shouldHideTooltip
+				>
+					{ bundleName }
+				</BundledBadge>
+			) }
 		</div>
 	);
 }

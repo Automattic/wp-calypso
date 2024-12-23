@@ -16,7 +16,8 @@
 	}
 
 	.card {
-		flex: 0 1 calc(50% - 12px);
+		flex: 0 1 calc(50% - 16px);
+		max-width: 45%;
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		width: 100%;
 		padding: 1rem;
@@ -92,6 +93,10 @@
 	}
 	a:focus {
 		outline: none;
+	}
+
+	.consolidated-view__popover-content-activity-dates {
+		font-weight: 700;
 	}
 }
 
