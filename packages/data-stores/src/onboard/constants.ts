@@ -33,7 +33,6 @@ export enum SiteIntent {
 	DIFM = 'difm', // "Do It For Me"
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated
-	WithThemeAssembler = 'with-theme-assembler',
 	AssemblerFirst = 'assembler-first',
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',

@@ -27,7 +27,6 @@ export const START_WRITING_FLOW = 'start-writing';
 export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
-export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const ASSEMBLER_FIRST_FLOW = 'assembler-first';
 
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
@@ -172,24 +171,14 @@ export const isDomainUpsellFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [
-		WITH_THEME_ASSEMBLER_FLOW,
-		AI_ASSEMBLER_FLOW,
-		ASSEMBLER_FIRST_FLOW,
-	];
-
+	const SITE_ASSEMBLER_FLOWS = [ AI_ASSEMBLER_FLOW, ASSEMBLER_FIRST_FLOW ];
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
 
 export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;
 
-export const isWithThemeAssemblerFlow = ( flowName: string | null ) => {
-	return !! flowName && WITH_THEME_ASSEMBLER_FLOW === flowName;
-};
-
 export const isWithThemeFlow = ( flowName: string | null ) => {
-	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
-
+	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW ];
 	return !! flowName && WITH_THEME_FLOWS.includes( flowName );
 };
 

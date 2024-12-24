@@ -1,8 +1,4 @@
-import {
-	isDefaultGlobalStylesVariationSlug,
-	isAssemblerDesign,
-	isAssemblerSupported,
-} from '@automattic/design-picker';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from 'react';
@@ -20,7 +16,6 @@ const makeSearchParams = (
 
 const useRecipe = (
 	allDesigns: StarterDesigns | undefined,
-	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	pickUnlistedDesign: ( theme: string ) => void,
 	recordPreviewDesign: ( design: Design, styleVariation?: StyleVariation ) => void,
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
@@ -164,13 +159,6 @@ const useRecipe = (
 
 	const previewDesign = ( design: Design, styleVariation?: StyleVariation ) => {
 		recordPreviewDesign( design, styleVariation );
-
-		// Redirect to Site Assembler if the design_type is set to "assembler".
-		if ( isAssemblerDesign( design ) && isAssemblerSupported() ) {
-			pickDesign( design );
-			return;
-		}
-
 		handleSelectedDesignChange( design );
 		handleSelectedStyleVariationChange( styleVariation );
 	};
