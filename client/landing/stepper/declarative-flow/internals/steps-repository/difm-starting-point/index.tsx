@@ -14,7 +14,7 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const existingSiteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
 	const siteId = useSite()?.ID;
-	const showNewOrExistingSiteChoice = existingSiteCount > 0;
+	const showNewOrExistingSiteChoice = ! siteId && existingSiteCount > 0;
 
 	const onSubmit = ( value: string ) => {
 		submit?.( {
@@ -39,7 +39,7 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 							showNewOrExistingSiteChoice ? onSubmit( 'existing-site' ) : onSubmit( 'new-site' )
 						}
 						onSecondarySubmit={ () => onSubmit( 'new-site' ) }
-						showNewOrExistingSiteChoice={ existingSiteCount }
+						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
 						siteId={ siteId }
 						isStoreFlow={ false }
 					/>
