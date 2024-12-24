@@ -17,7 +17,7 @@ import {
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
+import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
@@ -102,12 +102,11 @@ const onboarding: Flow = {
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, siteIntent, isUserLoggedIn } = useSelect(
+		const { planCartItem, signupDomainOrigin, isUserLoggedIn } = useSelect(
 			( select ) => ( {
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-				siteIntent: ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			} ),
 			[]
@@ -121,11 +120,6 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/create-site`,
-		} );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
@@ -164,11 +158,25 @@ const onboarding: Flow = {
 				}
 
 				case 'difmStartingPoint': {
+					const difmFlowLink = addQueryArgs(
+						locale && locale !== 'en' ? `/start/do-it-for-me/${ locale }` : '/start/do-it-for-me',
+						{
+							back_to: window.location.href.replace( window.location.origin, '' ),
+							newOrExistingSiteChoice: 'new-site',
+						}
+					);
+
 					if ( isUserLoggedIn ) {
-						return navigate( 'create-site', undefined, false );
+						return window.location.assign( difmFlowLink );
 					}
 
-					return window.location.assign( logInUrl );
+					const loginUrl = getLoginUrl( {
+						variationName: flowName,
+						redirectTo: difmFlowLink,
+						locale,
+					} );
+
+					return window.location.assign( loginUrl );
 				}
 
 				case 'domains':
@@ -251,13 +259,10 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination =
-						isGoalsAtFrontExperiment && siteIntent === SiteIntent.DIFM
-							? `/start/website-design-services/?siteSlug=${ providedDependencies.siteSlug }`
-							: addQueryArgs( '/setup/site-setup', {
-									siteSlug: providedDependencies.siteSlug,
-									...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-							  } );
+					const destination = addQueryArgs( '/setup/site-setup', {
+						siteSlug: providedDependencies.siteSlug,
+						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+					} );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );

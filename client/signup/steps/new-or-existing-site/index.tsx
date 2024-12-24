@@ -18,19 +18,28 @@ interface Props {
 	flowName: string;
 	stepName: string;
 	existingSiteCount: number;
+	signupDependencies: {
+		back_to?: string;
+		newOrExistingSiteChoice?: ChoiceType;
+	};
 }
 
 export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 
-	const { stepName, goToNextStep, existingSiteCount, flowName } = props;
+	const { stepName, goToNextStep, existingSiteCount, flowName, signupDependencies } = props;
+	const { back_to: backUrl, newOrExistingSiteChoice } = signupDependencies;
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 		triggerGuidesForStep( flowName, stepName );
 	}, [ dispatch, flowName, stepName ] );
 
-	const branchSteps = useBranchSteps( stepName, () => [ 'difm-site-picker' ] );
+	const branchSteps = useBranchSteps( stepName, () =>
+		newOrExistingSiteChoice
+			? [ 'new-or-existing-site', 'difm-site-picker' ]
+			: [ 'difm-site-picker' ]
+	);
 
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
 		// If 'new-site' is selected, skip the `difm-site-picker` step.
@@ -52,6 +61,17 @@ export default function NewOrExistingSiteStep( props: Props ) {
 
 	const showNewOrExistingSiteChoice = existingSiteCount > 0;
 
+	// Support pre-selected choice.
+	useEffect( () => {
+		if ( newOrExistingSiteChoice ) {
+			newOrExistingSiteSelected( newOrExistingSiteChoice );
+		}
+	}, [ newOrExistingSiteChoice ] );
+
+	if ( newOrExistingSiteChoice ) {
+		return null;
+	}
+
 	return (
 		<StepWrapper
 			stepContent={
@@ -69,6 +89,8 @@ export default function NewOrExistingSiteStep( props: Props ) {
 			hideFormattedHeader
 			align="left"
 			hideSkip
+			backUrl={ backUrl }
+			allowBackFirstStep={ !! backUrl }
 			isHorizontalLayout={ false }
 			isWideLayout
 			headerImageUrl={ difmImage }
