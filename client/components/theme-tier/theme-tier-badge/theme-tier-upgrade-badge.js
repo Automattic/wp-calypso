@@ -36,12 +36,24 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 		}
 
 		if ( showPartnerPrice && subscriptionPrices.month ) {
-			return translate( 'Available on %(planName)s plus %(price)s/month', {
+			const fullLabel = translate( 'Available on %(planName)s plus %(price)s/month', {
 				args: {
 					planName: planName,
 					price: subscriptionPrices.month,
 				},
 			} );
+
+			// Use shorter version if full label is too long
+			const MAX_LABEL_LENGTH = 45;
+			return fullLabel.length > MAX_LABEL_LENGTH
+				? /* translators: This is a shorter version of the text "Available on %(planName)s plus %(price)s/month". */
+				  translate( '%(planName)s + %(price)s/mo', {
+						args: {
+							planName: planName,
+							price: subscriptionPrices.month,
+						},
+				  } )
+				: fullLabel;
 		}
 
 		return translate( 'Available on %(planName)s', {
