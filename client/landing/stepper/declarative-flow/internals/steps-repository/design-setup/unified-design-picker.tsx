@@ -269,12 +269,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setSelectedFontVariation,
 		setGlobalStyles,
 		resetPreview,
-	} = useRecipe(
-		allDesigns,
-		pickUnlistedDesign,
-		recordPreviewDesign,
-		recordPreviewStyleVariation
-	);
+	} = useRecipe( allDesigns, pickUnlistedDesign, recordPreviewDesign, recordPreviewStyleVariation );
 
 	const shouldUnlockGlobalStyles =
 		shouldLimitGlobalStyles && selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId;
