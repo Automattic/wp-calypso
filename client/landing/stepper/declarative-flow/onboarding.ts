@@ -122,6 +122,11 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
+					const goalsUrl =
+						locale && locale !== 'en'
+							? `/setup/onboarding/goals/${ locale }`
+							: '/setup/onboarding/goals';
+
 					const { intent } = providedDependencies;
 
 					switch ( intent ) {
@@ -130,7 +135,11 @@ const onboarding: Flow = {
 								locale && locale !== 'en'
 									? `/setup/hosted-site-migration/${ locale }`
 									: '/setup/hosted-site-migration';
-							return window.location.assign( migrationFlowLink );
+							return window.location.assign(
+								addQueryArgs( migrationFlowLink, {
+									back_to: goalsUrl,
+								} )
+							);
 						}
 
 						case SiteIntent.DIFM: {
@@ -139,7 +148,11 @@ const onboarding: Flow = {
 									? `/start/do-it-for-me/${ locale }`
 									: '/start/do-it-for-me';
 
-							return window.location.assign( difmFlowLink );
+							return window.location.assign(
+								addQueryArgs( difmFlowLink, {
+									back_to: goalsUrl,
+								} )
+							);
 						}
 
 						default: {

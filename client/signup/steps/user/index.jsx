@@ -773,6 +773,7 @@ export class UserStep extends Component {
 const ConnectedUser = connect(
 	( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+
 		return {
 			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
