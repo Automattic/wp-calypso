@@ -15,7 +15,7 @@ import {
 	EditorPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, fixme_retry } from '../shared';
 
 declare const browser: Browser;
 
@@ -99,8 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Launchpad is shown', async function () {
 			// dirty hack to wait for the launchpad to load.
 			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
-			await page.waitForURL( /launchpad/, { timeout: 30000, waitUntil: 'load' } );
+			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
 		} );
 
 		it( 'Write first post', async function () {
@@ -144,8 +143,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Launchpad is shown', async function () {
 			// dirty hack to wait for the launchpad to load.
 			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
-			await page.waitForURL( /launchpad/ );
+			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
 		} );
 
 		it( 'Launch site', async function () {
