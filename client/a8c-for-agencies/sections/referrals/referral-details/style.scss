@@ -12,8 +12,8 @@
 	text-decoration: underline;
 }
 
-.item-preview__pane.referral-details-items {
-	.item-preview__content {
+.multi-sites-dashboard-item-view.referral-details-items {
+	.multi-sites-dashboard-item-view__content {
 		display: block;
 		@media (max-width: $break-mobile) {
 			height: 75vh;

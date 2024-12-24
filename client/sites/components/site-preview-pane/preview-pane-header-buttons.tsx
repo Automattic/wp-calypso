@@ -20,7 +20,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }:
 
 	return (
 		<>
-			<Button onClick={ closeSitePreviewPane } className="item-preview__close-preview-button">
+			<Button onClick={ closeSitePreviewPane } className="item-view__close-button">
 				{ __( 'Close' ) }
 			</Button>
 			<Button

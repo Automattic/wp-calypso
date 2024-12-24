@@ -2,11 +2,11 @@
 @import "@wordpress/base-styles/mixins";
 
 .main.multi-sites-dashboard-layout.sites-dashboard .site-error-preview {
-	.preview-pane__navigation.is-hidden {
+	.multi-sites-dashboard-item-view__navigation.is-hidden {
 		display: none;
 	}
 
-	.item-preview__content {
+	.multi-sites-dashboard-item-view__content {
 		padding: 24px;
 		display: block;
 
@@ -15,7 +15,7 @@
 		}
 	}
 
-	.item-preview__header {
+	.multi-sites-dashboard-item-view__header {
 		border: 1px solid var(--color-accent-5);
 	}
 }
@@ -80,7 +80,7 @@
 }
 
 .site-no-wp-admin-access {
-	.item-preview__content {
+	.multi-sites-dashboard-item-view__content {
 		display: block;
 	}
 }

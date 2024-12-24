@@ -1,7 +1,7 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import ItemPreviewPane, {
+import ItemView, {
 	createFeaturePreview,
 } from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
@@ -81,10 +81,10 @@ export default function ReferralDetails( {
 	);
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			className="referral-details-items"
 			itemData={ itemData }
-			closeItemPreviewPane={ closeSitePreviewPane }
+			closeItemView={ closeSitePreviewPane }
 			features={ features }
 			hideNavIfSingleTab
 		/>

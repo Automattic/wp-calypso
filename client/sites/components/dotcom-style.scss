@@ -102,7 +102,7 @@
 	}
 
 	// Custom style for toggle and page number controls.
-	.item-preview__content {
+	.multi-sites-dashboard-item-view__content {
 		.pagination__page-number.pagination__list-item.is-selected button,
 		.segmented-control__item.is-selected a:hover,
 		.segmented-control__item.is-selected a {
@@ -248,16 +248,16 @@
 		}
 	}
 
-	.item-preview__header {
-		.item-preview__header-title {
+	.multi-sites-dashboard-item-view__header {
+		.multi-sites-dashboard-item-view__header-title {
 			font-family: Recoleta, sans-serif;
 			font-weight: 400;
 			line-height: 1;
 			letter-spacing: normal;
 		}
 
-		.item-preview__header-content {
-			.item-preview__header-info {
+		.multi-sites-dashboard-item-view__header-content {
+			.multi-sites-dashboard-item-view__header-info {
 				flex-wrap: wrap;
 			}
 
@@ -266,11 +266,11 @@
 			}
 		}
 
-		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
+		.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__header-title-summary .multi-sites-dashboard-item-view__header-summary {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5rem;
-			.item-preview__header-summary-link {
+			.multi-sites-dashboard-item-view__header-summary-link {
 				color: var(--studio-gray-70, #3c434a);
 				text-decoration: none;
 				&:hover {
@@ -279,11 +279,11 @@
 			}
 		}
 
-		.item-preview__header-actions .button {
+		.multi-sites-dashboard-item-view__header-actions .button {
 			border-radius: 4px;
 		}
 
-		.item-preview__header-content .item-preview__close-preview {
+		.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__close {
 			height: 16px;
 			padding-left: 0;
 			padding-right: 0;
@@ -294,7 +294,7 @@
 			}
 		}
 	}
-	.item-preview__content {
+	.multi-sites-dashboard-item-view__content {
 		padding: 32px 48px 48px;
 		font-size: rem(14px);
 		color: var(--studio-gray-100);
@@ -431,7 +431,7 @@
 
 .is-mobile-app-view {
 	.wpcom-site .multi-sites-dashboard-layout.sites-dashboard .site-preview-pane {
-		.item-preview__header {
+		.multi-sites-dashboard-item-view__header {
 			padding: 0;
 		}
 	}

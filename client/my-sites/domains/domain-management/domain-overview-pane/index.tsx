@@ -5,7 +5,7 @@ import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import ItemPreviewPane from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
+import ItemView from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
 import * as paths from 'calypso/my-sites/domains/paths';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { FEATURE_TO_ROUTE_MAP, DOMAIN_OVERVIEW, EMAIL_MANAGEMENT } from './constants';
@@ -75,10 +75,7 @@ const DomainOverviewPane = ( {
 
 		return (
 			<>
-				<Button
-					onClick={ closeSitePreviewPane }
-					className="button item-preview__close-preview-button"
-				>
+				<Button onClick={ closeSitePreviewPane } className="button item-view__close-button">
 					{ __( 'Close' ) }
 				</Button>
 				<Button
@@ -133,14 +130,14 @@ const DomainOverviewPane = ( {
 	}, [ __, selectedDomain, selectedFeature, selectedDomainPreview ] );
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			itemData={ itemData }
-			closeItemPreviewPane={ () => {
+			closeItemView={ () => {
 				page.show( paths.domainManagementRoot() );
 			} }
 			features={ features }
 			enforceTabsView
-			itemPreviewPaneHeaderExtraProps={ {
+			itemViewHeaderExtraProps={ {
 				headerButtons: PreviewPaneHeaderButtons,
 			} }
 		/>

@@ -19,7 +19,7 @@ import {
 import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/types';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
-import ItemPreviewPane, {
+import ItemView, {
 	createFeaturePreview,
 } from 'calypso/layout/multi-sites-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/layout/multi-sites-dashboard/item-preview-pane/types';
@@ -229,10 +229,10 @@ export function OverviewPreviewPane( {
 	};
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			hideNavIfSingleTab
 			itemData={ itemData }
-			closeItemPreviewPane={ closeSitePreviewPane }
+			closeItemView={ closeSitePreviewPane }
 			features={ showErrorPane ? errorFeatures : features }
 			className={ clsx( className, {
 				'site-error-preview': showErrorPane,

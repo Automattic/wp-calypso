@@ -1,6 +1,6 @@
-.item-preview__pane {
+.multi-sites-dashboard-item-view {
 
-	.preview-pane__navigation {
+	.multi-sites-dashboard-item-view__navigation {
 		.section-nav-tabs__list {
 			padding: 0 0 0 32px;
 			width: unset;
@@ -18,7 +18,7 @@
 	}
 }
 
-.item-preview__content {
+.multi-sites-dashboard-item-view__content {
 	& > * {
 		width: 100%;
 		max-width: 1400px;
