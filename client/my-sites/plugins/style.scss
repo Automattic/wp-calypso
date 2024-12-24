@@ -638,31 +638,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugins__confirmation-modal {
-	.plugins__confirmation-modal-heading {
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.plugins__confirmation-modal-desc {
-		display: block;
-		padding-top: 12px;
-		font-size: 1rem;
-		font-weight: 400;
-	}
-
-	.dialog__action-buttons {
-		padding: 24px;
-
-		button {
-			margin-inline-start: 16px;
-			padding: 7px;
-			font-size: 0.75rem;
-			line-height: 1;
-		}
-	}
-}
-
 .plugin-details__reviews {
 	margin-bottom: 40px;
 

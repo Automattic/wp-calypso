@@ -1,4 +1,45 @@
+@import '@automattic/typography/styles/fonts';
+
 .accept__dialog {
 	padding-bottom: 24px;
 	max-width: 500px;
+}
+
+.accept__dialog-use-modal {
+	.components-modal__header h1.components-modal__header-heading {
+		font-family: $sans;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	.accept__dialog-buttons {
+		display: flex;
+		justify-content: end;
+		gap: 0.5rem;
+		margin-top: 1.5rem;
+
+		.components-button.is-primary.is-scary {
+			background-color: var( --color-error );
+			color: var( --color-text-inverted );
+			border-color: var( --color-error );
+
+			&:hover,
+			&:focus-visible {
+				background-color: var( --color-error-60 );
+			}
+		}
+	}
+}
+
+// TODO: remove after /plugins/manage details doesn't use Dialog
+.is-section-plugins .components-modal__screen-overlay {
+	z-index: z-index( 'root', '.is-section-plugins .components-modal__screen-overlay' );
+}
+
+// TODO: remove after /plugins/manage details doesn't use Dialog
+.is-section-jetpack-cloud-plugin-management .components-modal__screen-overlay {
+	z-index: z-index(
+		'root',
+		'.is-section-jetpack-cloud-plugin-management .components-modal__screen-overlay'
+	);
 }
