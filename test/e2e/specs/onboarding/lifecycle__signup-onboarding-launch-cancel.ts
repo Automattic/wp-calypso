@@ -163,6 +163,9 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Land in Home dashboard', async function () {
+			// dirty hack to wait for the launchpad to load.
+			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
+			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
 				{ timeout: 30 * 1000 }

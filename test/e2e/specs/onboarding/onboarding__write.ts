@@ -97,7 +97,10 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		let editorPage: EditorPage;
 
 		it( 'Launchpad is shown', async function () {
-			await page.waitForURL( /launchpad/, { timeout: 30000 } );
+			// dirty hack to wait for the launchpad to load.
+			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
+			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
+			await page.waitForURL( /launchpad/, { timeout: 30000, waitUntil: 'load' } );
 		} );
 
 		it( 'Write first post', async function () {
@@ -139,6 +142,9 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 
 	describe( 'Launchpad', function () {
 		it( 'Launchpad is shown', async function () {
+			// dirty hack to wait for the launchpad to load.
+			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
+			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 			await page.waitForURL( /launchpad/ );
 		} );
 
