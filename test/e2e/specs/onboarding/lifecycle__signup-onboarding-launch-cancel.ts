@@ -26,7 +26,7 @@ import {
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, fixme_retry } from '../shared';
 
 declare const browser: Browser;
 
@@ -163,9 +163,13 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Land in Home dashboard', async function () {
-			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
-				{ timeout: 30 * 1000 }
+			// dirty hack to wait for the launchpad to load.
+			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
+			await fixme_retry( () =>
+				page.waitForURL(
+					DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
+					{ timeout: 30 * 1000 }
+				)
 			);
 		} );
 
