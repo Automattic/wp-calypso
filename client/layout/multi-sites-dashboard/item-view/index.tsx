@@ -5,8 +5,8 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import ItemViewContent from './item-preview-pane-content';
-import ItemViewHeader from './item-preview-pane-header';
+import ItemViewContent from './item-view-content';
+import ItemViewHeader from './item-view-header';
 import { FeaturePreviewInterface, ItemViewProps } from './types';
 
 import './style.scss';
