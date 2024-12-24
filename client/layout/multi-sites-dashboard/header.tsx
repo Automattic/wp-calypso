@@ -67,7 +67,7 @@ export default function LayoutHeader( { showStickyContent, children, className }
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
-	const wrapperClass = clsx( className, 'a4a-layout__viewport' );
+	const wrapperClass = clsx( className, 'multi-sites-dashboard-layout__viewport' );
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 
