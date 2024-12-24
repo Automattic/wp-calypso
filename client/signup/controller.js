@@ -239,13 +239,8 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		const hasRedirected =
-			context.querystring?.includes( 'redirected_1220=true' ) ||
-			// Check the URL as well because sometimes the context.querystring lags behind the URL.
-			new URLSearchParams( window.location.search ).has( 'redirected_1220' );
-
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ! hasRedirected ) {
+		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected_1220=true' ) ) {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
 
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
