@@ -26,6 +26,8 @@ $theme-card-info-margin-top: 16px;
 	}
 
 	.theme-card__info-badge-container {
+		position: absolute;
+		bottom: 0;
 		display: flex;
 		flex-basis: 100%;
 	}
@@ -221,13 +223,6 @@ $theme-card-info-margin-top: 16px;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 
-	&:not(&--has-style-variations) {
-		.theme-card__info-options,
-		.theme-card__info-options .theme__more-button {
-			top: 0;
-		}
-	}
-
 	&-badge {
 		border-radius: 20px;  /* stylelint-disable-line scales/radii */
 		flex: 0 0 auto;
@@ -274,6 +269,7 @@ $theme-card-info-margin-top: 16px;
 	position: relative;
 	white-space: nowrap;
 	width: 0;
+	text-overflow: ellipsis;
 }
 
 .theme-card__info-style-variations {
@@ -296,9 +292,8 @@ $theme-card-info-margin-top: 16px;
 	border: 0;
 	display: flex;
 	flex: 0 0 auto;
-	position: absolute;
-	right: 0;
 	transition: all 0.1s ease-in-out;
+	align-self: center;
 
 	&:hover {
 		background-color: initial;
