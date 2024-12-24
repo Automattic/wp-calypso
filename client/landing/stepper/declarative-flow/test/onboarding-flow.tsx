@@ -64,9 +64,7 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/start/do-it-for-me?back_to=%2Fsetup%2Fonboarding%2Fgoals'
-			);
+			expect( getFlowLocation().path ).toBe( '/difmStartingPoint' );
 		} );
 
 		it( 'should navigate to designSetup step for other intents', async () => {
