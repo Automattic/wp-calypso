@@ -984,8 +984,8 @@ export const normalizers = {
 				clicks,
 				opens_rate,
 				clicks_rate,
-				opens_unique,
-				clicks_unique,
+				unique_opens,
+				unique_clicks,
 				total_sends,
 			} ) => {
 				const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
@@ -1000,8 +1000,8 @@ export const normalizers = {
 					clicks: clicks || '0',
 					opens_rate: opens_rate || '0',
 					clicks_rate: clicks_rate || '0',
-					opens_unique: opens_unique || '0',
-					clicks_unique: clicks_unique || '0',
+					unique_opens: unique_opens || '0',
+					unique_clicks: unique_clicks || '0',
 					total_sends: total_sends || '0',
 					page: detailPage,
 					actions: [

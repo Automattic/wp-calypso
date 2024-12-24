@@ -64,8 +64,8 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
 	const renderTooltipContent = ( item ) => {
-		const opensUnique = parseInt( item.opens_unique, 10 );
-		const clicksUnique = parseInt( item.clicks_unique, 10 );
+		const uniqueOpens = parseInt( item.unique_opens, 10 );
+		const uniqueClicks = parseInt( item.unique_clicks, 10 );
 		const opens = parseInt( item.opens, 10 );
 		const clicks = parseInt( item.clicks, 10 );
 		const opensRate = parseFloat( item.opens_rate );
@@ -80,18 +80,18 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					} ) }
 				</div>
 				<div>
-					{ opensUnique
+					{ uniqueOpens
 						? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
-								args: { uniqueOpens: opensUnique, openRate: opensRate },
+								args: { uniqueOpens: uniqueOpens, openRate: opensRate },
 						  } )
 						: translate( 'Opens: %(opens)d)', {
 								args: { opens },
 						  } ) }
 				</div>
 				<div>
-					{ clicksUnique
+					{ uniqueClicks
 						? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
-								args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
+								args: { uniqueClicks: uniqueClicks, clickRate: clicksRate },
 						  } )
 						: translate( 'Clicks: %(clicks)d ', {
 								args: { clicks },
