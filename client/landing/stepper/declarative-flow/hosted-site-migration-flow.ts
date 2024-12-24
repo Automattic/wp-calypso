@@ -9,11 +9,11 @@ const hostedSiteMigrationFlow: Flow = {
 	isSignupFlow: true,
 	useLoginParams() {
 		const [ searchParams ] = useSearchParams();
-		const backUrl = searchParams.get( 'back_url' );
+		const backTo = searchParams.get( 'back_to' );
 
 		return {
 			extraQueryParams: {
-				...( backUrl ? { back_url: backUrl } : {} ),
+				...( backTo ? { back_to: backTo } : {} ),
 			},
 		};
 	},

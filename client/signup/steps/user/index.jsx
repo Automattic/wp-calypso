@@ -756,8 +756,6 @@ export class UserStep extends Component {
 		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
-				backUrl={ this.props.backUrl }
-				allowBackFirstStep={ !! this.props.backUrl }
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
@@ -775,10 +773,8 @@ export class UserStep extends Component {
 const ConnectedUser = connect(
 	( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const backUrl = get( getCurrentQueryArguments( state ), 'back_url' );
 
 		return {
-			backUrl: backUrl?.startsWith( '/' ) ? backUrl : undefined,
 			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),

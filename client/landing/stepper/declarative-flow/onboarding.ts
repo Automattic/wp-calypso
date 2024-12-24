@@ -137,7 +137,7 @@ const onboarding: Flow = {
 									: '/setup/hosted-site-migration';
 							return window.location.assign(
 								addQueryArgs( migrationFlowLink, {
-									back_url: goalsUrl,
+									back_to: goalsUrl,
 								} )
 							);
 						}
@@ -150,7 +150,7 @@ const onboarding: Flow = {
 
 							return window.location.assign(
 								addQueryArgs( difmFlowLink, {
-									back_url: goalsUrl,
+									back_to: goalsUrl,
 								} )
 							);
 						}
