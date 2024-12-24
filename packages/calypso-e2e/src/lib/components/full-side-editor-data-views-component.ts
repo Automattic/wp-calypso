@@ -1,11 +1,6 @@
 import { Page } from 'playwright';
 import { EditorComponent } from './editor-component';
 
-const selectors = {
-	primaryFieldByText: ( primaryFieldText: string ) =>
-		`.dataviews-title-field:has-text("${ primaryFieldText }")`,
-};
-
 /**
  * Represents an instance of the WordPress.com FSE Editor's DataViews.
  * This is used for data layouts (e.g. tables, grids, and lists).
@@ -30,7 +25,6 @@ export class FullSiteEditorDataViewsComponent {
 	 */
 	async clickPrimaryFieldByExactText( primaryFieldText: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const primaryField = editorParent.locator( selectors.primaryFieldByText( primaryFieldText ) );
-		await primaryField.click();
+		await editorParent.getByRole( 'button', { name: primaryFieldText } ).first().click();
 	}
 }
