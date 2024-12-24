@@ -32,6 +32,8 @@ import {
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
+	setHasRedirectedForExperiment,
+	getHasRedirectedForExperiment,
 } from './storageUtils';
 import {
 	getStepUrl,
@@ -239,9 +241,18 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
+		const hasRedirected =
+			context.querystring?.includes( 'redirected_1220=true' ) ||
+			// Check the URL as well because sometimes the context.querystring lags behind the URL.
+			new URLSearchParams( window.location.search ).has( 'redirected_1220' ) ||
+			// Check session storage in case the query parma was omitted.
+			getHasRedirectedForExperiment();
+
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ! context.querystring?.includes( 'redirected_1220=true' ) ) {
+
+		if ( isOnboardingFlow && ! hasRedirected ) {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
+			setHasRedirectedForExperiment();
 
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_stepper_flow_confidence_check_2'
