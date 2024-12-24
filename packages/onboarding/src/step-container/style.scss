@@ -220,7 +220,7 @@
 		@mixin disable-sticky-footer {
 			position: absolute;
 			top: 8px;
-			inset-inline-start: 72px;
+			inset-inline-start: 56px;
 			inset-inline-end: 24px;
 			// Align with wordpress logo in signup-header
 			padding: 1px 0 0;

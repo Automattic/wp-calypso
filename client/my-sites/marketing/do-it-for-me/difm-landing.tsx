@@ -123,6 +123,7 @@ const FAQHeader = styled.h1`
 const FAQSection = styled.div`
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 48px;
 `;
 
 const FoldableFAQ = styled( FoldableFAQComponent )`
