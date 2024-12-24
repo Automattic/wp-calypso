@@ -158,11 +158,12 @@ const onboarding: Flow = {
 				}
 
 				case 'difmStartingPoint': {
+					const { newOrExistingSiteChoice } = providedDependencies;
 					const difmFlowLink = addQueryArgs(
 						locale && locale !== 'en' ? `/start/do-it-for-me/${ locale }` : '/start/do-it-for-me',
 						{
 							back_to: window.location.href.replace( window.location.origin, '' ),
-							newOrExistingSiteChoice: 'new-site',
+							newOrExistingSiteChoice,
 						}
 					);
 

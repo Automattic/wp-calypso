@@ -28,7 +28,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 
 	const { stepName, goToNextStep, existingSiteCount, flowName, signupDependencies } = props;
-	const { back_to: backUrl, newOrExistingSiteChoice } = signupDependencies;
+	const { back_to: backUrl, newOrExistingSiteChoice: preselectedChoice } = signupDependencies;
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -36,9 +36,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	}, [ dispatch, flowName, stepName ] );
 
 	const branchSteps = useBranchSteps( stepName, () =>
-		newOrExistingSiteChoice
-			? [ 'new-or-existing-site', 'difm-site-picker' ]
-			: [ 'difm-site-picker' ]
+		preselectedChoice ? [ 'new-or-existing-site', 'difm-site-picker' ] : [ 'difm-site-picker' ]
 	);
 
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
@@ -63,12 +61,12 @@ export default function NewOrExistingSiteStep( props: Props ) {
 
 	// Support pre-selected choice.
 	useEffect( () => {
-		if ( newOrExistingSiteChoice ) {
-			newOrExistingSiteSelected( newOrExistingSiteChoice );
+		if ( preselectedChoice ) {
+			newOrExistingSiteSelected( preselectedChoice );
 		}
-	}, [ newOrExistingSiteChoice ] );
+	}, [ preselectedChoice ] );
 
-	if ( newOrExistingSiteChoice ) {
+	if ( preselectedChoice ) {
 		return null;
 	}
 
