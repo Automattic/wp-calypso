@@ -175,6 +175,9 @@ const onboarding: Flow = {
 						variationName: flowName,
 						redirectTo: difmFlowLink,
 						locale,
+						extra: {
+							back_to: window.location.href.replace( window.location.origin, '' ),
+						},
 					} );
 
 					return window.location.assign( loginUrl );
