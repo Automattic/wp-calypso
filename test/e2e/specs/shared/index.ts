@@ -8,11 +8,14 @@ export * from './api-delete-site';
  */
 export async function fixme_retry( callback: () => unknown, retries: number = 5 ) {
 	let count = retries;
-	try {
-		return await callback();
-	} catch ( e ) {
-		if ( ! --count ) {
-			throw e;
+	while ( count-- ) {
+		try {
+			return await callback();
+		} catch ( e ) {
+			if ( ! --count ) {
+				throw e;
+			}
+			await new Promise( ( r ) => setTimeout( r, 1000 ) );
 		}
 	}
 }
