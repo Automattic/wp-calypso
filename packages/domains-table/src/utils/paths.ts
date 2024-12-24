@@ -23,11 +23,14 @@ export function domainManagementLink(
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
 	if ( isAllDomainManagementEnabled && isAllSitesView ) {
-		if ( feature && 'email-management' === feature ) {
-			return `/domains/manage/all/email/${ domain }/${ siteSlug }`;
-		}
+		switch ( feature ) {
+			case 'email-management':
+				return `/domains/manage/all/email/${ domain }/${ siteSlug }`;
 
-		return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
+			case 'domain-overview':
+			default:
+				return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
+		}
 	}
 
 	if ( isAllSitesView ) {
