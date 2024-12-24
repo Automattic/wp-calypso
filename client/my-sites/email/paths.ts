@@ -150,7 +150,9 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => {
 	if ( isUnderDomainManagementAll( relativeTo ) ) {
-		return getPath( siteName, domainName, null, relativeTo, urlParameters );
+		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
+			urlParameters
+		) }`;
 	}
 
 	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
