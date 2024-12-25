@@ -1,26 +1,8 @@
-import { SegmentedControl } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
-
-type DeliveryFrequencyOptionProps = {
-	children: React.ReactNode;
-	value: Reader.EmailDeliveryFrequency;
-	selected: boolean;
-	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
-};
-
-const DeliveryFrequencyOption = ( {
-	children,
-	selected,
-	value,
-	onChange,
-}: DeliveryFrequencyOptionProps ) => (
-	<SegmentedControl.Item selected={ selected } onClick={ () => onChange( value ) }>
-		{ children }
-	</SegmentedControl.Item>
-);
+import { ChangeEvent, useMemo } from 'react';
+import FormSelect from 'calypso/components/forms/form-select';
 
 type DeliveryFrequencyInputProps = {
 	onChange: ( value: Reader.EmailDeliveryFrequency ) => void;
@@ -29,7 +11,7 @@ type DeliveryFrequencyInputProps = {
 };
 
 type DeliveryFrequencyKeyLabel = {
-	key: Reader.EmailDeliveryFrequency;
+	value: Reader.EmailDeliveryFrequency;
 	label: string;
 };
 
@@ -43,19 +25,24 @@ const DeliveryFrequencyInput = ( {
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
 		() => [
 			{
-				key: Reader.EmailDeliveryFrequency.Instantly,
+				value: Reader.EmailDeliveryFrequency.Instantly,
 				label: translate( 'Instantly' ),
 			},
 			{
-				key: Reader.EmailDeliveryFrequency.Daily,
+				value: Reader.EmailDeliveryFrequency.Daily,
 				label: translate( 'Daily' ),
 			},
 			{
-				key: Reader.EmailDeliveryFrequency.Weekly,
+				value: Reader.EmailDeliveryFrequency.Weekly,
 				label: translate( 'Weekly' ),
 			},
 		],
 		[ translate ]
+	);
+
+	const selectedFrequency = useMemo< DeliveryFrequencyKeyLabel | undefined >(
+		() => availableFrequencies.find( ( option ) => option.value === selectedValue ),
+		[ selectedValue, availableFrequencies ]
 	);
 
 	return (
@@ -67,22 +54,21 @@ const DeliveryFrequencyInput = ( {
 			{ ! isLoggedIn && (
 				<p className="setting-item__label">{ translate( 'Email me new posts' ) }</p>
 			) }
-			<SegmentedControl
+			<FormSelect
 				className={ clsx( 'delivery-frequency-input__control', {
 					'is-loading': isUpdating,
 				} ) }
+				value={ selectedFrequency?.value }
+				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+					onChange( event.target.value as Reader.EmailDeliveryFrequency )
+				}
 			>
-				{ availableFrequencies.map( ( { key, label }, index ) => (
-					<DeliveryFrequencyOption
-						selected={ selectedValue === key }
-						value={ key }
-						onChange={ onChange }
-						key={ index }
-					>
-						{ label }
-					</DeliveryFrequencyOption>
+				{ availableFrequencies.map( ( option ) => (
+					<option key={ option.value } value={ option.value }>
+						{ option.label }
+					</option>
 				) ) }
-			</SegmentedControl>
+			</FormSelect>
 		</div>
 	);
 };
