@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
 import { translate as i18nCalypsoTranslate, useTranslate } from 'i18n-calypso';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
@@ -42,7 +41,7 @@ export const getShortcuts = createSelector(
 			chartEnd: string;
 		},
 		translateFromProps,
-		isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' )
+		isNewDateFilteringEnabled = true
 	) => {
 		const translate = translateFromProps ?? i18nCalypsoTranslate;
 		const siteId = getSelectedSiteId( state );
