@@ -501,7 +501,6 @@ class StatsSite extends Component {
 							activeTab={ getActiveTab( this.props.chartTab ) }
 							activeLegend={ this.state.activeLegend }
 							onChangeLegend={ this.onChangeLegend }
-							isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 							isWithNewDateControl
 							showArrows={ ! wpcomShowUpsell }
 							slug={ slug }
@@ -516,7 +515,6 @@ class StatsSite extends Component {
 								showQueryDate
 								isShort
 								dateRange={ customChartRange }
-								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 							/>
 						</StatsPeriodNavigation>
 					</StatsPeriodHeader>

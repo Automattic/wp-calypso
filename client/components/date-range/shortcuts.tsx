@@ -26,8 +26,6 @@ const DateRangePickerShortcuts = ( {
 	startDate,
 	endDate,
 	shortcutList,
-	// Temporary prop to enable new date filtering UI.
-	isNewDateFilteringEnabled = false,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment ) => void;
@@ -36,7 +34,6 @@ const DateRangePickerShortcuts = ( {
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
 	shortcutList?: DateRangePickerShortcut[];
-	isNewDateFilteringEnabled?: boolean;
 } ) => {
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
@@ -52,7 +49,7 @@ const DateRangePickerShortcuts = ( {
 			chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
 			daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
 		},
-		isNewDateFilteringEnabled
+		true
 	);
 
 	shortcutList = shortcutList || defaultShortcutList;
