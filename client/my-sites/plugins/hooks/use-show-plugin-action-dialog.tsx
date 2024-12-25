@@ -16,7 +16,7 @@ const DialogMessage: React.FC< DialogMessageProps > = ( { heading, message } ) =
 	</div>
 );
 
-type DialogCallback = ( accepted: boolean ) => void;
+export type DialogCallback = ( accepted: boolean ) => void;
 const useShowPluginActionDialog = () => {
 	const getDialogText = useGetDialogText();
 
