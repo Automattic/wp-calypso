@@ -43,14 +43,11 @@ const DateRangePickerShortcuts = ( {
 	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
 	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
-	const { supportedShortcutList: defaultShortcutList, selectedShortcut } = useShortcuts(
-		{
-			chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
-			chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
-			daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
-		},
-		true
-	);
+	const { supportedShortcutList: defaultShortcutList, selectedShortcut } = useShortcuts( {
+		chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
+		chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
+		daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
+	} );
 
 	shortcutList = shortcutList || defaultShortcutList;
 

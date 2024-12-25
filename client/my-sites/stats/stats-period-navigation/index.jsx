@@ -313,7 +313,7 @@ const connectComponent = connect(
 			treatAtomicAsJetpackSite: false,
 		} );
 
-		const { supportedShortcutList } = getShortcuts( state, {}, translate, true );
+		const { supportedShortcutList } = getShortcuts( state, {}, translate );
 		const shortcutList = supportedShortcutList.map( addIsGatedFor( state, siteId ) );
 
 		return {

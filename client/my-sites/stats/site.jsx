@@ -833,7 +833,7 @@ export default connect(
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
-		const { supportedShortcutList } = getShortcuts( state, {}, undefined, true );
+		const { supportedShortcutList } = getShortcuts( state, {}, undefined );
 
 		return {
 			canUserViewStats,

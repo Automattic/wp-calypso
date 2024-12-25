@@ -176,7 +176,7 @@ class StatsDatePicker extends Component {
 		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange, reduxState } =
 			this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
-		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate, true );
+		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
