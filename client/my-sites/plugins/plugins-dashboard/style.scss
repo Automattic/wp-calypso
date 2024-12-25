@@ -826,3 +826,45 @@
 		justify-content: center;
 	}
 }
+
+body.is-section-plugins .multi-sites-dashboard-layout,
+.is-section-jetpack-cloud-plugin-management .multi-sites-dashboard-layout {
+	.dataviews-wrapper {
+			margin: auto;
+
+			.dataviews-view-table {
+					.dataviews-view-table__row {
+							.plugin-icon {
+									max-width: 35px;
+									max-height: 35px;
+							}
+
+							td:nth-child(2) {
+									white-space: break-spaces;
+							}
+					}
+			}
+	}
+
+	.dataviews-pagination {
+			padding: 12px 16px 12px 16px;
+	}
+
+	.plugin-name-button {
+			padding: 0;
+	text-align: start;
+	height: auto;
+	}
+}
+
+.sites-manage-plugin-status-button {
+	padding: 0;
+	display: contents;
+}
+
+.sites-manage-plugin-button {
+	margin-left: -12px;
+	font-size: inherit;
+	color: inherit;
+	cursor: pointer;
+}

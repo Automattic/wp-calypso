@@ -125,6 +125,15 @@ export default function PluginsListDataViews( {
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
 	useEffect( () => {
+		// Sets the correct fields when route changes
+		setDataViewsState( {
+			...dataViewsState,
+			fields: getFieldsPerView( pluginSlug ),
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginSlug ] );
+
+	useEffect( () => {
 		if (
 			dataViewsState.filters?.length === 1 &&
 			dataViewsState.filters[ 0 ].field === 'status' &&
@@ -155,7 +164,7 @@ export default function PluginsListDataViews( {
 				fields={ fields }
 				search
 				searchLabel={ translate( 'Search for plugins' ) }
-				actions={ actions }
+				actions={ pluginSlug ? [] : actions }
 				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ defaultLayouts }

@@ -1,7 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import Layout from 'calypso/layout/multi-sites-dashboard';
@@ -12,32 +14,31 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/multi-sites-dashboard/header';
 import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { useSelector } from 'calypso/state';
+import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	activatePlugin,
 	deactivatePlugin,
 	disableAutoupdatePlugin,
 	enableAutoupdatePlugin,
 	removePlugin,
-	updatePlugin,
+	updatePlugin as updatePluginAction,
 } from 'calypso/state/plugins/installed/actions';
 import {
 	getPlugins,
-	isRequestingForSites,
 	isRequestingForAllSites,
-	requestPluginsError,
 	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
-import { PluginActions } from '../hooks/types';
+import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 
 import './style.scss';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
@@ -83,30 +84,35 @@ const PluginsDashboard = ( {
 	search: searchTerm,
 	showPluginActionDialog,
 }: PluginsDashboardProps ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] | undefined >( undefined );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
-	const currentPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) );
-	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] | undefined >( undefined );
-	console.log( currentPlugins );
+	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector( ( state ) => isRequestingForAllSites( state ) );
+	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
+		( plugin ) => {
+			const pluginData = wporgPlugins?.[ plugin.slug ];
+			return Object.assign( {}, plugin, pluginData );
+		}
+	);
+	const currentPlugins = useSelector( ( state ) =>
+		getPluginsWithUpdateStatuses( state, allPlugins )
+	);
+	const dashboardTitle = pluginSlug ? `Manage ${ pluginSlug } in all sites` : 'Manage Plugins';
 
-	const doActionOverSelected = (
-		actionName: string,
-		action: ( arg0: any, arg1: any ) => any,
-		selectedPlugins: any[] | undefined
-	) => {
+	const doActionOverSelected = ( actionName: string, action: ( arg0: any, arg1: any ) => any ) => {
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: { slug: string } ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		const pluginAndSiteObjects = selectedPlugins
-			.filter(
-				( plugin: { slug: string } ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin )
-			) // ignore sites that are deactivating, activating or removing jetpack
-			.map( ( p: { sites: { [ key: string ]: any } } ) => {
-				return Object.keys( p.sites ).map( ( siteId ) => {
-					const site = sites.find( ( s ) => s.ID === parseInt( siteId ) );
+			?.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
+			.map( ( p: Plugin ) => {
+				return Object.keys( p?.sites ).map( ( siteId ) => {
+					const site = sites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return {
 						site,
 						plugin: p,
@@ -115,13 +121,13 @@ const PluginsDashboard = ( {
 			} ) // list of plugins -> list of plugin+site objects
 			.flat(); // flatten the list into one big list of plugin+site objects
 
-		pluginAndSiteObjects.forEach( ( { plugin, site } ) => action( site.ID, plugin ) );
+		pluginAndSiteObjects?.forEach( ( { plugin, site } ) => dispatch( action( site.ID, plugin ) ) );
 
 		const pluginSlugs = [
-			...new Set( pluginAndSiteObjects.map( ( { plugin } ) => plugin.slug ) ),
+			...new Set( pluginAndSiteObjects?.map( ( { plugin } ) => plugin.slug ) ),
 		].join( ',' );
 
-		const siteIds = [ ...new Set( pluginAndSiteObjects.map( ( { site } ) => site.ID ) ) ].join(
+		const siteIds = [ ...new Set( pluginAndSiteObjects?.map( ( { site } ) => site?.ID ) ) ].join(
 			','
 		);
 
@@ -137,25 +143,106 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Activate Plugin(s)', true );
+		recordTracksEvent( 'Clicked Activate Plugin(s)' );
 		doActionOverSelected( 'activating', activatePlugin );
 	};
+
+	const removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Remove Plugin(s) and Remove Jetpack' );
+
+		let waitForRemove = false;
+		doActionOverSelected( 'removing', ( site, plugin ) => {
+			waitForRemove = true;
+			removePlugin( site, plugin );
+		} );
+	};
+
+	const removeSelected = ( accepted, selectedPlugins ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Remove Plugin(s)' );
+		doActionOverSelected( 'removing', removePlugin );
+	};
+
+	const deactivateAndDisconnectSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack' );
+
+		let waitForDeactivate = false;
+
+		doActionOverSelected( 'deactivating', ( site, plugin ) => {
+			waitForDeactivate = true;
+			deactivatePlugin( site, plugin );
+		} );
+	};
+
+	const deactivateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Deactivate Plugin(s)' );
+		doActionOverSelected( 'deactivating', deactivatePlugin );
+	};
+
+	const updateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Update Plugin(s)' );
+		doActionOverSelected( 'updating', updatePlugin );
+	};
+
+	const setAutoupdateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Enable Autoupdate Plugin(s)' );
+		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin );
+	};
+
+	const unsetAutoupdateSelected = ( accepted ) => {
+		if ( ! accepted ) {
+			return;
+		}
+
+		recordTracksEvent( 'Clicked Disable Autoupdate Plugin(s)' );
+		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin );
+	};
+
+	const updatePlugin = ( selectedPlugin ) => {
+		handleUpdatePlugins( [ selectedPlugin ], updatePluginAction, [] );
+		removePluginStatuses();
+	};
+
+	/** END BULK ACTION DIALOG CALLBACKS */
 
 	const bulkActionDialog = ( actionName, selectedPlugins ) => {
 		const isJetpackIncluded = selectedPlugins.some(
 			( { slug }: { slug: string } ) => slug === 'jetpack'
 		);
 		const ALL_ACTION_CALLBACKS = {
-			[ PluginActions.ACTIVATE ]: this.activateSelected,
+			[ PluginActions.ACTIVATE ]: activateSelected,
 			[ PluginActions.DEACTIVATE ]: isJetpackIncluded
-				? this.deactivateAndDisconnectSelected
-				: this.deactivateSelected,
+				? deactivateAndDisconnectSelected
+				: deactivateSelected,
 			[ PluginActions.REMOVE ]: isJetpackIncluded
-				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
-				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
-			[ PluginActions.UPDATE ]: this.updateSelected,
-			[ PluginActions.ENABLE_AUTOUPDATES ]: this.setAutoupdateSelected,
-			[ PluginActions.DISABLE_AUTOUPDATES ]: this.unsetAutoupdateSelected,
+				? ( accepted ) => removeSelectedWithJetpack( accepted, selectedPlugins )
+				: ( accepted ) => removeSelected( accepted, selectedPlugins ),
+			[ PluginActions.UPDATE ]: updateSelected,
+			[ PluginActions.ENABLE_AUTOUPDATES ]: setAutoupdateSelected,
+			[ PluginActions.DISABLE_AUTOUPDATES ]: unsetAutoupdateSelected,
 		};
 		if ( actionName === PluginActions.UPDATE ) {
 			//filter out sites that don't have an update available
@@ -173,7 +260,6 @@ const PluginsDashboard = ( {
 		showPluginActionDialog( actionName, selectedPlugins, sites, selectedActionCallback );
 	};
 
-	const dashboardTitle = pluginSlug ? `Manage ${ pluginSlug } in all sites` : 'Manage Plugins';
 	return (
 		<Layout
 			className={ clsx(
@@ -186,8 +272,11 @@ const PluginsDashboard = ( {
 			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
+			<PageViewTracker
+				path={ pluginSlug ? `/plugins/manage/sites/${ pluginSlug }` : '/plugins/manage/sites' }
+				title="Plugins Dashboard"
+			/>
 			<QueryPlugins />
-
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
@@ -211,7 +300,6 @@ const PluginsDashboard = ( {
 					bulkActionDialog={ bulkActionDialog }
 				/>
 			</LayoutColumn>
-
 			{ pluginSlug && (
 				<LayoutColumn className="site-preview-pane" wide>
 					<LayoutTop withNavigation={ false }>
