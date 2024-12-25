@@ -538,8 +538,6 @@ class StatsSite extends Component {
 						chartTab={ this.props.chartTab }
 						customQuantity={ customChartQuantity }
 						customRange={ customChartRange }
-						showChartHeader // in the new date filtering enabled experience there is a new chart header to show
-						isNewDateFilteringEnabled
 					/>
 
 					{ ! wpcomShowUpsell && (
