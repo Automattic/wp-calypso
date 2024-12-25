@@ -56,7 +56,14 @@
 		}
 	}
 
-	.edit-contact-info-page .contact-details-form-fields {
-		padding: 0;
+	.edit-contact-info-page {
+		.card,
+		.edit-contact-info-page__sidebar {
+			border-radius: 4px;
+		}
+
+		.contact-details-form-fields {
+			padding: 0;
+		}
 	}
 }
