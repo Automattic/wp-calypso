@@ -79,6 +79,7 @@
 
 	@media (max-width: 660px) {
 		.multi-sites-dashboard-layout__header-main {
+			// A4A hides a part of LayoutHeader since it displays a different header for mobile 
 			display: none;
 		}
 	}
