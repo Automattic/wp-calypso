@@ -81,7 +81,11 @@ export class SocialConnectionsManager {
 
 			const result = await response.json();
 
+			console.log( '>>>>>>>>>>>> typeof result', { typeof: typeof result } );
+			console.log( '>>>>>>>>>>>>', { result } );
+
 			const url = route.request().url();
+			console.log( '>>>>>>>>>>>>', { url } );
 
 			if ( this.patterns.GET_POST.test( url ) ) {
 				// For posts, add a test connection to post attributes.
