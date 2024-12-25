@@ -1,6 +1,7 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	productsReinstall,
 	productsReinstallNotStarted,
@@ -77,6 +78,14 @@ export function activateTheme( themeId, siteId, options = {} ) {
 								href: getSiteUrl( getState(), siteId ),
 								duration: 20000,
 								showDismiss: false,
+								onClick: () => {
+									dispatch(
+										recordTracksEvent( 'calypso_theme_activated_notice_view_site', {
+											theme: themeId,
+											site: siteId,
+										} )
+									);
+								},
 							}
 						)
 					);
