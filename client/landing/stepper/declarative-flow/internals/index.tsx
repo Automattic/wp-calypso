@@ -163,11 +163,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
 		// and are redirected to the user step.
-		if ( step.slug === STEPS.USER.slug && stepData.nextStep ) {
-			const previousStepSlug = stepData.previousStep;
+		const nextStepSlug = stepData?.nextStep ?? '';
+		if ( step.slug === STEPS.USER.slug && nextStepSlug ) {
+			const previousStepSlug = stepData?.previousStep;
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
-				step: stepData.nextStep,
+				step: nextStepSlug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
@@ -182,7 +183,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					navigation={ {
 						...stepNavigation,
 						submit() {
-							navigate( stepData.nextStep, undefined, true );
+							navigate( nextStepSlug, undefined, true );
 						},
 						...( previousStepSlug && {
 							goBack() {

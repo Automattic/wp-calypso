@@ -52,7 +52,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
 		// If the current step requires the auth, it should become a next step after the auth.
 		const extraData = {
-			previousStep: stepData.previousStep,
+			previousStep: stepData?.previousStep,
 			nextStep: step.slug,
 		};
 
