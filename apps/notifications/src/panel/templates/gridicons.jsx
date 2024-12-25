@@ -21,6 +21,7 @@ const Gridicons = forwardRef( ( { icon, size = 24, onClick }, ref ) => {
 		case 'gridicons-checkmark':
 			return (
 				<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					<title>{ translate( 'Approve' ) }</title>
 					<path fill="none" d="M0 0h24v24H0z" />
 					<path d="M9 19.414l-6.707-6.707 1.414-1.414L9 16.586 20.293 5.293l1.414 1.414" />
 				</svg>
@@ -38,7 +39,7 @@ const Gridicons = forwardRef( ( { icon, size = 24, onClick }, ref ) => {
 		case 'gridicons-star':
 			return (
 				<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-					<title>{ translate( 'Star' ) }</title>
+					<title>{ translate( 'Like' ) }</title>
 					<path fill="none" d="M0 0h24v24H0z" />
 					<path d="M12 2l2.582 6.953L22 9.257l-5.822 4.602L18.18 21 12 16.89 5.82 21l2.002-7.14L2 9.256l7.418-.304" />
 				</svg>
@@ -47,7 +48,7 @@ const Gridicons = forwardRef( ( { icon, size = 24, onClick }, ref ) => {
 		case 'gridicons-star-outline':
 			return (
 				<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-					<title>{ translate( 'Star Outline' ) }</title>
+					<title>{ translate( 'Like' ) }</title>
 					<g>
 						<path d="M12 6.308l1.176 3.167.347.936.997.042 3.374.14-2.647 2.09-.784.62.27.963.91 3.25-2.813-1.872-.83-.553-.83.552-2.814 1.87.91-3.248.27-.962-.783-.62-2.648-2.092 3.374-.14.996-.04.347-.936L12 6.308M12 2L9.418 8.953 2 9.257l5.822 4.602L5.82 21 12 16.89 18.18 21l-2.002-7.14L22 9.256l-7.418-.305L12 2z" />
 					</g>
@@ -146,7 +147,7 @@ const Gridicons = forwardRef( ( { icon, size = 24, onClick }, ref ) => {
 		case 'gridicons-stats-alt':
 			return (
 				<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-					<title>{ translate( 'Stats Alt' ) }</title>
+					<title>{ translate( 'Stats' ) }</title>
 					<g>
 						<path d="M21 21H3v-2h18v2zM8 10H4v7h4v-7zm6-7h-4v14h4V3zm6 3h-4v11h4V6z" />
 					</g>
