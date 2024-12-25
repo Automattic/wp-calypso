@@ -207,6 +207,10 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/dns/add/' + siteName;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
 }
 

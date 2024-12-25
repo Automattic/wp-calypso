@@ -107,7 +107,7 @@ class AddDnsRecord extends Component {
 
 	renderMain() {
 		const { domains, dns, selectedDomainName, selectedSite, translate } = this.props;
-
+		const { showBreadcrumbs = true } = this.props.context?.params || {};
 		const recordBeingEdited = this.getRecordBeingEdited();
 
 		const dnsSupportPageLink = (
@@ -134,7 +134,9 @@ class AddDnsRecord extends Component {
 		return (
 			<Main wideLayout className="add-dns-record">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				<div className="add-dns-record__fullwidth">{ this.renderHeader() }</div>
+				{ showBreadcrumbs && (
+					<div className="add-dns-record__fullwidth">{ this.renderHeader() }</div>
+				) }
 				<div className="add-dns-record__main">
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
