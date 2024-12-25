@@ -16,6 +16,11 @@
 
 		.navigation-header__main {
 			padding: 0;
+			flex-direction: column;
+
+			.breadcrumbs {
+				padding-bottom: 24px;
+			}
 		}
 	}
 
@@ -51,7 +56,14 @@
 		}
 	}
 
-	.edit-contact-info-page .contact-details-form-fields {
-		padding: 0;
+	.edit-contact-info-page {
+		.card,
+		.edit-contact-info-page__sidebar {
+			border-radius: 4px;
+		}
+
+		.contact-details-form-fields {
+			padding: 0;
+		}
 	}
 }
