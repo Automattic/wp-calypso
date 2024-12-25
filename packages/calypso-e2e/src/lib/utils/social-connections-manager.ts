@@ -95,7 +95,7 @@ export class SocialConnectionsManager {
 					result.push( ...this.testConnections );
 				} else {
 					/**
-					 * It's possible that there are other connections added white these tests are running.
+					 * It's possible that there are other connections added while these tests are running.
 					 * So we need to merge them.
 					 *
 					 * Since useAdminUiV1 flag is not activated on Atomic sites,
