@@ -117,12 +117,13 @@ export class SocialConnectionsManager {
 	 */
 	async waitForConnectionTests() {
 		await this.page.waitForResponse( ( response ) => {
-			console.log( 'Waiting for response>>>>>>>>>>>>>', { url: response.url() } );
-
-			return (
+			const result =
 				this.patterns.CONNECTION_TESTS.test( response.url() ) ||
-				this.patterns.JP_CONNECTION_TESTS.test( response.url() )
-			);
+				this.patterns.JP_CONNECTION_TESTS.test( response.url() );
+
+			console.log( 'Waiting for response>>>>>>>>>>>>>', { result, url: response.url() } );
+
+			return result;
 		} );
 	}
 }
