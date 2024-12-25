@@ -89,7 +89,7 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
-export function showSitesPage( route: string ) {
+export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
 
@@ -103,7 +103,17 @@ export function showSitesPage( route: string ) {
 		}
 	} );
 
-	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	if ( openInNewTab ) {
+		const newWindow = window.open(
+			newUrl.toString().replace( window.location.origin, '' ),
+			'_blank'
+		);
+		if ( newWindow ) {
+			newWindow.opener = null;
+		}
+	} else {
+		pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	}
 }
 
 const SitesDashboard = ( {
@@ -336,14 +346,16 @@ const SitesDashboard = ( {
 
 	const openSitePreviewPane = (
 		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+		openInNewTab?: boolean
 	) => {
 		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 			site_id: site.ID,
 			source,
 		} );
 		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
+			openInNewTab
 		);
 	};
 
