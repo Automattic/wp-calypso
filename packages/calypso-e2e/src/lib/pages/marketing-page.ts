@@ -42,9 +42,6 @@ export class MarketingPage {
 	 */
 	async visitTab( siteSlug: string, tabSlug: string ) {
 		await this.page.goto( getCalypsoURL( `sites/marketing/${ tabSlug }/${ siteSlug }` ) );
-
-		// Wait for the services to load.
-		await this.page.waitForResponse( /wpcom\/v2\/sites\/[0-9]+\/external-services/ );
 	}
 
 	/**
@@ -133,6 +130,9 @@ export class MarketingPage {
 	async addSocialTestConnections( siteSlug: string ) {
 		await this.visitTab( siteSlug, 'connections' );
 
+		// Wait for the services to load.
+		await this.page.waitForResponse( /wpcom\/v2\/sites\/[0-9]+\/external-services/ );
+
 		const isConnected = await this.getSocialDisconnectButton( 'Tumblr' ).isVisible();
 
 		if ( isConnected ) {
@@ -151,6 +151,9 @@ export class MarketingPage {
 	 */
 	async removeSocialTestConnections( siteSlug: string ) {
 		await this.visitTab( siteSlug, 'connections' );
+
+		// Wait for the services to load.
+		await this.page.waitForResponse( /wpcom\/v2\/sites\/[0-9]+\/external-services/ );
 
 		const disconnectButton = this.getSocialDisconnectButton( 'Tumblr' );
 
