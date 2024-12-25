@@ -24,10 +24,6 @@
 		}
 	}
 
-	.multi-sites-dashboard-layout__header {
-		align-items: center;
-	}
-
 	.multi-sites-dashboard-layout__header-title {
 		display: block;
 	}
@@ -197,10 +193,6 @@
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.multi-sites-dashboard-layout__header {
-			align-items: center !important;
-		}
-
 		.sites-manage-all-domains-button,
 		.multi-sites-dashboard-layout__header-subtitle {
 			display: none;
