@@ -181,7 +181,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return (
 				<StepComponent
 					navigation={ {
-						...stepNavigation,
 						submit() {
 							navigate( nextStepSlug, undefined, true );
 						},
