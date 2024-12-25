@@ -151,7 +151,6 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Activate Plugin(s)' );
 		doActionOverSelected( 'activating', activatePlugin );
 	};
 
@@ -159,8 +158,6 @@ const PluginsDashboard = ( {
 		if ( ! accepted ) {
 			return;
 		}
-
-		recordTracksEvent( 'Clicked Remove Plugin(s) and Remove Jetpack' );
 
 		doActionOverSelected( 'removing', ( siteId: number, plugin: Plugin ) => {
 			removePlugin( siteId, plugin );
@@ -172,7 +169,6 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Remove Plugin(s)' );
 		doActionOverSelected( 'removing', removePlugin );
 	};
 
@@ -180,8 +176,6 @@ const PluginsDashboard = ( {
 		if ( ! accepted ) {
 			return;
 		}
-
-		recordTracksEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack' );
 
 		doActionOverSelected( 'deactivating', ( siteId: number, plugin: Plugin ) => {
 			deactivatePlugin( siteId, plugin );
@@ -193,13 +187,7 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Deactivate Plugin(s)' );
 		doActionOverSelected( 'deactivating', deactivatePlugin );
-	};
-
-	const updatePlugin = ( selectedPlugin: Plugin ) => {
-		handleUpdatePlugins( [ selectedPlugin ], updatePluginAction, [] );
-		removePluginStatuses();
 	};
 
 	const updateSelected = ( accepted: boolean ) => {
@@ -207,8 +195,10 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Update Plugin(s)' );
-		doActionOverSelected( 'updating', updatePlugin );
+		doActionOverSelected( 'updating', ( siteId: number, plugin: Plugin ) => {
+			handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
+			removePluginStatuses();
+		} );
 	};
 
 	const setAutoupdateSelected = ( accepted: boolean ) => {
@@ -216,7 +206,6 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Enable Autoupdate Plugin(s)' );
 		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin );
 	};
 
@@ -225,7 +214,6 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		recordTracksEvent( 'Clicked Disable Autoupdate Plugin(s)' );
 		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin );
 	};
 
