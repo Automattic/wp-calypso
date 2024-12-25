@@ -27,13 +27,6 @@
 		margin: -10px 0;
 	}
 
-	.multi-sites-dashboard-layout__top-wrapper:not(.preview-hidden) {
-		padding-block-start: 24px;
-		@include breakpoint-deprecated( "<660px" ) {
-			padding-block-start: 0;
-		}
-	}
-
 	.components-input-base {
 		border-radius: 4px;
 	}
