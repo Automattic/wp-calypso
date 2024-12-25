@@ -1,4 +1,5 @@
 /**
+ * @group calypso-pr
  * @group jetpack-wpcom-integration
  */
 
