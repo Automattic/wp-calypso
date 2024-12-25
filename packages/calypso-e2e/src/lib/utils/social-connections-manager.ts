@@ -82,7 +82,7 @@ export class SocialConnectionsManager {
 			const result = await response.json();
 
 			console.log( '>>>>>>>>>>>> typeof result', { typeof: typeof result } );
-			console.log( '>>>>>>>>>>>>', { result } );
+			console.log( '>>>>>>>>>>>>', JSON.stringify( result ) );
 
 			const url = route.request().url();
 			console.log( '>>>>>>>>>>>>', { url } );
