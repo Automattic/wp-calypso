@@ -7,11 +7,6 @@
 	flex-direction: column;
 	height: 100%;
 
-    .button:not(.is-borderless) {
-        padding: 10px 14px;
-        border-radius: 4px;
-    }
-
 	.subpage-wrapper__header.navigation-header {
 		padding: 24px;
 		border-block-end: 1px solid var(--color-border-secondary);
