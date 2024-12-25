@@ -79,7 +79,7 @@ export class SocialConnectionsManager {
 			// Fetch original response.
 			const response = await route.fetch();
 
-			const result = await response.json();
+			let result = await response.json();
 
 			console.log( '>>>>>>>>>>>> typeof result', { typeof: typeof result } );
 			console.log( '>>>>>>>>>>>>', JSON.stringify( result ) );
@@ -94,8 +94,29 @@ export class SocialConnectionsManager {
 				// For connection tests, add test connections to the body.
 				result.body.push( ...this.testConnections );
 			} else if ( this.patterns.JP_CONNECTION_TESTS.test( url ) ) {
+				/**
+				 * Convert to
+				 *	{
+				 *		"tumblr": {
+				 *			"25481710": {
+				 *				"display_name": "Untitled",
+				 *				...
+				 *			}
+				 *		}
+				 *	}
+				 */
+				const connections = this.testConnections.reduce<
+					Record< string, Record< string, unknown > >
+				>( ( acc, connection ) => {
+					acc[ connection.service_name ] = acc[ connection.service_name ] || {};
+
+					acc[ connection.service_name ][ connection.connection_id ] = connection;
+
+					return acc;
+				}, {} );
+
 				// For JP connection tests, add test connections to the result.
-				result.push( ...this.testConnections );
+				result = { ...result, ...connections };
 			}
 
 			await route.fulfill( {
