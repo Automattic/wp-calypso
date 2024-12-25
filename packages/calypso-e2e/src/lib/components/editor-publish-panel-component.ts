@@ -31,6 +31,15 @@ export class EditorPublishPanelComponent {
 	}
 
 	/**
+	 * Returns the root element of the toolbar.
+	 */
+	async getRoot() {
+		const editorParent = await this.editor.parent();
+
+		return editorParent.getByRole( 'region', { name: 'Editor publish' } );
+	}
+
+	/**
 	 * Checks whether the Editor Publish panel is open.
 	 *
 	 * This method will wait up to 5 seconds for the panel to be visible.

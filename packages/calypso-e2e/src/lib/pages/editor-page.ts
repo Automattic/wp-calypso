@@ -515,6 +515,22 @@ export class EditorPage {
 	//#region Settings Sidebar
 
 	/**
+	 * Returns the locator for the root element of the settings sidebar.
+	 */
+	async getSettingsRoot() {
+		return await this.editorSettingsSidebarComponent.getRoot();
+	}
+
+	/**
+	 * Returns the locator of a section (panel body) settings sidebar.
+	 *
+	 * @param {string} name Name of the section.
+	 */
+	async getSettingsSection( name: string ) {
+		return await this.editorSettingsSidebarComponent.getSection( name );
+	}
+
+	/**
 	 * Opens the Settings sidebar.
 	 */
 	async openSettings( target: EditorToolbarSettingsButton = 'Settings' ): Promise< void > {
@@ -538,8 +554,8 @@ export class EditorPage {
 	 *
 	 * @param {string} name Name of the section to expand.
 	 */
-	async expandSection( name: string ): Promise< void > {
-		await this.editorSettingsSidebarComponent.expandSection( name );
+	async expandSection( name: string ) {
+		return await this.editorSettingsSidebarComponent.expandSection( name );
 	}
 
 	/**
@@ -681,6 +697,13 @@ export class EditorPage {
 	//#endregion
 
 	//#region Publish, Draft & Schedule
+
+	/**
+	 * Returns the locator for the root element of the publish toolbar.
+	 */
+	async getPublishPanelRoot() {
+		return await this.editorPublishPanelComponent.getRoot();
+	}
 
 	/**
 	 * Publishes the post or page and returns the resulting URL.
