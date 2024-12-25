@@ -1063,21 +1063,6 @@ class ThemeSheet extends Component {
 					</Card>
 				);
 			}
-		} else {
-			// Logged out
-			renderedTab = (
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="help" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ translate( 'Have a question about this theme?' ) }
-						<small>
-							{ translate( 'Pick this design and start a site with us, we can help!', {
-								context: 'Logged out theme support message',
-							} ) }
-						</small>
-					</div>
-				</Card>
-			);
 		}
 
 		return renderedTab;
