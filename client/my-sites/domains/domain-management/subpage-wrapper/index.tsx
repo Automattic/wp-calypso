@@ -11,35 +11,43 @@ type SubpageWrapperProps = {
 };
 
 const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: SubpageWrapperProps ) => {
-	const subpageParams = getSubpageParams( subpageKey );
-	if ( ! subpageParams ) {
-		return children;
+	const { CustomHeader, title, subtitle } = getSubpageParams( subpageKey ) || {};
+
+	if ( CustomHeader ) {
+		return (
+			<div className="subpage-wrapper">
+				<CustomHeader selectedDomainName={ domainName } selectedSiteSlug={ siteName } />
+				<div className="subpage-wrapper__content">{ children }</div>
+			</div>
+		);
 	}
 
-	const breadcrumbItems = [
-		{
-			label: domainName,
-			href: domainManagementAllOverview( siteName, domainName ),
-		},
-		{
-			label: subpageParams.title,
-		},
-	];
+	if ( title ) {
+		const breadcrumbItems = [
+			{
+				label: domainName,
+				href: domainManagementAllOverview( siteName, domainName ),
+			},
+			{
+				label: title as string,
+			},
+		];
 
-	return subpageParams ? (
-		<div className="subpage-wrapper">
-			<NavigationHeader
-				className="subpage-wrapper__header"
-				navigationItems={ breadcrumbItems }
-				title={ subpageParams.title }
-				subtitle={ subpageParams.subtitle }
-				alwaysShowTitle
-			/>
-			<div className="subpage-wrapper__content">{ children }</div>
-		</div>
-	) : (
-		<>{ children }</>
-	);
+		return (
+			<div className="subpage-wrapper">
+				<NavigationHeader
+					className="subpage-wrapper__header"
+					navigationItems={ breadcrumbItems }
+					title={ title }
+					subtitle={ subtitle }
+					alwaysShowTitle
+				/>
+				<div className="subpage-wrapper__content">{ children }</div>
+			</div>
+		);
+	}
+
+	return children;
 };
 
 export default SubpageWrapper;

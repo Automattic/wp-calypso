@@ -4,7 +4,9 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import SubpageWrapper from '../index';
-import { ADD_FOWARDING_EMAIL } from '../subpages';
+import { ADD_FOWARDING_EMAIL, EDIT_CONTACT_INFO } from '../subpages';
+
+jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
 
 describe( 'SubpageWrapper', () => {
 	it( 'should render the children', () => {
@@ -52,20 +54,16 @@ describe( 'SubpageWrapper', () => {
 
 	it( 'should render breadcrumbs', () => {
 		const { container } = render(
-			<SubpageWrapper
-				subpageKey={ ADD_FOWARDING_EMAIL }
-				siteName="site.com"
-				domainName="domain.com"
-			>
+			<SubpageWrapper subpageKey={ EDIT_CONTACT_INFO } siteName="site.com" domainName="domain.com">
 				<span>Hello</span>
 			</SubpageWrapper>
 		);
 
-		expect( container.querySelector( '.breadcrumbs li:first-child' ).textContent ).toContain(
+		expect( container.querySelector( '.breadcrumbs li:first-child' )?.textContent ).toContain(
 			'domain.com'
 		);
-		expect( container.querySelector( '.breadcrumbs li:last-child' ).textContent ).toContain(
-			'Add new email forwarding'
+		expect( container.querySelector( '.breadcrumbs li:last-child' )?.textContent ).toContain(
+			'Contact information'
 		);
 	} );
 } );

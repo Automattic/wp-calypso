@@ -194,6 +194,10 @@ export function domainManagementEmail( siteName, domainName ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/dns/' + siteName;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }
 

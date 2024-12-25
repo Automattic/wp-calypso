@@ -381,7 +381,11 @@ export default {
 
 	domainManagementSubpageParams( subPageKey ) {
 		return ( pageContext, next ) => {
-			pageContext.params = getSubpageParams( subPageKey );
+			pageContext.params = {
+				...pageContext.params,
+				...getSubpageParams( subPageKey ),
+				subPageKey,
+			};
 			next();
 		};
 	},

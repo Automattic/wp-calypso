@@ -2,13 +2,13 @@ import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/co
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import formState from 'calypso/lib/form-state';
-
 class EmailForwardingAddNewCompact extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
@@ -18,7 +18,7 @@ class EmailForwardingAddNewCompact extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		onUpdateEmailForward: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
-		formHeader: PropTypes.element,
+		showFormHeader: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -90,7 +90,7 @@ class EmailForwardingAddNewCompact extends Component {
 	}
 
 	renderFormFields() {
-		const { translate, selectedDomainName, index, fields, formHeader } = this.props;
+		const { translate, selectedDomainName, index, fields, showFormHeader } = this.props;
 		const isValidMailbox = this.isValid( 'mailbox' );
 		const isValidDestination = this.isValid( 'destination' );
 		const { mailbox, destination } = fields;
@@ -99,7 +99,9 @@ class EmailForwardingAddNewCompact extends Component {
 
 		return (
 			<div className="email-forwarding__form-content">
-				{ formHeader ? <>{ formHeader }</> : null }
+				{ showFormHeader ? (
+					<CardHeading>{ translate( 'New email forwarding address' ) }</CardHeading>
+				) : null }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Emails sent to' ) }</FormLabel>
 					<FormTextInputWithAffixes
