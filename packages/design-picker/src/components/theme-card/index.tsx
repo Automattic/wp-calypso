@@ -1,7 +1,7 @@
-import { Card, Popover } from '@automattic/components';
+import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { forwardRef, useMemo, useRef, useState } from 'react';
+import { forwardRef, useMemo } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
 import type { StyleVariation } from '../../types';
 import type { Ref } from 'react';
@@ -10,7 +10,6 @@ import './style.scss';
 interface ThemeCardProps {
 	className?: string;
 	name: string;
-	description?: string;
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
@@ -21,7 +20,6 @@ interface ThemeCardProps {
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	isLoading?: boolean;
-	isShowDescriptionOnImageHover?: boolean;
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
 	onImageClick?: () => void;
@@ -56,7 +54,6 @@ const ThemeCard = forwardRef(
 		{
 			className,
 			name,
-			description,
 			image,
 			imageClickUrl,
 			imageActionLabel,
@@ -67,7 +64,6 @@ const ThemeCard = forwardRef(
 			optionsMenu,
 			isActive,
 			isLoading,
-			isShowDescriptionOnImageHover,
 			isSoftLaunched,
 			onClick,
 			onImageClick,
@@ -77,8 +73,6 @@ const ThemeCard = forwardRef(
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
 		const e2eName = useMemo( () => name?.toLowerCase?.().replace( /\s+/g, '-' ), [ name ] );
-		const imageRef = useRef< HTMLAnchorElement >( null );
-		const [ isShowTooltip, setIsShowTooltip ] = useState( false );
 
 		const isActionable = imageClickUrl || onImageClick;
 		const themeClasses = clsx( 'theme-card', {
@@ -100,7 +94,6 @@ const ThemeCard = forwardRef(
 					{ banner && <div className="theme-card__banner">{ banner }</div> }
 					<div className="theme-card__image-container">
 						<a
-							ref={ imageRef }
 							className="theme-card__image"
 							href={ imageClickUrl || '#' }
 							aria-label={ name }
@@ -111,8 +104,6 @@ const ThemeCard = forwardRef(
 
 								onImageClick?.();
 							} }
-							onMouseEnter={ () => setIsShowTooltip( true ) }
-							onMouseLeave={ () => setIsShowTooltip( false ) }
 						>
 							{ isActionable && imageActionLabel && (
 								<div className="theme-card__image-label">{ imageActionLabel }</div>
@@ -124,16 +115,6 @@ const ThemeCard = forwardRef(
 						<div className="theme-card__loading">
 							<div className="theme-card__loading-dot" />
 						</div>
-					) }
-					{ isShowDescriptionOnImageHover && description && (
-						<Popover
-							className="theme-card__tooltip"
-							context={ imageRef.current }
-							isVisible={ isShowTooltip }
-							showDelay={ 1000 }
-						>
-							{ description }
-						</Popover>
 					) }
 					{ isSoftLaunched && (
 						<div className="theme-card__info-soft-launched">
