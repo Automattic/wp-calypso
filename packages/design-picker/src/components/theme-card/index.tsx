@@ -143,7 +143,7 @@ const ThemeCard = forwardRef(
 						</div>
 					) }
 					<div className={ themeInfoClasses }>
-						<h2 className="theme-card__info-title" title={ name }>
+						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
 						{ ! optionsMenu && styleVariations.length > 0 && (

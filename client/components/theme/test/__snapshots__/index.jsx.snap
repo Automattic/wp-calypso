@@ -30,7 +30,6 @@ exports[`Theme rendering should match snapshot 1`] = `
     >
       <h2
         class="theme-card__info-title"
-        title="Twenty Seventeen"
       >
         <span>
           Twenty Seventeen
