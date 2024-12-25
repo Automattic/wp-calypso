@@ -42,7 +42,12 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const [ currentSearchParams ] = useSearchParams();
 
 	const customNavigate = useCallback< Navigate< StepperStep[] > >(
-		( nextStep: string, extraData = {}, replace = false ) => {
+		( nextStep: string | number, extraData = {}, replace = false ) => {
+			// Incase of navigating to `-1` to go back.
+			if ( typeof nextStep === 'number' ) {
+				return navigate( nextStep );
+			}
+
 			const hasQueryParams = nextStep.includes( '?' );
 
 			// Get the latest search params from the current location

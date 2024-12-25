@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -72,6 +72,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
 	const isValidStep = params.step != null && stepPaths.includes( params.step );
+	const location = useLocation();
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -168,16 +169,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				step: firstAuthWalledStep.slug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
+
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
-			const lastPreAuthWalledStepIndex =
-				flowSteps.findIndex( ( step ) => step.slug === 'user' ) - 1;
-			const lastPreAuthWalledStep =
-				lastPreAuthWalledStepIndex < 0 ? null : flowSteps[ lastPreAuthWalledStepIndex ];
+			const flowStartsWithAuth = flowSteps[ 0 ].slug === 'user';
+			const hasHistory = location.key !== 'default';
 
 			return (
 				<StepComponent
@@ -185,11 +185,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						submit() {
 							navigate( firstAuthWalledStep.slug, undefined, true );
 						},
-						...( lastPreAuthWalledStep && {
-							goBack() {
-								navigate( lastPreAuthWalledStep.slug, undefined, true );
-							},
-						} ),
+						...( ! flowStartsWithAuth &&
+							hasHistory && {
+								goBack() {
+									navigate( -1 );
+								},
+							} ),
 					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }

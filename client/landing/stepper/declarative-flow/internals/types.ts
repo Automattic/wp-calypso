@@ -86,7 +86,10 @@ export interface AsyncUserStep extends AsyncStepperStep {
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
-	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
+	stepName:
+		| FlowSteps[ number ][ 'slug' ]
+		| `${ FlowSteps[ number ][ 'slug' ] }?${ string }`
+		| number,
 	extraData?: any,
 	/**
 	 * If true, the current step will be replaced in the history stack.
