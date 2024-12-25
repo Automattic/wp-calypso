@@ -65,6 +65,8 @@ html, body {
 		padding-inline: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
+			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
+			// Consider removing this max-width as the default across all layouts.
 			max-width: 1500px;
 			margin-inline: auto !important;
 			padding-inline: 64px;
@@ -198,6 +200,7 @@ html, body {
 
 	.multi-sites-dashboard-layout__header-title {
 		margin-block-end: 0;
+		// TODO: Move this out of here into A4A styles?
 		display: none;
 
 		@include break-large {
