@@ -700,8 +700,10 @@ export class RenderDomainsStep extends Component {
 									'Sorry, there was a problem adding that domain. Please try again later.'
 								)
 							);
+						} )
+						.then( () => {
+							this.setState( { isMiniCartContinueButtonBusy: false } );
 						} );
-					this.setState( { isMiniCartContinueButtonBusy: false } );
 				} );
 			}, 500 );
 		} else {

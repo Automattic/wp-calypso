@@ -51,9 +51,13 @@ $blueberry-color: #3858e9;
 		}
 	}
 
+	.item-preview__header-favicon {
+		margin-inline-end: 12px;
+	}
+
 	@media (min-width: $break-large) {
 		.item-preview__header-favicon {
-			margin-right: 24px;
+			margin-inline-end: 24px;
 			position: relative;
 		}
 
@@ -102,10 +106,6 @@ $blueberry-color: #3858e9;
 	@media (max-width: $break-large) {
 		display: flex;
 		padding: 24px 24px 8px;
-
-		.sites-dataviews__site-favicon {
-			border-radius: 2px;
-		}
 
 		.item-preview__header-content {
 			flex-grow: 1;

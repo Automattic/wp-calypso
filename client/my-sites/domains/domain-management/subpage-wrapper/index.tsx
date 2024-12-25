@@ -25,18 +25,20 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 			label: subpageParams.title,
 		},
 	];
-
-	return (
+        
+	return subpageParams ? (
 		<div className="subpage-wrapper">
 			<NavigationHeader
+				className="subpage-wrapper__header"
 				navigationItems={ breadcrumbItems }
 				title={ subpageParams.title }
 				subtitle={ subpageParams.subtitle }
 				alwaysShowTitle
-				className="subpage-wrapper__header"
 			/>
 			<div className="subpage-wrapper__content">{ children }</div>
 		</div>
+	) : (
+		<>{ children }</>
 	);
 };
 

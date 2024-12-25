@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
+import SiteFavicon from 'calypso/blocks/site-favicon';
 import { navigate } from 'calypso/lib/navigate';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
