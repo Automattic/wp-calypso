@@ -399,8 +399,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	$gray-50: #646970;
 	$breakpoint-mobile: 660px;
 
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
+	--color-accent: var(--studio-wordpress-blue-50);
+	--color-accent-60: var(--studio-wordpress-blue-60);
 
 	.signup-header {
 		.wordpress-logo {
