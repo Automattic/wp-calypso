@@ -363,6 +363,7 @@
 			padding-left: calc(var(--sidebar-width-max));
 			padding-right: 16px;
 
+			// TODO: height should be the same across platforms after the redesign.
 			.main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
