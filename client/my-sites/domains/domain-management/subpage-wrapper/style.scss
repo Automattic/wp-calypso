@@ -90,6 +90,12 @@
                     border-bottom: none;
                 }
             }
+
+			.dns-records-list-item .dns-records-list-item__menu {
+				.ellipsis-menu__toggle {
+					right: unset;
+				}
+			}
         }
 
         .button.ellipsis {
