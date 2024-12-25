@@ -76,11 +76,10 @@ html, body {
 
 .multi-sites-dashboard-layout__top-wrapper {
 	padding-block-start: 24px;
-	border-bottom: #f1f1f1 1px solid;
+	border-block-end: 1px solid var(--color-neutral-5);
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
-		border-block-end: 1px solid var(--color-neutral-5);
 	}
 
 	.notice-banner {
