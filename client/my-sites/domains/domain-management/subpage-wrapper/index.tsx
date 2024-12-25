@@ -25,7 +25,7 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 			label: subpageParams.title,
 		},
 	];
-        
+
 	return subpageParams ? (
 		<div className="subpage-wrapper">
 			<NavigationHeader
