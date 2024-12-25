@@ -353,15 +353,6 @@
 	}
 }
 
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout,
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout .multi-sites-dashboard-layout-with-columns__container .multi-sites-dashboard-layout-column {
-	.multi-sites-dashboard-layout-column__container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	}
-}
-
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
 	&.multi-sites-dashboard-layout,

@@ -8,6 +8,14 @@
 .main.multi-sites-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
+	.multi-sites-dashboard-layout-column {
+		.multi-sites-dashboard-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+	}
+
 	.site-actions__actions-large-screen {
 		display: block;
 		margin-left: 10px;
