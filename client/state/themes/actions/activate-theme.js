@@ -75,7 +75,7 @@ export function activateTheme( themeId, siteId, options = {} ) {
 							{
 								button: translate( 'View site' ),
 								href: getSiteUrl( getState(), siteId ),
-								duration: 10000,
+								duration: 20000,
 								showDismiss: false,
 							}
 						)
