@@ -35,10 +35,13 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
-import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
+import { withShowPluginActionDialog, DialogCallback } from '../hooks/use-show-plugin-action-dialog';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
+
+type ActionCallbacks = Record< PluginActionName, DialogCallback >;
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
@@ -86,15 +89,15 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] | undefined >( undefined );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] >( [] );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
-		( plugin ) => {
+		( plugin: Plugin ) => {
 			const pluginData = wporgPlugins?.[ plugin.slug ];
-			return Object.assign( {}, plugin, pluginData );
+			return Object.assign( {}, plugin, pluginData ) as Plugin;
 		}
 	);
 	const currentPlugins = useSelector( ( state ) =>
@@ -102,26 +105,31 @@ const PluginsDashboard = ( {
 	);
 	const dashboardTitle = pluginSlug ? `Manage ${ pluginSlug } in all sites` : 'Manage Plugins';
 
-	const doActionOverSelected = ( actionName: string, action: ( arg0: any, arg1: any ) => any ) => {
-		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: { slug: string } ) =>
+	const doActionOverSelected = (
+		actionName: string,
+		action: ( siteId: number, plugin: Plugin ) => void
+	) => {
+		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: Plugin ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		const pluginAndSiteObjects = selectedPlugins
-			?.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
+			?.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) )
 			.map( ( p: Plugin ) => {
-				return Object.keys( p?.sites ).map( ( siteId ) => {
+				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = sites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return {
-						site,
 						plugin: p,
+						site,
 					};
 				} );
 			} ) // list of plugins -> list of plugin+site objects
 			.flat(); // flatten the list into one big list of plugin+site objects
 
-		pluginAndSiteObjects?.forEach( ( { plugin, site } ) => dispatch( action( site.ID, plugin ) ) );
+		pluginAndSiteObjects?.forEach( ( { plugin, site } ) =>
+			dispatch( action( site.ID || 0, plugin ) )
+		);
 
 		const pluginSlugs = [
 			...new Set( pluginAndSiteObjects?.map( ( { plugin } ) => plugin.slug ) ),
@@ -147,21 +155,19 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'activating', activatePlugin );
 	};
 
-	const removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
+	const removeSelectedWithJetpack = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
 		recordTracksEvent( 'Clicked Remove Plugin(s) and Remove Jetpack' );
 
-		let waitForRemove = false;
-		doActionOverSelected( 'removing', ( site, plugin ) => {
-			waitForRemove = true;
-			removePlugin( site, plugin );
+		doActionOverSelected( 'removing', ( siteId: number, plugin: Plugin ) => {
+			removePlugin( siteId, plugin );
 		} );
 	};
 
-	const removeSelected = ( accepted, selectedPlugins ) => {
+	const removeSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -170,22 +176,19 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'removing', removePlugin );
 	};
 
-	const deactivateAndDisconnectSelected = ( accepted ) => {
+	const deactivateAndDisconnectSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
 		recordTracksEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack' );
 
-		let waitForDeactivate = false;
-
-		doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			deactivatePlugin( site, plugin );
+		doActionOverSelected( 'deactivating', ( siteId: number, plugin: Plugin ) => {
+			deactivatePlugin( siteId, plugin );
 		} );
 	};
 
-	const deactivateSelected = ( accepted ) => {
+	const deactivateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -194,7 +197,12 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'deactivating', deactivatePlugin );
 	};
 
-	const updateSelected = ( accepted ) => {
+	const updatePlugin = ( selectedPlugin: Plugin ) => {
+		handleUpdatePlugins( [ selectedPlugin ], updatePluginAction, [] );
+		removePluginStatuses();
+	};
+
+	const updateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -203,7 +211,7 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'updating', updatePlugin );
 	};
 
-	const setAutoupdateSelected = ( accepted ) => {
+	const setAutoupdateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -212,7 +220,7 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin );
 	};
 
-	const unsetAutoupdateSelected = ( accepted ) => {
+	const unsetAutoupdateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
@@ -221,29 +229,21 @@ const PluginsDashboard = ( {
 		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin );
 	};
 
-	const updatePlugin = ( selectedPlugin ) => {
-		handleUpdatePlugins( [ selectedPlugin ], updatePluginAction, [] );
-		removePluginStatuses();
-	};
-
 	/** END BULK ACTION DIALOG CALLBACKS */
+	const bulkActionDialog = ( actionName: string, selectedPlugins: Plugin[] ) => {
+		const isJetpackIncluded = selectedPlugins.some( ( plugin ) => plugin.slug === 'jetpack' );
 
-	const bulkActionDialog = ( actionName, selectedPlugins ) => {
-		const isJetpackIncluded = selectedPlugins.some(
-			( { slug }: { slug: string } ) => slug === 'jetpack'
-		);
-		const ALL_ACTION_CALLBACKS = {
+		const ALL_ACTION_CALLBACKS: ActionCallbacks = {
 			[ PluginActions.ACTIVATE ]: activateSelected,
 			[ PluginActions.DEACTIVATE ]: isJetpackIncluded
 				? deactivateAndDisconnectSelected
 				: deactivateSelected,
-			[ PluginActions.REMOVE ]: isJetpackIncluded
-				? ( accepted ) => removeSelectedWithJetpack( accepted, selectedPlugins )
-				: ( accepted ) => removeSelected( accepted, selectedPlugins ),
+			[ PluginActions.REMOVE ]: isJetpackIncluded ? removeSelectedWithJetpack : removeSelected,
 			[ PluginActions.UPDATE ]: updateSelected,
 			[ PluginActions.ENABLE_AUTOUPDATES ]: setAutoupdateSelected,
 			[ PluginActions.DISABLE_AUTOUPDATES ]: unsetAutoupdateSelected,
 		};
+
 		if ( actionName === PluginActions.UPDATE ) {
 			//filter out sites that don't have an update available
 			selectedPlugins = selectedPlugins.map( ( plugin ) => {
@@ -256,8 +256,13 @@ const PluginsDashboard = ( {
 
 		setSelectedPlugins( selectedPlugins );
 
-		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName ];
-		showPluginActionDialog( actionName, selectedPlugins, sites, selectedActionCallback );
+		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName as PluginActionName ];
+		showPluginActionDialog(
+			actionName as PluginActionName,
+			selectedPlugins,
+			sites as Site[],
+			selectedActionCallback
+		);
 	};
 
 	return (
@@ -284,7 +289,6 @@ const PluginsDashboard = ( {
 						<Subtitle>{ translate( 'Manage plugins installed on all sites' ) }</Subtitle>
 						<Actions>
 							<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
-							{ /* <SitesDashboardHeader isPreviewPaneOpen={ !! selectedSite } /> */ }
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
