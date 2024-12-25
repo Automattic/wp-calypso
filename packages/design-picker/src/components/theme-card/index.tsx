@@ -86,7 +86,8 @@ const ThemeCard = forwardRef(
 			'theme-card--is-actionable': isActionable,
 		} );
 		const themeInfoClasses = clsx( 'theme-card__info', {
-			'theme-card__info--has-style-variations': styleVariations.length > 0,
+			// Only show style variations when there is both a badge and variations.
+			'theme-card__info--has-style-variations': badge && styleVariations.length > 0,
 		} );
 
 		return (

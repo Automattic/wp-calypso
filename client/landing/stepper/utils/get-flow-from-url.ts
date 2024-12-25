@@ -6,3 +6,9 @@ export const getFlowFromURL = () => {
 	const fromQuery = new URLSearchParams( window.location.search ).get( 'flow' );
 	return fromPath || fromQuery;
 };
+
+export const getStepFromURL = () => {
+	const fromPath = matchPath( { path: '/setup/:flow/:step' }, window.location.pathname )?.params
+		?.step;
+	return fromPath;
+};
