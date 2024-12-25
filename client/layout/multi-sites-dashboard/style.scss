@@ -200,12 +200,6 @@ html, body {
 
 	.multi-sites-dashboard-layout__header-title {
 		margin-block-end: 0;
-		// TODO: Move this out of here into A4A styles?
-		display: none;
-
-		@include break-large {
-			display: block;
-		}
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {

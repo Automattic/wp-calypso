@@ -13,6 +13,14 @@
 		}
 	}
 
+	.multi-sites-dashboard-layout__header-title {
+		display: none;
+		@include break-large {
+			display: block;
+		}
+	}
+
+
 	.site-actions__actions-large-screen {
 		display: block;
 		/** Increase the click area */
