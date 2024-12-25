@@ -8,10 +8,6 @@
 .main.multi-sites-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
-	.item-preview-pane .multi-sites-dashboard-layout-column__container {
-		display: flex;
-	}
-
 	.multi-sites-dashboard-layout-column {
 		@include breakpoint-deprecated( "<660px" ) {
 			border-radius: 0;
