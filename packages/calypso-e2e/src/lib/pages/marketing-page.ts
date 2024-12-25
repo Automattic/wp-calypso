@@ -1,6 +1,7 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
+import { SecretsManager } from '../../secrets';
 
 type MarketingPageTab =
 	| 'Marketing Tools'
@@ -41,6 +42,9 @@ export class MarketingPage {
 	 */
 	async visitTab( siteSlug: string, tabSlug: string ) {
 		await this.page.goto( getCalypsoURL( `sites/marketing/${ tabSlug }/${ siteSlug }` ) );
+
+		// Wait for the services to load.
+		await this.page.waitForResponse( /wpcom\/v2\/sites\/[0-9]+\/external-services/ );
 	}
 
 	/**
@@ -123,6 +127,41 @@ export class MarketingPage {
 			.waitFor();
 	}
 
+	/**
+	 * Ensures that there is at least one social connections for the site
+	 */
+	async addSocialTestConnections( siteSlug: string ) {
+		await this.visitTab( siteSlug, 'connections' );
+
+		const isConnected = await this.getSocialDisconnectButton( 'Tumblr' ).isVisible();
+
+		if ( isConnected ) {
+			return;
+		}
+
+		const popup = await this.clickSocialConnectButton( 'Tumblr' );
+
+		await this.setupTumblr( popup, SecretsManager.secrets.socialAccounts.tumblr );
+
+		await this.validateSocialConnected( 'Tumblr' );
+	}
+
+	/**
+	 * Ensure that there is at least one social connections for the site
+	 */
+	async removeSocialTestConnections( siteSlug: string ) {
+		await this.visitTab( siteSlug, 'connections' );
+
+		const disconnectButton = this.getSocialDisconnectButton( 'Tumblr' );
+
+		if ( await disconnectButton.isVisible() ) {
+			await Promise.all( [
+				disconnectButton.click(),
+				this.page.waitForResponse( /sites\/[0-9]+\/publicize-connections\/[0-9]+\/delete/ ),
+			] );
+		}
+	}
+
 	/* Social Connectisons */
 
 	/**
@@ -145,18 +184,26 @@ export class MarketingPage {
 	}
 
 	/**
+	 * Returns the Disconnect button for the specified Social service.
+	 *
+	 * @param {SocialConnection} target Social service.
+	 */
+	getSocialDisconnectButton( target: SocialConnection ) {
+		return this.page
+			.getByRole( 'main' )
+			.getByRole( 'listitem' )
+			.filter( { hasText: target } )
+			.getByRole( 'button', { name: 'Disconnect' } );
+	}
+
+	/**
 	 * Validates the specified Social service button now is connected.
 	 *
 	 * @param {SocialConnection} target Social service.
 	 * @throws {Error} If the social connection was not made for any reason.
 	 */
 	async validateSocialConnected( target: SocialConnection ): Promise< void > {
-		await this.page
-			.getByRole( 'main' )
-			.getByRole( 'listitem' )
-			.filter( { hasText: target } )
-			.getByRole( 'button', { name: 'Disconnect' } )
-			.waitFor();
+		await this.getSocialDisconnectButton( target ).waitFor();
 	}
 
 	/**

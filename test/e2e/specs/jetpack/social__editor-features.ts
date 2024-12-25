@@ -5,8 +5,8 @@
 import {
 	DataHelper,
 	EditorPage,
+	MarketingPage,
 	SecretsManager,
-	SocialConnectionsManager,
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
@@ -67,39 +67,34 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 		describe( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
-			let socialConnectionsManager: SocialConnectionsManager;
+			let marketingPage: MarketingPage;
 
 			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
 			const siteSlug = credentials.testSites?.primary?.url;
-			const siteId = credentials.testSites?.primary?.id;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 				editorPage = new EditorPage( page );
-				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 
 				const testAccount = new TestAccount( testAccountName );
 				await testAccount.authenticate( page );
+
+				marketingPage = new MarketingPage( page );
+				await marketingPage.addSocialTestConnections( siteSlug! );
+			} );
+
+			afterAll( async () => {
+				await marketingPage.removeSocialTestConnections( siteSlug! );
 			} );
 
 			beforeEach( async () => {
 				await editorPage.visit( 'post', { siteSlug } );
-			} );
 
-			afterEach( async () => {
-				await socialConnectionsManager.clearIntercepts();
+				// Open the Jetpack sidebar.
+				await editorPage.openSettings( 'Jetpack' );
 			} );
 
 			test( 'Should verify that auto-sharing is available for new posts', async function () {
-				await socialConnectionsManager.interceptRequests();
-
-				await Promise.all( [
-					// Open the Jetpack sidebar.
-					editorPage.openSettings( 'Jetpack' ),
-					// Wait for the connection test results to finish
-					socialConnectionsManager.waitForConnectionTests(),
-				] );
-
 				// Expand the Publicize panel.
 				const section = await editorPage.expandSection( 'Share this post' );
 
@@ -119,18 +114,6 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that resharing ${
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
-				let connectionTestPromise = Promise.resolve();
-				if ( features.resharing ) {
-					await socialConnectionsManager.interceptRequests();
-
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
-
-				// Open the Jetpack sidebar.
-				await editorPage.openSettings( 'Jetpack' );
-
-				await connectionTestPromise;
-
 				// Expand the Publicize panel.
 				let section = await editorPage.expandSection( 'Share this post' );
 
@@ -144,14 +127,8 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.publish();
 				await editorPage.closeAllPanels();
 
-				if ( features.resharing ) {
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
-
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
-
-				await connectionTestPromise;
 
 				// Expand the Publicize panel.
 				section = await editorPage.expandSection( 'Share this post' );
@@ -182,9 +159,6 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that manual sharing ${
 				features.manualSharing ? 'IS' : 'is NOT'
 			} available`, async function () {
-				// Open the Jetpack sidebar.
-				await editorPage.openSettings( 'Jetpack' );
-
 				// Expand the Publicize panel.
 				let section = await editorPage.expandSection( 'Share this post' );
 
@@ -227,9 +201,6 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			test( `Should verify that Social Image Generator ${
 				features.socialImageGenerator ? 'IS' : 'is NOT'
 			} available`, async function () {
-				// Open the Jetpack sidebar.
-				await editorPage.openSettings( 'Jetpack' );
-
 				const section = await editorPage.getSettingsSection( 'Social Image Generator' );
 
 				// Verify whether the Social Image Generator panel exists.
