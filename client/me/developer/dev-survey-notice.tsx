@@ -58,7 +58,7 @@ export const DeveloperSurveyNotice = ( {
 					</div>
 					<div className="developer-survey-notice__popup-content-buttons">
 						<Button
-							className="developer-survey-notice__popup-content-buttons-cancel"
+							variant="tertiary"
 							onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'remind-later-button' ) }
 						>
 							{ hasTranslation( 'Maybe later' ) || localeSlug === 'en'
@@ -66,7 +66,7 @@ export const DeveloperSurveyNotice = ( {
 								: translate( 'Remind later' ) }
 						</Button>
 						<Button
-							className="developer-survey-notice__popup-content-buttons-ok"
+							variant="primary"
 							href={ href }
 							target="_blank"
 							rel="noopener noreferrer"

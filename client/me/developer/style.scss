@@ -122,8 +122,8 @@
 		font-family: $font-sf-pro-text;
 
 		.developer-survey-notice__popup-head {
-			background: #0675c4;
-			border-bottom: 1px solid #f6f7f7;
+			background: var(--color-accent);
+			border-bottom: 1px solid var(--color-accent-0);
 			height: 56px;
 			padding: 0 14px 0 16px;
 			display: flex;
@@ -144,7 +144,7 @@
 		}
 
 		.developer-survey-notice__popup-img {
-			background: #0675c4;
+			background: var(--color-accent);
 			padding-bottom: 57.9%;
 			height: 0;
 
@@ -175,27 +175,8 @@
 
 			.developer-survey-notice__popup-content-buttons {
 				display: flex;
+				gap: 8px;
 				justify-content: flex-end;
-
-				.developer-survey-notice__popup-content-buttons-ok {
-					font-family: $font-sf-pro-text;
-					padding: 8px 14px;
-					background: var(--studio-blue-50);
-					color: var(--studio-white);
-					font-size: rem(14px);
-					line-height: 20px;
-					letter-spacing: -0.15px;
-				}
-
-				.developer-survey-notice__popup-content-buttons-cancel {
-					font-family: $font-sf-pro-text;
-					padding: 8px 14px;
-					color: var(--studio-blue-50);
-					text-align: center;
-					font-size: rem(14px);
-					line-height: 20px;
-					letter-spacing: -0.15px;
-				}
 			}
 		}
 	}
