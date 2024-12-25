@@ -20,13 +20,6 @@
 		}
 	}
 
-	.multi-sites-dashboard-layout__header-subtitle {
-		font-size: 0.875rem;
-		margin: 4px 0 0 0;
-		line-height: 20px;
-		letter-spacing: -0.15px;
-	}
-
 	.multi-sites-dashboard-layout__header-actions {
 		width: auto;
 		a {
@@ -185,8 +178,7 @@
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.sites-manage-all-domains-button,
-		.multi-sites-dashboard-layout__header-subtitle {
+		.sites-manage-all-domains-button {
 			display: none;
 		}
 
