@@ -95,7 +95,10 @@ export class SocialConnectionsManager {
 				result.body.push( ...this.testConnections );
 			} else if ( this.patterns.JP_CONNECTION_TESTS.test( url ) ) {
 				/**
-				 * Convert to
+				 * It's possible that there are other connections added white these tests are running. So we need to merge them.
+				 *
+				 * Since useAdminUiV1 flag is not activated on Atomic sites,
+				 * the result is still in weird format, this we need to convert to
 				 *	{
 				 *		"tumblr": {
 				 *			"25481710": {
@@ -105,18 +108,13 @@ export class SocialConnectionsManager {
 				 *		}
 				 *	}
 				 */
-				const connections = this.testConnections.reduce<
-					Record< string, Record< string, unknown > >
-				>( ( acc, connection ) => {
-					acc[ connection.service_name ] = acc[ connection.service_name ] || {};
+				result = this.testConnections.reduce( ( acc, cnxn ) => {
+					acc[ cnxn.service_name ] = acc[ cnxn.service_name ] || {};
 
-					acc[ connection.service_name ][ connection.connection_id ] = connection;
+					acc[ cnxn.service_name ][ cnxn.connection_id ] = cnxn;
 
 					return acc;
-				}, {} );
-
-				// For JP connection tests, add test connections to the result.
-				result = { ...result, ...connections };
+				}, result );
 			}
 
 			await route.fulfill( {
