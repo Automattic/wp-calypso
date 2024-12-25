@@ -24,9 +24,6 @@
 		// This is due to discrepancy in header actions between Dotcom and A4A.
 		// A4A hides displays a different header for mobile.
 		width: auto;
-		a {
-			font-weight: normal;
-		}
 	}
 
 	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
