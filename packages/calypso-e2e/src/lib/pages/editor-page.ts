@@ -205,6 +205,30 @@ export class EditorPage {
 	//#region Basic Entry
 
 	/**
+	 * Loads HTML into the editor.
+	 * @param content Content to load.
+	 */
+	async loadHtmlContent( content: string ) {
+		const editorParent = await this.getEditorParent();
+		await editorParent.evaluate( ( _, html ) => {
+			// @ts-expect-error Untyped global variable.
+			const { parse } = window.wp.blocks;
+			// @ts-expect-error Untyped global variable.
+			const { dispatch } = window.wp.data;
+			const blocks = parse( html );
+
+			blocks.forEach( ( block: any ) => {
+				if ( block.name === 'core/image' ) {
+					delete block.attributes.id;
+					delete block.attributes.url;
+				}
+			} );
+
+			dispatch( 'core/block-editor' ).resetBlocks( blocks );
+		}, content );
+	}
+
+	/**
 	 * Selects blank template from the template modal.
 	 */
 	async selectBlankPageTemplate() {

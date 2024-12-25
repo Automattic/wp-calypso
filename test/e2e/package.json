@@ -20,6 +20,7 @@
 		"clean:output": "rm -rf ./allure-results && rm -rf ./results",
 		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build",
 		"test": "yarn jest",
+		"metrics": "yarn jest --config jest.metrics.config.js",
 		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
 		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
 		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile"
