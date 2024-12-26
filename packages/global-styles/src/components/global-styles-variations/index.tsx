@@ -12,6 +12,8 @@ import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
 	withExperimentalBlockEditorProvider,
+	isColorVariation,
+	isFontVariation,
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
 import GlobalStylesVariationPreview from './preview';
@@ -127,7 +129,10 @@ const GlobalStylesVariations = ( {
 	const globalStylesVariationsWithoutDefault = useMemo(
 		() =>
 			globalStylesVariations.filter(
-				( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+				( globalStylesVariation ) =>
+					! isDefaultGlobalStyleVariationSlug( globalStylesVariation ) &&
+					! isColorVariation( globalStylesVariation ) &&
+					! isFontVariation( globalStylesVariation )
 			),
 		[ globalStylesVariations ]
 	);
