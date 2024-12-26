@@ -199,6 +199,7 @@ function EmailPlanMailboxesList( {
 								( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined
 							}
 							showIcon={ !! actionPathProps }
+							showContextMenu
 							domain={ domain }
 							disableActions={ isGoogleConfiguring }
 						>

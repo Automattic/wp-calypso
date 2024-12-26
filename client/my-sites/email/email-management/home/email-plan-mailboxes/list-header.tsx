@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import EmailTypeIcon from '../email-type-icon';
+import ContextMenu from './context-menu';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = React.PropsWithChildren< {
@@ -12,6 +13,7 @@ type Props = React.PropsWithChildren< {
 	addMailboxPath?: string;
 	domain?: ResponseDomain;
 	showIcon?: boolean;
+	showContextMenu?: boolean;
 	disableActions?: boolean;
 } >;
 const MailboxListHeader = ( {
@@ -21,6 +23,7 @@ const MailboxListHeader = ( {
 	addMailboxPath,
 	domain,
 	showIcon,
+	showContextMenu = false,
 	disableActions,
 }: Props ) => {
 	const translate = useTranslate();
@@ -63,6 +66,12 @@ const MailboxListHeader = ( {
 					<Button href={ addMailboxPath } variant="link" disabled={ !! disableActions }>
 						{ translate( 'Add mailbox' ) }
 					</Button>
+				) }
+				{ showContextMenu && (
+					<ContextMenu
+						domain={ domain }
+						className="email-plan-mailboxes-list__mailbox-context-menu"
+					/>
 				) }
 			</SectionHeader>
 			{ children }
