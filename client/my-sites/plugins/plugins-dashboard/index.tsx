@@ -39,15 +39,20 @@ import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-s
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
-import { withShowPluginActionDialog, DialogCallback } from '../hooks/use-show-plugin-action-dialog';
+import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
 import SitesWithInstalledPluginsList from '../plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
-type ActionCallbacks = Record< PluginActionName, DialogCallback >;
+interface PluginActionCallback {
+	( accepted: boolean ): void;
+}
+
+type ActionCallbacks = Record< PluginActionName, PluginActionCallback >;
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
@@ -115,7 +120,10 @@ const PluginsDashboard = ( {
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
-	const sitesToShow = allSites.filter( ( item ) => item && ! item?.options?.is_domain_only );
+	const sitesToShow = allSites.filter(
+		( item ): item is SiteDetails =>
+			item !== null && item !== undefined && ! item?.options?.is_domain_only
+	);
 	const sitesWithoutPlugin = sitesToShow.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
 	);
@@ -141,11 +149,15 @@ const PluginsDashboard = ( {
 					};
 				} );
 			} ) // list of plugins -> list of plugin+site objects
-			.flat(); // flatten the list into one big list of plugin+site objects
+			.flat() // flatten the list into one big list of plugin+site objects
+			.filter(
+				( obj ): obj is { plugin: Plugin; site: SiteDetails } =>
+					obj.site !== null && obj.site !== undefined
+			);
 
-		pluginAndSiteObjects?.forEach( ( { plugin, site } ) =>
-			dispatch( action( site.ID || 0, plugin ) )
-		);
+		pluginAndSiteObjects?.forEach( ( { plugin, site } ) => {
+			return dispatch( action( site.ID, plugin ) );
+		} );
 
 		const pluginSlugs = [
 			...new Set( pluginAndSiteObjects?.map( ( { plugin } ) => plugin.slug ) ),
@@ -269,6 +281,10 @@ const PluginsDashboard = ( {
 		);
 	};
 
+	const selectedPlugin = pluginSlug
+		? allPlugins.find( ( plugin ) => plugin.slug === pluginSlug )
+		: undefined;
+
 	return (
 		<Layout
 			className={ clsx(
@@ -306,7 +322,7 @@ const PluginsDashboard = ( {
 					bulkActionDialog={ bulkActionDialog }
 				/>
 			</LayoutColumn>
-			{ pluginSlug && sitesWithPlugin.length && allPlugins.length > 0 && (
+			{ selectedPlugin && sitesWithPlugin.length && allPlugins.length > 0 && (
 				<LayoutColumn className="plugin-manage-sites-pane" wide>
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
@@ -323,13 +339,13 @@ const PluginsDashboard = ( {
 							isWpCom
 							sites={ sitesWithPlugin }
 							isLoading={ isLoading }
-							plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+							plugin={ selectedPlugin }
 						/>
 
 						<PluginAvailableOnSitesList
 							sites={ sitesWithoutPlugin }
 							isLoading={ isLoading }
-							plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+							plugin={ selectedPlugin }
 						/>
 					</LayoutBody>
 				</LayoutColumn>
