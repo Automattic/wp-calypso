@@ -1,13 +1,13 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/dataviews/build-style/style.css";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/dataviews/build-style/style.css';
 
 .dataviews-wrapper {
 	// Maybe move upstream to the gutenberg repository
 	width: 100%;
 
 	tr.dataviews-view-table__row {
-		background: var(--studio-white);
+		background: var( --studio-white );
 
 		.components-checkbox-control__input {
 			opacity: 0;
@@ -15,15 +15,6 @@
 		.components-checkbox-control__input:checked,
 		.components-checkbox-control__input:indeterminate {
 			opacity: 1;
-		}
-
-		.dataviews-view-table-selection-checkbox {
-			padding-left: 12px;
-			&.is-selected {
-				.components-checkbox-control__input {
-					opacity: 1;
-				}
-			}
 		}
 
 		&:hover {
@@ -34,23 +25,23 @@
 		}
 
 		th {
-			border-bottom: 1px solid var(--color-neutral-5);
-			font-size: rem(13px);
+			border-bottom: 1px solid var( --color-neutral-5 );
+			font-size: rem( 13px );
 			font-weight: 400;
 			vertical-align: middle;
 		}
 
 		td {
-			border-bottom: 1px solid var(--color-neutral-5);
+			border-bottom: 1px solid var( --color-neutral-5 );
 			vertical-align: middle;
 
-			&:has(.sites-dataviews__site) {
+			&:has( .sites-dataviews__site ) {
 				width: 20%;
 			}
 		}
 
 		.dataviews-view-table__cell-content-wrapper {
-			font-size: rem(13px);
+			font-size: rem( 13px );
 		}
 
 		.dataviews-view-table__checkbox-column,
@@ -58,8 +49,8 @@
 			label.components-checkbox-control__label {
 				display: none;
 			}
-			&[type="checkbox"] {
-				border-color: var(--color-neutral-5);
+			&[type='checkbox'] {
+				border-color: var( --color-neutral-5 );
 			}
 		}
 
@@ -70,10 +61,10 @@
 
 	ul.dataviews-view-list {
 		li:hover {
-			background: var(--color-neutral-0);
+			background: var( --color-neutral-0 );
 		}
 		.is-selected {
-			background-color: var(--color-neutral-0);
+			background-color: var( --color-neutral-0 );
 		}
 
 		// Needs to be moved upstream to the gutenberg repository.
@@ -82,37 +73,18 @@
 		}
 	}
 
-	.components-checkbox-control__input[type="checkbox"]:focus {
-		box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-	}
-
-	.components-checkbox-control__input[type="checkbox"]:checked,
-	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-		border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-	}
-
-	.components-search-control input[type="search"].components-search-control__input {
-		background: var(--studio-white);
-		border: 1px solid var(--color-neutral-5);
-	}
-
-	.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
-	.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
-		box-shadow: none;
-		background-color: transparent;
-		color: var(--studio-jetpack-green-50);
+	.components-search-control input[type='search'].components-search-control__input {
+		background: var( --studio-white );
+		border: 1px solid var( --color-neutral-5 );
 	}
 
 	thead .dataviews-view-table__row th {
-		span,
+		span.dataviews-view-table-header,
 		button {
-			font-size: rem(11px);
+			font-size: rem( 11px );
 			font-weight: 500;
 			line-height: 20px;
-			color: var(--color-accent-80);
+			color: var( --color-accent-80 );
 			text-transform: uppercase;
 		}
 
@@ -128,14 +100,14 @@
 		justify-content: end;
 		flex-wrap: nowrap;
 
-		@media (min-width: 1080px) {
+		@media ( min-width: 1080px ) {
 			.site-actions__actions-large-screen {
 				float: none;
 				margin-inline-end: 20px;
 			}
 		}
 
-		> *:not(:last-child) {
+		> *:not( :last-child ) {
 			margin-inline-end: 10px;
 		}
 
@@ -149,14 +121,14 @@
 
 		&.sites-dataviews__actions-error {
 			svg {
-				color: var(--color-accent-5);
+				color: var( --color-accent-5 );
 			}
 		}
 	}
 
 	// Color overrides for focus states of Action button
-	.components-button:focus:not(:disabled) {
-		--wp-components-color-accent: var(--color-primary-light);
+	.components-button:focus:not( :disabled ) {
+		--wp-components-color-accent: var( --color-primary-light );
 	}
 }
 
@@ -166,7 +138,7 @@
 // when no field is hidable.
 // This has been fixed upstream as of
 // https://github.com/WordPress/gutenberg/pull/64711
-.dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
+.dataviews-settings-section:has( .dataviews-settings-section__content:empty ) {
 	display: none;
 }
 
@@ -176,7 +148,9 @@
 // It shouldn't be visible when there are no sortable fields.
 // Fixed at https://github.com/WordPress/gutenberg/issues/64816
 .is-section-a8c-for-agencies-team .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-sites.modal-open .dataviews-settings-section__content .is-divided-in-two,
+.is-section-a8c-for-agencies-sites.modal-open
+	.dataviews-settings-section__content
+	.is-divided-in-two,
 .is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two,
 .is-section-a8c-for-agencies-client .dataviews-settings-section__content .is-divided-in-two {
 	display: none !important;
@@ -216,25 +190,7 @@
 		position: sticky;
 		right: 0;
 		z-index: 1;
-		background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgb(255, 255, 255) 25%);
+		background: linear-gradient( 90deg, rgba( 255, 255, 255, 0 ) 0, rgb( 255, 255, 255 ) 25% );
 		padding-left: 48px;
 	}
-}
-
-// TODO: remove when this is implemented upstream.
-//
-// This reverts to core styles that are overriden by wp-calypso (this same file, line 21),
-// which need to be removed in a follow-up.
-// Follow-up issue: https://github.com/Automattic/dotcom-forge/issues/9554
-body.is-section-plugins .plugin-management-wrapper {
-    --wp-components-color-accent: var(--color-accent);
-}
-body.is-section-plugins .plugin-management-wrapper,
-.is-section-jetpack-cloud-plugin-management {
-
-    .dataviews-wrapper .dataviews-view-table .dataviews-view-table__row {
-		.dataviews-view-table-selection-checkbox{
-			padding-left: 0;
-		}
-    }
 }
