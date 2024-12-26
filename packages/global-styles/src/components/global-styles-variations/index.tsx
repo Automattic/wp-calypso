@@ -17,6 +17,8 @@ import {
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
 import GlobalStylesVariationPreview from './preview';
+import GlobalStylesVariationPreviewColors from './preview-colors';
+import GlobalStylesVariationPreviewTypography from './preview-typography';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
@@ -24,6 +26,9 @@ interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
 	showOnlyHoverView?: boolean;
+	VariationComponent:
+		| typeof GlobalStylesVariationPreview
+		| typeof GlobalStylesVariationPreviewColors;
 	onSelect: () => void;
 }
 
@@ -41,6 +46,7 @@ const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesO
 	globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
 
 const GlobalStylesVariation = ( {
+	VariationComponent = GlobalStylesVariationPreview,
 	globalStylesVariation,
 	isActive,
 	showOnlyHoverView,
@@ -85,7 +91,7 @@ const GlobalStylesVariation = ( {
 		>
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
-					<GlobalStylesVariationPreview
+					<VariationComponent
 						title={ globalStylesVariation.title }
 						inlineCss={ context.inline_css }
 						isFocused={ isFocused || showOnlyHoverView }
@@ -126,28 +132,53 @@ const GlobalStylesVariations = ( {
 			) ?? ( {} as GlobalStylesObject ),
 		[ globalStylesVariations ]
 	);
-	const globalStylesVariationsWithoutDefault = useMemo(
+
+	const { styleVariations, colorVariations, fontVariations } = useMemo(
 		() =>
-			globalStylesVariations.filter(
-				( globalStylesVariation ) =>
-					! isDefaultGlobalStyleVariationSlug( globalStylesVariation ) &&
-					! isColorVariation( globalStylesVariation ) &&
-					! isFontVariation( globalStylesVariation )
+			globalStylesVariations.reduce(
+				( acc, variation ) => {
+					if ( isDefaultGlobalStyleVariationSlug( variation ) ) {
+						return acc;
+					}
+
+					if ( isColorVariation( variation ) ) {
+						return {
+							...acc,
+							colorVariations: [ ...acc.colorVariations, variation ],
+						};
+					}
+
+					if ( isFontVariation( variation ) ) {
+						return {
+							...acc,
+							fontVariations: [ ...acc.fontVariations, variation ],
+						};
+					}
+
+					return {
+						...acc,
+						styleVariations: [ ...acc.styleVariations, variation ],
+					};
+				},
+				{
+					styleVariations: [],
+					colorVariations: [],
+					fontVariations: [],
+				}
 			),
 		[ globalStylesVariations ]
 	);
 
 	const nonDefaultStylesDescription = description ?? variationDescription;
-	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
-		( globalStylesVariation, index ) => (
-			<GlobalStylesVariation
-				key={ index }
-				globalStylesVariation={ globalStylesVariation }
-				isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
-				onSelect={ () => onSelect( globalStylesVariation ) }
-			/>
-		)
-	);
+	const nonDefaultStyles = styleVariations.map( ( globalStylesVariation, index ) => (
+		<GlobalStylesVariation
+			key={ index }
+			VariationComponent={ GlobalStylesVariationPreview }
+			globalStylesVariation={ globalStylesVariation }
+			isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+			onSelect={ () => onSelect( globalStylesVariation ) }
+		/>
+	) );
 
 	const headerText = splitDefaultVariation ? translate( 'Default Style' ) : translate( 'Styles' );
 
@@ -183,6 +214,7 @@ const GlobalStylesVariations = ( {
 					<div className="global-styles-variations">
 						<GlobalStylesVariation
 							key="base"
+							VariationComponent={ GlobalStylesVariationPreview }
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
@@ -218,6 +250,46 @@ const GlobalStylesVariations = ( {
 							<p>{ nonDefaultStylesDescription }</p>
 						</div>
 						<div className="global-styles-variations">{ nonDefaultStyles }</div>
+						{ colorVariations.length > 0 && (
+							<>
+								<div className="global-styles-variations__header">
+									<p>{ translate( 'Palettes' ) }</p>
+								</div>
+								<div className="global-styles-variations">
+									{ colorVariations.map( ( globalStylesVariation, index ) => (
+										<GlobalStylesVariation
+											key={ index }
+											VariationComponent={ GlobalStylesVariationPreviewColors }
+											globalStylesVariation={ globalStylesVariation }
+											isActive={
+												globalStylesVariation.slug === selectedGlobalStylesVariation?.slug
+											}
+											onSelect={ () => onSelect( globalStylesVariation ) }
+										/>
+									) ) }
+								</div>
+							</>
+						) }
+						{ fontVariations.length > 0 && (
+							<>
+								<div className="global-styles-variations__header">
+									<p>{ translate( 'Typography' ) }</p>
+								</div>
+								<div className="global-styles-variations">
+									{ fontVariations.map( ( globalStylesVariation, index ) => (
+										<GlobalStylesVariation
+											key={ index }
+											VariationComponent={ GlobalStylesVariationPreviewTypography }
+											globalStylesVariation={ globalStylesVariation }
+											isActive={
+												globalStylesVariation.slug === selectedGlobalStylesVariation?.slug
+											}
+											onSelect={ () => onSelect( globalStylesVariation ) }
+										/>
+									) ) }
+								</div>
+							</>
+						) }
 					</div>
 				) }
 			</div>
