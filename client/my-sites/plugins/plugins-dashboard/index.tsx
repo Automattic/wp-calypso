@@ -37,6 +37,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog, DialogCallback } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
@@ -99,7 +100,9 @@ const PluginsDashboard = ( {
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
-	const isLoading = useSelector( ( state ) => isRequestingForAllSites( state ) );
+	const isLoading = useSelector(
+		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
+	);
 	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
 		( plugin: Plugin ) => {
 			const pluginData = wporgPlugins?.[ plugin.slug ];
