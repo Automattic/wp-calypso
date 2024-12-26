@@ -7,6 +7,11 @@ import {
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import {
+	ADD_ON_350GB_STORAGE,
+	ADD_ON_300GB_STORAGE,
+	ADD_ON_250GB_STORAGE,
+	ADD_ON_200GB_STORAGE,
+	ADD_ON_150GB_STORAGE,
 	ADD_ON_100GB_STORAGE,
 	ADD_ON_50GB_STORAGE,
 	ADD_ON_CUSTOM_DESIGN,
@@ -53,6 +58,46 @@ export const getAddOnsList = (): AddOnMeta[] => {
 			description: i18n.translate(
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),
+		},
+		{
+			addOnSlug: ADD_ON_150GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 150,
+			name: i18n.translate( '150 GB Storage' ),
+		},
+		{
+			addOnSlug: ADD_ON_200GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 200,
+			name: i18n.translate( '200 GB Storage' ),
+		},
+		{
+			addOnSlug: ADD_ON_250GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 250,
+			name: i18n.translate( '250 GB Storage' ),
+		},
+		{
+			addOnSlug: ADD_ON_300GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 300,
+			name: i18n.translate( '300 GB Storage' ),
+		},
+		{
+			addOnSlug: ADD_ON_350GB_STORAGE,
+			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: null,
+			icon: spaceUpgradeIcon,
+			quantity: 350,
+			name: i18n.translate( '350 GB Storage' ),
 		},
 	];
 };
