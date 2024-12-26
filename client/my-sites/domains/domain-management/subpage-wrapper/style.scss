@@ -123,8 +123,9 @@
     }
 
     .domain__main-placeholder,
-    .dns-records {
-        .navigation-header{
+    .dns-records,
+	.add-dns-record {
+        .navigation-header {
             border-block-end: none !important;
             padding-top: 0 !important;
             padding-bottom: 0;
