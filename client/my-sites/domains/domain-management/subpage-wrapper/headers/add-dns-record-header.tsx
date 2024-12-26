@@ -32,7 +32,7 @@ const AddDnsRecordHeader: CustomHeaderComponentType = ( {
 				href: `/domains/manage/all/overview/${ selectedDomainName }/dns/${ selectedSiteSlug }`,
 			},
 			{
-				label: translate( 'Add new DNS record' ),
+				label: translate( 'Add a new DNS record' ),
 			},
 		] }
 		title={ translate( 'DNS records' ) }
