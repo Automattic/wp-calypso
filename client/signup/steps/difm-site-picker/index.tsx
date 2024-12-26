@@ -15,6 +15,7 @@ interface Props {
 	stepSectionName: string | null;
 	stepName: string;
 	flowName: string;
+	signupDependencies: any;
 	goToStep: () => void;
 	goToNextStep: () => void;
 }
@@ -36,7 +37,8 @@ const DIFMSitePicker = ( {
 export default function DIFMSitePickerStep( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { goToNextStep } = props;
+	const { signupDependencies, goToNextStep } = props;
+	const { back_to: backUrl } = signupDependencies;
 	const store = useStore();
 
 	const headerText = translate( 'Choose where you want us to build your site.' );
@@ -108,6 +110,8 @@ export default function DIFMSitePickerStep( props: Props ) {
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } /> }
 			hideSkip
+			backUrl={ backUrl }
+			allowBackFirstStep={ !! backUrl }
 			{ ...props }
 		/>
 	);

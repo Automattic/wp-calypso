@@ -6,7 +6,6 @@ export {
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
-	isAssemblerSupported,
 	isLockedStyleVariation,
 	getCategoryType,
 } from './utils';

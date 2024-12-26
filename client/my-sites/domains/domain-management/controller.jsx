@@ -381,14 +381,22 @@ export default {
 
 	domainManagementSubpageParams( subPageKey ) {
 		return ( pageContext, next ) => {
-			pageContext.params = getSubpageParams( subPageKey );
+			pageContext.params = {
+				...pageContext.params,
+				...getSubpageParams( subPageKey ),
+				subPageKey,
+			};
 			next();
 		};
 	},
 
 	domainManagementSubpageView( pageContext, next ) {
 		pageContext.primary = (
-			<SubpageWrapper subpageKey={ pageContext.params.subPageKey }>
+			<SubpageWrapper
+				subpageKey={ pageContext.params.subPageKey }
+				siteName={ pageContext.params.site }
+				domainName={ pageContext.params.domain }
+			>
 				{ pageContext.primary }
 			</SubpageWrapper>
 		);

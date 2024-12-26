@@ -16,12 +16,15 @@ import {
 	DOMAIN_OVERVIEW,
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
-import { ADD_FOWARDING_EMAIL } from './domain-management/subpage-wrapper/subpages';
+import {
+	ADD_FOWARDING_EMAIL,
+	DNS_RECORDS,
+	EDIT_CONTACT_INFO,
+} from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
 
 /**
  * Registers a multi-page route.
- *
  * @param {Object} options - The options object.
  * @param {Array} options.paths - The paths to register.
  * @param {Array} options.handlers - The handlers to register. These will be applied to each path.
@@ -413,6 +416,30 @@ export default function () {
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
 		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllRoot() + '/contact-info/edit/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
+		domainManagementController.domainManagementEditContactInfo,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
+		domainManagementController.domainManagementDns,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,

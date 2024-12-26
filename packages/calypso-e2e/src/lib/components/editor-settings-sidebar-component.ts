@@ -56,6 +56,26 @@ export class EditorSettingsSidebarComponent {
 	//#region Generic methods
 
 	/**
+	 * Returns the root element of the sidebar.
+	 */
+	async getRoot() {
+		const editorParent = await this.editor.parent();
+
+		return editorParent.getByRole( 'region', { name: 'Editor settings' } );
+	}
+
+	/**
+	 * Returns the root element (panel body) of the section.
+	 */
+	async getSection( name: string ) {
+		const sidebar = await this.getRoot();
+
+		return sidebar.locator( '.components-panel__body' ).filter( {
+			has: this.page.locator( `h2.components-panel__body-title button:has-text("${ name }")` ),
+		} );
+	}
+
+	/**
 	 * Clicks a button matching the accessible name.
 	 *
 	 * @param {string} name Accessible name of the button.
@@ -121,10 +141,13 @@ export class EditorSettingsSidebarComponent {
 	 * If the section is already open, this method will pass.
 	 *
 	 * @param {string} name Name of section to be expanded.
+	 *
+	 * @returns The section element.
 	 */
-	async expandSection( name: string ): Promise< void > {
+	async expandSection( name: string ) {
+		const section = await this.getSection( name );
 		if ( await this.targetIsOpen( selectors.section( name ) ) ) {
-			return;
+			return section;
 		}
 
 		const editorParent = await this.editor.parent();
@@ -135,6 +158,8 @@ export class EditorSettingsSidebarComponent {
 			`${ selectors.section( name ) }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
+
+		return section;
 	}
 
 	/**

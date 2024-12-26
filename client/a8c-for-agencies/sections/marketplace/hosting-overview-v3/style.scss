@@ -47,7 +47,7 @@ $background-color: #05374A;
 		}
 	}
 
-	.components-button {
+	.components-button:is(.is-primary, .is-secondary) {
 		min-height: 40px;
 	}
 }
