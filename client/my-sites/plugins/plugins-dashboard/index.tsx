@@ -27,15 +27,19 @@ import {
 	updatePlugin as updatePluginAction,
 } from 'calypso/state/plugins/installed/actions';
 import {
+	getSiteObjectsWithPlugin,
 	getPlugins,
 	isRequestingForAllSites,
 	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog, DialogCallback } from '../hooks/use-show-plugin-action-dialog';
+import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
+import SitesWithInstalledPluginsList from '../plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
 
@@ -90,6 +94,7 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] >( [] );
+	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
@@ -102,6 +107,13 @@ const PluginsDashboard = ( {
 	);
 	const currentPlugins = useSelector( ( state ) =>
 		getPluginsWithUpdateStatuses( state, allPlugins )
+	);
+	const sitesWithPlugin = useSelector( ( state ) =>
+		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
+	);
+	const sitesToShow = allSites.filter( ( item ) => item && ! item?.options?.is_domain_only );
+	const sitesWithoutPlugin = sitesToShow.filter(
+		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
 	);
 	const dashboardTitle = pluginSlug ? `Manage ${ pluginSlug } in all sites` : 'Manage Plugins';
 
@@ -281,8 +293,6 @@ const PluginsDashboard = ( {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<DocumentHead title={ dashboardTitle } />
-
 				<PluginsListDataViews
 					pluginSlug={ pluginSlug }
 					currentPlugins={ currentPlugins }
@@ -292,7 +302,7 @@ const PluginsDashboard = ( {
 					bulkActionDialog={ bulkActionDialog }
 				/>
 			</LayoutColumn>
-			{ pluginSlug && (
+			{ pluginSlug && sites.length && allPlugins.length > 0 && (
 				<LayoutColumn className="site-preview-pane" wide>
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
@@ -304,6 +314,18 @@ const PluginsDashboard = ( {
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
+					<SitesWithInstalledPluginsList
+						isWpCom
+						sites={ sites }
+						isLoading={ isLoading }
+						plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+					/>
+
+					<PluginAvailableOnSitesList
+						sites={ sitesWithoutPlugin }
+						isLoading={ isLoading }
+						plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+					/>
 				</LayoutColumn>
 			) }
 		</Layout>
