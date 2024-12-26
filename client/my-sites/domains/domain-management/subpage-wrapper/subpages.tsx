@@ -9,6 +9,10 @@ import DNSRecordsHeader, {
 	dnsRecordsTitle,
 	dnsRecordsSubtitle,
 } from './headers/dns-records-header';
+import EditDnsRecordHeader, {
+	editDnsRecordTitle,
+	editDnsRecordsSubtitle,
+} from './headers/edit-dns-record-header';
 
 type SubpageWrapperParamsType = {
 	CustomHeader?: CustomHeaderComponentType;
@@ -21,6 +25,7 @@ type SubpageWrapperParamsType = {
 export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
 export const DNS_RECORDS = 'dns-records';
 export const ADD_DNS_RECORD = 'add-dns-record';
+export const EDIT_DNS_RECORD = 'edit-dns-record';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
 
 // Subpage params map
@@ -47,6 +52,13 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subPageKey: ADD_DNS_RECORD,
 		title: addDnsRecordTitle,
 		subtitle: addDnsRecordsSubtitle,
+		showBreadcrumbs: false,
+	},
+	[ EDIT_DNS_RECORD ]: {
+		CustomHeader: EditDnsRecordHeader,
+		subPageKey: EDIT_DNS_RECORD,
+		title: editDnsRecordTitle,
+		subtitle: editDnsRecordsSubtitle,
 		showBreadcrumbs: false,
 	},
 };

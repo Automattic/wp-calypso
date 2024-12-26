@@ -20,6 +20,7 @@ import {
 	ADD_FOWARDING_EMAIL,
 	DNS_RECORDS,
 	ADD_DNS_RECORD,
+	EDIT_DNS_RECORD,
 	EDIT_CONTACT_INFO,
 } from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
@@ -453,6 +454,18 @@ export default function () {
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
 		domainManagementController.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/edit/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
+		domainManagementController.domainManagementDnsEditRecord,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,

@@ -220,10 +220,18 @@ export function domainManagementDnsEditRecord(
 	relativeTo = null,
 	recordId = null
 ) {
-	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	let path;
+
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		path = domainManagementOverviewRoot() + '/' + domainName + '/dns/edit/' + siteName;
+	} else {
+		path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	}
+
 	if ( recordId ) {
 		path += '?recordId=' + encodeURI( recordId );
 	}
+
 	return path;
 }
 
