@@ -232,9 +232,6 @@ html, body {
 	font-weight: 500;
 	line-height: 1.25;
 	letter-spacing: -0.5px;
-	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
-	}
 }
 
 .multi-sites-dashboard-layout__header-subtitle {
