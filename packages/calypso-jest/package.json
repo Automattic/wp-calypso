@@ -20,7 +20,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"@babel/core": "^7.25.8",
+		"@babel/core": "^7.26.0",
 		"babel-jest": "^29.6.1",
 		"enhanced-resolve": "^5.8.3",
 		"jest": "^29.7.0",
