@@ -1,4 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import AddDnsRecordHeader, {
+	addDnsRecordTitle,
+	addDnsRecordsSubtitle,
+} from './headers/add-dns-record-header';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 import DNSRecordsHeader, {
@@ -39,9 +43,10 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subtitle: __( "Manage your domain's contact details." ),
 	},
 	[ ADD_DNS_RECORD ]: {
+		CustomHeader: AddDnsRecordHeader,
 		subPageKey: ADD_DNS_RECORD,
-		title: __( 'Add a new DNS record' ),
-		subtitle: __( 'DNS records change how your domain works.' ),
+		title: addDnsRecordTitle,
+		subtitle: addDnsRecordsSubtitle,
 		showBreadcrumbs: false,
 	},
 };
