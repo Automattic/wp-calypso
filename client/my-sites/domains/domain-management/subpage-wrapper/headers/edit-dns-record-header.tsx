@@ -4,7 +4,7 @@ import ExternalLink from 'calypso/components/external-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { CustomHeaderComponentType } from './custom-header-component-type';
 
-export const editDnsRecordTitle = translate( 'Add a new DNS record' );
+export const editDnsRecordTitle = translate( 'Edit DNS record' );
 export const editDnsRecordsSubtitle = translate(
 	'DNS records change how your domain works. {{a}}Learn more{{/a}}.',
 	{
