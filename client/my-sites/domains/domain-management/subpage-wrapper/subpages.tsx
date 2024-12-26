@@ -50,16 +50,16 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	[ ADD_DNS_RECORD ]: {
 		CustomHeader: AddDnsRecordHeader,
 		subPageKey: ADD_DNS_RECORD,
-		title: addDnsRecordTitle,
-		subtitle: addDnsRecordsSubtitle,
-		showBreadcrumbs: false,
+		titleOverride: addDnsRecordTitle,
+		subtitleOverride: addDnsRecordsSubtitle,
+		showBreadcrumb: false,
 	},
 	[ EDIT_DNS_RECORD ]: {
 		CustomHeader: EditDnsRecordHeader,
 		subPageKey: EDIT_DNS_RECORD,
-		title: editDnsRecordTitle,
-		subtitle: editDnsRecordsSubtitle,
-		showBreadcrumbs: false,
+		titleOverride: editDnsRecordTitle,
+		subtitleOverride: editDnsRecordsSubtitle,
+		showBreadcrumb: false,
 	},
 };
 

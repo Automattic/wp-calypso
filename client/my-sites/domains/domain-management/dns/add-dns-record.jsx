@@ -42,6 +42,12 @@ class AddDnsRecord extends Component {
 
 	renderHeader() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const {
+			showBreadcrumb = true,
+			titleOverride,
+			subtitleOverride,
+		} = this.props.context?.params || {};
+
 		const recordBeingEdited = this.getRecordBeingEdited();
 		const dnsSupportPageLink = (
 			<ExternalLink
@@ -97,7 +103,14 @@ class AddDnsRecord extends Component {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ showBreadcrumb ? items : [] }
+				mobileItem={ showBreadcrumb ? mobileItem : null }
+				titleOverride={ titleOverride }
+				subtitleOverride={ subtitleOverride }
+			/>
+		);
 	}
 
 	goBack = () => {
@@ -107,7 +120,6 @@ class AddDnsRecord extends Component {
 
 	renderMain() {
 		const { domains, dns, selectedDomainName, selectedSite, translate } = this.props;
-		const { showBreadcrumbs = true } = this.props.context?.params || {};
 		const recordBeingEdited = this.getRecordBeingEdited();
 
 		const dnsSupportPageLink = (
@@ -134,9 +146,7 @@ class AddDnsRecord extends Component {
 		return (
 			<Main wideLayout className="add-dns-record">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				{ showBreadcrumbs && (
-					<div className="add-dns-record__fullwidth">{ this.renderHeader() }</div>
-				) }
+				<div className="add-dns-record__fullwidth">{ this.renderHeader() }</div>
 				<div className="add-dns-record__main">
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
