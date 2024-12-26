@@ -324,7 +324,7 @@
 	.multi-sites-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
-		height: calc(100vh - 32px);
+		height: calc(100vh - 32px - var(--masterbar-height));
 
 		.multi-sites-dashboard-layout__top-wrapper {
 			display: flex;
