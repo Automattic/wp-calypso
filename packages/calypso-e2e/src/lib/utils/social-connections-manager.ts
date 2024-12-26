@@ -79,7 +79,7 @@ export class SocialConnectionsManager {
 			// Fetch original response.
 			const response = await route.fetch();
 
-			const result = await response.json();
+			let result = await response.json();
 
 			const url = route.request().url();
 
@@ -91,7 +91,32 @@ export class SocialConnectionsManager {
 				result.body.push( ...this.testConnections );
 			} else if ( this.patterns.JP_CONNECTION_TESTS.test( url ) ) {
 				// For JP connection tests, add test connections to the result.
-				result.push( ...this.testConnections );
+				if ( Array.isArray( result ) ) {
+					result.push( ...this.testConnections );
+				} else {
+					/**
+					 * It's possible that there are other connections added while these tests are running.
+					 * So we need to merge them.
+					 *
+					 * Since useAdminUiV1 flag is not activated on Atomic sites,
+					 * the result is still in weird format, thus we need to convert to
+					 *	{
+					 *		"tumblr": {
+					 *			"25481710": {
+					 *				"display_name": "Untitled",
+					 *				...
+					 *			}
+					 *		}
+					 *	}
+					 */
+					result = this.testConnections.reduce( ( acc, cnxn ) => {
+						acc[ cnxn.service_name ] = acc[ cnxn.service_name ] || {};
+
+						acc[ cnxn.service_name ][ cnxn.connection_id ] = cnxn;
+
+						return acc;
+					}, result );
+				}
 			}
 
 			await route.fulfill( {
