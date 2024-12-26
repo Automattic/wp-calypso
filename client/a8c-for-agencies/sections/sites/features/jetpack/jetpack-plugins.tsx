@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import ItemPreviewPaneFooter from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-footer';
 import DocumentHead from 'calypso/components/data/document-head';
 
 type Props = {
@@ -31,7 +30,6 @@ export function JetpackPluginsPreview( { featureText, link, linkLabel, captionTe
 					</Button>
 				</div>
 			</div>
-			<ItemPreviewPaneFooter />
 		</>
 	);
 }

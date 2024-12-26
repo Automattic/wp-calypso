@@ -16,7 +16,7 @@ import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-ho
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
+import { ItemData, ItemViewHeaderExtraProps } from '../types';
 
 import './style.scss';
 
@@ -24,17 +24,17 @@ const ICON_SIZE_SMALL = 16;
 const ICON_SIZE_REGULAR = 24;
 
 interface Props {
-	closeItemPreviewPane?: () => void;
+	closeItemView?: () => void;
 	itemData: ItemData;
 	isPreviewLoaded: boolean;
 	className?: string;
-	extraProps?: ItemPreviewPaneHeaderExtraProps;
+	extraProps?: ItemViewHeaderExtraProps;
 }
 
-export default function ItemPreviewPaneHeader( {
+export default function ItemViewHeader( {
 	itemData,
 	isPreviewLoaded,
-	closeItemPreviewPane,
+	closeItemView,
 	className,
 	extraProps,
 }: Props ) {
@@ -77,8 +77,8 @@ export default function ItemPreviewPaneHeader( {
 		<>
 			{ isAtomic && <QuerySitePhpVersion siteId={ siteId } /> }
 			{ isAtomic && <QuerySiteWpVersion siteId={ siteId } /> }
-			<div className={ clsx( 'item-preview__header', className ) }>
-				<div className="item-preview__header-content">
+			<div className={ clsx( 'multi-sites-dashboard-item-view__header', className ) }>
+				<div className="multi-sites-dashboard-item-view__header-content">
 					{ ! isMobileApp && (
 						<>
 							{ !! itemData?.withIcon && (
@@ -86,18 +86,20 @@ export default function ItemPreviewPaneHeader( {
 									blogId={ itemData.blogId }
 									fallback={ siteIconFallback }
 									color={ itemData.color }
-									className="item-preview__header-favicon"
+									className="multi-sites-dashboard-item-view__header-favicon"
 									size={ size }
 								/>
 							) }
-							<div className="item-preview__header-info">
-								<div className="item-preview__header-title-summary">
-									<div className="item-preview__header-title">{ itemData.title }</div>
-									<div className="item-preview__header-summary">
+							<div className="multi-sites-dashboard-item-view__header-info">
+								<div className="multi-sites-dashboard-item-view__header-title-summary">
+									<div className="multi-sites-dashboard-item-view__header-title">
+										{ itemData.title }
+									</div>
+									<div className="multi-sites-dashboard-item-view__header-summary">
 										{ itemData?.url ? (
 											<Button
 												variant="link"
-												className="item-preview__header-summary-link"
+												className="multi-sites-dashboard-item-view__header-summary-link"
 												href={ itemData.url }
 												target="_blank"
 											>
@@ -124,12 +126,12 @@ export default function ItemPreviewPaneHeader( {
 									</div>
 
 									{ shouldDisplayVersionNumbers && (
-										<div className="item-preview__header-env-data">
+										<div className="multi-sites-dashboard-item-view__header-env-data">
 											{ wpVersion && (
-												<div className="item-preview__header-env-data-item">
+												<div className="multi-sites-dashboard-item-view__header-env-data-item">
 													WordPress{ ' ' }
 													<a
-														className="item-preview__header-env-data-item-link"
+														className="multi-sites-dashboard-item-view__header-env-data-item-link"
 														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
 														onClick={ handleWpVersionClick }
 													>
@@ -140,10 +142,10 @@ export default function ItemPreviewPaneHeader( {
 											) }
 
 											{ phpVersion && (
-												<div className="item-preview__header-env-data-item">
+												<div className="multi-sites-dashboard-item-view__header-env-data-item">
 													PHP{ ' ' }
 													<a
-														className="item-preview__header-env-data-item-link"
+														className="multi-sites-dashboard-item-view__header-env-data-item-link"
 														onClick={ handlePhpVersionClick }
 														href={ `/hosting-config/${ selectedSite?.domain }#php` }
 													>
@@ -156,17 +158,17 @@ export default function ItemPreviewPaneHeader( {
 								</div>
 
 								{ isPreviewLoaded && (
-									<div className="item-preview__header-actions">
+									<div className="multi-sites-dashboard-item-view__header-actions">
 										{ extraProps?.headerButtons ? (
 											<extraProps.headerButtons
 												focusRef={ focusRef }
 												itemData={ itemData }
-												closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
+												closeSitePreviewPane={ closeItemView || ( () => {} ) }
 											/>
 										) : (
 											<Button
-												onClick={ closeItemPreviewPane }
-												className="item-preview__close-preview"
+												onClick={ closeItemView }
+												className="multi-sites-dashboard-item-view__close"
 												aria-label={ translate( 'Close Preview' ) }
 												ref={ focusRef }
 											>

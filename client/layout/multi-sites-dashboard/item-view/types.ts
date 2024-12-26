@@ -30,21 +30,21 @@ export interface ItemData {
 	hideEnvDataInHeader?: boolean;
 }
 
-export interface PreviewPaneProps {
+export interface ItemViewProps {
 	itemData: ItemData;
-	closeItemPreviewPane?: () => void;
+	closeItemView?: () => void;
 	selectedFeatureId?: string;
 	features?: FeaturePreviewInterface[];
 	className?: string;
 	isSmallScreen?: boolean;
 	hasError?: boolean;
 	addTourDetails?: { id: string; tourId: string };
-	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
+	itemViewHeaderExtraProps?: ItemViewHeaderExtraProps;
 	hideNavIfSingleTab?: boolean;
 	enforceTabsView?: boolean;
 }
 
-export interface ItemPreviewPaneHeaderExtraProps {
+export interface ItemViewHeaderExtraProps {
 	externalIconSize?: number;
 	siteIconFallback?: SiteFaviconFallback;
 	headerButtons?: React.ComponentType< {

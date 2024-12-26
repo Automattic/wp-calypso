@@ -3,7 +3,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
-import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import ItemView from 'calypso/layout/multi-sites-dashboard/item-view';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
@@ -50,7 +50,7 @@ import SiteEnvironmentSwitcher from './site-environment-switcher';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+} from 'calypso/layout/multi-sites-dashboard/item-view/types';
 
 interface Props {
 	site: SiteExcerptData;
@@ -266,13 +266,13 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.UNSET;
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			itemData={ itemData }
-			closeItemPreviewPane={ closeSitePreviewPane }
+			closeItemView={ closeSitePreviewPane }
 			features={ features }
 			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
 			enforceTabsView
-			itemPreviewPaneHeaderExtraProps={ {
+			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,

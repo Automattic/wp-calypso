@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.domains-overview .item-preview__pane {
-	.item-preview__header .item-preview__header-content .item-preview__header-title-summary {
-		 .item-preview__header-summary-link {
+.domains-overview .multi-sites-dashboard-item-view {
+	.multi-sites-dashboard-item-view__header .multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__header-title-summary {
+		 .multi-sites-dashboard-item-view__header-summary-link {
 			color: var(--studio-gray-50, #646970);
 
 			&:hover {
@@ -11,7 +11,7 @@
 			}
 		}
 
-		.item-preview__header-title {
+		.multi-sites-dashboard-item-view__header-title {
 			font-family: Recoleta, sans-serif;
 			font-weight: 400;
 			line-height: 1;
@@ -19,7 +19,7 @@
 		}
 	}
 
-	.item-preview__content {
+	.multi-sites-dashboard-item-view__content {
 		padding: 0;
 		color: var(--studio-gray-100);
 
@@ -37,7 +37,7 @@
 		}
 	}
 
-	.preview-pane__navigation .section-nav-tabs__list {
+	.multi-sites-dashboard-item-view__navigation .section-nav-tabs__list {
 		box-sizing: border-box;
 		padding: 0 8px;
 
@@ -87,16 +87,16 @@
     overflow-x: auto;
 }
 
-.a4a-layout.domains-overview .item-preview__header {
-	.item-preview__header-info .item-preview__header-title-summary .item-preview__header-title {
+.a4a-layout.domains-overview .multi-sites-dashboard-item-view__header {
+	.multi-sites-dashboard-item-view__header-info .multi-sites-dashboard-item-view__header-title-summary .multi-sites-dashboard-item-view__header-title {
 		font-family: Recoleta, sans-serif;
 		font-weight: 400;
 		line-height: 1;
 		letter-spacing: normal;
 	}
 
-	.item-preview__header-content {
-		.item-preview__header-info {
+	.multi-sites-dashboard-item-view__header-content {
+		.multi-sites-dashboard-item-view__header-info {
 			flex-wrap: wrap;
 		}
 
@@ -105,11 +105,11 @@
 		}
 	}
 
-	.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
+	.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__header-title-summary .multi-sites-dashboard-item-view__header-summary {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-		.item-preview__header-summary-link {
+		.multi-sites-dashboard-item-view__header-summary-link {
 			color: var(--studio-gray-70, #3c434a);
 			text-decoration: none;
 			&:hover {
@@ -118,12 +118,12 @@
 		}
 	}
 
-	.item-preview__header-actions .button {
+	.multi-sites-dashboard-item-view__header-actions .button {
 		border-radius: 4px;
 		height: auto;
 	}
 
-	.item-preview__header-content .item-preview__close-preview {
+	.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__close {
 		height: 1rem;
 		padding-left: 0;
 		padding-right: 0;

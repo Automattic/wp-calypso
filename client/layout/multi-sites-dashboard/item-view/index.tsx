@@ -5,9 +5,9 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import ItemPreviewPaneContent from './item-preview-pane-content';
-import ItemPreviewPaneHeader from './item-preview-pane-header';
-import { FeaturePreviewInterface, PreviewPaneProps } from './types';
+import ItemViewContent from './item-view-content';
+import ItemViewHeader from './item-view-header';
+import { FeaturePreviewInterface, ItemViewProps } from './types';
 
 import './style.scss';
 
@@ -32,16 +32,16 @@ export const createFeaturePreview = (
 	};
 };
 
-export default function ItemPreviewPane( {
+export default function ItemView( {
 	features,
-	closeItemPreviewPane,
+	closeItemView,
 	className,
 	itemData,
 	addTourDetails,
-	itemPreviewPaneHeaderExtraProps,
+	itemViewHeaderExtraProps,
 	hideNavIfSingleTab,
 	enforceTabsView,
-}: PreviewPaneProps ) {
+}: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
 	// Ensure we have features
@@ -86,16 +86,18 @@ export default function ItemPreviewPane( {
 	const shouldHideNav = ( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp;
 
 	return (
-		<div className={ clsx( 'item-preview__pane', className ) }>
-			<ItemPreviewPaneHeader
-				closeItemPreviewPane={ closeItemPreviewPane }
+		<div className={ clsx( 'multi-sites-dashboard-item-view', className ) }>
+			<ItemViewHeader
+				closeItemView={ closeItemView }
 				itemData={ itemData }
 				isPreviewLoaded={ !! selectedFeature.preview }
-				extraProps={ itemPreviewPaneHeaderExtraProps }
+				extraProps={ itemViewHeaderExtraProps }
 			/>
 			<div ref={ setNavRef }>
 				<SectionNav
-					className={ clsx( 'preview-pane__navigation', { 'is-hidden': shouldHideNav } ) }
+					className={ clsx( 'multi-sites-dashboard-item-view__navigation', {
+						'is-hidden': shouldHideNav,
+					} ) }
 					selectedText={ selectedFeature.tab.label }
 					enforceTabsView={ enforceTabsView }
 				>
@@ -111,7 +113,7 @@ export default function ItemPreviewPane( {
 					context={ navRef }
 				/>
 			) }
-			<ItemPreviewPaneContent>{ selectedFeature.preview }</ItemPreviewPaneContent>
+			<ItemViewContent>{ selectedFeature.preview }</ItemViewContent>
 		</div>
 	);
 }

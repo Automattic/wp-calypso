@@ -7,7 +7,7 @@ type Props = {
 	className?: string;
 };
 
-export default function ItemPreviewPaneContent( { children }: Props ) {
+export default function ItemViewContent( { children }: Props ) {
 	const ref = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -19,7 +19,7 @@ export default function ItemPreviewPaneContent( { children }: Props ) {
 	}, [ children ] );
 
 	return (
-		<div className="item-preview__content" ref={ ref }>
+		<div className="multi-sites-dashboard-item-view__content" ref={ ref }>
 			{ children }
 		</div>
 	);
