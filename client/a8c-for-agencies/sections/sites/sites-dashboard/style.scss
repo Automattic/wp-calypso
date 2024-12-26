@@ -399,6 +399,8 @@
 
 		.sites-overview {
 			height: 100%;
+
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
@@ -441,6 +443,7 @@
 
 
 		&.preview-hidden {
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			.sites-overview {
 				flex-grow: 1;
 				transition: flex-grow 0.2s;
