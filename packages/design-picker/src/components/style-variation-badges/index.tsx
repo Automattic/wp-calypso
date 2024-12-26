@@ -1,6 +1,6 @@
+import { isStyleVariation, isDefaultVariation } from '@automattic/global-styles';
 import { useMemo } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
-import { isDefaultGlobalStylesVariationSlug } from '../../utils';
 import Badge from './badge';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -8,6 +8,7 @@ import './style.scss';
 const SPACE_BAR_KEYCODE = 32;
 
 interface BadgesProps {
+	className?: string;
 	maxVariationsToShow?: number;
 	variations: StyleVariation[];
 	onMoreClick?: () => void;
@@ -16,19 +17,26 @@ interface BadgesProps {
 }
 
 const Badges: React.FC< BadgesProps > = ( {
+	className,
 	maxVariationsToShow = 4,
 	variations = [],
 	onMoreClick,
 	onClick,
 	selectedVariation,
 } ) => {
-	const isSelectedVariationDefault = isDefaultGlobalStylesVariationSlug( selectedVariation?.slug );
+	const isSelectedVariationDefault = isDefaultVariation( selectedVariation );
+	const styleVariations = useMemo(() => variations.filter( variation => isStyleVariation( variation ) ), [ variations ] );
+	console.log( styleVariations );
 	const variationsToShow = useMemo( () => {
-		return variations.slice( 0, maxVariationsToShow );
-	}, [ variations, maxVariationsToShow ] );
+		return styleVariations.slice( 0, maxVariationsToShow );
+	}, [ styleVariations, maxVariationsToShow ] );
+
+	if ( styleVariations.length === 0 ) {
+		return null;
+	}
 
 	return (
-		<>
+		<div className={ className }>
 			{ variationsToShow.map( ( variation ) => (
 				<Badge
 					key={ variation.slug }
@@ -41,7 +49,7 @@ const Badges: React.FC< BadgesProps > = ( {
 					}
 				/>
 			) ) }
-			{ variations.length > variationsToShow.length && (
+			{ styleVariations.length > variationsToShow.length && (
 				<div
 					className="style-variation__badge-more-wrapper"
 					tabIndex={ 0 }
@@ -62,10 +70,10 @@ const Badges: React.FC< BadgesProps > = ( {
 						}
 					} }
 				>
-					<span>{ `+${ variations.length - variationsToShow.length }` }</span>
+					<span>{ `+${ styleVariations.length - variationsToShow.length }` }</span>
 				</div>
 			) }
-		</>
+		</div>
 	);
 };
 

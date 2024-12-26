@@ -7,13 +7,13 @@ import { ENTER } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
 	withExperimentalBlockEditorProvider,
 	isColorVariation,
 	isFontVariation,
+	isDefaultVariation,
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
 import GlobalStylesVariationPreview from './preview';
@@ -36,9 +36,6 @@ interface GlobalStylesVariationsProps {
 	needsUpgrade?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
-
-const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
-	globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
 
 const GlobalStylesVariation = ( {
 	globalStylesVariation,
@@ -122,20 +119,49 @@ const GlobalStylesVariations = ( {
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
-				isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+				isDefaultVariation( globalStylesVariation )
 			) ?? ( {} as GlobalStylesObject ),
 		[ globalStylesVariations ]
 	);
-	const globalStylesVariationsWithoutDefault = useMemo(
+
+	const { styleVariations, colorVariations } = useMemo(
 		() =>
-			globalStylesVariations.filter(
-				( globalStylesVariation ) =>
-					! isDefaultGlobalStyleVariationSlug( globalStylesVariation ) &&
-					! isColorVariation( globalStylesVariation ) &&
-					! isFontVariation( globalStylesVariation )
+			globalStylesVariations.reduce(
+				( acc, variation ) => {
+					if ( isDefaultVariation( variation ) ) {
+						return acc;
+					}
+
+					if ( isColorVariation( variation ) ) {
+						return {
+							...acc,
+							colorVariations: [ ...acc.colorVariations, variation ],
+						};
+					}
+
+					if ( isFontVariation( variation ) ) {
+						return {
+							...acc,
+							fontVariations: [ ...acc.fontVariations, variation ],
+						};
+					}
+
+					return {
+						...acc,
+						styleVariations: [ ...acc.styleVariations, variation ],
+					};
+				},
+				{
+					styleVariations: [],
+					colorVariations: [],
+					fontVariations: [],
+				}
 			),
 		[ globalStylesVariations ]
 	);
+
+	const globalStylesVariationsWithoutDefault =
+		styleVariations.length > 0 ? styleVariations : colorVariations;
 
 	const nonDefaultStylesDescription = description ?? variationDescription;
 	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
@@ -186,7 +212,7 @@ const GlobalStylesVariations = ( {
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
-								isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+								isDefaultVariation( selectedGlobalStylesVariation )
 							}
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }

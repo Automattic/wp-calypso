@@ -9,6 +9,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
@@ -114,11 +115,20 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
 };
 
-const isColorVariation = ( variation: GlobalStylesObject ) =>
-	isVariationWithProperties( variation, [ 'color' ] );
+const isColorVariation = ( variation?: GlobalStylesObject ) =>
+variation && isVariationWithProperties( variation, [ 'color' ] );
 
-const isFontVariation = ( variation: GlobalStylesObject ) =>
-	isVariationWithProperties( variation, [ 'typography' ] );
+const isFontVariation = ( variation?: GlobalStylesObject ) =>
+variation && isVariationWithProperties( variation, [ 'typography' ] );
+
+const isDefaultVariation = ( variation?: GlobalStylesObject ) =>
+	variation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
+
+const isStyleVariation = ( variation?: GlobalStylesObject ) =>
+	variation &&
+	! isDefaultVariation( variation ) &&
+	! isColorVariation( variation ) &&
+	! isFontVariation( variation )
 
 export {
 	cleanEmptyObject,
@@ -126,6 +136,8 @@ export {
 	GlobalStylesContext,
 	isColorVariation,
 	isFontVariation,
+	isDefaultVariation,
+	isStyleVariation,
 	transformStyles,
 	useSafeGlobalStylesOutput,
 	useGlobalSetting,

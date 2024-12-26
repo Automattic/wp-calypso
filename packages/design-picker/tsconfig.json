@@ -11,6 +11,7 @@
 	"references": [
 		{ "path": "../calypso-config" },
 		{ "path": "../data-stores" },
+		{ "path": "../global-styles" },
 		{ "path": "../js-utils" },
 		{ "path": "../onboarding" },
 		{ "path": "../viewport" }
