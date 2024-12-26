@@ -7,6 +7,7 @@ import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import Layout from 'calypso/layout/multi-sites-dashboard';
+import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
 import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
@@ -302,8 +303,8 @@ const PluginsDashboard = ( {
 					bulkActionDialog={ bulkActionDialog }
 				/>
 			</LayoutColumn>
-			{ pluginSlug && sites.length && allPlugins.length > 0 && (
-				<LayoutColumn className="site-preview-pane" wide>
+			{ pluginSlug && sitesWithPlugin.length && allPlugins.length > 0 && (
+				<LayoutColumn className="plugin-manage-sites-pane" wide>
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
 							<Title>
@@ -314,18 +315,20 @@ const PluginsDashboard = ( {
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
-					<SitesWithInstalledPluginsList
-						isWpCom
-						sites={ sites }
-						isLoading={ isLoading }
-						plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
-					/>
+					<LayoutBody>
+						<SitesWithInstalledPluginsList
+							isWpCom
+							sites={ sitesWithPlugin }
+							isLoading={ isLoading }
+							plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+						/>
 
-					<PluginAvailableOnSitesList
-						sites={ sitesWithoutPlugin }
-						isLoading={ isLoading }
-						plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
-					/>
+						<PluginAvailableOnSitesList
+							sites={ sitesWithoutPlugin }
+							isLoading={ isLoading }
+							plugin={ allPlugins.find( ( plugin ) => plugin.slug === pluginSlug ) }
+						/>
+					</LayoutBody>
 				</LayoutColumn>
 			) }
 		</Layout>
