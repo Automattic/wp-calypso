@@ -142,6 +142,10 @@ hr.subscriptions__separator {
 				margin-bottom: 16px;
 			}
 		}
+
+		.delivery-frequency-input__control {
+			max-width: 100%;
+		}
 	}
 
 	.site-settings-popover__unsubscribe-button.components-button.has-icon:not(:last-child) {

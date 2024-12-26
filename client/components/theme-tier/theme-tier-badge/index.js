@@ -1,6 +1,6 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import clsx from 'clsx';
-import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
+import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
 import { useSelector } from 'calypso/state';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
@@ -31,10 +31,9 @@ export default function ThemeTierBadge( {
 	);
 	const themeTier = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-
+	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 	const getBadge = () => {
-		if ( isGoalsAtFrontExperiment && 'free' === themeTier?.slug ) {
+		if ( isUpdatedBadgeDesign && 'free' === themeTier?.slug ) {
 			return <ThemeTierFreeBadge />;
 		}
 
@@ -51,7 +50,7 @@ export default function ThemeTierBadge( {
 		}
 
 		if (
-			! isGoalsAtFrontExperiment &&
+			! isUpdatedBadgeDesign &&
 			( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType )
 		) {
 			return <ThemeTierPartnerBadge />;

@@ -118,6 +118,7 @@ type NewsletterSettingsFormProps = {
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
 	updateFields: ( fields: Fields ) => void;
+	errorNotice: ( text: string ) => void;
 };
 
 const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
@@ -128,6 +129,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	isSavingSettings,
 	settings,
 	updateFields,
+	errorNotice,
 }: NewsletterSettingsFormProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -185,15 +187,31 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions, updateFields ] );
 
+	const onSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
+		event?.preventDefault();
+
+		if (
+			fields.wpcom_newsletter_categories_enabled &&
+			! fields.wpcom_newsletter_categories?.length
+		) {
+			errorNotice(
+				translate( 'Please select at least one category when newsletter categories are enabled.' )
+			);
+			return;
+		}
+
+		handleSubmitForm();
+	};
+
 	return (
-		<form onSubmit={ handleSubmitForm }>
+		<form onSubmit={ onSubmit }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="subscriptions"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Subscriptions' ) }
 			/>
@@ -252,7 +270,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				disabled={ disabled }
 				id="email-settings"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Email' ) }
 			/>
@@ -299,7 +317,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
 				showButton
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
@@ -314,7 +332,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				disabled={ disabled }
 				id="messages"
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ onSubmit }
 				showButton
 				title={ translate( 'Messages' ) }
 			/>
