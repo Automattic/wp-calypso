@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -23,7 +24,7 @@ import unlimitedThemesIcon from './icons/unlimited-themes';
 import type { AddOnMeta } from './types';
 
 export const getAddOnsList = (): AddOnMeta[] => {
-	return [
+	const defaultAddOns: AddOnMeta[] = [
 		{
 			addOnSlug: ADD_ON_UNLIMITED_THEMES,
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -59,45 +60,53 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),
 		},
-		{
-			addOnSlug: ADD_ON_150GB_STORAGE,
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: null,
-			icon: spaceUpgradeIcon,
-			quantity: 150,
-			name: i18n.translate( '150 GB Storage' ),
-		},
-		{
-			addOnSlug: ADD_ON_200GB_STORAGE,
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: null,
-			icon: spaceUpgradeIcon,
-			quantity: 200,
-			name: i18n.translate( '200 GB Storage' ),
-		},
-		{
-			addOnSlug: ADD_ON_250GB_STORAGE,
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: null,
-			icon: spaceUpgradeIcon,
-			quantity: 250,
-			name: i18n.translate( '250 GB Storage' ),
-		},
-		{
-			addOnSlug: ADD_ON_300GB_STORAGE,
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: null,
-			icon: spaceUpgradeIcon,
-			quantity: 300,
-			name: i18n.translate( '300 GB Storage' ),
-		},
-		{
-			addOnSlug: ADD_ON_350GB_STORAGE,
-			productSlug: PRODUCT_1GB_SPACE,
-			featureSlugs: null,
-			icon: spaceUpgradeIcon,
-			quantity: 350,
-			name: i18n.translate( '350 GB Storage' ),
-		},
 	];
+
+	if ( config.isEnabled( 'upgrades/storage-add-on-v2' ) ) {
+		return [
+			...defaultAddOns,
+			{
+				addOnSlug: ADD_ON_150GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 150,
+				name: i18n.translate( '150 GB Storage' ),
+			},
+			{
+				addOnSlug: ADD_ON_200GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 200,
+				name: i18n.translate( '200 GB Storage' ),
+			},
+			{
+				addOnSlug: ADD_ON_250GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 250,
+				name: i18n.translate( '250 GB Storage' ),
+			},
+			{
+				addOnSlug: ADD_ON_300GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 300,
+				name: i18n.translate( '300 GB Storage' ),
+			},
+			{
+				addOnSlug: ADD_ON_350GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 350,
+				name: i18n.translate( '350 GB Storage' ),
+			},
+		];
+	}
+
+	return defaultAddOns;
 };
