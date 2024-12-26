@@ -113,6 +113,21 @@ describe( 'DomainOverviewPane', () => {
 		expect( screen.getByText( 'Manage site' ) ).toBeInTheDocument();
 	} );
 
+	it( 'does not show Manage Site button when domain only and unattached', () => {
+		const siteProps = {
+			...defaultProps,
+			site: {
+				...defaultProps.site,
+				options: {
+					...defaultProps.site.options,
+					is_domain_only: true,
+				},
+			},
+		};
+		renderComponent( siteProps );
+		expect( screen.queryByText( 'Manage site' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'handles tab switching', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Email' ) );

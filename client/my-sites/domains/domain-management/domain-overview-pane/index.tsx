@@ -72,20 +72,22 @@ const DomainOverviewPane = ( {
 
 	const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane }: BtnProps ) => {
 		const adminButtonRef = useRef< HTMLButtonElement | null >( null );
-
+		const mergedRef = useMergeRefs( [ adminButtonRef, focusRef ] );
 		return (
 			<>
 				<Button onClick={ closeSitePreviewPane } className="button item-view__close-button">
 					{ __( 'Close' ) }
 				</Button>
-				<Button
-					primary
-					className="button item-preview__admin-button"
-					href={ adminUrl }
-					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
-				>
-					{ translate( 'Manage site' ) }
-				</Button>
+				{ ! site.options?.is_domain_only && (
+					<Button
+						primary
+						className="button item-preview__admin-button"
+						href={ adminUrl }
+						ref={ mergedRef }
+					>
+						{ translate( 'Manage site' ) }
+					</Button>
+				) }
 			</>
 		);
 	};
