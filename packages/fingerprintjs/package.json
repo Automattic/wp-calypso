@@ -51,7 +51,7 @@
 	},
 	"devDependencies": {
 		"@fpjs-incubator/broyster": "^0.1.4",
-		"@rollup/plugin-json": "^5.0.1",
+		"@rollup/plugin-json": "^5.0.2",
 		"@rollup/plugin-node-resolve": "^15.0.1",
 		"@rollup/plugin-terser": "^0.4.4",
 		"@rollup/plugin-typescript": "^10.0.1",
