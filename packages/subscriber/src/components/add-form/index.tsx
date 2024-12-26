@@ -30,7 +30,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
-	siteUrl: string;
+	siteUrl?: string;
 	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	showTitle?: boolean;

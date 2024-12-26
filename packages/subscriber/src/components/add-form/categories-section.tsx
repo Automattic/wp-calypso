@@ -8,7 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 interface Props {
 	siteId: number;
-	siteUrl: string;
+	siteUrl?: string;
 	newsletterCategories?: Array< { name: string; id: number; parent?: number } >;
 	selectedCategories: number[];
 	setSelectedCategories: ( categories: number[] ) => void;
@@ -17,7 +17,7 @@ interface Props {
 
 export const CategoriesSection: React.FC< Props > = ( {
 	siteId,
-	siteUrl,
+	siteUrl = '',
 	newsletterCategories = [],
 	selectedCategories,
 	setSelectedCategories,
@@ -60,7 +60,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 
 	const getCategoriesUrl = () => {
 		if ( ! isWPCOMSite ) {
-			return `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter`;
+			return siteUrl ? `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` : `#`;
 		}
 		return `/settings/newsletter/${ siteId }`;
 	};
