@@ -75,13 +75,6 @@
 		}
 	}
 
-	@media (max-width: 660px) {
-		.multi-sites-dashboard-layout__header-main {
-			// A4A hides a part of LayoutHeader since it displays a different header for mobile 
-			display: none;
-		}
-	}
-
 	@media (max-width: $break-large) {
 		.section-nav__mobile-header {
 			padding: 13px;
