@@ -6,6 +6,7 @@ import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 type DomainDashboardLayoutProps = {
 	innerContent: React.ReactNode;
 	selectedDomainName: string;
+	selectedFeature: string;
 };
 
 function DomainDashboardLayout( props: DomainDashboardLayoutProps ) {
@@ -17,6 +18,7 @@ function DomainDashboardLayout( props: DomainDashboardLayoutProps ) {
 					analyticsTitle="Domain Management > All Domains"
 					sidebarMode
 					selectedDomainName={ props.selectedDomainName }
+					selectedFeature={ props.selectedFeature }
 				/>
 			</LayoutColumn>
 			<LayoutColumn className="domains-overview__details" wide>
