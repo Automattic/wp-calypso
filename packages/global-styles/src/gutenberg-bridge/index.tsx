@@ -75,17 +75,20 @@ const useSafeGlobalStylesOutput = () => {
  * @param {string[]} properties The properties to filter by
  * @returns {Object} The merged object.
  */
-const filterObjectByProperties = ( object: { [ key: string ]: any }, properties: string[] ) => {
+const filterObjectByProperties = ( object: Record< string, any >, properties: string[] ) => {
 	if ( ! object || ! properties?.length ) {
 		return {};
 	}
 
-	const newObject = {};
+	const newObject: Record< string, any > = {};
 	Object.keys( object ).forEach( ( key ) => {
 		if ( properties.includes( key ) ) {
 			newObject[ key ] = object[ key ];
 		} else if ( typeof object[ key ] === 'object' ) {
-			const newFilter = filterObjectByProperties( object[ key ], properties );
+			const newFilter = filterObjectByProperties(
+				object[ key ] as Record< string, any >,
+				properties
+			);
 			if ( Object.keys( newFilter ).length ) {
 				newObject[ key ] = newFilter;
 			}
