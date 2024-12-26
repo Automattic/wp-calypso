@@ -25,11 +25,11 @@ export function domainManagementLink(
 	if ( isAllDomainManagementEnabled && isAllSitesView ) {
 		switch ( feature ) {
 			case 'email-management':
-				return `/domains/manage/all/email/${ domain }/${ siteSlug }`;
+				return `${ domainManagementAllRoot() }/email/${ domain }/${ siteSlug }`;
 
 			case 'domain-overview':
 			default:
-				return `/domains/manage/all/overview/${ domain }/${ siteSlug }`;
+				return `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`;
 		}
 	}
 
