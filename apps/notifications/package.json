@@ -56,6 +56,6 @@
 		"html-webpack-plugin": "^5.6.3",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
-		"webpack": "^5.95.0"
+		"webpack": "^5.97.1"
 	}
 }

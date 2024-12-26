@@ -60,7 +60,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.95.0"
+		"webpack": "^5.97.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

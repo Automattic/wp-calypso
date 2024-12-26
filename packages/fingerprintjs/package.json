@@ -81,12 +81,12 @@
 		"rollup": "^3.3.0",
 		"rollup-plugin-dts": "^5.2.0",
 		"rollup-plugin-license": "^3.0.1",
-		"terser-webpack-plugin": "^5.3.10",
+		"terser-webpack-plugin": "^5.3.11",
 		"ts-loader": "^9.4.2",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.3.3",
 		"ua-parser-js": "^0.7.32",
-		"webpack": "^5.95.0",
+		"webpack": "^5.97.1",
 		"webpack-cli": "^5.1.4",
 		"webpack-dev-server": "^4.15.2"
 	}

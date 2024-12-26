@@ -48,7 +48,7 @@
 		"postcss": "^8.4.5",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"webpack": "^5.95.0",
+		"webpack": "^5.97.1",
 		"webpack-cli": "^4.10.0"
 	},
 	"dependencies": {
