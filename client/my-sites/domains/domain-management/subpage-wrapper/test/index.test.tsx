@@ -4,7 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import SubpageWrapper from '../index';
-import { ADD_FOWARDING_EMAIL, EDIT_CONTACT_INFO } from '../subpages';
+import { ADD_FORWARDING_EMAIL, EDIT_CONTACT_INFO } from '../subpages';
 
 jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
 
@@ -12,7 +12,7 @@ describe( 'SubpageWrapper', () => {
 	it( 'should render the children', () => {
 		render(
 			<SubpageWrapper
-				subpageKey={ ADD_FOWARDING_EMAIL }
+				subpageKey={ ADD_FORWARDING_EMAIL }
 				siteName="site.com"
 				domainName="domain.com"
 			>
@@ -26,7 +26,7 @@ describe( 'SubpageWrapper', () => {
 	it( 'should render the children with the subpage header', () => {
 		render(
 			<SubpageWrapper
-				subpageKey={ ADD_FOWARDING_EMAIL }
+				subpageKey={ ADD_FORWARDING_EMAIL }
 				siteName="site.com"
 				domainName="domain.com"
 			>

@@ -22,7 +22,7 @@ type SubpageWrapperParamsType = {
 };
 
 // Subpage keys
-export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
+export const ADD_FORWARDING_EMAIL = 'add-forwarding-email';
 export const DNS_RECORDS = 'dns-records';
 export const ADD_DNS_RECORD = 'add-dns-record';
 export const EDIT_DNS_RECORD = 'edit-dns-record';
@@ -30,7 +30,7 @@ export const EDIT_CONTACT_INFO = 'edit-contact-info';
 
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
-	[ ADD_FOWARDING_EMAIL ]: {
+	[ ADD_FORWARDING_EMAIL ]: {
 		CustomHeader: AddForwardingEmailHeader,
 		showFormHeader: true,
 		showPageHeader: false,

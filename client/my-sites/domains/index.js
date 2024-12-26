@@ -17,7 +17,7 @@ import {
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
 import {
-	ADD_FOWARDING_EMAIL,
+	ADD_FORWARDING_EMAIL,
 	DNS_RECORDS,
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
@@ -416,7 +416,7 @@ export default function () {
 		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
 		siteSelection,
 		navigation,
-		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
+		domainManagementController.domainManagementSubpageParams( ADD_FORWARDING_EMAIL ),
 		emailController.emailManagementAddEmailForwards,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
