@@ -155,6 +155,7 @@ export interface BillingTransactionItem {
 	variation_slug: string;
 	months_per_renewal_interval: number;
 	wpcom_product_slug: string;
+	price_tier_slug: string | null;
 }
 
 export interface ReceiptCostOverride {

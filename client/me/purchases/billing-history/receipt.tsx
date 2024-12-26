@@ -41,6 +41,8 @@ import {
 	renderTransactionQuantitySummary,
 	renderDomainTransactionVolumeSummary,
 	transactionIncludesTax,
+	isTransactionJetpackSearch10kTier,
+	renderJetpackSearch10kTierBreakdown,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
 import type {
@@ -520,14 +522,13 @@ function ReceiptLineItem( {
 	const translate = useTranslate();
 	const termLabel = getTransactionTermLabel( item, translate );
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
-	const formattedAmount = formatCurrency(
-		shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
-		item.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
-		}
-	);
+	const subtotal_integer = shouldShowDiscount
+		? getReceiptItemOriginalCost( item )
+		: item.subtotal_integer;
+	const formattedAmount = formatCurrency( subtotal_integer, item.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 	return (
 		<>
 			<tr>
@@ -538,6 +539,9 @@ function ReceiptLineItem( {
 					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+					) }
+					{ isTransactionJetpackSearch10kTier( item ) && (
+						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }
 					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
 				</td>
