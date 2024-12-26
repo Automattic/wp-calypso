@@ -1017,7 +1017,7 @@ __metadata:
   resolution: "@automattic/fingerprintjs@workspace:packages/fingerprintjs"
   dependencies:
     "@fpjs-incubator/broyster": "npm:^0.1.4"
-    "@rollup/plugin-json": "npm:^5.0.1"
+    "@rollup/plugin-json": "npm:^5.0.2"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^10.0.1"
@@ -6237,7 +6237,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-json@npm:^5.0.1":
+"@rollup/plugin-json@npm:^5.0.2":
   version: 5.0.2
   resolution: "@rollup/plugin-json@npm:5.0.2"
   dependencies:
