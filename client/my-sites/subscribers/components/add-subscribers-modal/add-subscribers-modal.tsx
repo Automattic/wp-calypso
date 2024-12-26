@@ -237,6 +237,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }

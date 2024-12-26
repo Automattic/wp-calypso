@@ -8,16 +8,20 @@ import { useI18n } from '@wordpress/react-i18n';
 
 interface Props {
 	siteId: number;
+	siteUrl: string;
 	newsletterCategories?: Array< { name: string; id: number; parent?: number } >;
 	selectedCategories: number[];
 	setSelectedCategories: ( categories: number[] ) => void;
+	isWPCOMSite?: boolean;
 }
 
 export const CategoriesSection: React.FC< Props > = ( {
 	siteId,
+	siteUrl,
 	newsletterCategories = [],
 	selectedCategories,
 	setSelectedCategories,
+	isWPCOMSite = false,
 } ) => {
 	const { __ } = useI18n();
 	const [ showCategories, setShowCategories ] = useState( false );
@@ -54,6 +58,13 @@ export const CategoriesSection: React.FC< Props > = ( {
 		} );
 	};
 
+	const getCategoriesUrl = () => {
+		if ( ! isWPCOMSite ) {
+			return `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter`;
+		}
+		return `/settings/newsletter/${ siteId }`;
+	};
+
 	return (
 		<div className="add-subscriber__categories-container">
 			<h3>
@@ -67,13 +78,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 							{ createInterpolateElement(
 								__( 'Add these subscribers to specific <link>categories</link>.' ),
 								{
-									link: (
-										<a
-											href={ `/settings/newsletter/${ siteId }` }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
+									link: <a href={ getCategoriesUrl() } target="_blank" rel="noopener noreferrer" />,
 								}
 							) }
 						</p>
@@ -97,7 +102,9 @@ export const CategoriesSection: React.FC< Props > = ( {
 										) }{ ' ' }
 										<a
 											href={ localizeUrl(
-												'https://wordpress.com/support/newsletter-settings/enable-newsletter-categories/'
+												isWPCOMSite
+													? 'https://wordpress.com/support/newsletter-settings/enable-newsletter-categories/'
+													: 'https://jetpack.com/newsletter/newsletter-categories/'
 											) }
 											target="_blank"
 											rel="noopener noreferrer"

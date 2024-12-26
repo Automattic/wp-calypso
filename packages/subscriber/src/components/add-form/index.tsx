@@ -30,6 +30,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	siteUrl: string;
 	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
@@ -61,6 +62,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		siteUrl,
 		hasSubscriberLimit,
 		flowName,
 		showTitle = true,
@@ -503,9 +505,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						newsletterCategoriesData?.newsletterCategories.length > 0 && (
 							<CategoriesSection
 								siteId={ siteId }
+								siteUrl={ siteUrl }
 								newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
 								selectedCategories={ selectedCategories }
 								setSelectedCategories={ setSelectedCategories }
+								isWPCOMSite={ isWPCOMSite }
 							/>
 						) }
 
