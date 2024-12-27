@@ -74,7 +74,7 @@ export const createOpensTooltipContent = (
 					? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
 							args: { uniqueOpens: opensUnique, openRate: opensRate },
 					  } )
-					: translate( 'Unique opens: -' ) }
+					: translate( 'Unique opens: —' ) }
 			</div>
 		</div>
 	);
@@ -107,7 +107,7 @@ export const createClicksTooltipContent = (
 					? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
 							args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
 					  } )
-					: translate( 'Unique clicks: -' ) }
+					: translate( 'Unique clicks: —' ) }
 			</div>
 		</div>
 	);

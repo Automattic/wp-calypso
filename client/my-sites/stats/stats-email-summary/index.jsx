@@ -74,7 +74,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = opensUnique > 0 || opens === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.opens_rate }%` : '-' }
+									value={ hasUniquesData ? `${ item.opens_rate }%` : '—' }
 									item={ item }
 									renderContent={ createOpensTooltipContent }
 								/>
@@ -97,7 +97,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = clicksUnique > 0 || clicks === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.clicks_rate }%` : '-' }
+									value={ hasUniquesData ? `${ item.clicks_rate }%` : '—' }
 									item={ item }
 									renderContent={ createClicksTooltipContent }
 								/>
