@@ -4,6 +4,7 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -118,10 +119,15 @@ const PluginsDashboard = ( {
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
+	allSites.sort( orderByAtomic );
 	const sitesToShow = allSites.filter(
 		( item ): item is SiteDetails =>
-			item !== null && item !== undefined && ! item?.options?.is_domain_only
+			item !== null &&
+			item !== undefined &&
+			! item?.options?.is_domain_only &&
+			! item?.options?.is_wpforteams_site
 	);
+
 	const sitesWithoutPlugin = sitesToShow.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
 	);
@@ -313,6 +319,7 @@ const PluginsDashboard = ( {
 				path={ pluginSlug ? `/plugins/manage/sites/${ pluginSlug }` : '/plugins/manage/sites' }
 				title="Plugins Dashboard"
 			/>
+			<QueryJetpackSitesFeatures />
 			<QueryPlugins />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
@@ -379,3 +386,18 @@ const PluginsDashboard = ( {
 };
 
 export default withShowPluginActionDialog( UrlSearch( PluginsDashboard ) );
+
+function orderByAtomic( siteA: SiteDetails, siteB: SiteDetails ): number {
+	const { is_wpcom_atomic: siteAAtomic } = siteA?.options ?? {};
+	const { is_wpcom_atomic: siteBAtomic } = siteB?.options ?? {};
+
+	if ( siteAAtomic === siteBAtomic ) {
+		return 0;
+	}
+
+	if ( siteAAtomic && ! siteBAtomic ) {
+		return -1;
+	}
+
+	return 1;
+}
