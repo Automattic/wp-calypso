@@ -1,5 +1,5 @@
 import { Tooltip } from '@automattic/components';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 
 export interface EmailStatsItem {
@@ -15,20 +15,16 @@ export interface EmailStatsItem {
 interface TooltipWrapperProps {
 	value: string;
 	item: EmailStatsItem;
-	renderContent: (
-		item: EmailStatsItem,
-		translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
-	) => React.ReactNode;
+	TooltipContent: React.ComponentType< { item: EmailStatsItem } >;
 }
 
 export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 	value,
 	item,
-	renderContent,
+	TooltipContent,
 } ) => {
 	const triggerRef = useRef< HTMLSpanElement >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
-	const translate = useTranslate();
 
 	return (
 		<span className="stats-email__tooltip-wrapper">
@@ -41,7 +37,7 @@ export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 				{ value }
 			</span>
 			<Tooltip position="top" context={ triggerRef.current } isVisible={ showTooltip }>
-				{ renderContent( item, translate ) }
+				<TooltipContent item={ item } />
 			</Tooltip>
 		</span>
 	);
@@ -51,10 +47,8 @@ export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
 	return uniqueValue > 0 && totalValue > 0;
 };
 
-export const createOpensTooltipContent = (
-	item: EmailStatsItem,
-	translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
-) => {
+export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
+	const translate = useTranslate();
 	const opensUnique = parseInt( String( item.unique_opens ), 10 );
 	const opens = parseInt( String( item.opens ), 10 );
 	const opensRate = parseFloat( String( item.opens_rate ) );
@@ -84,10 +78,8 @@ export const createOpensTooltipContent = (
 	);
 };
 
-export const createClicksTooltipContent = (
-	item: EmailStatsItem,
-	translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
-) => {
+export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
+	const translate = useTranslate();
 	const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
 	const clicks = parseInt( String( item.clicks ), 10 );
 	const clicksRate = parseFloat( String( item.clicks_rate ) );

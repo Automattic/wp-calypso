@@ -21,8 +21,8 @@ import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import {
 	TooltipWrapper,
-	createOpensTooltipContent,
-	createClicksTooltipContent,
+	OpensTooltipContent,
+	ClicksTooltipContent,
 	hasUniqueMetrics,
 	EmailStatsItem,
 } from './tooltips';
@@ -89,7 +89,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 								<TooltipWrapper
 									value={ hasUniques ? `${ item.opens_rate }%` : '—' }
 									item={ item }
-									renderContent={ createOpensTooltipContent }
+									TooltipContent={ OpensTooltipContent }
 								/>
 							);
 						},
@@ -112,7 +112,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							<TooltipWrapper
 								value={ hasUniques ? `${ item.clicks_rate }%` : '—' }
 								item={ item }
-								renderContent={ createClicksTooltipContent }
+								TooltipContent={ ClicksTooltipContent }
 							/>
 						);
 					} }

@@ -7,8 +7,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	TooltipWrapper,
-	createOpensTooltipContent,
-	createClicksTooltipContent,
+	OpensTooltipContent,
+	ClicksTooltipContent,
 } from '../features/modules/stats-emails/tooltips';
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -76,7 +76,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<TooltipWrapper
 									value={ hasUniquesData ? `${ item.opens_rate }%` : '—' }
 									item={ item }
-									renderContent={ createOpensTooltipContent }
+									TooltipContent={ OpensTooltipContent }
 								/>
 							);
 						},
@@ -99,7 +99,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<TooltipWrapper
 									value={ hasUniquesData ? `${ item.clicks_rate }%` : '—' }
 									item={ item }
-									renderContent={ createClicksTooltipContent }
+									TooltipContent={ ClicksTooltipContent }
 								/>
 							);
 						}
