@@ -11,12 +11,12 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Pagination from 'calypso/components/pagination';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 	LayoutHeaderSubtitle as Subtitle,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PaymentMethodOverviewContext } from '../context';

@@ -14,11 +14,11 @@ import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
-import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';

@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import type { ItemData } from 'calypso/layout/multi-sites-dashboard/item-view/types';
+import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 type Props = {
 	focusRef: React.RefObject< HTMLButtonElement >;

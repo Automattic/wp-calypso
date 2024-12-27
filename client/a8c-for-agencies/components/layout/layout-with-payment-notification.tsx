@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 
 export default function LayoutWithPaymentNotification( {
 	children,

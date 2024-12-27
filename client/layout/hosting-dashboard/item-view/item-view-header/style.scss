@@ -3,25 +3,25 @@
 
 $blueberry-color: #3858e9;
 
-.multi-sites-dashboard-item-view__header {
+.hosting-dashboard-item-view__header {
 
-	.multi-sites-dashboard-item-view__header-content {
-		.multi-sites-dashboard-item-view__header-info {
+	.hosting-dashboard-item-view__header-content {
+		.hosting-dashboard-item-view__header-info {
 			display: flex;
 			flex-direction: row;
 			flex-grow: 1;
 			gap: 10px;
 		}
 
-		.multi-sites-dashboard-item-view__header-title-summary {
+		.hosting-dashboard-item-view__header-title-summary {
 			word-wrap: anywhere;
 
-			.multi-sites-dashboard-item-view__header-summary-link svg {
+			.hosting-dashboard-item-view__header-summary-link svg {
 				padding: 0 0 2px 4px;
 				vertical-align: middle;
 			}
 
-			.multi-sites-dashboard-item-view__header-env-data {
+			.hosting-dashboard-item-view__header-env-data {
 				padding-top: 6px;
 				display: flex;
 				gap: 16px;
@@ -30,7 +30,7 @@ $blueberry-color: #3858e9;
 				color: #101517;
 				letter-spacing: -0.15px;
 
-				.multi-sites-dashboard-item-view__header-env-data-item-link {
+				.hosting-dashboard-item-view__header-env-data-item-link {
 					color: $blueberry-color;
 					font-size: inherit;
 					padding: 0;
@@ -40,7 +40,7 @@ $blueberry-color: #3858e9;
 			}
 		}
 
-		.multi-sites-dashboard-item-view__close,
+		.hosting-dashboard-item-view__close,
 		.item-view__close-button,
 		.item-preview__admin-button {
 			align-self: flex-start;
@@ -51,35 +51,35 @@ $blueberry-color: #3858e9;
 		}
 	}
 
-	.multi-sites-dashboard-item-view__header-favicon {
+	.hosting-dashboard-item-view__header-favicon {
 		margin-inline-end: 12px;
 	}
 
 	@media (min-width: $break-large) {
-		.multi-sites-dashboard-item-view__header-favicon {
+		.hosting-dashboard-item-view__header-favicon {
 			margin-inline-end: 24px;
 			position: relative;
 		}
 
-		.multi-sites-dashboard-item-view__header-content {
+		.hosting-dashboard-item-view__header-content {
 			padding: 48px 48px 24px 48px;
 			display: flex;
 			align-items: top;
 
-			.multi-sites-dashboard-item-view__header-title-summary {
+			.hosting-dashboard-item-view__header-title-summary {
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
 
-				.multi-sites-dashboard-item-view__header-title {
+				.hosting-dashboard-item-view__header-title {
 					@include a4a-font-heading-xxl;
 					color: var(--color-text-black);
 					padding: 4px 0;
 				}
 
-				.multi-sites-dashboard-item-view__header-summary {
+				.hosting-dashboard-item-view__header-summary {
 
-					.multi-sites-dashboard-item-view__header-summary-link {
+					.hosting-dashboard-item-view__header-summary-link {
 						display: flex;
 						gap: 2px;
 						align-items: center;
@@ -107,24 +107,24 @@ $blueberry-color: #3858e9;
 		display: flex;
 		padding: 24px 24px 8px;
 
-		.multi-sites-dashboard-item-view__header-content {
+		.hosting-dashboard-item-view__header-content {
 			flex-grow: 1;
 			display: flex;
 
-			.multi-sites-dashboard-item-view__header-title-summary {
+			.hosting-dashboard-item-view__header-title-summary {
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
 
-				.multi-sites-dashboard-item-view__header-title {
+				.hosting-dashboard-item-view__header-title {
 					@include a4a-font-heading-md;
 					color: var(--color-text-black);
 					padding: 6px 0 4px 0;
 				}
 
-				.multi-sites-dashboard-item-view__header-summary {
+				.hosting-dashboard-item-view__header-summary {
 
-					.multi-sites-dashboard-item-view__header-summary-link {
+					.hosting-dashboard-item-view__header-summary-link {
 						display: flex;
 						align-items: center;
 						@include a4a-font-body-md;

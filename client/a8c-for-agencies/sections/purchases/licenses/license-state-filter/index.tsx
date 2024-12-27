@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lib/license-filters';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/multi-sites-dashboard/nav';
+import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/hosting-dashboard/nav';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import LicenseListContext from '../licenses-overview/context';

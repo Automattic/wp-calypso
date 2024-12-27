@@ -311,7 +311,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					offset={ HEADING_OFFSET }
 					timeout={ 250 }
 					container={
-						document.querySelector< HTMLElement >( '.multi-sites-dashboard-item-view__content' ) ??
+						document.querySelector< HTMLElement >( '.hosting-dashboard-item-view__content' ) ??
 						undefined
 					}
 				/>

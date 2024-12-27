@@ -2,19 +2,19 @@
 @import "@wordpress/base-styles/mixins";
 
 
-.main.multi-sites-dashboard-layout.sites-dashboard {
+.main.hosting-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
-	.multi-sites-dashboard-layout__header-actions {
+	.hosting-dashboard-layout__header-actions {
 		white-space: nowrap;
 	}
 
-	.site-preview-pane .multi-sites-dashboard-layout-column__container {
+	.site-preview-pane .hosting-dashboard-layout-column__container {
 		display: flex;
 	}
 
-	.multi-sites-dashboard-layout-column {
-		.multi-sites-dashboard-layout-column__container {
+	.hosting-dashboard-layout-column {
+		.hosting-dashboard-layout-column__container {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
@@ -39,7 +39,7 @@
 		margin: -10px 0;
 	}
 
-	.multi-sites-dashboard-layout__top-wrapper:not(.preview-hidden) {
+	.hosting-dashboard-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
 		@include breakpoint-deprecated( "<660px" ) {
 			padding-block-start: 0;
@@ -97,7 +97,7 @@
 	}
 
 	@media (max-width: 660px) {
-		.multi-sites-dashboard-layout__header-main {
+		.hosting-dashboard-layout__header-main {
 			display: none;
 		}
 	}
@@ -172,7 +172,7 @@
 			display: none;
 		}
 
-		.multi-sites-dashboard-item-view__content {
+		.hosting-dashboard-item-view__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -209,11 +209,11 @@
 			.sites-overview {
 				padding: 0;
 
-				.multi-sites-dashboard-layout__viewport {
+				.hosting-dashboard-layout__viewport {
 					padding-inline: 16px;
 				}
 
-				.multi-sites-dashboard-layout__header-title {
+				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 				}
@@ -345,10 +345,10 @@
 	&.sites-dashboard__layout:not(.preview-hidden) {
 
 
-		.multi-sites-dashboard-layout__top-wrapper {
+		.hosting-dashboard-layout__top-wrapper {
 			padding-block-start: 16px;
 
-			.multi-sites-dashboard-layout__header {
+			.hosting-dashboard-layout__header {
 				padding: 0;
 			}
 		}
@@ -358,7 +358,7 @@
 		}
 	}
 
-	&.sites-dashboard__layout:not(.preview-hidden) .multi-sites-dashboard-layout__navigation-wrapper {
+	&.sites-dashboard__layout:not(.preview-hidden) .hosting-dashboard-layout__navigation-wrapper {
 		display: none;
 	}
 
@@ -411,8 +411,8 @@
 			}
 		}
 
-		.multi-sites-dashboard-layout__top-wrapper,
-		.multi-sites-dashboard-layout__body {
+		.hosting-dashboard-layout__top-wrapper,
+		.hosting-dashboard-layout__body {
 			> * {
 				@include breakpoint-deprecated(">660px") {
 					max-width: none;
@@ -450,7 +450,7 @@
 			font-size: rem(24px);
 		}
 
-		.multi-sites-dashboard-item-view {
+		.hosting-dashboard-item-view {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -470,7 +470,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.multi-sites-dashboard-item-view {
+			.hosting-dashboard-item-view {
 				max-width: 0;
 				padding: 0;
 			}

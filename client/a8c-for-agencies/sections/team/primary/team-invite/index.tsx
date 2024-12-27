@@ -13,10 +13,10 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

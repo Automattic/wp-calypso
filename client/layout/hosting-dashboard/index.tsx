@@ -30,12 +30,12 @@ export default function Layout( {
 		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
 	);
 	const layoutContainerClassname = hasLayoutColumns
-		? 'multi-sites-dashboard-layout-with-columns__container'
-		: 'multi-sites-dashboard-layout__container';
+		? 'hosting-dashboard-layout-with-columns__container'
+		: 'hosting-dashboard-layout__container';
 
 	return (
 		<Main
-			className={ clsx( 'multi-sites-dashboard-layout', className, {
+			className={ clsx( 'hosting-dashboard-layout', className, {
 				'is-with-border': withBorder,
 			} ) }
 			fullWidthLayout={ wide }

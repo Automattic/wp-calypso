@@ -15,14 +15,14 @@ $iframe-background-color: #f7f7f7;
 	}
 }
 
-.bank-details__layout.main.multi-sites-dashboard-layout {
+.bank-details__layout.main.hosting-dashboard-layout {
 	height: 100%; // Setting the height to 100% to make sure the iFrame is always visible
 
 	@include breakpoint-deprecated( ">660px" ) {
 		height: calc(100vh - 32px);
 	}
 
-	.multi-sites-dashboard-layout__body {
+	.hosting-dashboard-layout__body {
 		background-color: $iframe-background-color;
 	}
 }
@@ -41,7 +41,7 @@ $iframe-background-color: #f7f7f7;
 }
 
 .bank-details__layout--automated {
-	.multi-sites-dashboard-layout__top-wrapper {
+	.hosting-dashboard-layout__top-wrapper {
 		padding-block-start: 24px;
 		padding-block-end: 0;
 	}

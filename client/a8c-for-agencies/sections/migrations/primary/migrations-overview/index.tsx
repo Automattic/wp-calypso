@@ -15,11 +15,11 @@ import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hook
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

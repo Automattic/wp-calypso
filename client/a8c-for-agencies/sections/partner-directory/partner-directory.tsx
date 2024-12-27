@@ -11,11 +11,11 @@ import {
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,

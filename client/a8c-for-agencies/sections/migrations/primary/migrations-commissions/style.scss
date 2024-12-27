@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .migrations-commissions {
-	&:not(.full-width-layout-with-table) .multi-sites-dashboard-layout__body-wrapper {
+	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
 		max-width: 900px;
 	}
 
@@ -45,4 +45,3 @@
 		}
 	}
 }
-

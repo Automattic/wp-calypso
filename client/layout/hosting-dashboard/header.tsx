@@ -11,15 +11,15 @@ type Props = {
 };
 
 export function LayoutHeaderTitle( { children }: Props ) {
-	return <h1 className="multi-sites-dashboard-layout__header-title">{ children }</h1>;
+	return <h1 className="hosting-dashboard-layout__header-title">{ children }</h1>;
 }
 
 export function LayoutHeaderSubtitle( { children }: Props ) {
-	return <h2 className="multi-sites-dashboard-layout__header-subtitle">{ children }</h2>;
+	return <h2 className="hosting-dashboard-layout__header-subtitle">{ children }</h2>;
 }
 
 export function LayoutHeaderActions( { children, className, useColumnAlignment }: Props ) {
-	const wrapperClass = clsx( className, 'multi-sites-dashboard-layout__header-actions', {
+	const wrapperClass = clsx( className, 'hosting-dashboard-layout__header-actions', {
 		'is-column-flex-align': useColumnAlignment,
 	} );
 	return <div className={ wrapperClass }>{ children }</div>;
@@ -34,7 +34,7 @@ export function LayoutHeaderBreadcrumb( {
 } ) {
 	return (
 		<div
-			className={ clsx( 'multi-sites-dashboard-layout__header-breadcrumb', {
+			className={ clsx( 'hosting-dashboard-layout__header-breadcrumb', {
 				'is-hidden-on-mobile': hideOnMobile,
 			} ) }
 		>
@@ -67,7 +67,7 @@ export default function LayoutHeader( { showStickyContent, children, className }
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
-	const wrapperClass = clsx( className, 'multi-sites-dashboard-layout__viewport' );
+	const wrapperClass = clsx( className, 'hosting-dashboard-layout__viewport' );
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 
@@ -101,15 +101,15 @@ export default function LayoutHeader( { showStickyContent, children, className }
 		>
 			<div
 				className={ clsx( {
-					'multi-sites-dashboard-layout__sticky-header': showStickyContent && hasCrossed,
+					'hosting-dashboard-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ clsx( 'multi-sites-dashboard-layout__header', {
+					className={ clsx( 'hosting-dashboard-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>
-					<div className="multi-sites-dashboard-layout__header-main">
+					<div className="hosting-dashboard-layout__header-main">
 						{ headerBreadcrumb }
 						{ headerTitle }
 						{ headerSubtitle }

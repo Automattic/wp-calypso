@@ -67,7 +67,7 @@ body.is-section-plugins {
 		}
 	}
 
-	.is-logged-in main:not(.multi-sites-dashboard-layout):not(.multi-sites-dashboard-layout-column) {
+	.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column) {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
 			padding-inline: 48px;
@@ -75,9 +75,9 @@ body.is-section-plugins {
 			@media (max-width: $break-medium) {
 				padding-inline: 2rem;
 			}
-		
+
 			@media (max-width: $break-small) {
-				padding-inline: 16px;	
+				padding-inline: 16px;
 			}
 		}
 
@@ -94,11 +94,11 @@ body.is-section-plugins {
 		}
 	}
 
-	.multi-sites-dashboard-layout-column {
+	.hosting-dashboard-layout-column {
 		overflow: auto;
 	}
 
-	.multi-sites-dashboard-layout-column.scheduled-updates-list-compact {
+	.hosting-dashboard-layout-column.scheduled-updates-list-compact {
 		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
@@ -135,7 +135,7 @@ body.is-section-plugins {
 		}
 	}
 
-	.multi-sites-dashboard-layout-column.scheduled-updates-list {
+	.hosting-dashboard-layout-column.scheduled-updates-list {
 		.plugins-update-manager-multisite__header,
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
@@ -165,8 +165,8 @@ body.is-section-plugins {
 		}
 	}
 
-	.multi-sites-dashboard-layout-column.scheduled-updates-edit,
-	.multi-sites-dashboard-layout-column.scheduled-updates-create {
+	.hosting-dashboard-layout-column.scheduled-updates-edit,
+	.hosting-dashboard-layout-column.scheduled-updates-create {
 		padding: 3rem;
 
 		@include breakpoint-deprecated( "<660px" ) {

@@ -6,17 +6,17 @@
 	background: var(--color-sidebar-menu-selected-background);
 }
 
-.checkout .multi-sites-dashboard-layout__body,
-.checkout .multi-sites-dashboard-layout__body-wrapper {
+.checkout .hosting-dashboard-layout__body,
+.checkout .hosting-dashboard-layout__body-wrapper {
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 }
 
-.checkout .multi-sites-dashboard-layout__container {
+.checkout .hosting-dashboard-layout__container {
 	height: 100%;
 }
 
-.checkout .multi-sites-dashboard-layout__body {
+.checkout .hosting-dashboard-layout__body {
 	padding: 0;
 	flex-grow: 1;
 
@@ -25,7 +25,7 @@
 	}
 }
 
-.checkout .multi-sites-dashboard-layout__body-wrapper {
+.checkout .hosting-dashboard-layout__body-wrapper {
 	height: 100%;
 }
 

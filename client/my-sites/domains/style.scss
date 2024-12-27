@@ -54,11 +54,11 @@ body.is-section-domains.is-domain-plan-package-flow {
 }
 
 .domains-overview {
-	.multi-sites-dashboard-layout-with-columns__container {
+	.hosting-dashboard-layout-with-columns__container {
 		background: var(--color-sidebar-background);
 	}
 
-	.multi-sites-dashboard-item-view {
+	.hosting-dashboard-item-view {
 		background: var(--color-light-backdrop);
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
 		flex-grow: 1;
@@ -67,11 +67,11 @@ body.is-section-domains.is-domain-plan-package-flow {
 		width: auto;
 	}
 
-	.multi-sites-dashboard-item-view__header-info {
+	.hosting-dashboard-item-view__header-info {
 		flex-wrap: wrap;
 	}
 
-	.multi-sites-dashboard-item-view__content div {
+	.hosting-dashboard-item-view__content div {
 		flex-grow: 1;
 	}
 

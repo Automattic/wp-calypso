@@ -1,10 +1,8 @@
 import clsx from 'clsx';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
 
 import './style.scss';
 

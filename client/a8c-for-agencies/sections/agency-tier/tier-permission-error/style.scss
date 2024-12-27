@@ -2,10 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .agency-tier-permission-error__layout {
-	.multi-sites-dashboard-layout__container {
+	.hosting-dashboard-layout__container {
 		height: 100%;
 	}
-	.multi-sites-dashboard-layout__body {
+	.hosting-dashboard-layout__body {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;

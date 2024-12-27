@@ -26,7 +26,7 @@
 }
 
 .products-overview.without-bundle {
-	.multi-sites-dashboard-layout__header-subtitle {
+	.hosting-dashboard-layout__header-subtitle {
 		padding-block-end: 16px;
 	}
 }
@@ -54,7 +54,7 @@
 }
 
 
-.products-overview .multi-sites-dashboard-layout__header {
+.products-overview .hosting-dashboard-layout__header {
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: nowrap;
@@ -63,12 +63,12 @@
 	}
 }
 
-.products-overview .multi-sites-dashboard-layout__body {
+.products-overview .hosting-dashboard-layout__body {
 	overflow-y: scroll; // We need to show the scrollbar so we avoid UI from shifting when filtering items.
 }
 
 .products-overview {
-	.multi-sites-dashboard-layout__top-wrapper {
+	.hosting-dashboard-layout__top-wrapper {
 		z-index: 10;
 	}
 
@@ -80,7 +80,7 @@
 		}
 	}
 
-	.section-nav.multi-sites-dashboard-layout__navigation .select-dropdown__header .count {
+	.section-nav.hosting-dashboard-layout__navigation .select-dropdown__header .count {
 		top: 8.5px;
 		margin-inline-end: 8px;
 	}

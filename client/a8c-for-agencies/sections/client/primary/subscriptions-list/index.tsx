@@ -9,10 +9,8 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import {
 	SubscriptionAction,
