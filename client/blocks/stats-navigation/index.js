@@ -18,7 +18,11 @@ import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getJetpackStatsAdminVersion,
+	getSiteOption,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -61,6 +65,8 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isSubscriptionsModuleActive: PropTypes.bool,
+		isSimple: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -70,7 +76,6 @@ class StatsNavigation extends Component {
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
 		delayTooltipPresentation: PropTypes.bool,
-		isSubscriptionsModuleActive: PropTypes.bool,
 	};
 
 	state = {
@@ -145,6 +150,7 @@ class StatsNavigation extends Component {
 			isStore,
 			isWordAds,
 			isSubscriptionsModuleActive,
+			isSimple,
 			siteId,
 		} = this.props;
 
@@ -167,7 +173,7 @@ class StatsNavigation extends Component {
 					return false;
 				}
 
-				return isSubscriptionsModuleActive;
+				return isSimple || isSubscriptionsModuleActive;
 
 			default:
 				return true;
@@ -310,6 +316,8 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
+			isSimple: isSimpleSite( state, siteId ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
@@ -319,7 +327,6 @@ export default connect(
 			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
-			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
