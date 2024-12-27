@@ -38,26 +38,37 @@
 		padding-block-start: 24px;
 	}
 
-	.plugin-manage-sites-pane .hosting-dashboard-layout-column__container .hosting-dashboard-layout__top-wrapper {
-		.hosting-dashboard-layout__viewport {
-			width: 100%;
+	.plugin-manage-sites-pane {
+
+		.hosting-dashboard-layout__body-wrapper {
+			padding-inline: 24px;
 		}
 
-		.hosting-dashboard-layout__header-title {
-			display: flex;
-			align-items: center;
-			gap: 8px;
+		.hosting-dashboard-layout-column__container .hosting-dashboard-layout__top-wrapper {
+			.hosting-dashboard-layout__viewport {
+				width: 100%;
+			}
+
+			.hosting-dashboard-layout__header-title {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+		}
+
+		.plugin-details-v2__title {
+			color: var(--studio-gray-100);
+			font-size: 1.25rem;
+			padding: 16px 0;
 		}
 	}
 
-	.sites-dataviews__site {
-		.button {
-			flex-shrink: 0;
-		}
-		.sites-dataviews__site-name {
-			padding: 0;
+	.hosting-dashboard-layout__top-wrapper .hosting-dashboard-layout__viewport {
+		@media ( max-width: $break-mobile ) {
+			padding-inline: 24px;
 		}
 	}
+
 	@media ( min-width: $break-large ) {
 		background: inherit;
 
