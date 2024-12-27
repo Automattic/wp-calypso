@@ -343,13 +343,15 @@ const PluginsDashboard = ( {
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
 							<Title>
-								<img
-									width={ 24 }
-									height={ 24 }
-									src={ selectedPlugin.icon }
-									alt={ selectedPlugin.name }
-								/>
-								{ ` ${ selectedPlugin.name }` }
+								{ selectedPlugin.icon && (
+									<img
+										width={ 24 }
+										height={ 24 }
+										src={ selectedPlugin.icon }
+										alt={ selectedPlugin.name }
+									/>
+								) }
+								{ `${ selectedPlugin.name }` }
 							</Title>
 							<Actions>
 								<Button href="/plugins/manage/sites">{ translate( 'Close' ) }</Button>
