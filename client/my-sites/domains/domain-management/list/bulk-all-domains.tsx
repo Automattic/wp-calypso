@@ -284,13 +284,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						padding-inline: 16px;
 						border-block-end: 1px solid var( --color-border-secondary );
 					}
-					.layout__primary > main {
-						background: var( --color-surface );
-						border-radius: 8px;
-						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
-						overflow: hidden;
-						max-width: none;
-					}
 				}
 			}
 
