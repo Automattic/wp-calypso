@@ -5,9 +5,9 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
-.main.multi-sites-dashboard-layout.sites-dashboard {
-	.multi-sites-dashboard-layout-column {
-		.multi-sites-dashboard-layout-column__container {
+.main.hosting-dashboard-layout.sites-dashboard {
+	.hosting-dashboard-layout-column {
+		.hosting-dashboard-layout-column__container {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
@@ -26,7 +26,7 @@
 		margin-right: 10px;
 	}
 
-	.multi-sites-dashboard-layout__top-wrapper {
+	.hosting-dashboard-layout__top-wrapper {
 		padding-block-start: 24px;
 	}
 
@@ -94,7 +94,7 @@
 			}
 		}
 
-		.multi-sites-dashboard-item-view__content {
+		.hosting-dashboard-item-view__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -128,7 +128,7 @@
 				padding: 0;
 
 				// FIXME: Remove this style, as the list view will likely be removed in the future.
-				.multi-sites-dashboard-layout__header-title {
+				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 					letter-spacing: normal;
@@ -237,7 +237,7 @@
 			font-size: rem(24px);
 		}
 
-		.multi-sites-dashboard-item-view {
+		.hosting-dashboard-item-view {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -247,7 +247,7 @@
 			@media (max-width: $break-small) {
 				max-height: calc(100vh - var(--masterbar-height));
 			}
-			.multi-sites-dashboard-item-view__navigation {
+			.hosting-dashboard-item-view__navigation {
 				box-shadow: none;
 				border-bottom: 1px solid var(--color-border-subtle);
 				padding-top: 1px;
@@ -265,7 +265,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.multi-sites-dashboard-item-view {
+			.hosting-dashboard-item-view {
 				max-width: 0;
 				padding: 0;
 			}

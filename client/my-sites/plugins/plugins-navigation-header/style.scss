@@ -17,7 +17,7 @@
 	}
 
 	@media (max-width: $break-small) {
-		padding-inline: 16px;	
+		padding-inline: 16px;
 	}
 
 	@include break-xhuge {
@@ -32,7 +32,7 @@
 	}
 }
 
-.is-logged-in main:not(.multi-sites-dashboard-layout):not(.multi-sites-dashboard-layout-column).plugins-browser--site-view {
+.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column).plugins-browser--site-view {
 	.plugins-navigation-header.navigation-header {
 		padding-inline: 0;
 

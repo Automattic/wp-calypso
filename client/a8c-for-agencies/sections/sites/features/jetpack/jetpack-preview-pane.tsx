@@ -11,8 +11,8 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
-import ItemView, { createFeaturePreview } from 'calypso/layout/multi-sites-dashboard/item-view';
-import { ItemData } from 'calypso/layout/multi-sites-dashboard/item-view/types';
+import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
+import { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
 import { JetpackBackupPreview } from './backup';

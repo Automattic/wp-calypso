@@ -54,7 +54,7 @@
 		"react-dom": "^18.3.1",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.95.0"
+		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",

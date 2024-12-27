@@ -29,6 +29,7 @@ interface BulkAllDomainsProps {
 	analyticsTitle: string;
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
+	selectedFeature?: string;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -443,6 +444,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						deleteBulkActionStatus={ deleteBulkActionStatus }
 						sidebarMode={ props.sidebarMode }
 						selectedDomainName={ props.selectedDomainName }
+						selectedFeature={ props.selectedFeature }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

@@ -56,7 +56,7 @@ $data-view-border-color: #f1f1f1;
 	gap: 48px;
 }
 
-.referrals-layout:not(.full-width-layout-with-table) .multi-sites-dashboard-layout__body-wrapper {
+.referrals-layout:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
 	max-width: 900px;
 }
 
@@ -96,7 +96,7 @@ $data-view-border-color: #f1f1f1;
 		margin-block-end: 32px;
 	}
 
-	&:not(.full-width-layout-with-table) .multi-sites-dashboard-layout__body-wrapper {
+	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
 		max-width: 700px;
 	}
 
@@ -130,7 +130,7 @@ $data-view-border-color: #f1f1f1;
 		margin-block-start: 32px;
 	}
 
-	&.main.multi-sites-dashboard-layout {
+	&.main.hosting-dashboard-layout {
 		@include break-large {
 			background: inherit;
 		}
@@ -150,7 +150,7 @@ $data-view-border-color: #f1f1f1;
 			gap: 0;
 		}
 
-		.multi-sites-dashboard-layout__top-wrapper > * {
+		.hosting-dashboard-layout__top-wrapper > * {
 			padding-inline: 24px;
 		}
 
@@ -166,7 +166,7 @@ $data-view-border-color: #f1f1f1;
 			}
 		}
 
-		.multi-sites-dashboard-layout__header-actions a.button {
+		.hosting-dashboard-layout__header-actions a.button {
 			text-wrap: nowrap;
 		}
 	}
@@ -196,7 +196,7 @@ $data-view-border-color: #f1f1f1;
 	}
 }
 
-.multi-sites-dashboard-layout__header-actions {
+.hosting-dashboard-layout__header-actions {
 	a.button {
 		text-wrap: pretty;
 	}
@@ -216,7 +216,7 @@ $data-view-border-color: #f1f1f1;
 /* FIXME: This is a temporary fix to make the referral
  * layout columns the same height
  */
-.main.multi-sites-dashboard-layout-column.referrals-layout__column {
+.main.hosting-dashboard-layout-column.referrals-layout__column {
 	height: auto;
 	overflow-y: scroll;
 }
@@ -231,7 +231,7 @@ $data-view-border-color: #f1f1f1;
 	display: flex;
 }
 
-.referrals-layout .multi-sites-dashboard-item-view {
+.referrals-layout .hosting-dashboard-item-view {
 	display: flex;
 	flex-direction: column;
 	height: calc(100vh - 32px);
