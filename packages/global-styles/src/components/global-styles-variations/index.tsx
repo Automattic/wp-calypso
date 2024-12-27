@@ -11,11 +11,10 @@ import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
 	withExperimentalBlockEditorProvider,
-	isColorVariation,
-	isFontVariation,
 	isDefaultVariation,
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
+import { getGroupedVariations } from '../../utils';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
@@ -125,41 +124,11 @@ const GlobalStylesVariations = ( {
 	);
 
 	const { styleVariations, colorVariations } = useMemo(
-		() =>
-			globalStylesVariations.reduce(
-				( acc, variation ) => {
-					if ( isDefaultVariation( variation ) ) {
-						return acc;
-					}
-
-					if ( isColorVariation( variation ) ) {
-						return {
-							...acc,
-							colorVariations: [ ...acc.colorVariations, variation ],
-						};
-					}
-
-					if ( isFontVariation( variation ) ) {
-						return {
-							...acc,
-							fontVariations: [ ...acc.fontVariations, variation ],
-						};
-					}
-
-					return {
-						...acc,
-						styleVariations: [ ...acc.styleVariations, variation ],
-					};
-				},
-				{
-					styleVariations: [],
-					colorVariations: [],
-					fontVariations: [],
-				}
-			),
+		() => getGroupedVariations( globalStylesVariations ),
 		[ globalStylesVariations ]
 	);
 
+	// Use the color variations if the style variations are empty because we don't display color variations as palette section.
 	const globalStylesVariationsWithoutDefault =
 		styleVariations.length > 0 ? styleVariations : colorVariations;
 

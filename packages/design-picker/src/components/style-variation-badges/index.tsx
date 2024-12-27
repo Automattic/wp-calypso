@@ -1,6 +1,5 @@
-import { isStyleVariation, isDefaultVariation } from '@automattic/global-styles';
+import { isDefaultVariation, getGroupedVariations } from '@automattic/global-styles';
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import Badge from './badge';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -25,31 +24,37 @@ const Badges: React.FC< BadgesProps > = ( {
 	selectedVariation,
 } ) => {
 	const isSelectedVariationDefault = isDefaultVariation( selectedVariation );
-	const styleVariations = useMemo(() => variations.filter( variation => isStyleVariation( variation ) ), [ variations ] );
-	console.log( styleVariations );
+	const { defaultVariation, styleVariations, colorVariations } = useMemo(
+		() => getGroupedVariations( variations ),
+		[ variations ]
+	);
+	// Use the color variations if the style variations are empty because we don't display color variations as palette section.
+	const currentStyleVariations = styleVariations.length > 0 ? styleVariations : colorVariations;
 	const variationsToShow = useMemo( () => {
-		return styleVariations.slice( 0, maxVariationsToShow );
-	}, [ styleVariations, maxVariationsToShow ] );
+		return currentStyleVariations.slice( 0, maxVariationsToShow - 1 );
+	}, [ currentStyleVariations, maxVariationsToShow ] );
 
-	if ( styleVariations.length === 0 ) {
+	if ( currentStyleVariations.length === 0 ) {
 		return null;
 	}
 
 	return (
 		<div className={ className }>
+			<Badge
+				key="base"
+				variation={ defaultVariation }
+				onClick={ onClick }
+				isSelected={ isSelectedVariationDefault }
+			/>
 			{ variationsToShow.map( ( variation ) => (
 				<Badge
 					key={ variation.slug }
 					variation={ variation }
 					onClick={ onClick }
-					isSelected={
-						( isSelectedVariationDefault &&
-							variation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) ||
-						variation.slug === selectedVariation?.slug
-					}
+					isSelected={ variation.slug === selectedVariation?.slug }
 				/>
 			) ) }
-			{ styleVariations.length > variationsToShow.length && (
+			{ currentStyleVariations.length > variationsToShow.length && (
 				<div
 					className="style-variation__badge-more-wrapper"
 					tabIndex={ 0 }
@@ -70,7 +75,7 @@ const Badges: React.FC< BadgesProps > = ( {
 						}
 					} }
 				>
-					<span>{ `+${ styleVariations.length - variationsToShow.length }` }</span>
+					<span>{ `+${ currentStyleVariations.length - variationsToShow.length }` }</span>
 				</div>
 			) }
 		</div>
