@@ -319,10 +319,4 @@ export const STEPS = {
 		slug: 'migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
 	},
-
-	USER: {
-		slug: 'user',
-		asyncComponent: () =>
-			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
-	},
 } satisfies Record< string, StepperStep >;
