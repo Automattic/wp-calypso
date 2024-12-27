@@ -147,6 +147,10 @@
 	}
 }
 
+.product-lightbox__variants-plan-card:not(:first-child) {
+	margin-top: 1rem;
+}
+
 .product-lightbox__variants-plan-card-price,
 .product-lightbox__variants-plan-card-old-price {
 	h4 {

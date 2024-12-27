@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
+import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
@@ -66,6 +67,8 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const { originalCurrentTierPrice, currentTierPrice } = getCurrentTierPrice();
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
+	const tooltipText = productTooltip( product, priceTierList, currencyCode ?? 'USD' );
 
 	const labelClass = clsx(
 		'product-lightbox__variants-grey-label',
@@ -151,6 +154,16 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 							</div>
 						) }
 					</div>
+					{ tooltipText && (
+						<div
+							className={ clsx(
+								'product-lightbox__variants-plan-card',
+								! isActive && 'product-lightbox__variants-plan-card inactive'
+							) }
+						>
+							<div className="product-lightbox__variants-grey-label">{ tooltipText }</div>
+						</div>
+					) }
 				</>
 			) }
 		</div>

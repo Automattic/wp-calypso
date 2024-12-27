@@ -93,7 +93,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setProductDescription( JETPACK_BOOST_PRODUCTS, { value: boostDescription } ),
 
-			...setProductDescription( JETPACK_SEARCH_PRODUCTS, { value: searchDescription } ),
+			...setProductDescription( JETPACK_SEARCH_PRODUCTS, {
+				value: searchDescription,
+				calloutText: translate( '100k records & requests/mo' ),
+			} ),
 
 			...setProductDescription( JETPACK_SOCIAL_PRODUCTS, {
 				value: socialDescription,
