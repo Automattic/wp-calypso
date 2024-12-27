@@ -152,7 +152,14 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = opensUnique > 0 || opens === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.opens_rate }%` : 'n/a' }
+									value={
+										hasUniquesData
+											? `${ item.opens_rate }%`
+											: translate(
+													/* translators: Shown in a table column when email open rate data is not available */
+													'n/a'
+											  )
+									}
 									item={ item }
 									renderContent={ renderOpensTooltipContent }
 								/>
@@ -175,7 +182,14 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = clicksUnique > 0 || clicks === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.clicks_rate }%` : 'n/a' }
+									value={
+										hasUniquesData
+											? `${ item.clicks_rate }%`
+											: translate(
+													/* translators: Shown in a table column when email click rate data is not available */
+													'n/a'
+											  )
+									}
 									item={ item }
 									renderContent={ renderClicksTooltipContent }
 								/>
