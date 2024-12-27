@@ -1,12 +1,5 @@
+import { STEPS } from '../declarative-flow/internals/steps';
 import type { Flow, StepperStep } from '../declarative-flow/internals/types';
-
-const USER_STEP: StepperStep = {
-	slug: 'user',
-	asyncComponent: () =>
-		import(
-			/* webpackChunkName: "stepper-user-step" */ '../declarative-flow/internals/steps-repository/__user'
-		),
-};
 
 function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	const steps = flow.useSteps();
@@ -17,7 +10,7 @@ function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	}
 
 	const newSteps = [ ...steps ];
-	newSteps.splice( firstAuthWalledStep, 0, USER_STEP );
+	newSteps.splice( firstAuthWalledStep, 0, STEPS.USER );
 	return newSteps;
 }
 
