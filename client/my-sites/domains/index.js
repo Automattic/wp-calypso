@@ -17,8 +17,10 @@ import {
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
 import {
-	ADD_FOWARDING_EMAIL,
+	ADD_FORWARDING_EMAIL,
 	DNS_RECORDS,
+	ADD_DNS_RECORD,
+	EDIT_DNS_RECORD,
 	EDIT_CONTACT_INFO,
 } from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
@@ -414,7 +416,7 @@ export default function () {
 		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
 		siteSelection,
 		navigation,
-		domainManagementController.domainManagementSubpageParams( ADD_FOWARDING_EMAIL ),
+		domainManagementController.domainManagementSubpageParams( ADD_FORWARDING_EMAIL ),
 		emailController.emailManagementAddEmailForwards,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
@@ -440,6 +442,30 @@ export default function () {
 		navigation,
 		domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
 		domainManagementController.domainManagementDns,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
+		domainManagementController.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/edit/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
+		domainManagementController.domainManagementDnsEditRecord,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,

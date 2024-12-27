@@ -7,6 +7,10 @@
 	flex-direction: column;
 	height: 100%;
 
+	.form-text-input-with-affixes .form-text-input {
+		border-radius: 2px 0 0 2px;
+	}
+
 	.subpage-wrapper__header.navigation-header {
 		padding: 24px;
 		border-block-end: 1px solid var(--color-border-secondary);
@@ -45,10 +49,6 @@
 			line-height: 24px;
 			margin-top: 0;
 			margin-bottom: 16px;
-		}
-
-		.form-text-input-with-affixes .form-text-input {
-			border-radius: 2px 0 0 2px;
 		}
 
 		.button {
@@ -123,8 +123,9 @@
     }
 
     .domain__main-placeholder,
-    .dns-records {
-        .navigation-header{
+    .dns-records,
+	.add-dns-record {
+        .navigation-header {
             border-block-end: none !important;
             padding-top: 0 !important;
             padding-bottom: 0;
@@ -134,6 +135,20 @@
             }
         }
     }
+
+	.add-dns-record {
+		grid-gap: 2rem;
+
+		&__main {
+			border: solid 1px $studio-gray-5;
+			padding: 1.5rem;
+		}
+
+		&__main,
+		&__sidebar > div {
+			border-radius: 4px;
+		}
+	}
 }
 
 .is-bulk-all-domains-page .layout__content .main {

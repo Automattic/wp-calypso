@@ -1,6 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
+import DnsRecordHeader, {
+	addDnsRecordTitle,
+	addDnsRecordsSubtitle,
+	editDnsRecordTitle,
+} from './headers/dns-record-header';
 import DNSRecordsHeader, {
 	dnsRecordsTitle,
 	dnsRecordsSubtitle,
@@ -10,17 +15,20 @@ type SubpageWrapperParamsType = {
 	CustomHeader?: CustomHeaderComponentType;
 	title?: string | React.ReactNode;
 	subtitle?: string | React.ReactNode;
+	context?: string;
 	[ key: string ]: unknown;
 };
 
 // Subpage keys
-export const ADD_FOWARDING_EMAIL = 'add-forwarding-email';
+export const ADD_FORWARDING_EMAIL = 'add-forwarding-email';
 export const DNS_RECORDS = 'dns-records';
+export const ADD_DNS_RECORD = 'add-dns-record';
+export const EDIT_DNS_RECORD = 'edit-dns-record';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
 
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
-	[ ADD_FOWARDING_EMAIL ]: {
+	[ ADD_FORWARDING_EMAIL ]: {
 		CustomHeader: AddForwardingEmailHeader,
 		showFormHeader: true,
 		showPageHeader: false,
@@ -36,6 +44,22 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subPageKey: EDIT_CONTACT_INFO,
 		title: __( 'Contact information' ),
 		subtitle: __( "Manage your domain's contact details." ),
+	},
+	[ ADD_DNS_RECORD ]: {
+		CustomHeader: DnsRecordHeader,
+		subPageKey: ADD_DNS_RECORD,
+		titleOverride: addDnsRecordTitle,
+		subtitleOverride: addDnsRecordsSubtitle,
+		showBreadcrumb: false,
+		context: 'add',
+	},
+	[ EDIT_DNS_RECORD ]: {
+		CustomHeader: DnsRecordHeader,
+		subPageKey: EDIT_DNS_RECORD,
+		titleOverride: editDnsRecordTitle,
+		subtitleOverride: addDnsRecordsSubtitle,
+		showBreadcrumb: false,
+		context: 'edit',
 	},
 };
 
