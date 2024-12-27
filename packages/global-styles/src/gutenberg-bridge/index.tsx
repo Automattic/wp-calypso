@@ -116,10 +116,10 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 };
 
 const isColorVariation = ( variation?: GlobalStylesObject ) =>
-variation && isVariationWithProperties( variation, [ 'color' ] );
+	variation && isVariationWithProperties( variation, [ 'color' ] );
 
 const isFontVariation = ( variation?: GlobalStylesObject ) =>
-variation && isVariationWithProperties( variation, [ 'typography' ] );
+	variation && isVariationWithProperties( variation, [ 'typography' ] );
 
 const isDefaultVariation = ( variation?: GlobalStylesObject ) =>
 	variation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
@@ -128,7 +128,7 @@ const isStyleVariation = ( variation?: GlobalStylesObject ) =>
 	variation &&
 	! isDefaultVariation( variation ) &&
 	! isColorVariation( variation ) &&
-	! isFontVariation( variation )
+	! isFontVariation( variation );
 
 export {
 	cleanEmptyObject,

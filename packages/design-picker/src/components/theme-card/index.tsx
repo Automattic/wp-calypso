@@ -26,7 +26,7 @@ interface ThemeCardProps {
 	onStyleVariationMoreClick?: () => void;
 }
 
-const StyleVariationBadges = lazy(() => import( '../style-variation-badges') );
+const StyleVariationBadges = lazy( () => import( '../style-variation-badges' ) );
 
 const ActiveBadge = () => {
 	return (
@@ -80,6 +80,7 @@ const ThemeCard = forwardRef(
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
 		} );
+
 		const themeInfoClasses = clsx( 'theme-card__info', {
 			// Only show style variations when there is both a badge and variations.
 			'theme-card__info--has-style-variations': badge && styleVariations.length > 0,
@@ -131,11 +132,11 @@ const ThemeCard = forwardRef(
 						{ ! optionsMenu && (
 							<Suspense fallback={ null }>
 								<StyleVariationBadges
-								className="theme-card__info-style-variations"
-								variations={ styleVariations }
-								selectedVariation={ selectedStyleVariation }
-								onMoreClick={ onStyleVariationMoreClick }
-								onClick={ onStyleVariationClick }
+									className="theme-card__info-style-variations"
+									variations={ styleVariations }
+									selectedVariation={ selectedStyleVariation }
+									onMoreClick={ onStyleVariationMoreClick }
+									onClick={ onStyleVariationClick }
 								/>
 							</Suspense>
 						) }
