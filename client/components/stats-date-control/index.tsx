@@ -26,8 +26,6 @@ interface StatsDateControlProps {
 		event_from: string,
 		stat_type: string
 	) => void;
-	// Temporary prop to enable new date filtering UI.
-	isNewDateFilteringEnabled: boolean;
 }
 
 // Define the event name keys for tracking events
@@ -81,7 +79,6 @@ const StatsDateControl = ( {
 	shortcutList,
 	overlay,
 	onGatedHandler,
-	isNewDateFilteringEnabled = false,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
@@ -190,10 +187,9 @@ const StatsDateControl = ( {
 				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 				recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
 			} }
-			tooltip={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+			tooltip={ translate( 'Filter all data by date' ) }
 			overlay={ overlay }
 			shortcutList={ shortcutList }
-			isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 		/>
 	);
 };

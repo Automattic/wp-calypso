@@ -27,8 +27,7 @@
 	.stats-period-navigation {
 		@include section-header-with-siblings;
 
-	 // this new selector removes padding only for the date filtering design
-		&.stats-period-navigation__is-with-new-date-filtering {
+		&.stats-period-navigation__is-with-new-date-control {
 			padding: 0;
 			align-items: center;
 

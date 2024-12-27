@@ -137,7 +137,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stats/new-date-filtering": true,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
