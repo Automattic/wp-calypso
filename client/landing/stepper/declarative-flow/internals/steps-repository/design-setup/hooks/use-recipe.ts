@@ -114,7 +114,7 @@ const useRecipe = (
 		setSearchParams(
 			makeSearchParams( ( currentSearchParams ) => {
 				if ( variation ) {
-					currentSearchParams.set( 'style_variation', variation.slug );
+					currentSearchParams.set( 'style_variation', variation.slug ?? '' );
 				} else {
 					currentSearchParams.delete( 'style_variation' );
 				}
