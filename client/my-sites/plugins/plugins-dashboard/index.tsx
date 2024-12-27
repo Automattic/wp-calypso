@@ -3,17 +3,18 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import Layout from 'calypso/layout/multi-sites-dashboard';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
-import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import Layout from 'calypso/layout/hosting-dashboard';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 	LayoutHeaderSubtitle as Subtitle,
-} from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -48,7 +49,7 @@ import type { Plugin } from 'calypso/state/plugins/installed/types';
 import './style.scss';
 
 interface PluginActionCallback {
-	( plugins: Plugin[] ): ( accepted: boolean ) => void;
+	( accepted: boolean ): void;
 }
 
 type ActionCallbacks = Record< PluginActionName, PluginActionCallback >;
@@ -99,6 +100,7 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] >( [] );
 	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
@@ -128,8 +130,7 @@ const PluginsDashboard = ( {
 
 	const doActionOverSelected = (
 		actionName: string,
-		action: ( siteId: number, plugin: Plugin ) => void,
-		selectedPlugins: Plugin[]
+		action: ( siteId: number, plugin: Plugin ) => void
 	) => {
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: Plugin ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
@@ -146,8 +147,8 @@ const PluginsDashboard = ( {
 						site,
 					};
 				} );
-			} )
-			.flat()
+			} ) // list of plugins -> list of plugin+site objects
+			.flat() // flatten the list into one big list of plugin+site objects
 			.filter(
 				( obj ): obj is { plugin: Plugin; site: SiteDetails } =>
 					obj.site !== null && obj.site !== undefined
@@ -172,102 +173,80 @@ const PluginsDashboard = ( {
 		} );
 	};
 
-	const activateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const activateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'activating', activatePlugin, plugins );
+		doActionOverSelected( 'activating', activatePlugin );
 	};
 
-	const removeSelectedWithJetpack = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const removeSelectedWithJetpack = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected(
-			'removing',
-			( siteId: number, plugin: Plugin ) => {
-				removePlugin( siteId, plugin );
-			},
-			plugins
-		);
+		doActionOverSelected( 'removing', ( siteId: number, plugin: Plugin ) => {
+			removePlugin( siteId, plugin );
+		} );
 	};
 
-	const removeSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const removeSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'removing', removePlugin, plugins );
+		doActionOverSelected( 'removing', removePlugin );
 	};
 
-	const deactivateAndDisconnectSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const deactivateAndDisconnectSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected(
-			'deactivating',
-			( siteId: number, plugin: Plugin ) => {
-				deactivatePlugin( siteId, plugin );
-			},
-			plugins
-		);
+		doActionOverSelected( 'deactivating', ( siteId: number, plugin: Plugin ) => {
+			deactivatePlugin( siteId, plugin );
+		} );
 	};
 
-	const deactivateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const deactivateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'deactivating', deactivatePlugin, plugins );
+		doActionOverSelected( 'deactivating', deactivatePlugin );
 	};
 
-	const updateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const updateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected(
-			'updating',
-			( siteId: number, plugin: Plugin ) => {
-				handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
-				removePluginStatuses();
-			},
-			plugins
-		);
+		doActionOverSelected( 'updating', ( siteId: number, plugin: Plugin ) => {
+			handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
+			removePluginStatuses();
+		} );
 	};
 
-	const setAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const setAutoupdateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin, plugins );
+		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin );
 	};
 
-	const unsetAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
+	const unsetAutoupdateSelected = ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin, plugins );
+		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin );
 	};
 
+	/** END BULK ACTION DIALOG CALLBACKS */
 	const bulkActionDialog = ( actionName: string, selectedPlugins: Plugin[] ) => {
 		const isJetpackIncluded = selectedPlugins.some( ( plugin ) => plugin.slug === 'jetpack' );
-
-		let pluginsToProcess = selectedPlugins;
-		if ( actionName === PluginActions.UPDATE ) {
-			//filter out sites that don't have an update available
-			pluginsToProcess = selectedPlugins.map( ( plugin ) => {
-				const filteredSites = Object.fromEntries(
-					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
-				);
-				return { ...plugin, sites: filteredSites };
-			} );
-		}
 
 		const ALL_ACTION_CALLBACKS: ActionCallbacks = {
 			[ PluginActions.ACTIVATE ]: activateSelected,
@@ -280,12 +259,24 @@ const PluginsDashboard = ( {
 			[ PluginActions.DISABLE_AUTOUPDATES ]: unsetAutoupdateSelected,
 		};
 
+		if ( actionName === PluginActions.UPDATE ) {
+			//filter out sites that don't have an update available
+			selectedPlugins = selectedPlugins.map( ( plugin ) => {
+				const filteredSites = Object.fromEntries(
+					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
+				);
+				return { ...plugin, sites: filteredSites };
+			} );
+		}
+
+		setSelectedPlugins( selectedPlugins );
+
 		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName as PluginActionName ];
 		showPluginActionDialog(
 			actionName as PluginActionName,
-			pluginsToProcess,
+			selectedPlugins,
 			sites as Site[],
-			selectedActionCallback( pluginsToProcess )
+			selectedActionCallback
 		);
 	};
 

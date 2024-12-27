@@ -19,11 +19,11 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import SurveyManager from './components/survery-manager';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
+import { STEPS } from './steps';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -161,14 +161,17 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return null;
 		}
 
-		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
-
-		if ( step.slug === 'user' && firstAuthWalledStep ) {
+		// The `nextStep` is available only when logged-out users go to the step that requires auth
+		// and are redirected to the user step.
+		const nextStepSlug = stepData?.nextStep ?? '';
+		if ( step.slug === STEPS.USER.slug && nextStepSlug ) {
+			const previousStepSlug = stepData?.previousStep;
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
-				step: firstAuthWalledStep.slug,
+				step: nextStepSlug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
+
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: 'user',
@@ -179,8 +182,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<StepComponent
 					navigation={ {
 						submit() {
-							navigate( firstAuthWalledStep.slug, undefined, true );
+							navigate( nextStepSlug, undefined, true );
 						},
+						...( previousStepSlug && {
+							goBack() {
+								navigate( previousStepSlug, undefined, true );
+							},
+						} ),
 					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
@@ -212,7 +220,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<SurveyManager />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route

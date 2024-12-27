@@ -31,8 +31,8 @@ import './style.scss';
 type EmailForwardsAddProps = {
 	selectedDomainName: string;
 	source?: string;
+	showFormHeader?: boolean;
 	showPageHeader?: boolean;
-	formHeader?: React.ReactNode;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -41,8 +41,8 @@ const noop = (): void => {};
 const EmailForwardsAdd = ( {
 	selectedDomainName,
 	source,
+	showFormHeader = false,
 	showPageHeader = true,
-	formHeader,
 }: EmailForwardsAddProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
@@ -104,7 +104,7 @@ const EmailForwardsAdd = ( {
 					onAddedEmailForwards={ onAddedEmailForwards }
 					onBeforeAddEmailForwards={ noop }
 					selectedDomainName={ selectedDomainName }
-					formHeader={ formHeader }
+					showFormHeader={ showFormHeader }
 				/>
 			) }
 		</Card>

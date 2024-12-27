@@ -167,6 +167,7 @@ export const useCredentialsForm = (
 		control,
 		handleSubmit,
 		submitHandler,
+		clearErrors,
 		accessMethod,
 		isBusy,
 		canBypassVerification,

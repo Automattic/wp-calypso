@@ -3,6 +3,7 @@ import { Operator } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
@@ -88,8 +89,16 @@ export function useFields(
 								} }
 								className="plugin-name-button"
 							>
-								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
+								{ item.icon ? (
+									<PluginIcon className="plugin-icon" image={ item.icon } size={ 35 } />
+								) : (
+									<Icon
+										size={ 32 }
+										icon={ plugins }
+										className="plugin-icon"
+										style={ { maxWidth: '35px', maxHeight: '35px' } }
+									/>
+								) }
 								{ item.name }
 							</Button>
 							{ pluginActionStatus }

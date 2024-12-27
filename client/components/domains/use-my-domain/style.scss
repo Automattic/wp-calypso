@@ -103,6 +103,10 @@
 			}
 		}
 	}
+
+	a, a:visited {
+		color: var(--color-accent);
+	}
 }
 
 button.action_buttons__button.action-buttons__back.use-my-domain__go-back {

@@ -33,7 +33,9 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 	} );
 };
 
-export const AttachmentButton: React.FC = () => {
+export const AttachmentButton: React.FC< {
+	attachmentButtonRef?: React.RefObject< HTMLElement >;
+} > = ( { attachmentButtonRef } ) => {
 	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -86,7 +88,9 @@ export const AttachmentButton: React.FC = () => {
 	return (
 		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
-			{ ! isAttachingFile && <Icon icon={ image } /> }
+			{ ! isAttachingFile && attachmentButtonRef && (
+				<Icon ref={ attachmentButtonRef } icon={ image } />
+			) }
 		</FormFileUpload>
 	);
 };

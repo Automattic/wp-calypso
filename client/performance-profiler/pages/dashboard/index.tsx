@@ -5,9 +5,17 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import {
+	DeviceTabProvider,
+	useDeviceTab,
+} from 'calypso/hosting/performance/contexts/device-tab-context';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
-import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
+import {
+	PerformanceProfilerHeader,
+	type TabType,
+	TabTypes,
+} from 'calypso/performance-profiler/components/header';
 import {
 	MessageDisplay,
 	ErrorSecondLine,
@@ -25,11 +33,11 @@ type PerformanceProfilerDashboardProps = {
 	filter?: string;
 };
 
-export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
+const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
-	const { url, tab, hash, filter } = props;
+	const { url, hash, filter } = props;
 	const isSavedReport = useRef( !! hash );
-	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
+	const { activeTab, setActiveTab } = useDeviceTab();
 	const {
 		data: basicMetrics,
 		isError: isBasicMetricsError,
@@ -78,7 +86,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const desktopReport =
 		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
 	const performanceReport =
-		activeTab === TabType.mobile
+		activeTab === TabTypes.mobile
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
 
@@ -119,7 +127,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					/>
 					<div
 						className={ clsx( 'loading-container', 'mobile-loading', {
-							'is-active': activeTab === TabType.mobile,
+							'is-active': activeTab === TabTypes.mobile,
 							'is-loading': ! mobileLoaded,
 						} ) }
 					>
@@ -127,14 +135,14 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					</div>
 					<div
 						className={ clsx( 'loading-container', 'desktop-loading', {
-							'is-active': activeTab === TabType.desktop,
+							'is-active': activeTab === TabTypes.desktop,
 							'is-loading': ! desktopLoaded,
 						} ) }
 					>
 						<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
 					</div>
-					{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
-						( activeTab === TabType.desktop && desktopLoaded ) ) && (
+					{ ( ( activeTab === TabTypes.mobile && mobileLoaded ) ||
+						( activeTab === TabTypes.desktop && desktopLoaded ) ) && (
 						<PerformanceProfilerDashboardContent
 							performanceReport={ performanceReport }
 							activeTab={ activeTab }
@@ -148,5 +156,13 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				</>
 			) }
 		</div>
+	);
+};
+
+export const PerformanceProfilerDashboardWrapper = ( props: PerformanceProfilerDashboardProps ) => {
+	return (
+		<DeviceTabProvider initialTab={ props.tab }>
+			<PerformanceProfilerDashboard { ...props } />
+		</DeviceTabProvider>
 	);
 };
