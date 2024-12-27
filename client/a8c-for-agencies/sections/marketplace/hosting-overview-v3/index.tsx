@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
@@ -89,6 +90,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 		>
 			<LayoutTop>
 				<PressableUsageLimitNotice />
+				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [

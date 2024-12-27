@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -23,6 +24,7 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
+				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>

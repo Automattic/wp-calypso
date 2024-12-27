@@ -4,6 +4,7 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'react';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -222,6 +223,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 		>
 			{ isClient ? null : (
 				<LayoutTop>
+					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [

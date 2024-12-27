@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
@@ -53,6 +54,7 @@ export default function PaymentMethodAdd( { withAssignLicense, isClientCheckout 
 			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
 
 			<LayoutTop>
+				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
 					{ ! stepper && ! isClientCheckout && (
 						<Breadcrumb

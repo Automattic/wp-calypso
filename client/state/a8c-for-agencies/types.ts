@@ -97,6 +97,8 @@ export interface Agency {
 		label: string;
 		features: string[];
 	};
+	approval_status: ApprovalStatus | '';
+	created_at: string;
 }
 
 export interface AgencyStore {
@@ -124,4 +126,10 @@ interface CombinedStore {
  */
 export interface A4AStore {
 	a8cForAgencies: CombinedStore;
+}
+
+export enum ApprovalStatus {
+	PENDING = 'pending',
+	APPROVED = 'approved',
+	REJECTED = 'rejected',
 }
