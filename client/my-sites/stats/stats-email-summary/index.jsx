@@ -19,9 +19,6 @@ const TooltipWrapper = ( { value, item, renderContent } ) => {
 	const triggerRef = useRef( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
-	const formattedValue =
-		typeof value === 'number' ? Number( value ).toFixed( 2 ) : value.replace( '%', '' ).trim();
-
 	return (
 		<span className="stats-email__tooltip-wrapper">
 			<span
@@ -30,7 +27,7 @@ const TooltipWrapper = ( { value, item, renderContent } ) => {
 				onMouseEnter={ () => setShowTooltip( true ) }
 				onMouseLeave={ () => setShowTooltip( false ) }
 			>
-				{ `${ formattedValue }%` }
+				{ value }
 			</span>
 			<Tooltip position="top" context={ triggerRef.current } isVisible={ showTooltip }>
 				{ renderContent( item ) }
@@ -63,14 +60,12 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	}
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-	const renderTooltipContent = ( item ) => {
-		const uniqueOpens = parseInt( item.unique_opens, 10 );
-		const uniqueClicks = parseInt( item.unique_clicks, 10 );
+	const renderOpensTooltipContent = ( item ) => {
+		const opensUnique = parseInt( item.unique_opens, 10 );
 		const opens = parseInt( item.opens, 10 );
-		const clicks = parseInt( item.clicks, 10 );
 		const opensRate = parseFloat( item.opens_rate );
-		const clicksRate = parseFloat( item.clicks_rate );
 		const totalSends = parseInt( item.total_sends, 10 );
+		const hasUniquesData = opensUnique > 0 && opens > 0;
 
 		return (
 			<div className="stats-email__tooltip">
@@ -80,22 +75,46 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					} ) }
 				</div>
 				<div>
-					{ uniqueOpens
-						? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
-								args: { uniqueOpens: uniqueOpens, openRate: opensRate },
-						  } )
-						: translate( 'Opens: %(opens)d)', {
-								args: { opens },
-						  } ) }
+					{ translate( 'Total opens: %(opens)d', {
+						args: { opens },
+					} ) }
 				</div>
 				<div>
-					{ uniqueClicks
-						? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
-								args: { uniqueClicks: uniqueClicks, clickRate: clicksRate },
+					{ hasUniquesData
+						? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
+								args: { uniqueOpens: opensUnique, openRate: opensRate },
 						  } )
-						: translate( 'Clicks: %(clicks)d ', {
-								args: { clicks },
-						  } ) }
+						: translate( 'Unique opens: n/a' ) }
+				</div>
+			</div>
+		);
+	};
+
+	const renderClicksTooltipContent = ( item ) => {
+		const clicksUnique = parseInt( item.unique_clicks, 10 );
+		const clicks = parseInt( item.clicks, 10 );
+		const clicksRate = parseFloat( item.clicks_rate );
+		const totalSends = parseInt( item.total_sends, 10 );
+		const hasUniquesData = clicksUnique > 0 && clicks > 0;
+
+		return (
+			<div className="stats-email__tooltip">
+				<div>
+					{ translate( 'Subscribers reached: %(sends)d', {
+						args: { sends: totalSends },
+					} ) }
+				</div>
+				<div>
+					{ translate( 'Total clicks: %(clicks)d', {
+						args: { clicks },
+					} ) }
+				</div>
+				<div>
+					{ hasUniquesData
+						? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
+								args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
+						  } )
+						: translate( 'Unique clicks: n/a' ) }
 				</div>
 			</div>
 		);
@@ -127,13 +146,18 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<span>{ translate( 'Opens' ) }</span>
 							</>
 						),
-						body: ( item ) => (
-							<TooltipWrapper
-								value={ `${ item.opens_rate }%` }
-								item={ item }
-								renderContent={ renderTooltipContent }
-							/>
-						),
+						body: ( item ) => {
+							const opensUnique = parseInt( item.unique_opens, 10 );
+							const opens = parseInt( item.opens, 10 );
+							const hasUniquesData = opensUnique > 0 || opens === 0;
+							return (
+								<TooltipWrapper
+									value={ hasUniquesData ? `${ item.opens_rate }%` : 'n/a' }
+									item={ item }
+									renderContent={ renderOpensTooltipContent }
+								/>
+							);
+						},
 					} }
 					path="emails"
 					moduleStrings={ { ...StatsStrings.emails, title: '' } }
@@ -145,16 +169,19 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value, item ) => {
-						if ( item?.opens !== undefined ) {
+						if ( item?.clicks !== undefined ) {
+							const clicksUnique = parseInt( item.unique_clicks, 10 );
+							const clicks = parseInt( item.clicks, 10 );
+							const hasUniquesData = clicksUnique > 0 || clicks === 0;
 							return (
 								<TooltipWrapper
-									value={ `${ value }%` }
+									value={ hasUniquesData ? `${ item.clicks_rate }%` : 'n/a' }
 									item={ item }
-									renderContent={ renderTooltipContent }
+									renderContent={ renderClicksTooltipContent }
 								/>
 							);
 						}
-						return <span>{ `${ value }%` }</span>;
+						return <span>{ value }</span>;
 					} }
 					listItemClassName="stats__summary--narrow-mobile"
 				/>
