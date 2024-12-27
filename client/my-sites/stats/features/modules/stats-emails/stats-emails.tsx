@@ -80,7 +80,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					period={ period }
 					query={ query }
 					statType={ statType }
-					mainItemLabel={ translate( 'Latest Emails' ) }
+					mainItemLabel={ translate( 'Latest emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number ) => `${ value }%` }
