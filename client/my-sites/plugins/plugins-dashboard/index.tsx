@@ -3,7 +3,6 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import Layout from 'calypso/layout/multi-sites-dashboard';
@@ -49,7 +48,7 @@ import type { Plugin } from 'calypso/state/plugins/installed/types';
 import './style.scss';
 
 interface PluginActionCallback {
-	( accepted: boolean ): void;
+	( plugins: Plugin[] ): ( accepted: boolean ) => void;
 }
 
 type ActionCallbacks = Record< PluginActionName, PluginActionCallback >;
@@ -100,7 +99,6 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ selectedPlugins, setSelectedPlugins ] = useState< Plugin[] >( [] );
 	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
@@ -130,7 +128,8 @@ const PluginsDashboard = ( {
 
 	const doActionOverSelected = (
 		actionName: string,
-		action: ( siteId: number, plugin: Plugin ) => void
+		action: ( siteId: number, plugin: Plugin ) => void,
+		selectedPlugins: Plugin[]
 	) => {
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: Plugin ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
@@ -147,8 +146,8 @@ const PluginsDashboard = ( {
 						site,
 					};
 				} );
-			} ) // list of plugins -> list of plugin+site objects
-			.flat() // flatten the list into one big list of plugin+site objects
+			} )
+			.flat()
 			.filter(
 				( obj ): obj is { plugin: Plugin; site: SiteDetails } =>
 					obj.site !== null && obj.site !== undefined
@@ -173,80 +172,102 @@ const PluginsDashboard = ( {
 		} );
 	};
 
-	const activateSelected = ( accepted: boolean ) => {
+	const activateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'activating', activatePlugin );
+		doActionOverSelected( 'activating', activatePlugin, plugins );
 	};
 
-	const removeSelectedWithJetpack = ( accepted: boolean ) => {
+	const removeSelectedWithJetpack = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'removing', ( siteId: number, plugin: Plugin ) => {
-			removePlugin( siteId, plugin );
-		} );
+		doActionOverSelected(
+			'removing',
+			( siteId: number, plugin: Plugin ) => {
+				removePlugin( siteId, plugin );
+			},
+			plugins
+		);
 	};
 
-	const removeSelected = ( accepted: boolean ) => {
+	const removeSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'removing', removePlugin );
+		doActionOverSelected( 'removing', removePlugin, plugins );
 	};
 
-	const deactivateAndDisconnectSelected = ( accepted: boolean ) => {
+	const deactivateAndDisconnectSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'deactivating', ( siteId: number, plugin: Plugin ) => {
-			deactivatePlugin( siteId, plugin );
-		} );
+		doActionOverSelected(
+			'deactivating',
+			( siteId: number, plugin: Plugin ) => {
+				deactivatePlugin( siteId, plugin );
+			},
+			plugins
+		);
 	};
 
-	const deactivateSelected = ( accepted: boolean ) => {
+	const deactivateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'deactivating', deactivatePlugin );
+		doActionOverSelected( 'deactivating', deactivatePlugin, plugins );
 	};
 
-	const updateSelected = ( accepted: boolean ) => {
+	const updateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'updating', ( siteId: number, plugin: Plugin ) => {
-			handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
-			removePluginStatuses();
-		} );
+		doActionOverSelected(
+			'updating',
+			( siteId: number, plugin: Plugin ) => {
+				handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
+				removePluginStatuses();
+			},
+			plugins
+		);
 	};
 
-	const setAutoupdateSelected = ( accepted: boolean ) => {
+	const setAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin );
+		doActionOverSelected( 'enablingAutoupdates', enableAutoupdatePlugin, plugins );
 	};
 
-	const unsetAutoupdateSelected = ( accepted: boolean ) => {
+	const unsetAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
 		if ( ! accepted ) {
 			return;
 		}
 
-		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin );
+		doActionOverSelected( 'disablingAutoupdates', disableAutoupdatePlugin, plugins );
 	};
 
-	/** END BULK ACTION DIALOG CALLBACKS */
 	const bulkActionDialog = ( actionName: string, selectedPlugins: Plugin[] ) => {
 		const isJetpackIncluded = selectedPlugins.some( ( plugin ) => plugin.slug === 'jetpack' );
+
+		let pluginsToProcess = selectedPlugins;
+		if ( actionName === PluginActions.UPDATE ) {
+			//filter out sites that don't have an update available
+			pluginsToProcess = selectedPlugins.map( ( plugin ) => {
+				const filteredSites = Object.fromEntries(
+					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
+				);
+				return { ...plugin, sites: filteredSites };
+			} );
+		}
 
 		const ALL_ACTION_CALLBACKS: ActionCallbacks = {
 			[ PluginActions.ACTIVATE ]: activateSelected,
@@ -259,24 +280,12 @@ const PluginsDashboard = ( {
 			[ PluginActions.DISABLE_AUTOUPDATES ]: unsetAutoupdateSelected,
 		};
 
-		if ( actionName === PluginActions.UPDATE ) {
-			//filter out sites that don't have an update available
-			selectedPlugins = selectedPlugins.map( ( plugin ) => {
-				const filteredSites = Object.fromEntries(
-					Object.entries( plugin.sites ).filter( ( [ , site ] ) => site.update?.new_version )
-				);
-				return { ...plugin, sites: filteredSites };
-			} );
-		}
-
-		setSelectedPlugins( selectedPlugins );
-
 		const selectedActionCallback = ALL_ACTION_CALLBACKS[ actionName as PluginActionName ];
 		showPluginActionDialog(
 			actionName as PluginActionName,
-			selectedPlugins,
+			pluginsToProcess,
 			sites as Site[],
-			selectedActionCallback
+			selectedActionCallback( pluginsToProcess )
 		);
 	};
 
