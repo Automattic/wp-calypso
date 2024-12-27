@@ -118,8 +118,14 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 const isColorVariation = ( variation?: GlobalStylesObject ) =>
 	variation && isVariationWithProperties( variation, [ 'color' ] );
 
-const isFontVariation = ( variation?: GlobalStylesObject ) =>
-	variation && isVariationWithProperties( variation, [ 'typography' ] );
+const isFontVariation = ( variation?: GlobalStylesObject ) => {
+	// The `settings.color` of the font variation is `null` if the endpoint only returns this property.
+	return (
+		variation &&
+		( isVariationWithProperties( variation, [ 'typography' ] ) ||
+			variation.settings?.color === null )
+	);
+};
 
 const isDefaultVariation = ( variation?: GlobalStylesObject ) =>
 	variation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
