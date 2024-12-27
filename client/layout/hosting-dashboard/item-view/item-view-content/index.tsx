@@ -19,7 +19,7 @@ export default function ItemViewContent( { children }: Props ) {
 	}, [ children ] );
 
 	return (
-		<div className="multi-sites-dashboard-item-view__content" ref={ ref }>
+		<div className="hosting-dashboard-item-view__content" ref={ ref }>
 			{ children }
 		</div>
 	);

@@ -5,14 +5,14 @@ import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import ItemView from 'calypso/layout/multi-sites-dashboard/item-view';
+import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { FEATURE_TO_ROUTE_MAP, DOMAIN_OVERVIEW, EMAIL_MANAGEMENT } from './constants';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
-} from 'calypso/layout/multi-sites-dashboard/item-view/types';
+} from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
 

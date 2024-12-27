@@ -86,7 +86,7 @@ export default function ItemView( {
 	const shouldHideNav = ( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp;
 
 	return (
-		<div className={ clsx( 'multi-sites-dashboard-item-view', className ) }>
+		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
 			<ItemViewHeader
 				closeItemView={ closeItemView }
 				itemData={ itemData }
@@ -95,7 +95,7 @@ export default function ItemView( {
 			/>
 			<div ref={ setNavRef }>
 				<SectionNav
-					className={ clsx( 'multi-sites-dashboard-item-view__navigation', {
+					className={ clsx( 'hosting-dashboard-item-view__navigation', {
 						'is-hidden': shouldHideNav,
 					} ) }
 					selectedText={ selectedFeature.tab.label }

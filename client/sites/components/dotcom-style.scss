@@ -9,13 +9,13 @@
 	padding-bottom: 0;
 }
 
-.wpcom-site .multi-sites-dashboard-layout-with-columns__container {
+.wpcom-site .hosting-dashboard-layout-with-columns__container {
 	background: var(--color-sidebar-background);
 }
 
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard {
-	.multi-sites-dashboard-layout__top-wrapper,
-	.multi-sites-dashboard-layout__body {
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard {
+	.hosting-dashboard-layout__top-wrapper,
+	.hosting-dashboard-layout__body {
 		> * {
 			padding-inline: 48px;
 			// Override the max-width set in a8c-for-agencies/components/layout/style.scss
@@ -25,26 +25,26 @@
 		}
 	}
 
-	.multi-sites-dashboard-layout__header {
+	.hosting-dashboard-layout__header {
 		align-items: center;
 	}
 
-	.multi-sites-dashboard-layout__header-main {
+	.hosting-dashboard-layout__header-main {
 		display: block;
 	}
 
-	.multi-sites-dashboard-layout__header-title {
+	.hosting-dashboard-layout__header-title {
 		display: block;
 	}
 
-	.multi-sites-dashboard-layout__header-subtitle {
+	.hosting-dashboard-layout__header-subtitle {
 		font-size: 0.875rem;
 		margin: 4px 0 0 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
 	}
 
-	.multi-sites-dashboard-layout__header-actions {
+	.hosting-dashboard-layout__header-actions {
 		width: auto;
 		a {
 			font-weight: normal;
@@ -54,10 +54,10 @@
 	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 }
 
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
 
-	.multi-sites-dashboard-layout__top-wrapper {
+	.hosting-dashboard-layout__top-wrapper {
 		border-block-end: none;
 
 		@include break-medium {
@@ -87,7 +87,7 @@
 
 	}
 
-	.multi-sites-dashboard-layout__header {
+	.hosting-dashboard-layout__header {
 		flex-wrap: nowrap;
 	}
 }
@@ -102,7 +102,7 @@
 	}
 
 	// Custom style for toggle and page number controls.
-	.multi-sites-dashboard-item-view__content {
+	.hosting-dashboard-item-view__content {
 		.pagination__page-number.pagination__list-item.is-selected button,
 		.segmented-control__item.is-selected a:hover,
 		.segmented-control__item.is-selected a {
@@ -206,21 +206,21 @@
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.multi-sites-dashboard-layout__header {
+		.hosting-dashboard-layout__header {
 			align-items: center !important;
 		}
 
 		.sites-manage-all-domains-button,
-		.multi-sites-dashboard-layout__header-subtitle {
+		.hosting-dashboard-layout__header-subtitle {
 			display: none;
 		}
 
-		.multi-sites-dashboard-layout__viewport {
+		.hosting-dashboard-layout__viewport {
 			width: 360px;
 			justify-content: space-between;
 		}
 
-		.multi-sites-dashboard-layout__viewport > div:first-child {
+		.hosting-dashboard-layout__viewport > div:first-child {
 			width: 100%;
 		}
 
@@ -231,7 +231,7 @@
 }
 
 // Styles for site preview pane.
-.wpcom-site .multi-sites-dashboard-layout.sites-dashboard .site-preview-pane {
+.wpcom-site .hosting-dashboard-layout.sites-dashboard .site-preview-pane {
 	.hosting-features__icon {
 		display: inline-block;
 		height: 18px;
@@ -248,16 +248,16 @@
 		}
 	}
 
-	.multi-sites-dashboard-item-view__header {
-		.multi-sites-dashboard-item-view__header-title {
+	.hosting-dashboard-item-view__header {
+		.hosting-dashboard-item-view__header-title {
 			font-family: Recoleta, sans-serif;
 			font-weight: 400;
 			line-height: 1;
 			letter-spacing: normal;
 		}
 
-		.multi-sites-dashboard-item-view__header-content {
-			.multi-sites-dashboard-item-view__header-info {
+		.hosting-dashboard-item-view__header-content {
+			.hosting-dashboard-item-view__header-info {
 				flex-wrap: wrap;
 			}
 
@@ -266,11 +266,11 @@
 			}
 		}
 
-		.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__header-title-summary .multi-sites-dashboard-item-view__header-summary {
+		.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-summary {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5rem;
-			.multi-sites-dashboard-item-view__header-summary-link {
+			.hosting-dashboard-item-view__header-summary-link {
 				color: var(--studio-gray-70, #3c434a);
 				text-decoration: none;
 				&:hover {
@@ -279,11 +279,11 @@
 			}
 		}
 
-		.multi-sites-dashboard-item-view__header-actions .button {
+		.hosting-dashboard-item-view__header-actions .button {
 			border-radius: 4px;
 		}
 
-		.multi-sites-dashboard-item-view__header-content .multi-sites-dashboard-item-view__close {
+		.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__close {
 			height: 16px;
 			padding-left: 0;
 			padding-right: 0;
@@ -294,7 +294,7 @@
 			}
 		}
 	}
-	.multi-sites-dashboard-item-view__content {
+	.hosting-dashboard-item-view__content {
 		padding: 32px 48px 48px;
 		font-size: rem(14px);
 		color: var(--studio-gray-100);
@@ -357,9 +357,9 @@
 	}
 }
 
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout,
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout .multi-sites-dashboard-layout-with-columns__container .multi-sites-dashboard-layout-column {
-	.multi-sites-dashboard-layout-column__container {
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .hosting-dashboard-layout-with-columns__container .hosting-dashboard-layout-column {
+	.hosting-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -367,31 +367,31 @@
 }
 
 // Use flexbox to structure of fly-out panel.
-.wpcom-site .main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
-	&.multi-sites-dashboard-layout,
-	.multi-sites-dashboard-layout-column,
-	.multi-sites-dashboard-layout-with-columns__container {
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.hosting-dashboard-layout,
+	.hosting-dashboard-layout-column,
+	.hosting-dashboard-layout-with-columns__container {
 		overflow: visible;
 		height: calc(100vh - 32px - var(--masterbar-height));
 	}
 
-	.multi-sites-dashboard-layout-column__container {
+	.hosting-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
 		height: calc(100vh - 32px);
 
-		.multi-sites-dashboard-layout__top-wrapper {
+		.hosting-dashboard-layout__top-wrapper {
 			display: flex;
 			margin-bottom: 0;
 			padding: 0;
 
-			.multi-sites-dashboard-layout__viewport {
+			.hosting-dashboard-layout__viewport {
 				display: flex;
 				margin: 0;
 				padding: 16px 24px;
 			}
 
-			.multi-sites-dashboard-layout__header {
+			.hosting-dashboard-layout__header {
 				margin: 0;
 			}
 		}
@@ -417,7 +417,7 @@
 			padding-left: calc(var(--sidebar-width-max));
 			padding-right: 16px;
 
-			.main.multi-sites-dashboard-layout.sites-dashboard.sites-dashboard__layout {
+			.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
 		}
@@ -430,8 +430,8 @@
 }
 
 .is-mobile-app-view {
-	.wpcom-site .multi-sites-dashboard-layout.sites-dashboard .site-preview-pane {
-		.multi-sites-dashboard-item-view__header {
+	.wpcom-site .hosting-dashboard-layout.sites-dashboard .site-preview-pane {
+		.hosting-dashboard-item-view__header {
 			padding: 0;
 		}
 	}

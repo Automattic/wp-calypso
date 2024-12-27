@@ -77,8 +77,8 @@ export default function ItemViewHeader( {
 		<>
 			{ isAtomic && <QuerySitePhpVersion siteId={ siteId } /> }
 			{ isAtomic && <QuerySiteWpVersion siteId={ siteId } /> }
-			<div className={ clsx( 'multi-sites-dashboard-item-view__header', className ) }>
-				<div className="multi-sites-dashboard-item-view__header-content">
+			<div className={ clsx( 'hosting-dashboard-item-view__header', className ) }>
+				<div className="hosting-dashboard-item-view__header-content">
 					{ ! isMobileApp && (
 						<>
 							{ !! itemData?.withIcon && (
@@ -86,20 +86,20 @@ export default function ItemViewHeader( {
 									blogId={ itemData.blogId }
 									fallback={ siteIconFallback }
 									color={ itemData.color }
-									className="multi-sites-dashboard-item-view__header-favicon"
+									className="hosting-dashboard-item-view__header-favicon"
 									size={ size }
 								/>
 							) }
-							<div className="multi-sites-dashboard-item-view__header-info">
-								<div className="multi-sites-dashboard-item-view__header-title-summary">
-									<div className="multi-sites-dashboard-item-view__header-title">
+							<div className="hosting-dashboard-item-view__header-info">
+								<div className="hosting-dashboard-item-view__header-title-summary">
+									<div className="hosting-dashboard-item-view__header-title">
 										{ itemData.title }
 									</div>
-									<div className="multi-sites-dashboard-item-view__header-summary">
+									<div className="hosting-dashboard-item-view__header-summary">
 										{ itemData?.url ? (
 											<Button
 												variant="link"
-												className="multi-sites-dashboard-item-view__header-summary-link"
+												className="hosting-dashboard-item-view__header-summary-link"
 												href={ itemData.url }
 												target="_blank"
 											>
@@ -126,12 +126,12 @@ export default function ItemViewHeader( {
 									</div>
 
 									{ shouldDisplayVersionNumbers && (
-										<div className="multi-sites-dashboard-item-view__header-env-data">
+										<div className="hosting-dashboard-item-view__header-env-data">
 											{ wpVersion && (
-												<div className="multi-sites-dashboard-item-view__header-env-data-item">
+												<div className="hosting-dashboard-item-view__header-env-data-item">
 													WordPress{ ' ' }
 													<a
-														className="multi-sites-dashboard-item-view__header-env-data-item-link"
+														className="hosting-dashboard-item-view__header-env-data-item-link"
 														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
 														onClick={ handleWpVersionClick }
 													>
@@ -142,10 +142,10 @@ export default function ItemViewHeader( {
 											) }
 
 											{ phpVersion && (
-												<div className="multi-sites-dashboard-item-view__header-env-data-item">
+												<div className="hosting-dashboard-item-view__header-env-data-item">
 													PHP{ ' ' }
 													<a
-														className="multi-sites-dashboard-item-view__header-env-data-item-link"
+														className="hosting-dashboard-item-view__header-env-data-item-link"
 														onClick={ handlePhpVersionClick }
 														href={ `/hosting-config/${ selectedSite?.domain }#php` }
 													>
@@ -158,7 +158,7 @@ export default function ItemViewHeader( {
 								</div>
 
 								{ isPreviewLoaded && (
-									<div className="multi-sites-dashboard-item-view__header-actions">
+									<div className="hosting-dashboard-item-view__header-actions">
 										{ extraProps?.headerButtons ? (
 											<extraProps.headerButtons
 												focusRef={ focusRef }
@@ -168,7 +168,7 @@ export default function ItemViewHeader( {
 										) : (
 											<Button
 												onClick={ closeItemView }
-												className="multi-sites-dashboard-item-view__close"
+												className="hosting-dashboard-item-view__close"
 												aria-label={ translate( 'Close Preview' ) }
 												ref={ focusRef }
 											>

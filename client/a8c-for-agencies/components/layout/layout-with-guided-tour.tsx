@@ -5,7 +5,7 @@ import {
 	A4A_ONBOARDING_TOURS_EVENT_NAMES,
 } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
-import Layout from 'calypso/layout/multi-sites-dashboard';
+import Layout from 'calypso/layout/hosting-dashboard';
 
 export function LayoutWithGuidedTour( { ...props }: ComponentProps< typeof Layout > ) {
 	const guidedTours = useGuidedTours();
