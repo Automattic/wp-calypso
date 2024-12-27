@@ -1,5 +1,5 @@
 import { Tooltip } from '@automattic/components';
-import { TranslateResult } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 
 export interface EmailStatsItem {
@@ -15,7 +15,10 @@ export interface EmailStatsItem {
 interface TooltipWrapperProps {
 	value: string;
 	item: EmailStatsItem;
-	renderContent: ( item: EmailStatsItem ) => React.ReactNode;
+	renderContent: (
+		item: EmailStatsItem,
+		translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
+	) => React.ReactNode;
 }
 
 export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
@@ -25,6 +28,7 @@ export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 } ) => {
 	const triggerRef = useRef< HTMLSpanElement >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
+	const translate = useTranslate();
 
 	return (
 		<span className="stats-email__tooltip-wrapper">
@@ -37,7 +41,7 @@ export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 				{ value }
 			</span>
 			<Tooltip position="top" context={ triggerRef.current } isVisible={ showTooltip }>
-				{ renderContent( item ) }
+				{ renderContent( item, translate ) }
 			</Tooltip>
 		</span>
 	);
@@ -48,13 +52,13 @@ export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
 };
 
 export const createOpensTooltipContent = (
-	item: any,
+	item: EmailStatsItem,
 	translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
 ) => {
-	const opensUnique = parseInt( item.unique_opens, 10 );
-	const opens = parseInt( item.opens, 10 );
-	const opensRate = parseFloat( item.opens_rate );
-	const totalSends = parseInt( item.total_sends, 10 );
+	const opensUnique = parseInt( String( item.unique_opens ), 10 );
+	const opens = parseInt( String( item.opens ), 10 );
+	const opensRate = parseFloat( String( item.opens_rate ) );
+	const totalSends = parseInt( String( item.total_sends ), 10 );
 	const hasUniques = hasUniqueMetrics( opensUnique, opens );
 
 	return (
@@ -81,13 +85,13 @@ export const createOpensTooltipContent = (
 };
 
 export const createClicksTooltipContent = (
-	item: any,
+	item: EmailStatsItem,
 	translate: ( text: string, options?: { args: Record< string, any > } ) => TranslateResult
 ) => {
-	const clicksUnique = parseInt( item.unique_clicks, 10 );
-	const clicks = parseInt( item.clicks, 10 );
-	const clicksRate = parseFloat( item.clicks_rate );
-	const totalSends = parseInt( item.total_sends, 10 );
+	const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+	const clicks = parseInt( String( item.clicks ), 10 );
+	const clicksRate = parseFloat( String( item.clicks_rate ) );
+	const totalSends = parseInt( String( item.total_sends ), 10 );
 	const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 
 	return (

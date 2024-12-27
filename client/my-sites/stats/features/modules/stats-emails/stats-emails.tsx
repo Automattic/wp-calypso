@@ -82,14 +82,14 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
 						body: ( item: EmailStatsItem ) => {
-							const opensUnique = parseInt( item.unique_opens, 10 );
-							const opens = parseInt( item.opens, 10 );
+							const opensUnique = parseInt( String( item.unique_opens ), 10 );
+							const opens = parseInt( String( item.opens ), 10 );
 							const hasUniques = hasUniqueMetrics( opensUnique, opens );
 							return (
 								<TooltipWrapper
 									value={ hasUniques ? `${ item.opens_rate }%` : '—' }
 									item={ item }
-									renderContent={ ( item ) => createOpensTooltipContent( item, translate ) }
+									renderContent={ createOpensTooltipContent }
 								/>
 							);
 						},
@@ -105,14 +105,14 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						if ( ! item?.opens ) {
 							return value;
 						}
-						const clicksUnique = parseInt( item.unique_clicks, 10 );
-						const clicks = parseInt( item.clicks, 10 );
+						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+						const clicks = parseInt( String( item.clicks ), 10 );
 						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 						return (
 							<TooltipWrapper
 								value={ hasUniques ? `${ item.clicks_rate }%` : '—' }
 								item={ item }
-								renderContent={ ( item ) => createClicksTooltipContent( item, translate ) }
+								renderContent={ createClicksTooltipContent }
 							/>
 						);
 					} }
