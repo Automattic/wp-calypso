@@ -1,0 +1,19 @@
+.pie-semi-circle-chart {
+	position: relative;
+	text-align: center;
+
+	&-legend {
+		margin-top: 1rem;
+	}
+
+	.label {
+		margin-bottom: 0px;  // Add space between label and pie chart
+		font-weight: 600;    // Make label more prominent than note
+		font-size: 16px;     // Set explicit font size
+	}
+
+	.note {
+		margin-top: 0px;     // Add space between pie chart and note
+		font-size: 14px;     // Slightly smaller text for hierarchy
+	}
+}

@@ -21,6 +21,8 @@ import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
+import { LineChart } from 'calypso/components/charts';
+
 import './style.scss';
 
 const ChartTabShape = PropTypes.shape( {
@@ -124,6 +126,15 @@ class StatModuleChartTabs extends Component {
 			} );
 		}
 
+		const newChartData = {
+			data: chartData?.map( ( record ) => {
+				return { date: new Date(record.label), value: record.value };
+			} ),
+			label: 'Views',
+		};
+
+		console.log( 'newChartData', newChartData );
+
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -150,18 +161,24 @@ class StatModuleChartTabs extends Component {
 				) }
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState
-						headingText={
-							selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
-						}
-						infoText={
-							selectedPeriod === 'hour'
-								? translate( 'Try selecting a different time frame.' )
-								: null
-						}
-					/>
-				</Chart>
+				<LineChart
+					width={ 715 }
+					height={ 400 }
+					data={ [ newChartData ] }
+					withTooltips
+					theme={ {
+						backgroundColor: '#FFFFFF',
+						colors: [ '#98C8DF', '#006DAB', '#A6DC80', '#1F9828', '#FF8C8F' ],
+						gridColor: '',
+						gridColorDark: '',
+						gridStyles: {
+							stroke: '#787C82',
+							strokeWidth: 1,
+						},
+						labelBackgroundColor: '#FFFFFF',
+						tickLength: 0,
+					} }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ isNewDateFilteringEnabled ? countsComp : null }

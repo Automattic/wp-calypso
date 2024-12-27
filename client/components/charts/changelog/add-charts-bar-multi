@@ -1,0 +1,4 @@
+Significance: patch
+Type: added
+
+Adding support for multiple data series to the Bar chart component.

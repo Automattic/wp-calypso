@@ -148,6 +148,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-razorpay": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
+		"@automattic/charts": "^0.1.0",
 		"@automattic/color-studio": "^3.0.1",
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
@@ -413,7 +414,8 @@
 		"@wordpress/viewport": "6.8.0",
 		"@wordpress/warning": "3.8.0",
 		"@wordpress/widgets": "4.8.0",
-		"@wordpress/wordcount": "4.8.0"
+		"@wordpress/wordcount": "4.8.0",
+		"@automattic/charts": "portal:/Users/jasperkang/A8C/jetpack/projects/js-packages/charts"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {

@@ -1,0 +1,8 @@
+# Files not needed to be distributed in the package.
+.gitattributes    export-ignore
+node_modules      export-ignore
+
+# Files to exclude from the mirror repo.
+/changelog/**     production-exclude
+**/stories/**     production-exclude
+**/test/**        production-exclude

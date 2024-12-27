@@ -1,0 +1,25 @@
+.line-chart {
+	position: relative;
+
+	&__tooltip {
+		background: #fff;
+		padding: 0.5rem;
+	}
+
+	&__tooltip-date {
+		font-weight: bold;
+		padding-bottom: 10px;
+	}
+
+	&__tooltip-row {
+		display: flex;
+		align-items: center;
+		padding: 4px 0;
+		justify-content: space-between;
+	}
+
+	&__tooltip-label {
+		font-weight: 500;
+		padding-right: 1rem;
+	}
+}
