@@ -233,6 +233,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			.domains-overview__list.multi-sites-dashboard-layout-column,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main,
 			.domains-overview__list .multi-sites-dashboard-layout-column__container,
 			.domains-overview__details .multi-sites-dashboard-layout-column__container,
 			.multi-sites-dashboard-layout-column.domains-overview__list.main
@@ -243,7 +245,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 			.multi-sites-dashboard-layout-column.domains-overview__list.main
 				.multi-sites-dashboard-layout-column__container
-				.main {
+				.main,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main {
 				display: flex;
 				flex-direction: column;
 				padding-bottom: 0;
