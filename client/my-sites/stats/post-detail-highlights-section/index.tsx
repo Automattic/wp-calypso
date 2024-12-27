@@ -82,10 +82,10 @@ export default function PostDetailHighlightsSection( {
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 
+	const isSimple = useSelector( isSimpleSite );
+
 	const isSubscriptionsModuleActive =
 		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions' ) ) ?? false;
-
-	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 
 	const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 
