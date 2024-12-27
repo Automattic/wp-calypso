@@ -60,7 +60,7 @@ export const createOpensTooltipContent = (
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Subscribers reached: %(sends)d', {
+				{ translate( 'Recipients: %(sends)d', {
 					args: { sends: totalSends },
 				} ) }
 			</div>
@@ -74,7 +74,7 @@ export const createOpensTooltipContent = (
 					? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
 							args: { uniqueOpens: opensUnique, openRate: opensRate },
 					  } )
-					: translate( 'Unique opens: n/a' ) }
+					: translate( 'Unique opens: -' ) }
 			</div>
 		</div>
 	);
@@ -93,7 +93,7 @@ export const createClicksTooltipContent = (
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Subscribers reached: %(sends)d', {
+				{ translate( 'Recipients: %(sends)d', {
 					args: { sends: totalSends },
 				} ) }
 			</div>
@@ -107,7 +107,7 @@ export const createClicksTooltipContent = (
 					? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
 							args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
 					  } )
-					: translate( 'Unique clicks: n/a' ) }
+					: translate( 'Unique clicks: -' ) }
 			</div>
 		</div>
 	);

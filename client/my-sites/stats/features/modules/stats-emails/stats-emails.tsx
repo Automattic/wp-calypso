@@ -87,14 +87,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							const hasUniques = hasUniqueMetrics( opensUnique, opens );
 							return (
 								<TooltipWrapper
-									value={
-										hasUniques
-											? `${ item.opens_rate }%`
-											: translate(
-													/* translators: Shown in a table column when email open rate data is not available */
-													'n/a'
-											  )
-									}
+									value={ hasUniques ? `${ item.opens_rate }%` : '-' }
 									item={ item }
 									renderContent={ ( item ) => createOpensTooltipContent( item, translate ) }
 								/>
@@ -117,14 +110,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 						return (
 							<TooltipWrapper
-								value={
-									hasUniques
-										? `${ item.clicks_rate }%`
-										: translate(
-												/* translators: Shown in a table column when email click rate data is not available */
-												'n/a'
-										  )
-								}
+								value={ hasUniques ? `${ item.clicks_rate }%` : translate( '-' ) }
 								item={ item }
 								renderContent={ ( item ) => createClicksTooltipContent( item, translate ) }
 							/>
