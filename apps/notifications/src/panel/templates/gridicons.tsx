@@ -75,7 +75,7 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>{ translate( 'Reader Follow' ) }</title>
 						<g>
-							<path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4V4h14v2z" />
+							<path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z" />
 						</g>
 					</svg>
 				);
@@ -225,7 +225,7 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>{ translate( 'Arrow Down' ) }</title>
 						<g>
-							<path d="M11 4v12.17l-5.59-5.59L4 12l8 8 8-8-1.41-1.41L7.83 13H20v-2z" />
+							<path d="M11 4v12.17l-5.59-5.59L4 12l8 8 8-8-1.41-1.41L13 16.17V4h-2z" />
 						</g>
 					</svg>
 				);
@@ -235,7 +235,7 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>{ translate( 'Arrow Left' ) }</title>
 						<g>
-							<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+							<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L13 16.17V4h-2z" />
 						</g>
 					</svg>
 				);
