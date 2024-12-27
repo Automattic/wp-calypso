@@ -5,6 +5,7 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 
 import './style.scss';
 
@@ -36,10 +37,6 @@ const A4AAgencyApprovalNotice = () => {
 		return null;
 	}
 
-	if ( ! agency?.approval_status ) {
-		return null;
-	}
-
 	const availableBannerDetails = {
 		[ ApprovalStatus.PENDING ]: {
 			text: translate(
@@ -60,7 +57,7 @@ const A4AAgencyApprovalNotice = () => {
 				'We have not approved your application for the Automattic for Agencies program. Please {{a}}contact support{{/a}} to discuss this further if you think this was done in error.',
 				{
 					components: {
-						a: <a href="#contact-support" />,
+						a: <a href={ CONTACT_URL_HASH_FRAGMENT } />,
 					},
 				}
 			),
@@ -69,7 +66,9 @@ const A4AAgencyApprovalNotice = () => {
 		},
 	};
 
-	const bannerDetails = availableBannerDetails[ agency?.approval_status ];
+	const bannerDetails = agency?.approval_status
+		? availableBannerDetails[ agency.approval_status ]
+		: null;
 
 	if ( ! bannerDetails ) {
 		return null;
