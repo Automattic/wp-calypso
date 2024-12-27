@@ -13,39 +13,28 @@ export const getVariationType = (
 		: GlobalStylesVariationType.Free;
 
 export const getGroupedVariations = ( variations: GlobalStylesObject[] ) => {
-	return variations.reduce(
-		( acc, variation ) => {
-			if ( isDefaultVariation( variation ) ) {
-				return {
-					...acc,
-					defaultVariation: variation,
-				};
-			}
+	let defaultVariation;
+	const styleVariations = [];
+	const colorVariations = [];
+	const fontVariations = [];
 
-			if ( isColorVariation( variation ) ) {
-				return {
-					...acc,
-					colorVariations: [ ...acc.colorVariations, variation ],
-				};
-			}
-
-			if ( isFontVariation( variation ) ) {
-				return {
-					...acc,
-					fontVariations: [ ...acc.fontVariations, variation ],
-				};
-			}
-
-			return {
-				...acc,
-				styleVariations: [ ...acc.styleVariations, variation ],
-			};
-		},
-		{
-			defaultVariation: undefined,
-			styleVariations: [],
-			colorVariations: [],
-			fontVariations: [],
+	for ( let i = 0; i < variations.length; i++ ) {
+		const variation = variations[ i ];
+		if ( isDefaultVariation( variation ) ) {
+			defaultVariation = variation;
+		} else if ( isColorVariation( variation ) ) {
+			colorVariations.push( variation );
+		} else if ( isFontVariation( variation ) ) {
+			fontVariations.push( variation );
+		} else {
+			styleVariations.push( variation );
 		}
-	);
+	}
+
+	return {
+		defaultVariation,
+		styleVariations,
+		colorVariations,
+		fontVariations,
+	};
 };

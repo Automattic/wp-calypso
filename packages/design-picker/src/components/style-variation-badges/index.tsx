@@ -40,12 +40,14 @@ const Badges: React.FC< BadgesProps > = ( {
 
 	return (
 		<div className={ className }>
-			<Badge
-				key="base"
-				variation={ defaultVariation }
-				onClick={ onClick }
-				isSelected={ isSelectedVariationDefault }
-			/>
+			{ defaultVariation && (
+				<Badge
+					key="base"
+					variation={ defaultVariation }
+					onClick={ onClick }
+					isSelected={ isSelectedVariationDefault }
+				/>
+			) }
 			{ variationsToShow.map( ( variation ) => (
 				<Badge
 					key={ variation.slug }
