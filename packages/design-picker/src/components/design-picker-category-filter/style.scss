@@ -7,7 +7,7 @@
 	justify-content: space-between;
 	flex-direction: column;
 	gap: 10px;
-	margin-bottom: 24px;
+	margin-bottom: 40px;
 
 	@include break-medium {
 		flex-direction: row;
@@ -19,7 +19,7 @@
 	button.components-button.responsive-toolbar-group__swipe-item {
 		padding: 8px 16px;
 		margin-inline-start: -4px;
-		margin-inline-end: 4px;
+		margin-inline-end: 2px;
 		font-size: rem(13px);
 
 		&::before {
