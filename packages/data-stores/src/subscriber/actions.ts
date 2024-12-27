@@ -55,15 +55,24 @@ export function createActions() {
 
 		try {
 			const token = oauthToken.getToken();
+			const formDataEntries: Array<
+				[ string, string | number | File ] | [ string, File, string ]
+			> = [
+				...( file ? [ [ 'import', file, file.name ] as [ string, File, string ] ] : [] ),
+
+				...categories.map( ( categoryId ) => [ 'categories[]', categoryId ] as [ string, number ] ),
+
+				...emails.map( ( email ) => [ 'emails[]', email ] as [ string, string ] ),
+
+				[ 'data', JSON.stringify( { parse_only: parseOnly } ) ] as [ string, string ],
+			];
+
 			const data: ImportSubscribersResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
 				token: typeof token === 'string' ? token : undefined,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				formData: file && [ [ 'import', file, file.name ] ],
-				body: { emails, categories, parse_only: parseOnly },
+				formData: formDataEntries as ( string | File )[][],
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
