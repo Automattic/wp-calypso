@@ -1,14 +1,18 @@
+import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
+import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/performance-tracking';
 import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { STEPS } from '../../steps';
 import SurveyManager from '../survery-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, Navigate, StepperStep } from '../../types';
+import type { StepperInternalSelect } from '@automattic/data-stores';
 
 type StepRouteProps = {
 	step: StepperStep;
@@ -22,6 +26,11 @@ type StepRouteProps = {
 const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const stepContent = renderStep( step );
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
+
 	const loginUrl = useLoginUrlForFlow( { flow } );
 	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
 	const shouldSkipRender = shouldAuthUser || ! stepContent;
@@ -41,7 +50,13 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		navigate( 'user', undefined, true );
+		// If the current step requires the auth, it should become a next step after the auth.
+		const extraData = {
+			previousStep: stepData?.previousStep,
+			nextStep: step.slug,
+		};
+
+		navigate( STEPS.USER.slug, extraData, true );
 		return null;
 	}
 
