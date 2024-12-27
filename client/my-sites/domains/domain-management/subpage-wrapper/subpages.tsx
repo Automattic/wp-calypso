@@ -1,23 +1,21 @@
 import { __ } from '@wordpress/i18n';
-import AddDnsRecordHeader, {
-	addDnsRecordTitle,
-	addDnsRecordsSubtitle,
-} from './headers/add-dns-record-header';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
+import DnsRecordHeader, {
+	addDnsRecordTitle,
+	addDnsRecordsSubtitle,
+	editDnsRecordTitle,
+} from './headers/dns-record-header';
 import DNSRecordsHeader, {
 	dnsRecordsTitle,
 	dnsRecordsSubtitle,
 } from './headers/dns-records-header';
-import EditDnsRecordHeader, {
-	editDnsRecordTitle,
-	editDnsRecordsSubtitle,
-} from './headers/edit-dns-record-header';
 
 type SubpageWrapperParamsType = {
 	CustomHeader?: CustomHeaderComponentType;
 	title?: string | React.ReactNode;
 	subtitle?: string | React.ReactNode;
+	context?: string;
 	[ key: string ]: unknown;
 };
 
@@ -48,18 +46,20 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subtitle: __( "Manage your domain's contact details." ),
 	},
 	[ ADD_DNS_RECORD ]: {
-		CustomHeader: AddDnsRecordHeader,
+		CustomHeader: DnsRecordHeader,
 		subPageKey: ADD_DNS_RECORD,
 		titleOverride: addDnsRecordTitle,
 		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
+		context: 'add',
 	},
 	[ EDIT_DNS_RECORD ]: {
-		CustomHeader: EditDnsRecordHeader,
+		CustomHeader: DnsRecordHeader,
 		subPageKey: EDIT_DNS_RECORD,
 		titleOverride: editDnsRecordTitle,
-		subtitleOverride: editDnsRecordsSubtitle,
+		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
+		context: 'edit',
 	},
 };
 

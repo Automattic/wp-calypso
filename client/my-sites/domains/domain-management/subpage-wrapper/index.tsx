@@ -11,12 +11,16 @@ type SubpageWrapperProps = {
 };
 
 const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: SubpageWrapperProps ) => {
-	const { CustomHeader, title, subtitle } = getSubpageParams( subpageKey ) || {};
+	const { CustomHeader, title, subtitle, context } = getSubpageParams( subpageKey ) || {};
 
 	if ( CustomHeader ) {
 		return (
 			<div className="subpage-wrapper">
-				<CustomHeader selectedDomainName={ domainName } selectedSiteSlug={ siteName } />
+				<CustomHeader
+					selectedDomainName={ domainName }
+					selectedSiteSlug={ siteName }
+					context={ context }
+				/>
 				<div className="subpage-wrapper__content">{ children }</div>
 			</div>
 		);
