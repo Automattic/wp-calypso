@@ -20,6 +20,7 @@ const {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext: UntypedGSContext,
+	areGlobalStyleConfigsEqual,
 	useGlobalStylesOutput,
 	useGlobalSetting,
 	useGlobalStyle,
@@ -64,10 +65,67 @@ const useSafeGlobalStylesOutput = () => {
 	}
 };
 
+/**
+ * Returns a new object, with properties specified in `properties` array.,
+ * maintain the original object tree structure.
+ * The function is recursive, so it will perform a deep search for the given properties.
+ * E.g., the function will return `{ a: { b: { c: { test: 1 } } } }` if the properties are  `[ 'test' ]`.
+ *
+ * @param {Object}   object     The object to filter
+ * @param {string[]} properties The properties to filter by
+ * @returns {Object} The merged object.
+ */
+const filterObjectByProperties = ( object: Record< string, any >, properties: string[] ) => {
+	if ( ! object || ! properties?.length ) {
+		return {};
+	}
+
+	const newObject: Record< string, any > = {};
+	Object.keys( object ).forEach( ( key ) => {
+		if ( properties.includes( key ) ) {
+			newObject[ key ] = object[ key ];
+		} else if ( typeof object[ key ] === 'object' ) {
+			const newFilter = filterObjectByProperties(
+				object[ key ] as Record< string, any >,
+				properties
+			);
+			if ( Object.keys( newFilter ).length ) {
+				newObject[ key ] = newFilter;
+			}
+		}
+	} );
+	return newObject;
+};
+
+/**
+ * Compares a style variation to the same variation filtered by the specified properties.
+ * Returns true if the variation contains only the properties specified.
+ *
+ * @param {Object}   variation  The variation to compare.
+ * @param {string[]} properties The properties to compare.
+ * @returns {boolean} Whether the variation contains only the specified properties.
+ */
+const isVariationWithProperties = ( variation: GlobalStylesObject, properties: string[] ) => {
+	const variationWithProperties = filterObjectByProperties(
+		window.structuredClone( variation ),
+		properties
+	);
+
+	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
+};
+
+const isColorVariation = ( variation: GlobalStylesObject ) =>
+	isVariationWithProperties( variation, [ 'color' ] );
+
+const isFontVariation = ( variation: GlobalStylesObject ) =>
+	isVariationWithProperties( variation, [ 'typography' ] );
+
 export {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
+	isColorVariation,
+	isFontVariation,
 	transformStyles,
 	useSafeGlobalStylesOutput,
 	useGlobalSetting,
