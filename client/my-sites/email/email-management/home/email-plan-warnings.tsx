@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, ButtonProps, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
@@ -18,9 +18,10 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 type EmailPlanWarningsProps = {
 	domain: ResponseDomain;
 	emailAccount: EmailAccount;
+	ctaBtnProps?: ButtonProps;
 };
 
-const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
+const EmailPlanWarnings = ( { domain, emailAccount, ctaBtnProps }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug ?? '';
@@ -37,7 +38,12 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	if ( hasUnusedMailboxWarning( emailAccount ) && isTitanMailAccount( emailAccount ) ) {
 		cta = (
-			<Button compact primary href={ getTitanSetUpMailboxPath( selectedSiteSlug, domain.name ) }>
+			<Button
+				compact
+				primary
+				href={ getTitanSetUpMailboxPath( selectedSiteSlug, domain.name ) }
+				{ ...ctaBtnProps }
+			>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
@@ -51,6 +57,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 					recordTracksEvent( 'calypso_email_management_google_workspace_accept_tos_link_click' );
 				} }
 				target="_blank"
+				{ ...ctaBtnProps }
 			>
 				{ translate( 'Finish setup' ) }
 				<Gridicon icon="external" />

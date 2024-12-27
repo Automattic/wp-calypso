@@ -394,7 +394,7 @@ export const ssrSetupLocale = ( _context, next ) => {
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
 	const duplicateViewsExperimentAssignment = await loadExperimentAssignment(
-		'calypso_duplicate_views_placeholder'
+		'calypso_post_onboarding_holdout_120924'
 	);
 	if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
 		const state = context.store.getState();

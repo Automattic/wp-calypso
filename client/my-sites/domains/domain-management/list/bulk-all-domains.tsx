@@ -28,6 +28,7 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 	sidebarMode?: boolean;
+	selectedDomainName?: string;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -73,7 +74,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				border-radius: 4px;
 			}
 
-			header.navigation-header {
+			.domains-overview__list .navigation-header {
 				padding-top: 24px;
 
 				.formatted-header {
@@ -230,13 +231,17 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
-			.domains-overview__list.a4a-layout-column,
-			.domains-overview__list .a4a-layout-column__container,
-			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+			.domains-overview__list.multi-sites-dashboard-layout-column,
+			.domains-overview__list .multi-sites-dashboard-layout-column__container,
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
 				height: 100%;
 			}
 
-			.a4a-layout-column.domains-overview__list.main .a4a-layout-column__container .main {
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
 				display: flex;
 				flex-direction: column;
 				padding-bottom: 0;
@@ -261,7 +266,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						visibility: hidden;
 					}
 
-					&:hover {
+					&:hover,
+					&.is-selected {
 						.gridicons-ellipsis {
 							visibility: visible;
 						}
@@ -435,6 +441,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
 						sidebarMode={ props.sidebarMode }
+						selectedDomainName={ props.selectedDomainName }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

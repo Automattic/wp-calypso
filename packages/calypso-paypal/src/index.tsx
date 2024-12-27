@@ -1,7 +1,6 @@
 import { PayPalScriptProvider, ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, createContext, PropsWithChildren, useContext, useRef } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 
 export interface PayPalConfigurationApiResponse {
 	client_id: string | undefined;
@@ -15,13 +14,6 @@ export interface UsePayPalConfiguration {
 	payPalConfiguration: PayPalConfiguration | undefined;
 }
 
-async function defaultFetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
-	return await wpcomRequest( {
-		path: `/me/paypal-configuration`,
-		method: 'GET',
-	} );
-}
-
 const PayPalContext = createContext< PayPalConfiguration | undefined >( undefined );
 
 const defaultConfiguration: PayPalConfiguration = {
@@ -31,7 +23,7 @@ const defaultConfiguration: PayPalConfiguration = {
 function usePayPalConfigurationInternalOnly( {
 	fetchPayPalConfiguration,
 }: {
-	fetchPayPalConfiguration?: () => Promise< PayPalConfigurationApiResponse >;
+	fetchPayPalConfiguration: () => Promise< PayPalConfigurationApiResponse >;
 } ): {
 	payPalConfiguration: PayPalConfiguration | undefined;
 	error: undefined | Error;
@@ -43,7 +35,7 @@ function usePayPalConfigurationInternalOnly( {
 
 	useEffect( () => {
 		let isSubscribed = true;
-		( fetchPayPalConfiguration ?? defaultFetchPayPalConfiguration )()
+		fetchPayPalConfiguration()
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
@@ -82,7 +74,7 @@ export function PayPalProvider( {
 }: PropsWithChildren< {
 	currency: string;
 	handleError?: ( error: Error ) => void;
-	fetchPayPalConfiguration?: () => Promise< PayPalConfigurationApiResponse >;
+	fetchPayPalConfiguration: () => Promise< PayPalConfigurationApiResponse >;
 } > ) {
 	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly( {
 		fetchPayPalConfiguration,

@@ -46,7 +46,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const launchpadEnabled = site?.options.launchpad_screen === 'full';
+	const launchpadEnabled = site?.options?.launchpad_screen === 'full';
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that

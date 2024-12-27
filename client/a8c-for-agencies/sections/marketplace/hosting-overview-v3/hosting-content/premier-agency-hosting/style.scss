@@ -10,3 +10,8 @@
 		color: var(--color-text);
 	}
 }
+
+.pressable-plan-section__details-footnote {
+	@include a4a-font-body-sm;
+	color: var(--color-neutral-80);
+}

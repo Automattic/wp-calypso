@@ -76,7 +76,7 @@ export function Purchases() {
 			<PurchaseListConciergeBanner
 				availableSessions={ availableConciergeSessions }
 				isUserBlocked={ isConciergeUserBlocked }
-				nextAppointment={ nextConciergeAppointment }
+				nextAppointment={ nextConciergeAppointment ?? undefined }
 				siteId={ siteId ?? undefined }
 			/>
 			<CheckoutErrorBoundary

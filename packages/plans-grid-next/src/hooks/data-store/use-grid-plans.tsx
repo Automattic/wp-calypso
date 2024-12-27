@@ -91,7 +91,7 @@ const isGridPlanVisible = ( {
 	return isVisible;
 };
 
-const usePlanTypesWithIntent = ( {
+export const usePlanTypesWithIntent = ( {
 	intent,
 	selectedPlan,
 	siteId,
@@ -228,12 +228,12 @@ const useGridPlans: UseGridPlansType = ( {
 	isInSignup,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
-	storageAddOns,
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
 	isDomainOnlySite,
+	reflectStorageSelectionInPlanPrices,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -286,10 +286,10 @@ const useGridPlans: UseGridPlansType = ( {
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
-		storageAddOns,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.

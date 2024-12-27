@@ -4,11 +4,11 @@ import './style.scss';
 import { Badge, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -25,6 +25,7 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
@@ -39,6 +40,7 @@ import {
 	formatAmount,
 	getAdvertisingDashboardPath,
 	getCampaignActiveDays,
+	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -179,6 +181,7 @@ export default function CampaignItemDetails( props: Props ) {
 		impressions_total = 0,
 		clicks_total,
 		clickthrough_rate,
+		duration_days,
 		total_budget,
 		total_budget_used,
 		conversions_total,
@@ -276,6 +279,30 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
 
+	const durationDateFormatted = getCampaignDurationFormatted(
+		start_date,
+		end_date,
+		is_evergreen,
+		campaign?.ui_status
+	);
+
+	const durationDateAndTimeFormatted = getCampaignDurationFormatted(
+		start_date,
+		end_date,
+		is_evergreen,
+		campaign?.ui_status,
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D` refers to day of month (e.g. `5`), `HH` refers to hours in 24-hour format (e.g. `19` in 19:50), `mm` refers to minutes (e.g. `50`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		_x( 'MMM D, HH:mm', 'shorter date format' )
+	);
+
+	const durationFormatted = duration_days
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', duration_days ),
+				formatNumber( duration_days, true )
+		  )
+		: '';
+
 	const initialRange =
 		activeDays <= 7 ? ChartSourceDateRanges.WHOLE_CAMPAIGN : ChartSourceDateRanges.LAST_7_DAYS;
 	const initialResolution = activeDays < 3 ? ChartResolution.Hour : ChartResolution.Day;
@@ -334,11 +361,13 @@ export default function CampaignItemDetails( props: Props ) {
 		setSelectedDateRange( newDateRange );
 	};
 
+	const areStatsEnabled = useJetpackBlazeVersionCheck( siteId, '14.1', '0.5.3' );
+
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
 		chartParams,
-		!! impressions_total
+		!! impressions_total && areStatsEnabled
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
@@ -357,8 +386,16 @@ export default function CampaignItemDetails( props: Props ) {
 			);
 		}
 
-		if ( ! data ) {
-			return null;
+		// Data should be an array with at least 2 elements. The reason is the necessity to overcome
+		// uPlot's bug of having an infinite loop https://github.com/leeoniya/uPlot/issues/827.
+		if ( ! Array.isArray( data ) || data.length < 2 ) {
+			return (
+				<div>
+					{ translate(
+						"We couldn't retrieve any data for this time frame. Please check back later, as campaign data may take a few hours to appear."
+					) }
+				</div>
+			);
 		}
 
 		return (
@@ -754,6 +791,32 @@ export default function CampaignItemDetails( props: Props ) {
 						{ shouldShowStats && (
 							<div className="campaign-item-details__main-stats-container">
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
+									{ !! duration_days && (
+										<div className="campaign-item-details__main-stats-row ">
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Duration' ) }
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
+											<div>
+												<span className="campaign-item-details__label">
+													{ translate( 'Run between' ) }
+													&nbsp;
+													<InfoPopover position="right">
+														<span className="popover-title">
+															{ ! isLoading ? durationDateAndTimeFormatted : <FlexibleSkeleton /> }
+														</span>
+													</InfoPopover>
+												</span>
+												<span className="campaign-item-details__text wp-brand-font">
+													{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+												</span>
+											</div>
+										</div>
+									) }
 									<div className="campaign-item-details__main-stats-row ">
 										<div>
 											<span className="campaign-item-details__label">
@@ -765,7 +828,7 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Impressions' ) }
+												{ translate( 'People reached' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
@@ -837,69 +900,71 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</div>
 
-									<>
-										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-											<div>
-												<div className="campaign-item-page__graph">
-													<DropdownMenu
-														class="campaign-item-page__graph-selector"
-														controls={ chartControls }
-														icon={ chevronDown }
-														text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-														label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-													/>
-													<DropdownMenu
-														class="campaign-item-page__graph-selector"
-														controls={ [
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																title: __( 'Clicks' ),
-																isDisabled: chartSource === ChartSourceOptions.Clicks,
-															},
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-																title: __( 'Impressions' ),
-																isDisabled: chartSource === ChartSourceOptions.Impressions,
-															},
-														] }
-														icon={ chevronDown }
-														text={
-															chartSource === ChartSourceOptions.Clicks
-																? __( 'Clicks' )
-																: __( 'Impressions' )
-														}
-														label={ chartSource }
-													/>
-													{ getCampaignStatsChart(
-														campaignStats?.series[ chartSource ] ?? null,
-														chartSource,
-														campaignsStatsIsLoading
-													) }
-												</div>
-											</div>
-										</div>
-
-										{ campaignStats && (
+									{ areStatsEnabled && (
+										<>
 											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 												<div>
-													<div className="campaign-item-page__locaton-charts">
-														<span className="campaign-item-details__label">
-															{ chartSource === ChartSourceOptions.Clicks
-																? __( 'Clicks by location' )
-																: __( 'Impressions by location' ) }
-														</span>
-														<div>
-															<LocationChart
-																stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
-																total={ campaignStats.total_stats.total[ chartSource ] }
-																source={ chartSource }
-															/>
-														</div>
+													<div className="campaign-item-page__graph">
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ chartControls }
+															icon={ chevronDown }
+															text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+															label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+														/>
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ [
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																	title: __( 'Clicks' ),
+																	isDisabled: chartSource === ChartSourceOptions.Clicks,
+																},
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																	title: __( 'Impressions' ),
+																	isDisabled: chartSource === ChartSourceOptions.Impressions,
+																},
+															] }
+															icon={ chevronDown }
+															text={
+																chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks' )
+																	: __( 'Impressions' )
+															}
+															label={ chartSource }
+														/>
+														{ getCampaignStatsChart(
+															campaignStats?.series[ chartSource ] ?? null,
+															chartSource,
+															campaignsStatsIsLoading
+														) }
 													</div>
 												</div>
 											</div>
-										) }
-									</>
+
+											{ campaignStats && (
+												<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+													<div>
+														<div className="campaign-item-page__locaton-charts">
+															<span className="campaign-item-details__label">
+																{ chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks by location' )
+																	: __( 'Impressions by location' ) }
+															</span>
+															<div>
+																<LocationChart
+																	stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+																	total={ campaignStats.total_stats.total[ chartSource ] }
+																	source={ chartSource }
+																/>
+															</div>
+														</div>
+													</div>
+												</div>
+											) }
+										</>
+									) }
 								</div>
 							</div>
 						) }
@@ -990,7 +1055,7 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								{ campaign?.campaign_stats?.impressions_total > 0 && (
+								{ areStatsEnabled && campaign?.campaign_stats?.impressions_total > 0 && (
 									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 										<div>
 											<div className="campaign-item-page__graph">

@@ -145,11 +145,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-options' ),
 	},
 
-	PATTERN_ASSEMBLER: {
-		slug: 'pattern-assembler',
-		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
-	},
-
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
@@ -170,11 +165,6 @@ export const STEPS = {
 	SITE_PICKER: {
 		slug: 'site-picker',
 		asyncComponent: () => import( './steps-repository/site-picker-list' ),
-	},
-
-	SITE_PROMPT: {
-		slug: 'site-prompt',
-		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
 	},
 
 	STORE_ADDRESS: {
