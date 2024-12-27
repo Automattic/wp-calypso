@@ -127,7 +127,6 @@ const PluginsDashboard = ( {
 	const sitesWithoutPlugin = sitesToShow.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
 	);
-	const dashboardTitle = pluginSlug ? `Manage ${ pluginSlug } in all sites` : 'Manage Plugins';
 
 	const doActionOverSelected = (
 		actionName: string,
@@ -285,6 +284,9 @@ const PluginsDashboard = ( {
 		? allPlugins.find( ( plugin ) => plugin.slug === pluginSlug )
 		: undefined;
 
+	const dashboardTitle = selectedPlugin
+		? `Manage ${ selectedPlugin.name } in all sites`
+		: 'Manage Plugins';
 	return (
 		<Layout
 			className={ clsx(
@@ -306,10 +308,14 @@ const PluginsDashboard = ( {
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
-						<Subtitle>{ translate( 'Manage plugins installed on all sites' ) }</Subtitle>
-						<Actions>
-							<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
-						</Actions>
+						{ ! pluginSlug && (
+							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
+						) }
+						{ ! pluginSlug && (
+							<Actions>
+								<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
+							</Actions>
+						) }
 					</LayoutHeader>
 				</LayoutTop>
 
@@ -327,7 +333,13 @@ const PluginsDashboard = ( {
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
 							<Title>
-								{ translate( `Manage %(pluginSlug)s in all sites`, { args: { pluginSlug } } ) }
+								<img
+									width={ 24 }
+									height={ 24 }
+									src={ selectedPlugin.icon }
+									alt={ selectedPlugin.name }
+								/>
+								{ ` ${ selectedPlugin.name }` }
 							</Title>
 							<Actions>
 								<Button href="/plugins/manage/sites">{ translate( 'Close' ) }</Button>

@@ -163,7 +163,7 @@ export default function PluginsListDataViews( {
 				onChangeView={ setDataViewsState }
 				fields={ fields }
 				search
-				searchLabel={ translate( 'Search for plugins' ) }
+				searchLabel={ translate( 'Search' ) }
 				actions={ pluginSlug ? [] : actions }
 				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }
