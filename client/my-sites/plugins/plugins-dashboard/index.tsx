@@ -6,15 +6,15 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import Layout from 'calypso/layout/multi-sites-dashboard';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
-import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import Layout from 'calypso/layout/hosting-dashboard';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 	LayoutHeaderSubtitle as Subtitle,
-} from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';

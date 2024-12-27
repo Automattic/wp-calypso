@@ -5,18 +5,18 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
-.main.multi-sites-dashboard-layout.sites-dashboard {
+.main.hosting-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
-	.multi-sites-dashboard-layout__header-actions {
+	.hosting-dashboard-layout__header-actions {
 		white-space: nowrap;
 	}
 
-	.item-preview-pane .multi-sites-dashboard-layout-column__container {
+	.item-preview-pane .hosting-dashboard-layout-column__container {
 		display: flex;
 	}
 
-	.multi-sites-dashboard-layout-column {
+	.hosting-dashboard-layout-column {
 		@include breakpoint-deprecated( "<660px" ) {
 			border-radius: 0;
 		}
@@ -34,7 +34,7 @@
 		margin-right: 10px;
 	}
 
-	.multi-sites-dashboard-layout__top-wrapper:not(.preview-hidden) {
+	.hosting-dashboard-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
 	}
 
@@ -60,7 +60,7 @@
 	}
 
 	@media (max-width: 660px) {
-		.multi-sites-dashboard-layout__header-main {
+		.hosting-dashboard-layout__header-main {
 			display: none;
 		}
 	}
@@ -151,7 +151,7 @@
 			.sites-overview {
 				padding: 0;
 
-				.multi-sites-dashboard-layout__header-title {
+				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 					letter-spacing: normal;
@@ -201,10 +201,10 @@
 	&.sites-dashboard__layout:not(.preview-hidden) {
 
 
-		.multi-sites-dashboard-layout__top-wrapper {
+		.hosting-dashboard-layout__top-wrapper {
 			padding-block-start: 16px;
 
-			.multi-sites-dashboard-layout__header {
+			.hosting-dashboard-layout__header {
 				padding: 0;
 			}
 		}
@@ -218,7 +218,7 @@
 		}
 	}
 
-	&.sites-dashboard__layout:not(.preview-hidden) .multi-sites-dashboard-layout__navigation-wrapper {
+	&.sites-dashboard__layout:not(.preview-hidden) .hosting-dashboard-layout__navigation-wrapper {
 		display: none;
 	}
 
@@ -827,8 +827,8 @@
 	}
 }
 
-body.is-section-plugins .multi-sites-dashboard-layout,
-.is-section-jetpack-cloud-plugin-management .multi-sites-dashboard-layout {
+body.is-section-plugins .hosting-dashboard-layout,
+.is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
 	.dataviews-wrapper {
 			margin: auto;
 
