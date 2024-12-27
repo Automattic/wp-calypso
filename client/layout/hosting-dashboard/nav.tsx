@@ -82,9 +82,9 @@ export default function LayoutNavigation( {
 	children,
 }: LayoutNavigationProps ) {
 	return (
-		<div className="multi-sites-dashboard-layout__navigation-wrapper">
+		<div className="hosting-dashboard-layout__navigation-wrapper">
 			<SectionNav
-				className={ clsx( 'multi-sites-dashboard-layout__navigation', className ) }
+				className={ clsx( 'hosting-dashboard-layout__navigation', className ) }
 				applyUpdatedStyles
 				selectedText={
 					<span>

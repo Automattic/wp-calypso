@@ -3,7 +3,7 @@ import { BundledBadge, PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
+import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
@@ -20,7 +20,7 @@ export default function ThemeTierBundledBadge() {
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
 	if ( ! bundleSettings ) {
 		return;
@@ -48,7 +48,7 @@ export default function ThemeTierBundledBadge() {
 		</>
 	);
 
-	const labelText = isGoalsAtFrontExperiment
+	const labelText = isUpdatedBadgeDesign
 		? translate( 'Available on %(businessPlanName)s', {
 				args: {
 					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
@@ -61,19 +61,19 @@ export default function ThemeTierBundledBadge() {
 			{ showUpgradeBadge && ! isThemeIncluded && (
 				<PremiumBadge
 					className={ clsx( 'theme-tier-badge__content', {
-						'theme-tier-badge__without-background': isGoalsAtFrontExperiment,
+						'theme-tier-badge__without-background': isUpdatedBadgeDesign,
 					} ) }
 					focusOnShow={ false }
 					labelText={ labelText }
 					tooltipClassName="theme-tier-badge-tooltip"
 					tooltipContent={ tooltipContent }
 					tooltipPosition="top"
-					shouldHideTooltip={ isGoalsAtFrontExperiment }
-					isClickable={ ! isGoalsAtFrontExperiment }
+					shouldHideTooltip={ isUpdatedBadgeDesign }
+					isClickable={ ! isUpdatedBadgeDesign }
 				/>
 			) }
 
-			{ ! isGoalsAtFrontExperiment && (
+			{ ! isUpdatedBadgeDesign && (
 				<BundledBadge
 					className="theme-tier-badge__content"
 					color={ bundleSettings.color }

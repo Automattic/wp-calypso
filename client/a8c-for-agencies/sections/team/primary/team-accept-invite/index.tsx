@@ -9,10 +9,8 @@ import useActivateMemberMutation, {
 	APIError,
 } from 'calypso/a8c-for-agencies/data/team/use-activate-member';
 import AgencyLogo from 'calypso/assets/images/a8c-for-agencies/agency-logo.svg';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';

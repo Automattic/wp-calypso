@@ -4,9 +4,15 @@
 .consolidated-view {
 	display: flex;
 	gap: 24px;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+
+	@include break-mobile {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
 
 	@include break-wide {
 		flex-wrap: nowrap;
@@ -16,10 +22,16 @@
 	}
 
 	.card {
-		flex: 0 1 calc(50% - 16px);
-		max-width: 45%;
-		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		flex: 1;
+		max-width: 100%;
 		width: 100%;
+
+		@include break-mobile {
+			flex: 0 1 calc(50% - 16px);
+			max-width: 45%;
+		}
+
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		padding: 1rem;
 
 		.consolidated-view__value {

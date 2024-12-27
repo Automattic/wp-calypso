@@ -7,11 +7,11 @@ type Props = {
 };
 
 export default function LayoutBody( { children, className }: Props ) {
-	const wrapperClass = clsx( className, 'multi-sites-dashboard-layout__body' );
+	const wrapperClass = clsx( className, 'hosting-dashboard-layout__body' );
 
 	return (
 		<div className={ wrapperClass }>
-			<div className="multi-sites-dashboard-layout__body-wrapper">{ children }</div>
+			<div className="hosting-dashboard-layout__body-wrapper">{ children }</div>
 		</div>
 	);
 }
