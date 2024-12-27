@@ -44,7 +44,7 @@ function getSiteFilters( siteId: number ): SiteFilterType[] {
 			id: 'stats-insights',
 		},
 		{
-			title: i18n.translate( 'Newsletters' ),
+			title: i18n.translate( 'Newsletter' ),
 			path: '/stats/subscribers/' + siteId,
 			id: 'stats-subscribers',
 			period: 'day', // default period for Subscribers
