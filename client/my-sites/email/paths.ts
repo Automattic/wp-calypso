@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
@@ -149,7 +150,7 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	relativeTo,
 	urlParameters
 ) => {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
 		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
 			urlParameters
 		) }`;
