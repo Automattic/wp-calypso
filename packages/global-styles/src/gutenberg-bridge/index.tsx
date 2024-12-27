@@ -83,7 +83,7 @@ const filterObjectByProperties = ( object: Record< string, any >, properties: st
 
 	const newObject: Record< string, any > = {};
 	Object.keys( object ).forEach( ( key ) => {
-		if ( properties.includes( key ) ) {
+		if ( properties.includes( key ) && object[ key ] !== null ) {
 			newObject[ key ] = object[ key ];
 		} else if ( typeof object[ key ] === 'object' ) {
 			const newFilter = filterObjectByProperties(
