@@ -9,6 +9,22 @@
 	margin: 1.5em 0;
 	padding: 0 20px;
 
+	&.stats-period-navigation__is-with-new-date-control {
+		padding: 0;
+		align-items: flex-start;
+		row-gap: 8px;
+	
+		.stats-navigation-arrows {
+			justify-content: flex-end;
+		}
+	
+		.stats-period-navigation__date-range-control {
+			display:flex;
+			flex-direction: row;
+			gap: 20px;
+		}
+	}
+
 	.stats-period-navigation__children {
 		flex-grow: 1;
 	}
@@ -51,24 +67,4 @@
 	.chart__legend {
 		margin-bottom: initial;
 	}
-}
-
-// Styling specific to the new Date Filtering traffic page project
-.stats-period-navigation.stats-period-navigation__is-with-new-date-filtering {
-
-	.stats-navigation-arrows {
-		justify-content: flex-end;
-	}
-
-	.stats-period-navigation__date-range-control {
-		display:flex;
-		flex-direction: row;
-		gap: 20px;
-	  }
-}
-
-.stats-period-navigation.stats-period-navigation__is-with-new-date-control {
-	padding: 0;
-	align-items: flex-start;
-	row-gap: 8px;
 }

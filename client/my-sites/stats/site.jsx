@@ -501,7 +501,6 @@ class StatsSite extends Component {
 							activeTab={ getActiveTab( this.props.chartTab ) }
 							activeLegend={ this.state.activeLegend }
 							onChangeLegend={ this.onChangeLegend }
-							isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 							isWithNewDateControl
 							showArrows={ ! wpcomShowUpsell }
 							slug={ slug }
@@ -516,7 +515,6 @@ class StatsSite extends Component {
 								showQueryDate
 								isShort
 								dateRange={ customChartRange }
-								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
 							/>
 						</StatsPeriodNavigation>
 					</StatsPeriodHeader>
@@ -835,7 +833,7 @@ export default connect(
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
 
-		const { supportedShortcutList } = getShortcuts( state, {}, undefined, true );
+		const { supportedShortcutList } = getShortcuts( state, {}, undefined );
 
 		return {
 			canUserViewStats,

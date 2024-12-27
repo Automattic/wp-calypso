@@ -40,8 +40,7 @@ export const getShortcuts = createSelector(
 			chartStart: string;
 			chartEnd: string;
 		},
-		translateFromProps,
-		isNewDateFilteringEnabled = true
+		translateFromProps
 	) => {
 		const translate = translateFromProps ?? i18nCalypsoTranslate;
 		const siteId = getSelectedSiteId( state );
@@ -51,6 +50,20 @@ export const getShortcuts = createSelector(
 		const yesterdayStr = siteYesterday.format( DATE_FORMAT );
 
 		const supportedShortcutList = [
+			{
+				id: 'today',
+				label: translate( 'Today' ),
+				startDate: siteTodayStr,
+				endDate: siteTodayStr,
+				period: DATERANGE_PERIOD.DAY,
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				startDate: yesterdayStr,
+				endDate: yesterdayStr,
+				period: DATERANGE_PERIOD.DAY,
+			},
 			{
 				id: 'last_7_days',
 				label: translate( 'Last 7 Days' ),
@@ -88,25 +101,6 @@ export const getShortcuts = createSelector(
 			},
 		];
 
-		if ( isNewDateFilteringEnabled ) {
-			supportedShortcutList.unshift(
-				{
-					id: 'today',
-					label: translate( 'Today' ),
-					startDate: siteTodayStr,
-					endDate: siteTodayStr,
-					period: DATERANGE_PERIOD.DAY,
-				},
-				{
-					id: 'yesterday',
-					label: translate( 'Yesterday' ),
-					startDate: yesterdayStr,
-					endDate: yesterdayStr,
-					period: DATERANGE_PERIOD.DAY,
-				}
-			);
-		}
-
 		return {
 			selectedShortcut: findShortcutForRange( supportedShortcutList, dateRange ),
 			supportedShortcutList,
@@ -117,31 +111,22 @@ export const getShortcuts = createSelector(
 		dateRange: {
 			chartStart: string;
 			chartEnd: string;
-		},
-		translateFromProps,
-		isNewDateFilteringEnabled
+		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 
-		return [
-			siteId,
-			siteToday.format( DATE_FORMAT ),
-			dateRange?.chartStart,
-			dateRange?.chartEnd,
-			isNewDateFilteringEnabled,
-		];
+		return [ siteId, siteToday.format( DATE_FORMAT ), dateRange?.chartStart, dateRange?.chartEnd ];
 	}
 );
 
-export function useShortcuts(
-	dateRange: { chartStart: string; chartEnd: string; daysInRange: number },
-	isNewDateFilteringEnabled = false
-) {
+export function useShortcuts( dateRange: {
+	chartStart: string;
+	chartEnd: string;
+	daysInRange: number;
+} ) {
 	const translate = useTranslate();
-	const shortcuts = useSelector( ( state ) =>
-		getShortcuts( state, dateRange, translate, isNewDateFilteringEnabled )
-	);
+	const shortcuts = useSelector( ( state ) => getShortcuts( state, dateRange, translate ) );
 
 	return shortcuts;
 }

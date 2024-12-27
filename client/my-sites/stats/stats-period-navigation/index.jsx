@@ -7,19 +7,12 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Legend from 'calypso/components/chart/legend';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsDateControl from 'calypso/components/stats-date-control';
-import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
 import {
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_INTERVAL_DROPDOWN,
-	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
-	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
-	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
-	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
-	STATS_PERIOD,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -45,7 +38,6 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
-		isNewDateFilteringEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,7 +49,6 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
-		isNewDateFilteringEnabled: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -234,18 +225,15 @@ class StatsPeriodNavigation extends PureComponent {
 			queryParams,
 			slug,
 			isWithNewDateControl,
-			isNewDateFilteringEnabled,
 			dateRange,
 			shortcutList,
 			gateDateControl,
-			intervals,
 			siteId,
 			momentSiteZone,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( momentSiteZone, period );
 
-		// TODO: Refactor the isNewDateFilteringEnabled dedicated variables.
 		const isChartRangeEndSameOrAfterToday = moment( dateRange?.chartEnd ).isSameOrAfter(
 			momentSiteZone,
 			'day'
@@ -256,7 +244,6 @@ class StatsPeriodNavigation extends PureComponent {
 			<div
 				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
-					'stats-period-navigation__is-with-new-date-filtering': isNewDateFilteringEnabled,
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
@@ -272,7 +259,7 @@ class StatsPeriodNavigation extends PureComponent {
 				) }
 
 				{ /* New filtering view: Shows date control in a simplified layout */ }
-				{ isWithNewDateControl && isNewDateFilteringEnabled && (
+				{ isWithNewDateControl && (
 					<div className="stats-period-navigation__date-range-control">
 						{ showArrowsForDateRange && (
 							<NavigationArrows
@@ -298,55 +285,6 @@ class StatsPeriodNavigation extends PureComponent {
 										/>
 									)
 								}
-								isNewDateFilteringEnabled
-							/>
-						</div>
-					</div>
-				) }
-
-				{ /* Standard new date control view: Shows date control with additional controls (Legend, IntervalDropdown) */ }
-				{ isWithNewDateControl && ! isNewDateFilteringEnabled && (
-					<div className="stats-period-navigation__date-control">
-						<StatsDateControl
-							slug={ slug }
-							queryParams={ queryParams }
-							dateRange={ dateRange }
-							shortcutList={ shortcutList }
-							onGatedHandler={ this.onGatedHandler }
-							overlay={
-								gateDateControl && (
-									<StatsCardUpsell
-										className="stats-module__upsell"
-										statType={ STATS_FEATURE_DATE_CONTROL }
-										siteId={ siteId }
-									/>
-								)
-							}
-						/>
-						<div className="stats-period-navigation__period-control">
-							{ this.props.activeTab && (
-								<Legend
-									activeCharts={ this.props.activeLegend }
-									activeTab={ this.props.activeTab }
-									availableCharts={ this.props.availableLegend }
-									clickHandler={ this.onLegendClick }
-									tabs={ this.props.charts }
-								/>
-							) }
-							{ showArrows && (
-								<NavigationArrows
-									disableNextArrow={ disableNextArrow || isToday }
-									disablePreviousArrow={ disablePreviousArrow }
-									onClickNext={ this.handleArrowNext }
-									onClickPrevious={ this.handleArrowPrevious }
-								/>
-							) }
-							<IntervalDropdown
-								slug={ slug }
-								period={ period }
-								queryParams={ queryParams }
-								intervals={ intervals }
-								onGatedHandler={ this.onGatedHandler }
 							/>
 						</div>
 					</div>
@@ -363,7 +301,7 @@ const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
 } );
 
 const connectComponent = connect(
-	( state, { period, isNewDateFilteringEnabled, translate } ) => {
+	( state, { period, translate } ) => {
 		const siteId = getSelectedSiteId( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
 		const gatePeriodInterval = shouldGateStats(
@@ -375,45 +313,13 @@ const connectComponent = connect(
 			treatAtomicAsJetpackSite: false,
 		} );
 
-		const { supportedShortcutList } = getShortcuts(
-			state,
-			{},
-			translate,
-			isNewDateFilteringEnabled
-		);
+		const { supportedShortcutList } = getShortcuts( state, {}, translate );
 		const shortcutList = supportedShortcutList.map( addIsGatedFor( state, siteId ) );
-		const intervals = {
-			[ STATS_PERIOD.DAY ]: {
-				id: STATS_PERIOD.DAY,
-				label: translate( 'Days' ),
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_DAY ),
-				statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
-			},
-			[ STATS_PERIOD.WEEK ]: {
-				id: STATS_PERIOD.WEEK,
-				label: translate( 'Weeks' ),
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ),
-				statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
-			},
-			[ STATS_PERIOD.MONTH ]: {
-				id: STATS_PERIOD.MONTH,
-				label: translate( 'Months' ),
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_MONTH ),
-				statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
-			},
-			[ STATS_PERIOD.YEAR ]: {
-				id: STATS_PERIOD.YEAR,
-				label: translate( 'Years' ),
-				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_YEAR ),
-				statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
-			},
-		};
 
 		return {
 			shortcutList,
 			gateDateControl,
 			gatePeriodInterval,
-			intervals,
 			siteId,
 			isSiteJetpackNotAtomic,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
