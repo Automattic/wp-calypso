@@ -23,7 +23,6 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
-import { STEPS } from './steps';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -161,32 +160,34 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return null;
 		}
 
-		// The `nextStep` is available only when logged-out users go to the step that requires auth
-		// and are redirected to the user step.
-		const nextStepSlug = stepData?.nextStep ?? '';
-		if ( step.slug === STEPS.USER.slug && nextStepSlug ) {
-			const previousStepSlug = stepData?.previousStep;
+		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
+
+		if ( step.slug === 'user' && firstAuthWalledStep ) {
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
-				step: nextStepSlug,
+				step: firstAuthWalledStep.slug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
-
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
+			const lastPreAuthWalledStepIndex =
+				flowSteps.findIndex( ( step ) => step.slug === 'user' ) - 1;
+			const lastPreAuthWalledStep =
+				lastPreAuthWalledStepIndex < 0 ? null : flowSteps[ lastPreAuthWalledStepIndex ];
+
 			return (
 				<StepComponent
 					navigation={ {
 						submit() {
-							navigate( nextStepSlug, undefined, true );
+							navigate( firstAuthWalledStep.slug, undefined, true );
 						},
-						...( previousStepSlug && {
+						...( lastPreAuthWalledStep && {
 							goBack() {
-								navigate( previousStepSlug, undefined, true );
+								navigate( lastPreAuthWalledStep.slug, undefined, true );
 							},
 						} ),
 					} }
