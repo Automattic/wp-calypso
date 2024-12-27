@@ -17,7 +17,7 @@ interface BadgesProps {
 
 const Badges: React.FC< BadgesProps > = ( {
 	className,
-	maxVariationsToShow = 4,
+	maxVariationsToShow = 3,
 	variations = [],
 	onMoreClick,
 	onClick,
@@ -31,7 +31,7 @@ const Badges: React.FC< BadgesProps > = ( {
 	// Use the color variations if the style variations are empty because we don't display color variations as palette section.
 	const currentStyleVariations = styleVariations.length > 0 ? styleVariations : colorVariations;
 	const variationsToShow = useMemo( () => {
-		return currentStyleVariations.slice( 0, maxVariationsToShow - 1 );
+		return currentStyleVariations.slice( 0, maxVariationsToShow );
 	}, [ currentStyleVariations, maxVariationsToShow ] );
 
 	if ( currentStyleVariations.length === 0 ) {
