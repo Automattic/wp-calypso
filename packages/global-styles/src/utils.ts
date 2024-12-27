@@ -12,6 +12,11 @@ export const getVariationType = (
 		? GlobalStylesVariationType.Premium
 		: GlobalStylesVariationType.Free;
 
+const filterVariationsWithSameSlug = ( variations: GlobalStylesObject[] ) =>
+	variations.filter(
+		( value, index, self ) => index === self.findIndex( ( { slug } ) => slug === value.slug )
+	);
+
 export const getGroupedVariations = ( variations: GlobalStylesObject[] ) => {
 	let defaultVariation;
 	const styleVariations = [];
@@ -33,8 +38,8 @@ export const getGroupedVariations = ( variations: GlobalStylesObject[] ) => {
 
 	return {
 		defaultVariation,
-		styleVariations,
-		colorVariations,
-		fontVariations,
+		styleVariations: filterVariationsWithSameSlug( styleVariations ),
+		colorVariations: filterVariationsWithSameSlug( colorVariations ),
+		fontVariations: filterVariationsWithSameSlug( fontVariations ),
 	};
 };
