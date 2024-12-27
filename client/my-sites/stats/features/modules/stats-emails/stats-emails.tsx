@@ -19,6 +19,13 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import {
+	TooltipWrapper,
+	createOpensTooltipContent,
+	createClicksTooltipContent,
+	hasUniqueMetrics,
+	EmailStatsItem,
+} from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
@@ -74,7 +81,25 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: { opens_rate: number } ) => <span>{ `${ item.opens_rate }%` }</span>,
+						body: ( item: EmailStatsItem ) => {
+							const opensUnique = parseInt( item.unique_opens, 10 );
+							const opens = parseInt( item.opens, 10 );
+							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							return (
+								<TooltipWrapper
+									value={
+										hasUniques
+											? `${ item.opens_rate }%`
+											: translate(
+													/* translators: Shown in a table column when email open rate data is not available */
+													'n/a'
+											  )
+									}
+									item={ item }
+									renderContent={ ( item ) => createOpensTooltipContent( item, translate ) }
+								/>
+							);
+						},
 					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
@@ -83,8 +108,28 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
-					formatValue={ ( value: number ) => `${ value }%` }
-					showSummaryLink
+					formatValue={ ( value: number, item: EmailStatsItem ) => {
+						if ( ! item?.opens ) {
+							return value;
+						}
+						const clicksUnique = parseInt( item.unique_clicks, 10 );
+						const clicks = parseInt( item.clicks, 10 );
+						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+						return (
+							<TooltipWrapper
+								value={
+									hasUniques
+										? `${ item.clicks_rate }%`
+										: translate(
+												/* translators: Shown in a table column when email click rate data is not available */
+												'n/a'
+										  )
+								}
+								item={ item }
+								renderContent={ ( item ) => createClicksTooltipContent( item, translate ) }
+							/>
+						);
+					} }
 					className={ className }
 					hasNoBackground
 					skipQuery
