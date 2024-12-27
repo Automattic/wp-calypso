@@ -2,8 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 @media (max-width: 660px) {
-	.multi-sites-dashboard-layout__header-title {
-		// A4A hides a part of LayoutHeader since it displays a different header for mobile 
+	.hosting-dashboard-layout__header-title {
+		// A4A hides a part of LayoutHeader since it displays a different header for mobile
 		display: none;
 	}
 }
