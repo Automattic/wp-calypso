@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
-import { Subscriber } from '@automattic/data-stores';
+import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import {
 	Button,
 	DropZone,
@@ -16,6 +16,7 @@ import { useCallback, FormEvent, FunctionComponent, useState, useEffect, useRef 
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
+import { CategoriesSection } from '../add-form/categories-section';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
 import { tip } from './icon';
 
@@ -23,6 +24,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	siteUrl?: string;
 	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	recordTracksEvent?: RecordTrackEvents;
@@ -31,6 +33,7 @@ interface Props {
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	disabled?: boolean;
 	hidden?: boolean;
+	isWPCOMSite?: boolean;
 }
 
 export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
@@ -41,6 +44,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		siteUrl,
 		flowName,
 		recordTracksEvent,
 		onImportStarted,
@@ -48,11 +52,16 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		onChangeIsImportValid,
 		hidden,
 		disabled,
+		isWPCOMSite = false,
 	} = props;
 
 	const { importCsvSubscribers, importCsvSubscribersUpdate, getSubscribersImports } = useDispatch(
 		Subscriber.store
 	);
+
+	const { data: newsletterCategoriesData } = useNewsletterCategories( {
+		siteId,
+	} );
 
 	/**
 	 * ↓ Fields
@@ -63,6 +72,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
+	const [ selectedCategories, setSelectedCategories ] = useState< number[] >( [] );
 
 	const importSelector = useSelect(
 		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
@@ -107,7 +117,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		e.preventDefault();
 		setSubmitAttemptCount( submitAttemptCount + 1 );
 		onImportStarted?.( !! selectedFile );
-		selectedFile && importCsvSubscribers( siteId, selectedFile );
+		selectedFile && importCsvSubscribers( siteId, selectedFile, [], selectedCategories );
 		! selectedFile && onImportFinished?.();
 	}
 
@@ -313,6 +323,19 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 							</FormFileUpload>
 						</VStack>
 					</div>
+
+					{ newsletterCategoriesData?.enabled &&
+						newsletterCategoriesData?.newsletterCategories.length > 0 && (
+							<CategoriesSection
+								siteId={ siteId }
+								siteUrl={ siteUrl }
+								newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
+								selectedCategories={ selectedCategories }
+								setSelectedCategories={ setSelectedCategories }
+								isWPCOMSite={ isWPCOMSite }
+							/>
+						) }
+
 					<AddSubscribersDisclaimer buttonLabel={ __( 'Add subscribers' ) } />
 					<Button
 						type="submit"

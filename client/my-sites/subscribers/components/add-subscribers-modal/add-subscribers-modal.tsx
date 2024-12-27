@@ -298,12 +298,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					) }
 					<UploadSubscribersForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
+						isWPCOMSite={ ! isJetpack }
 					/>
 				</>
 			) }
