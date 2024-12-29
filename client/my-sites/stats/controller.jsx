@@ -16,6 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
+import { appendQueryStringForRedirection } from './utils';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -222,12 +223,11 @@ export function site( context, next ) {
 }
 
 export function redirectToDaySummary( context ) {
-	// Query string from window.location.search differs depending on environment.
-	// Make sure to append the query if we are working inside wp-admin otherwise it will be lost.
-	const isWpAdmin = context.canonicalPath.includes( '/wp-admin/' );
-	const query =
-		isWpAdmin && context.query ? `&${ new URLSearchParams( context.query ).toString() }` : '';
-	const url = `/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }${ query }`;
+	const url = appendQueryStringForRedirection(
+		`/stats/day/${ context.params.module }/${ context.params.site }`,
+		context.query
+	);
+
 	page.redirect( url );
 }
 
