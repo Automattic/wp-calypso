@@ -79,7 +79,7 @@ import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
-import { parseQueryStringForOdysseyRedirect, getPathWithUpdatedQueryString } from './utils';
+import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -311,7 +311,6 @@ class StatsSite extends Component {
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
-			isOdyssey,
 			context,
 			supportsPlanUsage,
 			supportsUTMStatsFeature,
@@ -369,20 +368,14 @@ class StatsSite extends Component {
 
 		// Redirect to the daily views if the period dropdown is locked.
 		if ( shouldForceDefaultPeriod && period !== 'day' ) {
-			page.redirect( `/stats/day/${ slug }${ window.location.search }` );
+			page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
 			return;
 		}
 
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
 		if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
-			page.redirect(
-				parseQueryStringForOdysseyRedirect(
-					`/stats/hour/${ slug }${ window.location.search }`,
-					isOdyssey,
-					context.query
-				)
-			);
+			page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
 			return;
 		}
 
@@ -396,7 +389,9 @@ class StatsSite extends Component {
 			storedPeriod &&
 			storedPeriod !== period
 		) {
-			page.redirect( `/stats/${ storedPeriod }/${ slug }${ window.location.search }` );
+			page.redirect(
+				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
+			);
 			return;
 		}
 
@@ -854,7 +849,6 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
-			isOdyssey,
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,

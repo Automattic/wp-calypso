@@ -16,7 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
-import { parseQueryStringForOdysseyRedirect } from './utils';
+import { appendQueryStringForRedirection } from './utils';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -223,10 +223,8 @@ export function site( context, next ) {
 }
 
 export function redirectToDaySummary( context ) {
-	const isWpAdmin = context.canonicalPath.includes( '/wp-admin/' );
-	const url = parseQueryStringForOdysseyRedirect(
-		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`,
-		isWpAdmin,
+	const url = appendQueryStringForRedirection(
+		`/stats/day/${ context.params.module }/${ context.params.site }`,
 		context.query
 	);
 

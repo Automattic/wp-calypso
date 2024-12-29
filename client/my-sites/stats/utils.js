@@ -49,16 +49,14 @@ export const trackStatsAnalyticsEvent = ( eventName, properties = {} ) => {
 };
 
 /**
- * Prepare query string for redirection on Odyssey Stats
- * Query string from window.location.search differs depending on environment.
- * Make sure to append the query if we are working inside wp-admin otherwise it will be lost.
- * @param {string} baseUrl base URL with window.location.search for Calypso Stats
- * @param {boolean} isOdyssey is Stats running in wp-admin
+ * Prepare query string for redirection on both Calypso and Odyssey Stats
+ * Make sure to append the query if we are working inside wp-admin.
+ * @param {string} pathname base pathname
  * @param {Object} query query object
  * @returns pathname concatenated with query string
  */
-export const parseQueryStringForOdysseyRedirect = ( baseUrl, isOdyssey, query = {} ) => {
-	const queryString = isOdyssey && query ? `&${ new URLSearchParams( query ).toString() }` : '';
+export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
+	const queryString = new URLSearchParams( query ).toString();
 
-	return `${ baseUrl }${ queryString }`;
+	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
 };
