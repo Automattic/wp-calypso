@@ -119,7 +119,6 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
-		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"my-sites/add-ons": true,
