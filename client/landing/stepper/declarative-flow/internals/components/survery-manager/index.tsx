@@ -17,11 +17,11 @@ const MIGRATION_SURVEY_FLOWS = [
 	MIGRATION_SIGNUP_FLOW,
 ];
 
-const SurveyManager = () => {
+const SurveyManager = ( { disabled }: { disabled: boolean } ) => {
 	const { params } = useFlowNavigation();
 	const isEnLocale = useIsEnglishLocale();
 
-	if ( ! params.flow ) {
+	if ( ! params.flow || disabled ) {
 		return null;
 	}
 
