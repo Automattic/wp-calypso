@@ -163,6 +163,20 @@
             }
         }
     }
+
+	&.subpage-wrapper--add-mailbox {
+		.card-heading.new-mailbox-list__numbered-heading,
+		.section-header__label {
+			color: var(--studio-gray-100);
+			font-size: 1rem;
+			font-weight: 500;
+			margin-bottom: 1rem;
+		}
+
+		.card.new-mailbox {
+			border-radius: 4px;
+		}
+	}
 }
 
 .is-bulk-all-domains-page .layout__content .main {
