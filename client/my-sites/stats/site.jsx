@@ -156,19 +156,25 @@ const getDefaultDaysForPeriod = ( period ) => {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
-
-	const [ activeTabState, setActiveTabState ] = useState( null );
-	const [ activeLegend, setActiveLegend ] = useState( null );
 	const { period } = props.period;
-
+	const [ activeTabState, setActiveTabState ] = useState( () => getActiveTab( chartTab ) );
+	const [ activeLegend, setActiveLegend ] = useState( () =>
+		period !== 'hour' ? getActiveTab( chartTab ).legendOptions || [] : []
+	);
 	const queryDate = date.format( DATE_FORMAT );
+
+	const { supportedShortcutList } = useShortcuts();
 	const moduleStrings = statsStrings();
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
-
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const slug = useSelector( getSelectedSiteSlug );
+	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
+	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+
 	const upsellModalView = useSelector(
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
 	);
@@ -198,14 +204,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
 	);
-
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
-
-	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
-	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
-
-	const { supportedShortcutList } = useShortcuts();
 
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
