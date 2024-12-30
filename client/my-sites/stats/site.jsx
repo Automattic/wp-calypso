@@ -342,6 +342,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 	}, [ chartTab, period, activeTabState ] );
 
+	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
+	const isRunningOnWPAdmin = useMemo( () => document.getElementById( 'wpadminbar' ), [] );
+
 	// Sort out end date for chart.
 	const chartEnd = getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 
@@ -461,9 +464,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		'stats__flexible-grid-item--full--large',
 		'stats__flexible-grid-item--full--medium'
 	);
-
-	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
-	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
 	return (
 		<div className="stats">
