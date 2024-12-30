@@ -182,7 +182,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	const hasSiteLoadedFeatures = useSelector(
-		( state ) => isWPAdmin && hasLoadedSiteFeatures( state, siteId )
+		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
 	);
 
 	const shouldForceDefaultDateRange = useSelector( ( state ) =>
