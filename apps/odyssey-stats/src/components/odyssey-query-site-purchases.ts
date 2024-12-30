@@ -22,7 +22,7 @@ async function queryOdysseyQuerySitePurchases(
 	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId ) {
-		return;
+		return [];
 	}
 
 	const apiPath = shouldUseStatsBuiltInPurchasesApi
@@ -70,11 +70,7 @@ async function queryOdysseyQuerySitePurchasesFromMyJetpack(
 	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId || shouldUseStatsBuiltInPurchasesApi ) {
-		return {
-			data: [],
-			isFetching: false,
-			isError: false,
-		};
+		return [];
 	}
 	return wpcom.req
 		.get( {
