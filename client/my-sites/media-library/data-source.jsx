@@ -8,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePhotosIcon from './google-photos-icon';
@@ -32,12 +33,18 @@ export class MediaLibraryDataSource extends Component {
 	storeButtonRef = ( ref ) => ( this.buttonRef = ref );
 
 	togglePopover = () => {
-		this.setState( { popover: ! this.state.popover } );
+		const nextValue = ! this.state.popover;
+		this.setState( { popover: nextValue } );
+		recordTracksEvent( 'calypso_media_data_source_toggle', { expanded: nextValue } );
 	};
 
 	changeSource = ( newSource ) => () => {
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
+			recordTracksEvent( 'calypso_media_data_source_change', {
+				old_source: this.props.source,
+				new_source: newSource,
+			} );
 		}
 	};
 

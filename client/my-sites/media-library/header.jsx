@@ -7,6 +7,7 @@ import ButtonGroup from 'calypso/components/button-group';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import StickyPanel from 'calypso/components/sticky-panel';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { userCan } from 'calypso/lib/site/utils';
 import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -53,12 +54,31 @@ class MediaLibraryHeader extends Component {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
 		} );
+
+		recordTracksEvent( 'calypso_media_add_via_url_toggle', { expanded: state } );
 	};
 
 	toggleMoreOptions = ( state ) => {
 		this.setState( {
 			isMoreOptionsVisible: state,
 		} );
+
+		recordTracksEvent( 'calypso_media_more_options_toggle', { expanded: state } );
+	};
+
+	onViewDetails = () => {
+		this.props.onViewDetails();
+		recordTracksEvent( 'calypso_media_editor_open' );
+	};
+
+	onDeleteItem = () => {
+		this.props.onDeleteItem();
+		recordTracksEvent( 'calypso_media_item_delete' );
+	};
+
+	onMediaScaleChange = ( value ) => {
+		this.props.onMediaScaleChange( value );
+		recordTracksEvent( 'calypso_media_scale_change', { value } );
 	};
 
 	renderUploadButtons = () => {
@@ -127,12 +147,12 @@ class MediaLibraryHeader extends Component {
 				{ this.renderUploadButtons() }
 				<MediaModalSecondaryActions
 					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDelete={ this.props.onDeleteItem }
+					onViewDetails={ this.onViewDetails }
+					onDelete={ this.onDeleteItem }
 					site={ this.props.site }
 				/>
 				<MediaLibraryScale
-					onChange={ this.props.onMediaScaleChange }
+					onChange={ this.onMediaScaleChange }
 					mediaScale={ this.props.mediaScale }
 				/>
 			</Card>
