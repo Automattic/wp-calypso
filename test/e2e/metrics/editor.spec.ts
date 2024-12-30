@@ -8,8 +8,8 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	PostsPage,
-	Metrics,
 } from '@automattic/calypso-e2e';
+import { Metrics } from '@wordpress/e2e-test-utils-playwright';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Metrics: Editor' ), function () {
 
 	it( 'Start and fill a test post', async function () {
 		postsPage = new PostsPage( page );
-		const metrics = new Metrics( page );
+		const metrics = await new Metrics( { page } );
 		await postsPage.visit();
 		await postsPage.newPost();
 		editorPage = new EditorPage( page );
