@@ -2,7 +2,9 @@ import pageRedirect from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { DataViews, Operator } from '@wordpress/dataviews';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import moment from 'moment';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -12,12 +14,9 @@ import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
-import { setPage } from 'calypso/state/billing-transactions/ui/actions';
-import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { IAppState } from 'calypso/state/types';
-import { filterTransactions, paginateTransactions } from './filter-transactions';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -25,7 +24,7 @@ import {
 	renderTransactionQuantitySummary,
 } from './utils';
 
-import '@wordpress/dataviews/build-style/style.css';
+import 'calypso/components/dataviews/style.scss';
 import './style.scss';
 
 const SERVICES = [
@@ -83,46 +82,154 @@ export interface BillingHistoryListProps {
 }
 
 export interface BillingHistoryListConnectedProps {
-	app?: string;
-	date: { newest: boolean };
-	page: number;
-	pageSize: number;
-	query: string;
-	total: number;
 	transactions: BillingTransaction[];
 	sendingBillingReceiptEmail: ( receiptId: string ) => boolean;
 	moment: typeof moment;
 	sendBillingReceiptEmail: ( receiptId: string ) => void;
-	setPage: ( transactionType: string, page: number ) => void;
 }
 
 type Props = BillingHistoryListProps & BillingHistoryListConnectedProps & LocalizeProps;
 
 const BillingHistoryListDataView: React.FC< Props > = ( {
 	getReceiptUrlFor,
-	page,
-	pageSize,
-	total,
 	transactions = [],
 	sendBillingReceiptEmail,
-	setPage,
 	translate,
 	moment,
 } ) => {
-	const onChangeView = ( newView: { page?: number } ) => {
-		const newPage = typeof newView.page === 'number' ? newView.page : 1;
-		if ( newView.page !== page ) {
-			setPage( 'past', newPage );
+	const [ view, setView ] = useState( {
+		type: 'table' as const,
+		search: '',
+		filters: [] as Array< {
+			field: string;
+			operator: Operator;
+			value: string | string[];
+		} >,
+		page: 1,
+		perPage: 10,
+		sort: {
+			field: 'date',
+			direction: 'desc' as const,
+		},
+		titleField: 'title',
+		fields: [ 'date', 'service', 'amount' ],
+		layout: {},
+	} );
+
+	// Apply filtering
+	const filteredTransactions = transactions.filter( ( transaction ) => {
+		// Handle search
+		if ( view.search ) {
+			const searchTerm = view.search.toLowerCase();
+			const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
+			const searchableFields = [
+				transaction.service,
+				transactionItem.product,
+				transactionItem.variation,
+				transactionItem.domain,
+				moment( transaction.date ).format( 'll' ),
+				transaction.amount,
+			];
+
+			if (
+				! searchableFields.some(
+					( field ) => field && field.toString().toLowerCase().includes( searchTerm )
+				)
+			) {
+				return false;
+			}
 		}
+
+		// Handle filters
+		if ( view.filters.length === 0 ) {
+			return true;
+		}
+
+		return view.filters.every( ( filter ) => {
+			if ( filter.field === 'service' && filter.value ) {
+				return transaction.service === filter.value;
+			}
+			return true;
+		} );
+	} );
+
+	// Apply sorting
+	const sortedTransactions = [ ...filteredTransactions ].sort( ( a, b ) => {
+		let comparison = 0;
+		switch ( view.sort.field ) {
+			case 'date':
+				comparison = new Date( a.date ).getTime() - new Date( b.date ).getTime();
+				break;
+			case 'service': {
+				const aService = a.items.length > 0 ? a.items[ 0 ].variation : a.service;
+				const bService = b.items.length > 0 ? b.items[ 0 ].variation : b.service;
+				comparison = ( aService || '' ).localeCompare( bService || '' );
+				break;
+			}
+			case 'amount':
+				comparison = a.amount_integer - b.amount_integer;
+				break;
+			default:
+				return 0;
+		}
+		return view.sort.direction === 'desc' ? -comparison : comparison;
+	} );
+
+	const startIndex = ( view.page - 1 ) * view.perPage;
+	const paginatedTransactions = sortedTransactions.slice( startIndex, startIndex + view.perPage );
+
+	const onChangeView = ( newView: {
+		page?: number;
+		perPage?: number;
+		sort?: {
+			field: string;
+			direction: 'asc' | 'desc';
+		};
+		filters?: Array< {
+			field: string;
+			operator: Operator;
+			value: string | string[];
+		} >;
+		search?: string;
+	} ) => {
+		setView( ( currentView ) => {
+			const updatedView = { ...currentView };
+
+			// Update only the changed properties
+			if ( newView.page !== undefined && newView.page !== currentView.page ) {
+				updatedView.page = newView.page;
+			}
+
+			if ( newView.perPage && newView.perPage !== currentView.perPage ) {
+				updatedView.perPage = newView.perPage;
+				updatedView.page = 1; // Reset to first page
+			}
+
+			if ( newView.sort && ! isEqual( newView.sort, currentView.sort ) ) {
+				updatedView.sort = newView.sort as typeof currentView.sort;
+			}
+
+			if ( newView.filters && ! isEqual( newView.filters, currentView.filters ) ) {
+				updatedView.filters = newView.filters;
+				updatedView.page = 1; // Reset to first page
+			}
+
+			if ( newView.search !== undefined ) {
+				updatedView.search = newView.search;
+			}
+
+			return updatedView;
+		} );
 	};
 
 	const getFields = () => [
 		{
 			id: 'date',
 			label: 'Date',
-			type: 'datetime' as const,
+			type: 'text' as const,
 			enableGlobalSearch: true,
 			enableHiding: false,
+			enableSorting: true,
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				return item.date;
 			},
@@ -132,19 +239,24 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 		},
 		{
 			id: 'service',
-			label: 'Summary',
+			label: 'App',
 			type: 'text' as const,
 			elements: SERVICES,
 			enableGlobalSearch: true,
 			enableHiding: false,
+			enableSorting: true,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return <div>{ serviceName( item, translate ) }</div>;
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
-				return item.service;
-			},
-			filterBy: {
-				operators: [ 'isAny', 'is', 'isAny' ] as Operator[],
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				if ( transactionItem.product === transactionItem.variation ) {
+					return transactionItem.product;
+				}
+				return capitalPDangit( transactionItem.variation );
 			},
 		},
 		{
@@ -152,26 +264,15 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			label: 'Amount',
 			type: 'text' as const,
 			enableGlobalSearch: true,
+			enableSorting: true,
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				return item.amount_integer;
+			},
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return <TransactionAmount transaction={ item } />;
 			},
 		},
 	];
-
-	const getView = () => ( {
-		type: 'table' as const,
-		search: '',
-		filters: [],
-		page,
-		perPage: pageSize,
-		sort: {
-			field: 'date',
-			direction: 'desc' as const,
-		},
-		titleField: 'title',
-		fields: [ 'date', 'service', 'amount' ],
-		layout: {},
-	} );
 
 	const getActions = () => [
 		{
@@ -201,13 +302,13 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 		<div className="billing-history">
 			<div className="dataviews-wrapper">
 				<DataViews
-					data={ transactions || [] }
+					data={ paginatedTransactions }
 					paginationInfo={ {
-						totalItems: total,
-						totalPages: Math.ceil( total / pageSize ),
+						totalItems: transactions.length,
+						totalPages: Math.ceil( transactions.length / view.perPage ),
 					} }
 					fields={ getFields() }
-					view={ getView() }
+					view={ view }
 					search
 					searchLabel="Search receipts"
 					onChangeView={ onChangeView }
@@ -226,28 +327,29 @@ function getIsSendingReceiptEmail( state: IAppState ) {
 	};
 }
 
+const filterTransactionsBySite = (
+	transactions: BillingTransaction[] | null | undefined,
+	siteId: string | number | null | undefined
+): BillingTransaction[] => {
+	if ( ! siteId || ! transactions ) {
+		return transactions ?? [];
+	}
+	return transactions.filter( ( transaction ) =>
+		transaction.items.some( ( item ) => String( item.site_id ) === String( siteId ) )
+	);
+};
+
 export default connect(
 	( state: IAppState, { siteId }: BillingHistoryListProps ) => {
 		const transactions = getPastBillingTransactions( state );
-		const pageSize = 10;
-		const filteredTransactions = transactions && filterTransactions( transactions, {}, siteId );
-
-		const uiState = getBillingTransactionFilters( state, 'past' );
-		const currentPage = uiState?.page ? uiState.page : 1;
-
-		const paginatedTransactions =
-			filteredTransactions && paginateTransactions( filteredTransactions, currentPage, pageSize );
+		const filteredBySite = filterTransactionsBySite( transactions, siteId );
 
 		return {
-			page: currentPage,
-			pageSize,
-			total: filteredTransactions?.length ?? 0,
-			transactions: paginatedTransactions,
+			transactions: filteredBySite,
 			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{
-		setPage,
 		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
 	}
 )( localize( withLocalizedMoment( BillingHistoryListDataView ) ) );
