@@ -7,6 +7,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
+import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -59,6 +60,17 @@ const SitesDashboardBannersManager = ( {
 				/>
 			</div>
 		);
+	}
+
+	// TODO: refactor banners to use this pattern
+	// Define banner creators in priority order
+	const bannerCreators = [ useRestoreSitesBanner ];
+	// Return the first banner that should show
+	for ( const createBanner of bannerCreators ) {
+		const banner = createBanner();
+		if ( banner.shouldShow() ) {
+			return <div className="sites-banner-container">{ banner.render() }</div>;
+		}
 	}
 
 	if ( showA8CForAgenciesBanner ) {
