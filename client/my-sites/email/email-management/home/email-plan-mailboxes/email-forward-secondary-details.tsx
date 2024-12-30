@@ -4,12 +4,13 @@ import type { Mailbox } from 'calypso/data/emails/types';
 
 type Props = {
 	mailbox: Mailbox;
+	hideIcon?: boolean;
 };
-function EmailForwardSecondaryDetails( { mailbox }: Props ) {
+function EmailForwardSecondaryDetails( { mailbox, hideIcon }: Props ) {
 	if ( isEmailForward( mailbox ) ) {
 		return (
 			<div className="email-plan-mailboxes-list__mailbox-secondary-details">
-				<Gridicon icon="chevron-right" />
+				{ ! hideIcon && <Gridicon icon="chevron-right" /> }
 				<span>{ getEmailForwardAddress( mailbox ) }</span>
 			</div>
 		);

@@ -174,12 +174,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
+			const lastPreAuthWalledStepIndex =
+				flowSteps.findIndex( ( step ) => step.slug === 'user' ) - 1;
+			const lastPreAuthWalledStep =
+				lastPreAuthWalledStepIndex < 0 ? null : flowSteps[ lastPreAuthWalledStepIndex ];
+
 			return (
 				<StepComponent
 					navigation={ {
 						submit() {
 							navigate( firstAuthWalledStep.slug, undefined, true );
 						},
+						...( lastPreAuthWalledStep && {
+							goBack() {
+								navigate( lastPreAuthWalledStep.slug, undefined, true );
+							},
+						} ),
 					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }

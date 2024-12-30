@@ -1,9 +1,4 @@
-import {
-	Design,
-	StyleVariation,
-	isAssemblerDesign,
-	isAssemblerSupported,
-} from '@automattic/design-picker';
+import { Design, StyleVariation } from '@automattic/design-picker';
 import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
@@ -82,7 +77,6 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: isAssemblerDesign( design ) && isAssemblerSupported(),
 		assembler_source: getAssemblerSource( design ),
 	};
 }

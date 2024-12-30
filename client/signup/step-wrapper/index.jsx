@@ -9,6 +9,7 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { isReskinnedFlow } from '../is-flow';
 import './style.scss';
 
@@ -67,7 +68,7 @@ class StepWrapper extends Component {
 				backUrl={ this.props.backUrl }
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
-				allowBackFirstStep={ this.props.allowBackFirstStep }
+				allowBackFirstStep={ this.props.allowBackFirstStep || !! this.props.backUrl }
 				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
 				queryParams={ this.props.queryParams }
 			/>
@@ -265,8 +266,14 @@ class StepWrapper extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
+	const backToParam = getCurrentQueryArguments( state )?.back_to?.toString();
+	const backTo = backToParam?.startsWith( '/' ) ? backToParam : undefined;
+
+	const backUrl = ownProps.backUrl ?? backTo;
+
 	return {
+		backUrl,
 		userLoggedIn: isUserLoggedIn( state ),
 	};
 } )( localize( StepWrapper ) );

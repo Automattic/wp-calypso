@@ -6,12 +6,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
-import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import AddNewSite from 'calypso/components/add-new-site';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 

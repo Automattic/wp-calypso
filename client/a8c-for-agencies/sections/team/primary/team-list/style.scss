@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .team-list {
-	.multi-sites-dashboard-layout__body {
+	.hosting-dashboard-layout__body {
 		margin-block-end: 16px;
 
 		@include break-medium {
@@ -14,7 +14,7 @@
 		display: none;
 	}
 
-	.multi-sites-dashboard-layout__navigation-wrapper {
+	.hosting-dashboard-layout__navigation-wrapper {
 		margin-block-end: 16px;
 		max-width: 100%;
 

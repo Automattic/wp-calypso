@@ -231,8 +231,12 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
 		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
 		const shouldNotHideBasedOnRef = [ GUIDED_ONBOARDING_FLOW_REFERRER ].includes( ref );
-
-		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideBasedOnRef;
+		const shouldNotHideIfBackToIsSet = Boolean( urlQueryParams.get( 'back_to' ) );
+		return (
+			( shouldHideBasedOnRef || shouldHideBasedOnVariant ) &&
+			! shouldNotHideBasedOnRef &&
+			! shouldNotHideIfBackToIsSet
+		);
 	};
 
 	return (
@@ -243,6 +247,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				flowName="site-migration"
 				className="import__onboarding-page"
 				hideBack={ shouldHideBackButton() }
+				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
 				hideSkip
 				hideFormattedHeader
 				goBack={ navigation?.goBack }
