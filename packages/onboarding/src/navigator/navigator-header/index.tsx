@@ -22,10 +22,10 @@ const NavigatorHeader = ( { title, description, hideBack, onBack }: Props ) => {
 				{ ! hideBack && (
 					<NavigatorBackButton
 						as={ Button }
-						title={ translate( 'Back' ) }
+						title={ translate( 'Back back' ) }
 						borderless
 						aria-label={ translate( 'Navigate to the previous view' ) }
-						onClick={ onBack }
+						// onClick={ onBack }
 					>
 						<Gridicon icon="chevron-left" size={ 16 } />
 					</NavigatorBackButton>

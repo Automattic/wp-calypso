@@ -291,7 +291,7 @@ function HundredYearPlanStepWrapper( props: Props ) {
 			<StepContainer
 				stepName={ stepName }
 				isWideLayout
-				hideBack
+				// hideBack
 				flowName={ flowName }
 				hideFormattedHeader
 				stepContent={

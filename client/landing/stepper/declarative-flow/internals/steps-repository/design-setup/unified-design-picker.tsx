@@ -728,7 +728,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function handleBackClick() {
+		goBack?.();
+		return;
+		
 		if ( isPreviewingDesign ) {
+			console.log('inside isPreviewingDesign')
 			recordTracksEvent(
 				'calypso_signup_design_preview_exit',
 				getEventPropsByDesign( selectedDesign as Design, {
@@ -741,6 +745,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			resetPreview();
 			return;
 		}
+
+		console.log('going back')
 
 		designPickerFilters.resetFilters();
 		goBack?.();
@@ -908,7 +914,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideBack={ shouldHideActionButtons }
+				// hideBack={ shouldHideActionButtons }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				customizedActionButtons={ ! shouldHideActionButtons ? actionButtons : undefined }

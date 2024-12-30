@@ -83,7 +83,7 @@ const useScreens = ( {
 						),
 						actionText: translate( 'Save styles' ),
 						onSelect: onScreenSelect,
-						onBack: onScreenBack,
+						// onBack: onScreenBack,
 						onSubmit: onScreenSubmit,
 					},
 				variations &&
@@ -95,6 +95,7 @@ const useScreens = ( {
 						slug: 'color-palettes',
 						checked: !! selectedColorVariation,
 						icon: color,
+						// hideBack: true,
 						label: translate( 'Colors' ),
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
@@ -115,7 +116,7 @@ const useScreens = ( {
 						),
 						actionText: translate( 'Save colors' ),
 						onSelect: onScreenSelect,
-						onBack: onScreenBack,
+						// onBack: onScreenBack,
 						onSubmit: onScreenSubmit,
 					},
 				variations &&

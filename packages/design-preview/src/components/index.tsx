@@ -106,7 +106,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		onSelectColorVariation,
 		onSelectFontVariation,
 		onScreenSelect,
-		onScreenBack,
+		onScreenBack: () => { console.log('hello') },
 		onScreenSubmit,
 	} );
 

@@ -29,7 +29,7 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 						title={ <>{ title ?? label }</> }
 						description={ description }
 						hideBack={ hideBack }
-						onBack={ () => onBack?.( slug ) }
+						// onBack={ () => onBack?.( slug ) }
 					/>
 					{ content }
 					<div className="navigator-screen__footer">
@@ -39,7 +39,7 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 							title={ translate( 'Back' ) }
 							borderless
 							aria-label={ translate( 'Navigate to the previous view' ) }
-							onClick={ () => onBack?.( slug ) }
+							onClick={ () => console.log('back') }
 						>
 							<Gridicon icon="chevron-left" size={ 18 } />
 							{ translate( 'Back' ) }
