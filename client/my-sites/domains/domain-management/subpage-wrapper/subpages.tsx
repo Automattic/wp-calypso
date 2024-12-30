@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
+import MailboxHeader from './headers/add-mailbox-header';
 import CompareEmailProvidersHeader from './headers/compare-email-providers';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 import DnsRecordHeader, {
@@ -21,6 +22,7 @@ type SubpageWrapperParamsType = {
 };
 
 // Subpage keys
+export const ADD_MAILBOX = 'add-mailbox';
 export const ADD_FORWARDING_EMAIL = 'add-forwarding-email';
 export const COMPARE_EMAIL_PROVIDERS = 'compare-email-providers';
 export const DNS_RECORDS = 'dns-records';
@@ -62,6 +64,12 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
 		context: 'edit',
+	},
+	[ ADD_MAILBOX ]: {
+		CustomHeader: MailboxHeader,
+		showFormHeader: false,
+		showPageHeader: false,
+		customFormHeader: __( 'New mailbox' ),
 	},
 };
 
