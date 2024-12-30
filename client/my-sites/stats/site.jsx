@@ -317,13 +317,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	// Note: This is only used in the empty version of the module.
 	// There's a similar function inside stats-module/index.jsx that is used when we have content.
-	const getStatHref = ( path, query ) => {
-		const paramsValid = props.period && path && slug;
+	const getStatHref = ( modulePath, query ) => {
+		const paramsValid = props.period && modulePath && slug;
 		if ( ! paramsValid ) {
 			return undefined;
 		}
 
-		let url = `/stats/${ props.period.period }/${ path }/${ slug }`;
+		let url = `/stats/${ props.period.period }/${ modulePath }/${ slug }`;
 
 		if ( query?.start_date ) {
 			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
