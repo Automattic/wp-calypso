@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -810,4 +810,4 @@ const StatsSite = ( props ) => {
 	);
 };
 
-export default StatsSite;
+export default localize( StatsSite );
