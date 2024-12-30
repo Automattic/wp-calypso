@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -20,6 +19,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -31,6 +31,7 @@ import {
 	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_PAGE_TRAFFIC,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -41,13 +42,12 @@ import {
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
-import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -58,14 +58,12 @@ import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
 import StatsModuleDownloads from './features/modules/stats-downloads';
-import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
-import StatsFeedbackController from './feedback';
-import HighlightsSection from './highlights-section';
+import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
@@ -81,17 +79,12 @@ import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import StatsUpsellModal from './stats-upsell-modal';
-import { getPathWithUpdatedQueryString } from './utils';
+import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 	return module.key;
 } );
-
-const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
-	period,
-	date: endOf,
-} ) );
 
 const chartRangeToQuery = memoizeLast( ( chartRange ) => ( {
 	period: 'day',
@@ -193,7 +186,12 @@ class StatsSite extends Component {
 		}
 
 		// Determine the target period for the navigation.
-		const targetPeriod = period === 'day' ? 'hour' : 'day';
+		let targetPeriod = 'day';
+		if ( period === 'day' ) {
+			targetPeriod = 'hour';
+		} else if ( period === 'year' ) {
+			targetPeriod = 'month';
+		}
 
 		const path = `/stats/${ targetPeriod }/${ this.props.slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
@@ -201,17 +199,14 @@ class StatsSite extends Component {
 		return url;
 	};
 
-	barClick = ( isNewDateFilteringEnabled, bar ) => {
+	barClick = ( shouldForceDefaultDateRange, bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-
-		if ( ! isNewDateFilteringEnabled ) {
-			page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
-			return;
-		}
 
 		const { period: barPeriod } = this.props.period;
 		// Stop navigation if the bar period is hour.
-		if ( barPeriod === 'hour' ) {
+		// Stop navigation if date control is locked to prevent navigation to hourly stats.
+		// TODO: Determine if we should allow navigation to hourly stats when STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS is locked.
+		if ( barPeriod === 'hour' || shouldForceDefaultDateRange ) {
 			return;
 		}
 
@@ -240,27 +235,42 @@ class StatsSite extends Component {
 		}
 	}
 
-	getValidDateOrNullFromInput( inputDate ) {
+	getValidDateOrNullFromInput( inputDate, inputKey ) {
+		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			return null;
+			const { hasSiteLoadedFeatures, shouldForceDefaultDateRange, supportedShortcutList } =
+				this.props;
+
+			const appliedShortcutId = localStorage.getItem(
+				'jetpack_stats_stored_date_range_shortcut_id'
+			);
+			const appliedShortcut = supportedShortcutList.find(
+				( shortcut ) => shortcut.id === appliedShortcutId
+			);
+
+			if ( appliedShortcut ) {
+				const storedValue = appliedShortcut[ inputKey ];
+				const isStoredValueValid = moment( storedValue ).isValid();
+
+				return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
+					? storedValue
+					: null;
+			}
 		}
+
 		const isValid = moment( inputDate ).isValid();
+
 		return isValid ? inputDate : null;
 	}
 
 	// Return a default amount of days to subtracts from the present day depending on the period selected.
 	// Used in case no starting date is present in the URL.
-	getDefaultDaysForPeriod( period, defaultSevenDaysForPeriodDay = false ) {
+	getDefaultDaysForPeriod( period ) {
 		switch ( period ) {
 			case 'hour':
 				return 1;
 			case 'day':
-				// TODO: Temporary fix for the new date filtering feature.
-				if ( defaultSevenDaysForPeriodDay ) {
-					return 7;
-				}
-
-				return 30;
+				return 7;
 			case 'week':
 				return 12 * 7; // ~last 3 months
 			case 'month':
@@ -302,32 +312,23 @@ class StatsSite extends Component {
 			isSitePrivate,
 			isOdysseyStats,
 			context,
-			moduleSettings,
 			supportsPlanUsage,
-			supportsEmailStats,
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
 			isOldJetpack,
+			hasSiteLoadedFeatures,
 			shouldForceDefaultDateRange,
+			shouldForceDefaultPeriod,
 			supportUserFeedback,
 			momentSiteZone,
 			wpcomShowUpsell,
 		} = this.props;
-		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
-		let defaultPeriod = PAST_SEVEN_DAYS;
-
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 		const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 		const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
 
-		// Set the current period based on the module settings.
-		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
-		if ( moduleSettings?.highlights?.period_in_days === 30 ) {
-			defaultPeriod = PAST_THIRTY_DAYS;
-		}
-
 		const queryDate = date.format( DATE_FORMAT );
-		const { period, endOf } = this.props.period;
+		const { period } = this.props.period;
 		const moduleStrings = statsStrings();
 
 		// Set up a custom range for the chart.
@@ -335,7 +336,7 @@ class StatsSite extends Component {
 		let customChartRange = null;
 
 		// Sort out end date for chart.
-		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 
 		if ( chartEnd ) {
 			customChartRange = { chartEnd };
@@ -346,8 +347,8 @@ class StatsSite extends Component {
 		}
 
 		// Find the quantity of bars for the chart.
-		let daysInRange = this.getDefaultDaysForPeriod( period, isNewDateFilteringEnabled );
-		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+		let daysInRange = this.getDefaultDaysForPeriod( period );
+		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
 		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 
 		if ( chartStart && isSameOrBefore ) {
@@ -365,10 +366,32 @@ class StatsSite extends Component {
 
 		customChartRange.daysInRange = daysInRange;
 
+		// Redirect to the daily views if the period dropdown is locked.
+		if ( shouldForceDefaultPeriod && period !== 'day' ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
+			return;
+		}
+
 		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
 		// If it's single day period, redirect to hourly stats.
-		if ( period === 'day' && daysInRange === 1 ) {
-			page.redirect( `/stats/hour/${ slug }${ window.location.search }` );
+		if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
+			return;
+		}
+
+		// Use the stored period if it's different from the current period.
+		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		if (
+			hasSiteLoadedFeatures &&
+			! shouldForceDefaultPeriod &&
+			// Avoid the infinite redirect loop between single day period and hourly views.
+			period !== 'hour' &&
+			storedPeriod &&
+			storedPeriod !== period
+		) {
+			page.redirect(
+				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
+			);
 			return;
 		}
 
@@ -390,7 +413,7 @@ class StatsSite extends Component {
 		);
 
 		// Force the default date range to be 7 days if the 30-day option is locked.
-		if ( shouldForceDefaultDateRange ) {
+		if ( shouldForceDefaultDateRange && period !== 'hour' ) {
 			// For ChartTabs
 			customChartQuantity = 7;
 
@@ -402,9 +425,7 @@ class StatsSite extends Component {
 				.format( DATE_FORMAT );
 		}
 
-		const query = isNewDateFilteringEnabled
-			? chartRangeToQuery( customChartRange )
-			: memoizedQuery( period, endOf.format( DATE_FORMAT ) );
+		const query = chartRangeToQuery( customChartRange );
 
 		// For period option links
 		const traffic = {
@@ -433,6 +454,9 @@ class StatsSite extends Component {
 			'stats__flexible-grid-item--full--large',
 			'stats__flexible-grid-item--full--medium'
 		);
+
+		// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
+		const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
 		return (
 			<div className="stats">
@@ -466,118 +490,55 @@ class StatsSite extends Component {
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
-				{ ! isNewDateFilteringEnabled && (
-					// @TODO: remove highlight section completely once flag is released
-					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
-				) }
-				{ isNewDateFilteringEnabled && (
-					// moves date range block into new location
-					<StickyPanel headerId={ isOdysseyStats ? 'wpadminbar' : 'header' }>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation
-								date={ date }
+				<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation
+							date={ date }
+							period={ period }
+							url={ `/stats/${ period }/${ slug }` }
+							queryParams={ context.query }
+							pathTemplate={ pathTemplate }
+							charts={ CHARTS }
+							availableLegend={ this.getAvailableLegend() }
+							activeTab={ getActiveTab( this.props.chartTab ) }
+							activeLegend={ this.state.activeLegend }
+							onChangeLegend={ this.onChangeLegend }
+							isWithNewDateControl
+							showArrows={ ! wpcomShowUpsell }
+							slug={ slug }
+							dateRange={ customChartRange }
+						>
+							{ ' ' }
+							<DatePicker
 								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-								queryParams={ context.query }
-								pathTemplate={ pathTemplate }
-								charts={ CHARTS }
-								availableLegend={ this.getAvailableLegend() }
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								onChangeLegend={ this.onChangeLegend }
-								isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
-								isWithNewDateControl
-								showArrows={ ! wpcomShowUpsell }
-								slug={ slug }
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+								isShort
 								dateRange={ customChartRange }
-							>
-								{ ' ' }
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-									isShort
-									dateRange={ customChartRange }
-									isNewDateFilteringEnabled // @TODO:remove this prop once we release new date filtering
-								/>
-							</StatsPeriodNavigation>
-						</StatsPeriodHeader>
-					</StickyPanel>
-				) }
+							/>
+						</StatsPeriodNavigation>
+					</StatsPeriodHeader>
+				</StickyPanel>
 				<div id="my-stats-content" className={ wrapperClass }>
-					<>
-						{ ! isNewDateFilteringEnabled && (
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
-									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-									queryParams={ context.query }
-									pathTemplate={ pathTemplate }
-									charts={ CHARTS }
-									availableLegend={ this.getAvailableLegend() }
-									activeTab={ getActiveTab( this.props.chartTab ) }
-									activeLegend={ this.state.activeLegend }
-									onChangeLegend={ this.onChangeLegend }
-									isWithNewDateControl
-									showArrows
-									slug={ slug }
-									dateRange={ customChartRange }
-								>
-									{ ' ' }
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-										isShort
-										isNewDateFilteringEnabled={ false }
-									/>
-								</StatsPeriodNavigation>
-							</StatsPeriodHeader>
-						) }
-
-						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
-							<ChartTabs
-								slug={ slug }
-								period={ this.props.period }
-								queryParams={ context.query }
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
-								className="is-date-filtering-enabled"
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-								showChartHeader // in the new date filtering enabled experience there is a new chart header to show
-								isNewDateFilteringEnabled
-							/>
-						) }
-						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick.bind( this, isNewDateFilteringEnabled ) }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-								customQuantity={ customChartQuantity }
-								customRange={ customChartRange }
-							/>
-						) }
-					</>
+					<ChartTabs
+						slug={ slug }
+						period={ this.props.period }
+						queryParams={ context.query }
+						activeTab={ getActiveTab( this.props.chartTab ) }
+						activeLegend={ this.state.activeLegend }
+						availableLegend={ this.getAvailableLegend() }
+						onChangeLegend={ this.onChangeLegend }
+						barClick={ this.barClick.bind( this, shouldForceDefaultDateRange ) }
+						className="is-date-filtering-enabled"
+						switchTab={ this.switchChart }
+						charts={ CHARTS }
+						queryDate={ queryDate }
+						chartTab={ this.props.chartTab }
+						customQuantity={ customChartQuantity }
+						customRange={ customChartRange }
+					/>
 
 					{ ! wpcomShowUpsell && (
 						<>
@@ -651,17 +612,6 @@ class StatsSite extends Component {
 									/>
 								) }
 
-								{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-								{ ! isNewDateFilteringEnabled && supportsEmailStats && (
-									<StatsModuleEmails
-										period={ this.props.period }
-										moduleStrings={ moduleStrings.emails }
-										query={ query }
-										summaryUrl={ this.getStatHref( 'emails', query ) }
-										className={ halfWidthModuleClasses }
-									/>
-								) }
-
 								<StatsModuleSearch
 									moduleStrings={ moduleStrings.search }
 									period={ this.props.period }
@@ -730,7 +680,7 @@ class StatsSite extends Component {
 				{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
 					<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				) }
-				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
+				{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
@@ -759,11 +709,6 @@ class StatsSite extends Component {
 				actionCallback={ this.enableStatsModule }
 			/>
 		);
-	}
-
-	componentDidMount() {
-		// TODO: Migrate to a query component pattern (i.e. <QueryStatsModuleSettings siteId={siteId} />).
-		this.props.requestModuleSettings( this.props.siteId );
 	}
 
 	renderInsufficientPermissionsPage() {
@@ -845,6 +790,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
@@ -867,22 +813,31 @@ export default connect(
 
 		const {
 			supportsPlanUsage,
-			supportsEmailStats,
 			supportsUTMStats,
 			supportsDevicesStats,
 			isOldJetpack,
 			supportUserFeedback,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
+		// Odyssey Stats does not need loading features to determine gated features.
+		const hasSiteLoadedFeatures = isWPAdmin || hasLoadedSiteFeatures( state, siteId );
 		// Determine if the default date range should be forced to 7 days.
 		const shouldForceDefaultDateRange = shouldGateStats(
 			state,
 			siteId,
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
+		const shouldForceDefaultPeriod = shouldGateStats(
+			state,
+			siteId,
+			STATS_FEATURE_INTERVAL_DROPDOWN_WEEK
+		);
+
 		const wpcomShowUpsell =
 			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC );
+
+		const { supportedShortcutList } = getShortcuts( state, {}, undefined );
 
 		return {
 			canUserViewStats,
@@ -894,25 +849,25 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
-			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
-			supportsEmailStats,
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			supportUserFeedback,
 			isOldJetpack,
+			hasSiteLoadedFeatures,
 			shouldForceDefaultDateRange,
+			shouldForceDefaultPeriod,
 			momentSiteZone: getMomentSiteZone( state, siteId ),
 			wpcomShowUpsell,
+			supportedShortcutList,
 		};
 	},
 	{
 		recordGoogleEvent,
 		enableJetpackStatsModule,
 		recordTracksEvent,
-		requestModuleSettings,
 	}
 )( localize( StatsSite ) );

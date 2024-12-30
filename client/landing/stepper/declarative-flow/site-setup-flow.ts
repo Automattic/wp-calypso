@@ -1,26 +1,29 @@
-import { Onboard } from '@automattic/data-stores';
-import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
+import {
+	Onboard,
+	updateLaunchpadSettings,
+	getThemeIdFromStylesheet,
+} from '@automattic/data-stores';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
+import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -31,12 +34,10 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type {
-	OnboardSelect,
-	SiteSelect,
-	UserSelect,
-	StepperInternalSelect,
-} from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -48,27 +49,16 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
+function useGoalsAtFrontExperimentQueryParam() {
+	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
+}
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
-	useSideEffect( currentStep, navigate ) {
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-
-		useEffect( () => {
-			// Require to start the flow from the first step
-			if ( currentStep === 'pattern-assembler' && ! selectedDesign ) {
-				navigate( 'goals' );
-			}
-		}, [] );
-	},
-
 	useSteps() {
-		// We have already checked the value has loaded in useAssertConditions
-		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const steps = [
 			STEPS.GOALS,
@@ -76,7 +66,6 @@ const siteSetupFlow: Flow = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -100,20 +89,13 @@ const siteSetupFlow: Flow = {
 		];
 
 		if ( isGoalsAtFrontExperiment ) {
-			// The user has already seen the goals step in the `onboarding` flow
-			// TODO Ensure that DESIGN_CHOICES is at the front if the user is Big Sky eligible
-			steps.splice( 0, 4 );
+			return [ STEPS.PROCESSING, STEPS.ERROR ];
 		}
 
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
-
-		const stepData = useSelect(
-			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
-			[]
-		);
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -165,12 +147,8 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 
-		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
-
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-
-		const isDesignChoicesStepEnabled =
-			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+		const isDesignChoicesStepEnabled = isBigSkyEligible;
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -218,7 +196,7 @@ const siteSetupFlow: Flow = {
 
 					const settings = {
 						site_intent: siteIntent,
-						site_goals: goals,
+						...( goals.length && { site_goals: goals } ),
 						launchpad_screen: undefined as string | undefined,
 					};
 
@@ -269,7 +247,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipSelectedDesign' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -292,31 +270,14 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const { selectedDesign: _selectedDesign } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'pattern-assembler' );
-					}
-
 					return navigate( 'processing' );
 				}
-				case 'pattern-assembler':
-					return navigate( 'processing' );
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// End of Pattern Assembler flow
-					if ( isAssemblerDesign( selectedDesign ) ) {
-						const params = new URLSearchParams( {
-							canvas: 'edit',
-							assembler: '1',
-						} );
-
-						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -530,7 +491,12 @@ const siteSetupFlow: Flow = {
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
-					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+					const backUrl = window.location.href.replace( window.location.origin, '' );
+					return exitFlow(
+						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
+							backUrl
+						) }`
+					);
 				}
 			}
 		}
@@ -563,14 +529,6 @@ const siteSetupFlow: Flow = {
 
 				case 'design-choices': {
 					return navigate( 'goals' );
-				}
-
-				case 'pattern-assembler': {
-					if ( stepData?.previousStep ) {
-						return navigate( stepData?.previousStep );
-					}
-
-					return navigate( 'designSetup' );
 				}
 
 				case 'importList':
@@ -731,14 +689,103 @@ const siteSetupFlow: Flow = {
 			};
 		}
 
-		const [ isLoadingGoalsFirstExp ] = useGoalsFirstExperiment();
-		if ( isLoadingGoalsFirstExp ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-			};
-		}
-
 		return result;
+	},
+
+	useSideEffect() {
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
+		const { siteSlugOrId, siteId } = useSiteData();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
+		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
+			( select ) => {
+				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
+					ONBOARD_STORE
+				) as OnboardSelect;
+				return {
+					selectedDesign: getSelectedDesign(),
+					selectedStyleVariation: getSelectedStyleVariation(),
+					selectedGlobalStyles: getSelectedGlobalStyles(),
+				};
+			},
+			[]
+		);
+
+		const dispatch = reduxDispatch();
+
+		const skippedCheckout = useQuery().get( 'skippedCheckout' );
+
+		useEffect( () => {
+			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
+				return;
+			}
+
+			setPendingAction( async () => {
+				if ( ! selectedDesign ) {
+					return;
+				}
+
+				// Complete the "Select a design" task only when there is a selected design.
+				const design_completed = selectedDesign?.default ? false : true;
+				await updateLaunchpadSettings( siteSlugOrId, {
+					checklist_statuses: { design_completed },
+				} );
+
+				if ( selectedDesign?.is_virtual ) {
+					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
+					return Promise.resolve()
+						.then( () =>
+							dispatch(
+								activateOrInstallThenActivate( themeId ?? '', siteId, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+							)
+						)
+						.then( ( activeThemeStylesheet: string ) =>
+							assembleSite( siteSlugOrId, activeThemeStylesheet, {
+								homeHtml: selectedDesign.recipe?.pattern_html,
+								headerHtml: selectedDesign.recipe?.header_html,
+								footerHtml: selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} )
+						);
+				}
+
+				return setDesignOnSite( siteSlugOrId, selectedDesign, {
+					styleVariation: selectedStyleVariation,
+					globalStyles: selectedGlobalStyles,
+				} )
+					.then( async ( theme: ActiveTheme ) => {
+						const design_completed = selectedDesign?.default ? false : true;
+						await updateLaunchpadSettings( siteSlugOrId, {
+							checklist_statuses: { design_completed },
+						} );
+						return dispatch( setActiveTheme( siteId, theme ) );
+					} )
+					.catch( ( error: Error ) => {
+						// We attempt to set the design on the site anyway even when the checkout is skipped.
+						// That's because the user might have selected a free design, and there's no reason
+						// we shouldn't set that design on the site when the checkout is skipped.
+						// If the ThemeNotPurchasedError is thrown we know that they actually selected a
+						// paid theme and we're unable to apply it.
+						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
+							return;
+						}
+						throw error;
+					} );
+			} );
+		}, [
+			isGoalsAtFrontExperiment,
+			siteSlugOrId,
+			siteId,
+			setDesignOnSite,
+			selectedDesign,
+			setPendingAction,
+			dispatch,
+			selectedStyleVariation,
+			selectedGlobalStyles,
+			skippedCheckout,
+		] );
 	},
 };
 

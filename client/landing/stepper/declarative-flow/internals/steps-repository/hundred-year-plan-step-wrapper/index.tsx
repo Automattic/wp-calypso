@@ -245,7 +245,7 @@ function InfoColumn( {
 					<WordPressWordmark size={ { width: 200, height: 25 } } />
 				</WordPressLogoWrapper>
 
-				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
+				{ ! isMobile && <HundredYearPlanLogo /> }
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
 					<Description isMobile={ isMobile }>
@@ -294,7 +294,6 @@ function HundredYearPlanStepWrapper( props: Props ) {
 				hideBack
 				flowName={ flowName }
 				hideFormattedHeader
-				shouldStickyNavButtons={ false }
 				stepContent={
 					<Container
 						className={ `hundred-year-plan-step-wrapper ${ stepName }` }

@@ -6,18 +6,6 @@ $card_padding_large: 24px;
 $min_results_height: 180px;
 
 .customer-home__layout .help-search {
-	&.card {
-		padding: 0;
-	}
-
-	.help-search__inner {
-		padding: 0 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			padding: 16px 24px 0;
-		}
-	}
-
 	.card-heading {
 		margin-bottom: 16px;
 	}
@@ -27,26 +15,17 @@ $min_results_height: 180px;
 		justify-content: space-between;
 	}
 
-	.help-search__footer {
-		margin-bottom: 30px;
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-bottom: 6px;
-		}
-	}
-
 	.help-search__cta {
 		display: flex;
 		align-items: center;
-		width: 100%;
-		padding: 10px $card_padding_small;
-		color: var(--color-text);
-		line-height: 1;
-		font-size: inherit;
+		width: calc(100% + $card_padding_large * 2);
 		height: auto;
-
-		@include break-mobile {
-			padding: 10px $card_padding_large;
-		}
+		padding-left: $card_padding_large;
+		padding-right: $card_padding_large;
+		margin-left: -$card_padding_large;
+		margin-right: -$card_padding_large;
+		color: var(--color-text);
+		font-size: inherit;
 
 		&:hover,
 		&:focus {
@@ -93,8 +72,8 @@ $min_results_height: 180px;
 	}
 
 	.inline-help__search {
-		// Don't allow ellipsis items to flow outside box
-		width: 100%;
+		width: 100%; // Don't allow ellipsis items to flow outside box
+		padding: 0 0 16px 0;
 	}
 
 	.inline-help__results-item {
@@ -103,11 +82,11 @@ $min_results_height: 180px;
 
 		a {
 			text-decoration: none;
-			line-height: 1;
 			padding: 10px $card_padding_small;
 
 			// Ellipsis overflow handling
-			display: block;
+			display: flex;
+			align-items: center;
 			flex: 1;
 			white-space: nowrap;
 			overflow: hidden;
@@ -115,43 +94,23 @@ $min_results_height: 180px;
 
 			.gridicon,
 			svg {
-				margin: 0 5px -3px 0;
-				position: relative;
-				top: 2px;
+				top: 0;
 			}
 
 			&:hover,
 			&:focus {
 				cursor: pointer;
 			}
-
-			@include break-mobile {
-				padding-left: $card_padding_large;
-				padding-right: $card_padding_large;
-			}
 		}
 	}
 
 	.inline-help__results {
 		min-height: $min_results_height;
-		padding: #{$search_results_top_spacing - 1px} 0 0 0;
-		margin-left: -$card_padding_small;
-		margin-right: -$card_padding_small;
-
-		@include break-mobile {
-			margin-left: -$card_padding_large;
-			margin-right: -$card_padding_large;
-		}
 	}
 
 	.inline-help__results-title {
-		padding-left: $card_padding_small;
-		padding-right: $card_padding_small;
-
-		@include break-mobile {
-			padding-left: $card_padding_large;
-			padding-right: $card_padding_large;
-		}
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.inline-help__empty-results {

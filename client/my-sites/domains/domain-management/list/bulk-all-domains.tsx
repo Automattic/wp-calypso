@@ -28,6 +28,8 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 	sidebarMode?: boolean;
+	selectedDomainName?: string;
+	selectedFeature?: string;
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
@@ -73,7 +75,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				border-radius: 4px;
 			}
 
-			header.navigation-header {
+			.domains-overview__list .navigation-header {
 				padding-top: 24px;
 
 				.formatted-header {
@@ -230,19 +232,60 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
+			.domains-overview__list.multi-sites-dashboard-layout-column,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main,
+			.domains-overview__list .multi-sites-dashboard-layout-column__container,
+			.domains-overview__details .multi-sites-dashboard-layout-column__container,
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main {
+				height: 100%;
+			}
+
+			.multi-sites-dashboard-layout-column.domains-overview__list.main
+				.multi-sites-dashboard-layout-column__container
+				.main,
+			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main {
+				display: flex;
+				flex-direction: column;
+				padding-bottom: 0;
+
+				.domains-table {
+					flex-grow: 1;
+					margin-top: 0;
+					overflow: auto;
+					padding-bottom: 0;
+					width: 100%;
+
+					table {
+						max-height: unset;
+					}
+				}
+			}
+
+			.domains-overview__list {
+				.domains-table__row {
+					.gridicons-ellipsis {
+						rotate: 90deg;
+						visibility: hidden;
+					}
+
+					&:hover,
+					&.is-selected {
+						.gridicons-ellipsis {
+							visibility: visible;
+						}
+					}
+				}
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
 						border-block-end: 1px solid var( --color-border-secondary );
-					}
-					.layout__primary > main {
-						background: var( --color-surface );
-						border-radius: 8px;
-						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
-						overflow: hidden;
-						max-width: none;
 					}
 				}
 			}
@@ -269,6 +312,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				.domains-overview__list .domains-table {
 					table {
 						grid-template-columns: 4fr auto;
+						max-height: 100%;
 
 						.domains-table__domain-name {
 							overflow-wrap: anywhere;
@@ -360,7 +404,13 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 	const isDomainsEmpty = isFetched && domains.length === 0;
 	const buttons = ! isDomainsEmpty
-		? [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ]
+		? [
+				<OptionsDomainButton
+					key="breadcrumb_button_1"
+					allDomainsList
+					sidebarMode={ props.sidebarMode }
+				/>,
+		  ]
 		: [];
 	const purchaseActions = usePurchaseActions();
 
@@ -389,6 +439,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						fetchBulkActionStatus={ fetchBulkActionStatus }
 						deleteBulkActionStatus={ deleteBulkActionStatus }
 						sidebarMode={ props.sidebarMode }
+						selectedDomainName={ props.selectedDomainName }
+						selectedFeature={ props.selectedFeature }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

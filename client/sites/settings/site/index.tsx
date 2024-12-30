@@ -7,7 +7,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite, isWpcomSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteSettingsForm from './form';
 
@@ -25,11 +25,13 @@ export function SiteSettings( props: any ) {
 	);
 	const isAtomic = useSelectedSiteSelector( isAtomicSite );
 	const isAtomicAndEditingToolkitDeactivated = isAtomic && editingToolkitIsActive === false;
+	const siteIsWpcom = useSelectedSiteSelector( isWpcomSite );
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
 
 	const additionalProps = {
 		site,
 		siteIsJetpack,
+		siteIsWpcom,
 		isUnlaunchedSite,
 		isAtomicAndEditingToolkitDeactivated,
 		isWpcomStagingSite,

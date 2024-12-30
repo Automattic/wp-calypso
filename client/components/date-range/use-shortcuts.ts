@@ -1,6 +1,5 @@
-import config from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
-import { translate, useTranslate } from 'i18n-calypso';
+import { translate as i18nCalypsoTranslate, useTranslate } from 'i18n-calypso';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -15,6 +14,25 @@ export const DATERANGE_PERIOD = {
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
+export const findShortcutForRange = (
+	supportedShortcutList: DateRangePickerShortcut[],
+	dateRange: { chartStart: string; chartEnd: string }
+) => {
+	if ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) {
+		return null;
+	}
+	// Search the shortcut array for something matching the current date range.
+	// Returns shortcut or null;
+	const shortcut = supportedShortcutList.find( ( element ) => {
+		if ( element.endDate === dateRange.chartEnd && element.startDate === dateRange.chartStart ) {
+			return element;
+		}
+		return null;
+	} );
+
+	return shortcut;
+};
+
 export const getShortcuts = createSelector(
 	(
 		state: object,
@@ -22,10 +40,9 @@ export const getShortcuts = createSelector(
 			chartStart: string;
 			chartEnd: string;
 		},
-		translateFunction,
-		isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' )
+		translateFromProps
 	) => {
-		translateFunction = translateFunction ?? translate;
+		const translate = translateFromProps ?? i18nCalypsoTranslate;
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
@@ -34,82 +51,55 @@ export const getShortcuts = createSelector(
 
 		const supportedShortcutList = [
 			{
+				id: 'today',
+				label: translate( 'Today' ),
+				startDate: siteTodayStr,
+				endDate: siteTodayStr,
+				period: DATERANGE_PERIOD.DAY,
+			},
+			{
+				id: 'yesterday',
+				label: translate( 'Yesterday' ),
+				startDate: yesterdayStr,
+				endDate: yesterdayStr,
+				period: DATERANGE_PERIOD.DAY,
+			},
+			{
 				id: 'last_7_days',
-				label: translateFunction( 'Last 7 Days' ),
+				label: translate( 'Last 7 Days' ),
 				startDate: siteToday.clone().subtract( 6, 'days' ).format( DATE_FORMAT ),
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.DAY,
 			},
 			{
 				id: 'last_30_days',
-				label: translateFunction( 'Last 30 Days' ),
+				label: translate( 'Last 30 Days' ),
 				startDate: siteToday.clone().subtract( 29, 'days' ).format( DATE_FORMAT ),
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.DAY,
 			},
 			{
 				id: 'last_3_months',
-				label: translateFunction( 'Last 90 Days' ),
+				label: translate( 'Last 90 Days' ),
 				startDate: siteToday.clone().subtract( 89, 'days' ).format( DATE_FORMAT ),
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.WEEK,
 			},
 			{
 				id: 'last_year',
-				label: translateFunction( 'Last Year' ),
+				label: translate( 'Last Year' ),
 				startDate: siteToday.clone().subtract( 364, 'days' ).format( DATE_FORMAT ),
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.MONTH,
 			},
 			{
 				id: 'custom_date_range',
-				label: translateFunction( 'Custom Range' ),
+				label: translate( 'Custom Range' ),
 				startDate: '',
 				endDate: '',
 				period: DATERANGE_PERIOD.DAY,
 			},
 		];
-
-		if ( isNewDateFilteringEnabled ) {
-			supportedShortcutList.unshift(
-				{
-					id: 'today',
-					label: translateFunction( 'Today' ),
-					startDate: siteTodayStr,
-					endDate: siteTodayStr,
-					period: DATERANGE_PERIOD.DAY,
-				},
-				{
-					id: 'yesterday',
-					label: translateFunction( 'Yesterday' ),
-					startDate: yesterdayStr,
-					endDate: yesterdayStr,
-					period: DATERANGE_PERIOD.DAY,
-				}
-			);
-		}
-
-		const findShortcutForRange = (
-			supportedShortcutList: DateRangePickerShortcut[],
-			dateRange: { chartStart: string; chartEnd: string }
-		) => {
-			if ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) {
-				return null;
-			}
-			// Search the shortcut array for something matching the current date range.
-			// Returns shortcut or null;
-			const shortcut = supportedShortcutList.find( ( element ) => {
-				if (
-					element.endDate === dateRange.chartEnd &&
-					element.startDate === dateRange.chartStart
-				) {
-					return element;
-				}
-				return null;
-			} );
-
-			return shortcut;
-		};
 
 		return {
 			selectedShortcut: findShortcutForRange( supportedShortcutList, dateRange ),
@@ -121,31 +111,22 @@ export const getShortcuts = createSelector(
 		dateRange: {
 			chartStart: string;
 			chartEnd: string;
-		},
-		translateFunction,
-		isNewDateFilteringEnabled
+		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 
-		return [
-			siteId,
-			siteToday.format( DATE_FORMAT ),
-			dateRange?.chartStart,
-			dateRange?.chartEnd,
-			isNewDateFilteringEnabled,
-		];
+		return [ siteId, siteToday.format( DATE_FORMAT ), dateRange?.chartStart, dateRange?.chartEnd ];
 	}
 );
 
-export function useShortcuts(
-	dateRange: { chartStart: string; chartEnd: string; daysInRange: number },
-	isNewDateFilteringEnabled = false
-) {
+export function useShortcuts( dateRange: {
+	chartStart: string;
+	chartEnd: string;
+	daysInRange: number;
+} ) {
 	const translate = useTranslate();
-	const shortcuts = useSelector( ( state ) =>
-		getShortcuts( state, dateRange, translate, isNewDateFilteringEnabled )
-	);
+	const shortcuts = useSelector( ( state ) => getShortcuts( state, dateRange, translate ) );
 
 	return shortcuts;
 }

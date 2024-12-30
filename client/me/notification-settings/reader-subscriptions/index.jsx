@@ -225,18 +225,21 @@ class NotificationSubscriptions extends Component {
 									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
 								/>
 								<span>
-									{ locale === 'en' ||
-									i18n.hasTranslation(
-										'Pause all email updates from sites you’re following on WordPress.com'
-									)
-										? this.props.translate(
-												'Pause all email updates from sites you’re following on WordPress.com'
-										  )
-										: this.props.translate(
-												'Block all email updates from blogs you’re following on WordPress.com'
-										  ) }
+									{ this.props.translate(
+										'Pause all email updates from sites you’re subscribed to on WordPress.com'
+									) }
 								</span>
 							</FormLabel>
+							{ ( locale === 'en' ||
+								i18n.hasTranslation(
+									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
+								) ) && (
+								<FormSettingExplanation>
+									{ this.props.translate(
+										'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
+									) }
+								</FormSettingExplanation>
+							) }
 						</FormFieldset>
 
 						{ isAutomattician && (

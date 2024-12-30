@@ -60,6 +60,7 @@ export function conversationsA8c( context, next ) {
 			key="conversations"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
+			store={ { id: streamKey } }
 			trackScrollPage={ scrollTracker }
 		/>
 	);

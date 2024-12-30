@@ -691,6 +691,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<LineItemExpiryDates product={ product } />
 				</>
 			);
 		}
@@ -700,6 +701,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+					<LineItemExpiryDates product={ product } />
 				</>
 			);
 		}
@@ -763,6 +765,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				{ ! product.is_included_for_100yearplan && (
 					<>: { GetBillingIntervalLabel( { product } ) }</>
 				) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -785,6 +788,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per month', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -794,6 +798,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per year', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -803,6 +808,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per two years', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
@@ -812,11 +818,79 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( '%(price)s per three years', { args: { price } } ) }
+				<LineItemExpiryDates product={ product } />
 			</>
 		);
 	}
 
-	return <DefaultLineItemSublabel product={ product } />;
+	return (
+		<>
+			<DefaultLineItemSublabel product={ product } />
+			<LineItemExpiryDates product={ product } />
+		</>
+	);
+}
+
+function getApproximateDifferenceInMonths( dateFrom: Date, dateTo: Date ): number {
+	return Math.abs(
+		dateTo.getMonth() - dateFrom.getMonth() + 12 * ( dateTo.getFullYear() - dateFrom.getFullYear() )
+	);
+}
+
+function LineItemExpiryDates( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+
+	// We only currently show the expiry date for renewals when the current
+	// subscription is more than 9 months away from expiration (to help
+	// prevent accidental renewals), although it should be accurate for
+	// other cart items as well.
+	if ( ! product.is_renewal ) {
+		return null;
+	}
+	if ( ! product.subscription_current_expiry_date ) {
+		return null;
+	}
+	const expiryTimestamp = new Date( product.subscription_current_expiry_date );
+	const minNumberOfMonths = 10;
+	if ( getApproximateDifferenceInMonths( expiryTimestamp, new Date() ) < minNumberOfMonths ) {
+		return null;
+	}
+
+	const expiryDate = product.subscription_current_expiry_date
+		? formatDate( product.subscription_current_expiry_date )
+		: undefined;
+	const postRenewExpiry = product.subscription_post_purchase_expiry_date
+		? formatDate( product.subscription_post_purchase_expiry_date )
+		: undefined;
+	return (
+		<>
+			{ expiryDate && (
+				<>
+					<br />
+					{ translate( 'Currently expires on %(expiryDate)s', { args: { expiryDate } } ) }{ ' ' }
+				</>
+			) }
+			{ postRenewExpiry && (
+				<>
+					<br />
+					{ translate( 'After purchase, will expire on %(postRenewExpiry)s', {
+						args: { postRenewExpiry },
+					} ) }
+				</>
+			) }
+		</>
+	);
+}
+
+function formatDate( isoDate: string ): string {
+	// This somewhat mimics `moment.format('ll')` (used here formerly) without
+	// needing the deprecated `moment` package.
+	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
+		weekday: undefined,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	} );
 }
 
 function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {

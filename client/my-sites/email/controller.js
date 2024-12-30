@@ -27,6 +27,8 @@ export default {
 				<EmailForwardsAdd
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showFormHeader={ pageContext.params.showFormHeader }
+					showPageHeader={ pageContext.params.showPageHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -209,6 +211,7 @@ export default {
 
 				<EmailHome
 					source={ pageContext.query.source }
+					context={ pageContext.section.name }
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }

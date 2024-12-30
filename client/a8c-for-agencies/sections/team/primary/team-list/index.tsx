@@ -3,22 +3,20 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutNavigation, {
-	LayoutNavigationTabs,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_TEAM_INVITE_LINK,
 	A4A_TEAM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderTitle as Title,
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/hosting-dashboard/nav';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TAB_ACTIVE_MEMBERS, TAB_INVITED_MEMBERS } from '../../constants';

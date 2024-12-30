@@ -9,7 +9,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
@@ -25,9 +25,20 @@ interface Props {
 	features: ReactNode[];
 	image: string;
 	statType: string;
+	expandableView?: boolean;
+	mainFeatureLimit?: number;
+	expandText?: string;
 }
 
-export default function StatsUpsell( { title, features, image, statType }: Props ) {
+export default function StatsUpsell( {
+	title,
+	features,
+	image,
+	statType,
+	expandableView = false,
+	mainFeatureLimit = 4,
+	expandText = 'Show more',
+}: Props ) {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -39,14 +50,15 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
 	} )?.[ planKey ];
 	const planSlug = plan?.pathSlug ?? planKey;
 	const isLoading = plans.isLoading || ! pricing;
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
+	const isOdysseyStats = isEnabled( 'is_odyssey' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const localizeUrl = useLocalizeUrl();
+	const [ isExpanded, setIsExpanded ] = useState( false );
+	const redirectTo = encodeURIComponent( window.location.href );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
@@ -55,20 +67,53 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 		} );
 		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
-				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
+				`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }`
 			);
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ planSlug }` );
+			page( `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ redirectTo }` );
 		}
 	};
 
 	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
 
+	const toggleExpanded = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		if ( expandableView ) {
+			event.stopPropagation();
+
+			if ( ! isExpanded ) {
+				recordTracksEvent( `${ eventPrefix }_stats_upsell_expand`, {
+					stat_type: statType,
+				} );
+			}
+			setIsExpanded( ! isExpanded );
+		}
+	};
+
+	const getMainFeatures = () => {
+		if ( ! expandableView ) {
+			return features;
+		}
+
+		return features.filter( ( feature, index ) => index < mainFeatureLimit );
+	};
+
+	const getExpandedFeatures = () => {
+		if ( ! expandableView ) {
+			return [];
+		}
+
+		return features.filter( ( feature, index ) => index >= mainFeatureLimit );
+	};
+
 	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		setShowHelpCenter( true );
-		setShowSupportDoc( learnMoreLink );
+		if ( ! isOdysseyStats ) {
+			setShowHelpCenter( true );
+			setShowSupportDoc( learnMoreLink );
+		} else {
+			window.open( learnMoreLink, '_blank' );
+		}
 
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
 			stat_type: statType,
@@ -109,7 +154,7 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 								  ) }
 						</div>
 						<div className="stats-upsell__features">
-							{ features.map( ( feature, index ) => (
+							{ getMainFeatures().map( ( feature, index ) => (
 								<div className="stats-upsell__feature" key={ index }>
 									<Gridicon icon="checkmark" size={ 18 } />
 									<div className="stats-upsell__feature-text">{ feature }</div>
@@ -137,9 +182,40 @@ export default function StatsUpsell( { title, features, image, statType }: Props
 								{ translate( 'Learn more' ) }
 							</Button>
 						</div>
+						{ expandableView && (
+							<div className="stats-upsell__expand">
+								{ ! isExpanded && (
+									<Button onClick={ toggleExpanded }>
+										{ expandText }
+										<Gridicon icon="chevron-down" size={ 18 } />
+									</Button>
+								) }
+								{ isExpanded && (
+									<Button onClick={ toggleExpanded }>
+										{ translate( 'Show less' ) }
+										<Gridicon icon="chevron-up" size={ 18 } />
+									</Button>
+								) }
+							</div>
+						) }
+						{ isExpanded && (
+							<div className="stats-upsell__features">
+								{ getExpandedFeatures().map( ( feature, index ) => (
+									<div className="stats-upsell__feature" key={ index }>
+										<Gridicon icon="checkmark" size={ 18 } />
+										<div className="stats-upsell__feature-text">{ feature }</div>
+									</div>
+								) ) }
+							</div>
+						) }
 					</div>
 				</div>
-				<div className="stats-upsell__right">
+				<div
+					className={
+						'stats-upsell__right ' +
+						( expandableView && ! isExpanded ? 'stats-upsell_collapsed' : '' )
+					}
+				>
 					<img src={ image } alt={ translate( 'Features' ) } />
 				</div>
 			</div>

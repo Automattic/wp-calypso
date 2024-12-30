@@ -1,10 +1,10 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; // eslint-disable-line no-restricted-imports
+import clsx from 'clsx';
 import type { Category } from '../../types';
 import './style.scss';
 
 interface Props {
-	className: string;
+	className?: string;
 	categories: Category[];
 	selectedSlugs: string[];
 	isMultiSelection?: boolean;
@@ -23,10 +23,6 @@ export default function DesignPickerCategoryFilter( {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 		if ( category?.slug ) {
-			recordTracksEvent( 'calypso_signup_unified_design_select_category', {
-				category: category?.slug,
-			} );
-
 			onSelect( category.slug );
 		}
 	};
@@ -38,11 +34,12 @@ export default function DesignPickerCategoryFilter( {
 		.filter( ( index ) => index >= 0 );
 	return (
 		<ResponsiveToolbarGroup
-			className={ className }
+			className={ clsx( 'design-picker__category-filter', className ) }
 			initialActiveIndex={ initialActiveIndex !== -1 ? initialActiveIndex : 0 }
 			initialActiveIndexes={ initialActiveIndexes }
 			isMultiSelection={ isMultiSelection }
 			forceSwipe={ forceSwipe }
+			rootMargin="1px"
 			onClick={ onClick }
 		>
 			{ categories.map( ( category ) => (

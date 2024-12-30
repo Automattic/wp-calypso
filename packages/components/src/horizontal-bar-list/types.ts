@@ -32,6 +32,7 @@ export type HorizontalBarListItemProps = {
 	 * @property {boolean} hasNoBackground - don't render the background bar and adjust indentation
 	 */
 	hasNoBackground?: boolean;
+	formatValue?: ( value: number ) => string;
 };
 
 type StatDataObject = {

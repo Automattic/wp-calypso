@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
+import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControl from '../date-control';
@@ -25,8 +26,6 @@ interface StatsDateControlProps {
 		event_from: string,
 		stat_type: string
 	) => void;
-	// Temporary prop to enable new date filtering UI.
-	isNewDateFilteringEnabled: boolean;
 }
 
 // Define the event name keys for tracking events
@@ -80,7 +79,6 @@ const StatsDateControl = ( {
 	shortcutList,
 	overlay,
 	onGatedHandler,
-	isNewDateFilteringEnabled = false,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
@@ -149,6 +147,15 @@ const StatsDateControl = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
 
+		const appliedShortcut = findShortcutForRange( shortcutList, {
+			chartStart: startDate,
+			chartEnd: endDate,
+		} );
+
+		if ( appliedShortcut && appliedShortcut.id ) {
+			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+		}
+
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
 	};
@@ -156,6 +163,7 @@ const StatsDateControl = ( {
 	// handler for shortcut clicks
 	const onShortcutClickHandler = ( shortcut: DateRangePickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
 		if ( shortcut.isGated ) {
 			onGatedHandler &&
 				onGatedHandler(
@@ -163,6 +171,8 @@ const StatsDateControl = ( {
 					event_from,
 					shortcut.statType ?? shortcut.id
 				);
+		} else {
+			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
 		}
 	};
 
@@ -177,10 +187,9 @@ const StatsDateControl = ( {
 				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 				recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
 			} }
-			tooltip={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+			tooltip={ translate( 'Filter all data by date' ) }
 			overlay={ overlay }
 			shortcutList={ shortcutList }
-			isNewDateFilteringEnabled={ isNewDateFilteringEnabled }
 		/>
 	);
 };

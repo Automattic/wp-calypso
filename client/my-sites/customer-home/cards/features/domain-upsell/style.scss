@@ -2,13 +2,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body .customer-home__layout .domain-upsell__card {
-	padding: 16px 16px 20px;
-	@include break-small {
-		padding: 32px 24px;
-	}
-}
-
 .domain-upsell__card {
 	h3 {
 		font-family: $brand-serif;

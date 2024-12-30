@@ -43,4 +43,6 @@ export type Mailbox = {
 	domain: string;
 	last_access_time?: string;
 	mailbox: string;
+	warnings?: Warning[];
+	temporary?: boolean;
 };

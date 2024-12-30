@@ -74,14 +74,16 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: { opens: number } ) => <span>{ item.opens }</span>,
+						body: ( item: { opens_rate: number } ) => <span>{ `${ item.opens_rate }%` }</span>,
 					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					mainItemLabel={ translate( 'Latest Emails' ) }
+					mainItemLabel={ translate( 'Latest emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
+					valueField="clicks_rate"
+					formatValue={ ( value: number ) => `${ value }%` }
 					showSummaryLink
 					className={ className }
 					hasNoBackground

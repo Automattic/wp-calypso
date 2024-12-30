@@ -50,7 +50,6 @@ const WooExpressPlansPage = ( {
 		siteId: null,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
 	} );
 
 	// Using `discountedPrice` below will give us the price with any currency/conversion discounts applied.

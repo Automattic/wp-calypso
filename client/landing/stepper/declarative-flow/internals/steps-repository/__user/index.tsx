@@ -61,8 +61,8 @@ const UserStepComponent: Step = function UserStep( {
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
-		if ( 'username' in data ) {
-			setSignupIsNewUser( data.username );
+		if ( 'ID' in data ) {
+			setSignupIsNewUser( data.ID );
 		}
 	};
 
@@ -77,7 +77,8 @@ const UserStepComponent: Step = function UserStep( {
 				isWideLayout={ false }
 				isFullLayout
 				isLargeSkipLayout={ false }
-				hideBack
+				hideBack={ ! navigation.goBack }
+				goBack={ navigation.goBack }
 				stepContent={
 					<>
 						<FormattedHeader
