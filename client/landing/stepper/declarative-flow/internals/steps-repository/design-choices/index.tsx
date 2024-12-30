@@ -76,10 +76,10 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="designSetup"
 								onSelect={ handleSubmit }
 							/>
-							{ ! isLoading && isEligible && (
+							{ isEligible && (
 								<DesignChoice
 									className={ `design-choices__try-big-sky ${
-										isOpenAIDown ? ' design-choices__try-big-sky--disabled' : ''
+										! isLoading && isOpenAIDown ? 'design-choices__try-big-sky--disabled' : ''
 									}` }
 									title={ translate( 'Design with AI' ) }
 									description={ translate(
@@ -108,7 +108,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 										)
 									) }
 									onSelect={ () => {
-										if ( isOpenAIDown ) {
+										if ( isLoading || isOpenAIDown ) {
 											return;
 										}
 										recordTracksEvent( 'calypso_big_sky_choose', {
