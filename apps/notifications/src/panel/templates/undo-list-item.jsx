@@ -174,6 +174,14 @@ export class UndoListItem extends Component {
 		this.instance = ref;
 	};
 
+	hideNotification = ( event ) => {
+		if ( event ) {
+			event.preventDefault();
+		}
+		this.instance && this.setState( { isVisible: false } );
+		clearTimeout( this.state.undoTimer );
+	};
+
 	render() {
 		const actionMessages = {
 			spam: this.props.translate( 'Comment marked as spam' ),
@@ -191,7 +199,7 @@ export class UndoListItem extends Component {
 						{ undo_text }
 					</button>
 					<span className="wpnc__undo-message">{ message }</span>
-					<button className="wpnc__close-link" onClick={ this.actImmediately }>
+					<button className="wpnc__close-link" onClick={ this.hideNotification }>
 						<Gridicon icon="cross" size={ 24 } />
 					</button>
 				</p>
