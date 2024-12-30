@@ -30,7 +30,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const { isEligible, isLoading } = useIsBigSkyEligible();
+	const { isEligible, isLoading, isOpenAIDown } = useIsBigSkyEligible();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
@@ -78,7 +78,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							/>
 							{ ! isLoading && isEligible && (
 								<DesignChoice
-									className="design-choices__try-big-sky"
+									className={ `design-choices__try-big-sky ${
+										isOpenAIDown ? ' design-choices__try-big-sky--disabled' : ''
+									}` }
 									title={ translate( 'Design with AI' ) }
 									description={ translate(
 										'Use our AI website builder to easily and quickly build the site of your dreams.'
@@ -106,6 +108,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 										)
 									) }
 									onSelect={ () => {
+										if ( isOpenAIDown ) {
+											return;
+										}
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,
 											step: stepName,
