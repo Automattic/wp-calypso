@@ -43,4 +43,27 @@
 			transform: scale(1.05);
 		}
 	}
+
+	&.design-choices__try-big-sky--disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
+		outline-color: var(--studio-gray-20);
+
+		&:hover,
+		&:focus-visible {
+			outline-color: var(--studio-gray-20);
+		}
+
+		.design-choice__image-container {
+			opacity: 0.7;
+			transform: none;
+		}
+
+		.design-choice__title,
+		.design-choice__description,
+		.design-choice__footer {
+			color: var(--studio-gray-40);
+		}
+	}
 }
