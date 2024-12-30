@@ -211,10 +211,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 	const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
 
-	// Set up a custom range for the chart.
-	// Dependant on new date range picker controls.
-	let customChartRange = null;
-
 	const getAvailableLegend = () => {
 		const activeTab = getActiveTab( chartTab );
 		// TODO: remove this when we support hourly visitors.
@@ -342,6 +338,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 	}, [ chartTab, period, activeTabState ] );
 
+	// Set up a custom range for the chart.
+	// Dependant on new date range picker controls.
+	let customChartRange = null;
 	// Sort out end date for chart.
 	const chartEnd = getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 
