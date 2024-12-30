@@ -26,3 +26,14 @@
 	width: 24px;
 	height: 24px;
 }
+
+.a4a-migration-offer-v3 {
+	padding: 24px !important;
+	margin-bottom: 16px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	border-radius: 4px;
+
+	.a4a-migration-offer-v3__view-toggle {
+		padding: 0;
+	}
+}
