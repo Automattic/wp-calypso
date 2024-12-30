@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
@@ -182,7 +182,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	const hasSiteLoadedFeatures = useSelector(
-		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
+		( state ) => isWPAdmin && hasLoadedSiteFeatures( state, siteId )
 	);
 
 	const shouldForceDefaultDateRange = useSelector( ( state ) =>
@@ -334,7 +334,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		return url;
 	};
 
-	useMemo( () => {
+	useEffect( () => {
 		const activeTab = getActiveTab( chartTab );
 		if ( activeTab !== activeTabState ) {
 			setActiveTabState( activeTab );
