@@ -23,7 +23,7 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
-import { STEPS } from './steps';
+import { PRIVATE_STEPS } from './steps';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -164,7 +164,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
 		// and are redirected to the user step.
 		const nextStepSlug = stepData?.nextStep ?? '';
-		if ( step.slug === STEPS.USER.slug && nextStepSlug ) {
+		if ( step.slug === PRIVATE_STEPS.USER.slug && nextStepSlug ) {
 			const previousStepSlug = stepData?.previousStep;
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
@@ -196,6 +196,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					redirectTo={ postAuthStepPath }
 					signupUrl={ signupUrl }
 				/>
+			);
+		}
+
+		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
 			);
 		}
 
