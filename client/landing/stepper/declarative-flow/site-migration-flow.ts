@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
@@ -260,23 +259,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
-
-					// Take the user to the upgrade plan step.
-					if ( providedDependencies?.destination === 'upgrade' ) {
-						return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
-
-					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
+					return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
 						siteId,
 						siteSlug,
 					} );
@@ -600,23 +583,12 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
 						urlQueryParams.delete( 'showModal' );
-						if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
-							return navigate(
-								`${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }`
-							);
-						}
-
-						return navigate(
-							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
-						);
+						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
 					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
 					// the modal.
-					if (
-						config.isEnabled( 'migration-flow/enable-migration-assistant' ) &&
-						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
-					) {
+					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
