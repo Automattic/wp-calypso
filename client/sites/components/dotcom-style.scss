@@ -10,62 +10,26 @@
 }
 
 .wpcom-site .hosting-dashboard-layout-with-columns__container {
-	background: var(--color-sidebar-background);
-}
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 
-.wpcom-site .main.hosting-dashboard-layout.sites-dashboard {
-	.hosting-dashboard-layout__top-wrapper,
-	.hosting-dashboard-layout__body {
+	.hosting-dashboard-layout__top-wrapper {
 		> * {
+			// FIXME: Maybe this should be moved to layout/hosting-dashboard/style.scss once we have integrated DataViews without overrides across pages.
 			padding-inline: 48px;
-			// Override the max-width set in a8c-for-agencies/components/layout/style.scss
-			// as the title aligns with DataViews (full width).
-			// TODO: Remove when we drop A4A Layout or when A4A Layout drops the max-width.
+			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
+			// Consider removing this max-width as the default across all layouts.
 			max-width: revert;
 		}
 	}
 
-	.hosting-dashboard-layout__header {
-		align-items: center;
-	}
-
-	.hosting-dashboard-layout__header-main {
-		display: block;
-	}
-
-	.hosting-dashboard-layout__header-title {
-		display: block;
-	}
-
-	.hosting-dashboard-layout__header-subtitle {
-		font-size: 0.875rem;
-		margin: 4px 0 0 0;
-		line-height: 20px;
-		letter-spacing: -0.15px;
-	}
-
 	.hosting-dashboard-layout__header-actions {
+		// This is due to discrepancy in header actions between Dotcom and A4A.
+		// A4A hides displays a different header for mobile.
 		width: auto;
-		a {
-			font-weight: normal;
-		}
 	}
-
-	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 }
 
 .wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
-	background: var(--studio-white);
-
-	.hosting-dashboard-layout__top-wrapper {
-		border-block-end: none;
-
-		@include break-medium {
-			border-block-end: 1px solid var(--color-border-secondary);
-			margin-bottom: 24px;
-		}
-	}
-
 	.sites-banner-container {
 		box-sizing: border-box;
 		display: flex;
@@ -85,10 +49,6 @@
 			}
 		}
 
-	}
-
-	.hosting-dashboard-layout__header {
-		flex-wrap: nowrap;
 	}
 }
 
@@ -206,12 +166,7 @@
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.hosting-dashboard-layout__header {
-			align-items: center !important;
-		}
-
-		.sites-manage-all-domains-button,
-		.hosting-dashboard-layout__header-subtitle {
+		.sites-manage-all-domains-button {
 			display: none;
 		}
 
@@ -357,15 +312,6 @@
 	}
 }
 
-.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout,
-.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .hosting-dashboard-layout-with-columns__container .hosting-dashboard-layout-column {
-	.hosting-dashboard-layout-column__container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	}
-}
-
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
 	&.hosting-dashboard-layout,
@@ -378,7 +324,7 @@
 	.hosting-dashboard-layout-column__container {
 		display: flex;
 		flex-direction: column;
-		height: calc(100vh - 32px);
+		height: calc(100vh - 32px - var(--masterbar-height));
 
 		.hosting-dashboard-layout__top-wrapper {
 			display: flex;
@@ -417,6 +363,7 @@
 			padding-left: calc(var(--sidebar-width-max));
 			padding-right: 16px;
 
+			// TODO: height should be the same across platforms after the redesign.
 			.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}

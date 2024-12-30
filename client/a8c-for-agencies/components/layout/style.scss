@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+@media (max-width: 660px) {
+	.hosting-dashboard-layout__header-title {
+		// A4A hides a part of LayoutHeader since it displays a different header for mobile
+		display: none;
+	}
+}
+
 .a4a-layout__banner {
 	margin-inline: 0;
 	max-height: 100%;

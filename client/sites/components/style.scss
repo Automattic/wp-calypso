@@ -6,19 +6,11 @@
 }
 
 .main.hosting-dashboard-layout.sites-dashboard {
-	padding-block-start: 0;
-
-	.hosting-dashboard-layout__header-actions {
-		white-space: nowrap;
-	}
-
-	.item-preview-pane .hosting-dashboard-layout-column__container {
-		display: flex;
-	}
-
 	.hosting-dashboard-layout-column {
-		@include breakpoint-deprecated( "<660px" ) {
-			border-radius: 0;
+		.hosting-dashboard-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 		}
 	}
 
@@ -34,7 +26,7 @@
 		margin-right: 10px;
 	}
 
-	.hosting-dashboard-layout__top-wrapper:not(.preview-hidden) {
+	.hosting-dashboard-layout__top-wrapper {
 		padding-block-start: 24px;
 	}
 
@@ -55,12 +47,6 @@
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
-			display: none;
-		}
-	}
-
-	@media (max-width: 660px) {
-		.hosting-dashboard-layout__header-main {
 			display: none;
 		}
 	}
@@ -105,12 +91,6 @@
 				.sites-overview__tabs {
 					border-bottom: 1px solid var(--color-accent-5);
 				}
-
-				.sites-overview__content {
-					padding: 0;
-					margin: 0;
-					margin-top: 16px;
-				}
 			}
 		}
 
@@ -135,10 +115,6 @@
 				overflow: hidden;
 			}
 
-			.sites-overview__content {
-				display: none;
-			}
-
 			.sites-overview {
 				width: unset;
 				display: none;
@@ -151,16 +127,12 @@
 			.sites-overview {
 				padding: 0;
 
+				// FIXME: Remove this style, as the list view will likely be removed in the future.
 				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 					letter-spacing: normal;
 				}
-			}
-
-			.sites-overview__content {
-				padding: 0;
-				padding-inline: 0 !important;
 			}
 
 			.sites-overview__issue-license-button-short-caption {
@@ -194,21 +166,7 @@
 		}
 	}
 
-	.sites-overview__content-wrapper {
-		max-width: none;
-	}
-
 	&.sites-dashboard__layout:not(.preview-hidden) {
-
-
-		.hosting-dashboard-layout__top-wrapper {
-			padding-block-start: 16px;
-
-			.hosting-dashboard-layout__header {
-				padding: 0;
-			}
-		}
-
 		.components-base-control {
 			margin-right: 6px;
 		}
@@ -216,10 +174,6 @@
 		.site-preview__open {
 			display: none;
 		}
-	}
-
-	&.sites-dashboard__layout:not(.preview-hidden) .hosting-dashboard-layout__navigation-wrapper {
-		display: none;
 	}
 
 	&.sites-dashboard__layout {
@@ -261,18 +215,11 @@
 
 		.sites-overview {
 			height: 100%;
+
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
-			background: var(--color-light-backdrop);
-
-			.sites-overview__content {
-				display: flex;
-				flex: 1;
-				height: 100%;
-				overflow: auto;
-				margin-top: 24px;
-			}
 		}
 
 		@media only screen and (min-width: $break-large) {
@@ -312,6 +259,7 @@
 		}
 
 		&.preview-hidden {
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			.sites-overview {
 				flex-grow: 1;
 				transition: flex-grow 0.2s;
