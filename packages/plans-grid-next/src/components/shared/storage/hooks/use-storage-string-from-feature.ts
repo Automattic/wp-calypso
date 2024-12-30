@@ -43,6 +43,16 @@ const getIntegerVolume = (
 			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
 			 */
 			return 150;
+		case AddOns.ADD_ON_150GB_STORAGE:
+			return 200;
+		case AddOns.ADD_ON_200GB_STORAGE:
+			return 250;
+		case AddOns.ADD_ON_250GB_STORAGE:
+			return 300;
+		case AddOns.ADD_ON_300GB_STORAGE:
+			return 350;
+		case AddOns.ADD_ON_350GB_STORAGE:
+			return 400;
 		default:
 			return 0;
 	}
