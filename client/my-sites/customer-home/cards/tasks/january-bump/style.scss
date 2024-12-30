@@ -1,0 +1,45 @@
+.task {
+	&.task__january-bump {
+		position: relative;
+
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			display: block;
+			z-index: -1;
+		}
+		&::before {
+			width: 654px;
+			border-radius: 100%;
+			height: 654px;
+			background: #3858e9;
+			filter: blur(81px);
+			top: 50%;
+			left: 50%;
+			transform: translate(5%, 5%);
+		}
+
+		&::after {
+			background-image: url(calypso/assets/images/customer-home/plus-pattern-white.png);
+			top: 0;
+			left: 0;
+			width: calc(100% + 32px);
+			height: calc(100% + 32px);
+			background-size: 14px;
+		}
+
+		.task__actions {
+			flex-direction: column;
+			display: inline-flex;
+		}
+		.task__skip {
+			text-align: left;
+		}
+
+		.task__illustration {
+			width: 44%;
+			max-width: 272px;
+		}
+	}
+}

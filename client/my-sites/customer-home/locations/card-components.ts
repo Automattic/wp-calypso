@@ -26,6 +26,7 @@ import {
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
 	TASK_AFFILIATES,
+	TASK_JANUARY_BUMP,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -78,6 +79,7 @@ import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-featur
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
+import JanuaryBump from 'calypso/my-sites/customer-home/cards/tasks/january-bump';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
@@ -110,6 +112,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
 	[ TASK_AFFILIATES ]: Affiliates,
+	[ TASK_JANUARY_BUMP ]: JanuaryBump,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,

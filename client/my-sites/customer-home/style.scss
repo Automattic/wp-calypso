@@ -308,10 +308,6 @@ body.is-section-home.theme-default.color-scheme {
 		@include break-small {
 			margin: 32px;
 		}
-
-		@media (min-width: ($break-wide + 1)) {
-			margin: 0 32px 32px;
-		}
 	}
 
 	// Extend the checklist to the edge of the primary content area
