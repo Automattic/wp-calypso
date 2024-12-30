@@ -17,14 +17,11 @@ const MIGRATION_SURVEY_FLOWS = [
 	MIGRATION_SIGNUP_FLOW,
 ];
 
-const SurveyManager = () => {
-	// Temporarily disabled, context: https://a8c.slack.com/archives/C085HCWCEDN/p1735579884005299?thread_ts=1735306693.890579&cid=C085HCWCEDN
-	return null;
-
+const SurveyManager = ( { disabled }: { disabled: boolean } ) => {
 	const { params } = useFlowNavigation();
 	const isEnLocale = useIsEnglishLocale();
 
-	if ( ! params.flow ) {
+	if ( ! params.flow || disabled ) {
 		return null;
 	}
 
