@@ -1,10 +1,39 @@
-import { type PlanSlug, type WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
-import { AddOns } from '@automattic/data-stores';
+import {
+	type PlanSlug,
+	type WPComPlanStorageFeatureSlug,
+	PRODUCT_1GB_SPACE,
+} from '@automattic/calypso-products';
+import { Purchases, AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 
 type Props = {
 	planSlug: PlanSlug;
+};
+
+// TODO
+// how can we eliminate the need of mapping like this?
+// ideally, there shouldn't be additional add on slug, but only the consistent product slug being used
+// throughout the backend and the frontend.
+const quantityToAddOnSlug = ( quantity: number ): AddOns.StorageAddOnSlug | null => {
+	switch ( quantity ) {
+		case 50:
+			return AddOns.ADD_ON_50GB_STORAGE;
+		case 100:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		case 150:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		case 200:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		case 250:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		case 300:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		case 350:
+			return AddOns.ADD_ON_100GB_STORAGE;
+		default:
+			return null;
+	}
 };
 
 /**
@@ -20,10 +49,22 @@ export default function useDefaultStorageOption( {
 	const {
 		features: { storageFeature },
 	} = gridPlansIndex[ planSlug ];
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
+	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
+		siteId,
+		productSlug: PRODUCT_1GB_SPACE,
+	} );
+	const planStorageFeatureSlug = storageFeature?.getSlug() as WPComPlanStorageFeatureSlug;
 
-	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
-		? ( purchasedAddOn?.addOnSlug as AddOns.StorageAddOnSlug )
-		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
+	if ( ! spaceUpgradesPurchased ) {
+		return planStorageFeatureSlug;
+	}
+
+	// storage add-on is a tiered product, so we can assume it contains only one product entry here.
+	const purchasedAddOnSlug = quantityToAddOnSlug(
+		Object.values( spaceUpgradesPurchased )[ 0 ].purchaseRenewalQuantity
+	);
+
+	return purchasedAddOnSlug && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
+		? purchasedAddOnSlug
+		: planStorageFeatureSlug;
 }
