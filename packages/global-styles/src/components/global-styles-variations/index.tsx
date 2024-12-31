@@ -150,6 +150,10 @@ const GlobalStylesVariations = ( {
 		return null;
 	}
 
+	if ( globalStylesVariationsWithoutDefault.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
