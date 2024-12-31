@@ -1,11 +1,24 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
+	ACCOUNT_CLOSE,
 	ACCOUNT_CLOSE_SUCCESS,
 	ACCOUNT_RESTORE,
 	ACCOUNT_RESTORE_FAILED,
 	ACCOUNT_RESTORE_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
+
+export const isDeleting = ( state = false, action ) => {
+	switch ( action.type ) {
+		case ACCOUNT_CLOSE:
+			return true;
+
+		case ACCOUNT_CLOSE_SUCCESS:
+			return false;
+	}
+
+	return state;
+};
 
 export const isClosed = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -41,5 +54,5 @@ export const isRestoring = ( state = false, action ) => {
 	return state;
 };
 
-const combinedReducer = combineReducers( { isClosed, restoreToken, isRestoring } );
+const combinedReducer = combineReducers( { isDeleting, isClosed, restoreToken, isRestoring } );
 export default withStorageKey( 'account', combinedReducer );
