@@ -329,12 +329,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	};
 
 	useEffect( () => {
-		const activeTab = getActiveTab( chartTab );
-		if ( activeTab !== activeTabState ) {
-			setActiveTabState( activeTab );
-			setActiveLegend( period !== 'hour' ? activeTab.legendOptions || [] : [] );
-		}
-	}, [ chartTab, period, activeTabState ] );
+		const newActiveTab = getActiveTab( chartTab );
+		setActiveTabState( newActiveTab );
+		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
+	}, [ chartTab, period, activeTabState, context.query ] );
 
 	// Set up a custom range for the chart.
 	// Dependant on new date range picker controls.
