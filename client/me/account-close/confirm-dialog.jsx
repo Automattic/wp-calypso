@@ -52,6 +52,8 @@ class AccountCloseConfirmDialog extends Component {
 	handleConfirm = async () => {
 		this.props.closeAccount();
 		disablePersistence();
+		// Clear wordpress_logged_in cookie to force logout.
+		document.cookie = 'wordpress_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
 		await clearStore();
 		page( '/me/account/closed' );
 	};
