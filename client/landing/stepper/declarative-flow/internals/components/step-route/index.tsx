@@ -63,7 +63,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 				<>
 					<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
 					{ stepContent }
-					<SurveyManager />
+					<SurveyManager disabled />
 					<StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } />
 				</>
 			) }
