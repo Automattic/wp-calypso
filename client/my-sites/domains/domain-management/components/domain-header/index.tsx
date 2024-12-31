@@ -4,7 +4,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 
 import './style.scss';
 
-type NavigationItem = {
+export type NavigationItem = {
 	label: string;
 	subtitle?: string | ReactNode;
 	href?: string;
