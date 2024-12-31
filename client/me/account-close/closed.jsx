@@ -59,7 +59,7 @@ function AccountDeletedPage() {
 	return (
 		<BlankCanvas className="account-deleted">
 			<BlankCanvas.Header>
-				<Button variant="link" className="account-deleted__button-link" href="/">
+				<Button variant="link" className="account-deleted__button-link" href="/start">
 					{ translate( 'Create an account' ) }
 				</Button>
 			</BlankCanvas.Header>
