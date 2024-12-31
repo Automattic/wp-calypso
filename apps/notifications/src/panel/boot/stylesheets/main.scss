@@ -579,6 +579,8 @@ $with-sidebar-min-page-width: 1114px;
 		p {
 			padding-top: 1em;
 			padding-bottom: 1em;
+			display: flex;
+			align-items: center;
 		}
 
 		.wpnc__undo-link {
@@ -594,8 +596,8 @@ $with-sidebar-min-page-width: 1114px;
 
 	.wpnc__close-link {
 		color: var(--color-text-inverted);
-		position: absolute;
-		right: 10px;
+		margin-left: auto;
+		padding: 0 10px;
 		cursor: pointer;
 		user-select: none;
 	}
