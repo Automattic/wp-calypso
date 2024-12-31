@@ -28,6 +28,7 @@
 		"automated-migration/application-password": true,
 		"automated-migration/pending-status": true,
 		"calypso/all-domain-management": false,
+		"calypso/domains-dataviews": false,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
 		"checkout/ebanx-pix": true,
