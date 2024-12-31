@@ -194,7 +194,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
-	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
+	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
