@@ -71,7 +71,7 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				featureSlugs: null,
 				icon: spaceUpgradeIcon,
 				quantity: 150,
-				name: i18n.translate( '150 GB Storage' ),
+				name: i18n.translate( '%d GB Storage', { args: [ 150 ] } ),
 			},
 			{
 				addOnSlug: ADD_ON_200GB_STORAGE,
@@ -79,7 +79,7 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				featureSlugs: null,
 				icon: spaceUpgradeIcon,
 				quantity: 200,
-				name: i18n.translate( '200 GB Storage' ),
+				name: i18n.translate( '%d GB Storage', { args: [ 200 ] } ),
 			},
 			{
 				addOnSlug: ADD_ON_250GB_STORAGE,
@@ -87,7 +87,7 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				featureSlugs: null,
 				icon: spaceUpgradeIcon,
 				quantity: 250,
-				name: i18n.translate( '250 GB Storage' ),
+				name: i18n.translate( '%d GB Storage', { args: [ 250 ] } ),
 			},
 			{
 				addOnSlug: ADD_ON_300GB_STORAGE,
@@ -95,7 +95,7 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				featureSlugs: null,
 				icon: spaceUpgradeIcon,
 				quantity: 300,
-				name: i18n.translate( '300 GB Storage' ),
+				name: i18n.translate( '%d GB Storage', { args: [ 300 ] } ),
 			},
 			{
 				addOnSlug: ADD_ON_350GB_STORAGE,
@@ -103,7 +103,7 @@ export const getAddOnsList = (): AddOnMeta[] => {
 				featureSlugs: null,
 				icon: spaceUpgradeIcon,
 				quantity: 350,
-				name: i18n.translate( '350 GB Storage' ),
+				name: i18n.translate( '%d GB Storage', { args: [ 350 ] } ),
 			},
 		];
 	}
