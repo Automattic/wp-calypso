@@ -20,6 +20,10 @@ body.is-section-me {
 		.layout_primary > div {
 			padding-bottom: 0;
 		}
+
+		.layout__primary > .main {
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
+		}
 	}
 
 	.layout__secondary .global-sidebar {
