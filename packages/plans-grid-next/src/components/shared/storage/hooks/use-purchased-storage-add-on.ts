@@ -1,6 +1,6 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { useMemo } from '@wordpress/element';
 import { Purchases, AddOns } from '@automattic/data-stores';
+import { useMemo } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
 
 // TODO
@@ -36,19 +36,18 @@ export default function usePurchasedStorageAddOn(): AddOns.AddOnMeta | null {
 	} );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 
-	if ( ! spaceUpgradesPurchased ) {
-		return null;
-	}
-
-	// storage add-on is a tiered product, so we can assume it contains only one product entry here.
-	const purchasedAddOnSlug = quantityToAddOnSlug(
-		Object.values( spaceUpgradesPurchased )[ 0 ].purchaseRenewalQuantity
-	);
-
 	return useMemo( () => {
+		if ( ! spaceUpgradesPurchased ) {
+			return null;
+		}
+
+		// storage add-on is a tiered product, so we can assume it contains only one product entry here.
+		const purchasedAddOnSlug = quantityToAddOnSlug(
+			Object.values( spaceUpgradesPurchased )[ 0 ].purchaseRenewalQuantity
+		);
 		const purchasedAddOn = storageAddOns
 			.filter( ( addOn ): addOn is AddOns.AddOnMeta => addOn !== null ) // TODO: fix the related hooks so this won't be needed
 			.find( ( { addOnSlug } ) => purchasedAddOnSlug === addOnSlug );
 		return purchasedAddOn ?? null;
-	}, [ storageAddOns ] );
+	}, [ spaceUpgradesPurchased, storageAddOns ] );
 }
