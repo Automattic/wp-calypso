@@ -207,7 +207,8 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"woocommerce/rebrand-2-0": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
