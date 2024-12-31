@@ -40,6 +40,7 @@
 		"calypso/ai-blogging-prompts": true,
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
+		"calypso/domains-dataviews": false,
 		"cancellation-offers": true,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
