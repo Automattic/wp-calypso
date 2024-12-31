@@ -722,17 +722,16 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		  ]
 		: [];
 
-	const Element = isDomainsDataViewsEnabled ? DomainsDataViewsRenderer : DomainsTableRenderer;
+	const showDataViews = isDomainsDataViewsEnabled;
+	const Element = showDataViews ? DomainsDataViewsRenderer : DomainsTableRenderer;
 
 	return (
 		<>
 			<Global
-				styles={
-					isDomainsDataViewsEnabled ? domainsDataViewsGlobalStyles : domainsDashboardGlobalStyles
-				}
+				styles={ showDataViews ? domainsDataViewsGlobalStyles : domainsDashboardGlobalStyles }
 			/>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main className={ isDomainsDataViewsEnabled ? 'dataviews' : '' }>
+			<Main className={ showDataViews ? 'dataviews' : '' }>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
 					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
