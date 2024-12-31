@@ -100,7 +100,11 @@ const EmailProvidersInDepthComparison = ( {
 			<QueryProductsList />
 			{ ! hideNavigation && (
 				<EmailUpsellNavigation
-					backUrl={ getEmailManagementPath( selectedSite?.slug, selectedDomainName ) }
+					backUrl={
+						isDomainInCart
+							? `/domains/add/${ selectedDomainName }/email/${ selectedSite?.slug }`
+							: getEmailManagementPath( selectedSite?.slug, selectedDomainName )
+					}
 					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
 				/>
 			) }
