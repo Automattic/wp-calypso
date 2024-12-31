@@ -93,7 +93,9 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+				translate( 'AI Assistant' ),
 				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Newsletter and monetization tools' ),
 			];
 		case 'growth':
 			return [

@@ -123,8 +123,8 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 		}
 
 		return (
-			theme.name?.toLowerCase() === searchTerm?.toLowerCase() ||
-			theme.id?.toLowerCase() === searchTerm?.toLowerCase()
+			theme.name?.toLowerCase?.() === searchTerm?.toLowerCase() ||
+			theme.id?.toLowerCase?.() === searchTerm?.toLowerCase()
 		);
 	};
 

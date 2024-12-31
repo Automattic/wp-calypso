@@ -2,12 +2,7 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle,
-	LayoutHeaderActions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
@@ -15,6 +10,11 @@ import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use
 import useFetchDashboardSites, {
 	FetchDashboardSitesArgsInterface,
 } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
+import LayoutHeader, {
+	LayoutHeaderTitle,
+	LayoutHeaderActions,
+} from 'calypso/layout/hosting-dashboard/header';
 import AtomicSitesSelector from './atomic-sites-selector';
 import './styles.scss';
 

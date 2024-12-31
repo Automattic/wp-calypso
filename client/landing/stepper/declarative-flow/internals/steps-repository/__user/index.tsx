@@ -77,7 +77,8 @@ const UserStepComponent: Step = function UserStep( {
 				isWideLayout={ false }
 				isFullLayout
 				isLargeSkipLayout={ false }
-				hideBack
+				hideBack={ ! navigation.goBack }
+				goBack={ navigation.goBack }
 				stepContent={
 					<>
 						<FormattedHeader

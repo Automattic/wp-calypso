@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.domains-overview .item-preview__pane {
-	.item-preview__header .item-preview__header-content .item-preview__header-title-summary {
-		 .item-preview__header-summary-link {
+.domains-overview .hosting-dashboard-item-view {
+	.hosting-dashboard-item-view__header .hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary {
+		 .hosting-dashboard-item-view__header-summary-link {
 			color: var(--studio-gray-50, #646970);
 
 			&:hover {
@@ -11,7 +11,7 @@
 			}
 		}
 
-		.item-preview__header-title {
+		.hosting-dashboard-item-view__header-title {
 			font-family: Recoleta, sans-serif;
 			font-weight: 400;
 			line-height: 1;
@@ -19,7 +19,7 @@
 		}
 	}
 
-	.item-preview__content {
+	.hosting-dashboard-item-view__content {
 		padding: 0;
 		color: var(--studio-gray-100);
 
@@ -37,7 +37,7 @@
 		}
 	}
 
-	.preview-pane__navigation .section-nav-tabs__list {
+	.hosting-dashboard-item-view__navigation .section-nav-tabs__list {
 		box-sizing: border-box;
 		padding: 0 8px;
 
@@ -78,6 +78,59 @@
 
 		@include break-medium {
 			padding: 24px 0
+		}
+	}
+}
+
+.a4a-layout.domains-overview .domains-overview__details .section-nav-tabs__list {
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.a4a-layout.domains-overview .hosting-dashboard-item-view__header {
+	.hosting-dashboard-item-view__header-info .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-title {
+		font-family: Recoleta, sans-serif;
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: normal;
+	}
+
+	.hosting-dashboard-item-view__header-content {
+		.hosting-dashboard-item-view__header-info {
+			flex-wrap: wrap;
+		}
+
+		@media (max-width: $break-large) {
+			padding: 0;
+		}
+	}
+
+	.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-summary {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		.hosting-dashboard-item-view__header-summary-link {
+			color: var(--studio-gray-70, #3c434a);
+			text-decoration: none;
+			&:hover {
+				color: var(--color-accent, #3858e9);
+			}
+		}
+	}
+
+	.hosting-dashboard-item-view__header-actions .button {
+		border-radius: 4px;
+		height: auto;
+	}
+
+	.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__close {
+		height: 1rem;
+		padding-left: 0;
+		padding-right: 0;
+		color: var(--color-link);
+
+		@include break-medium {
+			height: 2rem;
 		}
 	}
 }

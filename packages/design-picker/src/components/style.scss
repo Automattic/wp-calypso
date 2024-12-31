@@ -58,6 +58,11 @@
 				margin-top: 12px;
 			}
 		}
+
+		.design-picker__design-card-group-footer {
+			margin-top: -12px;
+			margin-bottom: 36px;
+		}
 	}
 
 	.design-picker__grid {
@@ -115,8 +120,8 @@
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
-				column-gap: 24px;
-				row-gap: 28px;
+				column-gap: 40px;
+				row-gap: 48px;
 			}
 		}
 
@@ -376,6 +381,10 @@
 			opacity: 1;
 		}
 	}
+
+	.theme-tier-badge--free .badge {
+		font-size: $font-body-extra-small;
+	}
 }
 
 .design-picker.design-picker__unified {
@@ -384,11 +393,11 @@
 
 	.design-picker__grid {
 		@supports ( display: grid ) {
-			row-gap: 24px;
+			row-gap: 48px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 24px;
+				column-gap: 40px;
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -25,6 +25,7 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
@@ -173,6 +174,8 @@ export default function CampaignItemDetails( props: Props ) {
 		format,
 		budget_cents,
 		type,
+		display_delivery_estimate,
+		display_clicks_estimate,
 		is_evergreen = false,
 	} = campaign || {};
 
@@ -188,6 +191,32 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_rate,
 		conversion_last_currency_found,
 	} = campaign_stats || {};
+
+	// check if delivery outperformed
+	const calculateOutperformPercentage = ( estimates: string, total: number ): number => {
+		const tempValues = ( estimates || '' ).split( ':' );
+		let median = 0;
+		if ( tempValues && tempValues.length >= 2 ) {
+			const [ minValue, maxValue ] = tempValues.map( Number );
+			median = ( minValue + maxValue ) / 2;
+		}
+		if ( total > median && median > 0 ) {
+			return Math.round( ( ( total - median ) / median ) * 100 );
+		}
+		return 0;
+	};
+
+	// for impressions
+	const impressionsOutperformedPercentage = calculateOutperformPercentage(
+		display_delivery_estimate,
+		impressions_total
+	);
+
+	// for clicks
+	const clicksOutperformedPercentage = calculateOutperformPercentage(
+		display_clicks_estimate,
+		clicks_total
+	);
 
 	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
@@ -360,11 +389,13 @@ export default function CampaignItemDetails( props: Props ) {
 		setSelectedDateRange( newDateRange );
 	};
 
+	const areStatsEnabled = useJetpackBlazeVersionCheck( siteId, '14.1', '0.5.3' );
+
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
 		chartParams,
-		!! impressions_total
+		!! impressions_total && areStatsEnabled
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
@@ -819,17 +850,49 @@ export default function CampaignItemDetails( props: Props ) {
 											<span className="campaign-item-details__label">
 												{ translate( 'Clicks' ) }
 											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+											<span className="campaign-item-details__text">
+												<span className="wp-brand-font">
+													{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+												</span>
+												{ !! clicksOutperformedPercentage && (
+													<span className="campaign-item-details__outperformed">
+														{ translate( 'Outperformed' ) }
+													</span>
+												) }
 											</span>
+											{ !! clicksOutperformedPercentage && (
+												<span>
+													{ translate( '%(percentage)s% more than estimated', {
+														args: {
+															percentage: clicksOutperformedPercentage,
+														},
+													} ) }
+												</span>
+											) }
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'People reached' ) }
 											</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+											<span className="campaign-item-details__text">
+												<span className="wp-brand-font">
+													{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+												</span>
+												{ !! impressionsOutperformedPercentage && (
+													<span className="campaign-item-details__outperformed">
+														{ translate( 'Outperformed' ) }
+													</span>
+												) }
 											</span>
+											{ !! impressionsOutperformedPercentage && (
+												<span>
+													{ translate( '%(percentage)s% more than estimated', {
+														args: {
+															percentage: impressionsOutperformedPercentage,
+														},
+													} ) }
+												</span>
+											) }
 										</div>
 										{ isWooStore && status !== 'created' && (
 											<>
@@ -897,69 +960,71 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</div>
 
-									<>
-										<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
-											<div>
-												<div className="campaign-item-page__graph">
-													<DropdownMenu
-														class="campaign-item-page__graph-selector"
-														controls={ chartControls }
-														icon={ chevronDown }
-														text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-														label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
-													/>
-													<DropdownMenu
-														class="campaign-item-page__graph-selector"
-														controls={ [
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																title: __( 'Clicks' ),
-																isDisabled: chartSource === ChartSourceOptions.Clicks,
-															},
-															{
-																onClick: () => setChartSource( ChartSourceOptions.Impressions ),
-																title: __( 'Impressions' ),
-																isDisabled: chartSource === ChartSourceOptions.Impressions,
-															},
-														] }
-														icon={ chevronDown }
-														text={
-															chartSource === ChartSourceOptions.Clicks
-																? __( 'Clicks' )
-																: __( 'Impressions' )
-														}
-														label={ chartSource }
-													/>
-													{ getCampaignStatsChart(
-														campaignStats?.series[ chartSource ] ?? null,
-														chartSource,
-														campaignsStatsIsLoading
-													) }
-												</div>
-											</div>
-										</div>
-
-										{ campaignStats && (
+									{ areStatsEnabled && (
+										<>
 											<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 												<div>
-													<div className="campaign-item-page__locaton-charts">
-														<span className="campaign-item-details__label">
-															{ chartSource === ChartSourceOptions.Clicks
-																? __( 'Clicks by location' )
-																: __( 'Impressions by location' ) }
-														</span>
-														<div>
-															<LocationChart
-																stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
-																total={ campaignStats.total_stats.total[ chartSource ] }
-																source={ chartSource }
-															/>
-														</div>
+													<div className="campaign-item-page__graph">
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ chartControls }
+															icon={ chevronDown }
+															text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+															label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
+														/>
+														<DropdownMenu
+															class="campaign-item-page__graph-selector"
+															controls={ [
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
+																	title: __( 'Clicks' ),
+																	isDisabled: chartSource === ChartSourceOptions.Clicks,
+																},
+																{
+																	onClick: () => setChartSource( ChartSourceOptions.Impressions ),
+																	title: __( 'Impressions' ),
+																	isDisabled: chartSource === ChartSourceOptions.Impressions,
+																},
+															] }
+															icon={ chevronDown }
+															text={
+																chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks' )
+																	: __( 'Impressions' )
+															}
+															label={ chartSource }
+														/>
+														{ getCampaignStatsChart(
+															campaignStats?.series[ chartSource ] ?? null,
+															chartSource,
+															campaignsStatsIsLoading
+														) }
 													</div>
 												</div>
 											</div>
-										) }
-									</>
+
+											{ campaignStats && (
+												<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
+													<div>
+														<div className="campaign-item-page__locaton-charts">
+															<span className="campaign-item-details__label">
+																{ chartSource === ChartSourceOptions.Clicks
+																	? __( 'Clicks by location' )
+																	: __( 'Impressions by location' ) }
+															</span>
+															<div>
+																<LocationChart
+																	stats={ campaignStats?.total_stats.countryStats[ chartSource ] }
+																	total={ campaignStats.total_stats.total[ chartSource ] }
+																	source={ chartSource }
+																/>
+															</div>
+														</div>
+													</div>
+												</div>
+											) }
+										</>
+									) }
 								</div>
 							</div>
 						) }
@@ -1050,7 +1115,7 @@ export default function CampaignItemDetails( props: Props ) {
 									</>
 								</div>
 
-								{ campaign?.campaign_stats?.impressions_total > 0 && (
+								{ areStatsEnabled && campaign?.campaign_stats?.impressions_total > 0 && (
 									<div className="campaign-item-details__main-stats-row campaign-item-details__graph-stats-row">
 										<div>
 											<div className="campaign-item-page__graph">
