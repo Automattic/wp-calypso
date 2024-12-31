@@ -7,6 +7,7 @@ import { findShortcutForRange } from 'calypso/components/date-range/use-shortcut
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import LocalStorageCache from 'calypso/lib/local-storage-helper';
+import useLocalStorage from 'calypso/lib/local-storage-helper/use-local-storage';
 import DateControl from '../date-control';
 import { DateRangePickerShortcut } from '../date-range/shortcuts';
 
@@ -139,6 +140,11 @@ const StatsDateControl = ( {
 		return 'year';
 	};
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	const [ savedValue, setSavedValue ] = useLocalStorage(
+		'jetpack_stats_saved_date_range_shortcut_id'
+	);
+
 	// Handler for Apply button.
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
 		// Determine period based on date range.
@@ -158,6 +164,8 @@ const StatsDateControl = ( {
 				'jetpack_stats_stored_date_range_shortcut_id',
 				appliedShortcut.id
 			);
+
+			setSavedValue( appliedShortcut.id );
 		}
 
 		// Update chart via routing.

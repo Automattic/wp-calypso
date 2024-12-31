@@ -26,7 +26,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
-import LocalStorageCache from 'calypso/lib/local-storage-helper';
+import useLocalStorage from 'calypso/lib/local-storage-helper/use-local-storage';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	DATE_FORMAT,
@@ -180,6 +180,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
 	);
 
+	const [ savedValue ] = useLocalStorage( 'jetpack_stats_saved_date_range_shortcut_id' );
+
 	const {
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
@@ -189,7 +191,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	const hasSiteLoadedFeatures = useSelector(
-		( state ) => isWPAdmin && hasLoadedSiteFeatures( state, siteId )
+		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
 	);
 
 	const shouldForceDefaultDateRange = useSelector( ( state ) =>
@@ -288,9 +290,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const appliedShortcutId = LocalStorageCache.getItem(
-				'jetpack_stats_stored_date_range_shortcut_id'
-			);
+			const appliedShortcutId = savedValue;
 			const appliedShortcut = supportedShortcutList.find(
 				( shortcut ) => shortcut.id === appliedShortcutId
 			);
