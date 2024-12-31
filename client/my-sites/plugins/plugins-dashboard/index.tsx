@@ -312,7 +312,6 @@ const PluginsDashboard = ( {
 			) }
 			wide
 			title={ dashboardTitle }
-			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
 			<PageViewTracker
@@ -387,7 +386,10 @@ const PluginsDashboard = ( {
 
 export default withShowPluginActionDialog( UrlSearch( PluginsDashboard ) );
 
-function orderByAtomic( siteA: SiteDetails, siteB: SiteDetails ): number {
+function orderByAtomic(
+	siteA: SiteDetails | null | undefined,
+	siteB: SiteDetails | null | undefined
+): number {
 	const { is_wpcom_atomic: siteAAtomic } = siteA?.options ?? {};
 	const { is_wpcom_atomic: siteBAtomic } = siteB?.options ?? {};
 
