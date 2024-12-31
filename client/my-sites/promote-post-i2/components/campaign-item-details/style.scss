@@ -622,6 +622,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		}
 
+		.campaign-item-details__text.align-baseline {
+			align-items: baseline;
+		}
+
 		.campaign-item-details__details {
 			color: var(--studio-gray-50);
 			font-size: 0.875rem;
