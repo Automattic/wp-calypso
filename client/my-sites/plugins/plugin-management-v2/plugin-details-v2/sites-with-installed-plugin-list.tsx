@@ -6,11 +6,10 @@ import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashbo
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { DataViews } from 'calypso/components/dataviews';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PluginRowFormatter from 'calypso/my-sites/plugins/plugin-management-v2/plugin-row-formatter';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
-import { useSelector } from 'calypso/state';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import PluginActivateToggle from '../../plugin-activate-toggle';
-import PluginAutoupdateToggle from '../../plugin-autoupdate-toggle';
+import { useDispatch, useSelector } from 'calypso/state';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';
@@ -36,6 +35,8 @@ export default function SitesWithInstalledPluginsList( {
 	...rest
 }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const columns = [
 		{
 			key: 'site-name',
@@ -57,13 +58,32 @@ export default function SitesWithInstalledPluginsList( {
 		},
 	];
 
-	const isFromMarketplace = useSelector( ( state ) => isMarketplaceProduct( state, plugin?.slug ) );
+	const compareBooleans = ( a: boolean, b: boolean, direction: string ) => {
+		if ( a === b ) {
+			return 0;
+		}
+		return direction === 'asc' ? -1 : 1;
+	};
 
 	const dataViewsFields = useMemo(
 		() => [
 			{
 				id: 'domain',
 				label: translate( 'Site' ),
+				getValue: ( { item }: { item: SiteDetails } ) => item.domain,
+				render: ( { item }: { item: SiteDetails } ) => {
+					return (
+						<PluginRowFormatter
+							item={ plugin }
+							columnKey="site-name"
+							selectedSite={ item }
+							siteCount={ sites.length }
+						/>
+					);
+				},
+				enableHiding: false,
+				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'activate',
@@ -71,17 +91,17 @@ export default function SitesWithInstalledPluginsList( {
 				getValue: ( { item }: { item: SiteDetails } ) => plugin.sites[ item.ID ].active,
 				render: ( { item }: { item: SiteDetails } ) => {
 					return (
-						<div className="plugin-row-formatter__toggle">
-							<PluginActivateToggle
-								isJetpackCloud
-								hideLabel={ false }
-								plugin={ plugin }
-								site={ item }
-								disabled={ false }
-							/>
-						</div>
+						<PluginRowFormatter
+							item={ plugin }
+							columnKey="activate"
+							selectedSite={ item }
+							siteCount={ sites.length }
+						/>
 					);
 				},
+				enableHiding: false,
+				enableSorting: true,
+				sort: compareBooleans,
 			},
 			{
 				id: 'autoupdate',
@@ -89,43 +109,51 @@ export default function SitesWithInstalledPluginsList( {
 				getValue: ( { item }: { item: SiteDetails } ) => plugin.sites[ item.ID ].autoupdate,
 				render: ( { item }: { item: SiteDetails } ) => {
 					return (
-						<div className="plugin-row-formatter__toggle">
-							<PluginAutoupdateToggle
-								plugin={ plugin }
-								site={ item }
-								wporg={ !! plugin.wporg }
-								isMarketplaceProduct={ isFromMarketplace }
-								disabled={ !! plugin.isSelectable }
-							/>
-						</div>
+						<PluginRowFormatter
+							item={ plugin }
+							columnKey="autoupdate"
+							selectedSite={ item }
+							siteCount={ sites.length }
+						/>
 					);
 				},
+				enableHiding: false,
+				enableSorting: true,
+				sort: compareBooleans,
 			},
-			{ id: 'actions', label: translate( 'Actions' ) },
+			{
+				id: 'update',
+				label: translate( 'Update' ),
+				render: ( { item }: { item: SiteDetails } ) => {
+					return (
+						<PluginRowFormatter
+							item={ plugin }
+							columnKey="update"
+							selectedSite={ item }
+							siteCount={ sites.length }
+							updatePlugin={ () => dispatch( updatePlugin( item.ID, plugin ) ) }
+						/>
+					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{ id: 'actions', label: translate( 'Actions' ), enableHiding: false, enableSorting: false },
 		],
-		[ translate, plugin ]
+		[ translate, plugin, sites.length, dispatch ]
 	);
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
-		type: 'table',
-		fields: [ 'domain', 'activate', 'autoupdate', 'actions' ],
+		fields: [ 'domain', 'activate', 'autoupdate', 'update', 'actions' ],
 		items: sites,
-		enableSearch: false,
 		layout: {
 			styles: {
 				domain: {
-					width: '60%',
-					minWidth: '300px',
-				},
-				activate: {
-					width: '70px',
-				},
-				autoupdate: {
-					minWidth: '70px',
+					minWidth: '270px',
 				},
 				actions: {
-					width: '50px',
+					minWidth: '50px',
 				},
 			},
 		},
@@ -144,16 +172,11 @@ export default function SitesWithInstalledPluginsList( {
 		.map( ( site ) => site.site )
 		.filter( ( site ) => site && ! site.is_deleted );
 
-	const { data, paginationInfo } = useMemo( () => {
-		const result = filterSortAndPaginate( dataViewsSites, dataViewsState, dataViewsFields );
-
-		return {
-			data: result.data,
-			paginationInfo: result.paginationInfo,
-		};
-	}, [ dataViewsSites, dataViewsState, dataViewsFields ] );
-
-	console.log( { plugin, sites, selectedSite } );
+	const { data, paginationInfo } = filterSortAndPaginate(
+		dataViewsSites ?? [],
+		dataViewsState,
+		dataViewsFields
+	);
 
 	const renderActions = ( site: SiteDetails ) => {
 		const settingsLink = plugin?.action_links?.Settings ?? null;
