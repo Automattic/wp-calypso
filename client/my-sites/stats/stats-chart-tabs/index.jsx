@@ -1,11 +1,11 @@
+import { LineChart } from '@automattic/charts/components/line-chart';
 import clsx from 'clsx';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -15,7 +15,6 @@ import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
@@ -117,6 +116,14 @@ class StatModuleChartTabs extends Component {
 				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
+
+		const newChartData = {
+			data: chartData?.map( ( record ) => {
+				return { date: new Date( record.label ), value: record.value };
+			} ),
+			label: 'Views',
+		};
+
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
@@ -133,18 +140,24 @@ class StatModuleChartTabs extends Component {
 				/>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState
-						headingText={
-							selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
-						}
-						infoText={
-							selectedPeriod === 'hour'
-								? translate( 'Try selecting a different time frame.' )
-								: null
-						}
-					/>
-				</Chart>
+				<LineChart
+					width={ 800 }
+					height={ 400 }
+					data={ [ newChartData ] }
+					withTooltips
+					theme={ {
+						backgroundColor: '#FFFFFF',
+						colors: [ '#98C8DF', '#006DAB', '#A6DC80', '#1F9828', '#FF8C8F' ],
+						gridColor: '',
+						gridColorDark: '',
+						gridStyles: {
+							stroke: '#787C82',
+							strokeWidth: 1,
+						},
+						labelBackgroundColor: '#FFFFFF',
+						tickLength: 0,
+					} }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ countsComp }
