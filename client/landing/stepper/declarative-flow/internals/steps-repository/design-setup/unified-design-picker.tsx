@@ -913,7 +913,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
-				hideSkip={ isGoalsHoldout }
+				hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
 				skipLabelText={ translate( 'Skip setup' ) }
 				skipButtonAlign="top"
 				hideBack={ shouldHideActionButtons }
@@ -990,7 +990,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ isGoalsHoldout }
+			hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
 			skipLabelText={ translate( 'Skip setup' ) }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
