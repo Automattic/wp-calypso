@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { generatePath, useMatch, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { Navigate, StepperStep } from '../../types';
+import type { Navigate, StepperStep } from '../../types';
 
 const useOnboardingIntent = () => {
 	const intent = useSelect(
