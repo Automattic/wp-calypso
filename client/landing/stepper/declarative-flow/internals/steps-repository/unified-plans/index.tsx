@@ -48,8 +48,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
 	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
 	const [ , isGoalFirstExperiment ] = useGoalsFirstExperiment();
-	const { setDomainCartItem, setDomainCartItems, setSiteUrl, setSelectedDesign, setPendingAction } =
-		useWPDispatch( ONBOARD_STORE );
+	const { setSiteUrl, setSelectedDesign, setPendingAction } = useWPDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 
@@ -137,15 +136,8 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
-				/* The plans step removes paid domains when the user picks a free plan
-				   after picking a paid domain */
-				if ( stepInfo.stepName === 'domains' ) {
-					if ( stepInfo.isPurchasingItem === false ) {
-						setDomainCartItem( undefined );
-						setDomainCartItems( undefined );
-					} else if ( stepInfo.siteUrl ) {
-						setSiteUrl( stepInfo.siteUrl );
-					}
+				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
+					setSiteUrl( stepInfo.siteUrl );
 				} else {
 					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
 				}
