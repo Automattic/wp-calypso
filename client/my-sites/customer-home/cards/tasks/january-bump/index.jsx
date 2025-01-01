@@ -23,6 +23,7 @@ const JanuaryBump = () => {
 			actionUrl={ localizeUrl(
 				'https://wordpress.com/pricing/start-your-someday-project?ref=my-home-card'
 			) }
+			actionTarget="_self"
 			illustration={ januaryBumpIllustration }
 			taskId={ TASK_JANUARY_BUMP }
 		/>
