@@ -147,6 +147,10 @@
         }
     }
 
+    .dataviews-no-results, .dataviews-loading {
+        min-height: 500px;
+    }
+
     .dataviews__view-actions {
         margin-top: 1em;
 		padding-left: 0;

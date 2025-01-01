@@ -111,9 +111,7 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			field: 'date',
 			direction: 'desc' as const,
 		},
-		titleField: 'title',
 		fields: [ 'date', 'service', 'amount' ],
-		layout: {},
 	} );
 
 	// Apply filtering
@@ -304,8 +302,8 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 				<DataViews
 					data={ paginatedTransactions }
 					paginationInfo={ {
-						totalItems: transactions.length,
-						totalPages: Math.ceil( transactions.length / view.perPage ),
+						totalItems: filteredTransactions.length,
+						totalPages: Math.ceil( filteredTransactions.length / view.perPage ),
 					} }
 					fields={ getFields() }
 					view={ view }
