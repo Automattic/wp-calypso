@@ -850,12 +850,9 @@ object PreReleaseE2ETests : BuildType({
 				# Install deps
 				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
-				# Decrypt secrets
+				# Decrypt secrets (this builds the package as well)
 				# Must do before build so the secrets are in the dist output
 				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
