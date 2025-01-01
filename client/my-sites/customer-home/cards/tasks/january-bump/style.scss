@@ -1,7 +1,13 @@
+.swipeable__container{
+	.task.task__january-bump {
+			overflow: visible;
+	}
+}
+
 .task {
 	&.task__january-bump {
 		position: relative;
-
+		overflow: hidden;
 		&::before,
 		&::after {
 			content: "";
