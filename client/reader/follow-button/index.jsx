@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import CheckMark from 'calypso/assets/images/icons/check-mark.svg';
-import Plus from 'calypso/assets/images/icons/plus.svg';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SVGIcon from 'calypso/components/svg-icon';
@@ -45,11 +44,7 @@ function ReaderFollowButton( props ) {
 		ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } )
 	);
 
-	const followIcon = hasButtonStyle ? (
-		<SVGIcon classes="reader-follow-feed" name="plus" size="20" icon={ Plus } key="plus-icon" />
-	) : (
-		ReaderFollowFeedIcon( { iconSize: iconSize || 20 } )
-	);
+	const followIcon = ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
 
 	if ( isButtonOnly ) {
 		return (

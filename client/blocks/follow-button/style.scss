@@ -18,7 +18,7 @@ button.follow-button {
 
 	.follow-button__label {
 		color: var(--color-text-subtle);
-		margin-left: 5px;
+		margin-left: 3px;
 		white-space: nowrap;
 	}
 
@@ -129,7 +129,7 @@ button.follow-button {
 		padding: 12px 24px 12px 20px;
 
 		svg.reader-follow-feed * {
-			stroke: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 		}
 
 		svg.reader-following-feed * {

@@ -11,7 +11,6 @@ export default function ReaderFollowFeedIcon( props: ReaderFollowFeedIconProps )
 		<Icon
 			key="follow"
 			className="reader-follow-feed"
-			viewBox="0 0 20 20"
 			icon={ plus }
 			width={ iconSize }
 			height={ iconSize }
