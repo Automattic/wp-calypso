@@ -280,6 +280,7 @@ export class TitleFormatEditor extends Component {
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
+						ariaLabel={ type.label }
 						readOnly={ disabled }
 						editorState={ editorState }
 						onChange={ disabled ? noop : this.updateEditor }
