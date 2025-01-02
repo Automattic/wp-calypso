@@ -42,7 +42,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 		recordTracksEvent( 'calypso_subscriber_add_form_categories_change', {
 			site_id: siteId,
 			categories_count: validTokens.length,
-			action: 'added',
+			action: validTokens.length > selectedCategories.length ? 'added' : 'removed',
 		} );
 
 		setSelectedCategories( validTokens );
