@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from '@wordpress/element';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 const isThisASupportArticleLink = ( href: string ) =>
 	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
@@ -8,6 +9,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
 	const link = searchParams.get( 'link' ) || '';
+	const { site } = useHelpCenterContext();
 
 	const filters = useMemo(
 		() => [
@@ -39,6 +41,18 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 
 						navigate( `/post?link=${ element.href }` );
 					};
+				},
+			},
+
+			{
+				pattern: 'a[href*="wordpress.com/plans/"], a[href^="/"]',
+				action: ( element: HTMLAnchorElement ) => {
+					const href = element.getAttribute( 'href' ) as string;
+					const currentSiteDomain = site?.domain;
+
+					if ( currentSiteDomain ) {
+						element.setAttribute( 'href', new URL( `${ href + currentSiteDomain }` ).href );
+					}
 				},
 			},
 
