@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
@@ -140,6 +141,13 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleArrowNavigation = ( previousOrNext = false ) => {
 		const { moment, period, slug, dateRange } = this.props;
+
+		const isWPAdmin = config.isEnabled( 'is_odyssey' );
+		const event_from = isWPAdmin ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_date_range_navigation`, {
+			range_in_days: dateRange.daysInRange,
+			direction: previousOrNext ? 'previous' : 'next',
+		} );
 
 		const navigationStart = moment( dateRange.chartStart );
 		const navigationEnd = moment( dateRange.chartEnd );
