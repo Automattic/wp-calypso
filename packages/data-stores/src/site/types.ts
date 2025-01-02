@@ -503,14 +503,14 @@ interface PaletteColor {
 	slug: string;
 	color: string;
 	name: string;
-	default: string;
+	default?: string;
 }
 
 export interface GlobalStyles {
 	slug?: string;
 	title?: string;
 	settings: {
-		color: {
+		color?: {
 			palette: {
 				default: PaletteColor[];
 				theme: PaletteColor[];

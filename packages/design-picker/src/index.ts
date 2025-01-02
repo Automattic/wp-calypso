@@ -27,7 +27,12 @@ export {
 } from './constants';
 export type {
 	Design,
+	DesignOptions,
+	DesignRecipe,
+	DesignType,
 	Category,
+	PreviewData,
+	SoftwareSet,
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
 	StyleVariationPreview,

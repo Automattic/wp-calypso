@@ -8,5 +8,10 @@
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../calypso-sentry" }, { "path": "../design-picker" } ]
+	"references": [
+		{ "path": "../calypso-sentry" },
+		{ "path": "../calypso-products" },
+		{ "path": "../components" },
+		{ "path": "../i18n-utils" }
+	]
 }

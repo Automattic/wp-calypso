@@ -32,7 +32,6 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-sentry": "workspace:^",
 		"@automattic/components": "workspace:^",
-		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",

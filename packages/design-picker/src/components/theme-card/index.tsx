@@ -1,8 +1,7 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { forwardRef, useMemo } from 'react';
-import StyleVariationBadges from '../style-variation-badges';
+import { forwardRef, useMemo, Suspense, lazy } from 'react';
 import type { StyleVariation } from '../../types';
 import type { Ref } from 'react';
 import './style.scss';
@@ -26,6 +25,8 @@ interface ThemeCardProps {
 	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
 	onStyleVariationMoreClick?: () => void;
 }
+
+const StyleVariationBadges = lazy( () => import( '../style-variation-badges' ) );
 
 const ActiveBadge = () => {
 	return (
@@ -79,6 +80,7 @@ const ThemeCard = forwardRef(
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
 		} );
+
 		const themeInfoClasses = clsx( 'theme-card__info', {
 			// Only show style variations when there is both a badge and variations.
 			'theme-card__info--has-style-variations': badge && styleVariations.length > 0,
@@ -127,15 +129,16 @@ const ThemeCard = forwardRef(
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
-						{ ! optionsMenu && styleVariations.length > 0 && (
-							<div className="theme-card__info-style-variations">
+						{ ! optionsMenu && (
+							<Suspense fallback={ null }>
 								<StyleVariationBadges
+									className="theme-card__info-style-variations"
 									variations={ styleVariations }
 									selectedVariation={ selectedStyleVariation }
 									onMoreClick={ onStyleVariationMoreClick }
 									onClick={ onStyleVariationClick }
 								/>
-							</div>
+							</Suspense>
 						) }
 						{ ! isActive && badge && <>{ badge }</> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
