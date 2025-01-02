@@ -80,6 +80,7 @@ function AccountDeletedPage() {
 						{ translate( 'Return to WordPress.com' ) }
 					</Button>
 					{ config.isEnabled( 'me/account-restore' ) &&
+						restoreToken &&
 						( isRestoring ? (
 							<div className="account-deleted__restoring">
 								<Spinner />
