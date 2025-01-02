@@ -41,6 +41,7 @@ export type EmailProvidersInDepthComparisonProps = {
 	selectedDomainName: string;
 	selectedIntervalLength?: IntervalLength;
 	source?: string;
+	context?: string;
 };
 
 export type LearnMoreLinkProps = {

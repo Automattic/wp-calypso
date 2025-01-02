@@ -1,11 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import page from '@automattic/calypso-router';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
@@ -15,7 +18,11 @@ import {
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import { getEmailInDepthComparisonPath } from 'calypso/my-sites/email/paths';
+import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
+import {
+	getEmailInDepthComparisonPath,
+	getEmailManagementPath,
+} from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -28,6 +35,7 @@ const EmailProvidersInDepthComparison = ( {
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
+	context,
 }: EmailProvidersInDepthComparisonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -35,6 +43,10 @@ const EmailProvidersInDepthComparison = ( {
 	const isMobile = useMobileBreakpoint();
 
 	const selectedSite = useSelector( getSelectedSite );
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+	const hideNavigation = context === 'domains';
+	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( ! selectedSite ) {
@@ -86,7 +98,16 @@ const EmailProvidersInDepthComparison = ( {
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
-
+			{ ! hideNavigation && (
+				<EmailUpsellNavigation
+					backUrl={
+						isDomainInCart
+							? `/domains/add/${ selectedDomainName }/email/${ selectedSite?.slug }`
+							: getEmailManagementPath( selectedSite?.slug, selectedDomainName )
+					}
+					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+				/>
+			) }
 			<h1 className="email-providers-in-depth-comparison__header">
 				{ translate( 'Choose the right plan for you' ) }
 			</h1>
