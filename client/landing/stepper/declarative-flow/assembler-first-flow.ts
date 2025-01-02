@@ -262,10 +262,7 @@ function enableAssemblerTheme(
 	siteSlug: string,
 	reduxDispatch: CalypsoDispatch
 ) {
-	const params = new URLSearchParams( {
-		canvas: 'edit',
-		assembler: '1',
-	} );
+	const params = new URLSearchParams( { canvas: 'edit' } );
 
 	return () =>
 		Promise.resolve()

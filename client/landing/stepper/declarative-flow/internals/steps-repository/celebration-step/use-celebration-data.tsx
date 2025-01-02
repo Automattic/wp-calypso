@@ -23,10 +23,7 @@ const useCelebrationData = ( {
 	};
 
 	if ( isSiteAssemblerFlow( flow ) ) {
-		const siteEditorParams = new URLSearchParams( {
-			canvas: 'edit',
-			assembler: '1',
-		} );
+		const siteEditorParams = new URLSearchParams( { canvas: 'edit' } );
 
 		return {
 			...defaultCelebrationData,

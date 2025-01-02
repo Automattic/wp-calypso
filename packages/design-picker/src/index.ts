@@ -6,7 +6,6 @@ export {
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
-	isAssemblerSupported,
 	isLockedStyleVariation,
 	getCategoryType,
 } from './utils';
@@ -28,7 +27,12 @@ export {
 } from './constants';
 export type {
 	Design,
+	DesignOptions,
+	DesignRecipe,
+	DesignType,
 	Category,
+	PreviewData,
+	SoftwareSet,
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
 	StyleVariationPreview,

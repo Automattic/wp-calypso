@@ -151,7 +151,6 @@ $blueberry-color: #3858e9;
 
 .hosting-overview__active-domains {
 	grid-row: 4;
-	padding-bottom: 0;
 }
 
 .hosting-overview__navigation-header,
@@ -473,7 +472,7 @@ $blueberry-color: #3858e9;
 	}
 
 	.domains-table-mobile-card {
-		padding: 12px 16px;
+		padding: 12px 0;
 
 		.components-checkbox-control,
 		> div:not(:first-child) {

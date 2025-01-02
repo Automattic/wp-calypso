@@ -105,7 +105,7 @@ const StepContainer: React.FC< Props > = ( {
 		}
 	};
 
-	function BackButton() {
+	function renderBackButton() {
 		// Hide back button if goBack is falsy, it won't do anything in that case.
 		if ( shouldHideNavButtons || ( ! goBack && ! backUrl ) ) {
 			return null;
@@ -123,7 +123,7 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	function SkipButton() {
+	function renderSkipButton() {
 		const skipAction = onSkip ?? goNext;
 
 		if ( shouldHideNavButtons || ! skipAction ) {
@@ -149,7 +149,7 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	function NextButton() {
+	function renderNextButton() {
 		if ( shouldHideNavButtons || ! goNext ) {
 			return null;
 		}
@@ -183,9 +183,9 @@ const StepContainer: React.FC< Props > = ( {
 					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,
 				} ) }
 			>
-				{ ! hideBack && <BackButton /> }
-				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
-				{ ! hideNext && <NextButton /> }
+				{ ! hideBack && renderBackButton() }
+				{ ! hideSkip && skipButtonAlign === 'top' && renderSkipButton() }
+				{ ! hideNext && renderNextButton() }
 				{ customizedActionButtons }
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
@@ -216,7 +216,7 @@ const StepContainer: React.FC< Props > = ( {
 			{ ! hideSkip && skipButtonAlign === 'bottom' && (
 				<div className="step-container__buttons">
 					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
-					<SkipButton />
+					{ renderSkipButton() }
 				</div>
 			) }
 			{ showJetpackPowered && (

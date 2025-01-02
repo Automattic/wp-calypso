@@ -7,7 +7,7 @@ import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { restoreAccount } from 'calypso/state/account/actions';
 import { getIsRestoring, getRestoreToken } from 'calypso/state/account/selectors';
-import isAccountClosed from 'calypso/state/selectors/is-account-closed';
+import isAccountDeleting from 'calypso/state/selectors/is-account-deleting';
 
 import './closed.scss';
 
@@ -16,7 +16,7 @@ function AccountDeletedPage() {
 	const dispatch = useDispatch();
 
 	const isRestoring = useSelector( getIsRestoring );
-	const isUserAccountClosed = useSelector( isAccountClosed );
+	const isDeleting = useSelector( isAccountDeleting );
 
 	// restore token is either in the URL or in the reducer
 	const params = new URLSearchParams( window.location.search );
@@ -41,7 +41,7 @@ function AccountDeletedPage() {
 		dispatch( restoreAccount( restoreToken ) );
 	};
 
-	if ( ( ! isUserAccountClosed && ! config.isEnabled( 'me/account-restore' ) ) || ! restoreToken ) {
+	if ( isDeleting ) {
 		return (
 			<BlankCanvas className="account-deleted">
 				<BlankCanvas.Header />
@@ -59,7 +59,7 @@ function AccountDeletedPage() {
 	return (
 		<BlankCanvas className="account-deleted">
 			<BlankCanvas.Header>
-				<Button variant="link" className="account-deleted__button-link" href="/">
+				<Button variant="link" className="account-deleted__button-link" href="/start">
 					{ translate( 'Create an account' ) }
 				</Button>
 			</BlankCanvas.Header>
@@ -79,16 +79,24 @@ function AccountDeletedPage() {
 					<Button variant="secondary" onClick={ onCancelClick }>
 						{ translate( 'Return to WordPress.com' ) }
 					</Button>
-					{ config.isEnabled( 'me/account-restore' ) && (
-						<Button
-							variant="link"
-							className="account-deleted__button-link"
-							onClick={ onRestoreClick }
-							isBusy={ isRestoring }
-						>
-							{ translate( 'I made a mistake! Restore my account' ) }
-						</Button>
-					) }
+					{ config.isEnabled( 'me/account-restore' ) &&
+						restoreToken &&
+						( isRestoring ? (
+							<div className="account-deleted__restoring">
+								<Spinner />
+								<span className="account-deleted__restoring-text">
+									{ translate( 'Restoring your account' ) }
+								</span>
+							</div>
+						) : (
+							<Button
+								variant="link"
+								className="account-deleted__button-link"
+								onClick={ onRestoreClick }
+							>
+								{ translate( 'I made a mistake! Restore my account' ) }
+							</Button>
+						) ) }
 				</div>
 			</BlankCanvas.Content>
 		</BlankCanvas>

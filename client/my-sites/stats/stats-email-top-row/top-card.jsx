@@ -1,4 +1,5 @@
 import { Card, ShortenedNumber, Spinner } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 
 /* This is a very stripped down version of HighlightCard
  * HighlightCard doesn't support non-numeric values
@@ -29,13 +30,17 @@ const TopCardValue = ( { value, isLoading } ) => {
 	);
 };
 
-const TopCard = ( { heading, icon, value, isLoading } ) => {
+const TopCard = ( { heading, icon, value, isLoading, emailIsSending = false } ) => {
+	const translate = useTranslate();
 	return (
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
-			<div className="highlight-card-count">
-				<TopCardValue value={ value } isLoading={ isLoading } />
+			<div className={ `highlight-card-count ${ emailIsSending ? 'is-sending-email' : '' }` }>
+				<TopCardValue
+					value={ emailIsSending ? translate( 'Still sending emails.' ) : value }
+					isLoading={ isLoading }
+				/>
 			</div>
 		</Card>
 	);

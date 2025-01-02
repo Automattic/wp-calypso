@@ -1,16 +1,14 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import ItemPreviewPane, {
-	createFeaturePreview,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
 import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
 import ArchivedStatus from './components/archived-status';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral, ReferralInvoice } from '../types';
-import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
 
@@ -27,7 +25,6 @@ const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 export default function ReferralDetails( {
 	referral,
 	closeSitePreviewPane,
-	referralInvoices,
 	isArchiveView,
 }: Props ) {
 	const translate = useTranslate();
@@ -55,10 +52,6 @@ export default function ReferralDetails( {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const clientReferralInvoices = referralInvoices.filter(
-		( invoice ) => invoice.clientId === referral.client.id
-	);
-
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -79,17 +72,17 @@ export default function ReferralDetails( {
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralCommissions referral={ referral } referralInvoices={ clientReferralInvoices } />
+				<ReferralCommissions referral={ referral } />
 			),
 		],
-		[ translate, selectedReferralTab, isDesktop, referral, clientReferralInvoices ]
+		[ translate, selectedReferralTab, isDesktop, referral ]
 	);
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			className="referral-details-items"
 			itemData={ itemData }
-			closeItemPreviewPane={ closeSitePreviewPane }
+			closeItemView={ closeSitePreviewPane }
 			features={ features }
 			hideNavIfSingleTab
 		/>
