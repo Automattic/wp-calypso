@@ -23,20 +23,12 @@ const setSidebar = ( context: Context ): void => {
 
 export const pluginManagementContext: Callback = ( context, next ) => {
 	redirectIfHasNoAccess( context );
-	const { filter = 'all', site } = context.params;
-	const { s: search } = context.query;
+	const { site } = context.params;
 	context.header = <Header />;
 	// Set secondary context only on multi-site view
 	if ( ! site ) {
 		setSidebar( context );
 	}
-	context.primary = (
-		<PluginsOverview
-			filter={ filter === 'manage' ? 'all' : filter }
-			search={ search }
-			site={ site }
-		/>
-	);
 	next();
 };
 

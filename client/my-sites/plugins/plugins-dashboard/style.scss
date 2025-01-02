@@ -5,7 +5,7 @@
 	--color-light-backdrop: var( --studio-white );
 }
 
-.main.hosting-dashboard-layout.sites-dashboard {
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard {
 	padding-block-start: 0;
 
 	.hosting-dashboard-layout__header-actions {
@@ -221,6 +221,15 @@
 		max-width: none;
 	}
 
+	&.sites-dashboard__layout .hosting-dashboard-layout-with-columns__container { 
+		.hosting-dashboard-layout-column .hosting-dashboard-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top, 32px ) - var(--content-padding-bottom, 32px));
+		}
+	}
+
 	&.sites-dashboard__layout:not( .preview-hidden ) {
 		.hosting-dashboard-layout__top-wrapper {
 			padding-block-start: 16px;
@@ -244,40 +253,7 @@
 	}
 
 	&.sites-dashboard__layout {
-		.activity-card-list .activity-card .activity-card__time {
-			background: none;
-		}
-
-		.sites-overview__add-site-issue-license-buttons {
-			display: flex;
-			grid-gap: 8px;
-
-			&.is-with-split-button {
-				flex-direction: row;
-
-				> a {
-					flex-grow: 1;
-				}
-
-				.split-button {
-					display: flex;
-				}
-
-				.split-button__main {
-					flex-grow: 1;
-				}
-
-				@media ( max-width: $break-small ) {
-					> a {
-						flex-grow: 0;
-					}
-				}
-			}
-		}
-
-		.sites-overview__add-new-site {
-			white-space: nowrap;
-		}
+		display: block;
 
 		.sites-overview {
 			height: 100%;
@@ -366,6 +342,9 @@
 
 body.is-section-plugins .hosting-dashboard-layout,
 .is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
+	.hosting-dashboard-layout-with-columns__container {
+    background-color: var(--color-surface-backdrop);
+	}
 	.dataviews-wrapper {
 		margin: auto;
 
