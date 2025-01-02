@@ -64,7 +64,7 @@ export function createActions() {
 
 				...emails.map( ( email ) => [ 'emails[]', email ] as [ string, string ] ),
 
-				[ 'data', JSON.stringify( { parse_only: parseOnly } ) ] as [ string, string ],
+				[ 'parse_only', String( parseOnly ) ] as [ string, string ],
 			];
 
 			const data: ImportSubscribersResponse = yield wpcomRequest( {
