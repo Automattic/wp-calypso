@@ -134,7 +134,6 @@ class StatModuleFollowers extends Component {
 					mainItemLabel={ translate( 'Subscriber' ) }
 					metricLabel={ translate( 'Since' ) }
 					splitHeader
-					useShortNumber
 					showMore={ {
 						url: subscriberManagementUrl,
 						label: this.props.translate( 'Manage subscribers' ),

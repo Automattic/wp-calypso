@@ -11,12 +11,12 @@ import {
 	A4A_TEAM_INVITE_LINK,
 	A4A_TEAM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/multi-sites-dashboard/nav';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutNavigation, { LayoutNavigationTabs } from 'calypso/layout/hosting-dashboard/nav';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TAB_ACTIVE_MEMBERS, TAB_INVITED_MEMBERS } from '../../constants';

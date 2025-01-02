@@ -154,6 +154,9 @@ $z-layers: (
 		".theme-preview-modal": 100200,
 		".wplink__dialog.dialog.card": 100200,
 		".web-preview": 100200,
+		// TODO: remove after /plugins/manage details doesn't use Dialog
+		".is-section-plugins .components-modal__screen-overlay": 100201,
+		".is-section-jetpack-cloud-plugin-management .components-modal__screen-overlay": 100201,
 		".theme-site-selector-modal": 100201,
 		".is-section-theme .global-notices": 100201,
 		".popover.ellipsis-menu__menu": 100201,

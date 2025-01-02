@@ -28,6 +28,7 @@ interface Props {
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
 	subtitle?: string | ReactNode;
+	alwaysShowTitle?: boolean;
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
 	style?: object;
@@ -44,9 +45,12 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		compactBreadcrumb,
 		title,
 		subtitle,
+		alwaysShowTitle = false,
 		screenReader,
 		screenOptionsTab,
 	} = props;
+	const showTitle = alwaysShowTitle || navigationItems.length < 2;
+
 	return (
 		<header
 			id={ id }
@@ -67,7 +71,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 						compact={ compactBreadcrumb }
 						hideWhenOnlyOneLevel
 					/>
-					{ navigationItems.length < 2 && (
+					{ showTitle && (
 						<FormattedHeader
 							align="left"
 							headerText={ title }

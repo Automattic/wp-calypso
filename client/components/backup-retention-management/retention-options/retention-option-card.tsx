@@ -48,7 +48,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			<div className="retention-option__headline">
 				<div className="headline__label">{ RETENTION_OPTIONS_LABELS[ value ] }</div>
 				<input
-					className="headline__input components-radio-control__input"
+					className="components-radio-control__input"
 					type="radio"
 					name="storage_option"
 					value={ value }

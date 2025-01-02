@@ -18,13 +18,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import Layout from 'calypso/layout/multi-sites-dashboard';
-import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import Layout from 'calypso/layout/hosting-dashboard';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/layout/multi-sites-dashboard/header';
-import LayoutTop from 'calypso/layout/multi-sites-dashboard/top';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
@@ -89,7 +89,7 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
-export function showSitesPage( route: string ) {
+export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
 
@@ -103,7 +103,17 @@ export function showSitesPage( route: string ) {
 		}
 	} );
 
-	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	if ( openInNewTab ) {
+		const newWindow = window.open(
+			newUrl.toString().replace( window.location.origin, '' ),
+			'_blank'
+		);
+		if ( newWindow ) {
+			newWindow.opener = null;
+		}
+	} else {
+		pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	}
 }
 
 const SitesDashboard = ( {
@@ -336,14 +346,16 @@ const SitesDashboard = ( {
 
 	const openSitePreviewPane = (
 		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+		openInNewTab?: boolean
 	) => {
 		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 			site_id: site.ID,
 			source,
 		} );
 		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
+			openInNewTab
 		);
 	};
 

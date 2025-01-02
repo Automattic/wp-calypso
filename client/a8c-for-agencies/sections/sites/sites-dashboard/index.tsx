@@ -3,6 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState, useRef } from 'react';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -21,14 +22,14 @@ import {
 	AgencyDashboardFilter,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import LayoutColumn from 'calypso/layout/multi-sites-dashboard/column';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
-} from 'calypso/layout/multi-sites-dashboard/nav';
+} from 'calypso/layout/hosting-dashboard/nav';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -246,6 +247,7 @@ export default function SitesDashboard() {
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ navItems.length > 1 }>
 					<ProvisioningSiteNotification />
+					<A4AAgencyApprovalNotice />
 
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>

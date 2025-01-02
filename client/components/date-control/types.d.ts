@@ -12,8 +12,6 @@ interface DateControlProps {
 	onShortcutClick: ( shortcut: DateRangePickerShortcut ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
-	// Temporary prop to enable new date filtering UI.
-	isNewDateFilteringEnabled?: boolean;
 }
 
 interface DateControlPickerProps {

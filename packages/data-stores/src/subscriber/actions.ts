@@ -14,11 +14,17 @@ export function createActions() {
 	/**
 	 * ↓ Import subscribers by CSV
 	 */
-	const importCsvSubscribersStart = ( siteId: number, file?: File, emails: string[] = [] ) => ( {
+	const importCsvSubscribersStart = (
+		siteId: number,
+		file?: File,
+		emails: string[] = [],
+		categories: number[] = []
+	) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
 		file,
 		emails,
+		categories,
 	} );
 
 	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
@@ -42,21 +48,31 @@ export function createActions() {
 		siteId: number,
 		file?: File,
 		emails: string[] = [],
+		categories: number[] = [],
 		parseOnly: boolean = false
 	) {
-		yield importCsvSubscribersStart( siteId, file, emails );
+		yield importCsvSubscribersStart( siteId, file, emails, categories );
 
 		try {
 			const token = oauthToken.getToken();
+			const formDataEntries: Array<
+				[ string, string | number | File ] | [ string, File, string ]
+			> = [
+				...( file ? [ [ 'import', file, file.name ] as [ string, File, string ] ] : [] ),
+
+				...categories.map( ( categoryId ) => [ 'categories[]', categoryId ] as [ string, number ] ),
+
+				...emails.map( ( email ) => [ 'emails[]', email ] as [ string, string ] ),
+
+				[ 'data', JSON.stringify( { parse_only: parseOnly } ) ] as [ string, string ],
+			];
+
 			const data: ImportSubscribersResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
 				token: typeof token === 'string' ? token : undefined,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				formData: file && [ [ 'import', file, file.name ] ],
-				body: { emails, parse_only: parseOnly },
+				formData: formDataEntries as ( string | File )[][],
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
