@@ -107,17 +107,10 @@ class MasterbarLoggedIn extends Component {
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
-		this.actionSearchShortCutListener = () => {
-			if ( event.ctrlKey && event.shiftKey && event.key === 'F' ) {
-				this.clickSearchActions();
-			}
-		};
-		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.subscribeToViewPortChanges();
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
@@ -166,10 +159,6 @@ class MasterbarLoggedIn extends Component {
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 		window.scrollTo( 0, 0 );
-	};
-
-	clickSearchActions = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_search_actions_clicked' );
 	};
 
 	preloadMySites = () => {
@@ -509,26 +498,6 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderSearch() {
-		const { translate, isWordPressActionSearchFeatureEnabled } = this.props;
-		if ( isWordPressActionSearchFeatureEnabled ) {
-			return (
-				<Item
-					tipTarget="Action Search"
-					icon="search"
-					onClick={ this.clickSearchActions }
-					isActive={ false }
-					className="masterbar__item-action-search"
-					tooltip={ translate( 'Search' ) }
-					preloadSection={ this.preloadMe }
-				>
-					{ translate( 'Search Actions' ) }
-				</Item>
-			);
-		}
-		return null;
-	}
-
 	renderCart() {
 		const { siteSlug, siteId, sectionGroup } = this.props;
 		// Only display the masterbar cart when we are viewing a site-specific page.
@@ -635,7 +604,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSiteMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
-					{ this.renderSearch() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
