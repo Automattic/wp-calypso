@@ -77,7 +77,6 @@ const serviceName = (
 
 export interface BillingHistoryListProps {
 	header?: boolean;
-	siteId?: string | number | null;
 	getReceiptUrlFor: ( receiptId: string ) => string;
 }
 
@@ -115,7 +114,7 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 	} );
 
 	// Apply filtering
-	const filteredTransactions = transactions.filter( ( transaction ) => {
+	const filteredTransactions = ( transactions ?? [] ).filter( ( transaction ) => {
 		// Handle search
 		if ( view.search ) {
 			const searchTerm = view.search.toLowerCase();
@@ -354,28 +353,11 @@ function getIsSendingReceiptEmail( state: IAppState ) {
 	};
 }
 
-const filterTransactionsBySite = (
-	transactions: BillingTransaction[] | null | undefined,
-	siteId: string | number | null | undefined
-): BillingTransaction[] => {
-	if ( ! siteId || ! transactions ) {
-		return transactions ?? [];
-	}
-	return transactions.filter( ( transaction ) =>
-		transaction.items.some( ( item ) => String( item.site_id ) === String( siteId ) )
-	);
-};
-
 export default connect(
-	( state: IAppState, { siteId }: BillingHistoryListProps ) => {
-		const transactions = getPastBillingTransactions( state );
-		const filteredBySite = filterTransactionsBySite( transactions, siteId );
-
-		return {
-			transactions: filteredBySite,
-			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
-		};
-	},
+	( state: IAppState ) => ( {
+		transactions: getPastBillingTransactions( state ),
+		sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
+	} ),
 	{
 		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
 	}
