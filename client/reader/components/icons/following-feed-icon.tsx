@@ -10,12 +10,6 @@ export default function ReaderFollowingFeedIcon(
 	const { iconSize } = props;
 
 	return (
-		<Icon
-			key="following"
-			className="reader-following-feed"
-			icon={ published }
-			size={ iconSize }
-			stroke="#00c92f"
-		/>
+		<Icon key="following" className="reader-following-feed" icon={ published } size={ iconSize } />
 	);
 }
