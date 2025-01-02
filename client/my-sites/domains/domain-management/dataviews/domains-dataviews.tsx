@@ -43,13 +43,13 @@ export const DomainsDataViews = ( {
 		.pop();
 
 	useEffect( () => {
-		const fields = getFieldsByBreakpoint( isDesktop, sidebarMode );
-		const fieldsForBreakpoint = [ ...fields ].sort().toString();
-		const existingFields = [ ...( view?.fields ?? [] ) ].sort().toString();
+		const fieldsForBreakpoint = getFieldsByBreakpoint( isDesktop, sidebarMode );
+		const sortedFieldsForBreakpoint = [ ...fieldsForBreakpoint ].sort().toString();
+		const sortedExistingFields = [ ...( view?.fields ?? [] ) ].sort().toString();
 		// Compare the content of the arrays, not its referrences that will always be different.
 		// sort() sorts the array in place, so we need to clone them first.
-		if ( existingFields !== fieldsForBreakpoint ) {
-			setView( ( prevState ) => ( { ...prevState, fields } ) );
+		if ( sortedExistingFields !== sortedFieldsForBreakpoint ) {
+			setView( ( prevState ) => ( { ...prevState, fields: fieldsForBreakpoint } ) );
 		}
 	}, [ isDesktop, sidebarMode, view, setView ] );
 
