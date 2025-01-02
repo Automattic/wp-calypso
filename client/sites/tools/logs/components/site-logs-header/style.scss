@@ -10,7 +10,7 @@
 	justify-content: space-between;
 	margin-bottom: 24px;
 
-	@media (max-width: $break-medium) {
+	@media (max-width: $break-small) {
 		gap: 16px;
 	}
 
@@ -26,12 +26,12 @@
 		align-self: center;
 		gap: 10px;
 
-		@include break-medium {
+		@include break-small {
 			flex-direction: row;
 			align-items: center;
 		}
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-small) {
 			width: 100%;
 		}
 	}
