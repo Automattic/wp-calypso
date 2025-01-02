@@ -11,6 +11,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DateLabelDrill from './date-label-drill';
 
 import './style.scss';
 
@@ -24,12 +25,14 @@ class StatsDatePicker extends Component {
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
 		isShort: PropTypes.bool,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
 		showQueryDate: false,
 		isActivity: false,
 		isShort: false,
+		queryParams: {},
 	};
 
 	dateForSummarize() {
@@ -173,8 +176,17 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange, reduxState } =
-			this.props;
+		const {
+			summary,
+			translate,
+			query,
+			showQueryDate,
+			isActivity,
+			isShort,
+			dateRange,
+			reduxState,
+			queryParams,
+		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 
@@ -220,13 +232,21 @@ class StatsDatePicker extends Component {
 			);
 		}
 
+		const isDrillingDown = queryParams?.drilldown === '1';
+
 		return (
 			<div>
 				{ summary ? (
 					<span>{ sectionTitle }</span>
 				) : (
 					<div className="stats-section-title">
-						<h3>{ sectionTitle }</h3>
+						<h3>
+							{ isDrillingDown ? (
+								<DateLabelDrill query={ queryParams }>{ sectionTitle }</DateLabelDrill>
+							) : (
+								sectionTitle
+							) }
+						</h3>
 						{ showQueryDate && this.renderQueryDate() }
 					</div>
 				) }

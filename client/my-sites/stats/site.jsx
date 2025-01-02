@@ -241,7 +241,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 
 		const path = `/stats/${ targetPeriod }/${ slug }`;
-		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
+		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd, drilldown: 1 }, path );
 
 		return url;
 	};
@@ -518,6 +518,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							showQueryDate
 							isShort
 							dateRange={ customChartRange }
+							queryParams={ context.query }
 						/>
 					</StatsPeriodNavigation>
 				</StatsPeriodHeader>
