@@ -10,7 +10,7 @@ const CommentSubscriptionsManager = () => {
 			<div>
 				<div>
 					<SubscriptionsManagerWrapper
-						headerText={ translate( 'Manage subscriptions' ) }
+						headerText={ translate( 'Manage subscribed posts' ) }
 						subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
 					>
 						<Comments />

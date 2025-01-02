@@ -10,8 +10,6 @@
 		}
 	},
 	"exclude": [
-		"apps",
-		"desktop",
 		"public",
 		"node_modules",
 		"**/node_modules/*",

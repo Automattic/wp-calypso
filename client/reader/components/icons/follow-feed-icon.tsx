@@ -7,13 +7,5 @@ interface ReaderFollowFeedIconProps {
 export default function ReaderFollowFeedIcon( props: ReaderFollowFeedIconProps ): JSX.Element {
 	const { iconSize } = props;
 
-	return (
-		<Icon
-			key="follow"
-			className="reader-follow-feed"
-			icon={ plus }
-			width={ iconSize }
-			height={ iconSize }
-		/>
-	);
+	return <Icon key="follow" className="reader-follow-feed" icon={ plus } size={ iconSize } />;
 }
