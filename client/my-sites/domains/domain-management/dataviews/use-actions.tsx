@@ -1,7 +1,5 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { SelectDropdown } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import transformIcon from '@automattic/domains-table/src/bulk-actions-toolbar/transform.svg';
 import { canSetAsPrimary } from '@automattic/domains-table/src/utils/can-set-as-primary';
 import {
 	type as domainTypes,
@@ -21,17 +19,13 @@ import {
 } from '@automattic/domains-table/src/utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '@automattic/domains-table/src/utils/should-upgrade-to-make-domain-primary';
 import { Action } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { Icon, drawerLeft, info, update } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import { domainManagementEditContactInfo } from '../../paths';
+import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { DomainData } from './types';
 import { useDomainsDataViewsContext } from './use-context';
-
-declare const __i18n_text_domain__: string;
 
 export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?: () => void ) {
 	const { __ } = useI18n();
@@ -42,7 +36,6 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 		updatingDomain,
 		userCanSetPrimaryDomains = false,
 		onDomainAction,
-		handleAutoRenew,
 		handleUpdateContactInfo,
 	} = useDomainsDataViewsContext();
 
@@ -236,76 +229,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 			isEligible( domain: DomainData ) {
 				return isDomainRenewable( domain.processed );
 			},
-			RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-				const { __, _n } = useI18n();
-				const [ controlKey, setControlKey ] = useState( 1 );
-				const enableLabel = createInterpolateElement(
-					__( 'Turn <b>on</b> auto-renew', __i18n_text_domain__ ),
-					{ b: <strong /> }
-				);
-
-				const disableLabel = createInterpolateElement(
-					__( 'Turn <b>off</b> auto-renew', __i18n_text_domain__ ),
-					{ b: <strong /> }
-				);
-
-				const handleAutoRenewSelect = ( { value }: { value: string } ) => {
-					if ( value === 'enable' ) {
-						handleAutoRenew( items, true );
-					} else if ( value === 'disable' ) {
-						handleAutoRenew( items, false );
-					}
-
-					// By default the SelectDropdown will "select" the item that was clicked. We don't
-					// want this so we force the components internal state to be reset, which keeps
-					// the selection set to `initialSelected="button-label"`.
-					setControlKey( ( oldKey ) => oldKey + 1 );
-
-					onActionPerformed?.( items );
-					closeModal?.();
-				};
-
-				return (
-					<div>
-						<p>
-							{ sprintf(
-								/* translators: domainCount will be the number of domains to update */
-								_n(
-									'Update auto-renew settings for %(domainCount)d domain',
-									'Update auto-renew settings for %(domainCount)d domains',
-									items.length,
-									__i18n_text_domain__
-								),
-								{ domainCount: items.length }
-							) }
-						</p>
-						<SelectDropdown
-							key={ controlKey }
-							className="domains-table-bulk-actions-toolbar__select"
-							initialSelected="button-label"
-							showSelectedOption={ false }
-							onSelect={ handleAutoRenewSelect }
-							options={ [
-								{
-									value: 'button-label',
-									label: __( 'Choose new status…', __i18n_text_domain__ ),
-									icon: (
-										<img
-											className="domains-table-bulk-actions-toolbar__icon"
-											src={ transformIcon }
-											width={ 18 }
-											height={ 18 }
-											alt=""
-										/>
-									),
-								},
-								{ value: 'enable', label: enableLabel },
-								{ value: 'disable', label: disableLabel },
-							] }
-						/>
-					</div>
-				);
-			},
+			RenderModal: ( props ) => <AutoRenewDiolog { ...props } />,
 		},
 	];
 
