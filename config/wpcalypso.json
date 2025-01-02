@@ -114,6 +114,7 @@
 		"marketplace-test": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
+		"me/account-restore": true,
 		"me/vat-details": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
