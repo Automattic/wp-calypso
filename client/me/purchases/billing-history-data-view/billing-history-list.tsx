@@ -27,14 +27,37 @@ import {
 import 'calypso/components/dataviews/style.scss';
 import './style.scss';
 
-const SERVICES = [
-	{ value: 'WordPress.com', label: 'WordPress.com' },
-	{ value: 'Jetpack', label: 'Jetpack' },
-	{ value: 'WooCommerce', label: 'WooCommerce' },
-];
-
 const recordClickEvent = ( eventAction: string ) => {
 	recordGoogleEvent( 'Me', eventAction );
+};
+
+const getUniqueMonths = (
+	transactions: BillingTransaction[]
+): Array< { value: string; label: string } > => {
+	const uniqueMonths = new Set(
+		transactions.map( ( transaction ) => moment( transaction.date ).format( 'YYYY-MM' ) )
+	);
+
+	return Array.from( uniqueMonths )
+		.sort()
+		.reverse()
+		.map( ( monthStr ) => ( {
+			value: monthStr,
+			label: moment( monthStr ).format( 'MMMM YYYY' ),
+		} ) );
+};
+
+const getUniqueServices = (
+	transactions: BillingTransaction[]
+): Array< { value: string; label: string } > => {
+	const uniqueServices = new Set( transactions.map( ( transaction ) => transaction.service ) );
+
+	return Array.from( uniqueServices )
+		.sort()
+		.map( ( service ) => ( {
+			value: service,
+			label: service,
+		} ) );
 };
 
 const serviceNameDescription = (
@@ -110,7 +133,7 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			field: 'date',
 			direction: 'desc' as const,
 		},
-		fields: [ 'date', 'service', 'amount' ],
+		fields: [ 'date', 'service', 'type', 'amount' ],
 	} );
 
 	// Apply filtering
@@ -149,6 +172,9 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			if ( filter.field === 'type' && filter.value ) {
 				const [ firstItem ] = groupDomainProducts( transaction.items, translate );
 				return firstItem.type === filter.value;
+			}
+			if ( filter.field === 'date' && filter.value ) {
+				return moment( transaction.date ).format( 'YYYY-MM' ) === filter.value;
 			}
 			return true;
 		} );
@@ -228,11 +254,15 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			id: 'date',
 			label: 'Date',
 			type: 'text' as const,
+			elements: getUniqueMonths( transactions ?? [] ),
 			enableGlobalSearch: true,
 			enableHiding: false,
 			enableSorting: true,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
-				return item.date;
+				return moment( item.date ).format( 'YYYY-MM' );
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return <time>{ moment( item.date ).format( 'll' ) }</time>;
@@ -242,7 +272,7 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			id: 'service',
 			label: 'App',
 			type: 'text' as const,
-			elements: SERVICES,
+			elements: getUniqueServices( transactions ?? [] ),
 			enableGlobalSearch: true,
 			enableHiding: false,
 			enableSorting: true,
@@ -347,11 +377,9 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 	);
 };
 
-function getIsSendingReceiptEmail( state: IAppState ) {
-	return function isSendingBillingReceiptEmailForReceiptId( receiptId: number ) {
-		return isSendingBillingReceiptEmail( state, receiptId );
-	};
-}
+const getIsSendingReceiptEmail = ( state: IAppState ) => {
+	return ( receiptId: number ) => isSendingBillingReceiptEmail( state, receiptId );
+};
 
 export default connect(
 	( state: IAppState ) => ( {
