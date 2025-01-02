@@ -58,6 +58,7 @@ import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
 import StatsModuleDownloads from './features/modules/stats-downloads';
+import StatsModuleLocations from './features/modules/stats-locations';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
@@ -561,13 +562,26 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								className={ halfWidthModuleClasses }
 							/>
 
-							<StatsModuleCountries
-								moduleStrings={ moduleStrings.countries }
-								period={ props.period }
-								query={ query }
-								summaryUrl={ getStatHref( 'countryviews', query ) }
-								className={ clsx( 'stats__flexible-grid-item--full' ) }
-							/>
+							{ config.isEnabled( 'stats/locations' ) ? (
+								<>
+									<StatsModuleLocations
+										path="countryviews"
+										moduleStrings={ moduleStrings.locations }
+										period={ props.period }
+										query={ query }
+										summaryUrl={ getStatHref( 'countryviews', query ) }
+										className={ clsx( 'stats__flexible-grid-item--full' ) }
+									/>
+								</>
+							) : (
+								<StatsModuleCountries
+									moduleStrings={ moduleStrings.countries }
+									period={ props.period }
+									query={ query }
+									summaryUrl={ getStatHref( 'countryviews', query ) }
+									className={ clsx( 'stats__flexible-grid-item--full' ) }
+								/>
+							) }
 
 							{ /* If UTM if supported display the module or update Jetpack plugin card */ }
 							{ supportsUTMStats && ! isOldJetpack && (
