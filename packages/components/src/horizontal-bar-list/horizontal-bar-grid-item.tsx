@@ -109,7 +109,7 @@ const HorizontalBarListItem = ( {
 			return <ShortenedNumber value={ value } />;
 		}
 		if ( formatValue ) {
-			return formatValue( value );
+			return formatValue( value, data );
 		}
 		return usePlainCard ? value : numberFormat( value, 0 );
 	};
@@ -193,6 +193,7 @@ const HorizontalBarListItem = ( {
 									isStatic={ isStatic }
 									usePlainCard={ usePlainCard }
 									isLinkUnderlined={ isLinkUnderlined }
+									formatValue={ formatValue }
 								/>
 							);
 						} ) }

@@ -19,6 +19,13 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import {
+	TooltipWrapper,
+	OpensTooltipContent,
+	ClicksTooltipContent,
+	hasUniqueMetrics,
+	EmailStatsItem,
+} from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
@@ -74,7 +81,18 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: { opens_rate: number } ) => <span>{ `${ item.opens_rate }%` }</span>,
+						body: ( item: EmailStatsItem ) => {
+							const opensUnique = parseInt( String( item.unique_opens ), 10 );
+							const opens = parseInt( String( item.opens ), 10 );
+							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							return (
+								<TooltipWrapper
+									value={ hasUniques ? `${ item.opens_rate }%` : '—' }
+									item={ item }
+									TooltipContent={ OpensTooltipContent }
+								/>
+							);
+						},
 					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
@@ -83,8 +101,21 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					mainItemLabel={ translate( 'Latest emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
-					formatValue={ ( value: number ) => `${ value }%` }
-					showSummaryLink
+					formatValue={ ( value: number, item: EmailStatsItem ) => {
+						if ( ! item?.opens ) {
+							return value;
+						}
+						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+						const clicks = parseInt( String( item.clicks ), 10 );
+						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+						return (
+							<TooltipWrapper
+								value={ hasUniques ? `${ item.clicks_rate }%` : '—' }
+								item={ item }
+								TooltipContent={ ClicksTooltipContent }
+							/>
+						);
+					} }
 					className={ className }
 					hasNoBackground
 					skipQuery
