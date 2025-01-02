@@ -32,6 +32,10 @@ const SitesDashboardBannersManager = ( {
 		setShowHelpCenter( true );
 	}, [ setShowHelpCenter ] );
 
+	// TODO: refactor banners to use this pattern
+	// Define banners in priority order
+	const banners = [ useRestoreSitesBanner(), useA8CForAgenciesSitesBanner( { sitesCount } ) ];
+
 	if (
 		migrationPendingSitesCount &&
 		migrationPendingSitesCount > 0 &&
@@ -60,16 +64,8 @@ const SitesDashboardBannersManager = ( {
 		);
 	}
 
-	// TODO: refactor banners to use this pattern
-	// Define banner creators in priority order
-	const bannerCreators = [
-		useRestoreSitesBanner,
-		useA8CForAgenciesSitesBanner.bind( null, { sitesCount } ),
-	];
-
 	// Return the first banner that should show
-	for ( const createBanner of bannerCreators ) {
-		const banner = createBanner();
+	for ( const banner of banners ) {
 		if ( banner.shouldShow() ) {
 			return <div className="sites-banner-container">{ banner.render() }</div>;
 		}
