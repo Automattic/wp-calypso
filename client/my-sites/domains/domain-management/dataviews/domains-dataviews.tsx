@@ -2,7 +2,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useEffect, useMemo, useState } from 'react';
-import { BulkUpdateNotice } from './bulk-update-notice';
+import { BulkUpdateNotice } from './components/bulk-update-notice';
 import { DomainData } from './types';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
