@@ -209,18 +209,18 @@ export default function PlanSelectionFilter( {
 				tabs={ [
 					{
 						name: PLAN_CATEGORY_STANDARD,
-						title: translate( 'Shared Resource Plans' ),
+						title: translate( 'Signature Plans' ),
 						disabled: disableStandardTab,
 					},
 					{
 						name: PLAN_CATEGORY_ENTERPRISE,
-						title: translate( 'Signature Cloud Plans' ),
+						title: translate( 'Enterprise Plans' ),
 					},
 					...( showHighResourceTab
 						? [
 								{
 									name: PLAN_CATEGORY_HIGH_RESOURCE,
-									title: translate( 'High Resource Sites' ),
+									title: translate( 'High Resource Plans' ),
 								},
 						  ]
 						: [] ),

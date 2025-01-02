@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +9,7 @@ import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/componen
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
+import AddNewSite from 'calypso/components/add-new-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -35,10 +37,14 @@ export default function OverviewHeaderActions() {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			<AddNewSiteButton
-				showMainButtonLabel={ ! isNarrowView }
-				toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-			/>
+			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
+				<AddNewSite />
+			) : (
+				<AddNewSiteButton
+					showMainButtonLabel={ ! isNarrowView }
+					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+				/>
+			) }
 			{ ! isNarrowView && (
 				<Button
 					primary

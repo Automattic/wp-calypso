@@ -49,7 +49,9 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/hosted-site-migration' );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/hosted-site-migration?back_to=%2Fsetup%2Fonboarding%2Fgoals'
+			);
 		} );
 
 		it( 'should redirect to DIFM flow when intent is DIFM', async () => {
@@ -62,7 +64,7 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/start/do-it-for-me' );
+			expect( getFlowLocation().path ).toBe( '/difmStartingPoint' );
 		} );
 
 		it( 'should navigate to designSetup step for other intents', async () => {

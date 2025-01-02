@@ -102,16 +102,14 @@ export default function PressablePlanSection( {
 
 	const heading = useMemo( () => {
 		if ( isReferralMode ) {
-			return translate( 'Refer a variety of plans, or single high-resource sites to your clients' );
+			return translate( 'Refer a variety of plans to your clients' );
 		}
 
 		if ( existingPlan && pressableOwnership !== 'regular' ) {
 			return translate( 'Upgrade your plan' );
 		}
 
-		return translate(
-			'Choose from a variety of plans, or purchase single high-resource sites as add-ons'
-		);
+		return translate( 'Choose from a variety of high performance hosting plans' );
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
@@ -157,10 +155,10 @@ export default function PressablePlanSection( {
 					<p>
 						{ isStandardPlan
 							? translate(
-									'With Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
 							  )
 							: translate(
-									'With Signature Shared Resource Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Enterprise Plans, your traffic & storage limits are shared amongst your total sites.'
 							  ) }
 					</p>
 				) }

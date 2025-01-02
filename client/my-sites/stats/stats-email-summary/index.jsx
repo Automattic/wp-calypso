@@ -65,7 +65,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 						),
 						body: ( item ) => (
 							<>
-								<span>{ item.opens }</span>
+								<span>{ `${ item.opens_rate }%` }</span>
 							</>
 						),
 					} }
@@ -77,6 +77,8 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					hideSummaryLink
 					metricLabel={ translate( 'Clicks' ) }
+					valueField="clicks_rate"
+					formatValue={ ( value ) => `${ value }%` }
 					listItemClassName="stats__summary--narrow-mobile"
 				/>
 				<JetpackColophon />

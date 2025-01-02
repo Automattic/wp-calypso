@@ -8,8 +8,10 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import {
+	domainManagementAllEditContactInfo,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -184,6 +186,13 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 
 	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
 		props;
+	const editContactInfoLink = isUnderDomainManagementOverview( currentRoute )
+		? domainManagementAllEditContactInfo( props.selectedSite.slug, props.selectedDomainName )
+		: domainManagementEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  );
 
 	return (
 		<div>
@@ -195,15 +204,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						{ ! isHundredYearDomain && (
 							<Button
 								disabled={ disableEdit || readOnly || pendingContactUpdate }
-								href={
-									disableEdit || readOnly || pendingContactUpdate
-										? ''
-										: domainManagementEditContactInfo(
-												props.selectedSite.slug,
-												props.selectedDomainName,
-												currentRoute
-										  )
-								}
+								href={ disableEdit || readOnly || pendingContactUpdate ? '' : editContactInfoLink }
 							>
 								{ translate( 'Edit' ) }
 							</Button>
