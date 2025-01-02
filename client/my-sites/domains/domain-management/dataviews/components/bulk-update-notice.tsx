@@ -4,7 +4,7 @@ import { useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import Notice from 'calypso/components/notice'; //eslint-disable-line no-restricted-imports
 import NoticeAction from 'calypso/components/notice/notice-action'; //eslint-disable-line no-restricted-imports
-import { useDomainsDataViewsContext } from './use-context';
+import { useDomainsDataViewsContext } from '../use-context';
 
 export const BulkUpdateNotice = () => {
 	const translate = useTranslate();
