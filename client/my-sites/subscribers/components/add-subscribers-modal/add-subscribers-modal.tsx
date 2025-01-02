@@ -237,6 +237,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
@@ -297,12 +298,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					) }
 					<UploadSubscribersForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
+						isWPCOMSite={ ! isJetpack }
 					/>
 				</>
 			) }
