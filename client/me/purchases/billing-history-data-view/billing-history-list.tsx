@@ -147,6 +147,10 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 			if ( filter.field === 'service' && filter.value ) {
 				return transaction.service === filter.value;
 			}
+			if ( filter.field === 'type' && filter.value ) {
+				const [ firstItem ] = groupDomainProducts( transaction.items, translate );
+				return firstItem.type === filter.value;
+			}
 			return true;
 		} );
 	} );
@@ -255,6 +259,31 @@ const BillingHistoryListDataView: React.FC< Props > = ( {
 					return transactionItem.product;
 				}
 				return capitalPDangit( transactionItem.variation );
+			},
+		},
+		{
+			id: 'type',
+			label: 'Type',
+			type: 'text' as const,
+			elements: [
+				{ value: 'new purchase', label: 'New Purchase' },
+				{ value: 'recurring', label: 'Renewal' },
+			],
+			enableGlobalSearch: true,
+			enableHiding: false,
+			enableSorting: true,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				return (
+					<div>{ transactionItem.type_localized || capitalPDangit( transactionItem.type ) }</div>
+				);
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				return transactionItem.type;
 			},
 		},
 		{

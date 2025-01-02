@@ -211,3 +211,9 @@
 body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .billing-history.main > * {
     max-width: 100%;
 }
+
+@media screen and (min-width: 782px) {
+    body.is-section-me .navigation-header::after {
+       display: none !important;
+    }
+}
