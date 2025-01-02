@@ -1,6 +1,6 @@
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { BulkUpdateNotice } from './components/bulk-update-notice';
 import { DomainData } from './types';
@@ -26,7 +26,7 @@ export const DomainsDataViews = ( {
 	selectedDomainName,
 	openDomainPane,
 }: Props ) => {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { isDesktop } = useDomainsDataViewsContext();
 
 	const { view, setView } = useView( { sidebarMode, isDesktop } );
@@ -64,7 +64,7 @@ export const DomainsDataViews = ( {
 				view={ view }
 				actions={ actions }
 				search
-				searchLabel={ __( 'Search by domain…' ) }
+				searchLabel={ translate( 'Search by domain…' ) }
 				paginationInfo={ paginationInfo }
 				getItemId={ getDomainId }
 				selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }

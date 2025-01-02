@@ -20,7 +20,7 @@ import {
 import { shouldUpgradeToMakeDomainPrimary } from '@automattic/domains-table/src/utils/should-upgrade-to-make-domain-primary';
 import { Action } from '@wordpress/dataviews';
 import { Icon, drawerLeft, info, update } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
 import { domainManagementEditContactInfo } from '../../paths';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
@@ -28,7 +28,7 @@ import { DomainData } from './types';
 import { useDomainsDataViewsContext } from './use-context';
 
 export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?: () => void ) {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const {
 		sites,
 		isAllSitesView,
@@ -47,8 +47,8 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 			label: ( domains: Array< DomainData > ) => {
 				const domain = domains.length > 0 && domains[ 0 ];
 				return domain && domain.processed.type === domainTypes.TRANSFER
-					? __( 'View transfer' )
-					: __( 'View settings' );
+					? translate( 'View transfer' )
+					: translate( 'View settings' );
 			},
 			callback: ( domains: Array< DomainData > ) => {
 				const domain = domains[ 0 ];
@@ -73,7 +73,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					navigate( url );
 				}
 			},
-			label: __( 'Manage DNS' ),
+			label: translate( 'Manage DNS' ),
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
 				return (
@@ -101,7 +101,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					handleUpdateContactInfo( domains );
 				}
 			},
-			label: __( 'Manage contact information' ),
+			label: translate( 'Manage contact information' ),
 			supportsBulk: ! sidebarMode,
 			isEligible( domain: DomainData ) {
 				return (
@@ -120,7 +120,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					onClose?.();
 				}
 			},
-			label: __( 'Make primary site address' ),
+			label: translate( 'Make primary site address' ),
 			disabled: updatingDomain?.action === 'set-primary-address',
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
@@ -158,7 +158,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					navigate( url );
 				}
 			},
-			label: __( 'Transfer to WordPress.com' ),
+			label: translate( 'Transfer to WordPress.com' ),
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
 				return (
@@ -179,7 +179,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					navigate( url );
 				}
 			},
-			label: __( 'Attach to an existing site' ),
+			label: translate( 'Attach to an existing site' ),
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
 				return domain.processed.currentUserCanCreateSiteFromDomainOnly;
@@ -194,7 +194,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					onClose?.();
 				}
 			},
-			label: __( 'Change site address' ),
+			label: translate( 'Change site address' ),
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
 				const site =
@@ -215,7 +215,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 					onClose?.();
 				}
 			},
-			label: __( 'Renew now' ),
+			label: translate( 'Renew now' ),
 			supportsBulk: false,
 			isEligible( domain: DomainData ) {
 				return isDomainRenewable( domain.processed );
@@ -224,7 +224,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 		{
 			id: 'manage-auto-renew',
 			icon: <Icon icon={ update } />,
-			label: __( 'Manage auto-renew' ),
+			label: translate( 'Manage auto-renew' ),
 			supportsBulk: ! sidebarMode,
 			isEligible( domain: DomainData ) {
 				return isDomainRenewable( domain.processed );
