@@ -27,7 +27,7 @@ export type LogType = 'php' | 'web';
 const DEFAULT_PAGE_SIZE = 50;
 
 export function buildFilterParam(
-	logType: string,
+	logType: LogType,
 	severity: string,
 	requestType: string,
 	requestStatus: string
