@@ -14,7 +14,6 @@ import UserLists from './views/lists';
 import UserPosts from './views/posts';
 import UserReposts from './views/reposts';
 import './style.scss';
-import type { AppState } from 'calypso/types';
 
 interface NavigationItem {
 	label: string;
@@ -29,6 +28,15 @@ interface UserStreamProps {
 	isLoading: boolean;
 	requestUser: ( userId: string ) => Promise< void >;
 }
+
+type UserStreamState = {
+	reader: {
+		users: {
+			items: Record< string, UserData >;
+			requesting: Record< string, boolean >;
+		};
+	};
+};
 
 export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
 	useEffect( () => {
@@ -109,7 +117,7 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 }
 
 export default connect(
-	( state: AppState, ownProps: UserStreamProps ) => ( {
+	( state: UserStreamState, ownProps: UserStreamProps ) => ( {
 		user: state.reader.users.items[ ownProps.userId ],
 		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
 	} ),
