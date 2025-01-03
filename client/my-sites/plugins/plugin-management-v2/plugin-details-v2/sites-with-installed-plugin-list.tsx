@@ -14,7 +14,6 @@ import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';
-import SitesList from '../sites-list';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -28,36 +27,9 @@ interface Props {
 	isWpCom?: boolean;
 }
 
-export default function SitesWithInstalledPluginsList( {
-	sites,
-	plugin,
-	selectedSite,
-	isWpCom,
-	...rest
-}: Props ) {
+export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const columns = [
-		{
-			key: 'site-name',
-			header: translate( 'Site' ),
-		},
-		{
-			key: 'activate',
-			header: translate( 'Active' ),
-			smallColumn: true,
-		},
-		{
-			key: 'autoupdate',
-			header: translate( 'Autoupdate' ),
-			smallColumn: true,
-			colSpan: 4,
-		},
-		{
-			key: 'update',
-		},
-	];
 
 	const compareBooleans = ( a: boolean, b: boolean, direction: string ) => {
 		if ( a === b ) {
@@ -199,7 +171,7 @@ export default function SitesWithInstalledPluginsList( {
 		.filter( ( site ) => site && ! site.is_deleted );
 
 	const { data, paginationInfo } = filterSortAndPaginate(
-		dataViewsSites ?? [],
+		dataViewsSites as SiteDetails[],
 		dataViewsState,
 		dataViewsFields
 	);
@@ -225,16 +197,6 @@ export default function SitesWithInstalledPluginsList( {
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ { table: {} } }
 				getItemId={ ( item ) => item.domain }
-			/>
-			<SitesList
-				{ ...rest }
-				plugin={ plugin }
-				selectedSite={ selectedSite }
-				items={ sitesWithSecondarySites
-					.map( ( site ) => site.site )
-					.filter( ( site ) => site && ! site.is_deleted ) }
-				columns={ columns }
-				renderActions={ renderActions }
 			/>
 		</div>
 	);
