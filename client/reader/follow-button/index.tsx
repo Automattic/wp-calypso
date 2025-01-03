@@ -1,7 +1,6 @@
 import { Railcar } from '@automattic/calypso-analytics';
 import { useSelector } from 'react-redux';
-import FollowButtonContainer from 'calypso/blocks/follow-button';
-import { FollowButtonProps } from 'calypso/blocks/follow-button/button';
+import FollowButtonContainer, { FollowButtonContainerProps } from 'calypso/blocks/follow-button';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import {
@@ -11,7 +10,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 interface ReaderFollowButtonProps
-	extends Omit< FollowButtonProps, 'followIcon' | 'followingIcon' > {
+	extends Omit< FollowButtonContainerProps, 'followIcon' | 'followingIcon' > {
 	followSource?: string;
 	railcar?: Railcar;
 	siteUrl: string;

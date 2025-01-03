@@ -12,7 +12,7 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton, { FollowButtonProps } from './button';
 
-interface FollowButtonContainerProps extends FollowButtonProps {
+export interface FollowButtonContainerProps extends FollowButtonProps {
 	feedId?: number;
 	siteId?: string;
 	siteUrl: string;

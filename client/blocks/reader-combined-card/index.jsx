@@ -10,7 +10,7 @@ import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import FollowButton from 'calypso/reader/follow-button';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -130,7 +130,7 @@ class ReaderCombinedCardComponent extends Component {
 						</p>
 					</div>
 					{ this.props.showFollowButton && followUrl && (
-						<FollowButton siteUrl={ followUrl } followSource={ this.props.followSource } />
+						<ReaderFollowButton siteUrl={ followUrl } followSource={ this.props.followSource } />
 					) }
 				</header>
 				<ul className="reader-combined-card__post-list">
