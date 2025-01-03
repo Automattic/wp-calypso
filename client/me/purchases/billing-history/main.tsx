@@ -30,11 +30,7 @@ export function BillingHistoryContent( {
 	return (
 		<Card className="billing-history__receipts">
 			{ useDataViewBillingHistoryList ? (
-				<BillingHistoryListDataView
-					header
-					siteId={ siteId }
-					getReceiptUrlFor={ getReceiptUrlFor }
-				/>
+				<BillingHistoryListDataView getReceiptUrlFor={ getReceiptUrlFor } />
 			) : (
 				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 			) }
