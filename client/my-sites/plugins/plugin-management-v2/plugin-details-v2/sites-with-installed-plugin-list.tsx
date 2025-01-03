@@ -1,11 +1,12 @@
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { DataViews } from 'calypso/components/dataviews';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PluginCommonAction from 'calypso/my-sites/plugins/plugin-management-v2/plugin-common/plugin-common-actions';
 import PluginRowFormatter from 'calypso/my-sites/plugins/plugin-management-v2/plugin-row-formatter';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -64,6 +65,33 @@ export default function SitesWithInstalledPluginsList( {
 		}
 		return direction === 'asc' ? -1 : 1;
 	};
+
+	const renderActions = useCallback(
+		( site: SiteDetails ) => {
+			const settingsLink = plugin?.action_links?.Settings ?? null;
+			return (
+				<>
+					<RemovePlugin site={ site } plugin={ plugin } />
+					<PluginManageConnection site={ site } plugin={ plugin } />
+					{ isWpCom && (
+						<>
+							<PluginManageSubcription site={ site } plugin={ plugin } />
+							{ settingsLink && (
+								<PopoverMenuItem
+									className="plugin-management-v2__actions"
+									icon="cog"
+									href={ settingsLink }
+								>
+									{ translate( 'Settings' ) }
+								</PopoverMenuItem>
+							) }
+						</>
+					) }
+				</>
+			);
+		},
+		[ plugin, isWpCom, translate ]
+	);
 
 	const dataViewsFields = useMemo(
 		() => [
@@ -138,25 +166,23 @@ export default function SitesWithInstalledPluginsList( {
 				enableHiding: false,
 				enableSorting: false,
 			},
-			{ id: 'actions', label: translate( 'Actions' ), enableHiding: false, enableSorting: false },
+			{
+				id: 'actions',
+				label: translate( 'Actions' ),
+				render: ( { item }: { item: SiteDetails } ) => (
+					<PluginCommonAction item={ item } renderActions={ renderActions } />
+				),
+				enableHiding: false,
+				enableSorting: false,
+			},
 		],
-		[ translate, plugin, sites.length, dispatch ]
+		[ translate, plugin, sites.length, dispatch, renderActions ]
 	);
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
 		fields: [ 'domain', 'activate', 'autoupdate', 'update', 'actions' ],
 		items: sites,
-		layout: {
-			styles: {
-				domain: {
-					minWidth: '270px',
-				},
-				actions: {
-					minWidth: '50px',
-				},
-			},
-		},
 	} ) );
 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
@@ -177,30 +203,6 @@ export default function SitesWithInstalledPluginsList( {
 		dataViewsState,
 		dataViewsFields
 	);
-
-	const renderActions = ( site: SiteDetails ) => {
-		const settingsLink = plugin?.action_links?.Settings ?? null;
-		return (
-			<>
-				<RemovePlugin site={ site } plugin={ plugin } />
-				<PluginManageConnection site={ site } plugin={ plugin } />
-				{ isWpCom && (
-					<>
-						<PluginManageSubcription site={ site } plugin={ plugin } />
-						{ settingsLink && (
-							<PopoverMenuItem
-								className="plugin-management-v2__actions"
-								icon="cog"
-								href={ settingsLink }
-							>
-								{ translate( 'Settings' ) }
-							</PopoverMenuItem>
-						) }
-					</>
-				) }
-			</>
-		);
-	};
 
 	return (
 		<>
