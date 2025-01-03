@@ -31,7 +31,6 @@
 
 	&.domain-product-single-price {
 		justify-content: start;
-		margin-top: 6px;
 	}
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
