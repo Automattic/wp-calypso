@@ -7,7 +7,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 interface Props {
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	items: Array< SiteDetails | null | undefined >;
 	isLoading: boolean;
 	columns: Columns;

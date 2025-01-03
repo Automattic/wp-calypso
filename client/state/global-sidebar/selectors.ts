@@ -70,7 +70,9 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	return isSiteDashboard || isPluginsScheduledUpdatesEditMode;
+	const isPluginsManageSites = isInRoute( state, [ '/plugins/manage/sites/' ] );
+
+	return isSiteDashboard || isPluginsScheduledUpdatesEditMode || isPluginsManageSites;
 };
 
 export const getShouldShowUnifiedSiteSidebar = (
