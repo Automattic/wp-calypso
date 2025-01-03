@@ -70,28 +70,6 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 					</svg>
 				);
 
-			case 'gridicons-reader-follow':
-				// Added "title" to the "plus" icon from the "@wordpress/icons" package. Ideally the package should support adding titles to icons.
-				return (
-					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-						<title>{ translate( 'Reader Follow' ) }</title>
-						<path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" />
-					</svg>
-				);
-
-			case 'gridicons-reader-following':
-				return (
-					// Added "title" to the "published" icon from the "@wordpress/icons" package. Ideally the package should support adding titles to icons.
-					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-						<title>{ translate( 'Reader Following' ) }</title>
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="M12 18.5a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13ZM4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm11.53-1.47-1.06-1.06L11 12.94l-1.47-1.47-1.06 1.06L11 15.06l4.53-4.53Z"
-						/>
-					</svg>
-				);
-
 			case 'gridicons-mention':
 				return (
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
