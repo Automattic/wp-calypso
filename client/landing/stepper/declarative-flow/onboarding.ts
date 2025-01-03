@@ -1,8 +1,9 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
+import { resetOnboardStore } from '@automattic/data-stores/src/onboard/actions';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -10,6 +11,7 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
@@ -343,6 +345,16 @@ const onboarding: Flow = {
 		return {
 			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
 		};
+	},
+	useSideEffect( currentStepSlug ) {
+		const dispatch = useDispatch();
+
+		useEffect( () => {
+			if ( currentStepSlug === undefined ) {
+				resetOnboardStore();
+				dispatch( setSelectedSiteId( null ) );
+			}
+		}, [ currentStepSlug, dispatch ] );
 	},
 };
 
