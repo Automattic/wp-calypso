@@ -61,14 +61,6 @@ const SubscriberDataViews = ( {
 			{
 				id: 'subscription_type',
 				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) =>
-					item.user_id === 0
-						? translate( 'Email subscriber' )
-						: translate( 'WordPress.com follower' ),
-				render: ( { item }: { item: Subscriber } ) =>
-					item.user_id === 0
-						? translate( 'Email subscriber' )
-						: translate( 'WordPress.com follower' ),
 				enableHiding: false,
 				enableSorting: true,
 			},
