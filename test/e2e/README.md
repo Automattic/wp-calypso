@@ -91,7 +91,13 @@ export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret
 yarn workspace wp-e2e-tests decrypt-secrets
 ```
 
-11. run test.
+11. transpile the packages.
+
+```bash
+yarn workspace wp-e2e-tests build --watch
+```
+
+12. run test.
 
 ```bash
 yarn workspace wp-e2e-tests test -- <test_path>
