@@ -38,13 +38,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		externals: {
 			'@wordpress/i18n': [ 'wp', 'i18n' ],
 		},
-		resolve: {
-			...webpackConfig.resolve,
-			alias: {
-				...webpackConfig.resolve?.alias,
-				'@wordpress/upload-media': false,
-			},
-		},
 		plugins: [
 			...webpackConfig.plugins,
 			new webpack.DefinePlugin( {
