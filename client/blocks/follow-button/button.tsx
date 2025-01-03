@@ -17,7 +17,7 @@ export interface FollowButtonProps {
 }
 
 /**
- * Button to show and toggle follow states.
+ * Button to display a follow/unfollow button.
  */
 export default function FollowButton( props: FollowButtonProps ): JSX.Element {
 	const translate = useTranslate();

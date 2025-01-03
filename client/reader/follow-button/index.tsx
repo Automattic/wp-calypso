@@ -13,6 +13,9 @@ interface ReaderFollowButtonProps extends FollowButtonContainerProps {
 	siteUrl: string;
 }
 
+/**
+ * A specialization of the generic `components/follow-button` that sends stats.
+ */
 export default function ReaderFollowButton( props: ReaderFollowButtonProps ) {
 	const { onFollowToggle, railcar, followSource, siteUrl } = props;
 	const isLoggedIn = useSelector( isUserLoggedIn );
