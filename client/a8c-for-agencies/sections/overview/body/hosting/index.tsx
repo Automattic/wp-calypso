@@ -17,10 +17,6 @@ const OverviewBodyHosting = () => {
 
 	const [ isMigrationOfferExpanded, setIsMigrationOfferExpanded ] = useState( true );
 
-	const onToggleMigrationOfferView = useCallback( () => {
-		setIsMigrationOfferExpanded( ( isExpanded ) => ! isExpanded );
-	}, [] );
-
 	const actionHandlerCallback = useCallback(
 		( section: string, product: string ) => {
 			dispatch(
@@ -72,7 +68,7 @@ const OverviewBodyHosting = () => {
 		>
 			<MigrationOfferV3
 				isExpanded={ isMigrationOfferExpanded }
-				onToggleView={ onToggleMigrationOfferView }
+				onToggleView={ () => setIsMigrationOfferExpanded( ( prev ) => ! prev ) }
 			/>
 			<PressableOffering />
 		</Offering>
