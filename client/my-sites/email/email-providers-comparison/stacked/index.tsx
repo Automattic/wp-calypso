@@ -52,6 +52,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export type EmailProvidersStackedComparisonProps = {
+	className?: string;
 	cartDomainName?: string;
 	comparisonContext: string;
 	hideNavigation?: boolean;
@@ -63,6 +64,7 @@ export type EmailProvidersStackedComparisonProps = {
 };
 
 const EmailProvidersStackedComparison = ( {
+	className = '',
 	comparisonContext,
 	hideNavigation = false,
 	isDomainInCart = false,
@@ -240,7 +242,7 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main
-			className={ clsx( {
+			className={ clsx( className, {
 				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
 			} ) }
 			wideLayout

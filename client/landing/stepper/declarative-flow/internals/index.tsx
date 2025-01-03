@@ -19,11 +19,11 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import SurveyManager from './components/survery-manager';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
+import { PRIVATE_STEPS } from './steps';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -90,15 +90,29 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// See https://github.com/Automattic/wp-calypso/pull/82981.
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 
-	// this pre-loads all the lazy steps down the flow.
+	// this pre-loads the next step in the flow.
 	useEffect( () => {
+		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
+		const nextStep = flowSteps[ nextStepIndex ];
+
+		// 0 implies the findIndex returned -1.
+		if ( nextStepIndex === 0 || ! nextStep ) {
+			return;
+		}
+
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
 			// Otherwise, we're still waiting to render something meaningful, and we don't want to
 			// potentially slow that down by having the CPU busy initialising future steps.
 			return;
 		}
-		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
+		if (
+			// Don't load anything on user step because the user step will hard-navigate anyways.
+			currentStepRoute !== 'user' &&
+			'asyncComponent' in nextStep
+		) {
+			nextStep.asyncComponent();
+		}
 		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
 		// which means that we don't want to depend on `flowSteps` here, or this would end up
 		// running on every render. We thus depend on `flow` instead.
@@ -107,7 +121,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// different points. But even if they do, worst case scenario we only fail to preload
 		// some steps, and they'll simply be loaded later.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow, siteSlugOrId, selectedSite ] );
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
@@ -147,14 +161,17 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return null;
 		}
 
-		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
-
-		if ( step.slug === 'user' && firstAuthWalledStep ) {
+		// The `nextStep` is available only when logged-out users go to the step that requires auth
+		// and are redirected to the user step.
+		const postAuthStepSlug = stepData?.nextStep ?? '';
+		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
-				step: firstAuthWalledStep.slug,
+				step: postAuthStepSlug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
+
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: 'user',
@@ -165,8 +182,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<StepComponent
 					navigation={ {
 						submit() {
-							navigate( firstAuthWalledStep.slug, undefined, true );
+							navigate( postAuthStepSlug, undefined, true );
 						},
+						...( previousAuthStepSlug && {
+							goBack() {
+								navigate( previousAuthStepSlug, undefined, true );
+							},
+						} ),
 					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
@@ -174,6 +196,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					redirectTo={ postAuthStepPath }
 					signupUrl={ signupUrl }
 				/>
+			);
+		}
+
+		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
 			);
 		}
 
@@ -198,7 +227,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<SurveyManager />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route

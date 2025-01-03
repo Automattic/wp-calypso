@@ -2,10 +2,11 @@ import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
-import ConfirmModal from 'calypso/components/confirm-modal';
+import { useCallback } from 'react';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { useSelector } from 'calypso/state';
+import { PluginActions } from '../../hooks/types';
+import useShowPluginActionDialog from '../../hooks/use-show-plugin-action-dialog';
 import usePluginVersionInfo from '../hooks/use-plugin-version-info';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
@@ -26,10 +27,22 @@ interface Props {
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
 	const state = useSelector( ( state ) => state );
-	const [ displayConfirmModal, setDisplayConfirmModal ] = useState( false );
+	const showPluginActionDialog = useShowPluginActionDialog();
 
-	const { currentVersionsRange, updatedVersions, hasUpdate, updateableSites } =
-		usePluginVersionInfo( plugin, selectedSite?.ID );
+	const onShowUpdateConfirmationModal = useCallback( () => {
+		if ( selectedSite ) {
+			showPluginActionDialog( PluginActions.UPDATE, [ plugin ], [ selectedSite ], ( accepted ) => {
+				if ( accepted ) {
+					updatePlugin?.( plugin );
+				}
+			} );
+		}
+	}, [ plugin, selectedSite, updatePlugin, showPluginActionDialog ] );
+
+	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
+		plugin,
+		selectedSite?.ID
+	);
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
 
@@ -45,24 +58,9 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			( selectedSite ? parseInt( status.siteId ) === selectedSite.ID : true )
 	);
 
-	const pluginUpdateConfirmationTitle = translate( 'Update %(plugin)s', {
-		args: {
-			plugin: plugin.name ?? plugin.slug,
-		},
-	} );
-
 	const onUpdatePlugin = useCallback( () => {
 		updatePlugin && updatePlugin( plugin );
-		setDisplayConfirmModal( false );
 	}, [ plugin, updatePlugin ] );
-
-	const onShowUpdateConfirmationModal = useCallback( () => {
-		setDisplayConfirmModal( true );
-	}, [] );
-
-	const onHideUpdateConfirmationModal = useCallback( () => {
-		setDisplayConfirmModal( false );
-	}, [] );
 
 	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
@@ -109,26 +107,6 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 						args: updatedVersions[ 0 ],
 					} ) }
 				</Button>
-
-				<ConfirmModal
-					isVisible={ displayConfirmModal }
-					confirmButtonLabel={ translate( 'Update' ) }
-					text={ translate(
-						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d site. ',
-						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d sites. ',
-						{
-							count: updateableSites ?? 1,
-							args: {
-								version: updatedVersions[ 0 ],
-								plugin: plugin.name ?? plugin.slug,
-								siteCount: String( updateableSites ),
-							},
-						}
-					) }
-					title={ String( pluginUpdateConfirmationTitle ) }
-					onCancel={ onHideUpdateConfirmationModal }
-					onConfirm={ onUpdatePlugin }
-				/>
 			</div>
 		);
 	}

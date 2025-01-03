@@ -14,6 +14,7 @@ import type {
 
 interface StarterDesignsQueryParams {
 	seed?: string;
+	goals?: string[];
 	_locale: string;
 }
 
@@ -25,6 +26,7 @@ interface Options extends QueryOptions< StarterDesignsResponse > {
 interface StarterDesignsResponse {
 	filters: { subject: Record< string, Category > };
 	static: { designs: StarterDesign[] };
+	recommendation: string[];
 }
 
 export type ThemeTier = {
@@ -48,6 +50,7 @@ interface StarterDesign {
 	theme_type?: string;
 	screenshot?: string;
 	theme_tier: ThemeTier;
+	demo_uri?: string;
 }
 
 export function useStarterDesignsQuery(
@@ -63,6 +66,7 @@ export function useStarterDesignsQuery(
 					subject: response.filters?.subject || {},
 				},
 				designs: response.static?.designs?.map( apiStarterDesignsToDesign ),
+				recommendation: response.recommendation,
 			};
 
 			return select ? select( allDesigns ) : allDesigns;
@@ -97,6 +101,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		design_type,
 		screenshot,
 		theme_tier,
+		demo_uri,
 	} = design;
 
 	const is_externally_managed = design.theme_type === 'managed-external';
@@ -121,5 +126,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		theme: '',
 		screenshot,
 		design_tier: theme_tier?.slug,
+		demo_uri,
 	};
 }

@@ -129,7 +129,7 @@ const LostPasswordForm = ( {
 			onSubmit={ onSubmit }
 		>
 			<div className="login__form-userdata">
-				<FormLabel htmlFor="email">{ translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">{ translate( 'Your email' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { PanelDescription, PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
@@ -61,14 +61,14 @@ export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps 
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
-		<PanelSection>
-			<PanelHeading>
+		<PanelCard>
+			<PanelCardHeading>
 				{ translate( 'Defensive mode', {
 					comment: 'Defensive mode is a feature to protect against DDoS attacks.',
 					textOnly: true,
 				} ) }
-			</PanelHeading>
-			<PanelDescription>
+			</PanelCardHeading>
+			<PanelCardDescription>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
 					{
@@ -79,7 +79,7 @@ export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps 
 						},
 					}
 				) }
-			</PanelDescription>
+			</PanelCardDescription>
 
 			{ isLoadingDefensiveMode && <EdgeCacheLoadingPlaceholder /> }
 
@@ -191,6 +191,6 @@ export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps 
 					</Button>
 				</>
 			) }
-		</PanelSection>
+		</PanelCard>
 	);
 }

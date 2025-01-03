@@ -14,17 +14,17 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import DocumentHead from 'calypso/components/data/document-head';
+import GuidedTour from 'calypso/components/guided-tour';
+import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import Layout from 'calypso/layout/hosting-dashboard';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import DocumentHead from 'calypso/components/data/document-head';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
@@ -32,11 +32,13 @@ import {
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
+import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import { useTracksEventOnFilterChange } from '../hooks/use-tracks-event-on-filter-change';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -87,7 +89,7 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
-export function showSitesPage( route: string ) {
+export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
 
@@ -101,7 +103,17 @@ export function showSitesPage( route: string ) {
 		}
 	} );
 
-	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	if ( openInNewTab ) {
+		const newWindow = window.open(
+			newUrl.toString().replace( window.location.origin, '' ),
+			'_blank'
+		);
+		if ( newWindow ) {
+			newWindow.opener = null;
+		}
+	} else {
+		pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	}
 }
 
 const SitesDashboard = ( {
@@ -323,6 +335,8 @@ const SitesDashboard = ( {
 		}
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
+	useTracksEventOnFilterChange( dataViewsState.filters ?? [] );
+
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = () => {
 		if ( selectedSite ) {
@@ -332,14 +346,16 @@ const SitesDashboard = ( {
 
 	const openSitePreviewPane = (
 		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+		openInNewTab?: boolean
 	) => {
 		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 			site_id: site.ID,
 			source,
 		} );
 		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
+			openInNewTab
 		);
 	};
 
@@ -349,6 +365,13 @@ const SitesDashboard = ( {
 			openSitePreviewPane( targetSite, 'environment_switcher' );
 		}
 	};
+
+	const showSiteDashboard = useSelector( ( state ) =>
+		shouldShowSiteDashboard( state, selectedSite?.ID ?? null )
+	);
+	if ( !! selectedSite && ! showSiteDashboard ) {
+		return null;
+	}
 
 	// todo: temporary mock data
 	const hideListing = false;
@@ -365,7 +388,6 @@ const SitesDashboard = ( {
 			) }
 			wide
 			title={ selectedSite ? null : dashboardTitle }
-			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
 

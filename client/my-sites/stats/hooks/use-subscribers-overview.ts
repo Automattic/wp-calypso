@@ -5,10 +5,13 @@ import { useSubscribersQueries } from './use-subscribers-query';
 const DATES_TO_QUERY = [ 0, 30, 60, 90 ];
 const DATES_TO_QUERY_EXCLUDE_TODAY = [ 30, 60, 90 ];
 
+// Used to allow comparisons between translated strings
+const TODAY_LABEL = translate( 'Today' );
+
 function getLabels( dateToQuery: number ) {
 	switch ( dateToQuery ) {
 		case 0:
-			return translate( 'Today' );
+			return TODAY_LABEL;
 		case 30:
 			return translate( '30 days ago' );
 		case 60:
@@ -18,6 +21,15 @@ function getLabels( dateToQuery: number ) {
 		default:
 			return '';
 	}
+}
+
+function getNote( heading: string ) {
+	let note = translate( 'As of today' );
+	if ( heading !== TODAY_LABEL ) {
+		const prefix = translate( 'Since' );
+		note = `${ prefix } ${ heading }`;
+	}
+	return note;
 }
 
 // calculate the date to query for based on the number of days to subtract
@@ -43,9 +55,11 @@ export default function useSubscribersOverview( siteId: number | null, isTodayEx
 	const overviewData = subscribersData.map( ( data, index ) => {
 		const count = data?.data?.[ 0 ]?.subscribers || null;
 		const heading = getLabels( datesToQuery[ index ] );
+		const note = getNote( heading );
 		return {
 			count,
 			heading,
+			note,
 		};
 	} );
 

@@ -1,8 +1,13 @@
+import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { SiteLogs } from 'calypso/sites/tools/logs';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import { areHostingFeaturesSupported } from '../hosting-features/features';
 import Database from './database/page';
 import {
 	DeploymentCreation,
@@ -11,12 +16,10 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import Logs from './logs';
 import Monitoring from './monitoring';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SftpSsh from './sftp-ssh/page';
 import StagingSite from './staging-site';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
@@ -40,13 +43,30 @@ export function ToolsSidebar() {
 }
 
 export function tools( context: PageJSContext, next: () => void ) {
-	context.primary = <HostingFeatures showAsTools />;
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	if ( areHostingFeaturesSupported( site ) ) {
+		// Redirect to the first subtab
+		return page.redirect( `/sites/tools/staging-site/${ site?.slug }` );
+	}
+
+	context.primary = (
+		<>
+			<PageViewTracker title="Sites > Advanced Tools" path={ getRouteFromContext( context ) } />
+			<HostingFeatures showAsTools />
+		</>
+	);
 	next();
 }
 
 export function stagingSite( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Staging site"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<StagingSite />
 		</PanelWithSidebar>
@@ -57,6 +77,10 @@ export function stagingSite( context: PageJSContext, next: () => void ) {
 export function deployments( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Deployments"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<Deployments />
 		</PanelWithSidebar>
@@ -67,6 +91,10 @@ export function deployments( context: PageJSContext, next: () => void ) {
 export function deploymentCreation( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Deployments > Create"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<DeploymentCreation />
 		</PanelWithSidebar>
@@ -85,6 +113,10 @@ export function deploymentManagement( context: PageJSContext, next: () => void )
 
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Deployments > Manage"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<DeploymentManagement codeDeploymentId={ codeDeploymentId } />
 		</PanelWithSidebar>
@@ -103,6 +135,10 @@ export function deploymentRunLogs( context: PageJSContext, next: () => void ) {
 
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Deployments > Run logs"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<DeploymentRunLogs codeDeploymentId={ codeDeploymentId } />
 		</PanelWithSidebar>
@@ -113,6 +149,10 @@ export function deploymentRunLogs( context: PageJSContext, next: () => void ) {
 export function monitoring( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Monitoring"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<Monitoring />
 		</PanelWithSidebar>
@@ -123,8 +163,12 @@ export function monitoring( context: PageJSContext, next: () => void ) {
 export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Logs > PHP"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
-			<Logs logType="php" />
+			<SiteLogs logType="php" />
 		</PanelWithSidebar>
 	);
 	next();
@@ -133,8 +177,12 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 export function webServerLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Logs > Web"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
-			<Logs logType="web" />
+			<SiteLogs logType="web" />
 		</PanelWithSidebar>
 	);
 	next();
@@ -143,6 +191,10 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 export function sftpSsh( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > SFTP/SSH"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<SftpSsh />
 		</PanelWithSidebar>
@@ -153,6 +205,10 @@ export function sftpSsh( context: PageJSContext, next: () => void ) {
 export function database( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Advanced Tools > Database"
+				path={ getRouteFromContext( context ) }
+			/>
 			<ToolsSidebar />
 			<Database />
 		</PanelWithSidebar>

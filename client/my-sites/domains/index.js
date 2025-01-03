@@ -9,10 +9,28 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
+import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
+import {
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+} from './domain-management/domain-overview-pane/constants';
+import {
+	ADD_FORWARDING_EMAIL,
+	DNS_RECORDS,
+	ADD_DNS_RECORD,
+	EDIT_DNS_RECORD,
+	EDIT_CONTACT_INFO,
+} from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
 
+/**
+ * Registers a multi-page route.
+ * @param {Object} options - The options object.
+ * @param {Array} options.paths - The paths to register.
+ * @param {Array} options.handlers - The handlers to register. These will be applied to each path.
+ */
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
@@ -368,6 +386,88 @@ export default function () {
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
 		domainManagementController.domainManagementIndex,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementV2,
+		domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		emailController.emailManagement,
+		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_FORWARDING_EMAIL ),
+		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllRoot() + '/contact-info/edit/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
+		domainManagementController.domainManagementEditContactInfo,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
+		domainManagementController.domainManagementDns,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
+		domainManagementController.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/edit/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
+		domainManagementController.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender
 	);

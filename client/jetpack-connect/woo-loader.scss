@@ -6,6 +6,8 @@
 	width: 100%;
 	max-width: 100%;
 	max-height: 100%;
+	margin: 0;
+	animation: none;
 
 	.components-modal__header {
 		display: none;
@@ -22,11 +24,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-
-	@include breakpoint-deprecated( "<800px" ) {
-		width: calc(100% - 40px);
-		padding: 0 20px;
-	}
+	padding-inline: 20px;;
 
 	.loader-hearticon {
 		position: relative;
@@ -50,6 +48,7 @@
 		align-items: center;
 		justify-content: center;
 		max-width: 520px;
+		width: 100%;
 	}
 
 	.jetpack-connect-progress-bar {

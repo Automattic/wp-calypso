@@ -13,7 +13,6 @@ import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
-import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
 export default function ThemeTierCommunityBadge() {
@@ -63,18 +62,15 @@ export default function ThemeTierCommunityBadge() {
 	return (
 		<>
 			{ showUpgradeBadge && ! isThemeIncluded && (
-				<>
-					<ThemeTierBadgeTracker />
-					<PremiumBadge
-						className="theme-tier-badge__content"
-						focusOnShow={ false }
-						isClickable
-						labelText={ translate( 'Upgrade' ) }
-						tooltipClassName="theme-tier-badge-tooltip"
-						tooltipContent={ tooltipContent }
-						tooltipPosition="top"
-					/>
-				</>
+				<PremiumBadge
+					className="theme-tier-badge__content"
+					focusOnShow={ false }
+					isClickable
+					labelText={ translate( 'Upgrade' ) }
+					tooltipClassName="theme-tier-badge-tooltip"
+					tooltipContent={ tooltipContent }
+					tooltipPosition="top"
+				/>
 			) }
 
 			<PremiumBadge

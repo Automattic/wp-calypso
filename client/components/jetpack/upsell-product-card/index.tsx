@@ -8,8 +8,9 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useState } from 'react';
+import { createElement, ReactNode, useMemo, useState } from 'react';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
@@ -106,6 +107,24 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
+
+			if (
+				manageProductSlug === 'jetpack-search' &&
+				nonManagePriceTierList[ 0 ]?.transform_quantity_divide_by
+			) {
+				tooltipText = translate(
+					'{{p}}%(price)s per every additional %(thousands_of_records)dk records and/or requests per month{{/p}}',
+					{
+						args: {
+							price: formatCurrency( originalPrice, currencyCode ),
+							thousands_of_records: nonManagePriceTierList[ 0 ].transform_quantity_divide_by / 1000,
+						},
+						comment:
+							'price = formatted price per given number of records. thousands_of_records = number of records divided by 1000 (hence the k after it) See https://jetpack.com/upgrade/search/.',
+						components: { p: createElement( 'p' ) },
+					}
+				);
+			}
 			onCtaButtonClickInternal = () => {
 				onCtaButtonClick();
 				if ( isA4AEnabled ) {

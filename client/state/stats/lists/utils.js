@@ -168,7 +168,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
-			hour: translate( 'MMM D HH:mm', {
+			hour: translate( 'HH:mm', {
 				context: 'momentjs format string (hour)',
 				comment: 'This specifies an hour for the stats x-axis label.',
 			} ),
@@ -973,25 +973,45 @@ export const normalizers = {
 
 		const emailsData = get( data, [ 'posts' ], [] );
 
-		return emailsData.map( ( { id, href, date, title, type, opens, clicks } ) => {
-			const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
-			return {
+		return emailsData.map(
+			( {
 				id,
 				href,
 				date,
-				label: title,
+				title,
 				type,
-				value: clicks || '0',
-				opens: opens || '0',
-				clicks: clicks || '0',
-				page: detailPage,
-				actions: [
-					{
-						type: 'link',
-						data: href,
-					},
-				],
-			};
-		} );
+				opens,
+				clicks,
+				opens_rate,
+				clicks_rate,
+				unique_opens,
+				unique_clicks,
+				total_sends,
+			} ) => {
+				const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
+				return {
+					id,
+					href,
+					date,
+					label: title,
+					type,
+					value: clicks_rate || '0',
+					opens: opens || '0',
+					clicks: clicks || '0',
+					opens_rate: opens_rate || '0',
+					clicks_rate: clicks_rate || '0',
+					unique_opens: unique_opens || '0',
+					unique_clicks: unique_clicks || '0',
+					total_sends: total_sends || '0',
+					page: detailPage,
+					actions: [
+						{
+							type: 'link',
+							data: href,
+						},
+					],
+				};
+			}
+		);
 	},
 };

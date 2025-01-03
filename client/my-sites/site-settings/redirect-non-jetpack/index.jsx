@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -38,11 +37,7 @@ const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 			}
 
 			if ( siteSlug ) {
-				if ( isHostingMenuUntangled() ) {
-					page( '/sites/settings/administration/' + siteSlug );
-				} else {
-					page( '/settings/general/' + siteSlug );
-				}
+				page( '/settings/general/' + siteSlug );
 			}
 		};
 

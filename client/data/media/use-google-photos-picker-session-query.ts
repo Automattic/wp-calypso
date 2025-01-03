@@ -17,6 +17,9 @@ export default function useGooglePhotosPickerSessionQuery(
 					sessionId as string
 				) }`,
 			} ),
+		meta: {
+			persist: false,
+		},
 		enabled,
 		...options,
 	} );

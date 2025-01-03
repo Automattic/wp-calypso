@@ -1,11 +1,16 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
-import _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import _, { debounce } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import { CampaignChartSeriesData } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
+import {
+	CampaignChartSeriesData,
+	ChartResolution,
+} from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 import { ChartSourceOptions } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details';
 import 'uplot/dist/uPlot.min.css';
+import { tooltip } from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/tooltip';
 import { formatCents } from 'calypso/my-sites/promote-post-i2/utils';
 
 const DEFAULT_DIMENSIONS = {
@@ -16,15 +21,16 @@ const DEFAULT_DIMENSIONS = {
 type GraphProps = {
 	data: CampaignChartSeriesData[];
 	source: ChartSourceOptions;
+	resolution: ChartResolution;
 };
 
-const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
+const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
+	const hourly = resolution === ChartResolution.Hour;
+	const tooltipRef = useRef< HTMLDivElement | null >( null );
 
-	const primaryColor = getComputedStyle( document.body )
-		.getPropertyValue( '--color-primary' )
-		.trim();
-	const primaryRGB = hexToRgb( primaryColor );
+	const accentColor = getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim();
+	const chartColor = hexToRgb( accentColor );
 
 	const updateWidth = () => {
 		const wrapperElement = document.querySelector(
@@ -36,16 +42,18 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 		}
 	};
 
+	const debouncedUpdateWidth = debounce( updateWidth, 200 );
+
 	useEffect( () => {
-		// set initial width
+		// Set initial width
 		updateWidth();
-		window.addEventListener( 'resize', updateWidth );
+		window.addEventListener( 'resize', debouncedUpdateWidth );
 
 		return () => {
-			// remove on unmount
-			window.removeEventListener( 'resize', updateWidth );
+			// Remove on unmount
+			window.removeEventListener( 'resize', debouncedUpdateWidth );
 		};
-	}, [] );
+	}, [ debouncedUpdateWidth ] );
 
 	// Convert ISO date string to Unix timestamp
 	const labels = data.map( ( entry ) => new Date( entry.date_utc ).getTime() / 1000 );
@@ -54,9 +62,32 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 	// Convert to uPlot's AlignedData format
 	const uplotData: uPlot.AlignedData = [ new Float64Array( labels ), new Float64Array( values ) ];
 
+	const locale = useLocale();
+
 	const options = useMemo( () => {
+		const formatDate = ( date: Date, hourly: boolean ) => {
+			const options: Intl.DateTimeFormatOptions = hourly
+				? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+				: { month: 'short', day: 'numeric' };
+			return new Intl.DateTimeFormat( locale, options ).format( date );
+		};
+
+		const tooltipPlugin = tooltip( tooltipRef, formatDate, hourly, formatValue );
+
+		function formatValue( rawValue: number ) {
+			if ( rawValue == null ) {
+				return '-';
+			}
+
+			if ( source === ChartSourceOptions.Spend ) {
+				return `$${ formatCents( rawValue, 2 ) }`;
+			}
+
+			return rawValue.toLocaleString();
+		}
+
 		return {
-			class: 'blaze-stats-line-chart',
+			class: 'campaign-item-details__uplot-chart',
 			width: width,
 			height: DEFAULT_DIMENSIONS.height,
 			tzDate: ( ts: number ) => new Date( ts * 1000 ),
@@ -69,16 +100,11 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
-							i % 4 === 0
-								? new Intl.DateTimeFormat( 'en', {
-										month: 'short',
-										day: 'numeric',
-								  } ).format( new Date( s * 1000 ) )
-								: ''
+							i % 4 === 0 ? formatDate( new Date( s * 1000 ), hourly ) : ''
 						);
 					},
 				},
@@ -91,7 +117,7 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					ticks: {
 						show: false,
 					},
-					gap: 12,
+					gap: 16,
 				},
 			],
 			cursor: {
@@ -103,6 +129,17 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 					fill: '#fff',
 				},
 			},
+			legend: {
+				show: false, // This will hide the legend
+			},
+			scales: {
+				y: {
+					range: ( self: uPlot, min: number, max: number ): [ number, number ] => [
+						min,
+						max + ( max - min ) * 0.4, // Increase the scale by 40%, this allows extra space for the tooltip
+					],
+				},
+			},
 			series: [
 				{
 					label: 'Date',
@@ -110,22 +147,17 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 						if ( rawValue == null ) {
 							return '-';
 						}
-
-						const date = new Date( rawValue * 1000 );
-						return new Intl.DateTimeFormat( 'en', {
-							month: 'short',
-							day: 'numeric',
-						} ).format( date );
+						return formatDate( new Date( rawValue * 1000 ), hourly );
 					},
 				},
 				{
 					label: _.capitalize( source ),
-					stroke: primaryColor,
+					stroke: accentColor,
 					width: 3,
 					fill: ( self: uPlot ) => {
-						const { r, g, b } = primaryRGB;
+						const { r, g, b } = chartColor;
 
-						//Get the height so we can create a gradient
+						// Get the height so we can create a gradient
 						const height = self?.bbox?.height;
 						if ( ! height || ! isFinite( height ) ) {
 							return `rgba(${ r }, ${ g }, ${ b }, 0.1)`;
@@ -138,27 +170,20 @@ const CampaignStatsLineChart = ( { data, source }: GraphProps ) => {
 						return gradient;
 					},
 					paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
-						const { spline } = uPlot.paths;
-						return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						const { linear } = uPlot.paths;
+						return linear?.()( u, seriesIdx, idx0, idx1 ) || null;
 					},
 					points: {
-						show: false,
+						show: true,
 					},
 					value: ( self: uPlot, rawValue: number ) => {
-						if ( rawValue == null ) {
-							return '-';
-						}
-
-						if ( source === ChartSourceOptions.Spend ) {
-							return `$${ formatCents( rawValue, 2 ) }`;
-						}
-
-						return rawValue.toLocaleString();
+						return formatValue( rawValue );
 					},
 				},
 			],
+			plugins: [ tooltipPlugin ],
 		};
-	}, [ source, primaryColor, primaryRGB ] );
+	}, [ hourly, width, source, accentColor, locale, chartColor ] );
 
 	return (
 		<div style={ { position: 'relative' } }>

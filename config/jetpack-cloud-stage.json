@@ -33,12 +33,12 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": false,
 		"checkout/vat-form": true,
-		"checkout/paypal-ppcp": true,
 		"checkout/checkout-version": false,
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"individual-subscriber-stats": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
@@ -72,6 +72,7 @@
 		"layout/support-article-dialog": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
+		"newsletter-categories": true,
 		"oauth": true,
 		"p2-enabled": false,
 		"purchases/new-payment-methods": true,
@@ -81,7 +82,8 @@
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false,
-		"bulk-plugin-management": true
+		"bulk-plugin-management": true,
+		"importers/newsletter": true
 	},
 	"enable_all_sections": false,
 	"sections": {

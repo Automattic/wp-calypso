@@ -29,10 +29,12 @@ class StatsGeochart extends Component {
 		postId: PropTypes.number,
 		skipQuery: PropTypes.bool,
 		isLoading: PropTypes.bool,
+		numberLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
 		kind: 'site',
+		numberLabel: '',
 	};
 
 	state = {
@@ -101,7 +103,7 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, translate } = this.props;
+		const { currentUserCountryCode, data, translate, numberLabel } = this.props;
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -118,7 +120,7 @@ class StatsGeochart extends Component {
 
 		const chartData = new window.google.visualization.DataTable();
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
-		chartData.addColumn( 'number', translate( 'Views' ).toString() );
+		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
 
 		// Note that using raw hex values here is an exception due to

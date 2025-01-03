@@ -9,7 +9,6 @@ export type AccountCreationAPIResponse =
 			oauth2_redirect?: string;
 			marketing_price_group?: string;
 			created_account?: boolean;
-			isNewAccountCreated?: boolean;
 	  }
 	| {
 			error: 'user_exists';
@@ -65,6 +64,7 @@ export type AccountCreateReturn =
 			};
 	  }
 	| {
+			ID?: string;
 			username?: string;
 			marketing_price_group?: string | undefined;
 			bearer_token?: string | undefined;

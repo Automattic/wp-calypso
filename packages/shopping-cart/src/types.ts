@@ -710,6 +710,31 @@ export interface ResponseCartProduct {
 	 * lengths, like a two-year or three-year version of a product.
 	 */
 	product_variants: ResponseCartProductVariant[];
+
+	/**
+	 * The date when the product's subscription will expire if not renewed. This
+	 * might be its renewal date, but it might not be since we often renew
+	 * products earlier than their expiry date.
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_current_expiry_date?: string;
+
+	/**
+	 * The date when the product's subscription will expire if not renewed
+	 * after the current cart item is purchased. This might be its renewal
+	 * date, but it might not be since we often renew products earlier than
+	 * their expiry date.
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_post_purchase_expiry_date?: string;
 }
 
 export interface ResponseCartProductVariant {

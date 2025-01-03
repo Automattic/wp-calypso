@@ -24,7 +24,7 @@ export function Panel( {
 	);
 }
 
-export function PanelSection( {
+export function PanelCard( {
 	isBorderless,
 	className,
 	children,
@@ -35,8 +35,8 @@ export function PanelSection( {
 } ) {
 	return (
 		<div
-			className={ clsx( 'panel-section', className, {
-				'panel-section--borderless': isBorderless,
+			className={ clsx( 'panel-card', className, {
+				'panel-card--borderless': isBorderless,
 			} ) }
 		>
 			{ children }
@@ -44,7 +44,7 @@ export function PanelSection( {
 	);
 }
 
-export function PanelHeading( {
+export function PanelCardHeading( {
 	asFormLabel,
 	id,
 	children,
@@ -59,6 +59,6 @@ export function PanelHeading( {
 	return <h2 id={ id }>{ children }</h2>;
 }
 
-export function PanelDescription( { children }: { children: React.ReactNode } ) {
-	return <p className="panel-description">{ children }</p>;
+export function PanelCardDescription( { children }: { children: React.ReactNode } ) {
+	return <p className="panel-card__description">{ children }</p>;
 }

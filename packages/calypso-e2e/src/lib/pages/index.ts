@@ -24,6 +24,7 @@ export * from './revisions-page';
 export * from './shared-types';
 export * from './signup/user-signup-page';
 export * from './site-import-page';
+export * from './site-settings-page';
 export * from './stats-page';
 export * from './themes-detail-page';
 export * from './themes-page';

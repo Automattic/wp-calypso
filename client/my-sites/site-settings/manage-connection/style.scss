@@ -1,0 +1,52 @@
+.manage-connection__user {
+	padding: 5px 10px 0;
+	display: inline-block;
+
+	.gravatar {
+		margin-right: 10px;
+	}
+
+	.manage-connection__user-name {
+		vertical-align: top;
+		line-height: 24px;
+	}
+}
+
+.manage-connection__disconnect-link {
+	margin-top: 16px;
+}
+
+.manage-connection__user-dropdown .author-selector__author-toggle {
+	display: inline-block;
+	border-style: solid;
+	border-color: var(--color-neutral-10);
+	border-width: 1px;
+	border-radius: 2px;
+
+	.gridicon {
+		vertical-align: super;
+		padding-right: 5px;
+	}
+}
+
+.manage-connection__ownership-info {
+	display: flex;
+}
+
+.manage-connection__ownership-info-icon {
+	color: var(--color-text-subtle);
+	flex: 0 0 24px;
+	margin-right: 20px;
+}
+
+.manage-connection__ownership-info-text {
+	flex: 1;
+
+	p.form-setting-explanation {
+		margin-top: 0;
+
+		& + p.form-setting-explanation {
+			margin-top: 20px;
+		}
+	}
+}

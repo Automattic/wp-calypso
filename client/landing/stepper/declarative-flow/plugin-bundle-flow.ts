@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch } from 'calypso/state';
@@ -148,11 +147,7 @@ const pluginBundleFlow: Flow = {
 
 			if ( siteDetails?.options?.theme_slug ) {
 				const themeId = getThemeIdFromStylesheet( siteDetails?.options?.theme_slug );
-				if ( isEnabled( 'themes/display-thank-you-page-for-bundle' ) ) {
-					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }`;
-				} else {
-					defaultExitDest = `/theme/${ themeId }/${ siteSlug }`;
-				}
+				defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }`;
 			}
 
 			if ( 'checkForPlugins' === currentStep ) {

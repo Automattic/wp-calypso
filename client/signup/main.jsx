@@ -63,7 +63,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -525,14 +524,10 @@ class Signup extends Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const { isNewishUser, existingSiteCount } = this.props;
+		const { existingSiteCount } = this.props;
 
 		const isNewUser = !! ( dependencies && dependencies.is_new_account );
 		const siteId = dependencies && dependencies.siteId;
-		const isNew7DUserSite = !! (
-			isNewUser ||
-			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
-		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
 		// updated to use cartItems
@@ -548,11 +543,9 @@ class Signup extends Component {
 			: cartItem?.product_slug;
 
 		const debugProps = {
-			isNewishUser,
 			existingSiteCount,
 			isNewUser,
 			hasCartItems,
-			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
 			theme: selectedDesign?.theme,
@@ -582,7 +575,6 @@ class Signup extends Component {
 					undefined !== domainItem && domainItem.is_domain_registration
 						? domainItem.product_slug
 						: undefined,
-				isNew7DUserSite,
 				// Record the following values so that we can know the user completed which branch under the hero flow
 				theme: selectedDesign?.theme,
 				intent,
@@ -592,7 +584,6 @@ class Signup extends Component {
 				isTransfer: isTransfer,
 				signupDomainOrigin: signupDomainOriginValue,
 				framework: 'start',
-				isNewishUser,
 			} );
 		}
 	};
@@ -1008,7 +999,6 @@ export default connect(
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanName: getSitePlanName( state, siteId ),

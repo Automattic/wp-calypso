@@ -32,6 +32,10 @@
 	box-sizing: border-box;
 }
 
+.components-popover .components-popover__content .components-button:focus:not(:disabled) {
+	box-shadow: none;
+}
+
 // Since the component `Notice` styles affect the WP Admin notice styles,
 // we need to restore by overriding them except for `.wpcomsh-notice` on Atomic sites.
 .notice:not(.wpcomsh-notice, .promote-post-notice) {

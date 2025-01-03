@@ -3,7 +3,7 @@ import {
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
 	isJetpackCompleteSlug,
-	isJetpackGrowthPlan,
+	isJetpackGrowthSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecurityT1Slug,
@@ -93,10 +93,11 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+				translate( 'AI Assistant' ),
 				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Newsletter and monetization tools' ),
 			];
 		case 'growth':
-			// JetPack Creator features
 			return [
 				translate( 'Stats (10K site views, upgradeable)' ),
 				translate( 'Social' ),
@@ -107,7 +108,6 @@ function getFeatureStrings(
 				translate( 'Paid content gating' ),
 				translate( 'Paywall access' ),
 				translate( 'Newsletter' ),
-				translate( 'Priority support' ),
 				translate( '2% transaction fees' ),
 			];
 		case 'scan':
@@ -131,7 +131,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'social-v1':
@@ -140,7 +142,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'stats-free':
@@ -230,7 +234,7 @@ export default function getJetpackProductFeatures(
 		];
 	}
 
-	if ( isJetpackGrowthPlan( product.product_slug ) ) {
+	if ( isJetpackGrowthSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'growth', translate ),
 			...getFeatureStrings( 'support', translate ),

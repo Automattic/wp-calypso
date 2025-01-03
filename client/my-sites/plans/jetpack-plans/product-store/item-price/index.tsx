@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
+import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import useItemPrice from '../../use-item-price';
@@ -17,11 +18,8 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	siteId,
 	isMultiSiteIncompatible,
 } ) => {
-	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
-		siteId,
-		item,
-		item?.monthlyProductSlug || ''
-	);
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
+		useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
@@ -52,6 +50,9 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 				billingTerm={ item.displayTerm || item.term }
 				productName={ item.displayName }
 				displayPriceText={ item.displayPriceText }
+				tooltipText={
+					priceTierList.length > 0 && productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+				}
 			/>
 		</div>
 	);

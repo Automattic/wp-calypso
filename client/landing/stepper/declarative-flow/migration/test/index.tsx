@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { URLSearchParams } from 'url';
-import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -321,7 +320,7 @@ describe( `${ flow.name }`, () => {
 				);
 			} );
 
-			it( 'redirects user from MIGRATION_UPGRADE_PLAN using SOURCE_URL_STEP as destination when they accept the offer', () => {
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN using SITE_MIGRATION_CREDENTIALS as destination when they accept the offer', () => {
 				runNavigation( {
 					from: STEPS.MIGRATION_UPGRADE_PLAN,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -329,7 +328,7 @@ describe( `${ flow.name }`, () => {
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
-					destination: `/setup/migration/migration-source-url?siteId=123&siteSlug=example.wordpress.com`,
+					destination: `/setup/migration/site-migration-credentials?siteId=123&siteSlug=example.wordpress.com`,
 					extraQueryParams: undefined,
 					flowName: 'migration',
 					siteSlug: 'example.wordpress.com',
@@ -354,23 +353,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects user from How To Migrate to MIGRATION_SOURCE_URL when they selects the option "do it for me"', () => {
-				config.disable( 'automated-migration/collect-credentials' );
-
-				const destination = runNavigation( {
-					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.MIGRATION_SOURCE_URL,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				} );
-			} );
-
 			it( 'redirects user from How To Migrate > SITE_MIGRATION_CREDENTIALS when they selects the option "do it for me"', () => {
-				config.enable( 'automated-migration/collect-credentials' );
 				const destination = runNavigation( {
 					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -495,25 +478,6 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		describe( 'MIGRATION_SOURCE_URL', () => {
-			it( 'redirects users from Capture Source URL to Migration assisted', () => {
-				const destination = runNavigation( {
-					from: STEPS.MIGRATION_SOURCE_URL,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-					dependencies: { from: 'http://oldsite.example.com' },
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-						from: 'http://oldsite.example.com',
-					},
-				} );
-			} );
-		} );
-
 		describe( 'SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT STEP', () => {
 			it( 'redirects users from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to SITE_MIGRATION_ASSISTED_MIGRATION', () => {
 				runNavigation( {
@@ -542,18 +506,6 @@ describe( `${ flow.name }`, () => {
 	} );
 
 	describe( 'useStepNavigation > goBack', () => {
-		it( 'redirects back user from SOURCE URL > HOW TO MIGRATE', () => {
-			const destination = runNavigationBack( {
-				from: STEPS.MIGRATION_SOURCE_URL,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.MIGRATION_HOW_TO_MIGRATE,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
 		it( 'retain user on the step and set the assisted migration modal query param when the modal query param is not set', () => {
 			const destination = runNavigationBack( {
 				from: STEPS.MIGRATION_UPGRADE_PLAN,

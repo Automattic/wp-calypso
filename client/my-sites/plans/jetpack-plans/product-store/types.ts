@@ -56,7 +56,7 @@ export type ItemToDisplayProps = {
 
 export type MostPopularProps = {
 	className?: string;
-	heading: string;
+	heading?: string;
 	items: Array< SelectorProduct >;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	siteId: number | null;
@@ -103,6 +103,7 @@ export type FeaturedItemCardProps = {
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
 	isProductInCart?: boolean;
+	isVertical?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;

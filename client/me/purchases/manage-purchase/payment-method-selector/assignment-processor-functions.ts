@@ -201,6 +201,7 @@ export async function assignNewCardProcessor(
 			stripeSetupIntentId
 		);
 		const token = tokenResponse.payment_method;
+		const setupKey = tokenResponse.id;
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
@@ -234,6 +235,7 @@ export async function assignNewCardProcessor(
 			city,
 			organization,
 			address,
+			setupKey,
 		} );
 
 		return makeSuccessResponse( result );

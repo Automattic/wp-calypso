@@ -59,7 +59,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	const permanentDismiss = () => dismiss( { isDismissed: true } );
 
 	return (
-		<div className="customer-home-launchpad">
+		<div className="customer-home-launchpad customer-home__card is-small-hero">
 			<div className={ headerClasses }>
 				<h2 className="customer-home-launchpad__title">{ launchpadTitle }</h2>
 				{ numberOfSteps > completedSteps ? (
