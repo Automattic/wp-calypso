@@ -1,8 +1,9 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { clearStepPersistedState } from '@automattic/onboarding/src/utils/persisted-state';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -10,6 +11,8 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as reduxUseDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
@@ -56,6 +59,14 @@ const onboarding: Flow = {
 		);
 	},
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const dispatch = reduxUseDispatch();
+		useEffect( () => {
+			resetOnboardStore();
+			dispatch( setSelectedSiteId( null ) );
+			clearStepPersistedState();
+		}, [] );
+
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
@@ -337,6 +348,7 @@ const onboarding: Flow = {
 
 		return { goBack, submit };
 	},
+
 	useAssertConditions() {
 		const [ isLoading ] = useGoalsFirstExperiment();
 

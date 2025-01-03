@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import { useMatch } from 'react-router';
 
 const TWENTY_MINUTES = 20 * 60 * 1000;
-const VERSION = 1;
-const KEY = '@automattic/persisted-state';
+export const VERSION = 1;
+export const KEY = '@automattic/persisted-state';
 
 function setPersistedState( key: string, state: unknown, storage: Storage ) {
 	storage.setItem( key, JSON.stringify( state ) );
