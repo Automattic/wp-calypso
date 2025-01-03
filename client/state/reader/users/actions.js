@@ -35,11 +35,3 @@ export function requestUser( userId ) {
 		}
 	};
 }
-
-export function handleReaderListRequestFailure( userId, error ) {
-	return {
-		type: READER_USER_REQUEST_FAILURE,
-		userId,
-		error,
-	};
-}
