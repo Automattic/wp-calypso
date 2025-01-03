@@ -1,12 +1,12 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Icon, seen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import UnsubscribeIcon from '../icons/unsubscribe-icon';
-import ViewFeedIcon from '../icons/view-feed-icon';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -127,7 +127,7 @@ export const SiteSettingsPopover = ( {
 						{ Boolean( feedId ) && (
 							<Button
 								className="site-settings-popover__view-feed-button"
-								icon={ <ViewFeedIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+								icon={ <Icon className="subscriptions-ellipsis-menu__item-icon" icon={ seen } /> }
 								href={ getFeedUrl( feedId ) }
 								onClick={ () => {
 									recordViewFeedButtonClicked( {
