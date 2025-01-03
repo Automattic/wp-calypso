@@ -27,7 +27,7 @@ interface UserStreamProps {
 	userId: string;
 	user: UserData;
 	isLoading: boolean;
-	requestUser: typeof requestUser;
+	requestUser: ( userId: string ) => Promise< void >;
 }
 
 export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
