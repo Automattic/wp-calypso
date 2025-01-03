@@ -6,6 +6,7 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { UserData } from 'calypso/lib/user/user';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import UserComments from './views/comments';
 import UserLikes from './views/likes';
@@ -24,9 +25,7 @@ interface NavigationItem {
 interface UserStreamProps {
 	streamKey?: string;
 	userId: string;
-	user: {
-		avatar_URL: string;
-	};
+	user: UserData;
 	isLoading: boolean;
 	requestUser: typeof requestUser;
 }
