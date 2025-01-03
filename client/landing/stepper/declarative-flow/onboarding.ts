@@ -1,4 +1,5 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
+import { resetOnboardStoreWithSkipFlags } from '@automattic/data-stores/src/onboard/actions';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -288,6 +289,13 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					}
+
+					// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
+					resetOnboardStoreWithSkipFlags( [
+						'skipPendingAction',
+						'skipIntent',
+						'skipSelectedDesign',
+					] );
 				}
 				default:
 					return;
