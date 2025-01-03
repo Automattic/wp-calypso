@@ -1048,11 +1048,11 @@ export default function CampaignItemDetails( props: Props ) {
 													<span className="campaign-item-details__label">
 														{ __( 'Weekly spend' ) }
 													</span>
-													<span className="campaign-item-details__text wp-brand-font">
+													<span className="campaign-item-details__text wp-brand-font align-baseline">
 														{ ! isLoading ? (
 															<>
 																{ weeklySpendFormatted }{ ' ' }
-																<span className="campaign-item-details__details">
+																<span className="campaign-item-details__details no-bottom-margin">
 																	/ { totalBudgetFormatted }
 																</span>
 															</>

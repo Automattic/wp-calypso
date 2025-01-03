@@ -27,6 +27,7 @@
 	}
 	.blank-canvas__header-title {
 		position: relative;
+		z-index: 1;
 	}
 
 	.account-deleted__button-link {
@@ -40,6 +41,18 @@
 		gap: 1rem;
 		@include break-small {
 			align-items: center;
+		}
+	}
+	.account-deleted__restoring {
+		display: flex;
+		align-items: center;
+		.components-spinner {
+			margin-top: 0;
+			margin-left: 0;
+		}
+		&-text {
+			font-size: 0.875rem;
+			color: var( --studio-gray-60 );
 		}
 	}
 }

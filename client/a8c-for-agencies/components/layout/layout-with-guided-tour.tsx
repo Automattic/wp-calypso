@@ -7,6 +7,8 @@ import {
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
 import Layout from 'calypso/layout/hosting-dashboard';
 
+import './style.scss';
+
 export function LayoutWithGuidedTour( { ...props }: ComponentProps< typeof Layout > ) {
 	const guidedTours = useGuidedTours();
 

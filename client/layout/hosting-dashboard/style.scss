@@ -65,6 +65,8 @@ html, body {
 		padding-inline: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
+			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
+			// Consider removing this max-width as the default across all layouts.
 			max-width: 1500px;
 			margin-inline: auto !important;
 			padding-inline: 64px;
@@ -74,11 +76,10 @@ html, body {
 
 .hosting-dashboard-layout__top-wrapper {
 	padding-block-start: 24px;
-	border-bottom: #f1f1f1 1px solid;
+	border-block-end: 1px solid var(--color-neutral-5);
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
-		border-block-end: 1px solid var(--color-neutral-5);
 	}
 
 	.notice-banner {
@@ -165,6 +166,10 @@ html, body {
 			margin: 0;
 		}
 	}
+
+	a {
+		font-weight: normal;
+	}
 }
 
 .hosting-dashboard-layout__sticky-header {
@@ -198,11 +203,6 @@ html, body {
 
 	.hosting-dashboard-layout__header-title {
 		margin-block-end: 0;
-		display: none;
-
-		@include break-large {
-			display: block;
-		}
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -232,9 +232,6 @@ html, body {
 	font-weight: 500;
 	line-height: 1.25;
 	letter-spacing: -0.5px;
-	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
-	}
 }
 
 .hosting-dashboard-layout__header-subtitle {

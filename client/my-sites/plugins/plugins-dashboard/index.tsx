@@ -3,9 +3,9 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -16,6 +16,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import UrlSearch from 'calypso/lib/url-search';
 import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -312,8 +313,10 @@ const PluginsDashboard = ( {
 			) }
 			wide
 			title={ dashboardTitle }
+			sidebarNavigation={
+				isJetpackCloud() && <SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+			}
 		>
-			<DocumentHead title={ dashboardTitle } />
 			<PageViewTracker
 				path={ pluginSlug ? `/plugins/manage/sites/${ pluginSlug }` : '/plugins/manage/sites' }
 				title="Plugins Dashboard"
@@ -327,7 +330,7 @@ const PluginsDashboard = ( {
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }
-						{ ! pluginSlug && (
+						{ ! pluginSlug && ! isJetpackCloud() && (
 							<Actions>
 								<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
 							</Actions>

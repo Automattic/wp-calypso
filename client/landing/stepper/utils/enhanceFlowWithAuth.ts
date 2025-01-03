@@ -1,4 +1,4 @@
-import { STEPS } from '../declarative-flow/internals/steps';
+import { PRIVATE_STEPS } from '../declarative-flow/internals/steps';
 import type { Flow, StepperStep } from '../declarative-flow/internals/types';
 
 function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
@@ -9,9 +9,11 @@ function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 		return steps;
 	}
 
-	const newSteps = [ ...steps ];
-	newSteps.splice( firstAuthWalledStep, 0, STEPS.USER );
-	return newSteps;
+	// For logged-out users, we will redirect steps that require auth to the user step,
+	// and then redirect back to the original steps after auth.
+	// Therefore, we must avoid placing the user step as the first step,
+	// as it would prevent us from knowing which step to redirect back to.
+	return [ ...steps, PRIVATE_STEPS.USER ];
 }
 
 export function enhanceFlowWithAuth( flow: Flow ): Flow {
