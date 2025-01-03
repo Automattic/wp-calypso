@@ -138,20 +138,23 @@ const SubscriberDataViews = ( {
 
 	return (
 		<section className="subscriber-data-views">
-			<DataViews< Subscriber >
-				data={ data }
-				fields={ fields }
-				view={ currentView }
-				onChangeView={ handleViewChange }
-				isLoading={ isLoading }
-				paginationInfo={ paginationInfo }
-				getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
-				defaultLayouts={ { table: {} } }
-				actions={ actions }
-				search
-				searchLabel={ translate( 'Search by name, username or email…' ) }
-			/>
-			{ shouldShowLaunchpad && <EmptyComponent /> }
+			{ shouldShowLaunchpad ? (
+				<EmptyComponent />
+			) : (
+				<DataViews< Subscriber >
+					data={ data }
+					fields={ fields }
+					view={ currentView }
+					onChangeView={ handleViewChange }
+					isLoading={ isLoading }
+					paginationInfo={ paginationInfo }
+					getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
+					defaultLayouts={ { table: {} } }
+					actions={ actions }
+					search
+					searchLabel={ translate( 'Search by name, username or email…' ) }
+				/>
+			) }
 		</section>
 	);
 };
