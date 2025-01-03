@@ -22,6 +22,7 @@ export type PartialDomainData = Pick<
 	| 'tld_maintenance_end_time'
 	| 'type'
 	| 'wpcom_domain'
+	| 'domain_status'
 >;
 
 export interface AllDomainsQueryFnData {
@@ -30,6 +31,7 @@ export interface AllDomainsQueryFnData {
 
 export interface AllDomainsQueryArgs {
 	no_wpcom?: boolean;
+	resolve_status?: boolean;
 }
 
 export const getAllDomainsQueryKey = ( queryArgs: AllDomainsQueryArgs = {} ) => [
