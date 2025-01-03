@@ -1,6 +1,6 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { resetOnboardStore } from '@automattic/data-stores/src/onboard/actions';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, useStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect } from 'react';
@@ -348,13 +348,15 @@ const onboarding: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const dispatch = useDispatch();
+		const [ , , clearAllStepPersistedState ] = useStepPersistedState( 'onboarding' );
 
 		useEffect( () => {
-			if ( currentStepSlug === undefined ) {
+			if ( ! currentStepSlug ) {
 				resetOnboardStore();
 				dispatch( setSelectedSiteId( null ) );
+				clearAllStepPersistedState();
 			}
-		}, [ currentStepSlug, dispatch ] );
+		}, [ currentStepSlug, dispatch, clearAllStepPersistedState ] );
 	},
 };
 
