@@ -121,6 +121,9 @@ function getWebpackConfig(
 			fallback: {
 				stream: require.resolve( 'stream-browserify' ),
 			},
+			alias: {
+				'@wordpress/upload-media': false,
+			},
 		},
 		node: false,
 		plugins: [
