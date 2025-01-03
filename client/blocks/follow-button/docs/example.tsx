@@ -20,3 +20,5 @@ export default function FollowButtonExample(): JSX.Element {
 		</div>
 	);
 }
+
+FollowButtonExample.displayName = 'FollowButtonExample';

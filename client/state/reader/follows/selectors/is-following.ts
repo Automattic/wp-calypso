@@ -1,8 +1,9 @@
 import { find } from 'lodash';
 import getReaderAliasedFollowFeedUrl from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
-import 'calypso/state/reader/init';
 import { AppState } from 'calypso/types';
+
+import 'calypso/state/reader/init';
 
 interface IsFollowingArgs {
 	feedUrl?: string;
