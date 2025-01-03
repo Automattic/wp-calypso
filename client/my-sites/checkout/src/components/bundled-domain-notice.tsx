@@ -1,5 +1,6 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ResponseCart } from '@automattic/shopping-cart';
 import { REGISTER_DOMAIN } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import {
@@ -12,34 +13,35 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-function getBillingMonthsForPlan( cart ) {
+function getBillingMonthsForPlan( cart: ResponseCart ) {
 	const plans = cart.products
 		.map( ( { product_slug } ) => getPlan( product_slug ) )
 		.filter( Boolean );
 	const plan = plans?.[ 0 ];
+	if ( ! plan?.term ) {
+		return 0;
+	}
 
 	try {
-		return getBillingMonthsForTerm( plan?.term );
+		return getBillingMonthsForTerm( plan.term );
 	} catch ( e ) {
 		return 0;
 	}
 }
 
-function hasBiennialPlan( cart ) {
+function hasBiennialPlan( cart: ResponseCart ) {
 	return getBillingMonthsForPlan( cart ) === 24;
 }
 
-function hasTriennialPlan( cart ) {
+function hasTriennialPlan( cart: ResponseCart ) {
 	return getBillingMonthsForPlan( cart ) === 36;
 }
 
-function hasMonthlyPlan( cart ) {
+function hasMonthlyPlan( cart: ResponseCart ) {
 	return cart.products.some( ( { product_slug } ) => isMonthly( product_slug ) );
 }
 
-function getCopyForBillingTerm( cart ) {
+function getCopyForBillingTerm( cart: ResponseCart ) {
 	if ( hasBiennialPlan( cart ) ) {
 		return translate(
 			'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.'
@@ -57,10 +59,8 @@ function getCopyForBillingTerm( cart ) {
 
 /**
  * Use showBundledDomainNotice to manage BundleDomainNotice visibility when called.
- * @param {import('@automattic/shopping-cart').ResponseCart} cart
- * @returns boolean
  */
-export const showBundledDomainNotice = ( cart ) => {
+export const showBundledDomainNotice = ( cart: ResponseCart ): boolean => {
 	const isGiftPurchase = cart.is_gift_purchase;
 
 	if ( isGiftPurchase ) {
@@ -86,7 +86,7 @@ export const showBundledDomainNotice = ( cart ) => {
 	return true;
 };
 
-export default function BundledDomainNotice( { cart } ) {
+export default function BundledDomainNotice( { cart }: { cart: ResponseCart } ) {
 	const domainRegistrationLink = (
 		<a href={ localizeUrl( REGISTER_DOMAIN ) } target="_blank" rel="noopener noreferrer" />
 	);

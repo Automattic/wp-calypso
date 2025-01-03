@@ -1,11 +1,16 @@
-import { localize } from 'i18n-calypso';
+import { ResponseCart } from '@automattic/shopping-cart';
+import { LocalizeProps, localize } from 'i18n-calypso';
 import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import { getTitanProductName } from 'calypso/lib/titan';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-function TitanTermsOfService( { cart, translate } ) {
+function TitanTermsOfService( {
+	cart,
+	translate,
+}: {
+	cart: ResponseCart;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
 	if ( ! hasTitanMail( cart ) ) {
 		return null;
 	}

@@ -1,4 +1,5 @@
 import { isChargeback, isCredits } from '@automattic/calypso-products';
+import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
 
@@ -38,7 +39,7 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	}
 `;
 
-export function CheckoutMoneyBackGuarantee( { cart } ) {
+export function CheckoutMoneyBackGuarantee( { cart }: { cart: ResponseCart } ) {
 	// Return early if the cart is only Chargebacks fees
 	if ( cart.products.every( isChargeback || isCredits ) ) {
 		return null;

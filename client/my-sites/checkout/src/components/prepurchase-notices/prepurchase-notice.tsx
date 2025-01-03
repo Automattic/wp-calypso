@@ -1,6 +1,15 @@
+import { ReactNode } from 'react';
 import './style.scss';
 
-const PrePurchaseNotice = ( { message, linkUrl, linkText } ) => (
+const PrePurchaseNotice = ( {
+	message,
+	linkUrl,
+	linkText,
+}: {
+	message: ReactNode;
+	linkUrl: string | null | undefined;
+	linkText: ReactNode | null | undefined;
+} ) => (
 	<div className="prepurchase-notice">
 		<p className="prepurchase-notice__message">{ message }</p>
 		{ linkUrl && linkText && (

@@ -1,4 +1,4 @@
-export function UpSellCoupon( { onClick } ) {
+export function UpSellCoupon( { onClick }: { onClick: () => void } ) {
 	return (
 		<div>
 			<h4>Exclusive offer</h4>
