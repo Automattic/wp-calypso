@@ -97,7 +97,7 @@ export class SecretsManager {
 			const error: Error = err as Error;
 			throw new Error(
 				'Failed to initialize the E2E secrets: Could not find and parse the secrets file.\n' +
-					'Have you decrypted the secrets file yet?\n' +
+					'Have you decrypted the secrets file yet? If yes, please make sure to build the package too (`yarn workspace @automattic/calypso-e2e build`)\n' +
 					'Export the decryption key to E2E_SECRETS_KEY and run "yarn decrypt-secrets".\n' +
 					`Original error message: ${ error.message }`
 			);
