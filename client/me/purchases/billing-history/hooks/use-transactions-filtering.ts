@@ -19,11 +19,11 @@ export function useTransactionsFiltering(
 				const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
 				const searchableFields = [
 					transaction.service,
+					transaction.amount_integer,
 					transactionItem.product,
 					transactionItem.variation,
 					transactionItem.domain,
 					moment( transaction.date ).format( DATE_FORMATS.DISPLAY ),
-					transaction.amount,
 				];
 
 				if (
