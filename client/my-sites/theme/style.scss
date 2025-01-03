@@ -79,34 +79,6 @@ $button-border: 4px;
 	max-width: none;
 }
 
-.theme__sheet-bar {
-	background-color: var(--color-masterbar-item-hover-background);
-	color: var(--studio-white);
-	height: 180px;
-	padding: 0;
-	margin: 0;
-}
-
-.theme__sheet-bar-title {
-	display: flex;
-	align-items: flex-end;
-	font-size: $font-title-large;
-	font-weight: 400;
-	padding-top: 78px;
-	padding-left: 25px;
-	line-height: 1;
-}
-
-.theme__sheet-bar-tag {
-	max-width: none;
-	display: block;
-	color: var(--color-text-inverted);
-	font-size: $font-body;
-	font-weight: 400;
-	padding-top: 5px;
-	padding-left: 25px;
-}
-
 .theme__sheet-bar-soft-launched {
 	color: var(--color-warning-80);
 	font-family: $default-font;
