@@ -23,6 +23,20 @@ function getPersistedState( key: string, storage: Storage, TTL: number ) {
 	}
 }
 
+/**
+ * Clears all persisted state created by useStepPersistedState
+ * @param storage The storage to clear (defaults to localStorage)
+ */
+function clearStepPersistedState( storage: Storage = localStorage ): void {
+	const keys = Object.keys( storage );
+	const persistedKeys = keys.filter( ( key ) => key.startsWith( `${ VERSION }-${ KEY }` ) );
+
+	persistedKeys.forEach( ( key ) => {
+		storage.removeItem( key );
+		storage.removeItem( key + 'time' );
+	} );
+}
+
 type Options = {
 	/**
 	 * The used storage, defaults to sessionStorage.
@@ -36,7 +50,6 @@ type Options = {
 
 /**
  * A hook similar to useState, but persists the state. Uses `flow`, `step` and `lang`, and the passed key in the tree as keys.
- *
  * @param cacheKey the cache key. It will be concatenated with the flow, step and lang.
  * @param defaultValue the initial value of the state.
  * @param options the options for the hook.
@@ -46,7 +59,7 @@ export function useStepPersistedState< T >(
 	cacheKey: string,
 	defaultValue?: T,
 	options: Options = { storage: localStorage, TTL: TWENTY_MINUTES }
-): [ T, ( newState: T ) => void ] {
+) {
 	const match = useMatch( '/:flow/:step?/:lang?' );
 	const { flow = 'flow', step = 'step', lang = 'lang' } = match?.params || {};
 	const key = [ VERSION, KEY, flow, step, lang, cacheKey ].join( '-' );
@@ -63,5 +76,9 @@ export function useStepPersistedState< T >(
 		[ _setState, key, options.storage ]
 	);
 
-	return [ state, setState ];
+	const clearAllStepPersistedState = useCallback( () => {
+		clearStepPersistedState( options.storage );
+	}, [ options.storage ] );
+
+	return [ state, setState, clearAllStepPersistedState ] as const;
 }
