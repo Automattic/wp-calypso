@@ -1,17 +1,19 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import wpcom from 'calypso/lib/wp';
+import { requestUser } from 'calypso/state/reader/users/actions';
 import UserComments from './views/comments';
 import UserLikes from './views/likes';
 import UserLists from './views/lists';
 import UserPosts from './views/posts';
 import UserReposts from './views/reposts';
 import './style.scss';
+import type { AppState } from 'calypso/types';
 
 interface NavigationItem {
 	label: string;
@@ -22,33 +24,25 @@ interface NavigationItem {
 interface UserStreamProps {
 	streamKey?: string;
 	userId: string;
+	user: {
+		avatar_URL: string;
+	};
+	isLoading: boolean;
+	requestUser: typeof requestUser;
 }
 
-const requestsInFlight = new Set();
-function fetchUser( userId ) {
-	if ( requestsInFlight.has( userId ) ) {
-		return;
-	}
+export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
+	useEffect( () => {
+		requestUser( userId );
+	}, [ userId, requestUser ] );
 
-	requestsInFlight.add( userId );
-	function removeKey() {
-		requestsInFlight.delete( userId );
-	}
-	return wpcom.req
-		.get( `/users/${ encodeURIComponent( userId ) }/` )
-		.then( ( data ) => {
-			removeKey();
-			return data;
-		} )
-		.catch( () => {
-			removeKey();
-		} );
-}
-
-const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 	const translate = useTranslate();
+
+	if ( isLoading || ! user ) {
+		return <></>;
+	}
+
 	const currentPath = page.current;
-	const [ user, setUser ] = useState( null );
 
 	const navigationItems: NavigationItem[] = [
 		{
@@ -97,20 +91,10 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 		}
 	};
 
-	useEffect( () => {
-		fetchUser( userId ).then( ( data ) => {
-			const userData = {
-				...data,
-				has_avatar: true,
-			};
-			setUser( userData );
-		} );
-	}, [ userId ] );
-
 	return (
 		<div className="user-stream">
 			<h1 className="user-stream__header">User Profile</h1>
-			<ReaderAvatar author={ user } />
+			<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
 			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
@@ -123,6 +107,12 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 			<div className="user-stream__content">{ renderContent() }</div>
 		</div>
 	);
-};
+}
 
-export default UserStream;
+export default connect(
+	( state: AppState, ownProps: UserStreamProps ) => ( {
+		user: state.reader.users.items[ ownProps.userId ],
+		isLoading: state.reader.users.requesting?.[ ownProps.userId ] ?? false,
+	} ),
+	requestUser
+)( UserStream );
