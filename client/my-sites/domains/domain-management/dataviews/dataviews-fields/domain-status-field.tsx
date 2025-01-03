@@ -1,24 +1,35 @@
-import { SiteDetails } from '@automattic/data-stores';
+import { PartialDomainData, SiteDetails } from '@automattic/data-stores';
 import { DomainsTableStatusCell } from '@automattic/domains-table/src/domains-table/domains-table-status-cell';
 import { resolveDomainStatus } from '@automattic/domains-table/src/utils/resolve-domain-status';
 import { useTranslate } from 'i18n-calypso';
-import { DomainData } from '../types';
 import { useDomainsDataViewsContext } from '../use-context';
 
 interface Props {
-	domain: DomainData;
+	domain: PartialDomainData;
 }
 
-const DomainStatusField = ( { domain }: Props ) => {
-	const { sites, domainResults, updatingDomain, domainStatusPurchaseActions } =
-		useDomainsDataViewsContext();
+const DomainStatusField = ( props: Props ) => {
+	const {
+		sites,
+		getSiteSlug,
+		getFullDomain,
+		domainResults,
+		updatingDomain,
+		domainStatusPurchaseActions,
+	} = useDomainsDataViewsContext();
 	const translate = useTranslate();
 
-	const site =
-		sites[ domain.processed.blogId ] && ( sites[ domain.processed.blogId ] as SiteDetails );
-	const pendingUpdates = domainResults.get( domain.processed.domain ) ?? [];
+	const domain = getFullDomain( props.domain );
+	if ( ! domain ) {
+		return <></>;
+	}
 
-	if ( domain.processed.domain === updatingDomain?.domain && updatingDomain?.message ) {
+	const siteSlug = getSiteSlug( props.domain );
+
+	const site = sites[ domain.blogId ] && ( sites[ domain.blogId ] as SiteDetails );
+	const pendingUpdates = domainResults.get( domain.domain ) ?? [];
+
+	if ( domain.domain === updatingDomain?.domain && updatingDomain?.message ) {
 		pendingUpdates.unshift( {
 			created_at: updatingDomain?.created_at,
 			message: updatingDomain?.message,
@@ -27,23 +38,17 @@ const DomainStatusField = ( { domain }: Props ) => {
 	}
 
 	const domainStatus = domain
-		? resolveDomainStatus( domain.processed, {
-				siteSlug: domain.original.site_slug,
+		? resolveDomainStatus( domain, {
+				siteSlug: siteSlug,
 				translate,
 				getMappingErrors: true,
 				currentRoute: window.location.pathname,
-				isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( domain.processed ),
-				isCreditCardExpiring: domainStatusPurchaseActions?.isCreditCardExpiring?.(
-					domain.processed
-				),
+				isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( domain ),
+				isCreditCardExpiring: domainStatusPurchaseActions?.isCreditCardExpiring?.( domain ),
 				onRenewNowClick: () =>
-					domainStatusPurchaseActions?.onRenewNowClick?.(
-						domain.original.site_slug ?? '',
-						domain.processed
-					),
-				monthsUtilCreditCardExpires: domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.(
-					domain.processed
-				),
+					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', domain ),
+				monthsUtilCreditCardExpires:
+					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( domain ),
 				isVipSite: site?.is_vip,
 		  } )
 		: null;

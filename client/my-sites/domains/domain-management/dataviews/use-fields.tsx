@@ -1,39 +1,30 @@
 import { PartialDomainData } from '@automattic/data-stores';
 import { DomainsTableExpiresRenewsOnCell } from '@automattic/domains-table/src/domains-table/domains-table-expires-renews-cell';
 import { DomainsTableSiteCell } from '@automattic/domains-table/src/domains-table/domains-table-site-cell';
-import { SiteExcerptData } from '@automattic/sites';
 import { Field } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { DomainField } from './dataviews-fields/domain-field';
 import { DomainStatusField } from './dataviews-fields/domain-status-field';
 import { SslStatusField } from './dataviews-fields/ssl-status-field';
-import { DomainData } from './types';
 import { useDomainsDataViewsContext } from './use-context';
 
 interface Props {
-	openDomainPane?: ( domain: DomainData ) => void;
+	openDomainPane?: ( domain: PartialDomainData ) => void;
 }
 
 export function useFields( { openDomainPane }: Props ) {
 	const translate = useTranslate();
-	const { isAllSitesView, domainsRequiringAttention, sites, selectedFeature } =
-		useDomainsDataViewsContext();
+	const {
+		isAllSitesView,
+		domainsRequiringAttention,
+		sites,
+		selectedFeature,
+		getSiteSlug,
+		getFullDomain,
+	} = useDomainsDataViewsContext();
 
-	const siteSlug = ( domain: PartialDomainData, site?: SiteExcerptData ) => {
-		if ( ! site?.URL ) {
-			// Fall back to the site's ID if we're still loading detailed site data
-			return domain.blog_id.toString( 10 );
-		}
-
-		if ( site.options?.is_redirect && site.options?.unmapped_url ) {
-			return new URL( site.options.unmapped_url ).host;
-		}
-
-		return new URL( site.URL ).host.replace( /\//g, '::' );
-	};
-
-	const fields = useMemo< Field< DomainData >[] >(
+	const fields = useMemo< Field< PartialDomainData >[] >(
 		() => [
 			{
 				id: 'domain_name',
@@ -41,8 +32,8 @@ export function useFields( { openDomainPane }: Props ) {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: DomainData } ) => item.processed.domain,
-				render: ( { item }: { item: DomainData } ) => (
+				getValue: ( { item }: { item: PartialDomainData } ) => item.domain,
+				render: ( { item }: { item: PartialDomainData } ) => (
 					<DomainField
 						domain={ item }
 						isAllSitesView={ isAllSitesView }
@@ -56,14 +47,21 @@ export function useFields( { openDomainPane }: Props ) {
 				label: translate( 'Owner' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainData } ) =>
-					item.processed.owner.replace( / \((?!.*\().+\)$/, '' ),
-				render: ( { item }: { item: DomainData } ) => {
+				getValue: ( { item }: { item: PartialDomainData } ) => {
+					const domain = getFullDomain( item );
+					if ( ! domain ) {
+						return '';
+					}
 					// Removes the username that appears in parentheses after the owner's name.
 					// Uses $ and the negative lookahead assertion (?!.*\() to ensure we only match the very last parenthetical.
-					return item.processed.owner
-						? item.processed.owner.replace( / \((?!.*\().+\)$/, '' )
-						: '-';
+					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
+				},
+				render: ( { item }: { item: PartialDomainData } ) => {
+					const domain = getFullDomain( item );
+					if ( ! domain || ! domain.owner ) {
+						return '-';
+					}
+					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
 				},
 			},
 			{
@@ -71,17 +69,17 @@ export function useFields( { openDomainPane }: Props ) {
 				label: translate( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainData } ) => item.original.blog_name ?? '',
-				render: ( { item }: { item: DomainData } ) => {
-					const site = sites[ item.processed.blogId ];
-					const userCanAddSiteToDomain =
-						item.processed.currentUserCanCreateSiteFromDomainOnly ?? false;
+				getValue: ( { item }: { item: PartialDomainData } ) => sites[ item.blog_id ]?.name ?? '',
+				render: ( { item }: { item: PartialDomainData } ) => {
+					const domain = getFullDomain( item );
+					const site = sites[ item.blog_id ];
+					const userCanAddSiteToDomain = domain?.currentUserCanCreateSiteFromDomainOnly ?? false;
 
 					return (
 						<DomainsTableSiteCell
 							site={ site }
 							userCanAddSiteToDomain={ userCanAddSiteToDomain }
-							siteSlug={ siteSlug( item.original, site ) }
+							siteSlug={ getSiteSlug( item ) }
 						/>
 					);
 				},
@@ -91,18 +89,21 @@ export function useFields( { openDomainPane }: Props ) {
 				label: translate( 'SSL' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainData } ) => item.processed.sslStatus,
-				render: ( { item }: { item: DomainData } ) => <SslStatusField domain={ item } />,
+				getValue: ( { item }: { item: PartialDomainData } ) => {
+					const domain = getFullDomain( item );
+					return domain?.sslStatus;
+				},
+				render: ( { item }: { item: PartialDomainData } ) => <SslStatusField domain={ item } />,
 			},
 			{
 				id: 'expiry',
 				label: translate( 'Expires/Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainData } ) =>
-					item.processed.expiry ? Date.parse( item.processed.expiry ) : 0,
-				render: ( { item }: { item: DomainData } ) => (
-					<DomainsTableExpiresRenewsOnCell domain={ item.original } as="div" />
+				getValue: ( { item }: { item: PartialDomainData } ) =>
+					item.expiry ? Date.parse( item.expiry ) : 0,
+				render: ( { item }: { item: PartialDomainData } ) => (
+					<DomainsTableExpiresRenewsOnCell domain={ item } as="div" />
 				),
 			},
 			{
@@ -118,11 +119,20 @@ export function useFields( { openDomainPane }: Props ) {
 				) : (
 					translate( 'Status' )
 				),
-				getValue: ( { item }: { item: DomainData } ) => item.original.domain_status.status,
-				render: ( { item }: { item: DomainData } ) => <DomainStatusField domain={ item } />,
+				getValue: ( { item }: { item: PartialDomainData } ) => item.domain_status?.status,
+				render: ( { item }: { item: PartialDomainData } ) => <DomainStatusField domain={ item } />,
 			},
 		],
-		[ domainsRequiringAttention, isAllSitesView, openDomainPane, sites, translate ]
+		[
+			domainsRequiringAttention,
+			isAllSitesView,
+			openDomainPane,
+			sites,
+			translate,
+			getFullDomain,
+			getSiteSlug,
+			selectedFeature,
+		]
 	);
 
 	return fields;

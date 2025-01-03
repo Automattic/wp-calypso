@@ -1,9 +1,9 @@
+import { PartialDomainData } from '@automattic/data-stores';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { BulkUpdateNotice } from './components/bulk-update-notice';
-import { DomainData } from './types';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
@@ -12,11 +12,11 @@ import { useFields } from './use-fields';
 import useView, { getFieldsByBreakpoint } from './use-view';
 
 type Props = {
-	domains: DomainData[];
+	domains: PartialDomainData[] | undefined;
 	isLoading: boolean;
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
-	openDomainPane?: ( domain: DomainData ) => void;
+	openDomainPane?: ( domain: PartialDomainData ) => void;
 };
 
 export const DomainsDataViews = ( {
@@ -32,14 +32,13 @@ export const DomainsDataViews = ( {
 	const { view, setView } = useView( { sidebarMode, isDesktop } );
 	const fields = useFields( { openDomainPane } );
 	const actions = useActions( { sidebarMode } );
-
-	const { data: processedDomains, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( domains, view, fields );
+	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( domains || [], view, fields );
 	}, [ domains, view, fields ] );
 
 	const [ selectedIds, setSelectedIds ] = useState< string[] >( [] );
-	const selectedDomain = domains
-		.filter( ( d: DomainData ) => d.processed.domain === selectedDomainName )
+	const selectedDomain = domainsToDisplay
+		.filter( ( d: PartialDomainData ) => d.domain === selectedDomainName )
 		.pop();
 
 	useEffect( () => {
@@ -58,7 +57,7 @@ export const DomainsDataViews = ( {
 		<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
 			{ ! sidebarMode && <BulkUpdateNotice /> }
 			<DataViews
-				data={ processedDomains }
+				data={ domainsToDisplay }
 				fields={ fields }
 				onChangeView={ ( newView ) => setView( () => newView ) }
 				view={ view }

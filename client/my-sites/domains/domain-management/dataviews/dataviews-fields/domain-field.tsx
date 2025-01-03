@@ -1,3 +1,4 @@
+import { PartialDomainData } from '@automattic/data-stores';
 import { PrimaryDomainLabel } from '@automattic/domains-table';
 import { domainInfoContext } from '@automattic/domains-table/src/utils/constants';
 import { getDomainTypeText } from '@automattic/domains-table/src/utils/get-domain-type-text';
@@ -5,24 +6,36 @@ import { domainManagementLink as getDomainManagementLink } from '@automattic/dom
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { navigate } from 'calypso/lib/navigate';
-import { DomainData } from '../types';
+import { useDomainsDataViewsContext } from '../use-context';
 
 interface Props {
-	domain: DomainData;
+	domain: PartialDomainData;
 	isAllSitesView: boolean;
 	selectedFeature?: string;
-	openDomainPane?: ( domain: DomainData ) => void;
+	openDomainPane?: ( domain: PartialDomainData ) => void;
 }
 
-const DomainField = ( { domain, isAllSitesView, selectedFeature, openDomainPane }: Props ) => {
+const DomainField = ( {
+	domain: partialDomain,
+	isAllSitesView,
+	selectedFeature,
+	openDomainPane,
+}: Props ) => {
 	const { __ } = useI18n();
 
-	const domainManagementLink = ! domain.processed.isWPCOMDomain
-		? getDomainManagementLink( domain.processed, domain.original.site_slug, true, selectedFeature )
+	const { getFullDomain, getSiteSlug } = useDomainsDataViewsContext();
+
+	const domain = getFullDomain( partialDomain );
+	const siteSlug = getSiteSlug( partialDomain );
+
+	const domainManagementLink = ! partialDomain.wpcom_domain
+		? getDomainManagementLink( partialDomain, siteSlug, true, selectedFeature )
 		: '';
 
-	const domainTypeText = getDomainTypeText( domain.processed, __, domainInfoContext.DOMAIN_ROW );
-	const showPrimaryDomainLabel = ! isAllSitesView && domain.processed.isPrimary;
+	const domainTypeText = domain
+		? getDomainTypeText( domain, __, domainInfoContext.DOMAIN_ROW )
+		: '';
+	const showPrimaryDomainLabel = ! isAllSitesView && domain && domain.isPrimary;
 
 	const onDomainClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
@@ -43,7 +56,7 @@ const DomainField = ( { domain, isAllSitesView, selectedFeature, openDomainPane 
 		}
 
 		if ( openDomainPane ) {
-			openDomainPane( domain );
+			openDomainPane( partialDomain );
 		} else {
 			navigate( domainManagementLink, openInNewTab );
 		}
@@ -52,7 +65,7 @@ const DomainField = ( { domain, isAllSitesView, selectedFeature, openDomainPane 
 	return (
 		<Button className="domains-dataviews__domain-name-button" onClick={ onDomainClick }>
 			{ showPrimaryDomainLabel && <PrimaryDomainLabel /> }
-			<div className="domains-dataviews__domain-name">{ domain.processed.domain }</div>
+			<div className="domains-dataviews__domain-name">{ partialDomain.domain }</div>
 
 			{ domainTypeText && (
 				<div className="domains-table-row__domain-type-text">{ domainTypeText }</div>
