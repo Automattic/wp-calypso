@@ -75,18 +75,6 @@ export default function FollowButtonContainer(
 	};
 
 	return (
-		<FollowButton
-			following={ following }
-			onFollowToggle={ handleFollowToggle }
-			iconSize={ props.iconSize }
-			tagName={ props.tagName }
-			disabled={ props.disabled }
-			followLabel={ props.followLabel }
-			followingLabel={ props.followingLabel }
-			className={ props.className }
-			followIcon={ props.followIcon }
-			followingIcon={ props.followingIcon }
-			hasButtonStyle={ props.hasButtonStyle }
-		/>
+		<FollowButton { ...props } following={ following } onFollowToggle={ handleFollowToggle } />
 	);
 }
