@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { DataViews } from '@wordpress/dataviews';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
@@ -34,6 +35,7 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 		view.perPage
 	);
 	const fields = useFieldDefinitions( transactions, view );
+	const translate = useTranslate();
 
 	return (
 		<div className="billing-history">
@@ -47,7 +49,7 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 					fields={ fields }
 					view={ view }
 					search
-					searchLabel="Search receipts"
+					searchLabel={ translate( 'Search receipts' ) }
 					onChangeView={ updateView }
 					defaultLayouts={ { table: {} } }
 					actions={ actions }

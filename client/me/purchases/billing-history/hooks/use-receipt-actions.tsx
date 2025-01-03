@@ -1,5 +1,6 @@
 import pageRedirect from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -15,12 +16,13 @@ const recordClickEvent = ( eventAction: string ) => {
 
 export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => string ) {
 	const dispatch = useDispatch< ThunkDispatch< IAppState, undefined, Action > >();
+	const translate = useTranslate();
 
 	return useMemo(
 		() => [
 			{
 				id: 'view-receipt',
-				label: 'View receipt',
+				label: translate( 'View receipt' ),
 				isPrimary: true,
 				icon: <Gridicon icon="pages" />,
 				callback: ( items: BillingTransaction[] ) => {
@@ -30,7 +32,7 @@ export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => st
 			},
 			{
 				id: 'email-receipt',
-				label: 'Email receipt',
+				label: translate( 'Email receipt' ),
 				isPrimary: true,
 				icon: <Gridicon icon="mail" />,
 				callback: ( items: BillingTransaction[] ) => {
@@ -40,6 +42,6 @@ export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => st
 				},
 			},
 		],
-		[ dispatch, getReceiptUrlFor ]
+		[ dispatch, getReceiptUrlFor, translate ]
 	);
 }

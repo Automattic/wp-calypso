@@ -2,7 +2,7 @@ import { type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { capitalPDangit } from 'calypso/lib/formatting';
-import { DATE_FORMATS, TRANSACTION_TYPES } from './constants';
+import { DATE_FORMATS } from './constants';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -83,6 +83,27 @@ const getUniqueServices = (
 		} ) );
 };
 
+const getUniqueTransactionTypes = (
+	transactions: BillingTransaction[]
+): Array< { value: string; label: string } > => {
+	const typeMap = new Map< string, string >();
+
+	transactions
+		.flatMap( ( transaction ) => transaction.items )
+		.forEach( ( item ) => {
+			if ( item.type && ! typeMap.has( item.type ) ) {
+				typeMap.set( item.type, item.type_localized || item.type );
+			}
+		} );
+
+	return Array.from( typeMap.entries() )
+		.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+		.map( ( [ value, label ] ) => ( {
+			value,
+			label,
+		} ) );
+};
+
 export const getFieldDefinitions = (
 	transactions: BillingTransaction[] | null,
 	hiddenFields: string[],
@@ -90,7 +111,7 @@ export const getFieldDefinitions = (
 ) => ( {
 	date: {
 		id: 'date',
-		label: 'Date',
+		label: translate( 'Date' ),
 		type: 'text' as const,
 		width: '15%',
 		elements: getUniqueMonths( transactions ?? [] ),
@@ -110,7 +131,7 @@ export const getFieldDefinitions = (
 	},
 	service: {
 		id: 'service',
-		label: 'App',
+		label: translate( 'App' ),
 		type: 'text' as const,
 		width: '45%',
 		elements: getUniqueServices( transactions ?? [] ),
@@ -134,10 +155,10 @@ export const getFieldDefinitions = (
 	},
 	type: {
 		id: 'type',
-		label: 'Type',
+		label: translate( 'Type' ),
 		type: 'text' as const,
 		width: '20%',
-		elements: [ TRANSACTION_TYPES.NEW_PURCHASE, TRANSACTION_TYPES.RENEWAL ],
+		elements: getUniqueTransactionTypes( transactions ?? [] ),
 		enableGlobalSearch: true,
 		enableHiding: true,
 		enableSorting: true,
@@ -147,9 +168,7 @@ export const getFieldDefinitions = (
 		},
 		render: ( { item }: { item: BillingTransaction } ) => {
 			const [ transactionItem ] = groupDomainProducts( item.items, translate );
-			return (
-				<div>{ transactionItem.type_localized || capitalPDangit( transactionItem.type ) }</div>
-			);
+			return <div>{ transactionItem.type_localized || transactionItem.type }</div>;
 		},
 		getValue: ( { item }: { item: BillingTransaction } ) => {
 			const [ transactionItem ] = groupDomainProducts( item.items, translate );
@@ -158,7 +177,7 @@ export const getFieldDefinitions = (
 	},
 	amount: {
 		id: 'amount',
-		label: 'Amount',
+		label: translate( 'Amount' ),
 		type: 'text' as const,
 		width: '20%',
 		enableGlobalSearch: true,

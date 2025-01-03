@@ -9,11 +9,6 @@ export const DATE_FORMATS = {
 	DISPLAY: 'll',
 } as const;
 
-export const TRANSACTION_TYPES = {
-	NEW_PURCHASE: { value: 'new purchase', label: 'New Purchase' },
-	RENEWAL: { value: 'recurring', label: 'Renewal' },
-} as const;
-
 export const defaultDataViewsState: ViewState = {
 	type: 'table',
 	search: '',
