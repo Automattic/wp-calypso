@@ -11,6 +11,7 @@ import PluginRowFormatter from 'calypso/my-sites/plugins/plugin-management-v2/pl
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { PluginSite } from 'calypso/state/plugins/installed/types';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';
@@ -31,12 +32,18 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const compareBooleans = ( a: boolean, b: boolean, direction: string ) => {
-		if ( a === b ) {
-			return 0;
-		}
-		return direction === 'asc' ? -1 : 1;
-	};
+	const compareBooleans =
+		( fieldName: keyof PluginSite ) => ( a: SiteDetails, b: SiteDetails, direction: string ) => {
+			const aValue = plugin.sites[ a.ID ][ fieldName ];
+			const bValue = plugin.sites[ b.ID ][ fieldName ];
+			if ( aValue === bValue ) {
+				return 0;
+			}
+			if ( direction === 'asc' ) {
+				return aValue ? 1 : -1;
+			}
+			return aValue ? -1 : 1;
+		};
 
 	const renderActions = useCallback(
 		( site: SiteDetails ) => {
@@ -101,7 +108,7 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 				},
 				enableHiding: false,
 				enableSorting: true,
-				sort: compareBooleans,
+				sort: compareBooleans( 'active' ),
 			},
 			{
 				id: 'autoupdate',
@@ -119,7 +126,7 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 				},
 				enableHiding: false,
 				enableSorting: true,
-				sort: compareBooleans,
+				sort: compareBooleans( 'autoupdate' ),
 			},
 			{
 				id: 'update',
@@ -171,7 +178,7 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 		.filter( ( site ) => site && ! site.is_deleted );
 
 	const { data, paginationInfo } = filterSortAndPaginate(
-		dataViewsSites as SiteDetails[],
+		dataViewsSites.filter( ( site ): site is SiteDetails => site !== null && site !== undefined ),
 		dataViewsState,
 		dataViewsFields
 	);
