@@ -27,7 +27,7 @@ import type { Action } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
 import 'calypso/components/dataviews/style.scss';
-import './style.scss';
+import './style-data-view.scss';
 
 const INITIAL_PAGE = 1;
 const ITEMS_PER_PAGE = 10;

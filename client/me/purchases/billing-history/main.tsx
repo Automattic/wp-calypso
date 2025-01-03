@@ -9,7 +9,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
-import BillingHistoryListDataView from 'calypso/me/purchases/billing-history-data-view/billing-history-list';
+import BillingHistoryListDataView from 'calypso/me/purchases/billing-history/billing-history-list-data-view';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
