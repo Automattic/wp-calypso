@@ -1,7 +1,6 @@
+import { Icon, plus, published } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 import './style.scss';
 
@@ -64,8 +63,13 @@ export default function FollowButton( props: FollowButtonProps ): JSX.Element {
 
 	return (
 		<FollowButtonTag className={ menuClasses.join( ' ' ) } title={ label } onClick={ toggleFollow }>
-			<ReaderFollowingFeedIcon iconSize={ iconSize } />
-			<ReaderFollowFeedIcon iconSize={ iconSize } />
+			<Icon
+				key="following"
+				className="reader-following-feed"
+				icon={ published }
+				size={ iconSize }
+			/>
+			<Icon key="follow" className="reader-follow-feed" icon={ plus } size={ iconSize } />
 			<span className="follow-button__label">{ label }</span>
 		</FollowButtonTag>
 	);
