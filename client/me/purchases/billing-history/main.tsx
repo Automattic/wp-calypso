@@ -80,7 +80,7 @@ function BillingHistory() {
 					}
 				) }
 			/>
-			<QueryBillingTransactions transactionType="past" page={ 0 } sortColumn="" sortOrder="desc" />
+			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
 
