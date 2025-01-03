@@ -17,6 +17,7 @@ module.exports = {
 		'results',
 		'static',
 		'test',
+		'vendor',
 	],
 	// Consider only imports of `@wordpress/components`
 	importedFrom: '@wordpress/components',
