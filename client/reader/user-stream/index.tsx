@@ -112,7 +112,7 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 export default connect(
 	( state: AppState, ownProps: UserStreamProps ) => ( {
 		user: state.reader.users.items[ ownProps.userId ],
-		isLoading: state.reader.users.requesting?.[ ownProps.userId ] ?? false,
+		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
 	} ),
-	requestUser
+	{ requestUser }
 )( UserStream );

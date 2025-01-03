@@ -8,43 +8,31 @@ import {
 import 'calypso/state/reader/init';
 
 const requestsInFlight = new Set();
-export const requestUser = ( dispatch, ownProps ) => () => {
-	return {
-		requestUser: () => {
-			const userId = ownProps.userId;
-			if ( requestsInFlight.has( userId ) ) {
-				return;
-			}
+export function requestUser( userId ) {
+	return async ( dispatch ) => {
+		if ( requestsInFlight.has( userId ) ) {
+			return;
+		}
 
+		dispatch( { type: READER_USER_REQUEST, userId } );
+		requestsInFlight.add( userId );
+
+		try {
+			const userData = await wpcom.req.get( `/users/${ encodeURIComponent( userId ) }/` );
+			requestsInFlight.delete( userId );
 			dispatch( {
-				type: READER_USER_REQUEST,
+				type: READER_USER_REQUEST_SUCCESS,
 				userId,
+				userData,
 			} );
-
-			requestsInFlight.add( userId );
-			const removeKey = () => {
-				requestsInFlight.delete( userId );
-			};
-
-			return wpcom.req
-				.get( `/users/${ encodeURIComponent( userId ) }/` )
-				.then( ( userData ) => {
-					removeKey();
-					dispatch( receiveUser( userId, userData ) );
-				} )
-				.catch( ( error ) => {
-					removeKey();
-					dispatch( handleReaderListRequestFailure( userId, error ) );
-				} );
-		},
-	};
-};
-
-export function receiveUser( userId, userData ) {
-	return {
-		type: READER_USER_REQUEST_SUCCESS,
-		userId,
-		userData,
+		} catch ( error ) {
+			requestsInFlight.delete( userId );
+			dispatch( {
+				type: READER_USER_REQUEST_FAILURE,
+				userId,
+				error,
+			} );
+		}
 	};
 }
 
