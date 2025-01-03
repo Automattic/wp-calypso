@@ -1,4 +1,6 @@
+import { gql, useQuery } from '@apollo/client';
 import { useTranslate } from 'i18n-calypso';
+import { withGraphqlProvider } from 'calypso//a8c-for-agencies/api/apollo/hoc/with-graphql-provider';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -14,12 +16,57 @@ import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
 import OverviewSidebar from './sidebar';
-
 import './style.scss';
 
-export default function Overview() {
+const GET_USER = gql`
+	query GetUser {
+		me {
+			id
+			name
+			email
+			agency {
+				id
+				name
+				users {
+					id
+					email
+					role
+					capabilities
+				}
+				referrals {
+					id
+					status
+					client {
+						id
+						email
+					}
+					products {
+						status
+						product_id
+						quantity
+						site_assigned
+						license {
+							license_id
+							license_key
+							quantity
+							issued_at
+							attached_at
+							revoked_at
+						}
+					}
+				}
+			}
+		}
+	}
+`;
+
+function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency Overview' );
+
+	const { loading, error, data } = useQuery( GET_USER );
+
+	console.log( { loading, error, data } ); // eslint-disable-line no-console
 
 	return (
 		<Layout title={ title } wide>
@@ -42,3 +89,5 @@ export default function Overview() {
 		</Layout>
 	);
 }
+
+export default withGraphqlProvider( Overview );
