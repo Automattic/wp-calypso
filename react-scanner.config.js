@@ -4,7 +4,7 @@ module.exports = {
 	// Needed for properly reporting components with dot notation
 	includeSubComponents: true,
 	// Exclude usage in tests and stories.
-	globs: [ '**/!(test|stories)/!(*stories).@(js|ts)?(x)' ],
+	globs: [ '**/!(test|stories)/!(*stories).@(js|jsx|tsx)' ],
 	// Exclude any vendor or docs directories
 	exclude: [
 		'bin',
