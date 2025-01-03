@@ -36,7 +36,7 @@ export const BulkUpdateNotice = () => {
 					<Notice
 						key={ job.id }
 						status="is-error"
-						text={ translate( 'Some domain updates were not successful ' ) }
+						text={ translate( 'Some domain updates were not successful.' ) }
 						onDismissClick={ () => handleDismissNotice( job.id ) }
 					>
 						<StatusPopover
@@ -61,7 +61,7 @@ export const BulkUpdateNotice = () => {
 					status="is-success"
 					onDismissClick={ () => handleDismissNotice( job.id ) }
 				>
-					{ translate( 'Bulk domain updates finished successfully ' ) }
+					{ translate( 'Bulk domain updates finished successfully.' ) }
 				</Notice>
 			);
 		} );

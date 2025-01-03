@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PartialDomainData } from '@automattic/data-stores';
 import {
 	DomainStatusPurchaseActions,
 	DomainsTable,
@@ -16,7 +17,6 @@ import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-c
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader, { NavigationItem } from '../components/domain-header';
 import DotcomDomainsDataViews from '../dataviews';
-import { useDomains } from '../dataviews/use-domains';
 import {
 	createBulkAction,
 	deleteBulkActionStatus,
@@ -632,6 +632,8 @@ type RendererProps = {
 	item: NavigationItem;
 	selectedFeature?: string;
 	hasConnectableSites?: boolean;
+	domains: PartialDomainData[];
+	isLoading?: boolean;
 };
 
 function DomainsTableRenderer( {
@@ -639,54 +641,30 @@ function DomainsTableRenderer( {
 	purchaseActions,
 	sidebarMode,
 	selectedDomainName,
-	item,
 	selectedFeature,
 	hasConnectableSites,
+	domains,
+	isLoading,
 }: RendererProps ) {
-	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
-
-	const isDomainsEmpty = isFetched && domains.length === 0;
-	const buttons = ! isDomainsEmpty
-		? [
-				<OptionsDomainButton
-					key="breadcrumb_button_1"
-					allDomainsList
-					sidebarMode={ sidebarMode }
-				/>,
-		  ]
-		: [];
-
 	return (
-		<>
-			<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-			{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
-			{ ! isDomainsEmpty ? (
-				<DomainsTable
-					context="domains"
-					isLoadingDomains={ isLoading }
-					domains={ domains }
-					isAllSitesView
-					domainStatusPurchaseActions={ purchaseActions }
-					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
-					fetchAllDomains={ fetchAllDomains }
-					fetchSite={ fetchSite }
-					fetchSiteDomains={ fetchSiteDomains }
-					createBulkAction={ createBulkAction }
-					fetchBulkActionStatus={ fetchBulkActionStatus }
-					deleteBulkActionStatus={ deleteBulkActionStatus }
-					sidebarMode={ sidebarMode }
-					selectedFeature={ selectedFeature }
-					selectedDomainName={ selectedDomainName }
-					hasConnectableSites={ hasConnectableSites }
-				/>
-			) : (
-				<div className="bulk-domains-empty-state">
-					<div className="bulk-domains-empty-state__main">
-						<EmptyState />
-					</div>
-				</div>
-			) }
-		</>
+		<DomainsTable
+			context="domains"
+			isLoadingDomains={ isLoading }
+			domains={ domains }
+			isAllSitesView
+			domainStatusPurchaseActions={ purchaseActions }
+			currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
+			fetchAllDomains={ fetchAllDomains }
+			fetchSite={ fetchSite }
+			fetchSiteDomains={ fetchSiteDomains }
+			createBulkAction={ createBulkAction }
+			fetchBulkActionStatus={ fetchBulkActionStatus }
+			deleteBulkActionStatus={ deleteBulkActionStatus }
+			sidebarMode={ sidebarMode }
+			selectedFeature={ selectedFeature }
+			selectedDomainName={ selectedDomainName }
+			hasConnectableSites={ hasConnectableSites }
+		/>
 	);
 }
 
@@ -696,47 +674,24 @@ function DomainsDataViewsRenderer( {
 	sidebarMode,
 	selectedDomainName,
 	selectedFeature,
-	item,
+	domains,
+	isLoading,
 }: RendererProps ) {
-	const { isLoading, isFetched, domains } = useDomains();
-
-	const isDomainsEmpty = isFetched && domains.length === 0;
-	const buttons = ! isDomainsEmpty
-		? [
-				<OptionsDomainButton
-					key="breadcrumb_button_1"
-					allDomainsList
-					sidebarMode={ sidebarMode }
-				/>,
-		  ]
-		: [];
-
 	return (
-		<>
-			<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-			{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
-			{ ! isDomainsEmpty ? (
-				<DotcomDomainsDataViews
-					domains={ domains ?? [] }
-					isLoading={ isLoading }
-					selectedItem={ undefined }
-					isAllSitesView
-					domainStatusPurchaseActions={ purchaseActions }
-					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
-					createBulkAction={ createBulkAction }
-					fetchBulkActionStatus={ fetchBulkActionStatus }
-					selectedDomainName={ selectedDomainName }
-					sidebarMode={ sidebarMode }
-					selectedFeature={ selectedFeature }
-				/>
-			) : (
-				<div className="bulk-domains-empty-state">
-					<div className="bulk-domains-empty-state__main">
-						<EmptyState />
-					</div>
-				</div>
-			) }
-		</>
+		<DotcomDomainsDataViews
+			domains={ domains ?? [] }
+			isLoading={ !! isLoading }
+			selectedItem={ undefined }
+			isAllSitesView
+			domainStatusPurchaseActions={ purchaseActions }
+			currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
+			fetchSiteDomains={ fetchSiteDomains }
+			createBulkAction={ createBulkAction }
+			fetchBulkActionStatus={ fetchBulkActionStatus }
+			selectedDomainName={ selectedDomainName }
+			sidebarMode={ sidebarMode }
+			selectedFeature={ selectedFeature }
+		/>
 	);
 }
 
@@ -759,30 +714,55 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	};
 
 	const purchaseActions = usePurchaseActions();
+	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
 
-	const showDataViews = isDomainsDataViewsEnabled;
-	const Element = showDataViews ? DomainsDataViewsRenderer : DomainsTableRenderer;
+	const isDomainsEmpty = isFetched && domains.length === 0;
+	const buttons = ! isDomainsEmpty
+		? [
+				<OptionsDomainButton
+					key="breadcrumb_button_1"
+					allDomainsList
+					sidebarMode={ props.sidebarMode }
+				/>,
+		  ]
+		: [];
+
+	const Element = isDomainsDataViewsEnabled ? DomainsDataViewsRenderer : DomainsTableRenderer;
 
 	return (
 		<>
 			<Global
-				styles={ showDataViews ? domainsDataViewsGlobalStyles : domainsDashboardGlobalStyles }
+				styles={
+					isDomainsDataViewsEnabled ? domainsDataViewsGlobalStyles : domainsDashboardGlobalStyles
+				}
 			/>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main className={ showDataViews ? 'dataviews' : '' }>
+			<Main className={ isDomainsDataViewsEnabled ? 'dataviews' : '' }>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
 					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
 				/>
-				<Element
-					isInSupportSession={ isInSupportSession }
-					hasConnectableSites={ hasConnectableSites }
-					purchaseActions={ purchaseActions }
-					sidebarMode={ props.sidebarMode }
-					selectedDomainName={ props.selectedDomainName }
-					selectedFeature={ props.selectedFeature }
-					item={ item }
-				/>
+				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
+				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
+				{ ! isDomainsEmpty ? (
+					<Element
+						isInSupportSession={ isInSupportSession }
+						hasConnectableSites={ hasConnectableSites }
+						purchaseActions={ purchaseActions }
+						sidebarMode={ props.sidebarMode }
+						selectedDomainName={ props.selectedDomainName }
+						selectedFeature={ props.selectedFeature }
+						item={ item }
+						domains={ domains }
+						isLoading={ isLoading }
+					/>
+				) : (
+					<div className="bulk-domains-empty-state">
+						<div className="bulk-domains-empty-state__main">
+							<EmptyState />
+						</div>
+					</div>
+				) }
 			</Main>
 		</>
 	);

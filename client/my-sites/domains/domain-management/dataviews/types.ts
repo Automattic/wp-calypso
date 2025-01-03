@@ -3,8 +3,9 @@ import {
 	JobStatus,
 	BulkUpdateVariables,
 	BulkDomainUpdateStatusQueryFnData,
+	PartialDomainData,
 } from '@automattic/data-stores';
-import { DomainData as QueryDomainData } from '@automattic/data-stores/src/queries/use-site-domains-query';
+import { SiteDomainsQueryFnData } from '@automattic/data-stores/src/queries/use-site-domains-query';
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
 import { DomainAction } from '@automattic/domains-table/src/domains-table/domains-table-row-actions';
 import { SiteExcerptData } from '@automattic/sites';
@@ -20,7 +21,7 @@ type DomainActionDescription = {
 /**
  * Utility type for domain action handlers.
  */
-type OnDomainAction = (
+export type OnDomainAction = (
 	action: DomainAction,
 	domain: ResponseDomain
 ) => DomainActionDescription | void;
@@ -40,10 +41,10 @@ interface DomainsDataViewsUpdatingDomain {
  */
 interface BaseDomainsDataViewsProps {
 	className?: string;
-	domains: DomainData[];
+	domains: PartialDomainData[] | undefined;
 	isLoading: boolean;
-	selectedItem: DomainData | null | undefined;
-	openDomainPane?: ( domain: DomainData ) => void;
+	selectedItem: PartialDomainData | null | undefined;
+	openDomainPane?: ( domain: PartialDomainData ) => void;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
@@ -54,6 +55,9 @@ interface BaseDomainsDataViewsProps {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	selectedFeature?: string;
+	fetchSiteDomains?: (
+		siteIdOrSlug: number | string | null | undefined
+	) => Promise< SiteDomainsQueryFnData >;
 	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
@@ -72,16 +76,21 @@ export type DomainsDataViewsProps =
  */
 export interface Context {
 	sites: Record< number, SiteExcerptData >;
+	getFullDomain: ( domain: PartialDomainData ) => ResponseDomain | undefined;
+	getSiteSlug: ( domain: PartialDomainData ) => string;
 	isLoadingSites?: boolean;
 	isLoadingDomains?: boolean;
+	fetchSiteDomains?: (
+		siteIdOrSlug: number | string | null | undefined
+	) => Promise< SiteDomainsQueryFnData >;
 	createBulkAction?: ( variables: BulkUpdateVariables ) => Promise< void >;
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	domainsRequiringAttention?: number;
-	handleAutoRenew: ( domains: DomainData[], enable: boolean ) => void;
-	handleUpdateContactInfo: ( domains: DomainData[] ) => void;
+	handleAutoRenew: ( domains: PartialDomainData[], enable: boolean ) => void;
+	handleUpdateContactInfo: ( domains: PartialDomainData[] ) => void;
 	onDomainsRequiringAttentionChange: ( domainsRequiringAttention: number ) => void;
 	completedJobs: JobStatus[];
 	domainResults: Map< string, DomainUpdateStatus[] >;
@@ -91,45 +100,4 @@ export interface Context {
 	userCanSetPrimaryDomains: BaseDomainsDataViewsProps[ 'userCanSetPrimaryDomains' ];
 	isDesktop: boolean;
 	selectedFeature?: string;
-}
-
-/**
- * Extended domain data with additional fields.
- */
-type DomainDataExtension = {
-	site_slug: string;
-	domain_status: {
-		status: string;
-		status_type: string;
-		status_weight: number;
-	};
-};
-
-/**
- * Domain data with extended definition.
- */
-export type QueryDomainExtendedData = QueryDomainData & DomainDataExtension;
-
-/**
- * Domain data with original and processed data.
- */
-export type DomainData = {
-	original: QueryDomainExtendedData;
-	processed: ResponseDomain;
-};
-
-/**
- * Arguments for the domains query.
- */
-export interface DomainsQueryArgs {
-	no_wpcom?: boolean;
-	resolve_status?: boolean;
-	extended_data?: boolean;
-}
-
-/**
- * Data returned by the domains query function.
- */
-export interface DomainsQueryFnData {
-	domains: QueryDomainExtendedData[];
 }
