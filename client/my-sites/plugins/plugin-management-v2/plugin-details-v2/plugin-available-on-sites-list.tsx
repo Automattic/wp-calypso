@@ -10,7 +10,7 @@ import './style.scss';
 
 interface Props {
 	sites: Array< SiteDetails | null | undefined >;
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	isLoading: boolean;
 	plugin: PluginComponentProps;
 }
