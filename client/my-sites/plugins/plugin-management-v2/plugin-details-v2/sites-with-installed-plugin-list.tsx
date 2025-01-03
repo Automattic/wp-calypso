@@ -205,7 +205,7 @@ export default function SitesWithInstalledPluginsList( {
 	);
 
 	return (
-		<>
+		<div className="plugin-details-v2__sites-list">
 			<div className="plugin-details-v2__title">
 				{ translate(
 					'Installed on %(count)d site',
@@ -236,6 +236,6 @@ export default function SitesWithInstalledPluginsList( {
 				columns={ columns }
 				renderActions={ renderActions }
 			/>
-		</>
+		</div>
 	);
 }
