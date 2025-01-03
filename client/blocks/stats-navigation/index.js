@@ -109,11 +109,6 @@ class StatsNavigation extends Component {
 			}
 		);
 
-		// toggle the visibility of video module itself
-		if ( ! nextProps.hasVideoPress ) {
-			nextProps.pageModuleToggles.videos = false;
-		}
-
 		if (
 			prevState.pageModules !== nextProps.pageModuleToggles ||
 			prevState.availableModuleToggles !== nextProps.availableModuleToggles
