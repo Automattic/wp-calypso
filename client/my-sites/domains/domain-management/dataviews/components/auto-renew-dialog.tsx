@@ -1,16 +1,16 @@
 import { SelectDropdown } from '@automattic/components';
+import { PartialDomainData } from '@automattic/data-stores';
 import transformIcon from '@automattic/domains-table/src/bulk-actions-toolbar/transform.svg';
 import { RenderModalProps } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { DomainData } from '../types';
 import { useDomainsDataViewsContext } from '../use-context';
 
 export const AutoRenewDiolog = ( {
 	items,
 	closeModal,
 	onActionPerformed,
-}: RenderModalProps< DomainData > ) => {
+}: RenderModalProps< PartialDomainData > ) => {
 	const { handleAutoRenew } = useDomainsDataViewsContext();
 	const translate = useTranslate();
 	const [ controlKey, setControlKey ] = useState( 1 );

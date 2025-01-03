@@ -1,22 +1,32 @@
+import { PartialDomainData } from '@automattic/data-stores';
 import DomainsTableSslCell from '@automattic/domains-table/src/domains-table/domains-table-ssl-cell';
 import { domainManagementLink as getDomainManagementLink } from '@automattic/domains-table/src/utils/paths';
-import { DomainData } from '../types';
+import { useDomainsDataViewsContext } from '../use-context';
 
 interface Props {
-	domain: DomainData;
+	domain: PartialDomainData;
 }
 
-const SslStatusField = ( { domain }: Props ) => {
-	const domainManagementLink = ! domain.processed.isWPCOMDomain
-		? getDomainManagementLink( domain.processed, domain.original.site_slug, true )
+const SslStatusField = ( props: Props ) => {
+	const { getFullDomain, getSiteSlug } = useDomainsDataViewsContext();
+	const domain = getFullDomain( props.domain );
+
+	if ( ! domain ) {
+		return <></>;
+	}
+
+	const siteSlug = getSiteSlug( props.domain );
+
+	const domainManagementLink = ! domain.isWPCOMDomain
+		? getDomainManagementLink( domain, siteSlug, true )
 		: '';
 
-	const hasWpcomManagedSslCert = domain.processed.type === 'wpcom';
+	const hasWpcomManagedSslCert = domain.type === 'wpcom';
 
 	return (
 		<DomainsTableSslCell
 			domainManagementLink={ domainManagementLink }
-			sslStatus={ domain.processed.sslStatus }
+			sslStatus={ domain.sslStatus }
 			hasWpcomManagedSslCert={ hasWpcomManagedSslCert }
 			as="div"
 		/>
