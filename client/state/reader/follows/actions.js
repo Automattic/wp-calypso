@@ -55,7 +55,7 @@ import 'calypso/state/reader/init';
  * @param   {?Object} recommendedSiteInfo   A subscription, optional
  * @returns {Object}              			The action
  */
-export function follow( feedUrl, followInfo, recommendedSiteInfo ) {
+export function follow( feedUrl, followInfo, recommendedSiteInfo = null ) {
 	const action = {
 		type: READER_FOLLOW,
 		payload: {
