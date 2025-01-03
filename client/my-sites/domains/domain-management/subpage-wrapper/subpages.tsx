@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
+import CompareEmailProvidersHeader from './headers/compare-email-providers';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 import DnsRecordHeader, {
 	addDnsRecordTitle,
@@ -21,6 +22,7 @@ type SubpageWrapperParamsType = {
 
 // Subpage keys
 export const ADD_FORWARDING_EMAIL = 'add-forwarding-email';
+export const COMPARE_EMAIL_PROVIDERS = 'compare-email-providers';
 export const DNS_RECORDS = 'dns-records';
 export const ADD_DNS_RECORD = 'add-dns-record';
 export const EDIT_DNS_RECORD = 'edit-dns-record';
@@ -33,6 +35,9 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		showFormHeader: true,
 		showPageHeader: false,
 	},
+	[ COMPARE_EMAIL_PROVIDERS ]: {
+		CustomHeader: CompareEmailProvidersHeader,
+	},
 	[ DNS_RECORDS ]: {
 		CustomHeader: DNSRecordsHeader,
 		titleOverride: dnsRecordsTitle,
@@ -41,13 +46,11 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		showDetails: false,
 	},
 	[ EDIT_CONTACT_INFO ]: {
-		subPageKey: EDIT_CONTACT_INFO,
 		title: __( 'Contact information' ),
 		subtitle: __( "Manage your domain's contact details." ),
 	},
 	[ ADD_DNS_RECORD ]: {
 		CustomHeader: DnsRecordHeader,
-		subPageKey: ADD_DNS_RECORD,
 		titleOverride: addDnsRecordTitle,
 		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
@@ -55,7 +58,6 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	},
 	[ EDIT_DNS_RECORD ]: {
 		CustomHeader: DnsRecordHeader,
-		subPageKey: EDIT_DNS_RECORD,
 		titleOverride: editDnsRecordTitle,
 		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
