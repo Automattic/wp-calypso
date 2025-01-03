@@ -346,6 +346,7 @@ export class RenderDomainsStep extends Component {
 			stepName: this.props.stepName,
 			suggestion: undefined,
 			domainCart: {},
+			siteUrl: '',
 		};
 
 		this.props.saveSignupStep( stepData );
