@@ -53,7 +53,7 @@
 
 				&:focus {
 					color: var(--studio-gray-100);
-					outline: var(--color-primary-light) solid 2px;
+					outline: $help-center-blue solid 2px;
 					outline-offset: 2px;
 				}
 			}
