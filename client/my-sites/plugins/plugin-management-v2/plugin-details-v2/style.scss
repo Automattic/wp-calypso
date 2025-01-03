@@ -137,14 +137,22 @@
 }
 
 .plugin-details-v2__sites-list {
-	.dataviews-view-table {
-		tr th:last-child {
+	.dataviews-view-table tr {
+		th:last-child {
 			text-align: right;
 			padding-right: 0;
 		}
 
-		tr td:last-child {
+		td:last-child {
 			padding-right: 16px;
+		}
+
+		td:first-child .dataviews-view-table__cell-content-wrapper > span {
+			flex-grow: 1;
+
+			.plugin-row-formatter__overlay {
+				display: none;
+			}
 		}
 
 		td:last-child .dataviews-view-table__cell-content-wrapper {
