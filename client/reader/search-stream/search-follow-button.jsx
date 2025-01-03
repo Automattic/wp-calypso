@@ -6,7 +6,7 @@ import { Component } from 'react';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing, urlToDomainAndPath } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
-import FollowButton from 'calypso/reader/follow-button';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import './style.scss';
 
@@ -102,7 +102,7 @@ class SearchFollowButton extends Component {
 					<Gridicon icon="info" size="16" />
 					<strong>{ translate( 'Click below to add this site to your Reader feed:' ) }</strong>
 				</p>
-				<FollowButton
+				<ReaderFollowButton
 					followLabel={ translate( 'Subscribe to %s', {
 						args: followTitle,
 						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
