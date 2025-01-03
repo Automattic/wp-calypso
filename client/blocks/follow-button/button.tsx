@@ -1,16 +1,15 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 import './style.scss';
 
 export interface FollowButtonProps {
 	className?: string;
 	disabled?: boolean;
-	followIcon?: JSX.Element;
 	followLabel?: string;
 	following?: boolean;
-	followingIcon?: JSX.Element;
 	followingLabel?: string;
 	hasButtonStyle?: boolean;
 	iconSize?: number;
@@ -44,13 +43,6 @@ export default function FollowButton( props: FollowButtonProps ): JSX.Element {
 		menuClasses.push( 'has-button-style' );
 	}
 
-	const followingIcon = props.followingIcon || (
-		<Gridicon key="following" icon="reader-following" size={ iconSize } />
-	);
-	const followIcon = props.followIcon || (
-		<Gridicon key="follow" icon="reader-follow" size={ iconSize } />
-	);
-
 	/**
 	 * Toggle the follow state of the button.
 	 */
@@ -72,8 +64,8 @@ export default function FollowButton( props: FollowButtonProps ): JSX.Element {
 
 	return (
 		<FollowButtonTag className={ menuClasses.join( ' ' ) } title={ label } onClick={ toggleFollow }>
-			{ followingIcon }
-			{ followIcon }
+			<ReaderFollowingFeedIcon iconSize={ iconSize } />
+			<ReaderFollowFeedIcon iconSize={ iconSize } />
 			<span className="follow-button__label">{ label }</span>
 		</FollowButtonTag>
 	);

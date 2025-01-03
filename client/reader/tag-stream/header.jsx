@@ -9,8 +9,6 @@ import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { recordAction } from 'calypso/reader/stats';
 
 const updateQueryArg = ( params ) =>
@@ -110,11 +108,8 @@ class TagStreamHeader extends Component {
 								<FollowButton
 									followLabel={ translate( 'Follow tag' ) }
 									followingLabel={ translate( 'Following tag' ) }
-									iconSize={ 24 }
 									following={ following }
 									onFollowToggle={ onFollowToggle }
-									followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-									followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 								/>
 							) }
 						</div>
