@@ -1,56 +1,37 @@
 import { SelectDropdown, Gridicon, Badge } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { navigate } from 'calypso/lib/navigate';
+import { LogType } from 'calypso/sites/tools/logs';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
-import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
-import { buildFilterParam } from '../site-logs';
 import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
+
 import './style.scss';
-
-const SiteLogsToolbarDownloadProgress = ( {
-	recordsDownloaded = 0,
-	totalRecordsAvailable = 0,
-} ) => {
-	const translate = useTranslate();
-
-	if ( totalRecordsAvailable === 0 ) {
-		return null;
-	}
-
-	return (
-		<span className="site-logs-toolbar__download-progress">
-			{ translate(
-				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
-				{
-					args: {
-						logRecordsDownloaded: recordsDownloaded,
-						totalLogRecordsAvailable: totalRecordsAvailable,
-					},
-				}
-			) }
-		</span>
-	);
-};
 
 type Props = {
 	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
 	onSeverityChange: ( severity: string ) => void;
 	onRequestTypeChange: ( requestType: string ) => void;
 	onRequestStatusChange: ( requestStatus: string ) => void;
-	logType: SiteLogsTab;
+	onAutoRefreshChange: ( isChecked: boolean ) => void;
+	autoRefresh: boolean;
+	logType: LogType;
 	startDateTime: Moment;
 	endDateTime: Moment;
 	severity: string;
 	requestType: string;
 	requestStatus: string;
-	children?: React.ReactNode;
 };
 
 export const SiteLogsToolbar = ( {
@@ -58,21 +39,20 @@ export const SiteLogsToolbar = ( {
 	onSeverityChange,
 	onRequestTypeChange,
 	onRequestStatusChange,
+	autoRefresh,
+	onAutoRefreshChange,
 	logType,
 	startDateTime,
 	endDateTime,
 	severity,
 	requestType,
 	requestStatus,
-	children,
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
-	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
-	const isDownloading = state.status === 'downloading';
 	const [ isMobileOpen, setIsMobileOpen ] = useState( false );
 
 	const handleTimeRangeChange = ( newStart: Moment | null, newEnd: Moment | null ) => {
@@ -148,31 +128,69 @@ export const SiteLogsToolbar = ( {
 				{ translate( 'Filter' ) }
 				<Gridicon icon="filter" />
 			</Button>
+
 			<div className={ clsx( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }>
-				<label htmlFor="from">{ translate( 'From' ) }</label>
-				<DateTimePicker
-					id="from"
-					value={ startDateTime }
-					onChange={ ( value ) => handleTimeRangeChange( value, null ) }
-					gmtOffset={ siteGmtOffset }
-					min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
-					max={ endDateTime }
-				/>
-				<label htmlFor="to">{ translate( 'To' ) }</label>
-				<DateTimePicker
-					id="to"
-					value={ endDateTime }
-					onChange={ ( value ) => handleTimeRangeChange( null, value ) }
-					gmtOffset={ siteGmtOffset }
-					max={ moment() }
-					min={ startDateTime }
-				/>
+				<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">
+					<span>{ translate( 'Log type' ) }</span>
+					<ToggleGroupControl
+						className="site-logs-toolbar__toggle"
+						hideLabelFromVision
+						label=""
+						onChange={ ( value ) => {
+							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+						} }
+						value={ logType }
+						__nextHasNoMarginBottom
+					>
+						<ToggleGroupControlOption
+							className="site-logs-toolbar__toggle-option"
+							label={ translate( 'PHP error', {
+								textOnly: true,
+							} ) }
+							value="php"
+						/>
+						<ToggleGroupControlOption
+							className="site-logs-toolbar__toggle-option"
+							label={ translate( 'Web server', {
+								textOnly: true,
+							} ) }
+							value="web"
+						/>
+					</ToggleGroupControl>
+				</label>
+
+				<label className="site-logs-toolbar__label">
+					<span>{ translate( 'From' ) }</span>
+					<DateTimePicker
+						className="site-logs-toolbar__datepicker"
+						id="from"
+						value={ startDateTime }
+						onChange={ ( value ) => handleTimeRangeChange( value, null ) }
+						gmtOffset={ siteGmtOffset }
+						min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
+						max={ endDateTime }
+					/>
+				</label>
+
+				<label className="site-logs-toolbar__label">
+					<span>{ translate( 'To' ) }</span>
+					<DateTimePicker
+						className="site-logs-toolbar__datepicker"
+						id="to"
+						value={ endDateTime }
+						onChange={ ( value ) => handleTimeRangeChange( null, value ) }
+						gmtOffset={ siteGmtOffset }
+						max={ moment() }
+						min={ startDateTime }
+					/>
+				</label>
+
 				{ logType === 'php' && (
-					<div className="site-logs-toolbar-filter-element">
-						<label htmlFor="site-logs-severity">{ translate( 'Severity' ) }</label>
+					<label className="site-logs-toolbar__label">
+						<span>{ translate( 'Severity' ) }</span>
 						<SelectDropdown
 							id="site-logs-severity"
-							className="site-logs-toolbar-filter-severity"
+							className="site-logs-toolbar__dropdown"
 							selectedText={ selectedSeverity.label }
 							initialSelected={ severity }
 						>
@@ -191,15 +209,15 @@ export const SiteLogsToolbar = ( {
 								</SelectDropdown.Item>
 							) ) }
 						</SelectDropdown>
-					</div>
+					</label>
 				) }
 				{ logType === 'web' && (
 					<>
-						<div className="site-logs-toolbar-filter-element">
-							<label htmlFor="site-logs-request-type">{ translate( 'Request type' ) }</label>
+						<label className="site-logs-toolbar__label">
+							<span>{ translate( 'Request type' ) }</span>
 							<SelectDropdown
 								id="site-logs-request-type"
-								className="site-logs-toolbar-filter-request-type"
+								className="site-logs-toolbar__dropdown"
 								selectedText={ selectedRequestType.label }
 								initialSelected={ requestType }
 							>
@@ -217,12 +235,13 @@ export const SiteLogsToolbar = ( {
 									</SelectDropdown.Item>
 								) ) }
 							</SelectDropdown>
-						</div>
-						<div className="site-logs-toolbar-filter-element">
-							<label htmlFor="site-logs-request-status">{ translate( 'Status' ) }</label>
+						</label>
+
+						<label className="site-logs-toolbar__label">
+							<span>{ translate( 'Status' ) }</span>
 							<SelectDropdown
 								id="site-logs-request-status"
-								className="site-logs-toolbar-filter-request-status"
+								className="site-logs-toolbar__dropdown"
 								selectedText={ selectedRequestStatus.label }
 								initialSelected={ requestStatus }
 							>
@@ -240,30 +259,18 @@ export const SiteLogsToolbar = ( {
 									</SelectDropdown.Item>
 								) ) }
 							</SelectDropdown>
-						</div>
+						</label>
 					</>
 				) }
-
-				<Button
-					className="site-logs-toolbar__download"
-					disabled={ isDownloading }
-					isBusy={ isDownloading }
-					variant="primary"
-					onClick={ () =>
-						downloadLogs( {
-							logType,
-							startDateTime,
-							endDateTime,
-							filter: buildFilterParam( logType, severity, requestType, requestStatus ),
-						} )
-					}
-				>
-					{ translate( 'Download logs' ) }
-				</Button>
-
-				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
 			</div>
-			{ children }
+
+			<ToggleControl
+				__nextHasNoMarginBottom
+				className="site-logs__auto-refresh"
+				label={ translate( 'Auto-refresh', { textOnly: true } ) }
+				checked={ autoRefresh }
+				onChange={ onAutoRefreshChange }
+			/>
 		</div>
 	);
 };

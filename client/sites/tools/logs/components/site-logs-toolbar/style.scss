@@ -1,23 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+
 .site-logs-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: space-between;
 	margin-bottom: 1.5em;
-	@include break-wide {
-		display: flex;
-		gap: 16px;
-		flex-direction: row;
-		align-items: top;
-		justify-content: space-between;
-		flex-wrap: wrap;
-	}
 
-	.components-toggle-control {
+	.site-logs__auto-refresh {
+		align-self: center;
 		display: inline-block;
-		margin-top: 12px;
-
-		.components-toggle-control__label {
-			text-wrap: nowrap;
-		}
+		margin-right: 0 !important;
+		white-space: nowrap;
 	}
 
 	.site-logs-toolbar__top-row {
@@ -28,20 +23,37 @@
 		gap: 16px;
 		padding-bottom: 16px;
 		clear: both;
+	}
 
-		.site-logs-toolbar-filter-element {
-			display: flex;
-			align-items: center;
-			gap: 16px;
+	.site-logs-toolbar__label {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.site-logs-toolbar__label_toggle .components-base-control {
+		margin-right: 0 !important;
+		white-space: nowrap;
+	}
+
+	.site-logs-toolbar__toggle {
+		border-color: var(--color-neutral-10);
+	}
+
+	.site-logs-toolbar__toggle-option {
+		height: 36px;
+
+		&[aria-checked="false"] {
+			color: inherit;
 		}
+	}
 
-		input[type="datetime-local"] {
-			display: flex;
-			justify-content: center;
-			cursor: text;
-			&::-webkit-calendar-picker-indicator {
-				cursor: pointer;
-			}
+	.site-logs-toolbar__datepicker {
+		display: flex;
+		justify-content: center;
+		cursor: text;
+		&::-webkit-calendar-picker-indicator {
+			cursor: pointer;
 		}
 	}
 
@@ -49,36 +61,32 @@
 		display: none;
 		float: right;
 	}
+
 	@media screen and (max-width: 600px) {
 		.site-logs-toolbar__top-row {
 			flex-direction: column;
 			align-items: stretch;
-
-			.site-logs-toolbar-filter-element {
-				flex-direction: column;
-				align-items: stretch;
-			}
+			width: 100%;
 
 			&.is-hidden {
 				display: none;
 			}
 		}
+
+		.site-logs__auto-refresh {
+			order: -1;
+		}
+
 		.site-logs-toolbar__filter {
 			display: flex;
 		}
 
-		.select-dropdown .select-dropdown__container {
+		.site-logs-toolbar__toggle,
+		.site-logs-toolbar__datepicker,
+		.site-logs-toolbar__dropdown,
+		.select-dropdown__container {
 			width: 100%;
 		}
-
-		.select-dropdown {
-			width: 100%;
-		}
-	}
-
-	button {
-		height: 42px;
-		justify-content: center;
 	}
 }
 
