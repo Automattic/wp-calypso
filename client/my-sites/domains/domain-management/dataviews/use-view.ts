@@ -1,9 +1,13 @@
+import { usePrevious } from '@wordpress/compose';
 import { View } from '@wordpress/dataviews';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DEFAULT_PAGE, DEFAULT_PER_PAGE, QueryParams } from './use-query-params';
 
 type ViewProps = {
 	sidebarMode?: boolean;
 	isDesktop: boolean;
+	selectedDomain?: string;
+	queryParams: QueryParams;
 };
 
 export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean ) {
@@ -14,24 +18,26 @@ export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean
 	return [ 'domain_name' ];
 }
 
-export default function useView( { sidebarMode, isDesktop }: ViewProps ) {
+export default function useView( {
+	sidebarMode,
+	isDesktop,
+	queryParams: { page, perPage, search },
+}: ViewProps ) {
 	const initialDataViewsState: View = {
 		filters: [],
 		sort: {
 			field: '',
 			direction: 'asc',
 		},
+		page: page || DEFAULT_PAGE,
+		perPage: perPage || DEFAULT_PER_PAGE,
+		search: search || '',
 		type: sidebarMode ? 'list' : 'table',
-		perPage: 50,
-		page: 1,
-		search: '',
 		layout: {},
 	};
 
 	const [ view, setView ] = useState< View >( () => ( {
 		...initialDataViewsState,
-		perPage: 15,
-		search: '',
 		fields: getFieldsByBreakpoint( isDesktop, sidebarMode ),
 		layout: {
 			primaryField: 'domain_name',
@@ -57,4 +63,35 @@ export default function useView( { sidebarMode, isDesktop }: ViewProps ) {
 		view,
 		setView,
 	};
+}
+
+// DataViews' pagination always resets when the search component is mounted, even though the search term has not changed.
+// This is a bug which has a fix in https://github.com/WordPress/gutenberg/pull/61307.
+// This is a workaround until the above fix is released.
+// Here, we restore the page to the previous page if it is unintentionally changed by the above bug.
+export function useInitializeDataViewsPage< V extends View >(
+	dataViewsState: V,
+	setDataViewsState: ( state: V ) => void
+) {
+	const prevPage = usePrevious( dataViewsState.page );
+	const prevSearch = usePrevious( dataViewsState.search );
+
+	const done = useRef( false );
+
+	useEffect( () => {
+		if ( prevPage === 1 ) {
+			done.current = true;
+		}
+		if ( done.current ) {
+			return;
+		}
+
+		if ( dataViewsState.search === prevSearch && dataViewsState.page !== prevPage ) {
+			setDataViewsState( {
+				...dataViewsState,
+				page: prevPage,
+			} );
+			done.current = true;
+		}
+	}, [ dataViewsState, prevPage, prevSearch, setDataViewsState ] );
 }
