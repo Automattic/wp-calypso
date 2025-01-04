@@ -66,7 +66,6 @@ export default {
 				<DomainManagement.BulkAllDomains
 					analyticsPath={ domainManagementRoot() }
 					analyticsTitle="Domain Management > All Domains"
-					context={ pageContext }
 				/>
 			</>
 		);
