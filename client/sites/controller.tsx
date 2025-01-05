@@ -132,6 +132,7 @@ export function siteDashboard( feature: string ) {
 				initialSiteFeature={ feature }
 				selectedSiteFeaturePreview={ context.primary }
 				queryParams={ getQueryParams( context ) }
+				isOnlyLayoutView={ context.inSiteContext }
 			/>
 		);
 		next();
