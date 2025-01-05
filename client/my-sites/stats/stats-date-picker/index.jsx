@@ -15,6 +15,7 @@ import DateLabelDrill from './date-label-drill';
 
 import './style.scss';
 
+// TODO: Rename this component to StatsDateLabel and refactor it as a Functional Component.
 class StatsDatePicker extends Component {
 	static propTypes = {
 		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
@@ -232,6 +233,7 @@ class StatsDatePicker extends Component {
 			);
 		}
 
+		// Used for drill-downs from the date range chart.
 		const isDrillingDown = queryParams?.drilldown === '1';
 
 		return (

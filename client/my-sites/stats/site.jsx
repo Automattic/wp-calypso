@@ -241,6 +241,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 
 		const path = `/stats/${ targetPeriod }/${ slug }`;
+		// Mark the next loaded page should use the go-back action by the `drilldown` query string.
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd, drilldown: 1 }, path );
 
 		return url;

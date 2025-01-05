@@ -22,8 +22,9 @@ const DateLabelDrill = ( { query, children }: DateLabelDrillProps ) => {
 		const params = { ...query };
 		delete params.drilldown;
 		const url = appendQueryStringForRedirection( window.location.pathname, params );
-		window.history.replaceState( params, '', url );
 
+		// Remove the `drilldown` query parameter to prevent unexpected go-backs from being shared by directly copying the URL.
+		window.history.replaceState( params, '', url );
 		page.replace( url, null, false, false );
 	}, [ query ] );
 
