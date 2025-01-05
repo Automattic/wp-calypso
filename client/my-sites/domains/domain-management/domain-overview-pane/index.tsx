@@ -146,7 +146,7 @@ const DomainOverviewPane = ( {
 		<ItemView
 			itemData={ itemData }
 			closeItemView={ () => {
-				page.show( paths.domainManagementRoot() );
+				inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
 			} }
 			features={ features }
 			enforceTabsView
