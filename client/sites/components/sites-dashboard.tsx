@@ -65,6 +65,7 @@ interface SitesDashboardProps {
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
 	sectionName?: string;
+	isOnlyLayoutView?: boolean;
 }
 
 const siteSortingKeys = [
@@ -129,6 +130,7 @@ const SitesDashboard = ( {
 	},
 	initialSiteFeature = isEnabled( 'untangling/hosting-menu' ) ? OVERVIEW : DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
+	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -384,7 +386,8 @@ const SitesDashboard = ( {
 			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! selectedSite && 'preview-hidden'
+				! selectedSite && 'preview-hidden',
+				isOnlyLayoutView && 'domains-overview'
 			) }
 			wide
 			title={ selectedSite ? null : dashboardTitle }
@@ -426,14 +429,24 @@ const SitesDashboard = ( {
 					preferenceNames={ CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME }
 					eventNames={ CALYPSO_ONBOARDING_TOURS_EVENT_NAMES }
 				>
-					<LayoutColumn className="site-preview-pane" wide>
-						<DotcomPreviewPane
-							site={ selectedSite }
-							selectedSiteFeature={ initialSiteFeature }
-							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
-							closeSitePreviewPane={ closeSitePreviewPane }
-							changeSitePreviewPane={ changeSitePreviewPane }
-						/>
+					<LayoutColumn
+						className={ clsx(
+							'site-preview-pane',
+							isOnlyLayoutView && 'domains-overview__details'
+						) }
+						wide
+					>
+						{ isOnlyLayoutView ? (
+							selectedSiteFeaturePreview
+						) : (
+							<DotcomPreviewPane
+								site={ selectedSite }
+								selectedSiteFeature={ initialSiteFeature }
+								selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
+								closeSitePreviewPane={ closeSitePreviewPane }
+								changeSitePreviewPane={ changeSitePreviewPane }
+							/>
+						) }
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
