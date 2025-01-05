@@ -29,7 +29,16 @@ const useLocationViewsQuery = < T = StatsLocationViewsData >(
 		queryKey: [ 'stats', 'location-views', siteId, geoMode, query ],
 		queryFn: () =>
 			queryStatsLocationViews( siteId, geoMode, processQueryParams( query ) ) as Promise< T >,
-		select: ( data ) => normalizers.statsCountryViews( data as StatsLocationViewsData ),
+		select: ( data ) => {
+			const normalizedStats = normalizers.statsCountryViews(
+				data as StatsLocationViewsData,
+				query
+			);
+
+			return Array.isArray( normalizedStats ) && normalizedStats?.length && query?.max
+				? normalizedStats.slice( 0, query.max )
+				: normalizedStats;
+		},
 		staleTime: 1000 * 60 * 5, // Cache for 5 minutes
 	} );
 };
