@@ -254,10 +254,6 @@ export default {
 			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
 			setHasRedirectedForExperiment();
 
-			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_flow_confidence_check_3'
-			);
-
 			setReferrerPolicy();
 			let url =
 				getStepUrl(
@@ -266,7 +262,7 @@ export default {
 					getStepSectionName( context.params ),
 					localeFromParams ?? localeFromStore,
 					null,
-					stepperOnboardingExperimentAssignment.variationName === 'stepper' ? '/setup' : '/start'
+					'/setup'
 				) +
 				'?redirected_1220=true' +
 				( context.querystring ? '&' + context.querystring : '' ) +
