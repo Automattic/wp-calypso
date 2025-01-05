@@ -164,7 +164,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Visitors' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						useShortNumber
 						heroElement={ <Geochart query={ query } skipQuery /> }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
