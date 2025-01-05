@@ -1,5 +1,11 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectIfCurrentUserCannot,
+	redirectIfP2,
+	redirectIfJetpackNonAtomic,
+} from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
 	navigation,
@@ -9,6 +15,7 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
+import * as siteController from 'calypso/sites/controller';
 import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -66,6 +73,24 @@ function getCommonHandlers( {
 	}
 
 	return handlers;
+}
+
+function registerSiteDomainPage( { path, controllers } ) {
+	page(
+		path,
+		domainManagementController.domainManagementSiteContext,
+		siteSelection,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectIfP2,
+		redirectIfJetpackNonAtomic,
+		navigation,
+		...controllers,
+		siteController.siteDashboard(),
+		makeLayout,
+		clientRender
+	);
 }
 
 export default function () {
@@ -471,4 +496,20 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	registerSiteDomainPage( {
+		path: paths.domainManagementOverviewRoot() + '/site-domain/:domain/:site',
+		controllers: [
+			domainManagementController.domainManagementV2,
+			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: paths.domainManagementAllEmailRoot() + '/site-domain/:domain/:site',
+		controllers: [
+			emailController.emailManagement,
+			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		],
+	} );
 }
