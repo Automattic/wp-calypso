@@ -5,7 +5,6 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
@@ -251,7 +250,6 @@ export default {
 		const isOnboardingFlow = flowName === 'onboarding';
 
 		if ( isOnboardingFlow && ! hasRedirected ) {
-			await loadExperimentAssignment( 'calypso_signup_onboarding_aa_test' );
 			setHasRedirectedForExperiment();
 
 			setReferrerPolicy();
