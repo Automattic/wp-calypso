@@ -5,3 +5,8 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOMAIN_OVERVIEW ]: 'domains/manage/all/overview/:domain/:site',
 	[ EMAIL_MANAGEMENT ]: 'domains/manage/all/email/:domain/:site',
 };
+
+export const FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT: { [ feature: string ]: string } = {
+	[ DOMAIN_OVERVIEW ]: 'domains/manage/all/overview/site-domain/:domain/:site',
+	[ EMAIL_MANAGEMENT ]: 'domains/manage/all/email/site-domain/:domain/:site',
+};
