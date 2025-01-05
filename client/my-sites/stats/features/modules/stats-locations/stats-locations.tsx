@@ -135,7 +135,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					withHero
 				/>
 			) }
-			{ ( ( ! isRequestingData && ! isError && ! data ) || shouldGateStatsModule ) && (
+			{ ( ( ! isRequestingData && ! isError && data ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
