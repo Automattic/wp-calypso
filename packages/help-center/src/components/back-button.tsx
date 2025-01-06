@@ -24,16 +24,12 @@ export const BackButton = () => {
 	return (
 		<span className="back-button__help-center">
 			<Button
-				tabIndex={ 0 }
+				label={ __( 'Go Back', __i18n_text_domain__ ) }
 				data-testid="back-button-icon"
 				onClick={ handleClick }
 				className="back-button__help-center"
 			>
-				<Icon
-					aria-label={ __( 'Go Back', __i18n_text_domain__ ) }
-					icon={ chevronLeft }
-					size={ 18 }
-				/>
+				<Icon icon={ chevronLeft } size={ 18 } />
 			</Button>
 		</span>
 	);
