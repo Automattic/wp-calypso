@@ -81,9 +81,10 @@ export default function PageModuleToggler( {
 								<FormToggle
 									className="page-modules-settings-toggle-control"
 									checked={
-										toggleItem.disabled === false && pageModules[ toggleItem.key ] !== false
+										pageModules[ toggleItem.key ] !== null
+											? pageModules[ toggleItem.key ]
+											: toggleItem.defaultValue
 									}
-									disabled={ toggleItem.disabled }
 									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 										onToggleModule( toggleItem.key, event.target.checked );
 									} }

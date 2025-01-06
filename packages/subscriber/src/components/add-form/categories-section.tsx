@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
@@ -23,7 +23,8 @@ export const CategoriesSection: React.FC< Props > = ( {
 	setSelectedCategories,
 	isWPCOMSite = false,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ showCategories, setShowCategories ] = useState( false );
 	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
 	const infoButtonRef = useRef< HTMLButtonElement >( null );
@@ -132,7 +133,11 @@ export const CategoriesSection: React.FC< Props > = ( {
 					suggestions={ newsletterCategories.map( ( cat ) => cat.name ) }
 					onChange={ handleCategoryChange }
 					label=""
-					placeholder={ __( 'Search…' ) }
+					placeholder={
+						isEnglishLocale || hasTranslation( 'Type to add categories' )
+							? __( 'Type to add categories' )
+							: __( 'Search…' )
+					}
 				/>
 			) }
 		</div>
