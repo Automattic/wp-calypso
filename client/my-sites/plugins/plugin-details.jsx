@@ -302,6 +302,18 @@ function PluginDetails( props ) {
 		} );
 	};
 
+	const getMetaDescription = () => {
+		if ( wporgPlugin?.short_description ) {
+			return wporgPlugin.short_description;
+		}
+		if ( wpComPluginData?.description ) {
+			return wpComPluginData.description;
+		}
+		return translate(
+			"Discover and install WordPress plugins to extend your site's functionality."
+		);
+	};
+
 	if ( ! isRequestingSites && ! userCanManagePlugins ) {
 		return <NoPermissionsError title={ getPageTitle() } />;
 	}
@@ -359,7 +371,10 @@ function PluginDetails( props ) {
 
 	return (
 		<MainComponent className="is-plugin-details" wideLayout isLoggedOut={ ! isLoggedIn }>
-			<DocumentHead title={ getPageTitle() } />
+			<DocumentHead
+				title={ getPageTitle() }
+				meta={ [ { name: 'description', content: getMetaDescription() } ] }
+			/>
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Plugins > Plugin Details"

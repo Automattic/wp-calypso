@@ -149,6 +149,25 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		);
 	};
 
+	const getMetaDescription = () => {
+		if ( category ) {
+			return translate(
+				"Discover %(category)s plugins to extend your WordPress site's functionality.",
+				{
+					args: { category },
+				}
+			);
+		}
+		if ( search ) {
+			return translate( 'Search results for "%(search)s" in the WordPress plugin directory.', {
+				args: { search },
+			} );
+		}
+		return translate(
+			"Browse and discover WordPress plugins to extend your site's functionality."
+		);
+	};
+
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
@@ -176,6 +195,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
 						: translate( 'Plugins' )
 				}
+				meta={ [ { name: 'description', content: getMetaDescription() } ] }
 			/>
 
 			<PluginsNavigationHeader
