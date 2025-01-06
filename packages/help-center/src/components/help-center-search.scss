@@ -24,6 +24,12 @@
 				min-height: 40px;
 			}
 
+			.search__icon-navigation {
+				&:focus {
+					box-shadow: 0 0 0 3px $help-center-blue;
+				}
+			}
+
 			&.has-focus {
 				outline: $help-center-blue solid 2px;
 				transition: none;

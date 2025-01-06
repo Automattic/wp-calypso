@@ -14,7 +14,7 @@
 		padding: 16px;
 
 		&.has-unread {
-			background: #3858E9;
+			background: $help-center-blue;
 			color: var(--studio-white);
 			border-radius: 0;
 
@@ -80,7 +80,7 @@
 				background: var(--studio-white);
 				border-radius: 45%;
 				font-size: $font-body-extra-small;
-				color: #3858E9;
+				color: $help-center-blue;
 			}
 		}
 
