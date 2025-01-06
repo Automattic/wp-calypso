@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -7,6 +8,11 @@ import {
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import {
+	ADD_ON_350GB_STORAGE,
+	ADD_ON_300GB_STORAGE,
+	ADD_ON_250GB_STORAGE,
+	ADD_ON_200GB_STORAGE,
+	ADD_ON_150GB_STORAGE,
 	ADD_ON_100GB_STORAGE,
 	ADD_ON_50GB_STORAGE,
 	ADD_ON_CUSTOM_DESIGN,
@@ -18,7 +24,7 @@ import unlimitedThemesIcon from './icons/unlimited-themes';
 import type { AddOnMeta } from './types';
 
 export const getAddOnsList = (): AddOnMeta[] => {
-	return [
+	const defaultAddOns: AddOnMeta[] = [
 		{
 			addOnSlug: ADD_ON_UNLIMITED_THEMES,
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -55,4 +61,52 @@ export const getAddOnsList = (): AddOnMeta[] => {
 			),
 		},
 	];
+
+	if ( config.isEnabled( 'upgrades/storage-add-on-v2' ) ) {
+		return [
+			...defaultAddOns,
+			{
+				addOnSlug: ADD_ON_150GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 150,
+				name: i18n.translate( '%d GB Storage', { args: [ 150 ] } ),
+			},
+			{
+				addOnSlug: ADD_ON_200GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 200,
+				name: i18n.translate( '%d GB Storage', { args: [ 200 ] } ),
+			},
+			{
+				addOnSlug: ADD_ON_250GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 250,
+				name: i18n.translate( '%d GB Storage', { args: [ 250 ] } ),
+			},
+			{
+				addOnSlug: ADD_ON_300GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 300,
+				name: i18n.translate( '%d GB Storage', { args: [ 300 ] } ),
+			},
+			{
+				addOnSlug: ADD_ON_350GB_STORAGE,
+				productSlug: PRODUCT_1GB_SPACE,
+				featureSlugs: null,
+				icon: spaceUpgradeIcon,
+				quantity: 350,
+				name: i18n.translate( '%d GB Storage', { args: [ 350 ] } ),
+			},
+		];
+	}
+
+	return defaultAddOns;
 };

@@ -8,8 +8,8 @@ export interface AddOnMeta {
 	featureSlugs?: string[] | null;
 	icon?: JSX.Element;
 	featured?: boolean; // used to display the popular badge in the add-ons grid
-	name?: string; // when the name is optional, it will be filled by the product list data
-	description?: string; // same as the above.
+	name?: TranslateResult; // when the name is optional, it will be filled by the product list data
+	description?: TranslateResult; // same as the above.
 	displayCost?: TranslateResult;
 	purchased?: boolean;
 	isLoading?: boolean;
