@@ -208,8 +208,10 @@ export type FlowV2 = {
 	/**
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
+	 *
+	 * Returning false will kill the app.
 	 */
-	bootFlow(): Promise< readonly StepperStep[] > | readonly StepperStep[];
+	bootFlow(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
 	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..

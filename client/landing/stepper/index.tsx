@@ -137,6 +137,13 @@ window.AppBoot = async () => {
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
 	const flowSteps = 'bootFlow' in rawFlow ? await rawFlow.bootFlow() : null;
+	/**
+	 * When `bootFlow` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
+
 	const flow = await enhanceFlowWithAuth( rawFlow, flowSteps );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
