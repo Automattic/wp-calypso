@@ -1,10 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-html, body {
-	overflow: auto;
-}
-
 .main.hosting-dashboard-layout-column,
 .main.hosting-dashboard-layout {
 	background: var(--color-surface);
