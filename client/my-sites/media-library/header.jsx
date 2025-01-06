@@ -66,8 +66,8 @@ class MediaLibraryHeader extends Component {
 		recordTracksEvent( 'calypso_media_more_options_toggle', { expanded: state } );
 	};
 
-	onViewDetails = () => {
-		this.props.onViewDetails();
+	onViewDetails = ( ...args ) => {
+		this.props.onViewDetails( ...args );
 		recordTracksEvent( 'calypso_media_editor_open' );
 	};
 
