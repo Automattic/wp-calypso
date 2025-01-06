@@ -82,7 +82,7 @@ export class StatsPage {
 		if ( name === 'Insights' ) {
 			await this.page.waitForURL( /stats\/insights/ );
 		}
-		if ( name === 'Subscribers' ) {
+		if ( name === 'Newsletter' ) {
 			await this.page.waitForURL( /stats\/subscribers/ );
 		}
 		if ( name === 'Store' ) {
