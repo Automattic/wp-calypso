@@ -6,10 +6,10 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
 import DropdownOption from '../../../dropdown-option';
-import useAvailableStorageOptions from '../hooks/use-available-storage-dropdown-options';
 import useDefaultStorageOption from '../hooks/use-default-storage-option';
-import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
-import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
+import usePlanStorage from '../hooks/use-plan-storage';
+import useStorageString from '../hooks/use-storage-string';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
@@ -19,28 +19,26 @@ type StorageDropdownProps = {
 
 type StorageDropdownOptionProps = {
 	price?: string;
-	storageSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	totalStorage: number;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
 };
 
-const getStorageOptionPrice = (
+const getSelecetedStorageAddOn = (
 	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
-	return storageAddOnsForPlan?.find( ( addOn ) => addOn?.addOnSlug === storageOptionSlug )?.prices
-		?.formattedMonthlyPrice;
+	return storageAddOnsForPlan?.find( ( addOn ) => addOn?.addOnSlug === storageOptionSlug );
 };
 
 const StorageDropdownOption = ( {
 	price,
-	storageSlug,
+	totalStorage,
 	isLargeCurrency = false,
 	priceOnSeparateLine,
 }: StorageDropdownOptionProps ) => {
 	const translate = useTranslate();
-	const { siteId } = usePlansGridContext();
-	const title = useStorageStringFromFeature( { storageSlug, siteId } ) ?? '';
+	const title = useStorageString( totalStorage );
 
 	return (
 		<>
@@ -96,8 +94,8 @@ const StorageDropdown = ( {
 		[ planSlug ]
 	);
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
-
-	const availableStorageOptions = useAvailableStorageOptions( { planSlug } );
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
+	const planStorage = usePlanStorage( planSlug );
 
 	useEffect( () => {
 		if ( ! selectedStorageOptionForPlan ) {
@@ -110,26 +108,32 @@ const StorageDropdown = ( {
 		}
 	}, [] );
 
-	const selectControlOptions = availableStorageOptions?.map( ( slug ) => {
+	const selectControlOptions = availableStorageAddOns?.map( ( addOn ) => {
+		const addOnStorage = addOn.quantity ?? 0;
+
 		return {
-			key: slug,
+			key: addOn.addOnSlug,
 			name: (
 				<StorageDropdownOption
-					price={ getStorageOptionPrice( storageAddOns, slug ) }
-					storageSlug={ slug }
+					price={ addOn?.prices?.formattedMonthlyPrice }
+					totalStorage={ planStorage + addOnStorage }
 				/>
 			 ) as unknown as string,
 		};
 	} );
 
-	const selectedOptionPrice = getStorageOptionPrice( storageAddOns, selectedStorageOptionForPlan );
+	const selectedStorageAddOn = getSelecetedStorageAddOn(
+		storageAddOns,
+		selectedStorageOptionForPlan
+	);
+	const selectedStorageAddOnStorage = selectedStorageAddOn?.quantity ?? 0;
 
 	const selectedOption = {
 		key: selectedStorageOptionForPlan,
 		name: (
 			<StorageDropdownOption
-				price={ selectedOptionPrice }
-				storageSlug={ selectedStorageOptionForPlan }
+				price={ selectedStorageAddOn?.prices?.formattedMonthlyPrice }
+				totalStorage={ planStorage + selectedStorageAddOnStorage }
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
 			/>
@@ -157,15 +161,16 @@ const StorageDropdown = ( {
 				onChange={ handleOnChange }
 				label=""
 			/>
-			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
-				<div className="plans-grid-next-storage-dropdown__addon-offset-price-container">
-					<span className="plans-grid-next-storage-dropdown__addon-offset-price">
-						{ translate( '+ %(selectedOptionPrice)s/month', {
-							args: { selectedOptionPrice },
-						} ) }
-					</span>
-				</div>
-			) }
+			{ selectedStorageAddOn?.prices?.formattedMonthlyPrice &&
+				( isLargeCurrency || priceOnSeparateLine ) && (
+					<div className="plans-grid-next-storage-dropdown__addon-offset-price-container">
+						<span className="plans-grid-next-storage-dropdown__addon-offset-price">
+							{ translate( '+ %(selectedOptionPrice)s/month', {
+								args: { selectedOptionPrice: selectedStorageAddOn?.prices?.formattedMonthlyPrice },
+							} ) }
+						</span>
+					</div>
+				) }
 		</>
 	);
 };
