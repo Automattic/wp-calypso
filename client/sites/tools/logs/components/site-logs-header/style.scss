@@ -2,59 +2,42 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.logs-header {
+.site-logs-header {
 	display: flex;
 	gap: 24px;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 16px;
+	margin-bottom: 24px;
+
+	@media (max-width: $break-small) {
+		gap: 16px;
+	}
 
 	.navigation-header {
 		width: auto;
 		padding-bottom: 0;
-		margin-bottom: 16px;
+	}
 
-		@media (max-width: $break-medium) {
-			margin-bottom: 8px;
+	.site-logs-header__download-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-self: center;
+		gap: 10px;
+
+		@include break-small {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		@media (max-width: $break-small) {
+			width: 100%;
 		}
 	}
-}
 
-.logs-header__selector-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-self: flex-start;
-	gap: 10px;
-
-	@include break-medium {
-		flex-direction: row;
-		align-items: center;
-	}
-
-	@media (max-width: $break-medium) {
-		width: 100%;
-	}
-}
-
-.logs-header__selector-heading {
-	font-weight: 400;
-	font-size: 0.875rem;
-	line-height: 20px;
-}
-
-.logs-header__selector-controls {
-	flex-grow: 1;
-	&.segmented-control .segmented-control__item:first-of-type .segmented-control__link {
-		border-top-left-radius: 4px;
-		border-bottom-left-radius: 4px;
-	}
-	&.segmented-control .segmented-control__item:last-of-type .segmented-control__link {
-		border-top-right-radius: 4px;
-		border-bottom-right-radius: 4px;
-	}
-	@include break-medium {
-		max-width: 329px;
+	.site-logs-toolbar__download {
+		height: 42px;
+		justify-content: center;
 	}
 }

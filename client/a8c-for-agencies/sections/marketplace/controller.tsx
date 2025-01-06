@@ -47,7 +47,7 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
-	if ( isEnabled( 'a4a-hosting-page-redesign' ) && ! context.params.section ) {
+	if ( ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
 		page.redirect(
 			// If the agency is managing less than 5 sites, then we make wpcom as default section.

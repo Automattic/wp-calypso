@@ -1,19 +1,21 @@
+import pagejs from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
-import { useSitesDialog } from './use-sites-dialog';
 import './style.scss';
 
 interface Props {
+	pluginSlug: string | null;
 	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
 	isLoading: boolean;
@@ -23,7 +25,25 @@ interface Props {
 
 const defaultLayouts = { table: {} };
 
+const pluginsListFields = [ 'plugins', 'sites', 'update' ];
+const pluginViewFields = [ 'plugins' ];
+
+const getFieldsPerView = ( pluginSlug: string | null ) => {
+	if ( pluginSlug ) {
+		return pluginViewFields;
+	}
+	return pluginsListFields;
+};
+
+const openPluginSitesPane = ( plugin: Plugin ) => {
+	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
+		plugin: plugin.slug,
+	} );
+	pagejs.show( `/plugins/manage/sites/${ plugin.slug }` );
+};
+
 export default function PluginsListDataViews( {
+	pluginSlug,
 	currentPlugins,
 	initialSearch,
 	isLoading,
@@ -34,15 +54,15 @@ export default function PluginsListDataViews( {
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
-	const { sitesDialog, toggleDialogForPlugin } = useSitesDialog();
-	const fields = useFields( bulkActionDialog, toggleDialogForPlugin );
+
+	const fields = useFields( bulkActionDialog, openPluginSitesPane );
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
 		perPage: 15,
 		search: initialSearch,
-		fields: [ 'plugins', 'sites', 'update' ],
+		fields: getFieldsPerView( pluginSlug ),
 		layout: {
 			styles: {
 				plugins: {
@@ -105,6 +125,15 @@ export default function PluginsListDataViews( {
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
 	useEffect( () => {
+		// Sets the correct fields when route changes
+		setDataViewsState( {
+			...dataViewsState,
+			fields: getFieldsPerView( pluginSlug ),
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginSlug ] );
+
+	useEffect( () => {
 		if (
 			dataViewsState.filters?.length === 1 &&
 			dataViewsState.filters[ 0 ].field === 'status' &&
@@ -134,14 +163,13 @@ export default function PluginsListDataViews( {
 				onChangeView={ setDataViewsState }
 				fields={ fields }
 				search
-				searchLabel={ translate( 'Search for plugins' ) }
-				actions={ actions }
+				searchLabel={ translate( 'Search' ) }
+				actions={ pluginSlug ? [] : actions }
 				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ defaultLayouts }
 				header={ header }
 			/>
-			{ sitesDialog }
 		</>
 	);
 }

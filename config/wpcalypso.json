@@ -114,6 +114,7 @@
 		"marketplace-test": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
+		"me/account-restore": true,
 		"me/vat-details": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
@@ -202,7 +203,6 @@
 		"user-management-revamp": true,
 		"videomaker-trial": true,
 		"woop": false,
-		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
 		"woocommerce/rebrand-2-0": true

@@ -73,7 +73,7 @@ const MarketplaceThankYou = ( {
 	useEffect( () => {
 		if ( firstTheme && styleVariationSlug ) {
 			const styleVariation = firstTheme.style_variations.find(
-				( variation: { slug: string } ) => variation.slug === styleVariationSlug
+				( variation: { slug?: string } ) => variation.slug === styleVariationSlug
 			);
 
 			if ( styleVariation ) {

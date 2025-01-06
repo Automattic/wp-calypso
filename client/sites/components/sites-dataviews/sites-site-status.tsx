@@ -51,6 +51,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isPending = getMigrationStatus( site ) === 'pending';
+	const isStarted = getMigrationStatus( site ) === 'started';
 	const isDIFMInProgress = useSelector( ( state ) => isDIFMLiteInProgress( state, site.ID ) );
 
 	if ( site.is_deleted ) {
@@ -80,7 +81,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 						) : (
 							<div>
 								{ statusElement }
-								{ ! isPending && <SiteLaunchNag site={ site } /> }
+								{ ! isPending && ! isStarted && <SiteLaunchNag site={ site } /> }
 							</div>
 						) }
 					</>

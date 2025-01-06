@@ -11,8 +11,6 @@ import CommentButton from 'calypso/blocks/comment-button';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import DailyPostButton from 'calypso/blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
@@ -764,9 +762,6 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.use_excerpt && <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
-							{ isDailyPostChallengeOrPrompt( post ) && (
-								<DailyPostButton post={ post } site={ site } />
-							) }
 
 							<ReaderPostActions
 								post={ post }
