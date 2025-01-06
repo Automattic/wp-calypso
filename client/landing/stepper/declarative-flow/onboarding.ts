@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
+	clearSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
@@ -354,6 +355,7 @@ const onboarding: Flow = {
 				resetOnboardStore();
 				dispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
+				clearSignupCompleteSlug();
 			}
 		}, [ currentStepSlug, dispatch ] );
 	},
