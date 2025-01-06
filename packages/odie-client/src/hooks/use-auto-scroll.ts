@@ -5,7 +5,7 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 	const { chat } = useOdieAssistantContext();
 	const debounceTimeoutRef = useRef< number >( 500 );
 	const debounceTimeoutIdRef = useRef< number | null >( null );
-
+	const lastChatStatus = useRef< string | null >( null );
 	useEffect( () => {
 		const messageCount = chat.messages.length;
 		if ( messageCount < 2 || chat.status === 'loading' ) {
@@ -15,6 +15,18 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 		if ( debounceTimeoutIdRef.current ) {
 			clearTimeout( debounceTimeoutIdRef.current );
 		}
+
+		const isLastMessageFromOdie =
+			chat?.messages?.length > 0 && chat?.messages[ chat?.messages?.length - 1 ].role === 'bot';
+		if (
+			lastChatStatus.current === 'sending' &&
+			chat.status === 'loaded' &&
+			isLastMessageFromOdie
+		) {
+			// odie replies can be long, so we disable autoscroll when user interacts with odie
+			return;
+		}
+		lastChatStatus.current = chat.status;
 
 		debounceTimeoutIdRef.current = setTimeout( () => {
 			debounceTimeoutRef.current = 0;
