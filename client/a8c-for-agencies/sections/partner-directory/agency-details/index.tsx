@@ -54,7 +54,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			reduxDispatch(
 				successNotice( translate( 'Your agency profile was submitted!' ), {
 					displayOnNextPage: true,
-					// duration: 6000,
+					duration: 6000,
 				} )
 			);
 			! isFeedbackShown
