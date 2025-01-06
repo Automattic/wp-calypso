@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -25,7 +26,12 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
 	const { view, updateView } = useViewStateUpdate();
-	const actions = useReceiptActions( getReceiptUrlFor );
+	const receiptActions = useReceiptActions( getReceiptUrlFor );
+
+	const actions = receiptActions.map( ( action ) => ( {
+		...action,
+		icon: <Gridicon icon={ action.iconName } />,
+	} ) );
 
 	const filteredTransactions = useTransactionsFiltering( transactions, view );
 	const sortedTransactions = useTransactionsSorting( filteredTransactions, view );

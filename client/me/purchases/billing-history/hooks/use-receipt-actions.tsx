@@ -1,5 +1,4 @@
 import pageRedirect from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,7 +13,17 @@ const recordClickEvent = ( eventAction: string ) => {
 	recordGoogleEvent( 'Me', eventAction );
 };
 
-export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => string ) {
+export type ReceiptAction = {
+	id: 'view-receipt' | 'email-receipt';
+	label: string;
+	isPrimary: boolean;
+	iconName: string;
+	callback: ( items: BillingTransaction[] ) => void;
+};
+
+export function useReceiptActions(
+	getReceiptUrlFor: ( receiptId: string ) => string
+): ReceiptAction[] {
 	const dispatch = useDispatch< ThunkDispatch< IAppState, undefined, Action > >();
 	const translate = useTranslate();
 
@@ -24,7 +33,7 @@ export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => st
 				id: 'view-receipt',
 				label: translate( 'View receipt' ),
 				isPrimary: true,
-				icon: <Gridicon icon="pages" />,
+				iconName: 'pages',
 				callback: ( items: BillingTransaction[] ) => {
 					const item = items[ 0 ];
 					pageRedirect.redirect( getReceiptUrlFor( item.id ) );
@@ -34,7 +43,7 @@ export function useReceiptActions( getReceiptUrlFor: ( receiptId: string ) => st
 				id: 'email-receipt',
 				label: translate( 'Email receipt' ),
 				isPrimary: true,
-				icon: <Gridicon icon="mail" />,
+				iconName: 'mail',
 				callback: ( items: BillingTransaction[] ) => {
 					const item = items[ 0 ];
 					recordClickEvent( 'Email Receipt in Billing History' );
