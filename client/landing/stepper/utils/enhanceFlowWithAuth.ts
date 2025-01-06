@@ -1,8 +1,12 @@
 import { PRIVATE_STEPS } from '../declarative-flow/internals/steps';
-import type { Flow, StepperStep } from '../declarative-flow/internals/types';
+import type { Flow, FlowV1, StepperStep } from '../declarative-flow/internals/types';
 
-function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
+function useInjectUserStepIfNeededForV1( flow: FlowV1 ): readonly StepperStep[] {
 	const steps = flow.useSteps();
+	return injectUserStepInSteps( steps );
+}
+
+function injectUserStepInSteps( steps: readonly StepperStep[] ) {
 	const firstAuthWalledStep = steps.findIndex( ( step ) => step.requiresLoggedInUser );
 
 	if ( firstAuthWalledStep === -1 ) {
@@ -16,9 +20,24 @@ function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	return [ ...steps, PRIVATE_STEPS.USER ];
 }
 
-export function enhanceFlowWithAuth( flow: Flow ): Flow {
-	return {
-		...flow,
-		useSteps: () => useInjectUserStepIfNeeded( flow ),
-	};
+// This is pretty wonky because it has to support both V1 and V2 flows. Should be fixed soon to drop support for V1 flows.
+export async function enhanceFlowWithAuth(
+	flow: Flow,
+	steps: readonly StepperStep[] | null
+): Promise< Flow > {
+	/**
+	 * For V1 flows, we enhance `useSteps` method. For V2 flows, we enhance the return value of `bootFlow` method.
+	 */
+	if ( 'useSteps' in flow ) {
+		return {
+			...flow,
+			useSteps: () => useInjectUserStepIfNeededForV1( flow ),
+		};
+	} else if ( steps ) {
+		return {
+			...flow,
+			bootFlow: () => injectUserStepInSteps( steps ),
+		};
+	}
+	return flow;
 }

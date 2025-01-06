@@ -3,7 +3,7 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import { User as UserStore } from '@automattic/data-stores';
+import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
@@ -12,7 +12,7 @@ import {
 	SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -46,7 +46,6 @@ import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { Flow } from './declarative-flow/internals/types';
 import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
@@ -61,19 +60,6 @@ function determineFlow() {
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
-
-/**
- * TODO: this is no longer a switch and should be removed
- */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
-
-	return <FlowRenderer flow={ flow } />;
-};
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
@@ -137,8 +123,12 @@ window.AppBoot = async () => {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	if ( user ) {
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		receiveCurrentUser( user as UserStore.CurrentUser );
+	}
 
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
@@ -146,7 +136,8 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
-	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
+	const flowSteps = 'bootFlow' in rawFlow ? await rawFlow.bootFlow() : null;
+	const flow = await enhanceFlowWithAuth( rawFlow, flowSteps );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
@@ -163,7 +154,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
