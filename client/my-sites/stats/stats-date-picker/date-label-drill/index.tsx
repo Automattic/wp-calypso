@@ -1,37 +1,24 @@
-import page from '@automattic/calypso-router';
 import { Icon, levelUp } from '@wordpress/icons';
 import { useState, useEffect, ReactNode } from 'react';
-import { appendQueryStringForRedirection } from '../../utils';
 import './index.scss';
 
-interface QueryParams {
-	drilldown?: string;
-}
-
 interface DateLabelDrillProps {
-	context: {
-		query: QueryParams;
-		pathname: string;
-	};
 	children: ReactNode;
 }
 
-const DateLabelDrill = ( { context, children }: DateLabelDrillProps ) => {
+const DateLabelDrill = ( { children }: DateLabelDrillProps ) => {
 	const [ isAnimated, setIsAnimated ] = useState( false );
 
 	useEffect( () => {
 		setIsAnimated( true );
-
-		// Remove the `drilldown` query parameter to prevent unexpected go-backs from being shared by directly copying the URL.
-		const params = { ...context.query };
-		delete params.drilldown;
-		const url = appendQueryStringForRedirection( context.pathname, params );
-		window.history.replaceState( params, '', url );
-		page.replace( url, null, false, false );
-	}, [ context ] );
+		// Remove the flag after the drill-up action button is shown.
+		sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down' );
+	}, [] );
 
 	const goBack = () => {
 		window.history.back();
+		// Prevent multiple drill-up actions.
+		sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down' );
 	};
 
 	return (

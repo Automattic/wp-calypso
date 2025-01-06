@@ -12,10 +12,11 @@ import {
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DateLabelDrill from './date-label-drill';
+import withIsDrillingDownHook from './with-is-drilling-down-hook';
 
 import './style.scss';
 
-// TODO: Rename this component to StatsDateLabel and refactor it as a Functional Component.
+// TODO: Rename this component to `StatsDateLabel` and refactor it as a Functional Component.
 class StatsDatePicker extends Component {
 	static propTypes = {
 		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
@@ -26,7 +27,6 @@ class StatsDatePicker extends Component {
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
 		isShort: PropTypes.bool,
-		context: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -185,7 +185,8 @@ class StatsDatePicker extends Component {
 			isShort,
 			dateRange,
 			reduxState,
-			context,
+			// Used for drill-downs of the date range chart from `withIsDrillingDownHook`.
+			isDrillingDown,
 		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
@@ -232,9 +233,6 @@ class StatsDatePicker extends Component {
 			);
 		}
 
-		// Used for drill-downs from the date range chart.
-		const isDrillingDown = context.query?.drilldown === '1';
-
 		return (
 			<div>
 				{ summary ? (
@@ -242,11 +240,7 @@ class StatsDatePicker extends Component {
 				) : (
 					<div className="stats-section-title">
 						<h3>
-							{ isDrillingDown ? (
-								<DateLabelDrill context={ context }>{ sectionTitle }</DateLabelDrill>
-							) : (
-								sectionTitle
-							) }
+							{ isDrillingDown ? <DateLabelDrill>{ sectionTitle }</DateLabelDrill> : sectionTitle }
 						</h3>
 						{ showQueryDate && this.renderQueryDate() }
 					</div>
@@ -267,4 +261,9 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDatePicker );
+export default flowRight(
+	connectComponent,
+	localize,
+	withLocalizedMoment,
+	withIsDrillingDownHook
+)( StatsDatePicker );
