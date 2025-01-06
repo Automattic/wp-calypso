@@ -6,7 +6,6 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
-	"daily_post_blog_id": 489937,
 	"facebook_api_key": false,
 	"features": {},
 	"google_recaptcha_site_key": false,

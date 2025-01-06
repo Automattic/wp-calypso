@@ -1,10 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
-import { PromptIcon } from '@automattic/command-palette';
-import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -18,16 +15,9 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { openCommandPalette } from 'calypso/state/command-palette/actions';
-import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import {
-	getCurrentUser,
-	getCurrentUserDate,
-	getCurrentUserSiteCount,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -61,24 +51,15 @@ import {
 } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './masterbar-notifications/notifications-button';
-
-const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
-const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
 const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
 
 class MasterbarLoggedIn extends Component {
 	state = {
-		isActionSearchVisible: false,
-		isMenuOpen: false,
 		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
 		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
-		// making the ref a state triggers a re-render when it changes (needed for popover)
-		menuBtnRef: null,
-		readerBtnRef: null,
 	};
 
 	static propTypes = {
@@ -93,8 +74,6 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
 		isInEditor: PropTypes.bool,
-		hasDismissedThePopover: PropTypes.bool,
-		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 	};
@@ -128,17 +107,10 @@ class MasterbarLoggedIn extends Component {
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
-		this.actionSearchShortCutListener = () => {
-			if ( event.ctrlKey && event.shiftKey && event.key === 'F' ) {
-				this.clickSearchActions();
-			}
-		};
-		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.subscribeToViewPortChanges();
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
@@ -189,21 +161,8 @@ class MasterbarLoggedIn extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	clickSearchActions = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_search_actions_clicked' );
-		this.setState( { isActionSearchVisible: true } );
-	};
-
-	onSearchActionsClose = () => {
-		this.setState( { isActionSearchVisible: false } );
-	};
-
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
-	};
-
-	preloadAllSites = () => {
-		preload( 'sites' );
 	};
 
 	preloadReader = () => {
@@ -311,14 +270,6 @@ class MasterbarLoggedIn extends Component {
 			/>
 		);
 	}
-
-	handleToggleMenu = () => {
-		this.setState( ( state ) => ( { isMenuOpen: ! state.isMenuOpen } ) );
-	};
-
-	dismissPopover = () => {
-		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
-	};
 
 	renderCheckout() {
 		const {
@@ -547,44 +498,6 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderSearch() {
-		const { translate, isWordPressActionSearchFeatureEnabled } = this.props;
-		if ( isWordPressActionSearchFeatureEnabled ) {
-			return (
-				<Item
-					tipTarget="Action Search"
-					icon="search"
-					onClick={ this.clickSearchActions }
-					isActive={ false }
-					className="masterbar__item-action-search"
-					tooltip={ translate( 'Search' ) }
-					preloadSection={ this.preloadMe }
-				>
-					{ translate( 'Search Actions' ) }
-				</Item>
-			);
-		}
-		return null;
-	}
-
-	renderPublish() {
-		const { domainOnlySite, translate, isMigrationInProgress, isEcommerce } = this.props;
-		if ( ! domainOnlySite && ! isMigrationInProgress && ! isEcommerce ) {
-			return (
-				<AsyncLoad
-					require="./publish"
-					placeholder={ null }
-					isActive={ this.isActive( 'post' ) }
-					className="masterbar__item-new"
-					tooltip={ translate( 'Create a New Post' ) }
-				>
-					{ translate( 'Write' ) }
-				</AsyncLoad>
-			);
-		}
-		return null;
-	}
-
 	renderCart() {
 		const { siteSlug, siteId, sectionGroup } = this.props;
 		// Only display the masterbar cart when we are viewing a site-specific page.
@@ -604,35 +517,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderMe() {
-		const { isMobile } = this.state;
-		const { translate, user } = this.props;
-		return (
-			<Item
-				tipTarget="me"
-				url="/me"
-				icon={ isMobile ? null : 'user-circle' }
-				onClick={ this.clickMe }
-				isActive={ this.isActive( 'me' ) }
-				className="masterbar__item-me"
-				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
-				preloadSection={ this.preloadMe }
-			>
-				<Gravatar
-					className="masterbar__item-me-gravatar"
-					user={ user }
-					alt={ translate( 'My Profile' ) }
-					size={ 18 }
-				/>
-				<span className="masterbar__item-me-label">
-					{ translate( 'My Profile', {
-						context: 'Toolbar, must be shorter than ~12 chars',
-					} ) }
-				</span>
-			</Item>
-		);
-	}
-
 	renderNotifications() {
 		const { translate } = this.props;
 		return (
@@ -648,89 +532,6 @@ class MasterbarLoggedIn extends Component {
 					} ) }
 				</span>
 			</Notifications>
-		);
-	}
-
-	renderCommandPaletteSearch() {
-		const handleClick = () => {
-			this.props.recordTracksEvent( 'calypso_masterbar_command_palette_search_clicked' );
-			this.props.openCommandPalette();
-		};
-
-		return (
-			<Item
-				className="masterbar__item-menu"
-				icon={ <PromptIcon /> }
-				tooltip={ this.props.translate( 'Command Palette' ) }
-				isActive={ this.props.isCommandPaletteOpen }
-				onClick={ handleClick }
-			/>
-		);
-	}
-
-	renderMenu() {
-		const { menuBtnRef } = this.state;
-		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
-			this.props;
-		return (
-			<>
-				<Item
-					tipTarget="Menu"
-					icon="menu"
-					onClick={ this.handleToggleMenu }
-					isActive={ this.state.isMenuOpen }
-					className="masterbar__item-menu"
-					tooltip={ translate( 'Menu' ) }
-					ref={ ( ref ) => ref !== menuBtnRef && this.setState( { menuBtnRef: ref } ) }
-				/>
-				<MasterBarMobileMenu onClose={ this.handleToggleMenu } open={ this.state.isMenuOpen }>
-					{ this.renderPublish() }
-					{ this.renderMe() }
-				</MasterBarMobileMenu>
-				{ menuBtnRef && (
-					<Popover
-						className="masterbar__new-menu-popover"
-						isVisible={
-							! isFetchingPrefs && ! hasDismissedThePopover && ! isUserNewerThanNewNavigation
-						}
-						context={ menuBtnRef }
-						onClose={ this.dismissPopover }
-						position="bottom left"
-						showDelay={ 500 }
-					>
-						<div className="masterbar__new-menu-popover-inner">
-							<h1>
-								{ translate( '👆 New top navigation', {
-									comment: 'This is a popover title under the masterbar',
-								} ) }
-							</h1>
-							<p>{ translate( 'We changed the navigation for a cleaner experience.' ) }</p>
-							<div className="masterbar__new-menu-popover-actions">
-								<Button onClick={ this.dismissPopover }>
-									{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
-								</Button>
-							</div>
-						</div>
-					</Popover>
-				) }
-			</>
-		);
-	}
-
-	renderPopupSearch() {
-		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
-		const { isActionSearchVisible } = this.state;
-
-		if ( ! isWordPressActionSearchFeatureEnabled || ! isActionSearchVisible ) {
-			return null;
-		}
-
-		return (
-			<AsyncLoad
-				require="calypso/layout/popup-search"
-				placeholder={ null }
-				onClose={ this.onSearchActionsClose }
-			/>
 		);
 	}
 
@@ -753,36 +554,6 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return null;
-	}
-
-	renderAllSites() {
-		const { translate } = this.props;
-		return (
-			<Item
-				url="/sites"
-				className="masterbar__item-all-sites"
-				tipTarget="my-sites"
-				icon={ <Icon icon={ category } /> }
-				tooltip={ translate( 'Manage your sites' ) }
-				preloadSection={ this.preloadAllSites }
-			>
-				{ translate( 'All Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
-		);
-	}
-
-	renderCurrentSite() {
-		const { translate, siteTitle, siteUrl } = this.props;
-		return (
-			<Item
-				className="masterbar__item-current-site"
-				url={ siteUrl }
-				icon={ <span className="dashicons-before dashicons-admin-home" /> }
-				tooltip={ translate( 'Visit your site' ) }
-			>
-				{ siteTitle }
-			</Item>
-		);
 	}
 
 	renderBackHomeButton() {
@@ -833,7 +604,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSiteMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
-					{ this.renderSearch() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
@@ -886,14 +656,8 @@ export default connect(
 			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
-			isFetchingPrefs: isFetchingPreferences( state ),
-			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
-			isUserNewerThanNewNavigation:
-				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 		};
@@ -904,7 +668,6 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
-		openCommandPalette,
 		redirectToLogout,
 	}
 )( localize( MasterbarLoggedIn ) );

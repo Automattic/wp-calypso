@@ -3,7 +3,6 @@ import {
 	getAllPostCounts,
 	getAllPostCount,
 	getMyPostCounts,
-	getMyPostCount,
 	getNormalizedPostCounts,
 	getNormalizedMyPostCounts,
 } from '../selectors';
@@ -219,77 +218,6 @@ describe( 'selectors', () => {
 			expect( postCounts ).toEqual( {
 				publish: 1,
 			} );
-		} );
-	} );
-
-	describe( '#getMyPostCount()', () => {
-		test( "should return null if post counts haven't been received for site", () => {
-			const postCount = getMyPostCount(
-				{
-					posts: {
-						counts: {
-							counts: {},
-						},
-					},
-				},
-				2916284,
-				'post',
-				'publish'
-			);
-
-			expect( postCount ).toBeNull();
-		} );
-
-		test( 'should return post count for status', () => {
-			const postCount = getMyPostCount(
-				{
-					posts: {
-						counts: {
-							counts: {
-								2916284: {
-									post: {
-										all: {},
-										mine: {
-											publish: 1,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				'post',
-				'publish'
-			);
-
-			expect( postCount ).toEqual( 1 );
-		} );
-
-		test( 'should return 0 if post counts have been received for site, but no status key exists', () => {
-			const postCount = getMyPostCount(
-				{
-					posts: {
-						counts: {
-							counts: {
-								2916284: {
-									post: {
-										all: {},
-										mine: {
-											publish: 1,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				'post',
-				'draft'
-			);
-
-			expect( postCount ).toEqual( 0 );
 		} );
 	} );
 

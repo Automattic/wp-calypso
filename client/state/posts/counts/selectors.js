@@ -55,24 +55,6 @@ export function getMyPostCounts( state, siteId, postType ) {
 }
 
 /**
- * Returns post count for current user on a site, filtered by post type and
- * status.
- * @param  {Object} state    Global state tree
- * @param  {number} siteId   Site ID
- * @param  {string} postType Post type
- * @param  {string} status   Post status
- * @returns {number}          Post count
- */
-export function getMyPostCount( state, siteId, postType, status ) {
-	const counts = getMyPostCounts( state, siteId, postType );
-	if ( ! counts ) {
-		return null;
-	}
-
-	return counts[ status ] || 0;
-}
-
-/**
  * Returns an object of normalized post counts, summing publish/private and
  * pending/draft counts.
  * @param  {Object}   state         Global state tree

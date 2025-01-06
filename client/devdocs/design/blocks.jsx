@@ -18,7 +18,6 @@ import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
-import DailyPostButton from 'calypso/blocks/daily-post-button/docs/example';
 import DataCenterPicker from 'calypso/blocks/data-center-picker/docs/example';
 import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
 import DomainTip from 'calypso/blocks/domain-tip/docs/example';
@@ -158,7 +157,6 @@ export default class AppComponents extends Component {
 					<DismissibleCard readmeFilePath="dismissible-card" />
 					<ReaderAvatar readmeFilePath="reader-avatar" />
 					<ReaderPostOptionsMenu readmeFilePath="reader-post-options-menu" />
-					<DailyPostButton readmeFilePath="daily-post-button" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
 					<ReaderExportButton readmeFilePath="reader-export-button" />
