@@ -14,6 +14,7 @@ import sites from './sites/reducer';
 import streams from './streams/reducer';
 import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
+import users from './users/reducer';
 
 const combinedReducer = combineReducers( {
 	conversations,
@@ -30,6 +31,7 @@ const combinedReducer = combineReducers( {
 	tags,
 	thumbnails,
 	organizations,
+	users,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;

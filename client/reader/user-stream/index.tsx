@@ -1,8 +1,13 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { UserData } from 'calypso/lib/user/user';
+import { requestUser } from 'calypso/state/reader/users/actions';
 import UserComments from './views/comments';
 import UserLikes from './views/likes';
 import UserLists from './views/lists';
@@ -19,10 +24,31 @@ interface NavigationItem {
 interface UserStreamProps {
 	streamKey?: string;
 	userId: string;
+	user: UserData;
+	isLoading: boolean;
+	requestUser: ( userId: string ) => Promise< void >;
 }
 
-const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
+type UserStreamState = {
+	reader: {
+		users: {
+			items: Record< string, UserData >;
+			requesting: Record< string, boolean >;
+		};
+	};
+};
+
+export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
+	useEffect( () => {
+		requestUser( userId );
+	}, [ userId, requestUser ] );
+
 	const translate = useTranslate();
+
+	if ( isLoading || ! user ) {
+		return <></>;
+	}
+
 	const currentPath = page.current;
 
 	const navigationItems: NavigationItem[] = [
@@ -75,6 +101,7 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 	return (
 		<div className="user-stream">
 			<h1 className="user-stream__header">User Profile</h1>
+			<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
 			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
@@ -87,6 +114,12 @@ const UserStream = ( { streamKey, userId }: UserStreamProps ) => {
 			<div className="user-stream__content">{ renderContent() }</div>
 		</div>
 	);
-};
+}
 
-export default UserStream;
+export default connect(
+	( state: UserStreamState, ownProps: UserStreamProps ) => ( {
+		user: state.reader.users.items[ ownProps.userId ],
+		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
+	} ),
+	{ requestUser }
+)( UserStream );
