@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
