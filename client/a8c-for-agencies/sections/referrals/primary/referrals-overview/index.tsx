@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -67,7 +66,6 @@ export default function ReferralsOverview( {
 	);
 
 	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -184,7 +182,7 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback && isProductFeedbackEnabled ? (
+					{ showFeedback ? (
 						<A4AFeedback { ...feedbackProps } />
 					) : (
 						<LayoutBodyContent

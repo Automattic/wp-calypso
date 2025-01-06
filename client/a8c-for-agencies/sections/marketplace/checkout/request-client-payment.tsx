@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
 import { Icon, warning } from '@wordpress/icons';
@@ -146,13 +145,12 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	] );
 
 	const { isFeedbackShown } = useShowFeedback( 'referral-complete' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				isProductFeedbackEnabled && ! isFeedbackShown
+				! isFeedbackShown
 					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
 							args: { email },
 					  } ) + '#feedback'
@@ -162,7 +160,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 			setMessage( '' );
 			onClearCart();
 		}
-	}, [ email, isProductFeedbackEnabled, isSuccess, onClearCart, isFeedbackShown ] );
+	}, [ email, isSuccess, onClearCart, isFeedbackShown ] );
 
 	return (
 		<>

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, TextControl, TextareaControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -36,7 +35,6 @@ export default function TeamInvite() {
 	const { mutate: sendInvite, isPending: isSending } = useSendTeamMemberInvite();
 
 	const { showFeedback, isFeedbackShown, feedbackProps } = useShowFeedback( 'member-invite-sent' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const onSendInvite = useCallback( () => {
 		setError( '' );
@@ -69,7 +67,7 @@ export default function TeamInvite() {
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_a4a_team_invite_success' ) );
-					isProductFeedbackEnabled && ! isFeedbackShown
+					! isFeedbackShown
 						? window.history.replaceState(
 								null,
 								'',
@@ -90,15 +88,7 @@ export default function TeamInvite() {
 				},
 			}
 		);
-	}, [
-		dispatch,
-		isProductFeedbackEnabled,
-		message,
-		sendInvite,
-		isFeedbackShown,
-		translate,
-		username,
-	] );
+	}, [ dispatch, message, sendInvite, isFeedbackShown, translate, username ] );
 
 	const onUsernameChange = useCallback( ( value: string ) => {
 		setError( '' );
@@ -118,7 +108,7 @@ export default function TeamInvite() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				{ isProductFeedbackEnabled && showFeedback ? (
+				{ showFeedback ? (
 					<A4AFeedback { ...feedbackProps } />
 				) : (
 					<Form
