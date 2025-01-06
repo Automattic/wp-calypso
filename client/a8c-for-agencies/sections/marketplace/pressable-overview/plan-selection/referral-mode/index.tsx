@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -20,8 +18,6 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const onSelectPlan = useCallback(
 		( plan: APIProductFamilyProduct | null ) => {
@@ -53,11 +49,7 @@ export default function ReferralPressableOverviewPlanSelection( { onAddToCart }:
 	}, [ dispatch, onAddToCart, selectedPlan ] );
 
 	return (
-		<div
-			className={ clsx( 'pressable-overview-plan-selection', {
-				'is-new-hosting-page': isNewHostingPage,
-			} ) }
-		>
+		<div className="pressable-overview-plan-selection is-new-hosting-page">
 			<div className="pressable-overview-plan-selection__upgrade-title narrow">
 				{ translate( 'Choose a plan to refer' ) }
 			</div>

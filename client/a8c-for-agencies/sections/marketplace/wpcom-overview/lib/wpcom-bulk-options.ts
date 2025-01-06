@@ -1,13 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
-
 const wpcomBulkOptions = (
 	discountOptions?: {
 		quantity: number;
 		discount_percent: number;
 	}[]
 ) => {
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
-
 	if ( ! discountOptions || discountOptions.length === 0 ) {
 		return [
 			{
@@ -35,7 +31,7 @@ const wpcomBulkOptions = (
 				discount: 0,
 				sub: '',
 			},
-			...( isNewHostingPage ? [ { value: 2, label: '2', discount: 0, sub: '' } ] : [] )
+			{ value: 2, label: '2', discount: 0, sub: '' }
 		);
 	}
 
