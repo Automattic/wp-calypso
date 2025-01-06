@@ -25,6 +25,8 @@ import {
 const siteName = 'hello.wordpress.com';
 const domainName = 'hello.com';
 
+jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
+
 describe( 'path helper functions', () => {
 	it( 'getAddEmailForwardsPath', () => {
 		expect( getAddEmailForwardsPath( siteName, domainName ) ).toEqual(
@@ -170,6 +172,13 @@ describe( 'path helper functions', () => {
 		);
 		expect( getEmailInDepthComparisonPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getEmailInDepthComparisonPath( null, null ) ).toEqual( '/email' );
+
+		const relativeTo = '/domains/manage/all/email';
+		expect( getEmailInDepthComparisonPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/domains/manage/all/email/${ domainName }/compare/${ siteName }?referrer=${ encodeURIComponent(
+				relativeTo
+			) }`
+		);
 	} );
 
 	it( 'getMailboxesPath', () => {

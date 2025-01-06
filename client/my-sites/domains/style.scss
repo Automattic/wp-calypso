@@ -81,6 +81,9 @@ body.is-section-domains.is-domain-plan-package-flow {
 	}
 
 	.domains-overview__details.main {
-		height: 100%;
+		&,
+		.hosting-dashboard-layout-column__container {
+			height: 100%;
+		}
 	}
 }
