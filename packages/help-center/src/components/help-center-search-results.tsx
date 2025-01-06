@@ -347,6 +347,7 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
+			{ shouldUseHelpCenterExperience && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">
@@ -356,8 +357,6 @@ function HelpSearchResults( {
 					) }
 				</p>
 			) : null }
-
-			{ shouldUseHelpCenterExperience && <HelpCenterRecentConversations /> }
 			{ sections }
 		</div>
 	);
