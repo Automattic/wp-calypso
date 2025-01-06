@@ -95,6 +95,7 @@ const siteSetupFlow: Flow = {
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
 
 		const intent = useSelect(
@@ -246,8 +247,14 @@ const siteSetupFlow: Flow = {
 
 			navigate( 'processing' );
 
-			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipSelectedDesign' ] );
+			if ( ! isGoalsAtFrontExperiment ) {
+				// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
+				resetOnboardStoreWithSkipFlags( [
+					'skipPendingAction',
+					'skipIntent',
+					'skipSelectedDesign',
+				] );
+			}
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
