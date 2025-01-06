@@ -151,7 +151,7 @@ const DomainOverviewPane = ( {
 			features={ features }
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
-				headerButtons: inSiteContext ? undefined : PreviewPaneHeaderButtons,
+				headerButtons: PreviewPaneHeaderButtons,
 			} }
 		/>
 	);
