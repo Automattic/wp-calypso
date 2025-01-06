@@ -29,7 +29,7 @@ export default function PluginsResultsHeader( {
 		<div className={ clsx( 'plugins-results-header', className ) }>
 			{ ( title || subtitle ) && (
 				<div className="plugins-results-header__titles">
-					{ title && <div className="plugins-results-header__title">{ title }</div> }
+					{ title && <h2 className="plugins-results-header__title">{ title }</h2> }
 					{ subtitle && <div className="plugins-results-header__subtitle">{ subtitle }</div> }
 				</div>
 			) }
