@@ -23,13 +23,18 @@ function getPersistedState( key: string, storage: Storage, TTL: number ) {
 	}
 }
 
+function getPersistedStateKey( flow?: string, step?: string, lang?: string, cacheKey?: string ) {
+	return [ VERSION, KEY, flow, step, lang, cacheKey ].filter( Boolean ).join( '-' );
+}
+
 /**
  * Clears all persisted state created by useStepPersistedState
+ * @param flow The desired flow to clear
  * @param storage The storage to clear (defaults to localStorage)
  */
-function clearStepPersistedState( storage: Storage = localStorage ): void {
+export function clearStepPersistedState( flow?: string, storage: Storage = localStorage ): void {
 	const keys = Object.keys( storage );
-	const persistedKeys = keys.filter( ( key ) => key.startsWith( `${ VERSION }-${ KEY }` ) );
+	const persistedKeys = keys.filter( ( key ) => key.startsWith( getPersistedStateKey( flow ) ) );
 
 	persistedKeys.forEach( ( key ) => {
 		storage.removeItem( key );
@@ -62,7 +67,7 @@ export function useStepPersistedState< T >(
 ) {
 	const match = useMatch( '/:flow/:step?/:lang?' );
 	const { flow = 'flow', step = 'step', lang = 'lang' } = match?.params || {};
-	const key = [ VERSION, KEY, flow, step, lang, cacheKey ].join( '-' );
+	const key = getPersistedStateKey( flow, step, lang, cacheKey );
 
 	const [ state, _setState ] = useState< T >(
 		getPersistedState( key, options.storage, options.TTL ) || defaultValue
@@ -76,9 +81,5 @@ export function useStepPersistedState< T >(
 		[ _setState, key, options.storage ]
 	);
 
-	const clearAllStepPersistedState = useCallback( () => {
-		clearStepPersistedState( options.storage );
-	}, [ options.storage ] );
-
-	return [ state, setState, clearAllStepPersistedState ] as const;
+	return [ state, setState ] as const;
 }
