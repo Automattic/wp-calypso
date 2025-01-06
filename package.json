@@ -107,6 +107,7 @@
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
 		"search:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/search run storybook` instead'",
 		"start": "npx check-node-version --package && node bin/welcome.js && yarn run build && yarn run start-build",
+		"start:debug": "NODE_OPTIONS='--max-old-space-size=6144' SOURCEMAP='eval-source-map' yarn start",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",
 		"start-build": "BROWSERSLIST_ENV=evergreen node build/server.js | bunyan -o short",
 		"start-jetpack-cloud": "CALYPSO_ENV=jetpack-cloud-development yarn run start",
