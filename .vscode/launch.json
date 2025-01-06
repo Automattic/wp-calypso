@@ -1,0 +1,40 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Brave",
+			"request": "launch",
+			"type": "chrome",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client",
+			"runtimeExecutable": "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+			"sourceMapPathOverrides": {
+				"app://": "${workspaceFolder}/client"
+			}
+		},
+		{
+			"name": "Launch Chrome",
+			"request": "launch",
+			"type": "chrome",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client",
+			"sourceMapPathOverrides": {
+				"app://": "${workspaceFolder}/client"
+			}
+		},
+		{
+			"name": "Launch Firefox",
+			"request": "launch",
+			"reAttach": true,
+			"type": "firefox",
+			"url": "http://calypso.localhost:3000",
+			"webRoot": "${workspaceFolder}/client",
+			"pathMappings": [
+				{
+					"url": "app:///",
+					"path": "${workspaceFolder}/client"
+				}
+			]
+		}
+	]
+}
