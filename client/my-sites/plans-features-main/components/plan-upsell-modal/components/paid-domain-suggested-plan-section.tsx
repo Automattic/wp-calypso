@@ -22,11 +22,12 @@ export default function PaidDomainSuggestedPlanSection( props: {
 	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { paidDomainName, onPlanSelected, isBusy } = props;
 
 	const previousCopy = translate( 'Free for one year. Includes Premium themes.' );
 	const updatedCopy = translate( 'Free for one year, includes Premium themes' );
-	const hasTranslationForUpdatedCopy = useHasEnTranslation()(
+	const hasTranslationForUpdatedCopy = hasEnTranslation(
 		'Free for one year, includes Premium themes'
 	);
 
