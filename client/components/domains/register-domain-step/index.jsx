@@ -1796,7 +1796,11 @@ class RegisterDomainStep extends Component {
 	goToUseYourDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordUseYourDomainButtonClick( this.props.analyticsSection, this.props.flowName );
+		this.props.recordUseYourDomainButtonClick(
+			this.props.analyticsSection,
+			null,
+			this.props.flowName
+		);
 
 		page( this.getUseYourDomainUrl() );
 	};

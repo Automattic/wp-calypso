@@ -201,7 +201,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium, 'domains' );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium, 'domains/add' );
 
 		let registration = domainRegistration( {
 			domain,
