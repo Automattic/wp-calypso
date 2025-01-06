@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
+import { useSelector } from 'react-redux';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -49,7 +51,13 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		screenReader,
 		screenOptionsTab,
 	} = props;
-	const showTitle = alwaysShowTitle || navigationItems.length < 2;
+
+	const sectionName = useSelector( getSectionName );
+	// SEO: Hide title on plugins and themes pages as they have their own titles in markup.
+	const hideInSections = [ 'plugins', 'themes' ];
+	const showTitle =
+		alwaysShowTitle ||
+		( navigationItems.length < 2 && ! hideInSections.includes( sectionName || '' ) );
 
 	return (
 		<header
