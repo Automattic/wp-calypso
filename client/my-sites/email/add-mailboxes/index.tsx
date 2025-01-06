@@ -18,6 +18,10 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import {
+	domainManagementAllEmailRoot,
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
 import {
@@ -245,6 +249,7 @@ const MailboxesForm = ( {
 	translate,
 	showFormHeader,
 	customFormHeader,
+	currentRoute,
 }: AddMailboxesAdditionalProps & {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
@@ -318,10 +323,18 @@ const MailboxesForm = ( {
 		recordContinueEvent( { canContinue: true } );
 		setIsAddingToCart( true );
 
+		const selectedSiteSlug = selectedSite?.slug ?? '';
+		let checkoutPath = '/checkout/' + selectedSiteSlug;
+
+		if ( isUnderDomainManagementAll( currentRoute ) ) {
+			const redirectTo = `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`;
+			checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
+		}
+
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite?.slug ?? '' );
+				page( checkoutPath );
 			} )
 			.finally( () => setIsAddingToCart( false ) )
 			.catch( () => {
