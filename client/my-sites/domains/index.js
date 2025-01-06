@@ -80,8 +80,6 @@ function registerSiteDomainPage( { path, controllers } ) {
 		path,
 		domainManagementController.domainManagementSiteContext,
 		siteSelection,
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfP2,
 		redirectIfJetpackNonAtomic,
