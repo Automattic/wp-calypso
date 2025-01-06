@@ -9,24 +9,26 @@ interface QueryParams {
 }
 
 interface DateLabelDrillProps {
-	query?: QueryParams;
-	children?: ReactNode;
+	context: {
+		query: QueryParams;
+		pathname: string;
+	};
+	children: ReactNode;
 }
 
-const DateLabelDrill = ( { query, children }: DateLabelDrillProps ) => {
+const DateLabelDrill = ( { context, children }: DateLabelDrillProps ) => {
 	const [ isAnimated, setIsAnimated ] = useState( false );
 
 	useEffect( () => {
 		setIsAnimated( true );
 
-		const params = { ...query };
-		delete params.drilldown;
-		const url = appendQueryStringForRedirection( window.location.pathname, params );
-
 		// Remove the `drilldown` query parameter to prevent unexpected go-backs from being shared by directly copying the URL.
+		const params = { ...context.query };
+		delete params.drilldown;
+		const url = appendQueryStringForRedirection( context.pathname, params );
 		window.history.replaceState( params, '', url );
 		page.replace( url, null, false, false );
-	}, [ query ] );
+	}, [ context ] );
 
 	const goBack = () => {
 		window.history.back();

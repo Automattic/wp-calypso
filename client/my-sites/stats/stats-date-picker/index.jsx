@@ -26,14 +26,13 @@ class StatsDatePicker extends Component {
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
 		isShort: PropTypes.bool,
-		queryParams: PropTypes.object,
+		context: PropTypes.object,
 	};
 
 	static defaultProps = {
 		showQueryDate: false,
 		isActivity: false,
 		isShort: false,
-		queryParams: {},
 	};
 
 	dateForSummarize() {
@@ -186,7 +185,7 @@ class StatsDatePicker extends Component {
 			isShort,
 			dateRange,
 			reduxState,
-			queryParams,
+			context,
 		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
@@ -234,7 +233,7 @@ class StatsDatePicker extends Component {
 		}
 
 		// Used for drill-downs from the date range chart.
-		const isDrillingDown = queryParams?.drilldown === '1';
+		const isDrillingDown = context.query?.drilldown === '1';
 
 		return (
 			<div>
@@ -244,7 +243,7 @@ class StatsDatePicker extends Component {
 					<div className="stats-section-title">
 						<h3>
 							{ isDrillingDown ? (
-								<DateLabelDrill query={ queryParams }>{ sectionTitle }</DateLabelDrill>
+								<DateLabelDrill context={ context }>{ sectionTitle }</DateLabelDrill>
 							) : (
 								sectionTitle
 							) }

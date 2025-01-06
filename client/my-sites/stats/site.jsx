@@ -519,7 +519,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							showQueryDate
 							isShort
 							dateRange={ customChartRange }
-							queryParams={ context.query }
+							context={ context }
 						/>
 					</StatsPeriodNavigation>
 				</StatsPeriodHeader>
