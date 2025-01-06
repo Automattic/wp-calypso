@@ -31,7 +31,7 @@ export async function enhanceFlowWithAuth(
 	if ( 'useSteps' in flow ) {
 		return {
 			...flow,
-			useSteps: () => useInjectUserStepIfNeededForV1( flow ),
+			useSteps: () => useInjectUserStepIfNeededForV1( flow ) as StepperStep[],
 		};
 	} else if ( steps ) {
 		return {
