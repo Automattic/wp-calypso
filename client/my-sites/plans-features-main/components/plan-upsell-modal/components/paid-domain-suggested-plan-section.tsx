@@ -40,7 +40,7 @@ export default function PaidDomainSuggestedPlanSection( props: {
 				<DomainName>
 					<div>{ paidDomainName }</div>
 					<FreeDomainText>
-						{ translate( 'Free for one year. Includes Premium themes.' ) }
+						{ translate( 'Free for one year, includes Premium themes' ) }
 					</FreeDomainText>
 				</DomainName>
 			) }
