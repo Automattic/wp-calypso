@@ -122,6 +122,11 @@ class StatsEmailDetail extends Component {
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
+
+		if ( ! title ) {
+			title = <em>{ this.props.translate( 'Untitled' ) }</em>;
+		}
+
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
@@ -247,7 +252,12 @@ class StatsEmailDetail extends Component {
 							<div className="stats__email-wrapper">
 								<h3 className="highlight-cards-heading">{ this.getTitle( statType ) }</h3>
 
-								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
+								<StatsEmailTopRow
+									siteId={ siteId }
+									postId={ postId }
+									statType={ statType }
+									post={ post }
+								/>
 
 								<StatsPeriodHeader>
 									<StatsPeriodNavigation

@@ -38,7 +38,7 @@
 		.help-center-header__minimize,
 		.help-center-header__close {
 			&:focus {
-				outline: var(--color-primary-light) solid 2px;
+				outline: $help-center-blue solid 2px;
 			}
 		}
 

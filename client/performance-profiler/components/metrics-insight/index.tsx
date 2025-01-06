@@ -9,6 +9,7 @@ import {
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { useDeviceTab } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
@@ -97,9 +98,9 @@ const Content = styled.div`
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
-	const translate = useTranslate();
-
 	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash, url } = props;
+	const translate = useTranslate();
+	const { activeTab } = useDeviceTab();
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const [ cardOpen, setCardOpen ] = useState( false );
@@ -111,7 +112,9 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		insight,
 		hash,
 		isWpcom,
-		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
+		isEnabled( 'performance-profiler/llm' ) && retrieveInsight,
+		translate.localeSlug,
+		activeTab
 	);
 
 	const isLoadingLlmAnswer = isLoading || ! isFetched;

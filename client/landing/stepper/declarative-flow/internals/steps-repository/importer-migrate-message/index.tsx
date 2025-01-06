@@ -67,7 +67,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
-			automated_migration: config.isEnabled( 'automated-migration/collect-credentials' ),
+			automated_migration: true,
 			prevent_ticket_creation: shouldPreventTicketCreation,
 		} );
 		if ( ! shouldPreventTicketCreation ) {
@@ -81,10 +81,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	}, [ shouldPreventTicketCreation, config, fromUrl, siteSlug ] );
 	let whatToExpect: WhatToExpectProps[] = [];
 
-	if (
-		shouldPreventTicketCreation &&
-		config.isEnabled( 'automated-migration/collect-credentials' )
-	) {
+	if ( shouldPreventTicketCreation ) {
 		whatToExpect = [
 			{
 				icon: group,

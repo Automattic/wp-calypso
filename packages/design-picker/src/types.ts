@@ -1,4 +1,4 @@
-import type { GlobalStyles } from '@automattic/data-stores/src/site/types'; // Import from a specific file to avoid the circular dependencies
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 export interface Category {
 	slug: string;
@@ -6,21 +6,7 @@ export interface Category {
 	description?: string;
 }
 
-export interface StyleVariation {
-	slug: string;
-	title?: string;
-	settings: {
-		color: {
-			palette: {
-				theme: StyleVariationSettingsColorPalette[];
-			};
-		};
-	};
-	styles?: {
-		color: StyleVariationStylesColor;
-	};
-	inline_css?: string;
-}
+export interface StyleVariation extends GlobalStylesObject {}
 
 export interface StyleVariationSettingsColorPalette {
 	color: string;
@@ -110,7 +96,7 @@ export interface Design {
 
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
-	globalStyles?: GlobalStyles;
+	globalStyles?: GlobalStylesObject;
 }
 
 export interface DesignPreviewOptions {

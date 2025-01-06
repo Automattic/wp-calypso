@@ -73,6 +73,7 @@ export const OdieSendMessageButton = () => {
 			} );
 		} finally {
 			setSubmitDisabled( false );
+			inputRef.current?.focus();
 		}
 	}, [ isChatBusy, shouldUseHelpCenterExperience, chat?.provider, trackEvent, sendMessage ] );
 

@@ -230,7 +230,11 @@ const DesignCardGroup = ( {
 						getBadge={ getBadge }
 						getOptionsMenu={ getOptionsMenu }
 						oldHighResImageLoading={ oldHighResImageLoading }
-						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+						isActive={
+							showActiveThemeBadge &&
+							design.recipe?.stylesheet === siteActiveTheme &&
+							! design.is_virtual
+						}
 					/>
 				);
 			} ) }

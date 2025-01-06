@@ -51,7 +51,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 	const onSubmit = useCallback(
 		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
-			selectedFile && importCsvSubscribers( siteId, selectedFile, [], true );
+			selectedFile && importCsvSubscribers( siteId, selectedFile, [], [], true );
 		},
 		[ selectedFile, importCsvSubscribers, siteId ]
 	);

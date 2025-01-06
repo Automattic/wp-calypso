@@ -491,7 +491,12 @@ const siteSetupFlow: Flow = {
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
-					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+					const backUrl = window.location.href.replace( window.location.origin, '' );
+					return exitFlow(
+						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
+							backUrl
+						) }`
+					);
 				}
 			}
 		}

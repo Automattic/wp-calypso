@@ -2,7 +2,7 @@ export const JETPACK_MANAGE_DASHBOARD_LINK = '/dashboard';
 export const JETPACK_MANAGE_SITES_LINK = '/sites';
 export const JETPACK_MANAGE_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
 export const JETPACK_MANAGE_SITES_LINK_FAVORITES = '/sites/favorites';
-export const JETPACK_MANAGE_PLUGINS_LINK = '/plugins/manage';
+export const JETPACK_MANAGE_PLUGINS_LINK = '/plugins/manage/sites';
 export const JETPACK_CLOUD_ACTIVITY_LOG_LINK = '/activity-log';
 export const JETPACK_CLOUD_SCAN_LINK = '/scan';
 export const JETPACK_CLOUD_SEARCH_LINK = '/jetpack-search';

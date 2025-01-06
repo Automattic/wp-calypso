@@ -1,12 +1,6 @@
 import ConsolidatedViews from '../consolidated-view';
-import type { Referral, ReferralInvoice } from '../types';
+import type { Referral } from '../types';
 
-export default function ReferralCommissions( {
-	referral,
-	referralInvoices,
-}: {
-	referral: Referral;
-	referralInvoices: ReferralInvoice[];
-} ) {
-	return <ConsolidatedViews referrals={ [ referral ] } referralInvoices={ referralInvoices } />;
+export default function ReferralCommissions( { referral }: { referral: Referral } ) {
+	return <ConsolidatedViews referrals={ [ referral ] } />;
 }

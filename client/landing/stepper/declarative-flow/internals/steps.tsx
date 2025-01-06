@@ -320,3 +320,14 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
 	},
 } satisfies Record< string, StepperStep >;
+
+/**
+ * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
+ */
+export const PRIVATE_STEPS = {
+	USER: {
+		slug: 'user',
+		asyncComponent: () =>
+			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
+	},
+} satisfies Record< string, StepperStep >;

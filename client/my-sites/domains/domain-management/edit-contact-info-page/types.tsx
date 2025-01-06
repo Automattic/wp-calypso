@@ -7,3 +7,10 @@ export type EditContactInfoPageProps = {
 	selectedDomainName: string;
 	selectedSite: SiteDetails | null;
 };
+
+export type EditContactInfoPageContentProps = {
+	currentRoute: string;
+	domains: ResponseDomain[];
+	selectedDomainName: string;
+	selectedSite: SiteDetails | null;
+};

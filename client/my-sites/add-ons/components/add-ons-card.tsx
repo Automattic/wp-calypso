@@ -132,7 +132,7 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 			<Card className="add-ons-card">
 				<CardHeader isBorderless className="add-ons-card__header">
 					<div className="add-ons-card__icon">
-						<Icon icon={ addOnMeta.icon } size={ 44 } />
+						{ addOnMeta.icon && <Icon icon={ addOnMeta.icon } size={ 44 } /> }
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
