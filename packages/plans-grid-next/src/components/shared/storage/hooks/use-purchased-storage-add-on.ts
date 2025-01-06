@@ -14,15 +14,15 @@ const quantityToAddOnSlug = ( quantity: number ): AddOns.StorageAddOnSlug | null
 		case 100:
 			return AddOns.ADD_ON_100GB_STORAGE;
 		case 150:
-			return AddOns.ADD_ON_100GB_STORAGE;
+			return AddOns.ADD_ON_150GB_STORAGE;
 		case 200:
-			return AddOns.ADD_ON_100GB_STORAGE;
+			return AddOns.ADD_ON_200GB_STORAGE;
 		case 250:
-			return AddOns.ADD_ON_100GB_STORAGE;
+			return AddOns.ADD_ON_250GB_STORAGE;
 		case 300:
-			return AddOns.ADD_ON_100GB_STORAGE;
+			return AddOns.ADD_ON_300GB_STORAGE;
 		case 350:
-			return AddOns.ADD_ON_100GB_STORAGE;
+			return AddOns.ADD_ON_350GB_STORAGE;
 		default:
 			return null;
 	}
