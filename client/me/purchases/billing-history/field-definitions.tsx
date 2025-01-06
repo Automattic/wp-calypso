@@ -106,7 +106,6 @@ const getUniqueTransactionTypes = (
 
 export const getFieldDefinitions = (
 	transactions: BillingTransaction[] | null,
-	hiddenFields: string[],
 	translate: ReturnType< typeof useTranslate >
 ) => ( {
 	date: {
@@ -116,9 +115,8 @@ export const getFieldDefinitions = (
 		width: '15%',
 		elements: getUniqueMonths( transactions ?? [] ),
 		enableGlobalSearch: true,
-		enableHiding: true,
 		enableSorting: true,
-		isHidden: hiddenFields.includes( 'date' ),
+		enableHiding: false,
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -136,9 +134,8 @@ export const getFieldDefinitions = (
 		width: '45%',
 		elements: getUniqueServices( transactions ?? [] ),
 		enableGlobalSearch: true,
-		enableHiding: true,
 		enableSorting: true,
-		isHidden: hiddenFields.includes( 'service' ),
+		enableHiding: false,
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -160,9 +157,8 @@ export const getFieldDefinitions = (
 		width: '20%',
 		elements: getUniqueTransactionTypes( transactions ?? [] ),
 		enableGlobalSearch: true,
-		enableHiding: true,
 		enableSorting: true,
-		isHidden: hiddenFields.includes( 'type' ),
+		enableHiding: false,
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -181,9 +177,11 @@ export const getFieldDefinitions = (
 		type: 'text' as const,
 		width: '20%',
 		enableGlobalSearch: true,
-		enableHiding: true,
 		enableSorting: true,
-		isHidden: hiddenFields.includes( 'amount' ),
+		enableHiding: false,
+		filterBy: {
+			operators: [ 'is' as Operator ],
+		},
 		getValue: ( { item }: { item: BillingTransaction } ) => {
 			return item.amount_integer;
 		},
