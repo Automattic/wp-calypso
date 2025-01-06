@@ -21,7 +21,7 @@ const HundredYearDomainFlow: Flow = {
 		return translate( '100-Year Domain' );
 	},
 
-	useSteps() {
+	bootFlow() {
 		const steps = [
 			{
 				slug: 'domains',

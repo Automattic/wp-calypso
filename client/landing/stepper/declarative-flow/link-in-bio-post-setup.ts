@@ -14,7 +14,7 @@ const linkInBioPostSetup: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	isSignupFlow: false,
-	useSteps() {
+	bootFlow() {
 		return [ { slug: 'linkInBioPostSetup', component: LinkInBioPostSetup } ];
 	},
 	useSideEffect() {

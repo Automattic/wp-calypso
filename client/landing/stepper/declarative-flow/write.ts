@@ -26,7 +26,7 @@ const write: Flow = {
 		return translate( 'Write' );
 	},
 	isSignupFlow: false,
-	useSteps() {
+	bootFlow() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'processing', component: Processing },

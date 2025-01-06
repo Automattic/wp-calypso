@@ -24,7 +24,7 @@ import './internals/new-hosted-site-flow.scss';
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{

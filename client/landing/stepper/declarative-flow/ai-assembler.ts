@@ -61,7 +61,7 @@ const withAIAssemblerFlow: Flow = {
 		}, [ theme ] );
 	},
 
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
 			STEPS.NEW_OR_EXISTING_SITE,

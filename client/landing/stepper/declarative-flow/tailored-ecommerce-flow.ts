@@ -56,7 +56,7 @@ const ecommerceFlow: Flow = {
 
 		return useMemo( () => ( { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { recur } } ), [ recur ] );
 	},
-	useSteps() {
+	bootFlow() {
 		const steps = [
 			{
 				slug: 'storeProfiler',

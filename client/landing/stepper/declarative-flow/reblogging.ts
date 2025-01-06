@@ -16,7 +16,7 @@ const reblogging: Flow = {
 		return translate( 'Reblogging' );
 	},
 	isSignupFlow: true,
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },

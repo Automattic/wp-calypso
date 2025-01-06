@@ -18,7 +18,7 @@ const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
 	isSignupFlow: false,
 
-	useSteps() {
+	bootFlow() {
 		return [
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
 			{ slug: 'processing', component: ProcessingStep },

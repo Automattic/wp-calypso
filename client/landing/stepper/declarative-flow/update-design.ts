@@ -23,7 +23,7 @@ const updateDesign: Flow = {
 		return translate( 'Choose Design' );
 	},
 	isSignupFlow: false,
-	useSteps() {
+	bootFlow() {
 		return [ STEPS.DESIGN_SETUP, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {

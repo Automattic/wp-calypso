@@ -81,15 +81,6 @@ function ProcessingCopy( props: StepProps ) {
 	);
 }
 
-const COPY_SITE_STEPS = [
-	{ slug: 'domains', component: DomainsStep },
-	{ slug: 'create-site', component: CreateSite },
-	{ slug: 'processing', component: ProcessingStep },
-	{ slug: 'automated-copy', component: AutomatedCopySite },
-	{ slug: 'processing-copy', component: ProcessingCopy },
-	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
-];
-
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
@@ -98,8 +89,15 @@ const copySite: Flow = {
 	},
 	isSignupFlow: false,
 
-	useSteps() {
-		return COPY_SITE_STEPS;
+	bootFlow() {
+		return [
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'create-site', component: CreateSite },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'automated-copy', component: AutomatedCopySite },
+			{ slug: 'processing-copy', component: ProcessingCopy },
+			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
+		];
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {

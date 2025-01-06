@@ -25,7 +25,7 @@ const startWriting: Flow = {
 		return translate( 'Start writing' );
 	},
 	isSignupFlow: true,
-	useSteps() {
+	bootFlow() {
 		//TODO: Migrate to use the STEPS from the steps.ts file
 		return stepsWithRequiredLogin( [
 			{

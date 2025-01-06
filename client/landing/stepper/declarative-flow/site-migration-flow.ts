@@ -1,8 +1,8 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
+import { Onboard, OnboardActions, type SiteSelect, type UserSelect } from '@automattic/data-stores';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { dispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -30,15 +30,9 @@ const FLOW_NAME = 'site-migration';
 const siteMigration: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: false,
+	bootFlow() {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setIntent( Onboard.SiteIntent.SiteMigration );
 
-	useSideEffect() {
-		const { setIntent } = useDispatch( ONBOARD_STORE );
-		useEffect( () => {
-			setIntent( Onboard.SiteIntent.SiteMigration );
-		}, [] );
-	},
-
-	useSteps() {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,

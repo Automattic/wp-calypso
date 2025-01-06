@@ -1,5 +1,5 @@
 import { CONNECT_DOMAIN_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
@@ -14,6 +14,7 @@ import {
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { getDomainParams } from '../utils/get-domain-params';
 import { useLoginUrl } from '../utils/path';
 import { redirect } from './internals/steps-repository/import/util';
 import {
@@ -22,7 +23,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { OnboardActions, UserSelect } from '@automattic/data-stores';
 
 const CONNECT_DOMAIN_STEPS = [
 	{
@@ -91,19 +92,16 @@ const connectDomain: Flow = {
 
 		return result;
 	},
-	useSideEffect() {
-		const { domain } = useDomainParams();
-		const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	bootFlow() {
+		const { domain } = getDomainParams();
+		const { setHideFreePlan, setDomainCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
-		useEffect( () => {
-			if ( domain ) {
-				setHideFreePlan( true );
-				const domainCartItem = domainMapping( { domain } );
-				setDomainCartItem( domainCartItem );
-			}
-		}, [] );
-	},
-	useSteps() {
+		if ( domain ) {
+			setHideFreePlan( true );
+			const domainCartItem = domainMapping( { domain } );
+			setDomainCartItem( domainCartItem );
+		}
+
 		return CONNECT_DOMAIN_STEPS;
 	},
 	useTracksEventProps() {

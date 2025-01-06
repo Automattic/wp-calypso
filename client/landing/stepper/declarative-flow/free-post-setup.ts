@@ -1,7 +1,6 @@
-import { Onboard } from '@automattic/data-stores';
+import { Onboard, OnboardActions } from '@automattic/data-stores';
 import { FREE_POST_SETUP_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
@@ -15,13 +14,9 @@ const freePostSetup: Flow = {
 		return translate( 'Free' );
 	},
 	isSignupFlow: false,
-	useSideEffect() {
-		const { setIntent } = useDispatch( ONBOARD_STORE );
-		useEffect( () => {
-			setIntent( Onboard.SiteIntent.FreePostSetup );
-		}, [] );
-	},
-	useSteps() {
+	bootFlow() {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setIntent( Onboard.SiteIntent.FreePostSetup );
+
 		return [ STEPS.FREE_POST_SETUP ];
 	},
 	useStepNavigation( currentStep, navigate ) {

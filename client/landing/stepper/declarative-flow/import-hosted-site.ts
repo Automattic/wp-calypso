@@ -1,5 +1,5 @@
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { dispatch, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import localStorageHelper from 'store';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
@@ -30,19 +30,15 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { OnboardActions, UserSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const importHostedSiteFlow: Flow = {
 	name: IMPORT_HOSTED_SITE_FLOW,
 	isSignupFlow: true,
 
-	useSteps() {
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-		useEffect( () => {
-			resetOnboardStore();
-		}, [] );
+	bootFlow() {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 
 		return stepsWithRequiredLogin( [
 			{ slug: 'import', component: Import },

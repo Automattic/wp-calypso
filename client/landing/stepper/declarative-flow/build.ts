@@ -16,7 +16,7 @@ const build: Flow = {
 		return 'WordPress';
 	},
 	isSignupFlow: false,
-	useSteps() {
+	bootFlow() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'processing', component: Processing },

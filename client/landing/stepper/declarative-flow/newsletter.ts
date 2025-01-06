@@ -18,6 +18,7 @@ import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
+import { getQuery } from '../utils/get-query';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -28,9 +29,9 @@ const newsletter: Flow = {
 		return translate( 'Newsletter' );
 	},
 	isSignupFlow: true,
-	useSteps() {
-		const query = useQuery();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+	bootFlow() {
+		const query = getQuery();
+		const isComingFromMarketingPage = query[ 'ref' ] === 'newsletter-lp';
 
 		const publicSteps = [
 			...( ! isComingFromMarketingPage

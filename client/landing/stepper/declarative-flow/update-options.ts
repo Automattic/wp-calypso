@@ -12,7 +12,7 @@ import type { Flow } from './internals/types';
 const updateOptions: Flow = {
 	name: 'update-options',
 	isSignupFlow: false,
-	useSteps() {
+	bootFlow() {
 		return [ STEPS.OPTIONS, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {

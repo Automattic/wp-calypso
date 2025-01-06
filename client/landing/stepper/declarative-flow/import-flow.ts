@@ -26,7 +26,7 @@ const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
 	isSignupFlow: true,
 
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,

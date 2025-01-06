@@ -26,7 +26,7 @@ const designFirst: Flow = {
 		return translate( 'Blog' );
 	},
 	isSignupFlow: true,
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			{
 				slug: 'check-sites',

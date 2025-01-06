@@ -42,7 +42,7 @@ const readymadeTemplateFlow: Flow = {
 		setIntent( SiteIntent.ReadyMadeTemplate );
 	},
 
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
 			STEPS.SITE_CREATION_STEP,

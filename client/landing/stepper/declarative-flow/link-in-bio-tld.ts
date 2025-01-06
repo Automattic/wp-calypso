@@ -27,7 +27,7 @@ const linkInBio: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	isSignupFlow: true,
-	useSteps() {
+	bootFlow() {
 		//TODO: Use steps from steps.ts and in its async version.
 		return stepsWithRequiredLogin( [
 			{ slug: 'domains', component: DomainsStep },

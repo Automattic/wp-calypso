@@ -21,7 +21,7 @@ const entrepreneurFlow: Flow = {
 
 	isSignupFlow: true,
 
-	useSteps() {
+	bootFlow() {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.

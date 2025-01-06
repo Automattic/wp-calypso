@@ -19,7 +19,7 @@ const wooexpress: Flow = {
 	name: 'wooexpress',
 	isSignupFlow: true,
 
-	useSteps() {
+	bootFlow() {
 		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,

@@ -2,8 +2,7 @@ import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -21,14 +20,11 @@ const HundredYearPlanFlow: Flow = {
 	},
 
 	isSignupFlow: true,
-	useSteps() {
-		const currentUser = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
-			[]
-		);
-
+	bootFlow() {
+		const currentUser = ( select( USER_STORE ) as UserSelect ).getCurrentUser();
 		const isVipFeatureEnabled = config.isEnabled( '100-year-plan/vip' );
 		const hasSite = !! currentUser?.site_count;
+		clearSignupDestinationCookie();
 
 		const steps = [
 			// VIP step (conditional)
@@ -80,11 +76,6 @@ const HundredYearPlanFlow: Flow = {
 		];
 
 		return stepsWithRequiredLogin( steps );
-	},
-	useSideEffect() {
-		useEffect( () => {
-			clearSignupDestinationCookie();
-		}, [] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;

@@ -18,7 +18,7 @@ const domainUpsell: Flow = {
 	},
 	isSignupFlow: false,
 
-	useSteps() {
+	bootFlow() {
 		return [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'plans', component: PlansStep },
