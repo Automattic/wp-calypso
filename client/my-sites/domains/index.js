@@ -15,7 +15,7 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
-import * as siteController from 'calypso/sites/controller';
+import { siteDashboard } from 'calypso/sites/controller';
 import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -87,7 +87,7 @@ function registerSiteDomainPage( { path, controllers } ) {
 		redirectIfJetpackNonAtomic,
 		navigation,
 		...controllers,
-		siteController.siteDashboard(),
+		siteDashboard(),
 		makeLayout,
 		clientRender
 	);
