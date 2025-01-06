@@ -31,7 +31,7 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	FlowV1,
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -53,7 +53,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: Flow = {
+const siteSetupFlow: FlowV1 = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
