@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../commissions-info';
+import { useTotalInvoiceValue } from '../hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
-import { useTotalInvoiceValue } from '../wpcom-overview/hooks/use-total-invoice-value';
 import type { ShoppingCartItem } from '../types';
 
 type Props = {

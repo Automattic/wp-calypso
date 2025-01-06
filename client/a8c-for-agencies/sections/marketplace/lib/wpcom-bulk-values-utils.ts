@@ -1,4 +1,8 @@
-import { Option } from '../wpcom-slider';
+type Option = {
+	label: string;
+	value: number | string | null;
+	sub?: string;
+};
 
 type SliderOption = {
 	minAbsolute: number;
