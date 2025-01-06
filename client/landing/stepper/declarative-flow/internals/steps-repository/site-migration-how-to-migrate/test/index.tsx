@@ -30,7 +30,7 @@ jest.mock( 'calypso/lib/presales-chat', () => ( {
 jest.mock(
 	'calypso/landing/stepper/declarative-flow/internals/hooks/use-migration-experiment/index.ts',
 	() => ( {
-		useMigrationExperiment: jest.fn(),
+		useMigrationExperiment: jest.fn( ( flowName: string ) => flowName === 'site-migration' ),
 	} )
 );
 

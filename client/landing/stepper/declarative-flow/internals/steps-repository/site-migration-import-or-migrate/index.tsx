@@ -16,7 +16,7 @@ import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
+const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -29,7 +29,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 	let options;
 
-	const isMigrationExperimentEnabled = useMigrationExperiment();
+	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 
 	if ( isMigrationExperimentEnabled ) {
 		const badgeText = isBusinessPlan

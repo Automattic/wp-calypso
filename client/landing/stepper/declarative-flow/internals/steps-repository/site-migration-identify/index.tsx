@@ -82,9 +82,15 @@ interface Props {
 	onComplete: ( siteInfo: UrlData ) => void;
 	onSkip: () => void;
 	hideImporterListLink: boolean;
+	flowName: string;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	hideImporterListLink = false,
+	flowName,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -94,7 +100,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
-	const isMigrationExperimentEnabled = useMigrationExperiment();
+	const isMigrationExperimentEnabled = useMigrationExperiment( flowName );
 
 	useEffect( () => {
 		if ( siteInfo ) {
@@ -199,7 +205,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
+const SiteMigrationIdentify: Step = function ( { navigation, variantSlug, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -262,6 +268,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 						onSkip={ () => {
 							handleSubmit( 'skip_platform_identification' );
 						} }
+						flowName={ flow }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

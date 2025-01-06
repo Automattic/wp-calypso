@@ -26,8 +26,8 @@ interface Props extends StepProps {
 }
 
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
-	const { navigation, headerText, stepName, subHeaderText } = props;
-	const isMigrationExperimentEnabled = useMigrationExperiment();
+	const { navigation, headerText, stepName, subHeaderText, flow } = props;
+	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();

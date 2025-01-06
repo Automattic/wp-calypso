@@ -37,9 +37,10 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	navigation,
 	data,
 	customizedActionButtons,
+	flow,
 	...props
 } ) => {
-	const showVariants = useMigrationExperiment();
+	const showVariants = useMigrationExperiment( flow );
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
