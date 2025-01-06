@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
@@ -238,9 +239,7 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		const isOnboardingFlow = flowName === 'onboarding';
-
-		if ( isOnboardingFlow ) {
+		if ( isOnboardingFlow( flowName ) ) {
 			setReferrerPolicy();
 			let url =
 				getStepUrl(
@@ -251,7 +250,7 @@ export default {
 					null,
 					'/setup'
 				) +
-				( context.querystring ? '&' + context.querystring : '' ) +
+				( context.querystring ? '?' + context.querystring : '' ) +
 				( context.hashstring ? '#' + context.hashstring : '' );
 
 			if ( document.referrer ) {
