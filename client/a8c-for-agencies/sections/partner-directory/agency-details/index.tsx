@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, SearchableDropdown } from '@automattic/components';
 import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
@@ -47,7 +46,6 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const { showFeedback, isFeedbackShown, feedbackProps } =
 		useShowFeedback( 'agency-details-added' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
@@ -59,7 +57,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					duration: 6000,
 				} )
 			);
-			isProductFeedbackEnabled && ! isFeedbackShown
+			! isFeedbackShown
 				? window.history.replaceState(
 						null,
 						'',
@@ -67,7 +65,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				  )
 				: page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ agency, isProductFeedbackEnabled, isFeedbackShown, translate ]
+		[ agency, isFeedbackShown, translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -118,7 +116,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 		} );
 	};
 
-	if ( isProductFeedbackEnabled && showFeedback ) {
+	if ( showFeedback ) {
 		return <A4AFeedback { ...feedbackProps } />;
 	}
 
