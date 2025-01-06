@@ -37,6 +37,7 @@ const newsletter: Flow = {
 			ONBOARD_STORE
 		) as OnboardActions;
 
+		// We can just call these. They're guaranteed to run once.
 		setHidePlansFeatureComparison( true );
 		clearSignupDestinationCookie();
 		setIntent( Onboard.SiteIntent.Newsletter );
@@ -73,8 +74,10 @@ const newsletter: Flow = {
 		if ( ! isComingFromMarketingPage ) {
 			return [ STEPS.INTRO, ...privateSteps ];
 		}
+
 		return privateSteps;
 	},
+
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
