@@ -15,9 +15,7 @@
 			color: var(--color-text-inverted);
 		}
 
-		svg path[fill],
-		svg path[fill-rule],
-		svg path[fill-opacity] {
+		svg path {
 			fill: var(--color-text-inverted);
 		}
 

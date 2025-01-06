@@ -15,14 +15,11 @@
 		.follow-button__label {
 			color: var(--color-text-inverted);
 		}
+
 		.reader-following-feed,
 		.reader-follow-feed {
-			.following-icon-background,
 			path {
 				fill: var(--color-text-inverted);
-			}
-			.following-icon-tick {
-				stroke: var(--color-text-inverted);
 			}
 		}
 	}

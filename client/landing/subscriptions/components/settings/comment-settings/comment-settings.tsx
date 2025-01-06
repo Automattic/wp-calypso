@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
-import { UnsubscribeIcon } from '../icons';
+import UnsubscribeIcon from '../icons/unsubscribe-icon';
 import NotifyMeOfNewCommentsToggle from './notify-me-of-new-comments-toggle';
 import '../styles.scss';
 

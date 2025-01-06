@@ -212,8 +212,10 @@ export default class InfiniteList extends Component {
 	}
 
 	componentWillUnmount() {
-		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
-		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		if ( this._scrollContainer ) {
+			this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
+			this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		}
 		this.cancelAnimationFrame();
 		this.cancelScrollUpdate();
 		this._isMounted = false;

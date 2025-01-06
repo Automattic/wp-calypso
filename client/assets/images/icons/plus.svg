@@ -1,6 +1,0 @@
-<svg id="plus" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-	<g transform="matrix(1.3333333,0,0,1.3333333,4.0000002,4.0000002)">
-		<path d="M6 0V12" stroke-width="1.5"/>
-		<path d="M12 6L0 6" stroke-width="1.5"/>
-	</g>
-</svg>

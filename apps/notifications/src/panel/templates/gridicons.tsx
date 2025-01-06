@@ -71,22 +71,24 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 				);
 
 			case 'gridicons-reader-follow':
+				// Added "title" to the "plus" icon from the "@wordpress/icons" package. Ideally the package should support adding titles to icons.
 				return (
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>{ translate( 'Reader Follow' ) }</title>
-						<g>
-							<path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z" />
-						</g>
+						<path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" />
 					</svg>
 				);
 
 			case 'gridicons-reader-following':
 				return (
+					// Added "title" to the "published" icon from the "@wordpress/icons" package. Ideally the package should support adding titles to icons.
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<title>{ translate( 'Reader Following' ) }</title>
-						<g>
-							<path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z" />
-						</g>
+						<path
+							fillRule="evenodd"
+							clipRule="evenodd"
+							d="M12 18.5a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13ZM4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm11.53-1.47-1.06-1.06L11 12.94l-1.47-1.47-1.06 1.06L11 15.06l4.53-4.53Z"
+						/>
 					</svg>
 				);
 
