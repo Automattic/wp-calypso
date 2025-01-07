@@ -260,7 +260,7 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow ) {
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow && mode !== 'FORUM' ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -502,7 +502,7 @@ export const HelpCenterContactForm = () => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
-		if ( ! showingGPTResponse && ! showingSearchResults && ! skipResources ) {
+		if ( ! showingGPTResponse && ! showingSearchResults && ! skipResources && mode !== 'FORUM' ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
@@ -684,6 +684,7 @@ export const HelpCenterContactForm = () => {
 						</main>
 						<div className="contact-form-submit">
 							<Button
+								isBusy={ isSubmitting }
 								disabled={ isCTADisabled() }
 								onClick={ handleCTA }
 								variant="primary"
