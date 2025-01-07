@@ -22,15 +22,14 @@ export const BackButton = () => {
 	}
 
 	return (
-		<span className="back-button__help-center">
-			<Button
-				label={ __( 'Go Back', __i18n_text_domain__ ) }
-				data-testid="back-button-icon"
-				onClick={ handleClick }
-				className="back-button__help-center"
-			>
-				<Icon icon={ chevronLeft } size={ 18 } />
-			</Button>
-		</span>
+		<Button
+			label={ __( 'Go Back', __i18n_text_domain__ ) }
+			data-testid="back-button-icon"
+			onClick={ handleClick }
+			onTouchStart={ handleClick }
+			className="back-button__help-center"
+		>
+			<Icon icon={ chevronLeft } size={ 18 } />
+		</Button>
 	);
 };
