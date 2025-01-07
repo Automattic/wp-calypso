@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import LRU from 'lru';
 import Tannin from 'tannin';
-import numberFormat from './number-format';
 
 /**
  * Module variables
@@ -180,8 +179,19 @@ I18N.prototype.numberFormat = function ( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
 	const decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.';
 	const thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
+	const localeSlug = this.getLocaleSlug();
 
-	return numberFormat( number, decimals, decPoint, thousandsSep );
+	if ( typeof Intl === 'undefined' || ! Intl.NumberFormat ) {
+		warn( 'Intl.NumberFormat is not supported. number not formatted' );
+
+		return number;
+	}
+
+	return Intl.NumberFormat( localeSlug, {
+		minimumFractionDigits: decimals, // default is 0
+		maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
+		// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
+	} ).format( number );
 };
 
 I18N.prototype.configure = function ( options ) {

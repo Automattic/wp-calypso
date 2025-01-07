@@ -26,6 +26,8 @@ export default function formatNumberCompact( number, code = i18n.getLocaleSlug()
 	//show 2 sig figs, otherwise take leading sig figs.
 	const decimals = absNumber < unitValue * 10 ? 1 : 0;
 
+	// TODO clk numberFormat
+	// can deprecate complately in favour of `{ notation: 'compact' }` in Intl.NumberFormat
 	const value = numberFormat( absNumber / unitValue, {
 		decimals,
 		thousandsSep: grouping,
