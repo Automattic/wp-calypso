@@ -7,7 +7,12 @@
 	flex-wrap: wrap;
 	gap: 16px;
 	justify-content: space-between;
-	margin-bottom: 1.5em;
+	margin-bottom: 20px;
+	padding-top: 8px;
+
+	@include break-small {
+		padding-top: 0;
+	}
 
 	input:invalid {
 		background-color: var(--color-accent-5);
@@ -103,8 +108,11 @@
 	}
 
 	.site-logs-toolbar__filter {
+		color: inherit;
 		display: flex;
 		float: right;
+		gap: 6px;
+		text-decoration: none;
 
 		@include break-small {
 			display: none;

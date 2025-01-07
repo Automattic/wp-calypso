@@ -129,12 +129,13 @@ export const SiteLogsToolbar = ( {
 				onClick={ () => {
 					setIsMobileOpen( ! isMobileOpen );
 				} }
+				variant="link"
 			>
 				{ ( severity || requestType || requestStatus ) && (
-					<Badge className="site-logs-toolbar__badge" type="success"></Badge>
+					<Badge className="site-logs-toolbar__badge" type="success" />
 				) }
-				{ translate( 'Filter' ) }
 				<Gridicon icon="filter" />
+				{ translate( 'Filter' ) }
 			</Button>
 
 			<div className={ clsx( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }>
