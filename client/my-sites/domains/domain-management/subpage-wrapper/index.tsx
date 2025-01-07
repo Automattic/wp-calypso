@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
 import { getSubpageParams } from './subpages';
@@ -15,7 +16,7 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 
 	if ( CustomHeader ) {
 		return (
-			<div className="subpage-wrapper">
+			<div className={ clsx( 'subpage-wrapper', `subpage-wrapper--${ subpageKey }` ) }>
 				<CustomHeader
 					selectedDomainName={ domainName }
 					selectedSiteSlug={ siteName }
@@ -38,7 +39,7 @@ const SubpageWrapper = ( { children, subpageKey, siteName, domainName }: Subpage
 		];
 
 		return (
-			<div className="subpage-wrapper">
+			<div className={ clsx( 'subpage-wrapper', `subpage-wrapper--${ subpageKey }` ) }>
 				<NavigationHeader
 					className="subpage-wrapper__header"
 					navigationItems={ breadcrumbItems }
