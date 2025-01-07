@@ -7,7 +7,6 @@ import illustrationEmptyResults from 'calypso/assets/images/illustrations/illust
 import './style.scss';
 
 interface EmptyContentProps {
-	icon?: React.ReactNode;
 	title?: string | null | React.ReactNode;
 	illustration?: string | null;
 	illustrationWidth?: number;
@@ -101,7 +100,6 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 			} ) }
 		>
 			{ illustrationEl }
-			{ props.icon && <div className="empty-content__icon">{ props.icon }</div> }
 			{ typeof title === 'string' ? (
 				<h2 className="empty-content__title">{ title }</h2>
 			) : (
