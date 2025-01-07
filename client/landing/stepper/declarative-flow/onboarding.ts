@@ -11,6 +11,7 @@ import {
 	setSignupCompleteSlug,
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
+	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -352,11 +353,17 @@ const onboarding: Flow = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
+		/**
+		 * Clears every state we're persisting during the flow
+		 * when entering it. This is to ensure that the user
+		 * starts on a clean slate.
+		 */
 		useEffect( () => {
 			if ( ! currentStepSlug ) {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
+				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
 			}
