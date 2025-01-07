@@ -25,7 +25,7 @@ const UserPosts = ( { streamKey }: UserPostsProps ): JSX.Element => {
 					illustration={ null }
 					icon={ <Icon icon={ postList } size={ 48 } /> }
 					title={ null }
-					line="No posts yet."
+					line={ translate( 'No posts yet.' ) }
 				/>
 			) }
 		/>
