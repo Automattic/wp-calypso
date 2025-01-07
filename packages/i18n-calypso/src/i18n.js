@@ -364,7 +364,7 @@ I18N.prototype.fixMe = function ( { text, translation, fallback } ) {
 		throw new Error( 'fixMe() requires an object with proper text and translation properties' );
 	}
 
-	if ( [ 'en', 'en-gb' ].includes( this.getLocale() ) || this.hasTranslation( text ) ) {
+	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
 		return translation;
 	}
 
