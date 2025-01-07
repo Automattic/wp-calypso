@@ -67,40 +67,47 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
 
+		const headerContent = (
+			<>
+				<header className="user-profile__header">
+					<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+					<div className="user-profile-header__details">
+						<div className="user-profile-header__display-name">
+							<ReaderAuthorLink author={ { name: user.display_name } }>
+								{ user.display_name }
+							</ReaderAuthorLink>
+						</div>
+						{ user.bio && (
+							<div className="user-profile-header__bio">
+								<p>{ user.bio }</p>
+							</div>
+						) }
+					</div>
+				</header>
+				<SectionNav selectedText={ selectedTab }>
+					<NavTabs>
+						{ navigationItems.map( ( item ) => (
+							<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
+								{ item.label }
+							</NavItem>
+						) ) }
+					</NavTabs>
+				</SectionNav>
+			</>
+		);
+
 		switch ( basePath ) {
 			case `/read/users/${ userId }`:
-				return <UserPosts streamKey={ streamKey as string } />;
+				return <UserPosts streamKey={ streamKey as string }>{ headerContent }</UserPosts>;
 			case `/read/users/${ userId }/lists`:
-				return <UserLists />;
+				return <UserLists>{ headerContent }</UserLists>;
+			default:
+				return null;
 		}
 	};
 
 	return (
 		<div className="user-profile">
-			<header className="user-profile__header">
-				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
-				<div className="user-profile-header__details">
-					<div className="user-profile-header__display-name">
-						<ReaderAuthorLink author={ { name: user.display_name } }>
-							{ user.display_name }
-						</ReaderAuthorLink>
-					</div>
-					{ user.bio && (
-						<div className="user-profile-header__bio">
-							<p>{ user.bio }</p>
-						</div>
-					) }
-				</div>
-			</header>
-			<SectionNav selectedText={ selectedTab }>
-				<NavTabs>
-					{ navigationItems.map( ( item ) => (
-						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
-							{ item.label }
-						</NavItem>
-					) ) }
-				</NavTabs>
-			</SectionNav>
 			<div className="user-profile__content-wrapper">
 				<div className="user-profile__content">{ renderContent() }</div>
 			</div>
