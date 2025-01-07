@@ -109,6 +109,16 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
+				{
+					// Show pressable limit warning only if the product is a Pressable plan
+					product.family_slug === 'pressable-hosting' && (
+						<div className="product-info__pressable-limit-warning">
+							{ translate(
+								"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+							) }
+						</div>
+					)
+				}
 				{ product.licenseId && siteUrls && <p className="product-info__site-url">{ siteUrls }</p> }
 			</div>
 		</div>
