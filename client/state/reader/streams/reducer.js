@@ -227,7 +227,7 @@ export const isRequesting = ( state = false, action ) => {
  */
 export const lastPage = ( state = false, action ) => {
 	if ( action.type === READER_STREAMS_PAGE_RECEIVE ) {
-		return action.payload.streamItems.length === 0 || ! action.payload.pageHandle;
+		return action.payload.streamItems.length === 0;
 	}
 	return state;
 };
