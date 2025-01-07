@@ -90,7 +90,7 @@ let mostRecentState: ProvidedDependencies = {};
 export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
-	const managedSiteFlowProps = useIsManagedSiteFlowProps( props.flow );
+	const managedSiteFlowProps = useIsManagedSiteFlowProps();
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	return (

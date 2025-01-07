@@ -9,7 +9,7 @@ import {
 	getSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 
-export const useIsManagedSiteFlowProps = ( flow: string ) => {
+export const useIsManagedSiteFlowProps = () => {
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
 	const postSignUpSiteIdParam = getSignupCompleteSiteID();
 
@@ -17,7 +17,7 @@ export const useIsManagedSiteFlowProps = ( flow: string ) => {
 
 	useEffect( () => {
 		const signupDestinationCookieExists = retrieveSignupDestination();
-		const isReEnteringFlow = getSignupCompleteFlowName() === flow;
+		const isReEnteringFlow = getSignupCompleteFlowName() === 'onboarding';
 		const isManageSiteFlow =
 			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
 
@@ -25,7 +25,7 @@ export const useIsManagedSiteFlowProps = ( flow: string ) => {
 			clearSignupDestinationCookie();
 			return;
 		}
-	}, [ flow ] );
+	}, [] );
 
 	if ( selectedSite ) {
 		return {
