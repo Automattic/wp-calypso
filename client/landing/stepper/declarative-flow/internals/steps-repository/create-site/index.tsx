@@ -197,15 +197,14 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
-		if ( isManageSiteFlow ) {
-			const slug = getSignupCompleteSlug();
-
-			if ( planCartItem && slug ) {
-				await addPlanToCart( slug, flow, true, theme, planCartItem );
+		const signupCompleteSlug = getSignupCompleteSlug();
+		if ( isManageSiteFlow && signupCompleteSlug ) {
+			if ( planCartItem ) {
+				await addPlanToCart( signupCompleteSlug, flow, true, theme, planCartItem );
 			}
 
 			return {
-				siteSlug: getSignupCompleteSlug(),
+				siteSlug: signupCompleteSlug,
 				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};
