@@ -1,5 +1,4 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
-import { resetOnboardStore } from '@automattic/data-stores/src/onboard/actions';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -12,6 +11,7 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
@@ -348,16 +348,17 @@ const onboarding: Flow = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const dispatch = useDispatch();
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 		useEffect( () => {
 			if ( ! currentStepSlug ) {
 				resetOnboardStore();
-				dispatch( setSelectedSiteId( null ) );
+				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
 				clearSignupCompleteSlug();
 			}
-		}, [ currentStepSlug, dispatch ] );
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 	},
 };
 
