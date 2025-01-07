@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "mixins";
+@import "variables";
 
 // Search results section
 .help-center-search-results {
@@ -48,7 +49,7 @@
 			border: 1.5px solid #C3C4C7;
 
 			&:hover, &.is-unread-message {
-				border: 1.5px solid var(--color-primary) !important;
+				border: 1.5px solid $help-center-blue !important;
 			}
 		}
 	}

@@ -18,6 +18,7 @@ import {
 } from './domain-management/domain-overview-pane/constants';
 import {
 	ADD_FORWARDING_EMAIL,
+	COMPARE_EMAIL_PROVIDERS,
 	DNS_RECORDS,
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
@@ -407,6 +408,18 @@ export default function () {
 		navigation,
 		emailController.emailManagement,
 		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/compare/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( COMPARE_EMAIL_PROVIDERS ),
+		emailController.emailManagementInDepthComparison,
+		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender

@@ -1,12 +1,11 @@
-import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
+import { useA8CForAgenciesSitesBanner } from './sites-dashboard-banners/use-a8c-for-agencies-sites-banner';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
@@ -23,7 +22,6 @@ const SitesDashboardBannersManager = ( {
 }: SitesDashboardBannersManagerProps ) => {
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const showA8CForAgenciesBanner = sitesCount >= 5;
 	const migrationPendingSitesCount = sitesStatuses.find(
 		( status ) => status.name === 'migration-pending'
 	)?.count;
@@ -33,6 +31,10 @@ const SitesDashboardBannersManager = ( {
 	const openHelpCenter = useCallback( () => {
 		setShowHelpCenter( true );
 	}, [ setShowHelpCenter ] );
+
+	// TODO: refactor banners to use this pattern
+	// Define banners in priority order
+	const banners = [ useRestoreSitesBanner(), useA8CForAgenciesSitesBanner( { sitesCount } ) ];
 
 	if (
 		migrationPendingSitesCount &&
@@ -62,40 +64,11 @@ const SitesDashboardBannersManager = ( {
 		);
 	}
 
-	// TODO: refactor banners to use this pattern
-	// Define banner creators in priority order
-	const bannerCreators = [ useRestoreSitesBanner ];
 	// Return the first banner that should show
-	for ( const createBanner of bannerCreators ) {
-		const banner = createBanner();
+	for ( const banner of banners ) {
 		if ( banner.shouldShow() ) {
 			return <div className="sites-banner-container">{ banner.render() }</div>;
 		}
-	}
-
-	if ( showA8CForAgenciesBanner ) {
-		return (
-			<div className="sites-banner-container">
-				<Banner
-					callToAction={ translate( 'Learn more {{icon/}}', {
-						components: {
-							icon: <Gridicon icon="external" />,
-						},
-					} ) }
-					className="sites-banner"
-					description={ translate(
-						"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
-					) }
-					dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
-					event="learn-more"
-					horizontal
-					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard' ) }
-					target="_blank"
-					title={ translate( "Building sites for customers? Here's how to earn more." ) }
-					tracksClickName="calypso_sites_dashboard_a4a_banner_click"
-				/>
-			</div>
-		);
 	}
 
 	return null;

@@ -34,12 +34,13 @@
 		box-sizing: border-box;
 		display: flex;
 		justify-content: center;
-		margin: 0 auto;
+		margin: 24px auto 8px;
 		padding-inline: 48px;
 		width: 100%;
 	}
 
 	.sites-banner {
+		margin: 0;
 		width: 100%;
 
 		.banner__action {

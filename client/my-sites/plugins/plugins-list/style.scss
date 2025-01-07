@@ -55,11 +55,43 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
 	height: 100%;
 	overflow: hidden;
 
-	.plugin-management-wrapper {
+	.wpcom-site .main.hosting-dashboard-layout.sites-dashboard,
+	.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .hosting-dashboard-layout-with-columns__container {
+		overflow: hidden;
 		height: calc( 100vh - 50px );
-		display: flex;
-		flex-direction: column;
 		min-height: calc( 100vh - 64px );
+		padding: 0;
+	}
+
+	.sites-dashboard__layout.preview-hidden .sites-overview,
+	.sites-dashboard__layout:not(.preview-hidden) .hosting-dashboard-layout-column {
+		padding: 0;
+	}
+
+	@media ( max-width: 660px ) {
+		.wpcom-site .main.hosting-dashboard-layout.sites-dashboard {
+			min-height: 100vh;
+			.hosting-dashboard-layout__header-main {
+				display: block;
+			}
+		}
+
+		.hosting-dashboard-layout__top-wrapper {
+			display: none;
+		}
+
+	}
+
+	.wpcom-site .main.hosting-dashboard-layout.sites-dashboard .hosting-dashboard-layout__top-wrapper {
+		background-color: var(--color-surface-backdrop);
+
+		.hosting-dashboard-layout__viewport {
+			padding-inline: 0;
+		}
+	}
+
+	.sites-dashboard:not(.preview-hidden) .hosting-dashboard-layout__viewport {
+		width: 360px
 	}
 
 	.select-partner-key {

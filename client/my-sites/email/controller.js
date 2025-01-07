@@ -172,6 +172,7 @@ export default {
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 					source={ pageContext.query.source }
+					context={ pageContext.section.name }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

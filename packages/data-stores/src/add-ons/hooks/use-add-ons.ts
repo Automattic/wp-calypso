@@ -3,7 +3,7 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
-import { getAddOnsList } from '../addons-list';
+import { getAddOnsList } from '../add-ons-list';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import { createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 import type { AddOnMeta } from '../types';

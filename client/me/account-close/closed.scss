@@ -43,4 +43,16 @@
 			align-items: center;
 		}
 	}
+	.account-deleted__restoring {
+		display: flex;
+		align-items: center;
+		.components-spinner {
+			margin-top: 0;
+			margin-left: 0;
+		}
+		&-text {
+			font-size: 0.875rem;
+			color: var( --studio-gray-60 );
+		}
+	}
 }
