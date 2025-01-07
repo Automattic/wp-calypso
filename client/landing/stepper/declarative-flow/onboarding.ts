@@ -2,13 +2,14 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
+	clearSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
@@ -55,6 +56,15 @@ const onboarding: Flow = {
 			[ isGoalsAtFrontExperiment ]
 		);
 	},
+
+	useSideEffect( currentStepSlug ) {
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				clearSignupCompleteFlowName();
+			}
+		}, [ currentStepSlug ] );
+	},
+
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();

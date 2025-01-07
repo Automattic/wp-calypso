@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	getSignupCompleteFlowName,
@@ -12,22 +12,24 @@ import {
 export const useIsManagedSiteFlowProps = () => {
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
 	const postSignUpSiteIdParam = getSignupCompleteSiteID();
+	const isManageSiteFlow = useMemo( () => {
+		return (
+			wasSignupCheckoutPageUnloaded() &&
+			retrieveSignupDestination() &&
+			getSignupCompleteFlowName() === 'onboarding'
+		);
+	}, [] );
 
 	const selectedSite = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 
 	useEffect( () => {
-		const signupDestinationCookieExists = retrieveSignupDestination();
-		const isReEnteringFlow = getSignupCompleteFlowName() === 'onboarding';
-		const isManageSiteFlow =
-			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
-
 		if ( ! isManageSiteFlow ) {
 			clearSignupDestinationCookie();
 			return;
 		}
-	}, [] );
+	}, [ isManageSiteFlow ] );
 
-	if ( selectedSite ) {
+	if ( selectedSite && isManageSiteFlow ) {
 		return {
 			selectedSite,
 			showExampleSuggestions: false,
