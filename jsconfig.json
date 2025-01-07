@@ -10,6 +10,9 @@
 		}
 	},
 	"exclude": [
+		"apps",
+		"desktop",
+		"packages",
 		"public",
 		"node_modules",
 		"**/node_modules/*",
