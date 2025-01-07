@@ -76,17 +76,17 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 	};
 
 	return (
-		<div className="user-stream">
-			<header className="user-stream__header">
+		<div className="user-profile">
+			<header className="user-profile__header">
 				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
-				<div className="user-stream-header__details">
-					<div className="user-stream-header__display-name">
+				<div className="user-profile-header__details">
+					<div className="user-profile-header__display-name">
 						<ReaderAuthorLink author={ { name: user.display_name } }>
 							{ user.display_name }
 						</ReaderAuthorLink>
 					</div>
 					{ user.bio && (
-						<div className="user-stream-header__bio">
+						<div className="user-profile-header__bio">
 							<p>{ user.bio }</p>
 						</div>
 					) }
@@ -101,7 +101,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 					) ) }
 				</NavTabs>
 			</SectionNav>
-			<div className="user-stream__content">{ renderContent() }</div>
+			<div className="user-profile__content-wrapper">
+				<div className="user-profile__content">{ renderContent() }</div>
+			</div>
 		</div>
 	);
 }
