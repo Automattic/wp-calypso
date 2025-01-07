@@ -292,7 +292,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return translation if locale is en', () => {
-			i18n.getLocale = jest.fn().mockReturnValue( 'en' );
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				translation: 'hello',
@@ -302,7 +302,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return translation if locale is en-gb', () => {
-			i18n.getLocale = jest.fn().mockReturnValue( 'en-gb' );
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en-gb' );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				translation: 'hello',
@@ -322,7 +322,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return fallback if text does not have a translation and locale is not English', () => {
-			i18n.getLocale = jest.fn().mockReturnValue( 'fr' );
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'fr' );
 			i18n.hasTranslation = jest.fn().mockReturnValue( false );
 			const result = i18n.fixMe( {
 				text: 'hello',
