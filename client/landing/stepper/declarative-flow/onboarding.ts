@@ -10,6 +10,7 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 	clearSignupCompleteSlug,
+	clearSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -356,6 +357,7 @@ const onboarding: Flow = {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
+				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
