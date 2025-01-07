@@ -217,6 +217,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	};
 
 	const navigationFromChartBar = ( periodStartDate, currentPeriod ) => {
+		// Mark the drilled-down period page should use the go-back action.
+		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
+
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( currentPeriod === 'week' ? 'isoWeek' : currentPeriod )
