@@ -143,6 +143,19 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const fakeData = [
+		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
+		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
+		{ label: 'United Kingdom', countryCode: 'GB', value: 1200, region: '154' },
+		{ label: 'Canada', countryCode: 'CA', value: 1000, region: '021' },
+		{ label: 'Germany', countryCode: 'DE', value: 900, region: '155' },
+		{ label: 'Indonesia', countryCode: 'ID', value: 800, region: '035' },
+		{ label: 'Japan', countryCode: 'JP', value: 700, region: '030' },
+		{ label: 'France', countryCode: 'FR', value: 600, region: '155' },
+		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
+		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
+	];
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -180,7 +193,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 							</StatsInfoArea>
 						}
 						moduleType="countryviews"
-						data={ data } // TODO: we should pass fake data if shouldGate is true
+						data={ shouldGate ? fakeData : data }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
