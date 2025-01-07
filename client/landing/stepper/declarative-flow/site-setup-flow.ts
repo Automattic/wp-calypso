@@ -96,7 +96,6 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -247,10 +246,8 @@ const siteSetupFlow: Flow = {
 
 			navigate( 'processing' );
 
-			if ( ! isGoalsAtFrontExperiment ) {
-				// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-				resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
-			}
+			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipSelectedDesign' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {

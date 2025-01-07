@@ -23,25 +23,6 @@ function getPersistedState( key: string, storage: Storage, TTL: number ) {
 	}
 }
 
-function getPersistedStateKey( flow?: string, step?: string, lang?: string, cacheKey?: string ) {
-	return [ VERSION, KEY, flow, step, lang, cacheKey ].filter( Boolean ).join( '-' );
-}
-
-/**
- * Clears all persisted state created by useStepPersistedState
- * @param flow The desired flow to clear
- * @param storage The storage to clear (defaults to localStorage)
- */
-export function clearStepPersistedState( flow?: string, storage: Storage = localStorage ): void {
-	const keys = Object.keys( storage );
-	const persistedKeys = keys.filter( ( key ) => key.startsWith( getPersistedStateKey( flow ) ) );
-
-	persistedKeys.forEach( ( key ) => {
-		storage.removeItem( key );
-		storage.removeItem( key + 'time' );
-	} );
-}
-
 type Options = {
 	/**
 	 * The used storage, defaults to sessionStorage.
@@ -55,6 +36,7 @@ type Options = {
 
 /**
  * A hook similar to useState, but persists the state. Uses `flow`, `step` and `lang`, and the passed key in the tree as keys.
+ *
  * @param cacheKey the cache key. It will be concatenated with the flow, step and lang.
  * @param defaultValue the initial value of the state.
  * @param options the options for the hook.
@@ -64,10 +46,10 @@ export function useStepPersistedState< T >(
 	cacheKey: string,
 	defaultValue?: T,
 	options: Options = { storage: localStorage, TTL: TWENTY_MINUTES }
-) {
+): [ T, ( newState: T ) => void ] {
 	const match = useMatch( '/:flow/:step?/:lang?' );
 	const { flow = 'flow', step = 'step', lang = 'lang' } = match?.params || {};
-	const key = getPersistedStateKey( flow, step, lang, cacheKey );
+	const key = [ VERSION, KEY, flow, step, lang, cacheKey ].join( '-' );
 
 	const [ state, _setState ] = useState< T >(
 		getPersistedState( key, options.storage, options.TTL ) || defaultValue
@@ -81,5 +63,5 @@ export function useStepPersistedState< T >(
 		[ _setState, key, options.storage ]
 	);
 
-	return [ state, setState ] as const;
+	return [ state, setState ];
 }
