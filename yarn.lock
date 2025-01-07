@@ -2274,7 +2274,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^4.8.0"
     i18n-calypso: "workspace:^"
-    social-logos: "npm:^3.1.15"
+    social-logos: "npm:^3.1.16"
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@wordpress/data": ^10.8.0
@@ -13120,7 +13120,7 @@ __metadata:
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^3.1.15"
+    social-logos: "npm:^3.1.16"
     source-map-support: "npm:^0.5.19"
     store: "npm:^2.0.12"
     stream-browserify: "npm:^3.0.0"
@@ -30858,9 +30858,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^3.1.15":
-  version: 3.1.15
-  resolution: "social-logos@npm:3.1.15"
+"social-logos@npm:^3.1.16":
+  version: 3.1.16
+  resolution: "social-logos@npm:3.1.16"
   dependencies:
     prop-types: "npm:^15.8.1"
     react: "npm:18.3.1"
@@ -30868,7 +30868,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 7f4b23f3b28567e4744ccd7aea9a51c392f9540553a4813c0e52760709e6156ba8f1615ac4a62213d4217c5b9c11eb7e9345cf2cb5b1ccd058cf6f92377465e2
+  checksum: 6fdd785b981b0581992897513d0785d8501f6f8f0d1555cabea274fb5b02d1544cdb74203897a0edbf5074220c50afc642262a40d492b54fe9da3b417612fda7
   languageName: node
   linkType: hard
 
