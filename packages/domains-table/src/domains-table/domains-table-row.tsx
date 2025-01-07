@@ -100,7 +100,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const handleSelect = () => {
 		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
-		if ( isAllDomainManagementEnabled && isAllSitesView ) {
+		if ( isAllDomainManagementEnabled ) {
 			page.show( domainManagementLink );
 			return;
 		}

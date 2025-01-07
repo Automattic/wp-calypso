@@ -444,12 +444,13 @@
 /**
  * Context: All Domain Management
  */
+.wpcom-site .hosting-dashboard-item-view__content .context-all-domain-management, /* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
 		margin-left: 0;
 		width: 100%;
 
-		.domains-email__navigation-header.navigation-header {
+		header.domains-email__navigation-header.navigation-header {
 			border: 0;
 			padding: 1.5rem;
 

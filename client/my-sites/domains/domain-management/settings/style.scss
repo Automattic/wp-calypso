@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.edit__body-white.theme-default.color-scheme {
+body:not(.is-global).edit__body-white.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }
 

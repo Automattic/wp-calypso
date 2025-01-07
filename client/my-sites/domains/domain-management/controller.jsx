@@ -394,6 +394,7 @@ export default {
 					selectedFeature={ feature }
 					siteSlug={ siteSlug }
 					site={ site }
+					inSiteContext={ pageContext.inSiteContext }
 				/>
 			);
 
@@ -410,6 +411,11 @@ export default {
 			};
 			next();
 		};
+	},
+
+	domainManagementSiteContext( pageContext, next ) {
+		pageContext.inSiteContext = true;
+		next();
 	},
 
 	domainManagementSubpageView( pageContext, next ) {
