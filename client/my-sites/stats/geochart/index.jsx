@@ -196,7 +196,18 @@ class StatsGeochart extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const statType = ownProps.statType ?? 'statsCountryViews';
+	const currentUserCountryCode = getCurrentUserCountryCode( state );
 	const { postId, query, kind } = ownProps;
+
+	// Skip data fetching if it was explicitly passed as a prop
+	if ( ownProps.data ) {
+		return {
+			currentUserCountryCode,
+			data: ownProps.data,
+			siteId,
+			statType,
+		};
+	}
 
 	const data =
 		kind === 'email'
@@ -212,7 +223,7 @@ export default connect( ( state, ownProps ) => {
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
 
 	return {
-		currentUserCountryCode: getCurrentUserCountryCode( state ),
+		currentUserCountryCode,
 		data,
 		siteId,
 		statType,
