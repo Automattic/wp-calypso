@@ -18,9 +18,13 @@ export function useRestoreSitesBanner() {
 	return {
 		id,
 		shouldShow() {
+			if ( isDismissed ) {
+				return false;
+			}
+			// Show banner when ?restored=true param exists
 			const urlParams = new URLSearchParams( window.location.search );
 			const restored = urlParams.get( 'restored' );
-			return ! isDismissed && restored === 'true';
+			return restored === 'true';
 		},
 		render() {
 			return (
