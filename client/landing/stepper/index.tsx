@@ -144,7 +144,7 @@ window.AppBoot = async () => {
 		return;
 	}
 
-	const flow = await enhanceFlowWithAuth( rawFlow, flowSteps );
+	const flow = enhanceFlowWithAuth( rawFlow, flowSteps );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );

@@ -21,10 +21,7 @@ function injectUserStepInSteps( steps: readonly StepperStep[] ) {
 }
 
 // This is pretty wonky because it has to support both V1 and V2 flows. Should be fixed soon to drop support for V1 flows.
-export async function enhanceFlowWithAuth(
-	flow: Flow,
-	steps: readonly StepperStep[] | null
-): Promise< Flow > {
+export function enhanceFlowWithAuth( flow: Flow, steps: readonly StepperStep[] | null ): Flow {
 	/**
 	 * For V1 flows, we enhance `useSteps` method. For V2 flows, we enhance the return value of `bootFlow` method.
 	 */
