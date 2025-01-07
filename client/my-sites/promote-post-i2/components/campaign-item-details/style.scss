@@ -192,43 +192,16 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
-		.campaign-item-details__payment-links {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			padding: 16px;
 
-			.campaign-item-details__payment-link-row {
-				display: grid;
-				grid-template-columns: 40% 40% 20%;
-
-				.payment-link__label {
-					font-size: 0.875rem;
-					font-weight: 500;
-				}
-
-				.payment-link__link {
-					justify-self: flex-end;
-					a {
-						display: flex;
-						align-items: center;
-						gap: 2px;
-
-
-						svg {
-							path {
-								fill: var(--color-primary);
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 
 	.campaign-item-details__notice {
 		.notice__content {
 			line-height: 26px;
+			.notice__text {
+				display: inline-block;
+				padding-right: 16px;
+			}
 		}
 		margin-bottom: 64px;
 
@@ -305,10 +278,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					}
 				}
 			}
-		}
-		.campaign-item-details__payment-links-container {
-			background: var(--studio-gray-0);
-			border: none;
 		}
 
 		.campaign-item-details__main-stats-row {
