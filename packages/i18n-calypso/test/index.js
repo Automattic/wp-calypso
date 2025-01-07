@@ -285,9 +285,9 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
-		it( 'should throw an error if text, translation, or fallback are missing', () => {
+		it( 'should throw an error if text or translation are missing', () => {
 			expect( () => i18n.fixMe( {} ) ).toThrow(
-				'fixMe() requires an object with proper text, translation, and fallback properties'
+				'fixMe() requires an object with proper text and translation properties'
 			);
 		} );
 
