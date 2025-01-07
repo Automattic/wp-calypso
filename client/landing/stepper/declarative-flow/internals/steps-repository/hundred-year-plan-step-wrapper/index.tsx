@@ -167,7 +167,7 @@ const StyledFoldableCard = styled( FoldableCard )`
 			.foldable-card__action {
 				width: 32px;
 			}
-			.gridicons-chevron-down {
+			.gridicon {
 				fill: var( --studio-gray-0 );
 				height: 16px;
 				width: 16px;
