@@ -1,7 +1,7 @@
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import { fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
@@ -25,7 +25,6 @@ function UseMyDomainInput( {
 	validationError,
 } ) {
 	const domainNameInput = useRef( null );
-	const locale = useLocale();
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -47,11 +46,11 @@ function UseMyDomainInput( {
 		}
 	};
 
-	const hasDomainPlaceholderLabel =
-		englishLocales.includes( locale ) || hasTranslation( 'yourgroovydomain.com' );
-	const domainPlaceholderLabel = hasDomainPlaceholderLabel
-		? __( 'yourgroovydomain.com' )
-		: __( 'mydomain.com' );
+	const domainPlaceholderLabel = fixMe( {
+		text: 'yourgroovydomain.com',
+		translation: __( 'yourgroovydomain.com' ),
+		fallback: __( 'mydomain.com' ),
+	} );
 
 	return (
 		<Card className={ baseClassName }>
