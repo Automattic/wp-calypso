@@ -121,12 +121,14 @@ const EmailProvidersInDepthComparison = ( {
 				onIntervalChange={ changeIntervalLength }
 			/>
 
-			<ComparisonComponent
-				emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
-				intervalLength={ selectedIntervalLength }
-				onSelectEmailProvider={ selectEmailProvider }
-				selectedDomainName={ selectedDomainName }
-			/>
+			<div className="email-providers-in-depth-comparison__table">
+				<ComparisonComponent
+					emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
+					intervalLength={ selectedIntervalLength }
+					onSelectEmailProvider={ selectEmailProvider }
+					selectedDomainName={ selectedDomainName }
+				/>
+			</div>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
 		</Main>

@@ -149,6 +149,20 @@
 			border-radius: 4px;
 		}
 	}
+
+    .email-providers-in-depth-comparison__table {
+        border: solid 1px $studio-gray-5;
+        border-radius: 4px;
+        padding: 24px;
+
+        > table {
+            margin-top: 0;
+
+            td {
+                padding-top: 12px;
+            }
+        }
+    }
 }
 
 .is-bulk-all-domains-page .layout__content .main {

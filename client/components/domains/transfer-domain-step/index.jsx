@@ -471,7 +471,8 @@ class TransferDomainStep extends Component {
 	registerSuggestedDomain = () => {
 		this.props.recordAddDomainButtonClickInTransferDomain(
 			this.state.suggestion.domain_name,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		return this.props.onRegisterDomain( this.state.suggestion );
