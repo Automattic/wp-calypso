@@ -1,15 +1,20 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
+	clearSignupCompleteSlug,
+	clearSignupCompleteFlowName,
+	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
@@ -343,6 +348,26 @@ const onboarding: Flow = {
 		return {
 			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
 		};
+	},
+	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		/**
+		 * Clears every state we're persisting during the flow
+		 * when entering it. This is to ensure that the user
+		 * starts on a clean slate.
+		 */
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+				reduxDispatch( setSelectedSiteId( null ) );
+				clearStepPersistedState( this.name );
+				clearSignupDestinationCookie();
+				clearSignupCompleteFlowName();
+				clearSignupCompleteSlug();
+			}
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 	},
 };
 

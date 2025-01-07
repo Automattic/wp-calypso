@@ -653,6 +653,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@storybook/addon-actions": "npm:^7.6.19"
+    "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^6.4.5"

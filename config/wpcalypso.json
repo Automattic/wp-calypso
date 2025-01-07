@@ -161,6 +161,7 @@
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
 		"reader/recent-feed-overhaul": true,
+		"reader/user-profile": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
@@ -203,7 +204,6 @@
 		"user-management-revamp": true,
 		"videomaker-trial": true,
 		"woop": false,
-		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
 		"woocommerce/rebrand-2-0": true

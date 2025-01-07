@@ -37,6 +37,14 @@ const OPTION_KEYS = {
 	CITIES: 'cities',
 };
 
+type StatQueryType = 'country' | 'region' | 'city';
+
+const STAT_QUERY_TYPES: Record< string, StatQueryType > = {
+	[ OPTION_KEYS.COUNTRIES ]: 'country',
+	[ OPTION_KEYS.REGIONS ]: 'region',
+	[ OPTION_KEYS.CITIES ]: 'city',
+};
+
 type SelectOptionType = {
 	label: string;
 	value: string;
@@ -54,12 +62,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
-
-	const {
-		data = [],
-		isLoading: isRequestingData,
-		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, 'country', query );
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
 	const optionLabels = {
@@ -87,6 +89,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateStatsModule = useShouldGateStats( statType );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
+	const statQueryType = STAT_QUERY_TYPES[ selectedOption ];
+
+	const {
+		data = [],
+		isLoading: isRequestingData,
+		isError,
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, statQueryType, query );
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
