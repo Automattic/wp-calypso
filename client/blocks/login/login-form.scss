@@ -53,3 +53,14 @@ form {
 	margin-block-start: -8px;
 	font-size: 0.75rem;
 }
+
+.layout.is-white-login .login.is-akismet {
+	.button.is-primary {
+		background-color: var(--color-akismet);
+
+		&:hover,
+    	&:focus {
+        	background-color: var(--color-akismet);
+    	}
+    }
+}
