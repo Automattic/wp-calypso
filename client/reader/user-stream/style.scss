@@ -6,6 +6,10 @@
 		>* {
 			scrollbar-gutter: stable;
 		}
+
+		.empty-content {
+			margin-top: 150px;
+		}
 	}
 
 	.user-profile__header {
@@ -60,6 +64,7 @@
 
 		main.main.is-user-stream {
 			padding: 0;
+			border-block-end: none;
 		}
 	}
 }

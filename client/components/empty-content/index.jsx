@@ -9,6 +9,7 @@ import './style.scss';
 
 class EmptyContent extends Component {
 	static propTypes = {
+		icon: PropTypes.node,
 		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
@@ -110,6 +111,7 @@ class EmptyContent extends Component {
 				} ) }
 			>
 				{ illustration }
+				{ this.props.icon && <div className="empty-content__icon">{ this.props.icon }</div> }
 				{ typeof title === 'string' ? (
 					<h2 className="empty-content__title">{ title }</h2>
 				) : (
