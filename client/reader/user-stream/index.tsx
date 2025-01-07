@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -100,8 +101,21 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 
 	return (
 		<div className="user-stream">
-			<h1 className="user-stream__header">User Profile</h1>
-			<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+			<header className="user-stream__header">
+				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+				<div className="user-stream-header__details">
+					<div className="user-stream-header__display-name">
+						<ReaderAuthorLink author={ { name: user.display_name } }>
+							{ user.display_name }
+						</ReaderAuthorLink>
+					</div>
+					{ user.bio && (
+						<div className="user-stream-header__bio">
+							<p>{ user.bio }</p>
+						</div>
+					) }
+				</div>
+			</header>
 			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
