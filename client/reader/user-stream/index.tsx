@@ -9,11 +9,8 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
 import { requestUser } from 'calypso/state/reader/users/actions';
-import UserComments from './views/comments';
-import UserLikes from './views/likes';
 import UserLists from './views/lists';
 import UserPosts from './views/posts';
-import UserReposts from './views/reposts';
 import './style.scss';
 
 interface NavigationItem {
@@ -59,21 +56,6 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 			selected: currentPath === `/read/users/${ userId }`,
 		},
 		{
-			label: translate( 'Comments' ),
-			path: `/read/users/${ userId }/comments`,
-			selected: currentPath === `/read/users/${ userId }/comments`,
-		},
-		{
-			label: translate( 'Likes' ),
-			path: `/read/users/${ userId }/likes`,
-			selected: currentPath === `/read/users/${ userId }/likes`,
-		},
-		{
-			label: translate( 'Reposts' ),
-			path: `/read/users/${ userId }/reposts`,
-			selected: currentPath === `/read/users/${ userId }/reposts`,
-		},
-		{
 			label: translate( 'Lists' ),
 			path: `/read/users/${ userId }/lists`,
 			selected: currentPath === `/read/users/${ userId }/lists`,
@@ -88,12 +70,6 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 		switch ( basePath ) {
 			case `/read/users/${ userId }`:
 				return <UserPosts streamKey={ streamKey as string } />;
-			case `/read/users/${ userId }/comments`:
-				return <UserComments />;
-			case `/read/users/${ userId }/likes`:
-				return <UserLikes />;
-			case `/read/users/${ userId }/reposts`:
-				return <UserReposts />;
 			case `/read/users/${ userId }/lists`:
 				return <UserLists />;
 		}
