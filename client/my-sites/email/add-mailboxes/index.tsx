@@ -327,7 +327,8 @@ const MailboxesForm = ( {
 		let checkoutPath = '/checkout/' + selectedSiteSlug;
 
 		if ( isUnderDomainManagementAll( currentRoute ) ) {
-			const redirectTo = `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`;
+			const newEmail = mailboxOperations.mailboxes[ 0 ].getAsCartItem().email;
+			const redirectTo = `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`;
 			checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
 		}
 
