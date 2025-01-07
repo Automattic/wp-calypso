@@ -5,15 +5,11 @@ import {
 	PLAN_PREMIUM,
 	getPlan,
 } from '@automattic/calypso-products';
-import { translate, fixMe } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 const getIncludedWithLabel = ( planSlug ) => {
-	return fixMe( {
-		text: 'Included with %(planName)s',
-		translation: translate( 'Included with %(planName)s', {
-			args: { planName: getPlan( planSlug )?.getTitle() },
-		} ),
-		fallback: getPlan( planSlug )?.getTitle(),
+	return translate( 'Included with %(planName)s', {
+		args: { planName: getPlan( planSlug )?.getTitle() },
 	} );
 };
 
