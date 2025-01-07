@@ -1,6 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { withGraphqlProvider } from 'calypso//a8c-for-agencies/api/apollo/hoc/with-graphql-provider';
+import GraphiQLComponent from 'calypso/a8c-for-agencies/api/apollo/graphiql';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -82,6 +84,7 @@ function Overview() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody className="a4a-overview-content">
+				{ isEnabled( 'a4a-test-graphql' ) && <GraphiQLComponent /> }
 				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 
