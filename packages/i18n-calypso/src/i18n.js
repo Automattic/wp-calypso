@@ -357,13 +357,11 @@ I18N.prototype.hasTranslation = function () {
  * @param {Object} options
  * @param {string} options.text - The text to check for translation.
  * @param {string | Object} options.translation - The translation to return if the text is translated.
- * @param {string | Object} options.fallback - The fallback to return if the text is not translated.
+ * @param {string | Object | undefined } options.fallback - The fallback to return if the text is not translated.
  */
 I18N.prototype.fixMe = function ( { text, translation, fallback } ) {
-	if ( typeof text !== 'string' || ! translation || ! fallback ) {
-		throw new Error(
-			'fixMe() requires an object with proper text, translation, and fallback properties'
-		);
+	if ( typeof text !== 'string' || ! translation ) {
+		throw new Error( 'fixMe() requires an object with proper text and translation properties' );
 	}
 
 	if ( [ 'en', 'en-gb' ].includes( this.getLocale() ) || this.hasTranslation( text ) ) {
