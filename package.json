@@ -87,7 +87,7 @@
 		"clean:packages": "yarn workspaces foreach --all --parallel --verbose --exclude 'wp-calypso' run clean",
 		"clean:public": "rm -rf public",
 		"clean:translations": "rm -rf build/strings calypso-strings.pot chunks-map.*.json || true",
-		"components:storybook:start": "echo 'Storybook in Calypso moved into the root directory. Run `yarn storybook:start` instead.'",
+		"components:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/components run storybook` instead'",
 		"composite-checkout:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/composite-checkout run storybook` instead'",
 		"distclean": "yarn run clean && rm -rf **/node_modules **/.cache .yarn/install-state.gz || true",
 		"docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
