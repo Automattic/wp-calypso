@@ -54,8 +54,8 @@ form {
 	font-size: 0.75rem;
 }
 
-.layout.is-white-login .login.is-akismet {
-	.button.is-primary {
+.layout.is-white-login .login.is-akismet .login__form {
+	.button {
 		background-color: var(--color-akismet);
 
 		&:hover,
