@@ -111,8 +111,10 @@ export class RenderDomainsStep extends Component {
 
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
-		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
-		const siteUrl = get( props, 'signupDependencies.siteUrl' );
+		const suggestedDomain =
+			props.flowName === 'onboarding' ? false : get( props, 'signupDependencies.suggestedDomain' );
+		const siteUrl = false;
+		props.flowName === 'onboarding' ? false : get( props, 'signupDependencies.siteUrl' );
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
