@@ -183,10 +183,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	//User has already reached checkout and then hit the browser back button.
 	//In this case, site has already been created, and plan added to cart. We need to avoid to create another site.
 	const isManageSiteFlow = Boolean(
-		wasSignupCheckoutPageUnloaded() &&
-			signupDestinationCookieExists &&
-			isReEnteringFlow &&
-			getSignupCompleteSlug()
+		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
