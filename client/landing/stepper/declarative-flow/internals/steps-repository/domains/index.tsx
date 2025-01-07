@@ -232,7 +232,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			},
 		} );
 
-		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection() ) );
+		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
 
@@ -242,7 +242,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const handleAddMapping = ( domain: string ) => {
 		const domainCartItem = domainMapping( { domain } );
 
-		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection() ) );
+		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
 
@@ -255,7 +255,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				suggestion.domain_name,
 				getAnalyticsSection(),
 				position,
-				suggestion?.is_premium
+				suggestion?.is_premium,
+				flow
 			)
 		);
 

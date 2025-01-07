@@ -229,7 +229,8 @@ export class RenderDomainsStep extends Component {
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
 			position,
-			suggestion?.is_premium
+			suggestion?.is_premium,
+			this.props.flowName
 		);
 
 		await this.props.saveSignupStep( stepData );
@@ -480,7 +481,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInMapDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -523,7 +528,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInTransferDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
