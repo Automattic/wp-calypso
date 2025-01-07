@@ -11,6 +11,7 @@ import useLocationViewsQuery, {
 } from 'calypso/my-sites/stats/hooks/use-location-views-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
+import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
@@ -18,6 +19,12 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import {
+	STAT_TYPE_COUNTRY_VIEWS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
+} from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
@@ -44,7 +51,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const { locations: moduleStrings } = statsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsCountryViews';
+	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
@@ -54,27 +61,32 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		isError,
 	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, 'country', query );
 
-	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsModule = useShouldGateStats( statType );
-
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
 			selectLabel: translate( 'Countries' ),
 			headerLabel: translate( 'Top countries' ),
 			analyticsId: 'countries',
+			feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
 		},
 		[ OPTION_KEYS.REGIONS ]: {
 			selectLabel: translate( 'Regions' ),
 			headerLabel: translate( 'Top regions' ),
 			analyticsId: 'regions',
+			feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
 		},
 		[ OPTION_KEYS.CITIES ]: {
 			selectLabel: translate( 'Cities' ),
 			headerLabel: translate( 'Top cities' ),
 			analyticsId: 'cities',
+			feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
 		},
 	};
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( statType );
+	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
+	const shouldGate = shouldGateStatsModule || shouldGateTab;
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -135,7 +147,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					withHero
 				/>
 			) }
-			{ ( ( ! isRequestingData && ! isError && data ) || shouldGateStatsModule ) && (
+			{ ( ( ! isRequestingData && ! isError && data ) || shouldGate ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
@@ -159,9 +171,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 							</StatsInfoArea>
 						}
 						moduleType="countryviews"
-						data={ data }
+						data={ data } // TODO: we should pass fake data if shouldGate is true
 						emptyMessage={ emptyMessage }
-						metricLabel={ translate( 'Visitors' ) }
+						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
 						heroElement={ <Geochart query={ query } skipQuery /> }
@@ -182,28 +194,33 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								  }
 								: undefined
 						}
+						overlay={
+							shouldGate && (
+								<StatsCardUpsell
+									siteId={ siteId }
+									statType={ optionLabels[ selectedOption ].feature }
+								/>
+							)
+						}
 					/>
 				</>
 			) }
-			{ ! isRequestingData &&
-				Array.isArray( data ) &&
-				! data?.length &&
-				! shouldGateStatsModule && (
-					// show empty state
-					<StatsCard
-						title={ translate( 'Locations' ) }
-						isEmpty
-						emptyMessage={ emptyMessage }
-						footerAction={
-							summaryUrl
-								? {
-										url: summaryUrl,
-										label: translate( 'View more' ),
-								  }
-								: undefined
-						}
-					/>
-				) }
+			{ ! isRequestingData && Array.isArray( data ) && ! data?.length && ! shouldGate && (
+				// show empty state
+				<StatsCard
+					title={ translate( 'Locations' ) }
+					isEmpty
+					emptyMessage={ emptyMessage }
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
+					}
+				/>
+			) }
 		</>
 	);
 };
