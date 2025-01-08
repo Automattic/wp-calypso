@@ -126,7 +126,15 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+};
 
 // Retrieves the URL to set up Titan mailboxes
 export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (

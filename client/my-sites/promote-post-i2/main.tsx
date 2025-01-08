@@ -5,7 +5,7 @@ import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -25,6 +25,7 @@ import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
+import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
 import PostsList, {
 	postsNotReadyErrorMessage,
 } from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -123,6 +124,14 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
+
+	const shouldDisplayDebtAndPaymentLinks =
+		! isLoadingBillingSummary &&
+		data?.debt !== undefined &&
+		! data?.paymentsBlocked &&
+		data?.paymentLinks &&
+		data?.paymentLinks.length > 0 &&
+		parseFloat( data.debt ) > 0;
 
 	const {
 		has_more_pages: campaignsHasMorePages,
@@ -336,6 +345,30 @@ export default function PromotedPosts( { tab }: Props ) {
 						}
 					) }
 				</Notice>
+			) }
+
+			{ shouldDisplayDebtAndPaymentLinks && (
+				<>
+					<Notice
+						isReskinned
+						showDismiss={ false }
+						status="is-error"
+						icon="notice-outline"
+						className="promote-post-i2__payment-blocked-notice"
+					>
+						{ translate(
+							'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',
+							{
+								args: {
+									debtAmount: data.debt || '',
+									// this is just a fallback. debt should never be undefined
+									// it is checked in shouldDisplayDebtAndPaymentLinks
+								},
+							}
+						) }
+					</Notice>
+					<PaymentLinks payment_links={ data?.paymentLinks } />
+				</>
 			) }
 
 			{ /* Render campaigns tab */ }

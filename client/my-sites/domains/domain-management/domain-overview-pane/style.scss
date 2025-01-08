@@ -1,7 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.domains-overview .hosting-dashboard-item-view {
+.wpcom-site .hosting-dashboard-layout.domains-overview 	.site-preview-pane.domains-overview__details {
+	.hosting-dashboard-item-view .hosting-dashboard-item-view__content {
+		font-size: 1rem;
+	}
+}
+
+.hosting-dashboard-layout.domains-overview .hosting-dashboard-item-view {
 	.hosting-dashboard-item-view__header .hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary {
 		 .hosting-dashboard-item-view__header-summary-link {
 			color: var(--studio-gray-50, #646970);
@@ -46,7 +52,7 @@
 		}
 	}
 
-	.domains-overview__navigation-header.navigation-header {
+	div.hosting-dashboard-item-view__content header.domains-overview__navigation-header.navigation-header {
 		padding: 24px;
 		border: 0;
 

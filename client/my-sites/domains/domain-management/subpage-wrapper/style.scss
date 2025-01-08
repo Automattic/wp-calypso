@@ -163,6 +163,35 @@
             }
         }
     }
+
+	&.subpage-wrapper--add-mailbox {
+		.card-heading.new-mailbox-list__numbered-heading,
+		.section-header__label {
+			color: $studio-gray-100;
+			font-size: 1rem;
+			font-weight: 500;
+			margin-bottom: 1rem;
+		}
+
+		.card.new-mailbox {
+			border-radius: 4px;
+		}
+
+        .new-mailbox-list__separator {
+            margin-inline: -24px;
+            background: $studio-gray-5;
+        }
+
+        .vertical-nav {
+            .card.is-placeholder:first-child {
+                border-radius: 4px 4px 0 0;
+            }
+
+            .card.is-placeholder:last-child {
+                border-radius: 0 0 4px 4px;
+            }
+        }
+	}
 }
 
 .is-bulk-all-domains-page .layout__content .main {

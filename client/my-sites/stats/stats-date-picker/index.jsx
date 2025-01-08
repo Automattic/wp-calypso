@@ -11,9 +11,12 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DateLabelDrill from './date-label-drill';
+import withIsDrillingDownHook from './with-is-drilling-down-hook';
 
 import './style.scss';
 
+// TODO: Rename this component to `StatsDateLabel` and refactor it as a Functional Component.
 class StatsDatePicker extends Component {
 	static propTypes = {
 		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
@@ -173,8 +176,18 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort, dateRange, reduxState } =
-			this.props;
+		const {
+			summary,
+			translate,
+			query,
+			showQueryDate,
+			isActivity,
+			isShort,
+			dateRange,
+			reduxState,
+			// Used for drill-downs of the date range chart from `withIsDrillingDownHook`.
+			isDrillingDown,
+		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 
@@ -226,7 +239,9 @@ class StatsDatePicker extends Component {
 					<span>{ sectionTitle }</span>
 				) : (
 					<div className="stats-section-title">
-						<h3>{ sectionTitle }</h3>
+						<h3>
+							{ isDrillingDown ? <DateLabelDrill>{ sectionTitle }</DateLabelDrill> : sectionTitle }
+						</h3>
 						{ showQueryDate && this.renderQueryDate() }
 					</div>
 				) }
@@ -246,4 +261,9 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDatePicker );
+export default flowRight(
+	connectComponent,
+	localize,
+	withLocalizedMoment,
+	withIsDrillingDownHook
+)( StatsDatePicker );

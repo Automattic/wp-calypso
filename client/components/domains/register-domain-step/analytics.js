@@ -7,24 +7,32 @@ import {
 
 const noop = () => {};
 
-export const recordMapDomainButtonClick = ( section ) =>
+export const recordMapDomainButtonClick = ( section, flowName ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', {
+			section,
+			flow_name: flowName,
+		} )
 	);
 
-export const recordTransferDomainButtonClick = ( section, source ) =>
+export const recordTransferDomainButtonClick = ( section, source, flowName ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section, source } )
+		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', {
+			section,
+			source,
+			flow_name: flowName,
+		} )
 	);
 
-export const recordUseYourDomainButtonClick = ( section, source ) =>
+export const recordUseYourDomainButtonClick = ( section, source, flowName ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
 		recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
 			section,
 			source,
+			flow_name: flowName,
 		} )
 	);
 
@@ -33,7 +41,8 @@ export const recordSearchFormSubmit = (
 	section,
 	timeDiffFromLastSearch,
 	count,
-	vendor
+	vendor,
+	flowName
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -48,13 +57,14 @@ export const recordSearchFormSubmit = (
 			search_count: count,
 			search_vendor: vendor,
 			section,
+			flow_name: flowName,
 		} )
 	);
 
-export const recordSearchFormView = ( section ) =>
+export const recordSearchFormView = ( section, flowName ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Landed on Search' ),
-		recordTracksEvent( 'calypso_domain_search_pageview', { section } )
+		recordTracksEvent( 'calypso_domain_search_pageview', { section, flow_name: flowName } )
 	);
 
 export const recordSearchResultsReceive = (
@@ -62,7 +72,8 @@ export const recordSearchResultsReceive = (
 	searchResults,
 	responseTimeInMs,
 	resultCount,
-	section
+	section,
+	flowName
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Receive Results', 'Response Time', responseTimeInMs ),
@@ -72,6 +83,7 @@ export const recordSearchResultsReceive = (
 			response_time_ms: responseTimeInMs,
 			result_count: resultCount,
 			section,
+			flow_name: flowName,
 		} )
 	);
 
@@ -79,7 +91,8 @@ export const recordDomainAvailabilityReceive = (
 	searchQuery,
 	availableStatus,
 	responseTimeInMs,
-	section
+	section,
+	flowName
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -93,10 +106,16 @@ export const recordDomainAvailabilityReceive = (
 			available_status: availableStatus,
 			response_time: responseTimeInMs,
 			section,
+			flow_name: flowName,
 		} )
 	);
 
-export const recordDomainAddAvailabilityPreCheck = ( domain, unavailableStatus, section ) =>
+export const recordDomainAddAvailabilityPreCheck = (
+	domain,
+	unavailableStatus,
+	section,
+	flowName
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -108,16 +127,18 @@ export const recordDomainAddAvailabilityPreCheck = ( domain, unavailableStatus, 
 			domain: domain,
 			unavailable_status: unavailableStatus,
 			section,
+			flow_name: flowName,
 		} )
 	);
 
-export function recordShowMoreResults( searchQuery, pageNumber, section ) {
+export function recordShowMoreResults( searchQuery, pageNumber, section, flowName ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
 		recordTracksEvent( 'calypso_domain_search_show_more_results', {
 			search_query: searchQuery,
 			page_number: pageNumber,
 			section,
+			flow_name: flowName,
 		} )
 	);
 }
@@ -130,22 +151,24 @@ function processFiltersForAnalytics( filters ) {
 	return convertArraysToCSV( prepareKeys( filters ) );
 }
 
-export function recordFiltersReset( filters, keysToReset, section ) {
+export function recordFiltersReset( filters, keysToReset, section, flowName ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Filters Reset' ),
 		recordTracksEvent( 'calypso_domain_search_filters_reset', {
 			keys_to_reset: keysToReset.join( ',' ),
 			section,
+			flow_name: flowName,
 			...processFiltersForAnalytics( filters ),
 		} )
 	);
 }
 
-export function recordFiltersSubmit( filters, section ) {
+export function recordFiltersSubmit( filters, section, flowName ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Filters Submit' ),
 		recordTracksEvent( 'calypso_domain_search_filters_submit', {
 			section,
+			flow_name: flowName,
 			...processFiltersForAnalytics( filters ),
 		} )
 	);
@@ -186,7 +209,7 @@ function processSearchStatQueue() {
 	}
 }
 
-function reportSearchStats( { query, section, timestamp, vendor } ) {
+function reportSearchStats( { query, section, timestamp, vendor, flowName } ) {
 	let timeDiffFromLastSearchInSeconds = 0;
 	if ( lastSearchTimestamp ) {
 		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
@@ -198,6 +221,7 @@ function reportSearchStats( { query, section, timestamp, vendor } ) {
 		section,
 		timeDiffFromLastSearchInSeconds,
 		searchCount,
-		vendor
+		vendor,
+		flowName
 	);
 }
