@@ -50,6 +50,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const customNavigate = useCallback< Navigate< StepperStep[] > >(
 		( nextStep: string, extraData = {}, replace = false ) => {
 			// If the user is not logged in, and the next step requires a logged in user, redirect to the login step.
+			// This only supports in-stepper auth. No need to bother with classic auth since it's deprecated.
 			if (
 				! isLoggedIn &&
 				flow.__experimentalUseBuiltinAuth &&
