@@ -13,7 +13,8 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
@@ -49,15 +50,17 @@ const onboarding: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
 		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
 
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
 					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+					is_logged_out: ( ! userIsLoggedIn ).toString(),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn ]
 		);
 	},
 	useSteps() {
