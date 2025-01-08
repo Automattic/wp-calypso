@@ -52,8 +52,8 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			// If the user is not logged in, and the next step requires a logged in user, redirect to the login step.
 			if (
 				! isLoggedIn &&
-				steps.find( ( step ) => step.slug === nextStep )?.requiresLoggedInUser &&
-				flow.__experimentalUseBuiltinAuth
+				flow.__experimentalUseBuiltinAuth &&
+				steps.find( ( step ) => step.slug === nextStep )?.requiresLoggedInUser
 			) {
 				setStepData( {
 					intent: intent,
