@@ -34,6 +34,7 @@ class StatsGeochart extends Component {
 	};
 
 	static defaultProps = {
+		geoMode: 'country',
 		kind: 'site',
 		numberLabel: '',
 	};
