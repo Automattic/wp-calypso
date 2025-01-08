@@ -115,7 +115,9 @@ button {
 		padding: 60px 0 0;
 
 		// Launchpad has its own header
-		&.launchpad {
+		&.launchpad,
+		&.hundred-year-plan,
+		.hundred-year-domain {
 			margin-top: -60px;
 		}
 
