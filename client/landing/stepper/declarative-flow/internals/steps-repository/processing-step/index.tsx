@@ -139,7 +139,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
+	}, [ hasActionSuccessfullyRun, flow ] );
 
 	const getSubtitle = () => {
 		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
