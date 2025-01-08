@@ -197,6 +197,8 @@ export class FullPostView extends Component {
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 
+		// Track scroll depth and remove related instruments
+		this.trackScrollDepth( this.props.post );
 		if ( this.scrollableContainer ) {
 			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
 		}
