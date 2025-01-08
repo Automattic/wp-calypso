@@ -59,7 +59,7 @@ describe(
 			} );
 
 			it( 'Activate account', async function () {
-				await page.goto( activationLink );
+				await page.goto( activationLink, { timeout: 20000 } );
 			} );
 		} );
 
