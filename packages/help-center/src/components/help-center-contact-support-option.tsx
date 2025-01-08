@@ -1,13 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
@@ -36,7 +34,6 @@ const HelpCenterContactSupportOption = ( {
 	trackEventName,
 }: HelpCenterContactSupportOptionProps ) => {
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const currentSupportInteraction = useSelect(
@@ -59,12 +56,8 @@ const HelpCenterContactSupportOption = ( {
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 
 	const supportHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
-			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
-		}
-
-		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
-	}, [ __, isEnglishLocale ] );
+		return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
+	}, [ __ ] );
 
 	const handleOnClick = () => {
 		generateContactOnClickEvent( 'chat', trackEventName );
