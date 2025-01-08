@@ -1,9 +1,12 @@
 //* This hook is used to track the step route in the declarative flow.
 
+import { OnboardSelect } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepComplete, {
 	type RecordStepCompleteProps,
@@ -12,6 +15,7 @@ import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -57,6 +61,12 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 	const signupStepStartProps = useSnakeCasedKeys( {
 		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
 	} );
+	const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
 
 	/**
 	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
@@ -94,6 +104,8 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		recordStepStart( flowName, kebabCase( stepSlug ), {
 			intent,
 			is_in_hosting_flow: isAnyHostingFlow( flowName ),
+			is_goals_first: isGoalsAtFrontExperiment.toString(),
+			...( goals.length && { goals: goals.join( ',' ) } ),
 			...( design && { assembler_source: getAssemblerSource( design ) } ),
 			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
