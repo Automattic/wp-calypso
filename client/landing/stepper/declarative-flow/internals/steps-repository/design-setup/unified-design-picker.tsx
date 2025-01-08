@@ -743,12 +743,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
-		const tracksProps = {
+		recordTracksEvent( eventName, {
 			step: 'design-setup',
-			intent: intent,
-		};
-
-		recordTracksEvent( eventName, tracksProps );
+			flow,
+			intent,
+		} );
 	}
 	function getPrimaryActionButtonAction(): () => void {
 		if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
