@@ -30,6 +30,14 @@ const OPTION_KEYS = {
 	CITIES: 'cities',
 };
 
+type StatQueryType = 'country' | 'region' | 'city';
+
+const STAT_QUERY_TYPES: Record< string, StatQueryType > = {
+	[ OPTION_KEYS.COUNTRIES ]: 'country',
+	[ OPTION_KEYS.REGIONS ]: 'region',
+	[ OPTION_KEYS.CITIES ]: 'city',
+};
+
 type SelectOptionType = {
 	label: string;
 	value: string;
@@ -47,12 +55,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const statType = 'statsCountryViews';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
-
-	const {
-		data = [],
-		isLoading: isRequestingData,
-		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, 'country', query );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -75,6 +77,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			analyticsId: 'cities',
 		},
 	};
+
+	const statQueryType = STAT_QUERY_TYPES[ selectedOption ];
+
+	const {
+		data = [],
+		isLoading: isRequestingData,
+		isError,
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, statQueryType, query );
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;

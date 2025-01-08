@@ -8,7 +8,12 @@ import { useMemo, useRef } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { FEATURE_TO_ROUTE_MAP, DOMAIN_OVERVIEW, EMAIL_MANAGEMENT } from './constants';
+import {
+	FEATURE_TO_ROUTE_MAP,
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+	FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT,
+} from './constants';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
@@ -22,6 +27,7 @@ interface Props {
 	selectedFeature: string;
 	siteSlug: string;
 	site: SiteExcerptData;
+	inSiteContext?: boolean;
 }
 
 export function showDomainManagementPage( route: string ) {
@@ -56,6 +62,7 @@ const DomainOverviewPane = ( {
 	selectedFeature,
 	siteSlug,
 	site,
+	inSiteContext,
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
@@ -117,8 +124,12 @@ const DomainOverviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
+							const featureMap = inSiteContext
+								? FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT
+								: FEATURE_TO_ROUTE_MAP;
+
 							showDomainManagementPage(
-								FEATURE_TO_ROUTE_MAP[ defaultFeatureId ]
+								featureMap[ defaultFeatureId ]
 									.replace( ':domain', selectedDomain )
 									.replace( ':site', siteSlug )
 							);
@@ -135,7 +146,7 @@ const DomainOverviewPane = ( {
 		<ItemView
 			itemData={ itemData }
 			closeItemView={ () => {
-				page.show( paths.domainManagementRoot() );
+				inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
 			} }
 			features={ features }
 			enforceTabsView

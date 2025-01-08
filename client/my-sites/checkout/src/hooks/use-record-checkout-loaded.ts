@@ -25,6 +25,7 @@ export default function useRecordCheckoutLoaded( {
 } ): void {
 	const reduxDispatch = useDispatch();
 	const hasRecordedCheckoutLoad = useRef( false );
+	const { currency } = responseCart;
 	if ( ! isLoading && ! hasRecordedCheckoutLoad.current ) {
 		debug( 'composite checkout has loaded' );
 		reduxDispatch(
@@ -35,6 +36,7 @@ export default function useRecordCheckoutLoaded( {
 				product_slug: productAliasFromUrl,
 				is_composite: true,
 				checkout_flow: checkoutFlow,
+				currency,
 			} )
 		);
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );

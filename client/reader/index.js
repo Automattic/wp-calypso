@@ -26,13 +26,7 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 } from './controller';
-import {
-	userPosts,
-	userComments,
-	userLikes,
-	userReposts,
-	userLists,
-} from './user-stream/controller';
+import { userPosts, userLists } from './user-stream/controller';
 
 import './style.scss';
 
@@ -111,36 +105,6 @@ export default async function () {
 				updateLastRoute,
 				sidebar,
 				userPosts,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/read/users/:user_id/comments',
-				blogDiscoveryByFeedId,
-				redirectLoggedOutToSignup,
-				updateLastRoute,
-				sidebar,
-				userComments,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/read/users/:user_id/likes',
-				blogDiscoveryByFeedId,
-				redirectLoggedOutToSignup,
-				updateLastRoute,
-				sidebar,
-				userLikes,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/read/users/:user_id/reposts',
-				blogDiscoveryByFeedId,
-				redirectLoggedOutToSignup,
-				updateLastRoute,
-				sidebar,
-				userReposts,
 				makeLayout,
 				clientRender
 			);

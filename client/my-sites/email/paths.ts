@@ -126,7 +126,15 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+};
 
 // Retrieves the URL to set up Titan mailboxes
 export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
@@ -184,12 +192,21 @@ export const getEmailInDepthComparisonPath = (
 	relativeTo?: string,
 	source?: string,
 	intervalLength?: string
-) =>
-	getPath( siteName, domainName, 'compare', relativeTo, {
+) => {
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+			interval: intervalLength,
+			referrer: relativeTo,
+			source,
+		} ) }`;
+	}
+
+	return getPath( siteName, domainName, 'compare', relativeTo, {
 		interval: intervalLength,
 		referrer: relativeTo,
 		source,
 	} );
+};
 
 export const getProfessionalEmailCheckoutUpsellPath = (
 	siteName: string,

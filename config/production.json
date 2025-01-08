@@ -165,6 +165,7 @@
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
 		"reader/recent-feed-overhaul": true,
+		"reader/user-profile": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

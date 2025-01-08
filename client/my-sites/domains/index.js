@@ -17,7 +17,9 @@ import {
 	EMAIL_MANAGEMENT,
 } from './domain-management/domain-overview-pane/constants';
 import {
+	ADD_MAILBOX,
 	ADD_FORWARDING_EMAIL,
+	COMPARE_EMAIL_PROVIDERS,
 	DNS_RECORDS,
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
@@ -413,6 +415,18 @@ export default function () {
 	);
 
 	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/compare/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( COMPARE_EMAIL_PROVIDERS ),
+		emailController.emailManagementInDepthComparison,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
 		siteSelection,
 		navigation,
@@ -466,6 +480,18 @@ export default function () {
 		navigation,
 		domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
 		domainManagementController.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:site/titan/new/:domain',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
+		emailController.emailManagementNewTitanAccount,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,

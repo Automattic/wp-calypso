@@ -61,7 +61,10 @@ export function isUnderDomainManagementAll( path ) {
 }
 
 export function isUnderDomainManagementOverview( path ) {
-	return path?.startsWith( domainManagementOverviewRoot() + '/' );
+	return (
+		path?.startsWith( domainManagementOverviewRoot() + '/' ) ||
+		path?.startsWith( '/overview/site-domain/' )
+	);
 }
 
 export function domainAddNew( siteName, searchTerm ) {
