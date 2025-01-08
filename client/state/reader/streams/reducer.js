@@ -227,7 +227,7 @@ export const isRequesting = ( state = false, action ) => {
  */
 export const lastPage = ( state = false, action ) => {
 	if ( action.type === READER_STREAMS_PAGE_RECEIVE ) {
-		return action.payload.streamItems.length === 0;
+		return action.payload.streamItems.length === 0 || ! action.payload.pageHandle;
 	}
 	return state;
 };
@@ -239,11 +239,11 @@ export const lastPage = ( state = false, action ) => {
 export const pageHandle = ( state = null, action ) => {
 	if (
 		action.type === READER_STREAMS_PAGE_RECEIVE &&
-		action.payload.pageHandle &&
 		! action.payload.isPoll &&
 		! action.payload.gap
 	) {
-		return action.payload.pageHandle;
+		// Explicitly set pageHandle to null if server returns null.
+		return action.payload.pageHandle ?? null;
 	}
 	return state;
 };
