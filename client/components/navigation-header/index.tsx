@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -35,6 +32,7 @@ interface Props {
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
 	style?: object;
+	loggedIn?: boolean;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -51,17 +49,10 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		alwaysShowTitle = false,
 		screenReader,
 		screenOptionsTab,
+		loggedIn = true,
 	} = props;
 
-	const sectionName = useSelector( getSectionName );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const hideInSections = [ 'plugins', 'themes' ];
-
-	// For logged-out users, we handle title visibility differently.
-	const showTitle =
-		alwaysShowTitle ||
-		( isLoggedIn && navigationItems.length < 2 ) ||
-		! hideInSections.includes( sectionName || '' );
+	const showTitle = alwaysShowTitle || ( navigationItems.length < 2 && loggedIn );
 
 	return (
 		<header
