@@ -1,3 +1,6 @@
+import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
@@ -21,6 +24,26 @@ export default function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency Overview' );
 
+	const { createSuccessNotice, createErrorNotice, createInfoNotice, createWarningNotice } =
+		useDispatch( noticesStore );
+
+	const onClick = () => {
+		createSuccessNotice( 'This is a notice that will timeout' );
+		createSuccessNotice( translate( 'This is a notice with link that will not timeout' ), {
+			explicitDismiss: true,
+			actions: [
+				{
+					label: 'Action',
+					url: null,
+					onClick: null,
+				},
+			],
+		} );
+		createErrorNotice( 'This is a notice that will timeout' );
+		createInfoNotice( 'This is a notice that will timeout' );
+		createWarningNotice( 'This is a notice that will timeout' );
+	};
+
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
@@ -35,6 +58,7 @@ export default function Overview() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody className="a4a-overview-content">
+				<Button onClick={ onClick }>Hello</Button>
 				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 

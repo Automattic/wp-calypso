@@ -34673,6 +34673,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.8.0"
     "@wordpress/is-shallow-equal": "npm:^5.8.0"
     "@wordpress/keycodes": "npm:^4.8.0"
+    "@wordpress/notices": "npm:^5.15.1"
     "@wordpress/primitives": "npm:^4.8.0"
     "@wordpress/rich-text": "npm:^7.8.0"
     "@wordpress/stylelint-config": "npm:^23.0.0"

@@ -401,6 +401,11 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
+					<AsyncLoad
+						require="calypso/components/global-notices-v2"
+						placeholder={ null }
+						id="notices-v2"
+					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>

@@ -199,6 +199,7 @@
 		"@wordpress/icons": "^10.8.0",
 		"@wordpress/is-shallow-equal": "^5.8.0",
 		"@wordpress/keycodes": "^4.8.0",
+		"@wordpress/notices": "^5.15.1",
 		"@wordpress/primitives": "^4.8.0",
 		"@wordpress/rich-text": "^7.8.0",
 		"@wordpress/url": "^4.8.0",
