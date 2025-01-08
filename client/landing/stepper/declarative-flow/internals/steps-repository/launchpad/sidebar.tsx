@@ -290,6 +290,11 @@ const Sidebar = ( {
 					launchpadContext="onboarding"
 					makeLastTaskPrimaryAction
 				/>
+				<p className="launchpad__sidebar-description">
+					{ translate(
+						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+					) }
+				</p>
 				{ showPlansModal && site?.ID && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ () => setShowPlansModal( false ) }

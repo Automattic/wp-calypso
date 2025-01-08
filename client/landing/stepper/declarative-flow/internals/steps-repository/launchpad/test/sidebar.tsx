@@ -237,6 +237,15 @@ describe( 'Sidebar', () => {
 		expect( progressBar ).toBeVisible();
 	} );
 
+	it( 'displays site launch description', () => {
+		renderSidebar( props );
+
+		const launchingDescription = screen.getByText(
+			"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+		);
+		expect( launchingDescription ).toBeVisible();
+	} );
+
 	describe( 'when no custom domain has been purchased', () => {
 		it( 'shows a copy url to clipboard button', () => {
 			renderSidebar( {
