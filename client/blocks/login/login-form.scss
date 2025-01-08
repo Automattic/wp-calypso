@@ -54,7 +54,8 @@ form {
 	font-size: 0.75rem;
 }
 
-.layout.is-white-login .login.is-akismet .login__form {
+.layout.is-white-login .login.is-akismet .login__form,
+.layout.is-white-login .login.is-akismet .continue-as-user {
 	.button.is-primary {
 		background-color: var(--color-akismet);
 
