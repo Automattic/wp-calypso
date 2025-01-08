@@ -295,13 +295,16 @@ export class FullPostView extends Component {
 
 	setScrollDepth = () => {
 		if ( this.scrollableContainer ) {
-			const scrollTop = this.scrollableContainer.scrollTop;
-			const scrollHeight = this.scrollableContainer.scrollHeight;
-			const clientHeight = this.scrollableContainer.clientHeight;
-			const scrollDepth = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
+			const scrollTop = this.scrollableContainer.scrollTop ?? 0;
+			const scrollHeight = this.scrollableContainer.scrollHeight ?? 0;
+			const clientHeight = this.scrollableContainer.clientHeight ?? 0;
+
+			const denominator = scrollHeight - clientHeight;
+			const scrollDepth = denominator <= 0 ? 0 : scrollTop / denominator;
+
 			this.setState( ( prevState ) => ( {
-				maxScrollDepth: Math.max( prevState.maxScrollDepth, scrollDepth ) || 0,
-				hasCompleted: prevState.hasCompleted || scrollDepth >= 90,
+				maxScrollDepth: Math.min( 1, Math.max( 0, prevState.maxScrollDepth || 0, scrollDepth ) ),
+				hasCompleted: prevState.hasCompleted || scrollDepth >= 0.9,
 			} ) );
 		}
 	};
@@ -313,10 +316,11 @@ export class FullPostView extends Component {
 		}
 
 		if ( this.scrollableContainer && post.ID ) {
-			const roundedDepth = Math.round( maxScrollDepth * 100 ) / 100;
+			const scrollDepthPercentage = Math.round( maxScrollDepth * 100 );
+
 			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
 				context: 'full-post',
-				scroll_depth: roundedDepth,
+				scroll_depth: scrollDepthPercentage,
 			} );
 		}
 	};
