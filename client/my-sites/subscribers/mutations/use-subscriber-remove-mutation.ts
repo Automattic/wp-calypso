@@ -52,9 +52,12 @@ const useSubscriberRemoveMutation = (
 				await Promise.all( promises );
 			}
 
+			// Remove the subscriber from the followers and email followers because they may be both of them.
 			if ( subscriber.user_id ) {
 				await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
-			} else {
+			}
+
+			if ( subscriber.subscription_id ) {
 				await wpcom.req.post(
 					`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
 				);
