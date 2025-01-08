@@ -339,7 +339,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const { designs, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
 	// Show no results only when no design matches the selected categories and tiers.
 	const showNoResults = Object.values( designsByGroup ).every(
@@ -413,7 +413,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			) }
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
-				<DesignCardGroup { ...designCardProps } designs={ all } />
+				<DesignCardGroup { ...designCardProps } designs={ designs } />
 			) }
 
 			{ /* We want to show the last one on top first. */ }
