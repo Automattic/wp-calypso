@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -53,11 +54,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	} = props;
 
 	const sectionName = useSelector( getSectionName );
-	// SEO: Hide title on plugins and themes pages as they have their own titles in markup.
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const hideInSections = [ 'plugins', 'themes' ];
+
+	// For logged-out users, we handle title visibility differently.
 	const showTitle =
 		alwaysShowTitle ||
-		( navigationItems.length < 2 && ! hideInSections.includes( sectionName || '' ) );
+		( isLoggedIn && navigationItems.length < 2 ) ||
+		! hideInSections.includes( sectionName || '' );
 
 	return (
 		<header
