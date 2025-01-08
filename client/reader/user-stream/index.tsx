@@ -2,15 +2,11 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
+import UserProfileHeader from 'calypso/reader/user-stream/components/user-profile-header';
+import UserLists from 'calypso/reader/user-stream/views/lists';
+import UserPosts from 'calypso/reader/user-stream/views/posts';
 import { requestUser } from 'calypso/state/reader/users/actions';
-import UserLists from './views/lists';
-import UserPosts from './views/posts';
 import './style.scss';
 
 interface NavigationItem {
@@ -66,41 +62,19 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
-
-		const headerContent = (
-			<>
-				<header className="user-profile__header">
-					<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
-					<div className="user-profile-header__details">
-						<div className="user-profile-header__display-name">
-							<ReaderAuthorLink author={ { name: user.display_name } }>
-								{ user.display_name }
-							</ReaderAuthorLink>
-						</div>
-						{ user.bio && (
-							<div className="user-profile-header__bio">
-								<p>{ user.bio }</p>
-							</div>
-						) }
-					</div>
-				</header>
-				<SectionNav selectedText={ selectedTab }>
-					<NavTabs>
-						{ navigationItems.map( ( item ) => (
-							<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
-								{ item.label }
-							</NavItem>
-						) ) }
-					</NavTabs>
-				</SectionNav>
-			</>
+		const header = (
+			<UserProfileHeader
+				user={ user }
+				navigationItems={ navigationItems }
+				selectedTab={ selectedTab }
+			/>
 		);
 
 		switch ( basePath ) {
 			case `/read/users/${ userId }`:
-				return <UserPosts streamKey={ streamKey as string } headerContent={ headerContent } />;
+				return <UserPosts streamKey={ streamKey as string } headerContent={ header } />;
 			case `/read/users/${ userId }/lists`:
-				return <UserLists headerContent={ headerContent } />;
+				return <UserLists headerContent={ header } />;
 			default:
 				return null;
 		}
