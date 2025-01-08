@@ -77,6 +77,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
@@ -101,8 +102,6 @@ export class FullPostView extends Component {
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
-		maxScrollDepth: 0, // Track the maximum scroll depth achieved
-		hasCompleted: false, // Track whether the user completed the post
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -113,6 +112,7 @@ export class FullPostView extends Component {
 	};
 
 	componentDidMount() {
+		this.scrollTracker = new ScrollTracker();
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
@@ -141,8 +141,8 @@ export class FullPostView extends Component {
 			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
 			document.querySelector( '#primary > div > div' ); // for Recent Feed in Stream
 		if ( scrollableContainer ) {
-			scrollableContainer.addEventListener( 'scroll', this.setScrollDepth );
-			this.scrollableContainer = scrollableContainer; // Save reference for cleanup
+			this.scrollableContainer = scrollableContainer;
+			this.scrollTracker.setContainer( scrollableContainer );
 			this.resetScroll();
 		}
 	}
@@ -199,9 +199,7 @@ export class FullPostView extends Component {
 
 		// Track scroll depth and remove related instruments
 		this.trackScrollDepth( this.props.post );
-		if ( this.scrollableContainer ) {
-			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
-		}
+		this.scrollTracker.cleanup();
 		this.clearResetScrollTimeout();
 	}
 
@@ -282,54 +280,31 @@ export class FullPostView extends Component {
 	resetScroll = () => {
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
-			if ( this.scrollableContainer ) {
-				this.scrollableContainer.scrollTo( {
-					top: 0,
-					left: 0,
-					behavior: 'instant',
-				} );
-			}
-			this.setState( { maxScrollDepth: 0, hasCompleted: false } );
+			this.scrollTracker.resetMaxScrollDepth();
 		}, 0 ); // Defer until after the DOM update
 	};
 
-	setScrollDepth = () => {
-		if ( this.scrollableContainer ) {
-			const scrollTop = this.scrollableContainer.scrollTop ?? 0;
-			const scrollHeight = this.scrollableContainer.scrollHeight ?? 0;
-			const clientHeight = this.scrollableContainer.clientHeight ?? 0;
-
-			const denominator = scrollHeight - clientHeight;
-			const scrollDepth = denominator <= 0 ? 0 : scrollTop / denominator;
-
-			this.setState( ( prevState ) => ( {
-				maxScrollDepth: Math.min( 1, Math.max( 0, prevState.maxScrollDepth || 0, scrollDepth ) ),
-				hasCompleted: prevState.hasCompleted || scrollDepth >= 0.9,
-			} ) );
-		}
-	};
-
 	trackScrollDepth = ( post = null ) => {
-		const { maxScrollDepth } = this.state;
 		if ( ! post ) {
 			post = this.props.post;
 		}
 
 		if ( this.scrollableContainer && post.ID ) {
-			const scrollDepthPercentage = Math.round( maxScrollDepth * 100 );
-
+			const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
 			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
 				context: 'full-post',
-				scroll_depth: scrollDepthPercentage,
+				scroll_depth: maxScrollDepth,
 			} );
 		}
 	};
 
 	trackExitBeforeCompletion = ( post = null ) => {
-		const { hasCompleted, maxScrollDepth } = this.state;
 		if ( ! post ) {
 			post = this.props.post;
 		}
+
+		const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
+		const hasCompleted = maxScrollDepth >= 90; // User has read 90% of the post
 
 		if ( this.scrollableContainer && post.ID && ! hasCompleted ) {
 			recordTrackForPost( 'calypso_reader_article_exit_before_completion', post, {
