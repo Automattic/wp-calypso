@@ -1,8 +1,11 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
-import { generatePath, useMatch, useNavigate } from 'react-router';
+import { generatePath, createPath, useMatch, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { getLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -46,28 +49,58 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const steps = flow.useSteps();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const stepsSlugs = steps.map( ( step ) => step.slug );
+	const locale = useFlowLocale();
+	const { siteId, siteSlug } = useSiteData();
 
 	const customNavigate = useCallback< Navigate< StepperStep[] > >(
 		( nextStep: string, extraData = {}, replace = false ) => {
 			// If the user is not logged in, and the next step requires a logged in user, redirect to the login step.
-			// This only supports in-stepper auth. No need to bother with classic auth since it's deprecated.
 			if (
 				! isLoggedIn &&
-				flow.__experimentalUseBuiltinAuth &&
 				steps.find( ( step ) => step.slug === nextStep )?.requiresLoggedInUser
 			) {
-				setStepData( {
-					intent: intent,
-					previousStep: currentStepSlug,
-					nextStep,
-				} );
-				const signInPath = generatePath( `/:flow/:step/:lang?`, {
-					flow: flow.name,
-					lang,
-					step: PRIVATE_STEPS.USER.slug,
+				// In-stepper auth.
+				if ( flow.__experimentalUseBuiltinAuth ) {
+					const signInPath = generatePath( `/:flow/:step/:lang?`, {
+						flow: flow.name,
+						lang,
+						step: PRIVATE_STEPS.USER.slug,
+					} );
+
+					setStepData( {
+						intent: intent,
+						previousStep: currentStepSlug,
+						nextStep,
+					} );
+
+					return navigate( signInPath );
+				}
+
+				const nextStepPath = createPath( {
+					// We have to include /setup, this this URL should be absolute and we can't use `useHref`.
+					pathname: generatePath( `/setup/:flow/:step/:lang?`, {
+						flow: flow.name,
+						lang,
+						step: nextStep,
+					} ),
+					search: currentSearchParams.toString(),
+					hash: window.location.hash,
 				} );
 
-				return navigate( signInPath, { replace: true } );
+				debugger;
+
+				// Classic /login auth.
+				const loginUrl = getLoginUrlForFlow( {
+					flow,
+					locale,
+					path: nextStepPath,
+					siteId,
+					siteSlug,
+				} );
+
+				debugger;
+
+				return window.location.assign( loginUrl );
 			}
 
 			const hasQueryParams = nextStep.includes( '?' );
@@ -91,7 +124,19 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			navigate( addQueryParams( newPath, queryParams ), { replace } );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- steps array is recreated on every render, use stepsSlugs instead.
-		[ isLoggedIn, stepsSlugs, flow, intent, lang, navigate, setStepData, currentStepSlug ]
+		[
+			stepsSlugs,
+			isLoggedIn,
+			locale,
+			siteId,
+			siteSlug,
+			flow,
+			intent,
+			lang,
+			navigate,
+			setStepData,
+			currentStepSlug,
+		]
 	);
 
 	return {
