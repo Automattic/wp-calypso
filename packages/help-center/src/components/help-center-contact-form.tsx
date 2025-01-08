@@ -507,9 +507,8 @@ export const HelpCenterContactForm = () => {
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
-		const showForumSubmissionCTALabel = mode === 'FORUM' && showingSearchResults;
 
-		if ( showForumSubmissionCTALabel ) {
+		if ( mode === 'FORUM' && showingSearchResults ) {
 			return formTitles.buttonSubmittingLabel;
 		}
 
