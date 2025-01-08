@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import SocialLogo from 'social-logos';
+import { SocialLogo } from 'social-logos';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
 import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 

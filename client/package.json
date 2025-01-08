@@ -200,7 +200,7 @@
 		"redux-dynamic-middlewares": "^2.2.0",
 		"redux-thunk": "^3.1.0",
 		"regenerator-runtime": "^0.13.9",
-		"social-logos": "^2.5.9",
+		"social-logos": "^3.1.16",
 		"source-map-support": "^0.5.19",
 		"store": "^2.0.12",
 		"striptags": "^3.1.1",
