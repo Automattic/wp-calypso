@@ -30,9 +30,9 @@ const OPTION_KEYS = {
 	CITIES: 'cities',
 };
 
-type StatQueryType = 'country' | 'region' | 'city';
+type GeoMode = 'country' | 'region' | 'city';
 
-const STAT_QUERY_TYPES: Record< string, StatQueryType > = {
+const GEO_MODES: Record< string, GeoMode > = {
 	[ OPTION_KEYS.COUNTRIES ]: 'country',
 	[ OPTION_KEYS.REGIONS ]: 'region',
 	[ OPTION_KEYS.CITIES ]: 'city',
@@ -78,13 +78,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		},
 	};
 
-	const statQueryType = STAT_QUERY_TYPES[ selectedOption ];
+	const geoMode = GEO_MODES[ selectedOption ];
 
 	const {
 		data = [],
 		isLoading: isRequestingData,
 		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, statQueryType, query );
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query );
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -174,7 +174,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Visitors' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart query={ query } skipQuery /> }
+						heroElement={ <Geochart data={ data } geoMode={ geoMode } skipQuery /> }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={
