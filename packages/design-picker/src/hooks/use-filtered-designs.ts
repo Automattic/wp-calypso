@@ -74,9 +74,7 @@ export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string 
 			);
 		}
 
-		return {
-			all,
-		};
+		return { designs };
 	}, [ designs, selectedCategoriesWithoutDesignTier, selectedDesignTiers ] );
 
 	return filteredDesigns;
