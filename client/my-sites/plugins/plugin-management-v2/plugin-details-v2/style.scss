@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .plugin-details-v2 {
 	padding: 0 16px;
@@ -15,7 +15,7 @@
 
 	.plugin-details-v2__body-container {
 		padding-block-start: 0;
-		background: var(--color-surface);
+		background: var( --color-surface );
 		margin: 32px -180px -32px;
 		padding: 0 180px;
 
@@ -24,7 +24,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
 	}
 
@@ -46,7 +46,7 @@
 		display: flex;
 		margin: 10px 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin: 0;
 		}
 	}
@@ -54,7 +54,7 @@
 	.plugin-details__page {
 		padding: 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 30px 0 0;
 		}
 	}
@@ -83,13 +83,13 @@
 				&:first-child .section-nav-tab__link {
 					padding: 8px 8px 12px;
 
-					@include breakpoint-deprecated( ">660px" ) {
+					@include breakpoint-deprecated( '>660px' ) {
 						padding-left: 0;
 					}
 				}
 
 				&.is-selected .section-nav-tab__link {
-					color: var(--color-text-inverted);
+					color: var( --color-text-inverted );
 
 					.section-nav-tab__text {
 						padding-bottom: 0;
@@ -97,7 +97,7 @@
 						border-bottom: none;
 					}
 
-					@include breakpoint-deprecated( ">660px" ) {
+					@include breakpoint-deprecated( '>660px' ) {
 						color: initial;
 					}
 				}
@@ -108,15 +108,15 @@
 
 .plugin-details-v2__header {
 	border-bottom: none !important;
-	background-color: var(--color-surface-backdrop) !important;
+	background-color: var( --color-surface-backdrop ) !important;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		inset-inline-start: calc(var(--sidebar-width-min) + 1px) !important;
+	@include breakpoint-deprecated( '>660px' ) {
+		inset-inline-start: calc( var( --sidebar-width-min ) + 1px ) !important;
 		padding-inline-start: 24px !important;
 	}
 
 	@include break-large {
-		inset-inline-start: calc(var(--sidebar-width-min) + 45px) !important;
+		inset-inline-start: calc( var( --sidebar-width-min ) + 45px ) !important;
 		padding-inline-start: 39px !important;
 	}
 
@@ -132,6 +132,31 @@
 
 .plugin-details-v2__title {
 	font-size: 0.875rem;
-	color: var(--color-text);
+	color: var( --color-text );
 	margin: 16px 0;
+}
+
+.plugin-details-v2__sites-list {
+	.dataviews-view-table tr {
+		th:last-child {
+			text-align: right;
+			padding-right: 0;
+		}
+
+		td:last-child {
+			padding-right: 16px;
+		}
+
+		td:first-child .dataviews-view-table__cell-content-wrapper > span {
+			flex-grow: 1;
+
+			.plugin-row-formatter__overlay {
+				display: none;
+			}
+		}
+
+		td:last-child .dataviews-view-table__cell-content-wrapper {
+			justify-content: flex-end;
+		}
+	}
 }
