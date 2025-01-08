@@ -25,6 +25,7 @@ class StatsGeochart extends Component {
 		statType: PropTypes.string,
 		query: PropTypes.object,
 		data: PropTypes.array,
+		geoMode: PropTypes.string,
 		kind: PropTypes.string,
 		postId: PropTypes.number,
 		skipQuery: PropTypes.bool,
@@ -103,18 +104,23 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, translate, numberLabel } = this.props;
+		const { currentUserCountryCode, data, geoMode, translate, numberLabel } = this.props;
 		if ( ! data || ! data.length ) {
 			return;
 		}
 
-		const mapData = map( data, ( country ) => {
+		const mapData = map( data, ( location ) => {
+			let code = location.countryCode;
+			if ( geoMode !== 'country' ) {
+				code = `${ location.countryCode } ${ location.label }`;
+			}
+
 			return [
 				{
-					v: country.countryCode,
-					f: country.label,
+					v: code,
+					f: location.label,
 				},
-				country.value,
+				location.value,
 			];
 		} );
 
@@ -140,6 +146,10 @@ class StatsGeochart extends Component {
 			colorAxis: { colors: [ chartColorLight, chartColorDark ] },
 			domain: currentUserCountryCode,
 		};
+
+		if ( geoMode !== 'country' ) {
+			options.displayMode = 'markers';
+		}
 
 		const regions = [ ...new Set( map( data, 'region' ) ) ];
 
