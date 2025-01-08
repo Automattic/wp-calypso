@@ -5,10 +5,10 @@ import Stream from 'calypso/reader/stream';
 
 interface UserPostsProps {
 	streamKey: string;
-	children?: React.ReactNode;
+	headerContent: React.ReactNode;
 }
 
-const UserPosts = ( { streamKey, children }: UserPostsProps ): JSX.Element => {
+const UserPosts = ( { streamKey, headerContent }: UserPostsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (
@@ -30,7 +30,7 @@ const UserPosts = ( { streamKey, children }: UserPostsProps ): JSX.Element => {
 				/>
 			) }
 		>
-			{ children }
+			{ headerContent }
 		</Stream>
 	);
 };

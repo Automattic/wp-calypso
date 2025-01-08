@@ -98,9 +98,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 
 		switch ( basePath ) {
 			case `/read/users/${ userId }`:
-				return <UserPosts streamKey={ streamKey as string }>{ headerContent }</UserPosts>;
+				return <UserPosts streamKey={ streamKey as string } headerContent={ headerContent } />;
 			case `/read/users/${ userId }/lists`:
-				return <UserLists>{ headerContent }</UserLists>;
+				return <UserLists headerContent={ headerContent } />;
 			default:
 				return null;
 		}

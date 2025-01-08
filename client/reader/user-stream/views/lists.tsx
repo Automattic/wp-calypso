@@ -3,15 +3,15 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 
 interface UserListsProps {
-	children?: React.ReactNode;
+	headerContent: React.ReactNode;
 }
 
-const UserLists = ( { children }: UserListsProps ): JSX.Element => {
+const UserLists = ( { headerContent }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (
-		<div className="user-profile__lists">
-			{ children }
+		<div className="user-stream__lists">
+			{ headerContent }
 			<EmptyContent
 				illustration={ null }
 				icon={ <Icon icon={ formatListBullets } size={ 48 } /> }
