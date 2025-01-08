@@ -35,7 +35,13 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
 			{ isEnabled( 'a4a-product-page-redesign' ) ? (
-				<ProductsOverviewV2 />
+				<ProductsOverviewV2
+					siteId={ site_id }
+					suggestedProduct={ product_slug }
+					defaultMarketplaceType={ purchaseType }
+					productBrand={ getValidBrand( productBrand ) }
+					searchQuery={ search_query }
+				/>
 			) : (
 				<ProductsOverview
 					siteId={ site_id }
