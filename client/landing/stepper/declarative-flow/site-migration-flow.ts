@@ -55,6 +55,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 			STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+			STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -516,7 +517,7 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: fromQueryParam, siteSlug },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 						)
 					);
 				}
