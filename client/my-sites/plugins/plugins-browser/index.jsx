@@ -152,19 +152,15 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const getMetaDescription = () => {
 		if ( category ) {
 			return translate(
-				"Discover %(category)s plugins to extend your WordPress site's functionality.",
+				'Discover %(category)s plugins to extend your WordPress site’s functionality and unlock its full potential with tools built for success.',
 				{
 					args: { category },
 				}
 			);
 		}
-		if ( search ) {
-			return translate( 'Search results for "%(search)s" in the WordPress plugin directory.', {
-				args: { search },
-			} );
-		}
+
 		return translate(
-			"Browse and discover WordPress plugins to extend your site's functionality."
+			'Discover and install WordPress plugins to extend your site’s functionality. Boost SEO, e-commerce, and security with seamless WordPress.com integration.'
 		);
 	};
 
