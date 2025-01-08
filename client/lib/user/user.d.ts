@@ -14,6 +14,7 @@ export type UserData = { ID: number } & Partial< OptionalUserData >;
 export type OptionalUserData = {
 	abtests: Record< string, string >;
 	avatar_URL: string;
+	bio: string;
 	date: string;
 	description: string;
 	display_name: string;

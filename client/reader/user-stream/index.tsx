@@ -2,17 +2,15 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
 import { requestUser } from 'calypso/state/reader/users/actions';
-import UserComments from './views/comments';
-import UserLikes from './views/likes';
 import UserLists from './views/lists';
 import UserPosts from './views/posts';
-import UserReposts from './views/reposts';
 import './style.scss';
 
 interface NavigationItem {
@@ -58,21 +56,6 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 			selected: currentPath === `/read/users/${ userId }`,
 		},
 		{
-			label: translate( 'Comments' ),
-			path: `/read/users/${ userId }/comments`,
-			selected: currentPath === `/read/users/${ userId }/comments`,
-		},
-		{
-			label: translate( 'Likes' ),
-			path: `/read/users/${ userId }/likes`,
-			selected: currentPath === `/read/users/${ userId }/likes`,
-		},
-		{
-			label: translate( 'Reposts' ),
-			path: `/read/users/${ userId }/reposts`,
-			selected: currentPath === `/read/users/${ userId }/reposts`,
-		},
-		{
 			label: translate( 'Lists' ),
 			path: `/read/users/${ userId }/lists`,
 			selected: currentPath === `/read/users/${ userId }/lists`,
@@ -87,21 +70,28 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 		switch ( basePath ) {
 			case `/read/users/${ userId }`:
 				return <UserPosts streamKey={ streamKey as string } />;
-			case `/read/users/${ userId }/comments`:
-				return <UserComments />;
-			case `/read/users/${ userId }/likes`:
-				return <UserLikes />;
-			case `/read/users/${ userId }/reposts`:
-				return <UserReposts />;
 			case `/read/users/${ userId }/lists`:
 				return <UserLists />;
 		}
 	};
 
 	return (
-		<div className="user-stream">
-			<h1 className="user-stream__header">User Profile</h1>
-			<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+		<div className="user-profile">
+			<header className="user-profile__header">
+				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+				<div className="user-profile-header__details">
+					<div className="user-profile-header__display-name">
+						<ReaderAuthorLink author={ { name: user.display_name } }>
+							{ user.display_name }
+						</ReaderAuthorLink>
+					</div>
+					{ user.bio && (
+						<div className="user-profile-header__bio">
+							<p>{ user.bio }</p>
+						</div>
+					) }
+				</div>
+			</header>
 			<SectionNav selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
@@ -111,7 +101,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 					) ) }
 				</NavTabs>
 			</SectionNav>
-			<div className="user-stream__content">{ renderContent() }</div>
+			<div className="user-profile__content-wrapper">
+				<div className="user-profile__content">{ renderContent() }</div>
+			</div>
 		</div>
 	);
 }
