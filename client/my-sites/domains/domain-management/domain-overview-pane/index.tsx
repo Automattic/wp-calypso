@@ -153,7 +153,9 @@ const DomainOverviewPane = ( {
 			itemViewHeaderExtraProps={ {
 				headerButtons: PreviewPaneHeaderButtons,
 			} }
+				hideHeader={ inSiteContext }
 		/>
+		</>
 	);
 };
 
