@@ -1238,6 +1238,11 @@ export default function CampaignItemDetails( props: Props ) {
 
 													const durationFormatted = formatDuration( createdAt );
 
+													if ( order.status !== 'COMPLETED' ) {
+														// we only want to display data when orders are in completed state
+														return null;
+													}
+
 													return (
 														<div key={ index } className="campaign-item-details__weekly-orders-row">
 															<div className="campaign-item-details__weekly-label">
