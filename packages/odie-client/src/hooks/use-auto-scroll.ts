@@ -18,14 +18,8 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 
 		const isLastMessageFromOdie =
 			chat?.messages?.length > 0 && chat?.messages[ chat?.messages?.length - 1 ].role === 'bot';
-		if (
-			lastChatStatus.current === 'sending' &&
-			chat.status === 'loaded' &&
-			isLastMessageFromOdie
-		) {
-			// odie replies can be long, so we disable autoscroll when user interacts with odie
-			return;
-		}
+		const hasOdieReplied =
+			lastChatStatus.current === 'sending' && chat.status === 'loaded' && isLastMessageFromOdie;
 		lastChatStatus.current = chat.status;
 
 		debounceTimeoutIdRef.current = setTimeout( () => {
@@ -34,7 +28,13 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 				const messages = messagesContainerRef.current?.querySelectorAll(
 					'[data-is-message="true"],.odie-chatbox__action-message'
 				);
-				const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
+				let lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
+
+				if ( hasOdieReplied ) {
+					// After odie reply we scroll the user message since bot replies can be long
+					lastMessage = messages?.length ? messages[ messages.length - 2 ] : null;
+				}
+
 				lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
 			} );
 		}, debounceTimeoutRef.current ) as unknown as number;
