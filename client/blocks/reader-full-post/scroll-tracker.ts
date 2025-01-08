@@ -26,10 +26,8 @@ export default class ScrollTracker {
 	 * @param container - The HTML element to track scrolling on, or null to stop tracking
 	 */
 	public setContainer( container: HTMLElement | null ): void {
-		if ( this.container ) {
-			this.container.removeEventListener( 'scroll', this.handleScroll );
-		}
-
+		this.cleanup();
+		this.resetMaxScrollDepth();
 		this.container = container;
 		if ( container ) {
 			container.addEventListener( 'scroll', this.handleScroll );
