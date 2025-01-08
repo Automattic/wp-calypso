@@ -153,11 +153,11 @@
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-wordpress-blue, #3858e9);
+				color: var(--color-accent, #3858e9);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-wordpress-blue, #3858e9);
+				outline: 1px dashed var(--color-accent, #3858e9);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;
