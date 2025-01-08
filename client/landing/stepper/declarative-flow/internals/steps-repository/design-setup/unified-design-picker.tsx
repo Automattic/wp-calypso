@@ -744,7 +744,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function recordStepContainerTracksEvent( eventName: string ) {
 		const tracksProps = {
-			step: 'design-step',
+			step: 'design-setup',
 			intent: intent,
 		};
 
