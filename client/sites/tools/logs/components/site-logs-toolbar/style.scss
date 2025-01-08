@@ -2,27 +2,76 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-logs-toolbar {
+	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
 	justify-content: space-between;
-	margin-bottom: 1.5em;
+	margin-bottom: 20px;
+	padding-top: 8px;
+
+	@include break-small {
+		padding-top: 0;
+	}
+
+	input:invalid {
+		background-color: var(--color-accent-5);
+		color: var(--color-accent-70);
+		border-color: var(--color-accent-60);
+	}
+
+	input:valid {
+		background-color: var(--color-surface);
+		color: var(--color-neutral-70);
+		border-color: var(--color-neutral-10);
+	}
 
 	.site-logs__auto-refresh {
-		align-self: center;
-		display: inline-block;
 		margin-right: 0 !important;
 		white-space: nowrap;
 	}
 
+	.site-logs__auto-refresh_desktop {
+		display: none;
+		font-size: inherit;
+		margin-top: 20px;
+
+		@include break-small {
+			display: inline-block;
+		}
+	}
+
+	.site-logs__auto-refresh_mobile {
+		@include break-small {
+			display: none;
+		}
+	}
+
 	.site-logs-toolbar__top-row {
+		clear: both;
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		flex-wrap: wrap;
-		justify-content: flex-start;
 		gap: 16px;
 		padding-bottom: 16px;
-		clear: both;
+		width: 100%;
+
+		&.is-hidden {
+			display: none;
+		}
+
+		@include break-small {
+			align-items: center;
+			flex-direction: row;
+
+			&.is-hidden {
+				display: flex;
+			}
+		}
+
+		> :nth-last-child(2) {
+			margin-right: auto;
+		}
 	}
 
 	.site-logs-toolbar__label {
@@ -52,35 +101,32 @@
 		display: flex;
 		justify-content: center;
 		cursor: text;
+
 		&::-webkit-calendar-picker-indicator {
 			cursor: pointer;
 		}
 	}
 
 	.site-logs-toolbar__filter {
-		display: none;
+		color: inherit;
+		display: flex;
 		float: right;
+		gap: 6px;
+		text-decoration: none;
+
+		@include break-small {
+			display: none;
+		}
 	}
 
-	@media screen and (max-width: 600px) {
-		.site-logs-toolbar__top-row {
-			flex-direction: column;
-			align-items: stretch;
-			width: 100%;
+	.site-logs-toolbar__badge {
+		height: 8px;
+		width: 8px;
+		padding: 0;
+		margin-right: 4px;
+	}
 
-			&.is-hidden {
-				display: none;
-			}
-		}
-
-		.site-logs__auto-refresh {
-			order: -1;
-		}
-
-		.site-logs-toolbar__filter {
-			display: flex;
-		}
-
+	@media (max-width: #{$break-small - 1px}) {
 		.site-logs-toolbar__toggle,
 		.site-logs-toolbar__datepicker,
 		.site-logs-toolbar__dropdown,
@@ -88,32 +134,4 @@
 			width: 100%;
 		}
 	}
-}
-
-.is-mobile-app-view .site-logs-toolbar__download {
-	display: none;
-}
-.site-logs-container .site-logs-toolbar .site-logs-toolbar__badge {
-	height: 8px;
-	width: 8px;
-	padding: 0;
-	margin-right: 4px;
-}
-.site-logs-toolbar__download-progress {
-	display: flex;
-	align-items: center;
-	color: var(--color-neutral-50);
-	font-size: 0.875rem;
-}
-
-input:invalid {
-	background-color: var(--color-accent-5);
-	color: var(--color-accent-70);
-	border-color: var(--color-accent-60);
-}
-
-input:valid {
-	background-color: var(--color-surface);
-	color: var(--color-neutral-70);
-	border-color: var(--color-neutral-10);
 }

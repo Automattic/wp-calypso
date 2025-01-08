@@ -116,17 +116,26 @@ export const SiteLogsToolbar = ( {
 
 	return (
 		<div className="site-logs-toolbar">
+			<ToggleControl
+				__nextHasNoMarginBottom
+				className="site-logs__auto-refresh site-logs__auto-refresh_mobile"
+				label={ translate( 'Auto-refresh', { textOnly: true } ) }
+				checked={ autoRefresh }
+				onChange={ onAutoRefreshChange }
+			/>
+
 			<Button
 				className="site-logs-toolbar__filter"
 				onClick={ () => {
 					setIsMobileOpen( ! isMobileOpen );
 				} }
+				variant="link"
 			>
 				{ ( severity || requestType || requestStatus ) && (
-					<Badge className="site-logs-toolbar__badge" type="success"></Badge>
+					<Badge className="site-logs-toolbar__badge" type="success" />
 				) }
-				{ translate( 'Filter' ) }
 				<Gridicon icon="filter" />
+				{ translate( 'Filter' ) }
 			</Button>
 
 			<div className={ clsx( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }>
@@ -211,6 +220,7 @@ export const SiteLogsToolbar = ( {
 						</SelectDropdown>
 					</label>
 				) }
+
 				{ logType === 'web' && (
 					<>
 						<label className="site-logs-toolbar__label">
@@ -262,15 +272,15 @@ export const SiteLogsToolbar = ( {
 						</label>
 					</>
 				) }
-			</div>
 
-			<ToggleControl
-				__nextHasNoMarginBottom
-				className="site-logs__auto-refresh"
-				label={ translate( 'Auto-refresh', { textOnly: true } ) }
-				checked={ autoRefresh }
-				onChange={ onAutoRefreshChange }
-			/>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					className="site-logs__auto-refresh site-logs__auto-refresh_desktop"
+					label={ translate( 'Auto-refresh', { textOnly: true } ) }
+					checked={ autoRefresh }
+					onChange={ onAutoRefreshChange }
+				/>
+			</div>
 		</div>
 	);
 };

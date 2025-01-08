@@ -4,14 +4,14 @@
 
 .site-logs-header {
 	display: flex;
-	gap: 24px;
+	gap: 16px;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 24px;
 
-	@media (max-width: $break-small) {
-		gap: 16px;
+	@include break-small {
+		gap: 24px;
 	}
 
 	.navigation-header {
@@ -25,19 +25,32 @@
 		justify-content: flex-end;
 		align-self: center;
 		gap: 10px;
+		width: 100%;
 
 		@include break-small {
 			flex-direction: row;
 			align-items: center;
+			width: auto;
 		}
 
-		@media (max-width: $break-small) {
-			width: 100%;
+		body.is-mobile-app-view & {
+			display: none;
+		}
+
+		button {
+			font-size: inherit;
 		}
 	}
 
 	.site-logs-toolbar__download {
 		height: 42px;
 		justify-content: center;
+	}
+
+	.site-logs-toolbar__download-progress {
+		display: flex;
+		align-items: center;
+		color: var(--color-neutral-50);
+		font-size: 0.875rem;
 	}
 }
