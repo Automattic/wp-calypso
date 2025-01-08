@@ -67,17 +67,17 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 						step: PRIVATE_STEPS.USER.slug,
 					} );
 
+					// Inform the user step where to go after the user is authenticated.
 					setStepData( {
-						intent: intent,
 						previousStep: currentStepSlug,
 						nextStep,
 					} );
 
 					return navigate( signInPath );
 				}
-
+				// Classic /login auth.
 				const nextStepPath = createPath( {
-					// We have to include /setup, this this URL should be absolute and we can't use `useHref`.
+					// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
 					pathname: generatePath( `/setup/:flow/:step/:lang?`, {
 						flow: flow.name,
 						lang,
@@ -87,9 +87,6 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 					hash: window.location.hash,
 				} );
 
-				debugger;
-
-				// Classic /login auth.
 				const loginUrl = getLoginUrlForFlow( {
 					flow,
 					locale,
@@ -97,8 +94,6 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 					siteId,
 					siteSlug,
 				} );
-
-				debugger;
 
 				return window.location.assign( loginUrl );
 			}
