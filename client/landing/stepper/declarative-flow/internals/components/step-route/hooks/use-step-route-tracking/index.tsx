@@ -104,7 +104,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		recordStepStart( flowName, kebabCase( stepSlug ), {
 			intent,
 			is_in_hosting_flow: isAnyHostingFlow( flowName ),
-			is_goals_first: isGoalsAtFrontExperiment.toString(),
+			...( isGoalsAtFrontExperiment && { is_goals_first: isGoalsAtFrontExperiment.toString() } ),
 			...( goals.length && { goals: goals.join( ',' ) } ),
 			...( design && { assembler_source: getAssemblerSource( design ) } ),
 			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
@@ -129,6 +129,8 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			recordStepStart( flowName, kebabCase( stepOldSlug ), {
 				intent,
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
+				...( isGoalsAtFrontExperiment && { is_goals_first: isGoalsAtFrontExperiment.toString() } ),
+				...( goals.length && { goals: goals.join( ',' ) } ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
