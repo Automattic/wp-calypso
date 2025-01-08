@@ -5,7 +5,7 @@ interface UserPostsProps {
 	streamKey: string;
 }
 
-const UserPosts = ( { streamKey }: UserPostsProps ) => {
+const UserPosts = ( { streamKey }: UserPostsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (

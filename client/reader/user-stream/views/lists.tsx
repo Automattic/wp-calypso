@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 
-const UserLists = () => {
+const UserLists = (): JSX.Element => {
 	const translate = useTranslate();
 
 	return (

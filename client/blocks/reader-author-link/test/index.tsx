@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import ReaderAuthorLink from '../index';
+import React from 'react';
+import ReaderAuthorLink, { ReaderLinkAuthor } from '../index';
 
 jest.mock( 'calypso/reader/stats', () => ( {
 	recordAction: () => {},
@@ -11,7 +12,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 describe( 'ReaderAuthorLink', () => {
-	let author;
+	let author: ReaderLinkAuthor;
 
 	beforeEach( () => {
 		author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
@@ -33,8 +34,8 @@ describe( 'ReaderAuthorLink', () => {
 		expect( container.firstChild ).toHaveClass( 'test__ace' );
 	} );
 
-	test( 'should return null with a null author name', () => {
-		author.name = null;
+	test( 'should return null with a undefined author name', () => {
+		author.name = undefined;
 		const { container } = render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		expect( container ).toBeEmptyDOMElement();
 	} );
@@ -61,9 +62,9 @@ describe( 'ReaderAuthorLink', () => {
 	} );
 
 	test( 'should not return a link if siteUrl and author.URL are both missing', () => {
-		author.URL = null;
+		author.URL = undefined;
 		const { container } = render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		// Should just return children
-		expect( container.firstChild.nodeName ).toEqual( 'SPAN' );
+		expect( container.firstChild?.nodeName ).toEqual( 'SPAN' );
 	} );
 } );

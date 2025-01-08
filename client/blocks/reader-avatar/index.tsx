@@ -1,7 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
 
@@ -29,7 +28,7 @@ type ReaderAvatarProps = {
 	iconSize?: number | null;
 };
 
-const ReaderAvatar = ( {
+export default function ReaderAvatar( {
 	author,
 	siteIcon,
 	feedIcon,
@@ -40,7 +39,7 @@ const ReaderAvatar = ( {
 	showPlaceholder = false,
 	onClick = noop,
 	iconSize = null,
-}: ReaderAvatarProps ) => {
+}: ReaderAvatarProps ) {
 	let fakeSite;
 
 	const safeSiteIcon = safeImageUrl( siteIcon );
@@ -122,6 +121,4 @@ const ReaderAvatar = ( {
 			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
-};
-
-export default localize( ReaderAvatar );
+}
