@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useLocale } from 'calypso/landing/stepper/hooks/use-locale';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
