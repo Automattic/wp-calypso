@@ -774,3 +774,21 @@
 		justify-content: center;
 	}
 }
+
+/*
+ * For Domain and Email related pages under site context.
+ */
+.wpcom-site .hosting-dashboard-layout.domains-overview.main .hosting-dashboard-item-view {
+	.hosting-dashboard-item-view__content {
+		padding: 0;
+		padding-bottom: 48px;
+
+		@include break-medium {
+			padding: 24px;
+		}
+
+		@include break-large {
+			padding: 32px 48px 48px;
+		}
+	}
+}

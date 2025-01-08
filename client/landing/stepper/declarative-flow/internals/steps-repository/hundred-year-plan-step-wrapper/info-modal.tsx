@@ -159,6 +159,54 @@ export default function InfoModal( {
 		flowName === HUNDRED_YEAR_DOMAIN_FLOW
 			? translate( '100-Year Domain' )
 			: getPlan( PLAN_100_YEARS )?.getTitle();
+	const featureOneTitle =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate( 'Century-Long Domain Security' )
+			: translate( 'Century-Long Domain Registration' );
+	const featureOneDescription =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate(
+					'Say goodbye to the hassle of renewals. With our 100-Year Domain, your digital presence is safeguarded for the next century through a one-time setup, ensuring your domain remains yours—forever.'
+			  )
+			: translate(
+					'A domain is your most valuable digital asset. While standard domain registrations last a decade, our 100-Year Plan gives you an opportunity to secure your domain for a full century.'
+			  );
+	const featureTwoTitle =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate( 'Preservation for Future Generations' )
+			: translate( 'Peace Of Mind' );
+	const featureTwoDescription =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate(
+					'Preserve your business, passion project, or life’s work with century-long domain ownership. Your digital assets will remain a lasting part of your legacy, accessible for generations to come.'
+			  )
+			: translate(
+					'As guardians of your life’s work, we take our duty seriously. At the platform level, we maintain multiple backups of your content across geographically distributed data centers, automatically submit your site to the Internet Archive if it’s public, and will provide an optional locked mode.'
+			  );
+	const featureThreeTitle =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate( 'Trust & Stability Guaranteed' )
+			: translate( 'Enhanced Ownership Protocols' );
+	const featureThreeDescription =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate(
+					'We’ve developed a specialized trust account system to secure your domain’s longevity, ensuring stability regardless of future industry changes. Your investment today guarantees continuity tomorrow.'
+			  )
+			: translate(
+					'Navigate life’s milestones with ease. Whether you’re gifting a site to a newborn or facilitating a smooth transfer of ownership, we’re here to assist every step of the way.'
+			  );
+	const featureFourTitle =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate( 'Innovative Long-term Solutions' )
+			: translate( 'Top-Tier Managed WordPress Hosting' );
+	const featureFourDescription =
+		flowName === HUNDRED_YEAR_DOMAIN_FLOW
+			? translate(
+					'In collaboration with WordPress and The Internet Archive, we go beyond traditional domain management. Your site is backed by cutting-edge safeguards, distributed backups, and future-proof investment strategies.'
+			  )
+			: translate(
+					'The very best managed WordPress experience with unmetered bandwidth, best-in-class speed, and unstoppable security bundled in one convenient package.'
+			  );
 
 	return (
 		<StyledModal title="" onRequestClose={ onClose } isFullScreen>
@@ -188,36 +236,20 @@ export default function InfoModal( {
 				</Header>
 				<Row>
 					<RowItem>
-						<RowTitle>{ translate( 'Century-Long Domain Registration' ) }</RowTitle>
-						<RowContent>
-							{ translate(
-								'A domain is your most valuable digital asset. While standard domain registrations last a decade, our 100-Year Plan gives you an opportunity to secure your domain for a full century.'
-							) }
-						</RowContent>
+						<RowTitle>{ featureOneTitle }</RowTitle>
+						<RowContent>{ featureOneDescription }</RowContent>
 					</RowItem>
 					<RowItem>
-						<RowTitle>{ translate( 'Peace Of Mind' ) }</RowTitle>
-						<RowContent>
-							{ translate(
-								'As guardians of your life’s work, we take our duty seriously. At the platform level, we maintain multiple backups of your content across geographically distributed data centers, automatically submit your site to the Internet Archive if it’s public, and will provide an optional locked mode.'
-							) }
-						</RowContent>
+						<RowTitle>{ featureTwoTitle }</RowTitle>
+						<RowContent>{ featureTwoDescription }</RowContent>
 					</RowItem>
 					<RowItem>
-						<RowTitle>{ translate( 'Enhanced Ownership Protocols' ) }</RowTitle>
-						<RowContent>
-							{ translate(
-								'Navigate life’s milestones with ease. Whether you’re gifting a site to a newborn or facilitating a smooth transfer of ownership, we’re here to assist every step of the way.'
-							) }
-						</RowContent>
+						<RowTitle>{ featureThreeTitle }</RowTitle>
+						<RowContent>{ featureThreeDescription }</RowContent>
 					</RowItem>
 					<RowItem>
-						<RowTitle>{ translate( 'Top-Tier Managed WordPress Hosting' ) }</RowTitle>
-						<RowContent>
-							{ translate(
-								'The very best managed WordPress experience with unmetered bandwidth, best-in-class speed, and unstoppable security bundled in one convenient package.'
-							) }
-						</RowContent>
+						<RowTitle>{ featureFourTitle }</RowTitle>
+						<RowContent>{ featureFourDescription }</RowContent>
 					</RowItem>
 				</Row>
 			</Wrapper>

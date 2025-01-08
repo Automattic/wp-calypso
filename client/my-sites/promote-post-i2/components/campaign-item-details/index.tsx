@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import './style.scss';
-import { Badge, Dialog } from '@automattic/components';
+import { Badge, Dialog, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
@@ -9,7 +9,6 @@ import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -31,6 +30,7 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
 import LocationChart from 'calypso/my-sites/promote-post-i2/components/location-charts';
+import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -77,17 +77,6 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 		return splitted[ 4 ];
 	}
 };
-
-const getExternalLinkIcon = ( fillColor?: string ) => (
-	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			fillRule="evenodd"
-			clipRule="evenodd"
-			d="M9.93271 3.02436L12.4162 3.01314L8.1546 7.27477L8.8617 7.98188L13.1183 3.72526L13.0971 6.18673L14.0971 6.19534L14.1332 2.00537L9.92819 2.02437L9.93271 3.02436ZM4.66732 2.83349C3.6548 2.83349 2.83398 3.6543 2.83398 4.66682V11.3335C2.83398 12.346 3.6548 13.1668 4.66732 13.1668H11.334C12.3465 13.1668 13.1673 12.346 13.1673 11.3335V8.90756H12.1673V11.3335C12.1673 11.7937 11.7942 12.1668 11.334 12.1668H4.66732C4.20708 12.1668 3.83398 11.7937 3.83398 11.3335V4.66682C3.83398 4.20658 4.20708 3.83349 4.66732 3.83349H6.83398V2.83349H4.66732Z"
-			fill={ fillColor }
-		/>
-	</svg>
-);
 
 const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 	<span className="campaign-item-details__tablet-icon">
@@ -793,27 +782,7 @@ export default function CampaignItemDetails( props: Props ) {
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
 						{ status === 'suspended' && payment_links && payment_links.length > 0 && (
-							<div className="campaign-item-details__payment-links-container">
-								<div className="campaign-item-details__payment-links">
-									<div className="campaign-item-details__payment-link-row">
-										<div className="payment-link__label">{ translate( 'Date' ) }</div>
-										<div className="payment-link__label">{ translate( 'Amount' ) }</div>
-										<div>&nbsp;</div>
-									</div>
-									{ payment_links.map( ( info, index ) => (
-										<div key={ index } className="campaign-item-details__payment-link-row">
-											<div>{ moment( info.date ).format( 'MMMM DD, YYYY' ) }</div>
-											<div>${ formatNumber( info.amount ) }</div>
-											<div className="payment-link__link">
-												<ExternalLink href={ info.url } target="_blank">
-													{ translate( 'Pay' ) }
-													{ getExternalLinkIcon() }
-												</ExternalLink>
-											</div>
-										</div>
-									) ) }
-								</div>
-							</div>
+							<PaymentLinks payment_links={ payment_links } />
 						) }
 
 						{ shouldShowStats && (
@@ -1193,7 +1162,7 @@ export default function CampaignItemDetails( props: Props ) {
 													target="_blank"
 												>
 													{ getDestinationLabel() }
-													{ getExternalLinkIcon() }
+													<Gridicon icon="external" size={ 16 } />
 												</Button>
 											) : (
 												<FlexibleSkeleton />
@@ -1375,7 +1344,7 @@ export default function CampaignItemDetails( props: Props ) {
 									showSupportModal={ ! isRunningInWpAdmin }
 								>
 									{ translate( 'View documentation' ) }
-									{ getExternalLinkIcon() }
+									<Gridicon icon="external" size={ 16 } />
 								</InlineSupportLink>
 							</div>
 
