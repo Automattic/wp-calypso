@@ -85,12 +85,6 @@ a.button.plugin-row-formatter__plugin-name-card {
 		}
 	}
 
-	.components-form-toggle {
-		@include break-xlarge {
-			position: relative;
-			inset-inline-start: unset;
-		}
-	}
 }
 
 .plugin-row-formatter__install-plugin {
