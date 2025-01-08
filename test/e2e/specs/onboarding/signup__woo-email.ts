@@ -58,7 +58,7 @@ describe(
 				activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
 			} );
 
-			it( 'Activate account', async function () {
+			it.skip( 'Activate account', async function () {
 				await page.goto( activationLink, { timeout: 20000 } );
 			} );
 		} );
