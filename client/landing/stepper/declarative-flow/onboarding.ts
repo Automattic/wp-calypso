@@ -57,7 +57,7 @@ const onboarding: Flow = {
 			[]
 		);
 
-		return useMemo(
+		const memoizedBase = useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
@@ -68,11 +68,18 @@ const onboarding: Flow = {
 					...( isGoalsAtFrontExperiment && {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
 					} ),
-					...( goals.length && { goals: goals.join( ',' ) } ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn, goals ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn ]
 		);
+
+		return {
+			...memoizedBase,
+			[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+				...memoizedBase[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
+				...( goals.length && { goals: goals.join( ',' ) } ),
+			},
+		};
 	},
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
