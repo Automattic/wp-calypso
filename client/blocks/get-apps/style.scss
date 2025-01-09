@@ -89,6 +89,14 @@ body.get-apps__body {
 	gap: 3px;
 }
 
+.get-apps__not-available {
+	font-size: $font-body-extra-small;
+}
+
+.get-apps__not-available > div {
+	margin-top: 16px;
+}
+
 .get-apps__also-available {
 	margin-top: 16px;
 	display: flex;
@@ -113,4 +121,19 @@ body.get-apps__body {
 	display: flex;
 	flex-direction: row;
 	gap: 16px;
+}
+
+.get-apps__desktop-button {
+	margin-right: 8px;
+
+	.split-button__main {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		white-space: nowrap;
+	}
+
+	.split-button.has-icon-text .gridicon {
+		margin-right: 0;
+	}
 }

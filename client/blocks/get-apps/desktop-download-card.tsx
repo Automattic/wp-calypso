@@ -1,41 +1,22 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import Apple from 'calypso/assets/images/icons/apple-logo.svg';
-import DesktopAppLogo from 'calypso/assets/images/icons/desktop-app-logo.svg';
-import Linux from 'calypso/assets/images/icons/linux-logo.svg';
-import Windows from 'calypso/assets/images/icons/windows-logo.svg';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import SVGIcon from 'calypso/components/svg-icon';
 import userAgent from 'calypso/lib/user-agent';
 import { AppsCard } from './apps-card';
+import { PlatformType, type DesktopAppConfig } from './apps-config';
 
-enum PlatformType {
-	MacIntel = 'MacIntel',
-	MacSilicon = 'MacSilicon',
-	Windows = 'Windows',
-	Linux = 'Linux',
-	LinuxDeb = 'LinuxDeb',
-}
-
-interface PlatformConfig {
+interface AlsoAvailableConfig {
 	name: string;
 	icon: string;
 	iconName: string;
-	onClick: () => void;
 	link: string;
-	buttonText: string;
-	group: string;
+	onClick: () => void;
 }
 
-const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => (
-	<a
-		href={ localizeUrl( config.link ) }
-		onClick={ config.onClick }
-		className="get-apps__desktop-link"
-	>
+const AlsoAvailable: React.FC< { config: AlsoAvailableConfig } > = ( { config } ) => (
+	<a href={ config.link } onClick={ config.onClick } className="get-apps__desktop-link">
 		<SVGIcon
 			classes=""
 			aria-hidden="true"
@@ -47,102 +28,71 @@ const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => 
 	</a>
 );
 
-const DesktopDownloadCardTest = () => {
+interface DesktopDownloadCardProps {
+	appConfig: DesktopAppConfig;
+}
+
+const getCurrentPlatform = (): PlatformType => {
+	const platformName = navigator.platform;
+
+	switch ( platformName ) {
+		case 'MacIntel':
+			return PlatformType.MacIntel;
+		case 'MacSilicon':
+			return PlatformType.MacSilicon;
+		case 'Linux i686':
+		case 'Linux i686 on x86_64':
+			return PlatformType.Linux;
+		default:
+			return PlatformType.Windows;
+	}
+};
+
+const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig } ) => {
 	const translate = useTranslate();
 	const { isMobile } = userAgent;
-
-	const WORDPRESS_DESKTOP_APP_PARAMS: Record< PlatformType, PlatformConfig > = useMemo(
-		() => ( {
-			[ PlatformType.MacIntel ]: {
-				name: 'Mac with Intel Chip',
-				icon: Apple,
-				iconName: 'apple-logo',
-				onClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/osx?ref=getapps' ),
-				buttonText: translate( 'Download for Mac' ),
-				group: 'mac',
-			},
-			[ PlatformType.MacSilicon ]: {
-				name: 'Mac with Apple Silicon Chip',
-				icon: Apple,
-				iconName: 'apple-logo',
-				onClick: () => recordTracksEvent( 'calypso_app_download_mac_silicon_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/osx-silicon?ref=getapps' ),
-				buttonText: translate( 'Download for Mac' ),
-				group: 'mac',
-			},
-			[ PlatformType.Windows ]: {
-				name: 'Windows',
-				icon: Windows,
-				iconName: 'windows-logo',
-				onClick: () => recordTracksEvent( 'calypso_app_download_windows_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/windows?ref=getapps' ),
-				buttonText: translate( 'Download for Windows' ),
-				group: 'windows',
-			},
-			[ PlatformType.Linux ]: {
-				name: 'Linux (.tar.gz)',
-				icon: Linux,
-				iconName: 'linux-logo',
-				onClick: () => recordTracksEvent( 'calypso_app_download_linux_tar_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/linux?ref=getapps' ),
-				buttonText: translate( 'Download for Linux' ),
-				group: 'linux',
-			},
-			[ PlatformType.LinuxDeb ]: {
-				name: 'Linux (.deb)',
-				icon: Linux,
-				iconName: 'linux-logo',
-				onClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
-				link: localizeUrl( 'https://apps.wordpress.com/d/linux-deb?ref=getapps' ),
-				buttonText: translate( 'Download for Linux' ),
-				group: 'linux',
-			},
-		} ),
-		[ translate ]
-	);
-
 	const platform = useMemo( () => getCurrentPlatform(), [] );
 
-	function getCurrentPlatform(): PlatformType {
-		const platformName = navigator.platform;
-
-		switch ( platformName ) {
-			case 'MacIntel':
-				return PlatformType.MacIntel;
-			case 'MacSilicon':
-				return PlatformType.MacSilicon;
-			case 'Linux i686':
-			case 'Linux i686 on x86_64':
-				return PlatformType.Linux;
-			default:
-				return PlatformType.Windows;
-		}
-	}
+	const currentPlatformConfig = useMemo(
+		() => appConfig.platforms[ platform ],
+		[ appConfig.platforms, platform ]
+	);
 
 	const getDesktopDeviceDownloadOptions = () => {
+		if ( ! currentPlatformConfig ) {
+			return (
+				<div className="get-apps__not-available">
+					{ translate( 'Not available for your platform. Available for:' ) }
+					<div className="get-apps__also-available-list">
+						{ Object.entries( appConfig.platforms ).map( ( [ key, config ] ) => (
+							<AlsoAvailable key={ key } config={ config } />
+						) ) }
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				<div className="get-apps__desktop-button">
 					<SplitButton
-						whiteSeparator
-						label={ WORDPRESS_DESKTOP_APP_PARAMS[ platform ].buttonText }
+						whiteSeparator={ appConfig.isPrimary }
+						primary={ appConfig.isPrimary }
+						label={ currentPlatformConfig.buttonText }
 						icon={
 							<SVGIcon
 								classes="get-apps__desktop-button-icon"
 								aria-hidden="true"
-								name={ WORDPRESS_DESKTOP_APP_PARAMS[ platform ].iconName }
+								name={ currentPlatformConfig.iconName }
 								size={ 16 }
-								icon={ WORDPRESS_DESKTOP_APP_PARAMS[ platform ].icon }
+								icon={ currentPlatformConfig.icon }
 							/>
 						}
-						onClick={ WORDPRESS_DESKTOP_APP_PARAMS[ platform ].onClick }
-						href={ WORDPRESS_DESKTOP_APP_PARAMS[ platform ].link }
+						onClick={ currentPlatformConfig.onClick }
+						href={ currentPlatformConfig.link }
 					>
-						{ Object.entries( WORDPRESS_DESKTOP_APP_PARAMS )
-							.filter(
-								( [ , config ] ) => config.group === WORDPRESS_DESKTOP_APP_PARAMS[ platform ].group
-							)
+						{ Object.entries( appConfig.platforms )
+							.filter( ( [ , config ] ) => config.group === currentPlatformConfig.group )
 							.map( ( [ key, config ] ) => (
 								<PopoverMenuItem key={ key } href={ config.link } onClick={ config.onClick }>
 									{ config.name }
@@ -157,10 +107,8 @@ const DesktopDownloadCardTest = () => {
 					</div>
 
 					<div className="get-apps__also-available-list">
-						{ Object.entries( WORDPRESS_DESKTOP_APP_PARAMS )
-							.filter(
-								( [ , config ] ) => config.group !== WORDPRESS_DESKTOP_APP_PARAMS[ platform ].group
-							)
+						{ Object.entries( appConfig.platforms )
+							.filter( ( [ , config ] ) => config.group !== currentPlatformConfig.group )
 							.map( ( [ key, config ] ) => (
 								<AlsoAvailable key={ key } config={ config } />
 							) ) }
@@ -172,12 +120,10 @@ const DesktopDownloadCardTest = () => {
 
 	return (
 		<AppsCard
-			logo={ DesktopAppLogo }
-			logoName="desktop-app-logo"
-			title={ translate( 'WordPress.com desktop app' ) }
-			subtitle={ translate(
-				'The full WordPress.com experience packaged as an app for your laptop or desktop.'
-			) }
+			logo={ appConfig.logo }
+			logoName={ appConfig.logoName }
+			title={ appConfig.title }
+			subtitle={ appConfig.subtitle }
 		>
 			{ isMobile ? (
 				<div className="get-apps__desktop-link">
@@ -194,4 +140,4 @@ const DesktopDownloadCardTest = () => {
 	);
 };
 
-export default DesktopDownloadCardTest;
+export default DesktopDownloadCard;
