@@ -5,21 +5,12 @@ import {
 	PLAN_PREMIUM,
 	getPlan,
 } from '@automattic/calypso-products';
-import { englishLocales } from '@automattic/i18n-utils';
-import i18n, { translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 const getIncludedWithLabel = ( planSlug ) => {
-	const localeSlug = i18n.getLocaleSlug();
-
-	const shouldShowNewString =
-		( localeSlug && englishLocales.includes( i18n.getLocaleSlug() ) ) ||
-		i18n.hasTranslation( 'Included with %(planName)s' );
-
-	return shouldShowNewString
-		? translate( 'Included with %(planName)s', {
-				args: { planName: getPlan( planSlug )?.getTitle() },
-		  } )
-		: getPlan( planSlug )?.getTitle();
+	return translate( 'Included with %(planName)s', {
+		args: { planName: getPlan( planSlug )?.getTitle() },
+	} );
 };
 
 export const THEME_TIER_PREMIUM = 'premium';
