@@ -2,7 +2,6 @@ export * from './components';
 export {
 	getAssemblerDesign,
 	getDesignPreviewUrl,
-	isAssemblerDesign,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
