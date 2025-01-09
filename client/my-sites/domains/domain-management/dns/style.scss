@@ -32,9 +32,6 @@ body.dns__body-white {
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		margin: 4px 16px;
-		@include break-mobile {
-			max-width: 677px;
-		}
 		@include break-small {
 			margin: 0;
 		}

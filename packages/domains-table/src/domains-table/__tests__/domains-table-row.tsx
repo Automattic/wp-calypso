@@ -932,7 +932,7 @@ describe( 'domain status cell', () => {
 			const tooltip = screen.getByRole( 'tooltip' );
 
 			expect( tooltip ).toHaveTextContent(
-				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com name servers.'
+				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com servers.'
 			);
 		} );
 	} );

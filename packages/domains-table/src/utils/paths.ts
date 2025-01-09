@@ -189,7 +189,7 @@ export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
-export function domainMagementDNS( siteName: string, domainName: string ) {
+export function domainManagementDNS( siteName: string, domainName: string ) {
 	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
