@@ -6,6 +6,16 @@ import { DATE_FORMATS } from '../constants';
 import { groupDomainProducts } from '../utils';
 import type { ViewState, Filter } from '../data-views-types';
 
+function currencyToInteger( value: string ): number | null {
+	const match = value.match( /\$?(\d+)\.?(\d{0,2})/ );
+	if ( ! match ) {
+		return null;
+	}
+	const dollars = parseInt( match[ 1 ], 10 );
+	const cents = match[ 2 ] ? parseInt( match[ 2 ].padEnd( 2, '0' ), 10 ) : 0;
+	return dollars * 100 + cents;
+}
+
 export function useTransactionsFiltering(
 	transactions: BillingTransaction[] | null,
 	view: ViewState
@@ -17,9 +27,14 @@ export function useTransactionsFiltering(
 			if ( view.search ) {
 				const searchTerm = view.search.toLowerCase();
 				const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
+
+				const searchAmount = currencyToInteger( searchTerm );
+				if ( searchAmount !== null && searchAmount === transaction.amount_integer ) {
+					return true;
+				}
+
 				const searchableFields = [
 					transaction.service,
-					transaction.amount_integer,
 					transactionItem.product,
 					transactionItem.variation,
 					transactionItem.domain,
