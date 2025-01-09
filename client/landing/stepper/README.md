@@ -15,7 +15,7 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	bootFlow() {
+	initialize() {
 		return [ STEPS.DOMAINS, STEPS.DESIGN ];
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -34,7 +34,7 @@ export const exampleFlow: Flow = {
 
 ## The API
 
-To create a flow, you only have to implement `bootFlow` and `useStepNavigation`. `bootFlow` can do any checks you need and it should finally return an array of step objects, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
+To create a flow, you only have to implement `initialize` and `useStepNavigation`. `initialize` can do any checks you need and it should finally return an array of step objects, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
 
 There is also an optional `useSideEffect` hook. You can implement this hook to run any side-effects to the flow. You can prefetch information, send track events when something changes, etc...
 

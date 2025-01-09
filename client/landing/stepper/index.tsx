@@ -136,9 +136,9 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
-	const flowSteps = 'bootFlow' in rawFlow ? await rawFlow.bootFlow() : null;
+	const flowSteps = 'initialize' in rawFlow ? await rawFlow.initialize() : null;
 	/**
-	 * When `bootFlow` returns false, it means the app should be killed (the user probably issued a redirect).
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
 	 */
 	if ( flowSteps === false ) {
 		return;

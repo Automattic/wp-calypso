@@ -153,7 +153,7 @@ export type FlowV1 = {
 		extraQueryParams?: Record< string, string | number >;
 	};
 	/**
-	 * @deprecated use `bootFlow` method instead.
+	 * @deprecated use `initialize` method instead.
 	 */
 	useSteps: UseStepsHook;
 	/**
@@ -162,7 +162,7 @@ export type FlowV1 = {
 	 */
 	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
-	 * @deprecated Use `bootFlow` instead. `bootFlow` will run before the flow is rendered and you can make any decisions there.
+	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	/**
@@ -211,7 +211,11 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	bootFlow(): false | Promise< false > | Promise< readonly StepperStep[] > | readonly StepperStep[];
+	initialize():
+		| false
+		| Promise< false >
+		| Promise< readonly StepperStep[] >
+		| readonly StepperStep[];
 	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
@@ -224,7 +228,7 @@ export type FlowV2 = {
 	 */
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 	/**
-	 * @deprecated Avoid this. Assert your conditions in `bootFlow` instead unless you're 100% sure you need this.
+	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 };

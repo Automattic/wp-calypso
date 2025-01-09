@@ -29,7 +29,7 @@ const newsletter: Flow = {
 		return translate( 'Newsletter Example Flow' );
 	},
 	isSignupFlow: true,
-	bootFlow() {
+	initialize() {
 		const query = getQuery();
 		const isComingFromMarketingPage = query[ 'ref' ] === 'newsletter-lp';
 
