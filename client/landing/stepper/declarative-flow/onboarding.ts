@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -57,9 +57,9 @@ const onboarding: Flow = {
 			[]
 		);
 
-		const stringifiedGoals = goals.length && goals?.join( ',' );
+		const initialGoals = useRef( goals );
 
-		const memoizedBase = useMemo(
+		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
@@ -70,18 +70,13 @@ const onboarding: Flow = {
 					...( isGoalsAtFrontExperiment && {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
 					} ),
+					...( initialGoals.current.length && {
+						goals: initialGoals.current.join( ',' ),
+					} ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn, initialGoals ]
 		);
-
-		return {
-			...memoizedBase,
-			[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-				...memoizedBase[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
-				...( stringifiedGoals && { goals: stringifiedGoals } ),
-			},
-		};
 	},
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
