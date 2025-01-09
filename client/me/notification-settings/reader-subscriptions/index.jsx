@@ -1,5 +1,5 @@
 import { Card, FormLabel } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -56,7 +56,7 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
-		const { locale, teams } = this.props;
+		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
 
 		return (
@@ -210,11 +210,7 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>
-								{ locale === 'en' || i18n.hasTranslation( 'Pause emails' )
-									? this.props.translate( 'Pause emails' )
-									: this.props.translate( 'Block emails' ) }
-							</FormLegend>
+							<FormLegend>{ this.props.translate( 'Pause emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
@@ -230,16 +226,11 @@ class NotificationSubscriptions extends Component {
 									) }
 								</span>
 							</FormLabel>
-							{ ( locale === 'en' ||
-								i18n.hasTranslation(
+							<FormSettingExplanation>
+								{ this.props.translate(
 									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
-								) ) && (
-								<FormSettingExplanation>
-									{ this.props.translate(
-										'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
-									) }
-								</FormSettingExplanation>
-							) }
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						{ isAutomattician && (

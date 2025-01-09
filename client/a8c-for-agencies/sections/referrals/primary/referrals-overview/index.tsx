@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
-import A4APaymentDelayedNotice from 'calypso/a8c-for-agencies/components/a4a-payment-delayed-notice';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
@@ -129,8 +128,6 @@ export default function ReferralsOverview( {
 							<MissingPaymentSettingsNotice onClose={ () => setRequiredNoticeClosed( true ) } />
 						</div>
 					) }
-
-					{ hasReferrals && isPayable && ! actionRequiredNotice && <A4APaymentDelayedNotice /> }
 
 					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 

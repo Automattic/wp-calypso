@@ -1,15 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import config, { isEnabled } from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationHowToMigrate from '../';
+import { useMigrationExperiment } from '../../../hooks/use-migration-experiment';
 import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
-const isMigrationExperimentEnabled = isEnabled( 'migration-flow/experiment' );
 const navigation = { submit: jest.fn() };
 
 type Props = ComponentProps< typeof SiteMigrationHowToMigrate >;
@@ -28,17 +27,16 @@ jest.mock( 'calypso/lib/presales-chat', () => ( {
 	usePresalesChat: () => {},
 } ) );
 
-describe( 'SiteMigrationHowToMigrate', () => {
-	beforeAll( () => {
-		config.enable( 'migration-flow/experiment' );
-	} );
+jest.mock(
+	'calypso/landing/stepper/declarative-flow/internals/hooks/use-migration-experiment/index.ts',
+	() => ( {
+		useMigrationExperiment: jest.fn( ( flowName: string ) => flowName === 'site-migration' ),
+	} )
+);
 
-	afterAll( () => {
-		if ( isMigrationExperimentEnabled ) {
-			config.enable( 'migration-flow/experiment' );
-		} else {
-			config.disable( 'migration-flow/experiment' );
-		}
+describe( 'SiteMigrationHowToMigrate', () => {
+	beforeEach( () => {
+		( useMigrationExperiment as jest.Mock ).mockReturnValue( true );
 	} );
 
 	afterEach( () => {
