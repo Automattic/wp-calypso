@@ -285,49 +285,49 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
-		it( 'should throw an error if text or translation are missing', () => {
+		it( 'should throw an error if text is missing', () => {
 			expect( () => i18n.fixMe( {} ) ).toThrow(
-				'fixMe() requires an object with proper text and translation properties'
+				'fixMe() requires an object with proper text property'
 			);
 		} );
 
-		it( 'should return translation if locale is en', () => {
+		it( 'should return newCopy if locale is en', () => {
 			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
 			const result = i18n.fixMe( {
 				text: 'hello',
-				translation: 'hello',
-				fallback: 'hi',
+				newCopy: 'hello',
+				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'hello' );
 		} );
 
-		it( 'should return translation if locale is en-gb', () => {
+		it( 'should return newCopy if locale is en-gb', () => {
 			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en-gb' );
 			const result = i18n.fixMe( {
 				text: 'hello',
-				translation: 'hello',
-				fallback: 'hi',
+				newCopy: 'hello',
+				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'hello' );
 		} );
 
-		it( 'should return translation if text has a translation', () => {
+		it( 'should return newCopy if text has a translation', () => {
 			i18n.hasTranslation = jest.fn().mockReturnValue( true );
 			const result = i18n.fixMe( {
 				text: 'hello',
-				translation: 'bonjour',
-				fallback: 'hi',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'bonjour' );
 		} );
 
-		it( 'should return fallback if text does not have a translation and locale is not English', () => {
+		it( 'should return oldCopy if text does not have a translation and locale is not English', () => {
 			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'fr' );
 			i18n.hasTranslation = jest.fn().mockReturnValue( false );
 			const result = i18n.fixMe( {
 				text: 'hello',
-				translation: 'bonjour',
-				fallback: 'hi',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'hi' );
 		} );

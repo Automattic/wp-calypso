@@ -346,29 +346,29 @@ I18N.prototype.hasTranslation = function () {
 };
 
 /**
- * Returns `translation` if given `text` is translated or locale is English, otherwise returns the `fallback`.
+ * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
  * ------------------
  * Important - Usage:
  * ------------------
- * `translation` prop should be an actual `i18n.translate()` call from the consuming end.
+ * `newCopy` prop should be an actual `i18n.translate()` call from the consuming end.
  * This is the only way currently to ensure that it is picked up by our string extraction mechanism
  * and propagate into GlotPress for translation.
  * ------------------
  * @param {Object} options
  * @param {string} options.text - The text to check for translation.
- * @param {string | Object} options.translation - The translation to return if the text is translated.
- * @param {string | Object | undefined } options.fallback - The fallback to return if the text is not translated.
+ * @param {string | Object} options.newCopy - The translation to return if the text is translated.
+ * @param {string | Object | undefined } options.oldCopy - The fallback to return if the text is not translated.
  */
-I18N.prototype.fixMe = function ( { text, translation, fallback } ) {
-	if ( typeof text !== 'string' || ! translation ) {
-		throw new Error( 'fixMe() requires an object with proper text and translation properties' );
+I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
+	if ( typeof text !== 'string' ) {
+		throw new Error( 'fixMe() requires an object with proper text property' );
 	}
 
 	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
-		return translation;
+		return newCopy;
 	}
 
-	return fallback;
+	return oldCopy;
 };
 
 /**
