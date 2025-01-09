@@ -1,4 +1,4 @@
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -36,6 +36,7 @@ const SubscriberDataViews = ( {
 		isOwnerSubscribed,
 		perPage,
 		setPerPage,
+		handleSearch,
 	} = useSubscribersPage();
 
 	const isSimple = useSelector( isSimpleSite );
@@ -114,27 +115,21 @@ const SubscriberDataViews = ( {
 			setPerPage( newView.perPage );
 			pageChangeCallback( 1 );
 		}
+
+		if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
+			handleSearch( newView.search );
+		}
 	};
 
 	const { data, paginationInfo } = useMemo( () => {
-		const result = filterSortAndPaginate< Subscriber >(
-			subscribers,
-			{
-				...currentView,
-				page: 1,
-				perPage: subscribers.length,
-			},
-			fields
-		);
-
 		return {
-			data: result.data,
+			data: subscribers,
 			paginationInfo: {
 				totalItems: grandTotal,
 				totalPages: pages ?? 0,
 			},
 		};
-	}, [ subscribers, currentView, fields, grandTotal, pages ] );
+	}, [ subscribers, grandTotal, pages ] );
 
 	return (
 		<section className="subscriber-data-views">
