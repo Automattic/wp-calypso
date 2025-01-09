@@ -103,6 +103,9 @@ export default {
 					provider={ EmailProvider.Titan }
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showPageHeader={ pageContext?.params?.showPageHeader }
+					showFormHeader={ pageContext?.params?.showFormHeader }
+					customFormHeader={ pageContext?.params?.customFormHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

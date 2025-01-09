@@ -23,6 +23,7 @@ export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds/`;
 export const DOMAIN_PROMOTIONAL_PRICING_POLICY = `${ root }/domains/domain-pricing-and-available-tlds/#domain-name-promotional-pricing-policy`;
+export const DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/change-name-servers/#changing-name-servers-to-point-to-word-press-com`;
 export const DNS_RECORDS_ADD = `${ root }/domains/custom-dns/add-a-new-dns-record/`;
 export const DNS_RECORDS_EDITING_OR_DELETING = `${ root }/domains/custom-dns/edit-or-delete-dns-records/`;
 export const DNS_RECORDS_DEFAULT = `${ root }/domains/custom-dns/view-or-restore-default-dns-records/`;

@@ -40,7 +40,7 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 				stepContent={
 					<>
 						<div>
-							<ul>
+							<ul className="hundred-year-plan__benefits">
 								<li>
 									<Icon size={ 18 } icon={ check } />{ ' ' }
 									<span>

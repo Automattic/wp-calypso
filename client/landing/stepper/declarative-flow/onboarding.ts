@@ -13,10 +13,12 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
@@ -49,15 +51,27 @@ const onboarding: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
 		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
 
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
 					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+					is_logged_out: ( ! userIsLoggedIn ).toString(),
+				},
+				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+					...( isGoalsAtFrontExperiment && {
+						is_goals_first: isGoalsAtFrontExperiment.toString(),
+					} ),
+					...( goals.length && { goals: goals.join( ',' ) } ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn, goals ]
 		);
 	},
 	useSteps() {

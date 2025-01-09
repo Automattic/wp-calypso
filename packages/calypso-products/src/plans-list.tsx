@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -3506,10 +3506,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getPathSlug: () => 'starter',
 	getDescription: () =>
-		i18n.hasTranslation( 'Start with a custom domain name, simple payments, and extra storage.' ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
-			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
 	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [

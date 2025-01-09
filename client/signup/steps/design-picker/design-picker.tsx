@@ -9,7 +9,7 @@ import {
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf, hasTranslation } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { noop } from 'lodash';
@@ -118,9 +118,7 @@ const DesignButton: FC< DesignButtonProps > = ( {
 						onCheckout?.();
 					} }
 				>
-					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-						? __( 'Included in WordPress.com Premium' )
-						: __( 'Upgrade to Premium' ) }
+					{ __( 'Included in WordPress.com Premium' ) }
 				</Button>
 			);
 		} else if ( isPremiumDesign && ! shouldUpgrade && hasPurchasedTheme ) {

@@ -1,37 +1,30 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { getFlowFromURL } from '../../utils/get-flow-from-url';
+
+export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_flow_holdout_20241220';
 
 /**
  * Check whether the user should have the "goals first" onboarding experience.
- * Returns [ isLoading, isGoalsAtFrontExperiment ]
  *
- * The experience is currently gated behind a feature flag which is loaded immediately,
- * but we want to code as if loading time might be involved. So this hook has a fake
- * timer.
- * Note: It's important that there be no timer in the production experience
- * i.e. when the feature flag is disabled.
+ * Returns [ isLoading, isGoalsAtFrontExperiment ]
  */
 export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
-	const isEligible = isEnabled( 'onboarding/goals-first' ) && flow === ONBOARDING_FLOW;
 
-	const [ isLoading, setIsLoading ] = useState( true );
-	useEffect( () => {
-		if ( ! isEligible ) {
-			return;
-		}
+	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible: flow === ONBOARDING_FLOW,
+	} );
 
-		const id = setTimeout( () => setIsLoading( false ), 700 );
-		return () => {
-			clearTimeout( id );
-		};
-	}, [ isEligible ] );
+	/**
+	 * If the user is not eligible, we'll treat them as if they were in the
+	 * holdout/control group so we can provide the existing experience.
+	 *
+	 * This fallback is necessary because experimentAssignment returns null when the user
+	 * is not eligible, and we're using this hook within steps that are used by other flows.
+	 */
+	const variationName = experimentAssignment?.variationName ?? 'control';
 
-	if ( ! isEligible ) {
-		return [ false, false ];
-	}
-
-	return [ isLoading, true ];
+	return [ isLoading, variationName === 'treatment' ];
 }
