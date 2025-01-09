@@ -155,7 +155,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }
 					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
-					hideNavigation={ isAllDomainManagementContext || isInHostingOverview }
+					hideNavigation={ isAllDomainManagementContext }
 				/>
 			);
 		}
