@@ -70,7 +70,7 @@ Since this is a hook, it can access any state from any store, so you can make dy
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	buildFlow() {
+	initialize() {
 		return [
 			STEPS.INTRO,
 			STEPS.DOMAINS
