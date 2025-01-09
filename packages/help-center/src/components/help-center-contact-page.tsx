@@ -11,7 +11,7 @@ import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import { hasTranslation, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { backup, comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -94,7 +94,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
-			return language && hasTranslation( 'Email (%s)' )
+			return language
 				? sprintf(
 						// translators: %s is the language name
 						__( 'Email (%s)', __i18n_text_domain__ ),
@@ -103,11 +103,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
-		if ( hasTranslation( 'Email (English)' ) ) {
-			return __( 'Email (English)', __i18n_text_domain__ );
-		}
-
-		return __( 'Email', __i18n_text_domain__ );
+		return __( 'Email (English)', __i18n_text_domain__ );
 	}, [ __, locale, isEnglishLocale ] );
 
 	if ( isLoading ) {

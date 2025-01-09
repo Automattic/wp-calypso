@@ -555,18 +555,16 @@ export function generateSteps( {
 			stepName: 'site-or-domain',
 			props: {
 				getHeaderText( domainCart ) {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Choose how to use your domains' )
-						? i18n.translate( 'Choose how to use your domain', 'Choose how to use your domains', {
-								count: domainCart.length,
-						  } )
-						: i18n.translate( 'Choose how to use your domain' );
+					return i18n.translate(
+						'Choose how to use your domain',
+						'Choose how to use your domains',
+						{
+							count: domainCart.length,
+						}
+					);
 				},
 				get subHeaderText() {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Don’t worry, you can easily change it later.' )
-						? i18n.translate( 'Don’t worry, you can easily change it later.' )
-						: i18n.translate( 'Don’t worry, you can easily add a site later' );
+					return i18n.translate( 'Don’t worry, you can easily change it later.' );
 				},
 			},
 			providesDependencies: [

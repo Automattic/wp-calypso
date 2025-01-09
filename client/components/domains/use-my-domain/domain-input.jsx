@@ -1,6 +1,5 @@
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
@@ -25,7 +24,6 @@ function UseMyDomainInput( {
 	validationError,
 } ) {
 	const domainNameInput = useRef( null );
-	const locale = useLocale();
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -47,12 +45,6 @@ function UseMyDomainInput( {
 		}
 	};
 
-	const hasDomainPlaceholderLabel =
-		englishLocales.includes( locale ) || hasTranslation( 'yourgroovydomain.com' );
-	const domainPlaceholderLabel = hasDomainPlaceholderLabel
-		? __( 'yourgroovydomain.com' )
-		: __( 'mydomain.com' );
-
 	return (
 		<Card className={ baseClassName }>
 			{ ! isSignupStep && (
@@ -64,7 +56,7 @@ function UseMyDomainInput( {
 				<label>{ __( 'Enter the domain you would like to use:' ) }</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
-						placeholder={ domainPlaceholderLabel }
+						placeholder={ __( 'yourgroovydomain.com' ) }
 						value={ domainName }
 						onChange={ onChange }
 						onKeyDown={ keyDown }

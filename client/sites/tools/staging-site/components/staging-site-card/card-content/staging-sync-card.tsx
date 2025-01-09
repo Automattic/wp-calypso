@@ -1,7 +1,6 @@
 import { FormLabel } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import i18n, { translate, useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -233,22 +232,7 @@ const StagingToProductionSync = ( {
 		],
 		[ translate ]
 	);
-	const syncWarningTranslation =
-		englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-		i18n.hasTranslation(
-			'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
-		)
-			? translate(
-					'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
-					{
-						components: {
-							span: <ConfirmationModalRedSpan />,
-						},
-					}
-			  )
-			: translate(
-					'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
-			  );
+
 	return (
 		<>
 			{ showSyncPanel && (
@@ -284,7 +268,16 @@ const StagingToProductionSync = ( {
 							{ isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
 									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
-									<SyncWarningContent>{ syncWarningTranslation }</SyncWarningContent>
+									<SyncWarningContent>
+										{ translate(
+											'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
+											{
+												components: {
+													span: <ConfirmationModalRedSpan />,
+												},
+											}
+										) }
+									</SyncWarningContent>
 								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>

@@ -3,12 +3,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { hasTranslation, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useMemo, useState } from 'react';
 import stripTags from 'striptags';
@@ -72,8 +71,6 @@ const handleContentClick = ( event: React.MouseEvent ) => {
 
 export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props ) {
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
-
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
 
 	// Report loading state up.
@@ -152,12 +149,8 @@ export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props 
 	};
 
 	const aiResponseHeader = useMemo( () => {
-		if ( isEnglishLocale || hasTranslation( 'AI Generated Response:' ) ) {
-			return __( 'AI Generated Response:', __i18n_text_domain__ );
-		}
-
-		return __( 'Quick response:', __i18n_text_domain__ );
-	}, [ __, isEnglishLocale ] );
+		return __( 'AI Generated Response:', __i18n_text_domain__ );
+	}, [ __ ] );
 
 	return (
 		<div className="help-center-gpt__container">

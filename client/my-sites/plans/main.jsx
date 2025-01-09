@@ -15,10 +15,8 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WpcomPlansUI, Plans } from '@automattic/data-stores';
-import { englishLocales } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -397,22 +395,13 @@ class PlansComponent extends Component {
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
-
-		const hasEntrepreneurTrialSubHeaderTextTranslation = hasTranslation(
-			"Discover what's available in your %(planName)s plan."
-		);
-
-		const isEnglishLocale = englishLocales.includes( this.props.locale );
-
 		const entrepreneurTrialSubHeaderText =
-			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
-				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
-				  translate( "Discover what's available in your %(planName)s plan.", {
-						args: {
-							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-						},
-				  } )
-				: translate( "Discover what's available in your Entrepreneur plan." );
+			// translators: %(planName)s is a plan name. E.g. Commerce plan.
+			translate( "Discover what's available in your %(planName)s plan.", {
+				args: {
+					planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+				},
+			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 

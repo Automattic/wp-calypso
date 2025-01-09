@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
@@ -242,13 +242,7 @@ export const QuickLinks = ( {
 						href="https://wp.me/logo-maker/?utm_campaign=my_home"
 						onClick={ trackDesignLogoAction }
 						target="_blank"
-						label={
-							getLocaleSlug() === 'en' ||
-							getLocaleSlug() === 'en-gb' ||
-							i18n.hasTranslation( 'Create a logo with Fiverr' )
-								? translate( 'Create a logo with Fiverr' )
-								: translate( 'Create a logo' )
-						}
+						label={ translate( 'Create a logo with Fiverr' ) }
 						external
 						iconSrc={ fiverrIcon }
 					/>

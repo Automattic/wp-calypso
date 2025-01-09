@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
@@ -12,8 +11,7 @@ interface Props {
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
-	const { __, hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
+	const { __ } = useI18n();
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
@@ -63,16 +61,9 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 							: __( 'We pay the first year for Google domains' ),
 						description: (
 							<p>
-								{ isEnglishLocale ||
-								hasTranslation(
+								{ __(
 									"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
-								)
-									? __(
-											"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
-									  )
-									: __(
-											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
-									  ) }
+								) }
 							</p>
 						),
 						icon: <Icon icon={ payment } />,

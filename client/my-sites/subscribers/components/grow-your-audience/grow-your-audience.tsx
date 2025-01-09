@@ -1,6 +1,4 @@
-import { englishLocales, useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon, ExternalLink } from '@wordpress/components';
-import { hasTranslation } from '@wordpress/i18n';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
@@ -60,7 +58,6 @@ const GrowYourAudienceCard = ( {
 };
 
 const GrowYourAudience = () => {
-	const locale = useLocale();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -74,52 +71,26 @@ const GrowYourAudience = () => {
 	);
 	const globalSiteEnabled = isAdminInterfaceWPAdmin && isClassicEarlyRelease;
 
-	const statsCardTranslated =
-		englishLocales.includes( locale ) ||
-		( hasTranslation( 'Explore your stats' ) &&
-			hasTranslation(
-				'Take a look at your stats and refine your content strategy for better engagement.'
-			) &&
-			hasTranslation( 'Check stats' ) );
-
 	const statsUrl =
 		! isWPCOMSite || globalSiteEnabled
 			? `${ siteAdminUrl }admin.php?page=stats#!/stats/subscribers/${ selectedSiteSlug }`
 			: `https://wordpress.com/stats/subscribers/${ selectedSiteSlug }`;
-
-	const subscribeBlockUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
-		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
 
 	return (
 		<SectionContainer className="grow-your-audience">
 			<h2 className="grow-your-audience__title">{ translate( 'Grow your audience' ) }</h2>
 
 			<div className="grow-your-audience__cards">
-				{ statsCardTranslated ? (
-					<GrowYourAudienceCard
-						icon={ chartBar }
-						text={ translate(
-							'Take a look at your stats and refine your content strategy for better engagement.'
-						) }
-						title={ translate( 'Explore your stats' ) }
-						tracksEventCta="stats"
-						ctaLabel={ translate( 'Check stats' ) }
-						url={ statsUrl }
-					/>
-				) : (
-					<GrowYourAudienceCard
-						icon={ chartBar }
-						text={ translate(
-							'Using a subscriber block is the first step to growing your audience.'
-						) }
-						title={ translate( 'Every visitor is a potential subscriber' ) }
-						tracksEventCta="subscribe-block"
-						ctaLabel={ translate( 'Learn more' ) }
-						externalUrl
-						url={ localizeUrl( subscribeBlockUrl ) }
-					/>
-				) }
+				<GrowYourAudienceCard
+					icon={ chartBar }
+					text={ translate(
+						'Take a look at your stats and refine your content strategy for better engagement.'
+					) }
+					title={ translate( 'Explore your stats' ) }
+					tracksEventCta="stats"
+					ctaLabel={ translate( 'Check stats' ) }
+					url={ statsUrl }
+				/>
 				{ isWPCOMSite && (
 					<>
 						<GrowYourAudienceCard

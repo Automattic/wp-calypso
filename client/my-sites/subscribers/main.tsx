@@ -1,9 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
-import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -44,8 +43,6 @@ const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderPro
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
@@ -77,25 +74,14 @@ const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderPro
 		},
 	};
 
-	const subtitle =
-		isEnglishLocale ||
-		hasTranslation(
-			'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.'
-		)
-			? translate(
-					'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-					subtitleOptions
-			  )
-			: translate(
-					'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
-					subtitleOptions
-			  );
-
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
 			title={ translate( 'Subscribers' ) }
-			subtitle={ subtitle }
+			subtitle={ translate(
+				'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+				subtitleOptions
+			) }
 			screenReader={ navItems.insights?.label }
 			navigationItems={ [] }
 		>

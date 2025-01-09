@@ -1,16 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import useChatStatus from '../hooks/use-chat-status';
 import { HELP_CENTER_STORE } from '../stores';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
@@ -36,7 +34,6 @@ const HelpCenterContactSupportOption = ( {
 	trackEventName,
 }: HelpCenterContactSupportOptionProps ) => {
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const currentSupportInteraction = useSelect(
@@ -57,14 +54,6 @@ const HelpCenterContactSupportOption = ( {
 	);
 
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
-	const supportHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
-			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
-		}
-
-		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
-	}, [ __, isEnglishLocale ] );
 
 	const handleOnClick = () => {
 		generateContactOnClickEvent( 'chat', trackEventName );
@@ -124,7 +113,7 @@ const HelpCenterContactSupportOption = ( {
 							<Icon icon={ comment } />
 						</div>
 						<div>
-							<h2>{ supportHeaderText }</h2>
+							<h2>{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }</h2>
 							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
 						</div>
 					</div>

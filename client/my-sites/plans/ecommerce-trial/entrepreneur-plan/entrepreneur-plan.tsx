@@ -10,9 +10,7 @@ import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { CustomSelectControl } from '@wordpress/components';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState } from 'react';
 import './style.scss';
@@ -145,7 +143,6 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const plans = useEntrepreneurPlanPrices();
-	const isEnglish = useIsEnglishLocale();
 	const [ selectedInterval, setSelectedInterval ] = useState< PlanKeys >( 'PLAN_ECOMMERCE' );
 	const selectedPlan = plans[ selectedInterval ];
 
@@ -177,17 +174,13 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 		setSelectedInterval( key );
 	};
 
-	const hasNewTitleTranslation = hasTranslation( "What's included in your free trial:" );
-	const titleTranslation =
-		isEnglish || hasNewTitleTranslation
-			? translate( "What's included in your free trial:" )
-			: translate( "What's included in your free trial" );
-
 	return (
 		<>
 			{ ! hideTrialIncluded && (
 				<>
-					<h2 className="entrepreneur-trial-plan__section-title">{ titleTranslation }</h2>
+					<h2 className="entrepreneur-trial-plan__section-title">
+						{ translate( "What's included in your free trial:" ) }
+					</h2>
 					<div className="entrepreneur-trial-plan__included-wrapper">
 						<EcommerceTrialIncluded displayAll />
 					</div>
@@ -212,22 +205,17 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 							{ getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' }
 						</h3>
 						<p className="card-text">
-							{ isEnglish ||
-							hasTranslation(
-								"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!"
-							)
-								? // translators: %(planName)s is a plan name. E.g. Commerce plan.
-								  translate(
-										"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!",
-										{
-											args: {
-												planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-											},
-										}
-								  )
-								: translate(
-										"Secure the full benefits of the Entrepreneur plan. Purchase today and maximize your store's potential!"
-								  ) }
+							{
+								// translators: %(planName)s is a plan name. E.g. Commerce plan.
+								translate(
+									"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!",
+									{
+										args: {
+											planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+										},
+									}
+								)
+							}
 						</p>
 					</div>
 					<div className="price-block">
