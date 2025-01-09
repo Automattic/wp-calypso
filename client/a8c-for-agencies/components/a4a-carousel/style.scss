@@ -1,23 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .a4a-carousel {
 	display: flex;
 	flex-direction: column;
-	gap: 32px;
+	gap: 24px;
+
+	@include break-medium {
+		gap: 32px;
+	}
 }
 
 .a4a-carousel__navigation {
 	text-align: end;
 	display: flex;
 	flex-direction: row;
-	gap: 8px;
 	justify-content: flex-end;
+	gap: 16px;
+	padding-block-end: 16px;
+
+	@include break-medium {
+		gap: 8px;
+		padding-block-end: 0;
+	}
 }
 
 .a4a-carousel__navigation-button {
 	background-color: var(--color-surface);
 	border-radius: 50%!important;
-	width: 40px;
-	height: 40px;
+	min-width: 24px;
+	max-height: 24px;
+	padding: 0;
+	opacity: 0.9;
+
+	&:disabled {
+		opacity: 0.5;
+	}
 }
 
 .a4a-carousel__content {

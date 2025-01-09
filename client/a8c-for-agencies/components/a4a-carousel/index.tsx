@@ -10,8 +10,6 @@ type Props = {
 	children: React.ReactNode;
 };
 
-const OFFSET_X_STEP = 500;
-
 export default function A4ACarousel( { children, className }: Props ) {
 	const [ offsetX, setOffsetX ] = useState( 0 );
 
@@ -23,13 +21,15 @@ export default function A4ACarousel( { children, className }: Props ) {
 
 	const maxOffset = Math.max( 0, contentWidth - containerWidth );
 
+	const offsetStep = containerWidth;
+
 	const moveLeft = useCallback( () => {
-		setOffsetX( Math.min( offsetX + OFFSET_X_STEP, 0 ) );
-	}, [ offsetX ] );
+		setOffsetX( Math.min( offsetX + offsetStep, 0 ) );
+	}, [ offsetStep, offsetX ] );
 
 	const moveRight = useCallback( () => {
-		setOffsetX( Math.max( offsetX - OFFSET_X_STEP, -maxOffset ) );
-	}, [ offsetX, maxOffset ] );
+		setOffsetX( Math.max( offsetX - offsetStep, -maxOffset ) );
+	}, [ offsetX, offsetStep, maxOffset ] );
 
 	return (
 		<div className={ clsx( `a4a-carousel-wrapper`, className ) }>
@@ -40,14 +40,14 @@ export default function A4ACarousel( { children, className }: Props ) {
 						onClick={ moveLeft }
 						disabled={ offsetX === 0 }
 					>
-						<Icon icon={ chevronLeft } />
+						<Icon icon={ chevronLeft } size={ 20 } />
 					</Button>
 					<Button
 						className="a4a-carousel__navigation-button"
 						onClick={ moveRight }
 						disabled={ offsetX === -maxOffset }
 					>
-						<Icon icon={ chevronRight } />
+						<Icon icon={ chevronRight } size={ 20 } />
 					</Button>
 				</div>
 				<div
