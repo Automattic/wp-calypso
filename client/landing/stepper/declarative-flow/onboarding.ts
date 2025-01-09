@@ -57,6 +57,7 @@ const onboarding: Flow = {
 			[]
 		);
 
+		// we are only interested in the initial goals value when the user enters the goals step
 		const initialGoals = useRef( goals );
 
 		return useMemo(
