@@ -105,7 +105,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
 	const hasSitesLoaded = useSelector( hasLoadedSites );
-	const isAllDomainManagementContext = context === 'domains';
+	const isAllDomainManagementContext = context === 'domains' || context === 'hosting-overview';
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
@@ -155,7 +155,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }
 					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
-					hideNavigation={ isAllDomainManagementContext }
+					hideNavigation={ isAllDomainManagementContext || isInHostingOverview }
 				/>
 			);
 		}
