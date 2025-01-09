@@ -10,7 +10,8 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { livePreview } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -50,6 +51,8 @@ class PreviewToolbar extends Component {
 		isUnlaunchedSite: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		launchSite: PropTypes.func,
+		previewSource: PropTypes.string,
+		themeId: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -78,7 +81,16 @@ class PreviewToolbar extends Component {
 	handleEditorWebPreviewEditHeader = ( event ) => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
-		window.location.href = this.props.customizeUrl;
+
+		const { themeId, siteSlug } = this.props;
+
+		const wpAdminUrl = `https://${ siteSlug }/wp-admin/site-editor.php`;
+		const params = new URLSearchParams( {
+			wp_theme_preview: `pub/${ themeId }`,
+			wpcom_dashboard_link: `/theme/${ themeId }/${ siteSlug }`,
+			p: '/',
+		} );
+		window.location.href = `${ wpAdminUrl }?${ params.toString() }`;
 	};
 
 	render() {
@@ -165,12 +177,12 @@ class PreviewToolbar extends Component {
 					{ showEditHeaderLink && canUserEditThemeOptions && (
 						<Button
 							borderless
-							aria-label={ translate( 'Customize' ) }
+							aria-label={ translate( 'Try and customize' ) }
 							className="web-preview__edit-header-link"
 							href={ customizeUrl }
 							onClick={ this.handleEditorWebPreviewEditHeader }
 						>
-							{ translate( 'Customize' ) }
+							{ translate( 'Try and customize' ) }
 						</Button>
 					) }
 					{ showExternal && (
@@ -210,13 +222,15 @@ export default connect(
 		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
+		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
 			canUserEditThemeOptions,
 			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 			selectedSiteId,
+			siteSlug,
 		};
 	},
-	{ recordTracksEvent, launchSite }
+	{ recordTracksEvent, launchSite, livePreview }
 )( localize( PreviewToolbar ) );
