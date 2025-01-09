@@ -181,7 +181,12 @@ const SubscribersPage = ( {
 			sortTermChanged={ sortTermChanged }
 		>
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
-			<Main wideLayout className="subscribers">
+			<Main
+				wideLayout
+				className={ `subscribers${
+					isEnabled( 'subscribers-dataviews' ) ? ' subscribers--dataviews' : ''
+				}` }
+			>
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
 				<SubscribersHeader
