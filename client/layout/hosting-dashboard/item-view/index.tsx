@@ -41,7 +41,6 @@ export default function ItemView( {
 	itemViewHeaderExtraProps,
 	hideNavIfSingleTab,
 	enforceTabsView,
-	hideHeader,
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -88,14 +87,12 @@ export default function ItemView( {
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
-			{ ! hideHeader && (
-				<ItemViewHeader
-					closeItemView={ closeItemView }
-					itemData={ itemData }
-					isPreviewLoaded={ !! selectedFeature.preview }
-					extraProps={ itemViewHeaderExtraProps }
-				/>
-			) }
+			<ItemViewHeader
+				closeItemView={ closeItemView }
+				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
+				extraProps={ itemViewHeaderExtraProps }
+			/>
 			<div ref={ setNavRef }>
 				<SectionNav
 					className={ clsx( 'hosting-dashboard-item-view__navigation', {

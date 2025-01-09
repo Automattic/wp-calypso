@@ -42,7 +42,6 @@ export interface ItemViewProps {
 	itemViewHeaderExtraProps?: ItemViewHeaderExtraProps;
 	hideNavIfSingleTab?: boolean;
 	enforceTabsView?: boolean;
-	hideHeader?: boolean;
 }
 
 export interface ItemViewHeaderExtraProps {
