@@ -24,6 +24,7 @@ import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ProductListing from '../products-overview/product-listing';
 import ShoppingCart from '../shopping-cart';
+import ProductCategoryMenu from './product-category-menu';
 
 import './style.scss';
 
@@ -100,6 +101,8 @@ export function ProductsOverviewV2( {
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductCategoryMenu />
 			</LayoutTop>
 
 			<LayoutBody className="products-overview-v2__body">
