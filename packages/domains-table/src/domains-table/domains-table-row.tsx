@@ -95,20 +95,6 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
 	};
 
-<<<<<<< HEAD
-	const handleSelect = () => {
-		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
-
-		if ( isAllDomainManagementEnabled ) {
-			page.show( domainManagementLink );
-			return;
-		}
-
-		window.location.href = domainManagementLink;
-	};
-
-=======
->>>>>>> 4bfc093db69 (Improve `Points to WPCOM` logics)
 	return (
 		<tr
 			key={ domain.domain }

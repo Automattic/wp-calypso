@@ -111,11 +111,15 @@ export function resolveDomainStatus(
 			nameservers: true,
 		} ),
 		label: translate( 'Point to WordPress.com' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
 	};
 
 	const editDNSRecordsCallToAction = {
 		href: domainMagementDNS( siteSlug as string, domain.domain ),
 		label: translate( 'Point to WordPress.com' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
 	};
 
 	switch ( domain.type ) {
@@ -510,12 +514,16 @@ export function resolveDomainStatus(
 							components: {
 								strong: <strong />,
 								cta: domain.hasWpcomNameservers ? (
-									<a href={ domainMagementDNS( siteSlug as string, domain.domain ) } />
+									<a
+										href={ domainMagementDNS( siteSlug as string, domain.domain ) }
+										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
+									/>
 								) : (
 									<a
 										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
 											nameservers: true,
 										} ) }
+										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
 									/>
 								),
 							},
