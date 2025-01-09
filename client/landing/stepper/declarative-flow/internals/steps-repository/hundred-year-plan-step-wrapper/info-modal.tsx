@@ -103,7 +103,11 @@ const Row = styled.div`
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	gap: 60px;
+	gap: 24px;
+
+	@media ( min-width: ${ SMALL_BREAKPOINT }px ) {
+		gap: 60px;
+	}
 `;
 
 const RowItem = styled.div`
@@ -141,9 +145,10 @@ const RowContent = styled.div`
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 400;
-	line-height: 26px; /* 144.444% */
+	line-height: 20px;
 	@media ( min-width: ${ SMALL_BREAKPOINT }px ) {
 		font-size: 18px;
+		line-height: 26px; /* 144.444% */
 	}
 `;
 
