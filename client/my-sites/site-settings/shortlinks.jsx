@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -35,9 +35,9 @@ class Shortlinks extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<PanelSection>
+			<PanelCard>
 				<>
-					<PanelHeading>
+					<PanelCardHeading>
 						{ translate( 'WP.me Shortlinks' ) }
 						<SupportInfo
 							text={ translate(
@@ -45,7 +45,7 @@ class Shortlinks extends Component {
 							) }
 							link="https://jetpack.com/support/wp-me-shortlinks/"
 						/>
-					</PanelHeading>
+					</PanelCardHeading>
 					<FormFieldset>
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
@@ -55,7 +55,7 @@ class Shortlinks extends Component {
 						/>
 					</FormFieldset>
 				</>
-			</PanelSection>
+			</PanelCard>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

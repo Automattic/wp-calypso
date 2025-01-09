@@ -4,13 +4,14 @@ import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
-import { TabType } from 'calypso/performance-profiler/components/header';
+import { TabType, TabTypes } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
+import { useReportCompletedEffect } from 'calypso/performance-profiler/hooks/use-report-track-events-effect';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
@@ -33,7 +34,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	filter,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
-	activeTab = TabType.mobile,
+	activeTab = TabTypes.mobile,
 	overallScoreIsTab = false,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
@@ -53,6 +54,8 @@ export const PerformanceProfilerDashboardContent = ( {
 		fullPageScreenshot,
 	} = performanceReport;
 	const insightsRef = useRef< HTMLDivElement >( null );
+
+	useReportCompletedEffect( url, hash );
 
 	return (
 		<div className="performance-profiler-content">

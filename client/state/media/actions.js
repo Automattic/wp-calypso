@@ -1,3 +1,4 @@
+import { persistGooglePhotosPickerSessionCookie } from 'calypso/jetpack-connect/persistence-utils';
 import wp from 'calypso/lib/wp';
 import {
 	MEDIA_DELETE,
@@ -305,6 +306,8 @@ export function clearSite( siteId ) {
  * @param session
  */
 export function setPhotoPickerSession( session ) {
+	persistGooglePhotosPickerSessionCookie( session.id );
+
 	return {
 		type: MEDIA_PHOTOS_PICKER_SESSION_SET,
 		session,

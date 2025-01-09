@@ -5,6 +5,7 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
+	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -34,6 +35,7 @@ import {
 	hasPlan,
 	hasDomainRegistration,
 	getDomainsInCart,
+	hasPersonalPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -91,6 +93,7 @@ export class RenderDomainsStep extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
+		goBack: PropTypes.func,
 		isDomainOnly: PropTypes.bool.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
@@ -101,6 +104,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
+		recordTracksEvent: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -183,6 +187,19 @@ export class RenderDomainsStep extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps?.cart?.products?.length !== this.props?.cart?.products?.length ) {
+			if (
+				shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+				hasDomainRegistration( this.props.cart ) &&
+				! hasPersonalPlan( this.props.cart )
+			) {
+				// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
+				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
+			}
+		}
+	}
+
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
@@ -226,7 +243,8 @@ export class RenderDomainsStep extends Component {
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
 			position,
-			suggestion?.is_premium
+			suggestion?.is_premium,
+			this.props.flowName
 		);
 
 		await this.props.saveSignupStep( stepData );
@@ -343,6 +361,7 @@ export class RenderDomainsStep extends Component {
 			stepName: this.props.stepName,
 			suggestion: undefined,
 			domainCart: {},
+			siteUrl: '',
 		};
 
 		this.props.saveSignupStep( stepData );
@@ -476,7 +495,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInMapDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -519,7 +542,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInTransferDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -697,8 +724,10 @@ export class RenderDomainsStep extends Component {
 									'Sorry, there was a problem adding that domain. Please try again later.'
 								)
 							);
+						} )
+						.then( () => {
+							this.setState( { isMiniCartContinueButtonBusy: false } );
 						} );
-					this.setState( { isMiniCartContinueButtonBusy: false } );
 				} );
 			}, 500 );
 		} else {
@@ -1300,6 +1329,7 @@ export class RenderDomainsStep extends Component {
 			userSiteCount,
 			previousStepName,
 			useStepperWrapper,
+			goBack,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1317,7 +1347,8 @@ export class RenderDomainsStep extends Component {
 		const shouldHideBack =
 			! userSiteCount &&
 			previousStepName?.startsWith( 'user' ) &&
-			stepSectionName !== 'use-your-domain';
+			stepSectionName !== 'use-your-domain' &&
+			! ( isOnboardingFlow( flowName ) && !! goBack );
 
 		const hideBack = flowName === 'domain' || shouldHideBack;
 
@@ -1349,6 +1380,9 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingGuidedFlow( flowName ) ) {
 			// Let the framework decide the back url.
 			backUrl = undefined;
+		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
+			backUrl = null;
+			backLabelText = translate( 'Back' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
@@ -1408,6 +1442,8 @@ export class RenderDomainsStep extends Component {
 					hideSkip
 					align="center"
 					isWideLayout
+					goBack={ goBack }
+					recordTracksEvent={ this.props.recordTracksEvent }
 				/>
 			);
 		}

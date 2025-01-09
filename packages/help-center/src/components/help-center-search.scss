@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "variables";
 
 /**
  * Styling for '/' route.
@@ -23,8 +24,14 @@
 				min-height: 40px;
 			}
 
+			.search__icon-navigation {
+				&:focus {
+					box-shadow: 0 0 0 3px $help-center-blue;
+				}
+			}
+
 			&.has-focus {
-				outline: var(--color-primary-light) solid 2px;
+				outline: $help-center-blue solid 2px;
 				transition: none;
 
 				&.is-open {

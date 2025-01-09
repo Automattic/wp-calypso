@@ -14,7 +14,7 @@ import { zendeskMessageConverter } from '../../utils';
 
 const getFileType = ( file: File ) => {
 	if ( file.type.includes( 'image' ) ) {
-		return 'image';
+		return 'image-placeholder';
 	}
 
 	return 'text';
@@ -33,9 +33,14 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 	} );
 };
 
-export const AttachmentButton: React.FC = () => {
-	const { chat, addMessage, trackEvent } = useOdieAssistantContext();
-	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+export const AttachmentButton: React.FC< {
+	attachmentButtonRef?: React.RefObject< HTMLElement >;
+} > = ( { attachmentButtonRef } ) => {
+	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { data: authData } = useAuthenticateZendeskMessaging(
+		isUserEligibleForPaidSupport,
+		'messenger'
+	);
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 	const { zendeskClientId } = useSelect( ( select ) => {
@@ -83,7 +88,7 @@ export const AttachmentButton: React.FC = () => {
 	return (
 		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
-			{ ! isAttachingFile && <Icon icon={ image } /> }
+			{ ! isAttachingFile && <Icon ref={ attachmentButtonRef } icon={ image } /> }
 		</FormFileUpload>
 	);
 };

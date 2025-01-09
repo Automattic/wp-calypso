@@ -288,6 +288,7 @@
 	--color-jetpack-onboarding-background-rgb: var(--studio-blue-100-rgb);
 
 	/* Brand Color Properties */
+	--color-akismet: #357b49;
 	--color-automattic: var(--studio-blue-40);
 	--color-jetpack: var(--studio-jetpack-green);
 	--color-simplenote: var(--studio-simplenote-blue);
@@ -360,4 +361,8 @@
 	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: #72aee6; /* Direct from wp-admin */
+
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

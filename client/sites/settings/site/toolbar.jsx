@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -73,11 +73,11 @@ const Masterbar = ( {
 	}
 
 	return (
-		<PanelSection>
+		<PanelCard>
 			<QueryJetpackConnection siteId={ selectedSiteId } />
-			<PanelHeading>{ translate( 'WordPress.com toolbar' ) }</PanelHeading>
+			<PanelCardHeading>{ translate( 'WordPress.com toolbar' ) }</PanelCardHeading>
 			{ renderForm() }
-		</PanelSection>
+		</PanelCard>
 	);
 };
 

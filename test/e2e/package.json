@@ -36,6 +36,7 @@
 		"@automattic/calypso-e2e": "workspace:^",
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
+		"@playwright/browser-chromium": "1.48.2",
 		"@types/archiver": "^5.3.1",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",
@@ -54,7 +55,7 @@
 		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
 		"node-fetch": "^2.6.1",
-		"playwright": "^1.37",
+		"playwright": "1.48.2",
 		"postcss": "^8.3.11"
 	}
 }

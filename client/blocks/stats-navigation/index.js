@@ -4,16 +4,25 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
+import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
-import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import {
+	getJetpackStatsAdminVersion,
+	getSiteOption,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -56,6 +65,9 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isSubscriptionsModuleActive: PropTypes.bool,
+		isSimple: PropTypes.bool,
+		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -79,11 +91,29 @@ class StatsNavigation extends Component {
 				};
 			} )
 		),
+		availableModuleToggles: [],
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
-			return { pageModules: nextProps.pageModuleToggles };
+		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
+			( toggleItem ) => {
+				// disable the "videos" toggle on sites that do not have VideoPress enabled
+				// the toggle will be disabled (grayed out and non interactive)
+				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
+
+				return {
+					...toggleItem,
+					disabled: shouldDisableVideoToggle,
+					defaultValue: shouldDisableVideoToggle === false,
+				};
+			}
+		);
+
+		if (
+			prevState.pageModules !== nextProps.pageModuleToggles ||
+			prevState.availableModuleToggles !== nextProps.availableModuleToggles
+		) {
+			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
 		}
 
 		return null;
@@ -110,7 +140,14 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const {
+			isGoogleMyBusinessLocationConnected,
+			isStore,
+			isWordAds,
+			isSubscriptionsModuleActive,
+			isSimple,
+			siteId,
+		} = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -130,6 +167,8 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+
+				return isSimple || isSubscriptionsModuleActive;
 
 			default:
 				return true;
@@ -151,8 +190,10 @@ class StatsNavigation extends Component {
 			showLock,
 			hideModuleSettings,
 			delayTooltipPresentation,
+			gatedTrafficPage,
+			siteId,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
+		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -166,10 +207,18 @@ class StatsNavigation extends Component {
 			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
+		const shouldRenderModuleToggler =
+			! isLegacy &&
+			isModuleSettingsSupported &&
+			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+			! hideModuleSettings &&
+			! gatedTrafficPage;
+
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		return (
 			<div className={ wrapperClass }>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
@@ -216,22 +265,17 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ ! isLegacy &&
-					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
-					! hideModuleSettings && (
-						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-							pageModules={ pageModules }
-							onToggleModule={ this.onToggleModule }
-							isTooltipShown={
-								showSettingsTooltip &&
-								! isPageSettingsTooltipDismissed &&
-								! delayTooltipPresentation
-							}
-							onTooltipDismiss={ this.onTooltipDismiss }
-						/>
-					) }
+				{ shouldRenderModuleToggler && (
+					<PageModuleToggler
+						availableModuleToggles={ availableModuleToggles }
+						pageModules={ pageModules }
+						onToggleModule={ this.onToggleModule }
+						isTooltipShown={
+							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
+						}
+						onTooltipDismiss={ this.onTooltipDismiss }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -267,11 +311,17 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
+			isSimple: isSimpleSite( state, siteId ),
+			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
+			gatedTrafficPage:
+				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

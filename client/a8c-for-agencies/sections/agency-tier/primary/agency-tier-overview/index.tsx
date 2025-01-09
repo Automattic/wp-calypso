@@ -2,14 +2,14 @@ import { Card, Badge } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,9 +32,6 @@ export default function AgencyTierOverview() {
 
 	const currentAgencyTier = agency?.tier?.id;
 	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTier, translate );
-
-	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/';
 
 	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
@@ -87,7 +84,7 @@ export default function AgencyTierOverview() {
 											a: (
 												<a
 													target="_blank"
-													href={ learnMoreLink }
+													href={ currentAgencyTierInfo.learnMoreLink }
 													onClick={ () => {
 														dispatch(
 															recordTracksEvent( 'calypso_a4a_agency_tier_badge_learn_more_click', {

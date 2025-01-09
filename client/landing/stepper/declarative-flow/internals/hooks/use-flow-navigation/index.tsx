@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { generatePath, useMatch, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { Navigate, StepperStep } from '../../types';
+import type { Navigate, StepperStep } from '../../types';
 
 const useOnboardingIntent = () => {
 	const intent = useSelect(
@@ -44,7 +44,9 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const customNavigate = useCallback< Navigate< StepperStep[] > >(
 		( nextStep: string, extraData = {}, replace = false ) => {
 			const hasQueryParams = nextStep.includes( '?' );
-			const queryParams = ! hasQueryParams ? currentSearchParams : null;
+
+			// Get the latest search params from the current location
+			const queryParams = ! hasQueryParams ? new URLSearchParams( window.location.search ) : null;
 
 			setStepData( {
 				path: nextStep,
@@ -61,7 +63,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 
 			navigate( addQueryParams( newPath, queryParams ), { replace } );
 		},
-		[ currentSearchParams, flow, intent, lang, navigate, setStepData, currentStepSlug ]
+		[ flow, intent, lang, navigate, setStepData, currentStepSlug ]
 	);
 
 	return {

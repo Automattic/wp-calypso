@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
@@ -12,6 +13,7 @@ type EmailPathUtilityFunction = (
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
+export const domainsManagementPrefix = '/domains/manage/all/email';
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
@@ -36,7 +38,7 @@ function resolveRootPath( relativeTo?: string | null ) {
 function getPath(
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
-	slug: string,
+	slug?: string | null,
 	relativeTo?: string | null,
 	urlParameters?: QueryStringParameters
 ) {
@@ -48,12 +50,13 @@ function getPath(
 			domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 		}
 
+		const slugFragment = slug ? '/' + slug : '';
+
 		return (
 			resolveRootPath( relativeTo ) +
 			'/' +
 			domainName +
-			'/' +
-			slug +
+			slugFragment +
 			'/' +
 			siteName +
 			buildQueryString( urlParameters )
@@ -73,7 +76,15 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+};
 
 // Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
 export function getAddGSuiteUsersPath(
@@ -115,7 +126,15 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+};
 
 // Retrieves the URL to set up Titan mailboxes
 export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
@@ -138,7 +157,15 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+) => {
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+};
 
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
 	getPath( siteName, domainName, 'forwarding', relativeTo );
@@ -165,12 +192,21 @@ export const getEmailInDepthComparisonPath = (
 	relativeTo?: string,
 	source?: string,
 	intervalLength?: string
-) =>
-	getPath( siteName, domainName, 'compare', relativeTo, {
+) => {
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+			interval: intervalLength,
+			referrer: relativeTo,
+			source,
+		} ) }`;
+	}
+
+	return getPath( siteName, domainName, 'compare', relativeTo, {
 		interval: intervalLength,
 		referrer: relativeTo,
 		source,
 	} );
+};
 
 export const getProfessionalEmailCheckoutUpsellPath = (
 	siteName: string,

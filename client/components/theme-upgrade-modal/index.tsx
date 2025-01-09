@@ -466,7 +466,6 @@ export const ThemeUpgradeModal = ( {
 	const getPersonalPlanFeatureList = () => {
 		return getPlanFeaturesObject( [
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,

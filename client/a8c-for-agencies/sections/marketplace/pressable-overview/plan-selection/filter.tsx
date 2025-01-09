@@ -1,4 +1,5 @@
-import { Button, TabPanel } from '@wordpress/components';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,6 +12,8 @@ import {
 	FILTER_TYPE_VISITS,
 	PLAN_CATEGORY_STANDARD,
 	PLAN_CATEGORY_ENTERPRISE,
+	PLAN_CATEGORY_HIGH_RESOURCE,
+	FILTER_TYPE_STORAGE,
 } from '../constants';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
@@ -27,6 +30,7 @@ type Props = {
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
+	showHighResourceTab?: boolean;
 };
 
 export default function PlanSelectionFilter( {
@@ -35,6 +39,7 @@ export default function PlanSelectionFilter( {
 	onSelectPlan,
 	pressablePlan,
 	isLoading,
+	showHighResourceTab = false,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -43,14 +48,17 @@ export default function PlanSelectionFilter( {
 	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
+	const isMobile = useMobileBreakpoint();
+
 	const standardOptions = useMemo(
 		() =>
 			getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_STANDARD
+				PLAN_CATEGORY_STANDARD,
+				isMobile
 			),
-		[ filterType, plans ]
+		[ filterType, isMobile, plans ]
 	);
 
 	const enterpriseOptions = useMemo(
@@ -58,15 +66,20 @@ export default function PlanSelectionFilter( {
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_ENTERPRISE
+				PLAN_CATEGORY_ENTERPRISE,
+				isMobile
 			),
-			{
-				label: translate( 'More' ),
-				value: null,
-				category: null,
-			},
+			...( showHighResourceTab
+				? []
+				: [
+						{
+							label: translate( 'More' ),
+							value: null,
+							category: null,
+						},
+				  ] ),
 		],
-		[ filterType, plans, translate ]
+		[ filterType, isMobile, plans, showHighResourceTab, translate ]
 	);
 
 	const onSelectOption = useCallback(
@@ -86,19 +99,15 @@ export default function PlanSelectionFilter( {
 		PLAN_CATEGORY_STANDARD === selectedTab ? standardOptions : enterpriseOptions
 	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
 
-	const onSelectInstallFilterType = useCallback( () => {
-		setFilterType( FILTER_TYPE_INSTALL );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_filter_by_install_click' )
-		);
-	}, [ dispatch ] );
-
-	const onSelectVisitFilterType = useCallback( () => {
-		setFilterType( FILTER_TYPE_VISITS );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_filter_by_visits_click' )
-		);
-	}, [ dispatch ] );
+	const onSelectFilterType = useCallback(
+		( value: FilterType ) => {
+			setFilterType( value );
+			dispatch(
+				recordTracksEvent( `calypso_a4a_marketplace_hosting_pressable_filter_by_${ value }_click` )
+			);
+		},
+		[ dispatch ]
+	);
 
 	const additionalWrapperClass =
 		filterType === FILTER_TYPE_INSTALL
@@ -152,6 +161,12 @@ export default function PlanSelectionFilter( {
 		}
 	}, [ pressablePlan, standardOptions ] );
 
+	useEffect( () => {
+		if ( selectedTab === PLAN_CATEGORY_HIGH_RESOURCE ) {
+			onSelectPlan( null );
+		}
+	}, [ onSelectPlan, selectedTab ] );
+
 	if ( isLoading ) {
 		return (
 			<div className="pressable-overview-plan-selection__filter is-placeholder">
@@ -164,27 +179,22 @@ export default function PlanSelectionFilter( {
 	const FilterByPicker = () => (
 		<div className="pressable-overview-plan-selection__filter-type">
 			<p className="pressable-overview-plan-selection__filter-label">
-				{ translate( 'Filter by:' ) }
+				{ translate( 'Display plans by total' ) }
 			</p>
-			<div className="pressable-overview-plan-selection__filter-buttons">
-				<Button
-					className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-						'is-dark': filterType === FILTER_TYPE_INSTALL,
-					} ) }
-					onClick={ onSelectInstallFilterType }
-				>
-					{ translate( 'WordPress installs' ) }
-				</Button>
 
-				<Button
-					className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-						'is-dark': filterType === FILTER_TYPE_VISITS,
-					} ) }
-					onClick={ onSelectVisitFilterType }
-				>
-					{ translate( 'Number of visits' ) }
-				</Button>
-			</div>
+			<RadioControl
+				className="pressable-overview-plan-selection__filter-radio-control"
+				selected={ filterType }
+				options={ [
+					{ label: translate( 'WordPress installs' ), value: FILTER_TYPE_INSTALL },
+					{ label: translate( 'Traffic' ), value: FILTER_TYPE_VISITS },
+					{
+						label: isMobile ? translate( 'Storage (GB)' ) : translate( 'Storage' ),
+						value: FILTER_TYPE_STORAGE,
+					},
+				] }
+				onChange={ ( value ) => onSelectFilterType( value as FilterType ) }
+			/>
 		</div>
 	);
 
@@ -199,13 +209,21 @@ export default function PlanSelectionFilter( {
 				tabs={ [
 					{
 						name: PLAN_CATEGORY_STANDARD,
-						title: translate( 'Shared Resource Plans' ),
+						title: translate( 'Signature Plans' ),
 						disabled: disableStandardTab,
 					},
 					{
 						name: PLAN_CATEGORY_ENTERPRISE,
-						title: translate( 'Signature Shared Resource Plans' ),
+						title: translate( 'Enterprise Plans' ),
 					},
+					...( showHighResourceTab
+						? [
+								{
+									name: PLAN_CATEGORY_HIGH_RESOURCE,
+									title: translate( 'High Resource Plans' ),
+								},
+						  ]
+						: [] ),
 				] }
 			>
 				{ ( tab ) => {

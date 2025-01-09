@@ -440,3 +440,264 @@
 		}
 	}
 }
+
+/**
+ * Context: All Domain Management
+ */
+.wpcom-site .hosting-dashboard-item-view__content .context-all-domain-management, /* For Domain and Email related pages under site context. */
+.context-all-domain-management {
+	&.main {
+		margin-left: 0;
+		width: 100%;
+
+		header.domains-email__navigation-header.navigation-header {
+			border: 0;
+			padding: 1.5rem;
+
+			@include break-medium {
+				padding: 0 0 1.5rem 0;
+			}
+
+			@include break-large {
+				padding-bottom: 2rem;
+			}
+
+			.navigation-header__main {
+				padding-inline: 0;
+
+				.navigation-header__actions {
+					flex-grow: 0;
+				}
+			}
+		}
+	}
+
+	/* Mailboxes */
+	.email-plan-mailboxes-list {
+		&__mailbox-list {
+			margin-top: 0;
+			padding-bottom: 1.875rem;
+
+			@include break-medium {
+				border: solid 1px var(--color-border-subtle);
+				border-radius: 4px;
+			}
+
+			.card {
+				box-shadow: none;
+				background: none;
+			}
+
+			.card.section-header {
+				margin: 0 1.5rem;
+				padding: 1.75rem 0 1.25em 0;
+			}
+
+			.section-header__label-text {
+				display: flex;
+				align-items: center;
+				font-size: 1rem;
+				color: var(--studio-gray-100);
+			}
+
+			.section-header__actions {
+				flex: none;
+
+				.components-button {
+					font-size: 0.875rem;
+				}
+
+				.components-button.is-link {
+					text-decoration: none;
+				}
+			}
+
+			&-item.card.is-compact {
+				border-top: solid 1px var(--color-border-subtle);
+				margin: 0 1.5rem;
+				padding: 1.375rem 0;
+
+				&:last-child {
+					padding-bottom: 0;
+				}
+			}
+
+			&-item > div {
+				flex-grow: initial;
+			}
+
+			.email-mailbox-action-menu__main {
+				right: 0;
+				top: 18px;
+			}
+		}
+
+		&__mailbox-header-icon {
+			display: flex;
+			margin-inline-end: 0.5rem;
+			width: 24px;
+
+			img {
+				height: 24px;
+			}
+
+			svg {
+				height: 24px;
+				fill: var(--color-accent);
+			}
+		}
+
+		&__notice {
+			margin-top: 1rem;
+			margin-bottom: 2rem;
+
+			.email-plan-warnings__container {
+				margin: 0;
+			}
+
+			.email-plan-warnings__warning {
+				display: flex;
+				padding: 0;
+
+				.email-plan-warnings__message,
+				.email-plan-warnings__cta {
+					display: inline;
+				}
+
+				.email-plan-warnings__message {
+					flex-grow: 1;
+
+					span {
+						display: inline-block;
+						max-width: 700px;
+					}
+				}
+
+				.email-plan-warnings__cta {
+					margin: 0;
+					flex-grow: 0;
+					align-self: center;
+					white-space: nowrap;
+
+					svg {
+						height: 14px;
+						vertical-align: middle;
+					}
+
+					a {
+						color: var(--studio-gray-20);
+						text-decoration: none;
+					}
+				}
+			}
+		}
+	}
+
+	div.email-plan-mailboxes-list__mailbox-list-link span.disabled,
+	.section-header__actions button[disabled] {
+		color: var(--theme-highlight-color-50);
+		opacity: 0.5;
+	}
+
+	.email-plan-mailboxes-list__email-forward {
+		.section-header__label,
+		.email-plan-mailboxes-list__mailbox-list-item-main {
+			flex: 1 1 0;
+		}
+
+		.section-header__actions,
+		.email-mailbox-action-menu__main {
+			min-width: 80px;
+			flex: 0 0 auto;
+		}
+
+		.email-mailbox-action-menu__main {
+			text-align: end;
+
+			@include break-xlarge {
+				position: static;
+			}
+		}
+
+		.section-header__label {
+			font-weight: 500;
+
+			&.destination {
+				display: none;
+
+				@include break-xlarge {
+					display: block;
+				}
+			}
+		}
+
+		.email-plan-mailboxes-list__mailbox-list-item-main {
+			font-size: 0.875rem;
+
+			span {
+				align-self: center;
+			}
+		}
+
+		.email-plan-mailboxes-list__mailbox-secondary-details svg {
+			width: 1rem;
+		}
+
+		.email-mailbox-warnings {
+			.email-mailbox-warnings__warning,
+			.email-mailbox-warnings__action {
+				display: inline-block;
+				border: none;
+				padding: 0;
+				margin: 0;
+			}
+
+			.email-mailbox-warnings__action {
+				button {
+					padding: 0;
+				}
+			}
+
+			.email-mailbox-warnings__warning {
+				margin-left: 0;
+				margin-right: 0.75rem;
+
+				svg {
+					fill: var(--color-error);
+				}
+			}
+		}
+	}
+}
+
+.email-plan-mailboxes-list__email-upgrade-notice {
+	margin-top: 1rem;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	.components-notice__content {
+		display: flex;
+		margin-left: 0.25rem;
+		margin-right: 0.75rem;
+		align-items: center;
+	}
+
+	p {
+		margin: 0;
+		font-size: 0.75rem;
+		color: var(--studio-gray-70);
+	}
+
+	.icon {
+		svg {
+			fill: #fff;
+			padding: 4px;
+			border-radius: 100%;
+			background: var(--color-accent-60);
+		}
+	}
+
+	.content {
+		flex: 1 1 auto;
+		margin: 0 0.75rem;
+	}
+}

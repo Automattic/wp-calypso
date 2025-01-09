@@ -90,23 +90,6 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 
 .site-monitoring {
 	position: relative;
-
-	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
-	.pagination__page-number,
-	.pagination__ellipsis {
-		display: none;
-	}
-
-	&.is-loading {
-		.site-logs__monitoring-text {
-			opacity: 0.5;
-		}
-
-		.site-logs__monitoring-click-guard {
-			pointer-events: none;
-			opacity: 0.5;
-		}
-	}
 }
 
 .site-monitoring .components-tab-panel__tab-content,

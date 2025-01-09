@@ -102,6 +102,10 @@
 			}
 		}
 
+		&.odie-chatbox-message-error {
+			flex-direction: column;
+		}
+
 		.help-center-contact-page {
 			.help-center-contact-page__content {
 				margin-bottom: 0 !important;
@@ -117,10 +121,6 @@
 			font-size: $font-body-extra-small;
 			text-align: start;
 			margin: 16px 0;
-
-			.components-external-link {
-				margin-left: 6px;
-			}
 		}
 	}
 
@@ -228,6 +228,12 @@
 		p {
 			color: var(--studio-gray-80);
 			line-height: 20px;
+		}
+
+		&.odie-introduction-message-content__conversation_feedback {
+			flex-direction: column;
+			align-items: baseline;
+			padding: 0;
 		}
 	}
 
@@ -394,7 +400,7 @@
 
 			.odie-feedback-component-button-liked-pressed,
 			.odie-feedback-component-button-disliked-pressed {
-				background-color: var(--color-primary);
+				background-color: $blueberry-color;
 				cursor: default;
 				pointer-events: none;
 			}
@@ -414,7 +420,7 @@
 	}
 
 	.odie-feedback-component-button-icon-pressed {
-		background-color: var(--color-primary);
+		background-color: $blueberry-color;
 		fill: var(--color-text-inverted);
 	}
 
@@ -477,6 +483,11 @@
 			justify-content: center;
 			align-items: center;
 			border-radius: $custom-border-corner-size;
+
+			&:hover {
+				color: var(--studio-white);
+				border-color: inherit;
+			}
 
 			&.is-active {
 				border-width: 1px;
@@ -571,7 +582,7 @@
 	}
 
 	.odie-question-collapse {
-		animation: odie-question-collapse-animation 0.3s ease-in-out 1s forwards;
+		animation: odie-question-collapse-animation 0.3s ease-in-out 2.5s forwards;
 		overflow: hidden;
 	}
 
@@ -650,7 +661,7 @@
 		text-align: center;
 		padding-top: 6px;
 	}
-	
+
 	.odie-send-message-input-spinner {
 		color: $blueberry-color !important;
 	}

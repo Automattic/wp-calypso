@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
@@ -23,8 +22,6 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
@@ -77,8 +74,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 
 	return (
 		<div
-			className={ clsx( 'pressable-overview-plan-selection', {
-				'is-new-hosting-page': isNewHostingPage,
+			className={ clsx( 'pressable-overview-plan-selection is-new-hosting-page', {
 				'is-slider-hidden': pressableOwnership === 'regular' || isReferMode,
 			} ) }
 		>

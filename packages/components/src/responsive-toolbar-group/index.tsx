@@ -14,10 +14,12 @@ const ResponsiveToolbarGroup = ( {
 	rootMargin = '0px',
 	onClick = () => null,
 	initialActiveIndex = -1,
+	initialActiveIndexes,
 	swipeBreakpoint = '<660px',
 	hrefList = [],
 	forceSwipe = false,
 	swipeEnabled = true,
+	isMultiSelection = false,
 }: {
 	children: ReactNode[];
 	className?: string;
@@ -26,6 +28,7 @@ const ResponsiveToolbarGroup = ( {
 	rootMargin?: string;
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
+	initialActiveIndexes?: number[];
 	swipeBreakpoint?: string;
 
 	/**
@@ -42,6 +45,11 @@ const ResponsiveToolbarGroup = ( {
 	 * When false completely disables swipe at all breakpoints.
 	 */
 	swipeEnabled?: boolean;
+
+	/**
+	 * Whether to allow multiple selection.
+	 */
+	isMultiSelection?: boolean;
 } ) => {
 	const classes = clsx( 'responsive-toolbar-group', className );
 	const isWithinBreakpoint = useBreakpoint( swipeBreakpoint );
@@ -51,8 +59,10 @@ const ResponsiveToolbarGroup = ( {
 			<SwipeGroup
 				className={ classes }
 				initialActiveIndex={ initialActiveIndex }
+				initialActiveIndexes={ initialActiveIndexes }
 				onClick={ onClick }
 				hrefList={ hrefList }
+				isMultiSelection={ isMultiSelection }
 			>
 				{ children }
 			</SwipeGroup>
@@ -63,10 +73,12 @@ const ResponsiveToolbarGroup = ( {
 		<DropdownGroup
 			className={ classes }
 			initialActiveIndex={ initialActiveIndex }
+			initialActiveIndexes={ initialActiveIndexes }
 			onClick={ onClick }
 			hideRatio={ hideRatio }
 			showRatio={ showRatio }
 			rootMargin={ rootMargin }
+			isMultiSelection={ isMultiSelection }
 		>
 			{ children }
 		</DropdownGroup>

@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -5,6 +7,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import Notice from 'calypso/components/notice';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../hooks/use-credentials-form';
+import { ApplicationPasswordsInfo } from '../types';
 import { AccessMethodPicker } from './access-method-picker';
 import { BackupFileField } from './backup-file-field';
 import { ErrorMessage } from './error-message';
@@ -14,16 +17,30 @@ import { SpecialInstructions } from './special-instructions';
 import { UsernameField } from './username-field';
 
 interface CredentialsFormProps {
-	onSubmit: ( siteInfo?: UrlData | undefined ) => void;
+	onSubmit: (
+		siteInfo?: UrlData | undefined,
+		applicationPasswordsInfo?: ApplicationPasswordsInfo
+	) => void;
 	onSkip: () => void;
 }
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
-	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
-		useCredentialsForm( onSubmit );
+	const hasEnTranslation = useHasEnTranslation();
+
+	const {
+		control,
+		errors,
+		accessMethod,
+		isBusy,
+		submitHandler,
+		canBypassVerification,
+		clearErrors,
+	} = useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
+
+	const applicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 
 	let errorMessage;
 	if ( errors.root && errors.root.type !== 'manual' && errors.root.message ) {
@@ -36,6 +53,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 	const getContinueButtonText = () => {
 		if ( isBusy && ! canBypassVerification ) {
+			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
+			if ( applicationPasswordEnabled && hasScanningTranslation ) {
+				return translate( 'Scanning site' );
+			}
 			return translate( 'Verifying credentials' );
 		}
 		if ( canBypassVerification ) {
@@ -45,8 +66,16 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		return translate( 'Continue' );
 	};
 
+	const onSubmitLocal = ( e: React.FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+		clearErrors();
+		submitHandler();
+	};
+
+	const showSpecialInstructions = ! applicationPasswordEnabled || accessMethod === 'backup';
+
 	return (
-		<form className="site-migration-credentials__form" onSubmit={ submitHandler }>
+		<form className="site-migration-credentials__form" onSubmit={ onSubmitLocal }>
 			{ errorMessage && (
 				<Notice
 					className="site-migration-credentials__error-notice"
@@ -64,14 +93,18 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
 						<SiteAddressField control={ control } errors={ errors } />
-						<UsernameField control={ control } errors={ errors } />
-						<PasswordField control={ control } errors={ errors } />
+						{ ! applicationPasswordEnabled && (
+							<>
+								<UsernameField control={ control } errors={ errors } />
+								<PasswordField control={ control } errors={ errors } />
+							</>
+						) }
 					</div>
 				) }
 
 				{ accessMethod === 'backup' && <BackupFileField control={ control } errors={ errors } /> }
 
-				<SpecialInstructions control={ control } errors={ errors } />
+				{ showSpecialInstructions && <SpecialInstructions control={ control } errors={ errors } /> }
 
 				<ErrorMessage
 					error={ errors.root && errors.root.type === 'manual' ? errors.root : undefined }

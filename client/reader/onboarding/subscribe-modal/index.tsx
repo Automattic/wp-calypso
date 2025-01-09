@@ -209,9 +209,21 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		}
 	}, [ displayedRecommendations, selectedSite ] );
 
-	const handleItemClick = useCallback( ( site: CardData ) => {
-		setSelectedSite( site );
-	}, [] );
+	const handleItemClick = useCallback(
+		( site: CardData ) => {
+			// Only reset scroll position if selecting a different site.
+			if ( site.feed_ID !== selectedSite?.feed_ID ) {
+				const previewContainer = document.querySelector(
+					'.subscribe-modal__preview-stream-container'
+				);
+				if ( previewContainer ) {
+					previewContainer.scrollTop = 0;
+				}
+			}
+			setSelectedSite( site );
+		},
+		[ selectedSite ]
+	);
 
 	const follows = useSelector( getReaderFollows );
 

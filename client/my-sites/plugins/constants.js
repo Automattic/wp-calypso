@@ -44,6 +44,9 @@ export const AUTOMOMANAGED_PLUGINS = [
 	'polldaddy',
 	'classic-editor',
 	'wordpress-seo',
+	'amp',
+	'mailpoet',
+	'sensei-lms',
 ]; // These plugins auto update but can be activated / deactivated.
 
 export const ECOMMERCE_BUNDLED_PLUGINS = [

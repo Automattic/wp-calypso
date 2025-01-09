@@ -102,48 +102,48 @@ export default function HeadingInformation( props: Props ) {
 						finalStatus === 'local-development' ||
 						finalStatus === 'wpcom-sp' ||
 						finalStatus === 'genaral-a8c-properties' ) && (
-						<Button className="button-action" onClick={ onLearnMoreHosting }>
+						<Button variant="primary" className="button-action" onClick={ onLearnMoreHosting }>
 							{ translate( 'Learn more' ) }
 						</Button>
 					) }
 					{ finalStatus === 'wordpress-org' && (
-						<Button className="button-action" onClick={ onGetWordPress }>
+						<Button variant="primary" className="button-action" onClick={ onGetWordPress }>
 							{ translate( 'Get WordPress' ) }
 						</Button>
 					) }
 					{ finalStatus === 'automattic-com' && (
-						<Button className="button-action" onClick={ onLearnMoreAutomattic }>
+						<Button variant="primary" className="button-action" onClick={ onLearnMoreAutomattic }>
 							{ translate( 'Learn more' ) }
 						</Button>
 					) }
 					{ finalStatus === 'tumblr-com' && (
-						<Button className="button-action" onClick={ onJoinTumblr }>
+						<Button variant="primary" className="button-action" onClick={ onJoinTumblr }>
 							{ translate( 'Join Tumblr' ) }
 						</Button>
 					) }
 					{ finalStatus === 'gravatar-com' && (
-						<Button className="button-action" onClick={ onLearnMoreGravatar }>
+						<Button variant="primary" className="button-action" onClick={ onLearnMoreGravatar }>
 							{ translate( 'Learn more' ) }
 						</Button>
 					) }
 					{ finalStatus === 'akismet-com' && (
-						<Button className="button-action" onClick={ onGetAkismet }>
+						<Button variant="primary" className="button-action" onClick={ onGetAkismet }>
 							{ translate( 'Get started with Akismet' ) }
 						</Button>
 					) }
 					{ finalStatus === 'register-domain' && (
-						<Button className="button-action" onClick={ onRegisterDomain }>
+						<Button variant="primary" className="button-action" onClick={ onRegisterDomain }>
 							{ translate( 'Register domain' ) }
 						</Button>
 					) }
 					{ ( finalStatus === 'transfer-domain' || finalStatus === 'transfer-domain-hosting' ) && (
-						<Button className="button-action" onClick={ onTransferDomain }>
+						<Button variant="primary" className="button-action" onClick={ onTransferDomain }>
 							{ translate( 'Transfer domain' ) }
 						</Button>
 					) }
 					{ ( finalStatus === 'transfer-google-domain' ||
 						finalStatus === 'transfer-google-domain-hosting' ) && (
-						<Button className="button-action" onClick={ onTransferDomainFree }>
+						<Button variant="primary" className="button-action" onClick={ onTransferDomainFree }>
 							{ translate( 'Transfer domain for free' ) }
 						</Button>
 					) }
@@ -151,7 +151,7 @@ export default function HeadingInformation( props: Props ) {
 						finalStatus === 'transfer-hosting-wp' ||
 						finalStatus === 'transfer-domain-hosting-wp' ||
 						finalStatus === 'transfer-google-domain-hosting-wp' ) && (
-						<Button className="button-action" onClick={ onMigrateSite }>
+						<Button variant="primary" className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>
 					) }

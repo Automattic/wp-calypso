@@ -1,3 +1,6 @@
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+@import 'node_modules/@wordpress/base-styles/mixins';
+
 .github-deployments-repositories {
 	display: flex;
 	flex-direction: column;
@@ -6,8 +9,22 @@
 
 	&__search-bar {
 		display: flex;
-		gap: 16px;
+		flex-direction: column;
+		gap: 8px;
 		margin-bottom: 16px;
+
+		@include break-small {
+			flex-direction: row;
+			gap: 16px;
+		}
+
+		.select-dropdown__container {
+			width: 100%;
+
+			@include break-small {
+				width: auto;
+			}
+		}
 	}
 
 	.components-spinner {
@@ -20,7 +37,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 517px;
 		margin: 64px auto;
 		text-align: center;
 		p:first-child {

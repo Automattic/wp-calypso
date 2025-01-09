@@ -7,7 +7,7 @@ export const useSitesDashboardImportSiteUrl = (
 	additionalParameters: Record< string, Primitive >
 ) => {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_optimized_migration_flow_v2'
+		'calypso_signup_onboarding_site_migration_flow_202501_v1'
 	);
 
 	if ( isLoadingExperiment ) {

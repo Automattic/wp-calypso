@@ -1,0 +1,168 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/components/src/styles/typography";
+
+.stats-upsell {
+	margin: auto;
+	background: var(--studio-white);
+	border-radius: 4px;
+	border: 1px solid var(--studio-gray-5);
+	font-family: $font-sf-pro-text;
+	overflow: hidden;
+
+	.components-modal__content {
+		padding: 0;
+	}
+
+	.stats-upsell__close-button {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+	}
+
+	.stats-upsell__content {
+		display: flex;
+		align-items: flex-start;
+
+		flex-direction: column;
+		@include break-wide {
+			flex-direction: row;
+		}
+	}
+	.stats-upsell__left-inner {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		min-width: 279px;
+	}
+
+	.stats-upsell__right {
+		min-width: 279px;
+		overflow: hidden;
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 60px;
+			background: linear-gradient(to top, #FFF, rgba(255, 255, 255, 0));
+		}
+
+		@include break-wide {
+			flex: 1;
+		}
+		img {
+			border-radius: 4px;
+			width: 100%;
+		}
+	}
+
+	.stats-upsell_collapsed {
+		max-height: 570px;
+	}
+
+	.stats-upsell__left {
+		flex: 1;
+		.stats-upsell__left-inner {
+			padding: 31px;
+			gap: 24px;
+			@include break-wide {
+				padding: 48px;
+			}
+		}
+	}
+
+	.stats-upsell__title {
+		@extend .wp-brand-font;
+		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
+		font-size: 28px;
+		text-wrap: wrap;
+		line-height: 34px; /* 125% */
+		@include break-wide {
+			font-size: $font-title-large;
+		}
+	}
+
+	.stats-upsell__text {
+		font-size: $font-body;
+		@include break-wide {
+			max-width: 400px;
+		}
+	}
+
+	.stats-upsell__plan {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+	.stats-upsell__price-amount {
+		display: flex;
+		align-items: center;
+		font-size: $font-title-large;
+		font-weight: 500;
+
+		abbr {
+			font-size: $font-title-small;
+			line-height: $font-title-large;
+			font-weight: 400;
+		}
+	}
+	.stats-upsell__price-per-month {
+		font-size: $font-body-extra-small;
+		color: var(--color-neutral);
+	}
+
+	.stats-upsell__features {
+		font-size: $font-body-small;
+		display: flex;
+		flex-direction: column;
+		row-gap: 8px;
+
+		svg {
+			color: #0675c4;
+		}
+
+		.stats-upsell__feature {
+			display: flex;
+			column-gap: 7px;
+			@include break-wide {
+				column-gap: 8px;
+			}
+
+			.stats-upsell__feature-text {
+				flex: 1;
+			}
+		}
+	}
+
+	.stats-upsell__buttons {
+		padding-top: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+		max-width: 400px;
+		button {
+			display: block;
+		}
+	}
+
+	.stats-upsell__expand {
+		width: 100%;
+		max-width: 400px;
+		display: flex;
+		button {
+			justify-content: space-between;
+			width: 100%;
+			padding: 0;
+			color: var(--color-link);
+		}
+		.components-button:focus:not(:disabled) {
+			box-shadow: none;
+			color: var(--color-link);
+		}
+	}
+}

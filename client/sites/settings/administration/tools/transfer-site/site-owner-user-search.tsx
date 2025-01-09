@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FormEvent, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { PanelHeading } from 'calypso/components/panel';
+import { PanelCardHeading } from 'calypso/components/panel';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
@@ -87,9 +87,9 @@ const SiteOwnerTransferEligibility = ( {
 		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
 	};
 
-	function onUserClick( userLogin: string ) {
-		onRecipientChange( userLogin );
-		checkSiteTransferEligibility( { newSiteOwner: userLogin } );
+	function onUserClick( userEmail: string ) {
+		onRecipientChange( userEmail );
+		checkSiteTransferEligibility( { newSiteOwner: userEmail } );
 	}
 
 	function onRecipientChange( recipient: string ) {
@@ -102,7 +102,7 @@ const SiteOwnerTransferEligibility = ( {
 		<form onSubmit={ handleFormSubmit }>
 			<FormText>
 				{ translate(
-					"Ready to transfer {{strong}}%(siteSlug)s{{/strong}} and its associated purchases? Simply enter the new owner's email or WordPress.com username below, or choose an existing user to start the transfer process.",
+					"Ready to transfer {{strong}}%(siteSlug)s{{/strong}} and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process.",
 					{
 						args: { siteSlug },
 						components: { strong: <Strong /> },
@@ -111,13 +111,13 @@ const SiteOwnerTransferEligibility = ( {
 			</FormText>
 
 			<FormFieldset>
-				<FormLabel>{ translate( 'Email or WordPress.com username' ) }</FormLabel>
+				<FormLabel>{ translate( 'Email' ) }</FormLabel>
 				<FormTextInput
 					id="recipient"
 					name="recipient"
 					value={ tempSiteOwner }
 					isError={ recipientError }
-					placeholder="@"
+					placeholder="example@example.com"
 					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onRecipientChange( e.target.value ) }
 				/>
 				{ recipientError && (
@@ -144,7 +144,7 @@ const SiteOwnerTransferEligibility = ( {
 				<TeamMembersSiteTransfer
 					search={ tempSiteOwner }
 					usersQuery={ usersQuery }
-					onClick={ ( userLogin: string ) => onUserClick( userLogin ) }
+					onClick={ ( userEmail: string ) => onUserClick( userEmail ) }
 				/>
 			) }
 
@@ -163,7 +163,7 @@ const SiteOwnerTransferEligibility = ( {
 
 	return (
 		<>
-			{ isUntangled && <PanelHeading>{ translate( 'Confirm new owner' ) }</PanelHeading> }
+			{ isUntangled && <PanelCardHeading>{ translate( 'Confirm new owner' ) }</PanelCardHeading> }
 			{ form }
 		</>
 	);

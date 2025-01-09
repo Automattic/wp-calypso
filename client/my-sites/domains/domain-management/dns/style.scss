@@ -35,6 +35,9 @@ body.dns__body-white {
 		@include break-mobile {
 			max-width: 677px;
 		}
+		@include break-small {
+			margin: 0;
+		}
 	}
 
 	.dns-records-list-header {
@@ -243,6 +246,13 @@ button.dns__breadcrumb-button {
 		width: 40px;
 		display: flex;
 		justify-content: center;
+	}
+	.add-record__icon{
+		fill: var(--studio-gray-80);
+
+		@include break-large {
+			fill: var(--studio-white);
+		}
 	}
 }
 

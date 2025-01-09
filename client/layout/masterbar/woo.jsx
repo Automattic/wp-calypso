@@ -1,8 +1,10 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -35,6 +37,26 @@ const WooOauthMasterbar = () => {
 		}
 	}
 
+	const logo = config.isEnabled( 'woocommerce/rebrand-2-0' ) ? (
+		<SVGIcon
+			name="woocommerce-logo"
+			icon={ WooLogoRebrand2 }
+			classes="masterbar__woo-client-logo"
+			width="60"
+			height="24"
+			viewBox="0 0 60 24"
+		/>
+	) : (
+		<SVGIcon
+			name="woocommerce-logo"
+			icon={ WooLogo }
+			classes="masterbar__woo-client-logo"
+			width="38"
+			height="23"
+			viewBox="0 0 38 23"
+		/>
+	);
+
 	const backNav = (
 		<li className="masterbar__woo-nav-item">
 			<Button className="masterbar__login-back-link" onClick={ onClick }>
@@ -52,14 +74,7 @@ const WooOauthMasterbar = () => {
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
 							<a href="https://woocommerce.com" className="masterbar__woo-link">
-								<SVGIcon
-									name="woocommerce-logo"
-									icon={ WooLogo }
-									classes="masterbar__woo-client-logo"
-									width="38"
-									height="23"
-									viewBox="0 0 38 23"
-								/>
+								{ logo }
 							</a>
 						</li>
 						{ backNav }

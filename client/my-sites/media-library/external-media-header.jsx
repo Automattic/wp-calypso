@@ -6,6 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { changeMediaSource } from 'calypso/state/media/actions';
 import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
@@ -31,6 +32,7 @@ class MediaLibraryExternalHeader extends Component {
 		photosPickerApiEnabled: PropTypes.bool,
 		photosPickerSession: PropTypes.object,
 		createPhotosPickerSession: PropTypes.func,
+		isCreatingPhotosPickerSession: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -92,6 +94,8 @@ class MediaLibraryExternalHeader extends Component {
 		onSourceChange( '', () => {
 			this.props.addExternalMedia( selectedItems, site, postId, source );
 		} );
+
+		recordTracksEvent( 'calypso_media_external_media_copy', { source } );
 	};
 
 	onChangeSelection = () => {
@@ -99,15 +103,21 @@ class MediaLibraryExternalHeader extends Component {
 			this.props;
 
 		deletePhotosPickerSession && deletePhotosPickerSession( photosPickerSession?.id );
-		createPhotosPickerSession && createPhotosPickerSession();
+		createPhotosPickerSession &&
+			createPhotosPickerSession( {
+				onSuccess: ( session ) => {
+					session?.pickerUri && window.open( session.pickerUri, '_blank' );
+				},
+			} );
 	};
 
 	renderChangeSelectionButton() {
-		const { photosPickerSession, translate } = this.props;
+		const { photosPickerSession, isCreatingPhotosPickerSession, translate } = this.props;
 
 		return (
 			<Button
 				compact
+				busy={ isCreatingPhotosPickerSession }
 				onClick={ this.onChangeSelection }
 				disable={ ! photosPickerSession?.mediaItemsSet }
 			>

@@ -86,7 +86,7 @@ export const QuickLinks = ( {
 
 	return (
 		<FoldableCard
-			className="wp-for-teams-quick-links quick-links"
+			className="wp-for-teams-quick-links quick-links customer-home__card"
 			header={ translate( 'Quick Links' ) }
 			clickableHeader
 			expanded={ isExpanded }

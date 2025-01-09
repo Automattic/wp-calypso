@@ -163,6 +163,8 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const hasKeys = data && data.length > 0;
 	const redirectToHosting =
 		queryParams.source && queryParams.source === 'hosting-config' && queryParams.siteSlug;
+	const redirectToTools =
+		queryParams.source && queryParams.source === 'sites/tools/sftp-ssh' && queryParams.siteSlug;
 
 	const closeDialog = () => setShowDialog( false );
 
@@ -174,9 +176,11 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			<NavigationHeader navigationItems={ [] } title={ __( 'Security' ) } />
 
 			<HeaderCake
-				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
+				backText={ __( 'Back' ) }
 				backHref={
-					redirectToHosting ? `/${ queryParams.source }/${ queryParams.siteSlug }` : '/me/security'
+					redirectToHosting || redirectToTools
+						? `/${ queryParams.source }/${ queryParams.siteSlug }`
+						: '/me/security'
 				}
 			>
 				{ __( 'SSH Key' ) }

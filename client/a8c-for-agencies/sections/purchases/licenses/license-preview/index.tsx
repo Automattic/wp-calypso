@@ -35,21 +35,15 @@ import LicensesOverviewContext from '../licenses-overview/context';
 import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
-import type { LicenseMeta } from 'calypso/state/partner-portal/types';
+import type { License, LicenseMeta } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
 interface Props {
-	licenseKey: string;
-	product: string;
-	blogId: number | null;
-	siteUrl: string | null;
-	hasDownloads: boolean;
-	issuedAt: string;
-	attachedAt: string | null;
-	revokedAt: string | null;
+	license: License;
 	licenseType: LicenseType;
 	parentLicenseId?: number | null;
+	productName: string;
 	quantity?: number | null;
 	isChildLicense?: boolean;
 	meta?: LicenseMeta;
@@ -57,21 +51,22 @@ interface Props {
 }
 
 export default function LicensePreview( {
-	licenseKey,
-	blogId,
-	product,
-	siteUrl,
-	hasDownloads,
-	issuedAt,
-	attachedAt,
-	revokedAt,
+	license,
 	licenseType,
 	parentLicenseId,
+	productName,
 	quantity,
 	isChildLicense,
 	meta,
 	referral,
 }: Props ) {
+	const licenseKey = license.licenseKey;
+	const blogId = license.blogId;
+	const siteUrl = license.siteUrl;
+	const issuedAt = license.issuedAt;
+	const attachedAt = license.attachedAt;
+	const revokedAt = license.revokedAt;
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -236,7 +231,7 @@ export default function LicensePreview( {
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
 	const productTitle = licenseKey.startsWith( 'wpcom-hosting-business' )
 		? translate( 'WordPress.com Site' )
-		: product;
+		: productName;
 
 	const isDevelopmentSite = Boolean( meta?.isDevSite );
 
@@ -277,12 +272,12 @@ export default function LicensePreview( {
 					{ quantity ? (
 						<div className="license-preview__bundle">
 							<Gridicon icon="minus" className="license-preview__no-value" />
-							<div className="license-preview__product-small">{ product }</div>
+							<div className="license-preview__product-small">{ productName }</div>
 							<div>{ bundleCountContent }</div>
 						</div>
 					) : (
 						<>
-							<div className="license-preview__product-small">{ product }</div>
+							<div className="license-preview__product-small">{ productName }</div>
 							{ domain }
 							{ isPressableLicense &&
 								! revokedAt &&
@@ -370,7 +365,7 @@ export default function LicensePreview( {
 				<div>
 					{ !! isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
-							product={ product }
+							product={ productName }
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
 						/>
@@ -403,14 +398,7 @@ export default function LicensePreview( {
 					<BundleDetails parentLicenseId={ parentLicenseId } />
 				) : (
 					<LicenseDetails
-						licenseKey={ licenseKey }
-						product={ product }
-						siteUrl={ siteUrl }
-						blogId={ blogId }
-						hasDownloads={ hasDownloads }
-						issuedAt={ issuedAt }
-						attachedAt={ attachedAt }
-						revokedAt={ revokedAt }
+						license={ license }
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }

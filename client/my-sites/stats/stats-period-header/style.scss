@@ -27,13 +27,25 @@
 	.stats-period-navigation {
 		@include section-header-with-siblings;
 
-	 // this new selector removes padding only for the date filtering design
-		&.stats-period-navigation__is-with-new-date-filtering {
+		&.stats-period-navigation__is-with-new-date-control {
 			padding: 0;
 			align-items: center;
 
+			@media (max-width: $break-large) {
+				margin: 0;
+			}
+
 			@media (max-width: $break-medium) {
-				padding: 0 16px;
+				padding: 0;
+				justify-content: flex-end;
+			}
+
+			@media (max-width: 660px) {
+				margin-bottom: 24px;
+			}
+
+			@media (max-width: $break-mobile) {
+				margin: 24px 0;
 			}
 		}
 	}

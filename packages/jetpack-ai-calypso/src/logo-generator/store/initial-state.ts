@@ -34,6 +34,7 @@ const INITIAL_STATE: LogoGeneratorStateProp = {
 				asyncRequestTimerId: 0,
 				isRequestingImage: false,
 			},
+			featuresControl: {},
 		},
 	},
 	history: [],

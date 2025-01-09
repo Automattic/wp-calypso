@@ -2,15 +2,23 @@
 
 $brand-display: "SF Pro Display", sans-serif;
 
-.plugins-update-manager-multisite {
-	@media screen and (max-width: $break-medium) {
-		margin: 1rem;
+@mixin content-padding {
+	padding-inline: 48px;
+
+	@media (max-width: $break-medium) {
+		padding-inline: 2rem;
 	}
 
+	@media (max-width: $break-small) {
+		padding-inline: 16px;	
+	}	
+}
+
+.plugins-update-manager-multisite {
 	&__header {
-		@media screen and (max-width: $break-large) {
-			padding-top: 24px;
-		}
+		padding-top: 24px;
+		padding-bottom: 24px;
+		@include content-padding;
 	}
 
 	&__header-main {
@@ -44,7 +52,6 @@ $brand-display: "SF Pro Display", sans-serif;
 	.plugins-update-manager-multisite-filters,
 	.plugins-update-manager-multisite-table-container {
 		@media screen and (min-width: $break-xhuge) {
-			max-width: 1400px;
 			margin: 0 auto;
 		}
 		@media screen and (min-width: $break-large) {
@@ -64,6 +71,13 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 		}
 	}
+
+	.plugins-update-manager-multisite-filters {
+		padding-top: 24px;
+		padding-bottom: 24px;
+		@include content-padding;
+	}
+
 	.plugins-update-manager-multisite-filter {
 		margin-top: 1.25rem;
 		margin-bottom: 1.25rem;
@@ -75,6 +89,7 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;
+		@include content-padding;
 		border-bottom: solid 1px var(--studio-gray-0);
 
 		&:first-child {
@@ -167,17 +182,6 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		.validation-msg {
 			width: 100%;
-		}
-	}
-}
-
-main.scheduled-updates-list {
-	.plugins-update-manager-multisite {
-		&__header-main {
-			@media screen and (min-width: $break-xhuge) {
-				max-width: 1400px;
-				padding-inline: 64px;
-			}
 		}
 	}
 }

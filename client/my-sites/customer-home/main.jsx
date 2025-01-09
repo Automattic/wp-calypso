@@ -64,6 +64,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	trackStudioSyncConnectSite,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -130,12 +131,9 @@ const Home = ( {
 			return;
 		}
 		const studioSiteUrl = `wpcom-local-dev://sync-connect-site?studioSiteId=${ studioSiteId }&remoteSiteId=${ siteId }`;
-		recordTracksEvent( 'calypso_studio_sync_connect_site', {
-			remoteSiteId: siteId,
-			click: false,
-		} );
+		trackStudioSyncConnectSite( false );
 		window.location.href = studioSiteUrl;
-	}, [ siteId ] );
+	}, [ siteId, trackStudioSyncConnectSite ] );
 
 	const isFirstSecondaryCardInPrimaryLocation =
 		Array.isArray( layout?.primary ) &&
@@ -282,10 +280,7 @@ const Home = ( {
 			>
 				<NoticeAction
 					onClick={ () => {
-						recordTracksEvent( 'calypso_studio_sync_connect_site', {
-							remoteSiteId: siteId,
-							click: true,
-						} );
+						trackStudioSyncConnectSite( true );
 						window.location.href = studioSiteUrl;
 					} }
 				>
@@ -379,8 +374,14 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
+const trackStudioSyncConnectSite = ( click = false ) =>
+	recordTracksEvent( 'calypso_studio_sync_connect_site', {
+		click,
+	} );
+
 const mapDispatchToProps = {
 	trackViewSiteAction,
+	trackStudioSyncConnectSite,
 	verifyIcannEmail,
 };
 
@@ -390,6 +391,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		trackStudioSyncConnectSite: dispatchProps.trackStudioSyncConnectSite,
 		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };

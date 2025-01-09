@@ -40,7 +40,6 @@ import './style.scss';
 export const QuickLinks = ( {
 	canEditPages,
 	canCustomize,
-	canSwitchThemes,
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
@@ -178,15 +177,6 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
-			{ canSwitchThemes && (
-				<ActionBox
-					href={ `/themes/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackChangeThemeAction }
-					label={ translate( 'Change theme' ) }
-					materialIcon="view_quilt"
-				/>
-			) }
 			{ canManageSite && ! isWpcomStagingSite && (
 				<>
 					{ canAddEmail ? (
@@ -227,6 +217,18 @@ export const QuickLinks = ( {
 			) }
 			{ canManageSite && (
 				<>
+					<ActionBox
+						href={ usesWpAdminInterface ? `${ siteAdminUrl }themes.php` : `/themes/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackChangeThemeAction }
+						label={ translate( 'Change theme' ) }
+						iconComponent={
+							<span
+								className="quick-links__action-box-icon dashicons dashicons-admin-appearance"
+								aria-hidden
+							/>
+						}
+					/>
 					<ActionBox
 						href={
 							usesWpAdminInterface ? `${ siteAdminUrl }plugins.php` : `/plugins/${ siteSlug }`
@@ -479,7 +481,6 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
-		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),

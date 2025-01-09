@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -20,6 +20,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
+import { isUseHelpCenterExperienceEnabled } from './utils';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
@@ -39,6 +40,12 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [] );
 	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
+	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+		useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const hasOpenZendeskConversations =
+		! isLoadingOpenInteractions && supportInteractionsOpen
+			? supportInteractionsOpen?.length > 0
+			: false;
 
 	useEffect( () => {
 		if ( currentUser ) {
@@ -73,7 +80,9 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			{ shouldUseHelpCenterExperience && canConnectToZendesk && <HelpCenterSmooch /> }
+			{ shouldUseHelpCenterExperience && canConnectToZendesk && (
+				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
+			) }
 		</>,
 		portalParent
 	);
@@ -82,8 +91,7 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
-	const shouldUseHelpCenterExperience =
-		config.isEnabled( 'help-center-experience' ) || props.shouldUseHelpCenterExperience;
+	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled();
 
 	return (
 		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
