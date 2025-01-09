@@ -235,7 +235,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		isMultiSelection: isGoalCentricFeature,
 	} );
 
-	const { commonFilterProperties } = useTrackFilters( {
+	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
 		preselectedFilters: categorizationOptions.defaultSelections,
 		isBigSkyEligible,
 		isMultiSelection: isGoalCentricFeature,
@@ -244,6 +244,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
+		handleSelect: handleSelectFilter,
+		handleDeselect: handleDeselectFilter,
 	} );
 
 	const designPickerFilters = useDesignPickerFilters();
