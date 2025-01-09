@@ -32,6 +32,7 @@ interface Props {
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
 	style?: object;
+	loggedIn?: boolean;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -48,8 +49,10 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		alwaysShowTitle = false,
 		screenReader,
 		screenOptionsTab,
+		loggedIn = true,
 	} = props;
-	const showTitle = alwaysShowTitle || navigationItems.length < 2;
+
+	const showTitle = alwaysShowTitle || ( navigationItems.length < 2 && loggedIn );
 
 	return (
 		<header
