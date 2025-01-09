@@ -361,7 +361,8 @@ I18N.prototype.hasTranslation = function () {
  */
 I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
 	if ( typeof text !== 'string' ) {
-		throw new Error( 'fixMe() requires an object with proper text property' );
+		warn( 'fixMe() requires an object with a proper text property (string)' );
+		return null;
 	}
 
 	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {

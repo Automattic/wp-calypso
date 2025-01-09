@@ -285,10 +285,9 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
-		it( 'should throw an error if text is missing', () => {
-			expect( () => i18n.fixMe( {} ) ).toThrow(
-				'fixMe() requires an object with proper text property'
-			);
+		it( 'should return null if text is missing or wrong type', () => {
+			const result = i18n.fixMe( {} );
+			expect( result ).toBe( null );
 		} );
 
 		it( 'should return newCopy if locale is en', () => {
