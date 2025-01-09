@@ -49,14 +49,12 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 
 	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ siteSlug }` );
-		/*
 		if ( siteSlug ) {
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { share_site: true },
 			} );
 		}
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
-	*/
 		setClipboardCopied( true );
 		setTimeout( () => setClipboardCopied( false ), 3000 );
 	};
@@ -73,12 +71,6 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 						<h1 className="share-site-modal__modal-heading">
 							{ __( 'Share your site', 'launchpad' ) }
 						</h1>
-						<p className="share-site-modal__modal-body">
-							{ __(
-								'Copy your site link below or select a network to share your site.',
-								'launchpad'
-							) }
-						</p>
 					</div>
 					<div className="share-site-modal__modal-actions">
 						<div className="share-site-modal__modal-site">
