@@ -68,7 +68,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const firstStepSlug = useFirstStep( stepPaths );
-	const { navigate, params } = useFlowNavigation();
+	const { navigate, params } = useFlowNavigation( flow );
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
