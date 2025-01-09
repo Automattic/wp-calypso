@@ -7,7 +7,13 @@ import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/u
 import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
 import type { ShoppingCartItem } from '../types';
 
-export default function ProductInfo( { product }: { product: ShoppingCartItem } ) {
+export default function ProductInfo( {
+	product,
+	isAutomatedReferrals,
+}: {
+	product: ShoppingCartItem;
+	isAutomatedReferrals?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -110,8 +116,8 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
 				{
-					// Show pressable limit warning only if the product is a Pressable plan
-					product.family_slug === 'pressable-hosting' && (
+					// Show pressable limit warning if the product is a Pressable plan and it's not a referral
+					product.family_slug === 'pressable-hosting' && ! isAutomatedReferrals && (
 						<div className="product-info__pressable-limit-warning">
 							{ translate(
 								"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
