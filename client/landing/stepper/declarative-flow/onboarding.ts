@@ -57,6 +57,8 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const stringifiedGoals = goals.length && goals?.join( ',' );
+
 		const memoizedBase = useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
@@ -77,7 +79,7 @@ const onboarding: Flow = {
 			...memoizedBase,
 			[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
 				...memoizedBase[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
-				...( goals.length && { goals: goals.join( ',' ) } ),
+				...( stringifiedGoals && { goals: stringifiedGoals } ),
 			},
 		};
 	},
