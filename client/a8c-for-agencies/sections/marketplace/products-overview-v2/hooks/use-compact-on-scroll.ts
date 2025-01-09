@@ -9,9 +9,9 @@ export default function useCompactOnScroll() {
 			const scrollPosition = event.currentTarget.scrollTop;
 			const isScrollingDown = scrollPosition > lastScrollPosition;
 
-			if ( isScrollingDown && ! isCompact && scrollPosition > 100 ) {
+			if ( isScrollingDown && ! isCompact && scrollPosition > 200 ) {
 				setIsCompact( true );
-			} else if ( ! isScrollingDown && isCompact && scrollPosition < 10 ) {
+			} else if ( ! isScrollingDown && isCompact && scrollPosition === 0 ) {
 				setIsCompact( false );
 			}
 
