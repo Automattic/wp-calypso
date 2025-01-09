@@ -95,6 +95,7 @@
 
 	.signup-form-social-first-email {
 		.card {
+			background: transparent;
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
@@ -152,11 +153,11 @@
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-blue-50, #0675c4);
+				color: var(--color-accent, #3858e9);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--color-accent, #3858e9);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;
