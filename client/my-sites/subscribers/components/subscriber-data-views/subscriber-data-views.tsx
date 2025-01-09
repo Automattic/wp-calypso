@@ -5,6 +5,7 @@ import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import { useSubscriptionPlans } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -12,6 +13,17 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
 import type { View, Field, Action } from '@wordpress/dataviews';
 import './style.scss';
+
+const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
+	const plans = useSubscriptionPlans( subscriber );
+	return (
+		<>
+			{ plans.map( ( plan, index ) => (
+				<div key={ index }>{ plan.plan }</div>
+			) ) }
+		</>
+	);
+};
 
 type SubscriberDataViewsProps = {
 	siteId: number | null;
@@ -65,6 +77,8 @@ const SubscriberDataViews = ( {
 			{
 				id: 'subscription_type',
 				label: translate( 'Subscription type' ),
+				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
+				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				enableHiding: false,
 				enableSorting: true,
 			},
