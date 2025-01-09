@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import SiteFavicon from 'calypso/blocks/site-favicon';
-import Breadcrumb from 'calypso/components/breadcrumb';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
@@ -152,8 +152,8 @@ const DomainOverviewPane = ( {
 		<>
 			{ inSiteContext && (
 				<div className="domain-overview__breadcrumb">
-					<Breadcrumb
-						items={ [
+					<NavigationHeader
+						navigationItems={ [
 							{
 								label: site.name || selectedDomain,
 								href: `/overview/${ siteSlug }`,
