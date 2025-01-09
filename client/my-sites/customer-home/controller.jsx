@@ -78,7 +78,12 @@ export async function maybeRedirect( context, next ) {
 		) {
 			if ( from === 'full-launchpad' ) {
 				// A guard to prevent infinite loops (#98122)
-				context.store.dispatch( bumpStat( 'calypso_customer_home_launchpad_infinite_loop_guard' ) );
+				context.store.dispatch(
+					bumpStat(
+						'calypso_customer_home_launchpad_infinite_loop_guard',
+						site?.launch_status ?? 'null'
+					)
+				);
 			} else {
 				// The new stepper launchpad onboarding flow isn't registered within the "page"
 				// client-side router, so page.redirect won't work. We need to use the
