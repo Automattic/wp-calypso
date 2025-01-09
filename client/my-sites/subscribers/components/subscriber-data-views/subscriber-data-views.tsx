@@ -9,6 +9,7 @@ import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { SubscribersSortBy } from '../../constants';
 import type { View, Field, Action } from '@wordpress/dataviews';
 import './style.scss';
 
@@ -37,6 +38,8 @@ const SubscriberDataViews = ( {
 		perPage,
 		setPerPage,
 		handleSearch,
+		sortTerm,
+		setSortTerm,
 	} = useSubscribersPage();
 
 	const isSimple = useSelector( isSimpleSite );
@@ -94,18 +97,6 @@ const SubscriberDataViews = ( {
 		[ translate, onClickView, onClickUnsubscribe ]
 	);
 
-	const currentView = useMemo< View >(
-		() => ( {
-			type: 'table',
-			layout: {},
-			search: searchTerm,
-			page,
-			perPage,
-			sort: { field: 'date_subscribed', direction: 'desc' },
-		} ),
-		[ searchTerm, page, perPage ]
-	);
-
 	const handleViewChange = ( newView: View ) => {
 		if ( typeof newView.page === 'number' && newView.page !== page ) {
 			pageChangeCallback( newView.page );
@@ -119,7 +110,30 @@ const SubscriberDataViews = ( {
 		if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
 			handleSearch( newView.search );
 		}
+
+		if ( newView.sort?.field ) {
+			const newSortTerm =
+				newView.sort.field === 'name' ? SubscribersSortBy.Name : SubscribersSortBy.DateSubscribed;
+			if ( newSortTerm !== sortTerm ) {
+				setSortTerm( newSortTerm );
+			}
+		}
 	};
+
+	const currentView = useMemo< View >(
+		() => ( {
+			type: 'table',
+			layout: {},
+			search: searchTerm,
+			page,
+			perPage,
+			sort: {
+				field: sortTerm === SubscribersSortBy.Name ? 'name' : 'date_subscribed',
+				direction: 'desc',
+			},
+		} ),
+		[ searchTerm, page, perPage, sortTerm ]
+	);
 
 	const { data, paginationInfo } = useMemo( () => {
 		return {
