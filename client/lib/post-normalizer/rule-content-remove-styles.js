@@ -16,10 +16,15 @@ export default function removeContentStyles( post, dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
-	// Allow the markup for galleries, Instagram, and Twitter. Styling will be allowed on elements that match this selector.
+	// Styling will be allowed on elements that match this selector.
 	const allowedMarkupSelector =
+		// Inline highlighted text
+		'mark.has-inline-color, ' +
+		// Gallery
 		'.gallery, .gallery *, .gallery-row, .gallery-row *, .gallery-group, .gallery-group *, ' +
+		// Instagram
 		'blockquote[class^="instagram-"], blockquote[class^="instagram-"] *, ' +
+		// Twitter
 		'blockquote[class^="twitter-"], blockquote[class^="twitter-"] *';
 
 	// remove most style attributes
