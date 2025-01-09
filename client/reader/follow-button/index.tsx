@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import { Railcar } from '@automattic/calypso-analytics';
 import { useSelector } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
@@ -10,13 +10,23 @@ import {
 } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-function ReaderFollowButton( props ) {
+interface ReaderFollowButtonProps {
+	hasButtonStyle?: boolean;
+	iconSize?: number;
+	isButtonOnly?: boolean;
+	onFollowToggle?: ( isFollowing: boolean ) => void;
+	railcar?: Railcar;
+	followSource?: string;
+	siteUrl: string;
+}
+
+export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JSX.Element {
 	const { onFollowToggle, railcar, followSource, hasButtonStyle, isButtonOnly, siteUrl, iconSize } =
 		props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	function recordFollowToggle( isFollowing ) {
+	function recordFollowToggle( isFollowing: boolean ): void {
 		if ( isLoggedIn ) {
 			if ( isFollowing ) {
 				recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
@@ -55,12 +65,3 @@ function ReaderFollowButton( props ) {
 		/>
 	);
 }
-
-ReaderFollowButton.propTypes = {
-	onFollowToggle: PropTypes.func,
-	railcar: PropTypes.object,
-	followSource: PropTypes.string,
-	hasButtonStyle: PropTypes.bool,
-};
-
-export default ReaderFollowButton;

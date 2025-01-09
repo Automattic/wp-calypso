@@ -20,7 +20,6 @@ import {
 	useCategorization,
 	useDesignPickerFilters,
 	getDesignPreviewUrl,
-	isAssemblerDesign,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
@@ -28,7 +27,7 @@ import { StepContainer, DESIGN_FIRST_FLOW, ONBOARDING_FLOW } from '@automattic/o
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
@@ -79,7 +78,6 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
-	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
 	getVirtualDesignProps,
@@ -231,14 +229,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const designs = allDesigns?.designs ?? EMPTY_ARRAY;
-	const hasTrackedView = useRef( false );
-	useEffect( () => {
-		if ( ! hasTrackedView.current && designs.length > 0 ) {
-			hasTrackedView.current = true;
-			recordTracksEvent( 'calypso_signup_unified_design_picker_view' );
-		}
-	}, [ hasTrackedView, designs ] );
-
 	const categorizationOptions = getCategorizationOptions( goals, {
 		isMultiSelection: isGoalCentricFeature,
 	} );
@@ -707,22 +697,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
-		if ( ! isAssemblerDesign( _selectedDesign ) ) {
-			recordSelectedDesign( {
-				...commonFilterProperties,
-				flow,
-				intent,
-				design: _selectedDesign,
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-				optionalProps,
-			} );
-		}
+		recordSelectedDesign( {
+			...commonFilterProperties,
+			flow,
+			intent,
+			design: _selectedDesign,
+			styleVariation: selectedStyleVariation,
+			colorVariation: selectedColorVariation,
+			fontVariation: selectedFontVariation,
+			optionalProps,
+		} );
 
 		submit?.( {
 			...providedDependencies,
-			...getDesignTypeProps( _selectedDesign ),
 			eventProps: commonFilterProperties,
 		} );
 	}
@@ -751,12 +738,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
-		const tracksProps = {
-			step: 'design-step',
-			intent: intent,
-		};
-
-		recordTracksEvent( eventName, tracksProps );
+		recordTracksEvent( eventName, {
+			step: 'design-setup',
+			flow,
+			intent,
+		} );
 	}
 	function getPrimaryActionButtonAction(): () => void {
 		if ( isEnabled( 'global-styles/on-personal-plan' ) ) {

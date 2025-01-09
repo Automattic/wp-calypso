@@ -115,7 +115,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			navigation.submit?.( { intent, ...eventProps } );
 		};
 
-	const handleSkip = getStepSubmissionHandler( 'skip', { shouldSkipSubmitTracking: true } );
+	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );
 
 	const handleImportClick = () => {
