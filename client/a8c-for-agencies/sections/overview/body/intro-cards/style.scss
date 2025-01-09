@@ -1,5 +1,11 @@
 .intro-cards {
 	.dot-pager__page {
+
+		.components-text:not(.components-heading) {
+			margin-bottom: 1.5em;
+			display: inline-block;
+		}
+
 		p,
 		li {
 			@include a4a-font-body-lg;

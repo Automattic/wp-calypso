@@ -1,4 +1,8 @@
 import { Card, DotPager } from '@automattic/components';
+import {
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { useDispatch } from 'calypso/state';
@@ -6,17 +10,24 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
+const FONT_LEVELS = {
+	xxl: '32px',
+	xl: '20px',
+	l: '15px',
+	m: '13px',
+	s: '12px',
+};
+
 const Card1 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Welcome to Automattic for Agencies' ) }</h1>
-			<p>
+			<Heading level={ 1 }>{ translate( 'Welcome to Automattic for Agencies' ) }</Heading>
+			<Text size={ FONT_LEVELS.l }>
 				{ translate(
 					"Automattic for Agencies is a new agency program that combines the best of Automattic's offerings all in one place. By partnering with us, you will have opportunities to grow your business with:"
 				) }
-			</p>
-
+			</Text>
 			<SimpleList
 				items={ [
 					translate( 'Significant discounts on our products and services' ),
