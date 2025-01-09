@@ -20,7 +20,6 @@ import {
 	useCategorization,
 	useDesignPickerFilters,
 	getDesignPreviewUrl,
-	isAssemblerDesign,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
@@ -698,18 +697,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
-		if ( ! isAssemblerDesign( _selectedDesign ) ) {
-			recordSelectedDesign( {
-				...commonFilterProperties,
-				flow,
-				intent,
-				design: _selectedDesign,
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-				optionalProps,
-			} );
-		}
+		recordSelectedDesign( {
+			...commonFilterProperties,
+			flow,
+			intent,
+			design: _selectedDesign,
+			styleVariation: selectedStyleVariation,
+			colorVariation: selectedColorVariation,
+			fontVariation: selectedFontVariation,
+			optionalProps,
+		} );
 
 		submit?.( {
 			...providedDependencies,
