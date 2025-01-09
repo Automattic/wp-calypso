@@ -3,7 +3,7 @@
 	$tab-content-width: 768px;
 
 	.user-profile {
-		>* {
+		> * {
 			scrollbar-gutter: stable;
 		}
 
@@ -21,6 +21,9 @@
 
 		.reader-avatar {
 			margin: 0 $padding 0 0;
+			img {
+				max-width: initial;
+			}
 		}
 	}
 
@@ -37,7 +40,7 @@
 
 	.section-nav {
 		box-shadow: none;
-		border-bottom: 1px solid var(--color-border-subtle);
+		border-bottom: 1px solid var( --color-border-subtle );
 		height: auto !important;
 		margin: 0;
 	}
@@ -55,7 +58,7 @@
 
 	.section-nav-tab__text {
 		font-weight: 500;
-		color: var(--studio-black);
+		color: var( --studio-black );
 	}
 
 	div.user-profile__content {
