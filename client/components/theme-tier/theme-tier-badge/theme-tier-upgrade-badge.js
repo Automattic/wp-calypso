@@ -91,8 +91,8 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 			tooltipClassName="theme-tier-badge-tooltip"
 			tooltipContent={ tooltipContent }
 			tooltipPosition="top"
-			shouldHideTooltip={ isUpdatedBadgeDesign }
-			isClickable={ ! isUpdatedBadgeDesign }
+			shouldHideTooltip
+			isClickable={ false }
 		/>
 	);
 }
