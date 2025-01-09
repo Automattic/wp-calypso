@@ -24,7 +24,7 @@ const CommentBlockEditor = ( {
 
 	useEffect( () => {
 		if ( siteId ) {
-			addApiMiddleware( ( url ) => ( {
+			addApiMiddleware( ( url: string ) => ( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/proxy`,
 				query: `url=${ encodeURIComponent( url ) }`,
 				apiNamespace: 'oembed/1.0',
