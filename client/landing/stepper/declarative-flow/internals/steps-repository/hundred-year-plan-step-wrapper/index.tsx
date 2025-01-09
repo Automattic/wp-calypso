@@ -157,6 +157,8 @@ const StyledFoldableCard = styled( FoldableCard )`
 	}
 
 	&.card.foldable-card {
+		background: var( --studio-gray-100 );
+		color: var( --studio-gray-0 );
 		margin: 0;
 		.foldable-card__header {
 			.foldable-card__main {
