@@ -27,6 +27,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
+import SitesGuide from 'calypso/sites/components/guides/sites-guide';
 import {
 	SitesDashboardQueryParams,
 	handleQueryParamChange,
@@ -393,6 +394,8 @@ const SitesDashboard = ( {
 			title={ selectedSite ? null : dashboardTitle }
 		>
 			<DocumentHead title={ dashboardTitle } />
+
+			<SitesGuide />
 
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>

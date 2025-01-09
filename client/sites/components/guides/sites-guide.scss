@@ -1,0 +1,37 @@
+.components-modal__frame.sites-guide {
+	width: 512px;
+
+	&.is-loading {
+		display: none;
+	}
+
+	.sites-guide__image {
+		background-color: #7b90ff;
+		padding-top: 60px;
+		padding-left: 32px;
+		padding-right: 32px;
+
+		img {
+			border-top-left-radius: 4px;
+			border-top-right-radius: 4px;
+			width: 100%;
+			display: block;
+		}
+	}
+
+	h1 {
+		font-weight: 500;
+		font-size: 1.25rem;
+		line-height: 24px;
+		margin: 16px 0;
+		padding: 8px 32px 0;
+		color: #1e1e1e;
+	}
+
+	p {
+		line-height: 20px;
+		margin: 0 0 16px;
+		padding: 0 32px;
+		color: #1e1e1e;
+	}
+}
