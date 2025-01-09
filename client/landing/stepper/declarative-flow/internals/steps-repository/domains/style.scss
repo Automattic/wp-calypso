@@ -446,6 +446,8 @@
 	}
 
 	.step-container__header {
+		margin-bottom: 0;
+
 		@include break-small {
 			margin-bottom: 40px;
 		}
