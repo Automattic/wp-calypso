@@ -1,4 +1,5 @@
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
+import { BUNDLED_THEME } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,7 +12,7 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
-import { livePreview } from 'calypso/state/themes/actions';
+import { getThemeType } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -82,15 +83,20 @@ class PreviewToolbar extends Component {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		const { themeId, siteSlug } = this.props;
+		const { themeId, siteSlug, themeType } = this.props;
 
-		const wpAdminUrl = `https://${ siteSlug }/wp-admin/site-editor.php`;
+		const isBundledTheme = themeType === BUNDLED_THEME;
+		const themePrefix = isBundledTheme ? 'premium' : 'pub';
+
 		const params = new URLSearchParams( {
-			wp_theme_preview: `pub/${ themeId }`,
-			wpcom_dashboard_link: `/theme/${ themeId }/${ siteSlug }`,
+			wp_theme_preview: `${ themePrefix }/${ themeId }`,
+			wpcom_dashboard_link: `/theme/${ themeId }/${ siteSlug }${
+				isBundledTheme ? '?tab_filter=recommended&tier_filter=woocommerce' : ''
+			}`,
 			p: '/',
 		} );
-		window.location.href = `${ wpAdminUrl }?${ params.toString() }`;
+
+		window.location.href = `https://${ siteSlug }/wp-admin/site-editor.php?${ params.toString() }`;
 	};
 
 	render() {
@@ -216,13 +222,14 @@ class PreviewToolbar extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const currentUser = getCurrentUser( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const siteSlug = getSiteSlug( state, siteId );
+		const themeType = getThemeType( state, ownProps.themeId );
 
 		return {
 			canUserEditThemeOptions,
@@ -230,7 +237,8 @@ export default connect(
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 			selectedSiteId,
 			siteSlug,
+			themeType,
 		};
 	},
-	{ recordTracksEvent, launchSite, livePreview }
+	{ recordTracksEvent, launchSite }
 )( localize( PreviewToolbar ) );
