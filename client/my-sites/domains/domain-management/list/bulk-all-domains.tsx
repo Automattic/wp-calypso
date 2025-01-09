@@ -285,7 +285,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
-						border-block-end: 1px solid var( --color-border-secondary );
+						border-block-end: 1px solid var( --color-neutral-5 );
 					}
 				}
 			}
