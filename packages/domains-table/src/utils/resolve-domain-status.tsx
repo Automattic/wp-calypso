@@ -20,7 +20,7 @@ import {
 	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
-	domainMagementDNS,
+	domainManagementDNS,
 } from './paths';
 import { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
@@ -116,7 +116,7 @@ export function resolveDomainStatus(
 	};
 
 	const editDNSRecordsCallToAction = {
-		href: domainMagementDNS( siteSlug as string, domain.domain ),
+		href: domainManagementDNS( siteSlug as string, domain.domain ),
 		label: translate( 'Point to WordPress.com' ),
 		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
 			e.stopPropagation(),
@@ -515,7 +515,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								cta: domain.hasWpcomNameservers ? (
 									<a
-										href={ domainMagementDNS( siteSlug as string, domain.domain ) }
+										href={ domainManagementDNS( siteSlug as string, domain.domain ) }
 										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
 									/>
 								) : (
