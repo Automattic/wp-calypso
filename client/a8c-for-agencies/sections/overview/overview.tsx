@@ -22,27 +22,10 @@ import './style.scss';
 
 export default function Overview() {
 	const translate = useTranslate();
+
 	const title = translate( 'Agency Overview' );
 
-	const { createSuccessNotice, createErrorNotice, createInfoNotice, createWarningNotice } =
-		useDispatch( noticesStore );
-
-	const onClick = () => {
-		createSuccessNotice( 'This is a notice that will timeout' );
-		createSuccessNotice( translate( 'This is a notice with link that will not timeout' ), {
-			explicitDismiss: true,
-			actions: [
-				{
-					label: 'Action',
-					url: null,
-					onClick: null,
-				},
-			],
-		} );
-		createErrorNotice( 'This is a notice that will timeout' );
-		createInfoNotice( 'This is a notice that will timeout' );
-		createWarningNotice( 'This is a notice that will timeout' );
-	};
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	return (
 		<Layout title={ title } wide>
@@ -58,7 +41,35 @@ export default function Overview() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody className="a4a-overview-content">
-				<Button onClick={ onClick }>Hello</Button>
+				<Button
+					variant="secondary"
+					onClick={ () =>
+						createSuccessNotice( translate( 'This is a notice with link' ), {
+							id: 'notice-2',
+							actions: [
+								{
+									label: 'Action',
+									url: null,
+									onClick: null,
+								},
+							],
+						} )
+					}
+				>
+					Notice with Action
+				</Button>
+				&nbsp;&nbsp;&nbsp;
+				<Button
+					variant="secondary"
+					onClick={ () =>
+						createSuccessNotice( 'This is a notice', {
+							id: 'notice-3',
+						} )
+					}
+				>
+					Notice
+				</Button>
+				&nbsp;&nbsp;&nbsp;
 				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 

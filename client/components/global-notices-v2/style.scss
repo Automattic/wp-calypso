@@ -5,32 +5,20 @@
 	position: fixed;
 	bottom: var(--masterbar-height);
 	right: 0;
-	// bottom: auto;
 	left: 0;
 
-	// .is-section-checkout & {
-	// 	top: var(--masterbar-checkout-height);
-	// }
 
 	@include breakpoint-deprecated( ">660px" ) {
 		bottom: calc(var(--masterbar-height) + 16px);
 		right: 16px;
 		left: auto;
 		max-width: calc(100% - 32px);
-
-		// .is-section-checkout & {
-		// 	top: calc(var(--masterbar-checkout-height) + 16px);
-		// }
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
 		bottom: calc(var(--masterbar-height) + 24px);
 		right: 24px;
 		max-width: calc(100% - 48px);
-
-		// .is-section-checkout & {
-		// 	top: calc(var(--masterbar-checkout-height) + 24px);
-		// }
 	}
 
 	@include breakpoint-deprecated( ">1040px" ) {
@@ -39,13 +27,6 @@
 	}
 }
 
-// .layout.has-header-section .global-notices {
-// 	--masterbar-height: 66px;
-// 	@media only screen and (min-width: 782px) {
-// 		--masterbar-height: 78px;
-// 	}
-// }
-
 .global-notices-v2 .components-snackbar {
 	flex-wrap: nowrap;
 	margin-bottom: 0;
@@ -53,19 +34,17 @@
 	pointer-events: auto;
 	border-radius: 0;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	width: 300px;
 
-	// .notice__icon-wrapper {
-	// 	border-radius: 0;
-	// }
+	.components-snackbar__content {
+		width: 100%;
+		justify-content: space-between;
+	}
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		overflow: hidden;
 		margin-bottom: 24px;
 		border-radius: 2px;
-
-		// .notice__icon-wrapper {
-		// 	border-radius: 2px 0 0 3px;
-		// }
 	}
 }
