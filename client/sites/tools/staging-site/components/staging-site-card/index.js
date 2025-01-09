@@ -410,7 +410,7 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
-			setSyncError( error.code );
+			setSyncError( { code: error.code, message: error.message } );
 		},
 	} );
 

@@ -28,17 +28,19 @@ const STAGING_SYNC_JETPACK_ERROR_CODES = [
 ];
 const STAGING_SYNC_FAILED_ERROR_CODES = [ 'staging_site_sync_failed' ];
 
-function useIsJetpackConnectionSyncError( error: string | null | undefined ) {
+function useIsJetpackConnectionSyncError(
+	error: { code: string; message: string } | null | undefined
+) {
 	if ( ! error ) {
 		return false;
 	}
-	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error );
+	return STAGING_SYNC_JETPACK_ERROR_CODES.includes( error.code );
 }
-function useIsFailedSyncError( error: string | null | undefined ) {
+function useIsFailedSyncError( error: { code: string; message: string } | null | undefined ) {
 	if ( ! error ) {
 		return false;
 	}
-	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
+	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error.code );
 }
 
 const StagingSyncCardBody = styled.div( {
@@ -148,7 +150,7 @@ interface SyncCardProps {
 		production: string | null;
 		staging: string | null;
 	};
-	error?: string | null;
+	error?: { code: string; message: string } | null;
 }
 
 const StagingToProductionSync = ( {
@@ -360,7 +362,7 @@ const SyncCardContainer = ( {
 	isSyncInProgress: boolean;
 	siteToSync: 'production' | 'staging' | null;
 	siteUrls: SyncCardProps[ 'siteUrls' ];
-	error?: string | null;
+	error?: { code: string; message: string } | null;
 	onRetry?: () => void;
 } ) => {
 	const translate = useTranslate();
@@ -428,9 +430,15 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize the %s environment.', {
-								args: [ siteToSync ?? '' ],
-							} ) }
+							text={ translate(
+								"We couldn't synchronize the %(siteType)s environment. %(errorMessage)s",
+								{
+									args: {
+										siteType: siteToSync ?? '',
+										errorMessage: error.message ? ' ' + error.message : '',
+									},
+								}
+							) }
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
