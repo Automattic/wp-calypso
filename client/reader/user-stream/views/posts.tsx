@@ -1,14 +1,16 @@
 import { Icon, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
+import { UserData } from 'calypso/lib/user/user';
 import Stream from 'calypso/reader/stream';
+import UserProfileHeader from 'calypso/reader/user-stream/components/user-profile-header';
 
 interface UserPostsProps {
 	streamKey: string;
-	headerContent: React.ReactNode;
+	user: UserData;
 }
 
-const UserPosts = ( { streamKey, headerContent }: UserPostsProps ): JSX.Element => {
+const UserPosts = ( { streamKey, user }: UserPostsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (
@@ -30,7 +32,7 @@ const UserPosts = ( { streamKey, headerContent }: UserPostsProps ): JSX.Element 
 				/>
 			) }
 		>
-			{ headerContent }
+			<UserProfileHeader user={ user } />
 		</Stream>
 	);
 };
