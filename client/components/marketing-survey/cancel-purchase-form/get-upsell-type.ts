@@ -39,7 +39,7 @@ export type UpsellType =
  * @returns {UpsellType} The upsell nudge type
  */
 export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType {
-	const { productSlug, canRefund, canDowngrade, canOfferFreeMonth } = opts;
+	const { productSlug, canDowngrade, canOfferFreeMonth } = opts;
 	const liveChatSupported = config.isEnabled( 'livechat_solution' );
 
 	if ( ! productSlug ) {
@@ -58,10 +58,9 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 			}
 
 			if (
-				canRefund &&
-				( isWpComAnnualPlan( productSlug ) ||
-					isWpComBiennialPlan( productSlug ) ||
-					isWpComTriennialPlan( productSlug ) )
+				isWpComAnnualPlan( productSlug ) ||
+				isWpComBiennialPlan( productSlug ) ||
+				isWpComTriennialPlan( productSlug )
 			) {
 				return 'downgrade-monthly';
 			}

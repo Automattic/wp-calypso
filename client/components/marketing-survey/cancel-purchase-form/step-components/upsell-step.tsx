@@ -254,15 +254,16 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
 						{ refundAmount && <br /> }
-						{ refundAmount &&
-							translate(
-								'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
-								{
-									args: {
-										refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
-									},
-								}
-							) }
+						{ Number( refundAmount )
+							? translate(
+									'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
+									{
+										args: {
+											refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
+										},
+									}
+							  )
+							: null }
 					</>
 				</Upsell>
 			);
