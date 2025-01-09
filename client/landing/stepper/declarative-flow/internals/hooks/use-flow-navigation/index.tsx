@@ -46,7 +46,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const match = useMatch( '/:flow/:step?/:lang?' );
 	const { step: currentStepSlug = null, lang = null } = match?.params || {};
 	const [ currentSearchParams ] = useSearchParams();
-	const steps = flow.useSteps();
+	const steps = 'useSteps' in flow ? flow.useSteps() : flow.__flowSteps ?? [];
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const stepsSlugs = steps.map( ( step ) => step.slug );
 	const locale = useFlowLocale();

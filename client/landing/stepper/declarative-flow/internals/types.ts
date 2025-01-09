@@ -186,7 +186,7 @@ export type FlowV2 = {
 	/**
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
 	 */
-	__flowSteps: readonly StepperStep[] | false;
+	__flowSteps?: readonly StepperStep[];
 
 	name: string;
 	/**

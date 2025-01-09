@@ -136,15 +136,19 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
-	const flowSteps =
-		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
-		'initialize' in rawFlow ? ( rawFlow.__flowSteps = await rawFlow.initialize() ) : null;
+	const flowSteps = 'initialize' in rawFlow ? await rawFlow.initialize() : null;
 
 	/**
 	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
 	 */
-	if ( flowSteps === false ) {
+	if ( ! flowSteps ) {
 		return;
+	}
+
+	// Checking for initialize implies this a V2 flow.
+	if ( 'initialize' in rawFlow ) {
+		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
+		rawFlow.__flowSteps = flowSteps;
 	}
 
 	const flow = enhanceFlowWithAuth( rawFlow, flowSteps );
