@@ -136,7 +136,10 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
-	const flowSteps = 'initialize' in rawFlow ? await rawFlow.initialize() : null;
+	const flowSteps =
+		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
+		'initialize' in rawFlow ? ( rawFlow.__flowSteps = await rawFlow.initialize() ) : null;
+
 	/**
 	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
 	 */

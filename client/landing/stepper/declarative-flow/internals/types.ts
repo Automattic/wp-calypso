@@ -182,6 +182,12 @@ export type FlowV2 = {
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
 	__experimentalUseBuiltinAuth?: boolean;
+
+	/**
+	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
+	 */
+	__flowSteps: readonly StepperStep[] | false;
+
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
