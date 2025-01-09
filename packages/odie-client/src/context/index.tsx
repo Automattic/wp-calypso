@@ -47,6 +47,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	shouldUseHelpCenterExperience: false,
 	trackEvent: noop,
+	userHasEverEscalatedToHumanSupport: false,
 	waitAnswerToFirstMessageFromHumanSupport: false,
 } );
 
@@ -167,6 +168,13 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	const versionParams = urlSearchParams.get( 'version' );
 	const overriddenVersion = versionParams || version;
 
+	/**
+	 * Find if the users has ever escalated to human support at any point in the chat.
+	 */
+	const userHasEverEscalatedToHumanSupport = mainChatState.messages.some(
+		( message ) => message.context?.flags?.forward_to_human_support
+	);
+
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
@@ -190,6 +198,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setWaitAnswerToFirstMessageFromHumanSupport,
 				shouldUseHelpCenterExperience: shouldUseHelpCenterExperience ?? false,
 				trackEvent,
+				userHasEverEscalatedToHumanSupport,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,
 			} }

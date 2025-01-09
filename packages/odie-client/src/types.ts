@@ -23,6 +23,7 @@ export type OdieAssistantContextInterface = {
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
+	userHasEverEscalatedToHumanSupport: boolean;
 	version?: string | null;
 	setWaitAnswerToFirstMessageFromHumanSupport: (
 		waitAnswerToFirstMessageFromHumanSupport: boolean
@@ -96,7 +97,8 @@ type InquiryType =
 	| 'refund'
 	| 'billing'
 	| 'unrelated-to-wordpress'
-	| 'request-for-human-support';
+	| 'request-for-human-support'
+	| 'other';
 
 export type OdieUserTracking = {
 	path: string;
@@ -112,6 +114,7 @@ export type Context = {
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
 	question_tags?: {
+		category?: string;
 		feature?: Feature;
 		inquiry_type?: InquiryType;
 		language?: string;

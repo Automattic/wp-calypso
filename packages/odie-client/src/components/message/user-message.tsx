@@ -9,7 +9,19 @@ import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message } from '../../types';
+import type { Chat, Message } from '../../types';
+
+const isWordPressRelatedQuestion = ( message: Message ) => {
+	return ! (
+		message.context?.question_tags?.category === 'Other (everything else)' &&
+		message.context?.question_tags?.inquiry_type === 'other' &&
+		message.context?.question_tags?.product === 'unknown'
+	);
+};
+
+const shouldRenderRatingButtons = ( chat: Chat, message: Message ) => {
+	return isWordPressRelatedQuestion( message ) && chat.provider !== 'zendesk';
+};
 
 export const UserMessage = ( {
 	message,
@@ -26,17 +38,17 @@ export const UserMessage = ( {
 		shouldUseHelpCenterExperience,
 		trackEvent,
 		chat,
+		userHasEverEscalatedToHumanSupport,
 	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
-	const isConnectedToZendesk = chat?.provider === 'zendesk';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
-		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+		hasFeedback && ! isPositiveFeedback && userHasEverEscalatedToHumanSupport;
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
@@ -76,11 +88,13 @@ export const UserMessage = ( {
 
 	const renderDisclaimers = () => (
 		<>
-			{ ! isConnectedToZendesk && (
+			{ shouldRenderRatingButtons( chat, message ) && (
 				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 			) }
 
-			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
+			{ userHasEverEscalatedToHumanSupport && (
+				<DirectEscalationLink messageId={ message.message_id } />
+			) }
 
 			<div className="disclaimer">
 				{ createInterpolateElement(
@@ -123,11 +137,13 @@ export const UserMessage = ( {
 					{ showExtraContactOptions &&
 						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
 
-					{ ! showExtraContactOptions && (
+					{ shouldRenderRatingButtons( chat, message ) && (
 						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 					) }
 
-					{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
+					{ userHasEverEscalatedToHumanSupport && (
+						<DirectEscalationLink messageId={ message.message_id } />
+					) }
 
 					<div className="disclaimer">
 						{ createInterpolateElement(
