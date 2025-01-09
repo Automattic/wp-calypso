@@ -107,7 +107,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'site-title',
-				label: __( 'Site Title' ),
+				label: __( 'Site' ),
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
