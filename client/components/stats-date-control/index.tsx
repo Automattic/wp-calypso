@@ -145,7 +145,7 @@ const StatsDateControl = ( {
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
-		const period = bestPeriodForDays( rangeInDays );
+		let period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
@@ -157,6 +157,8 @@ const StatsDateControl = ( {
 
 		if ( appliedShortcut && appliedShortcut.id ) {
 			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+			// Apply the period from the found shortcut.
+			period = appliedShortcut.period;
 		}
 
 		// Update chart via routing.
