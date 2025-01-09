@@ -6,6 +6,8 @@ import './style.scss';
 
 export default function ProductCategoryMenu() {
 	const translate = useTranslate();
+
+	// We will replace this with the actual categories on a separate PR
 	const categories = [
 		{ label: 'Jetpack', value: 'jetpack' },
 		{ label: 'Woo', value: 'woocommerce' },
