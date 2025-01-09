@@ -3,6 +3,8 @@
 	$tab-content-width: 768px;
 
 	.user-profile {
+		padding: 0 16px;
+
 		> * {
 			scrollbar-gutter: stable;
 		}
@@ -16,8 +18,7 @@
 		align-items: center;
 		display: flex;
 		max-width: $tab-content-width;
-		margin: 16px auto 0;
-		padding: $padding 0;
+		padding: $padding 0 0;
 
 		.reader-avatar {
 			margin: 0 $padding 0 0;
