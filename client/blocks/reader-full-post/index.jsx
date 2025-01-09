@@ -280,6 +280,11 @@ export class FullPostView extends Component {
 	resetScroll = () => {
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
+			this.scrollableContainer.scrollTo( {
+				top: 0,
+				left: 0,
+				behavior: 'instant',
+			} );
 			this.scrollTracker.resetMaxScrollDepth();
 		}, 0 ); // Defer until after the DOM update
 	};
