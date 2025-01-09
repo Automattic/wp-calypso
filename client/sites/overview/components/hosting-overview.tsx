@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
@@ -15,6 +15,7 @@ import './style.scss';
 
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
+	const translate = useTranslate();
 
 	if ( site ) {
 		if ( isMigrationInProgress( site ) ) {
