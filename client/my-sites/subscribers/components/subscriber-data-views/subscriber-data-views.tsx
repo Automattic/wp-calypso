@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -38,6 +39,7 @@ const SubscriberDataViews = ( {
 	onClickUnsubscribe,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
+	const isMobile = useBreakpoint( '<782px' );
 	const {
 		grandTotal,
 		page,
@@ -60,8 +62,8 @@ const SubscriberDataViews = ( {
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 
-	const fields = useMemo< Field< Subscriber >[] >(
-		() => [
+	const fields = useMemo< Field< Subscriber >[] >( () => {
+		const baseFields = [
 			{
 				id: 'name',
 				label: translate( 'Name' ),
@@ -74,25 +76,33 @@ const SubscriberDataViews = ( {
 				enableHiding: false,
 				enableSorting: true,
 			},
-			{
-				id: 'subscription_type',
-				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
-				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: 'date_subscribed',
-				label: translate( 'Since' ),
-				getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
-				render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
-				enableHiding: false,
-				enableSorting: true,
-			},
-		],
-		[ translate, onClickView ]
-	);
+		];
+
+		if ( ! isMobile ) {
+			baseFields.push(
+				{
+					id: 'subscription_type',
+					label: translate( 'Subscription type' ),
+					getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
+					render: ( { item }: { item: Subscriber } ) => (
+						<SubscriptionTypeCell subscriber={ item } />
+					),
+					enableHiding: false,
+					enableSorting: true,
+				},
+				{
+					id: 'date_subscribed',
+					label: translate( 'Since' ),
+					getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
+					render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
+					enableHiding: false,
+					enableSorting: true,
+				}
+			);
+		}
+
+		return baseFields;
+	}, [ translate, onClickView, isMobile ] );
 
 	const actions = useMemo< Action< Subscriber >[] >(
 		() => [
