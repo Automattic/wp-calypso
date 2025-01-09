@@ -4,13 +4,11 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect, useRef } from '@wordpress/element';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
-import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepComplete, {
 	type RecordStepCompleteProps,
 } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
-import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
@@ -48,7 +46,6 @@ interface Props {
  */
 export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props ) => {
 	const intent = useIntent();
-	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 	const pathname = window.location.pathname;
@@ -94,7 +91,6 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		recordStepStart( flowName, kebabCase( stepSlug ), {
 			intent,
 			is_in_hosting_flow: isAnyHostingFlow( flowName ),
-			...( design && { assembler_source: getAssemblerSource( design ) } ),
 			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
 			...reenteringStepAfterSignupCompleteProps,
@@ -117,7 +113,6 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			recordStepStart( flowName, kebabCase( stepOldSlug ), {
 				intent,
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
-				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
 				...reenteringStepAfterSignupCompleteProps,

@@ -10,12 +10,34 @@ import {
 } from 'calypso/controller';
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import domainManagementController from 'calypso/my-sites/domains/domain-management/controller';
+import {
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+} from 'calypso/my-sites/domains/domain-management/domain-overview-pane/constants';
+import emailController from 'calypso/my-sites/email/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
+
+function registerSiteDomainPage( { path, controllers }: { path: string; controllers: any[] } ) {
+	page(
+		path,
+		domainManagementController.domainManagementSiteContext,
+		siteSelection,
+		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectIfP2,
+		redirectIfJetpackNonAtomic,
+		navigation,
+		...controllers,
+		siteDashboard( undefined ),
+		makeLayout,
+		clientRender
+	);
+}
 
 export default function () {
 	page( '/overview', siteSelection, sites, makeLayout, clientRender );
@@ -78,4 +100,21 @@ export default function () {
 			clientRender
 		);
 	}
+
+	// Domain pages under site overview's context.
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/domain/:domain/:site',
+		controllers: [
+			domainManagementController.domainManagementV2,
+			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/email/:domain/:site',
+		controllers: [
+			emailController.emailManagement,
+			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		],
+	} );
 }

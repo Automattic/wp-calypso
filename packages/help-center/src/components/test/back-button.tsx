@@ -31,7 +31,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByTestId( 'back-button-icon' ) );
+		await user.click( screen.getByTestId( 'help-center-back-button' ) );
 
 		expect( mockNavigate ).toHaveBeenCalledWith( -1 );
 	} );
@@ -45,7 +45,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByTestId( 'back-button-icon' ) );
+		await user.click( screen.getByTestId( 'help-center-back-button' ) );
 
 		expect( mockNavigate ).not.toHaveBeenCalledWith( '/' );
 	} );

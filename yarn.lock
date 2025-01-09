@@ -2272,10 +2272,9 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@types/social-logos": "npm:^2.3.1"
     "@wordpress/url": "npm:^4.8.0"
     i18n-calypso: "workspace:^"
-    social-logos: "npm:^2.5.2"
+    social-logos: "npm:^3.1.16"
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@wordpress/data": ^10.8.0
@@ -8795,15 +8794,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/social-logos@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "@types/social-logos@npm:2.3.1"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 1cbeae892b0e6bd770f2aa74dc5d72320e20ecb4125899f1cda5c17cb2d5863c02adc157fc7a1acb8e961814bdb973134bf56c61c3f1c8ffa4f2bbb67c517210
-  languageName: node
-  linkType: hard
-
 "@types/sockjs@npm:^0.3.33":
   version: 0.3.36
   resolution: "@types/sockjs@npm:0.3.36"
@@ -13130,7 +13120,7 @@ __metadata:
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^2.5.9"
+    social-logos: "npm:^3.1.16"
     source-map-support: "npm:^0.5.19"
     store: "npm:^2.0.12"
     stream-browserify: "npm:^3.0.0"
@@ -28053,7 +28043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.2.0, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
+"react-dom@npm:18.3.1, react-dom@npm:^18.2.0, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -28424,7 +28414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0, react@npm:^18.2.0, react@npm:^18.3.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.2.0, react@npm:^18.3.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -30868,14 +30858,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^2.5.2, social-logos@npm:^2.5.9":
-  version: 2.5.9
-  resolution: "social-logos@npm:2.5.9"
+"social-logos@npm:^3.1.16":
+  version: 3.1.16
+  resolution: "social-logos@npm:3.1.16"
   dependencies:
-    prop-types: "npm:^15.5.7"
+    prop-types: "npm:^15.8.1"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
   peerDependencies:
-    react: 15 - 18
-  checksum: 1f730f147b31ad9902b47bb03f32647ec5e3d131049e735758509be43870c8b2e17e9a93dfb20230e656314673f57fc10fcc62b220a13e65c83af6841b38f02f
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 6fdd785b981b0581992897513d0785d8501f6f8f0d1555cabea274fb5b02d1544cdb74203897a0edbf5074220c50afc642262a40d492b54fe9da3b417612fda7
   languageName: node
   linkType: hard
 

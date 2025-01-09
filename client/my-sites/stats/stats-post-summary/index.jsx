@@ -236,7 +236,7 @@ class StatsPostSummary extends Component {
 		const selectedRecordIndex = chartData.findIndex(
 			( item ) => item.period === selectedRecord.period
 		);
-		if ( 'day' === this.state.period ) {
+		if ( 'day' === this.state.period && stats.data ) {
 			const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
 			disablePreviousArrow = this.state.page >= maxPages && selectedRecordIndex === 0;
 			disableNextArrow = 1 === this.state.page && selectedRecordIndex === chartData.length - 1;

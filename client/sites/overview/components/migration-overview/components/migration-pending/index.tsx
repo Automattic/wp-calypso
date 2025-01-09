@@ -1,6 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
@@ -31,6 +31,7 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 };
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
+	const translate = useTranslate();
 	const continueMigrationUrl = getContinueMigrationUrl( site );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
