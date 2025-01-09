@@ -20,6 +20,19 @@
 			height: 42px;
 			margin: 0;
 		}
+
+		.help-center-contact-form__site-picker-cta {
+			&:disabled {
+				&:hover {
+					color: var(--color-neutral-20);
+				}
+			}
+			&.is-busy {
+				&:hover {
+					color: var(--color-text-inverted);
+				}
+			}
+		}
 	}
 
 	.help-center-contact-form__site-picker-hes-tray {

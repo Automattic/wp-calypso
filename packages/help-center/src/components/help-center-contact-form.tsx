@@ -233,6 +233,13 @@ export const HelpCenterContactForm = () => {
 		navigate( '/' );
 	}
 
+	function navigateToContactForm() {
+		navigate( {
+			pathname: '/contact-form',
+			search: params.toString(),
+		} );
+	}
+
 	function handleGPTCancel() {
 		// send a tracks event
 		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_cancel', {
@@ -244,28 +251,25 @@ export const HelpCenterContactForm = () => {
 		// stop loading the GPT response
 		params.set( 'show-gpt', 'false' );
 		params.set( 'disable-gpt', 'true' );
-		navigate( {
-			pathname: '/contact-form',
-			search: params.toString(),
-		} );
+		navigateToContactForm();
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow && ! skipResources ) {
+		if (
+			! enableGPTResponse &&
+			! showingSearchResults &&
+			! wapuuFlow &&
+			! skipResources &&
+			mode !== 'FORUM'
+		) {
 			params.set( 'show-results', 'true' );
-			navigate( {
-				pathname: '/contact-form',
-				search: params.toString(),
-			} );
+			navigateToContactForm();
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow ) {
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow && mode !== 'FORUM' ) {
 			params.set( 'show-gpt', 'true' );
-			navigate( {
-				pathname: '/contact-form',
-				search: params.toString(),
-			} );
+			navigateToContactForm();
 			return;
 		}
 
@@ -387,6 +391,8 @@ export const HelpCenterContactForm = () => {
 				break;
 
 			case 'FORUM':
+				params.set( 'show-results', 'true' );
+				navigateToContactForm();
 				submitTopic( {
 					ownershipResult,
 					message: message ?? '',
@@ -502,6 +508,10 @@ export const HelpCenterContactForm = () => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
+		if ( mode === 'FORUM' && showingSearchResults ) {
+			return formTitles.buttonSubmittingLabel;
+		}
+
 		if ( ! showingGPTResponse && ! showingSearchResults && ! skipResources ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
@@ -604,6 +614,7 @@ export const HelpCenterContactForm = () => {
 						/>
 						<section className="contact-form-submit">
 							<Button
+								isBusy={ isSubmitting }
 								disabled={ isCTADisabled() }
 								onClick={ handleCTA }
 								variant="primary"
@@ -684,6 +695,7 @@ export const HelpCenterContactForm = () => {
 						</main>
 						<div className="contact-form-submit">
 							<Button
+								isBusy={ isSubmitting }
 								disabled={ isCTADisabled() }
 								onClick={ handleCTA }
 								variant="primary"
