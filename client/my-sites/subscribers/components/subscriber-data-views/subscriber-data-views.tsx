@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
+import { SubscriberProfile } from 'calypso/my-sites/subscribers/components/subscriber-profile';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSubscriptionPlans } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
@@ -39,7 +40,7 @@ const SubscriberDataViews = ( {
 	onClickUnsubscribe,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
-	const isMobile = useBreakpoint( '<782px' );
+	const isMobile = useBreakpoint( '<1040px' );
 	const {
 		grandTotal,
 		page,
@@ -70,7 +71,12 @@ const SubscriberDataViews = ( {
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
 					<button onClick={ () => onClickView( item ) }>
-						{ item.display_name || item.email_address }
+						<SubscriberProfile
+							avatar={ item.avatar }
+							displayName={ item.display_name }
+							email={ item.email_address }
+							url={ item.url }
+						/>
 					</button>
 				),
 				enableHiding: false,
