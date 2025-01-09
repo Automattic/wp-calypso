@@ -83,7 +83,7 @@ const ActionButtons = styled.div( {
 type CardContentProps = {
 	stagingSite: StagingSite;
 	siteId: number;
-	error?: string | null;
+	error?: { code: string; message: string } | null;
 	onDeleteClick: () => void;
 	onPushClick: () => void;
 	onPullClick: () => void;

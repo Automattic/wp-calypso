@@ -41,7 +41,7 @@ type CardProps = {
 function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const [ syncError, setSyncError ] = useState< string | null >( null );
+	const [ syncError, setSyncError ] = useState< { code: string; message: string } | null >( null );
 	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const {
@@ -78,7 +78,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.code );
+			setSyncError( error );
 		},
 	} );
 
@@ -94,7 +94,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setSyncError( error.code );
+			setSyncError( error );
 		},
 	} );
 

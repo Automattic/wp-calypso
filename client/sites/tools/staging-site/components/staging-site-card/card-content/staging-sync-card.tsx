@@ -487,6 +487,7 @@ export const SiteSyncCard = ( {
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
+	const [ syncError, setSyncError ] = useState< { code: string; message: string } | null >( null );
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
@@ -520,7 +521,6 @@ export const SiteSyncCard = ( {
 		}
 	}, [ dispatch, onPush, resetSyncStatus, selectedItems, transformSelectedItems, type ] );
 
-	const syncError = error || checkStatusError;
 	const onPullInternal = useCallback( () => {
 		resetSyncStatus();
 		dispatch( removeNotice( stagingSiteSyncSuccess ) );
@@ -545,6 +545,10 @@ export const SiteSyncCard = ( {
 	} else {
 		siteToSync = selectedOption === actionForType ? 'production' : 'staging';
 	}
+
+	useEffect( () => {
+		setSyncError( error ?? checkStatusError ?? null );
+	}, [ error, checkStatusError ] );
 
 	useEffect( () => {
 		if ( selectedOption && status === SiteSyncStatus.COMPLETED && ! syncError ) {

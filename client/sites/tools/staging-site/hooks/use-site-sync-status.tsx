@@ -22,7 +22,7 @@ export type SyncStatus = {
 	progress: number;
 	resetSyncStatus: () => void;
 	isSyncInProgress: boolean;
-	error: string;
+	error: { code: string; message: string } | null;
 	siteSource: 'production' | 'staging' | null;
 	siteTarget: 'production' | 'staging' | null;
 	restoreId: string;
@@ -97,7 +97,12 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 			progress: syncProgress,
 			resetSyncStatus,
 			isSyncInProgress,
-			error: syncStatusError,
+			error: syncStatusError
+				? {
+						code: syncStatusError,
+						message: '',
+				  }
+				: null,
 			sourceSite: syncingSourceSite,
 			targetSite: syncingTargetSite,
 			lastRestoreId: syncLastRestoreId,
