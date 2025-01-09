@@ -54,10 +54,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		fields: [],
 		perPage: 10,
 		page: 1,
-		layout: {
-			primaryField: 'post',
-			mediaField: 'icon',
-		},
+		titleField: 'post',
+		mediaField: 'icon',
+		showMedia: true,
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
@@ -217,7 +216,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		},
 		[ shownData ]
 	);
-
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
 		<div className="recent-feed" onKeyDown={ handleKeyDown }>
