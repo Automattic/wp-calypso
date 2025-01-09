@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -12,6 +11,7 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -28,8 +28,6 @@ interface HostingDetailsWithIconsProps {
 		description: string;
 	}[];
 }
-
-const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
 
 const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
 	const translate = useTranslate();
@@ -84,9 +82,15 @@ interface Props {
 	onComplete: ( siteInfo: UrlData ) => void;
 	onSkip: () => void;
 	hideImporterListLink: boolean;
+	flowName: string;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	hideImporterListLink = false,
+	flowName,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -95,6 +99,8 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		isFetching,
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
+
+	const isMigrationExperimentEnabled = useMigrationExperiment( flowName );
 
 	useEffect( () => {
 		if ( siteInfo ) {
@@ -199,7 +205,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
+const SiteMigrationIdentify: Step = function ( { navigation, variantSlug, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -262,6 +268,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 						onSkip={ () => {
 							handleSubmit( 'skip_platform_identification' );
 						} }
+						flowName={ flow }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

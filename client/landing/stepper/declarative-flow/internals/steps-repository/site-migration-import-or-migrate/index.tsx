@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getPlan, isWpComBusinessPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
@@ -12,13 +11,12 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
-const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
-
-const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
+const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -30,6 +28,8 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 		: false;
 
 	let options;
+
+	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 
 	if ( isMigrationExperimentEnabled ) {
 		const badgeText = isBusinessPlan
