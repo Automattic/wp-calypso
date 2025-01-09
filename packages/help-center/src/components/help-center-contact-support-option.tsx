@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import useChatStatus from '../hooks/use-chat-status';
 import { HELP_CENTER_STORE } from '../stores';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
@@ -54,10 +54,6 @@ const HelpCenterContactSupportOption = ( {
 	);
 
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
-	const supportHeaderText = useMemo( () => {
-		return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
-	}, [ __ ] );
 
 	const handleOnClick = () => {
 		generateContactOnClickEvent( 'chat', trackEventName );
@@ -117,7 +113,7 @@ const HelpCenterContactSupportOption = ( {
 							<Icon icon={ comment } />
 						</div>
 						<div>
-							<h2>{ supportHeaderText }</h2>
+							<h2>{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }</h2>
 							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
 						</div>
 					</div>
