@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -95,12 +97,24 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
 	};
 
+	const handleSelect = () => {
+		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
+		if ( isAllDomainManagementEnabled ) {
+			page.show( domainManagementLink );
+			return;
+		}
+
+		window.location.href = domainManagementLink;
+	};
+
 	return (
 		<tr
 			key={ domain.domain }
 			className={ clsx( 'domains-table__row', {
 				'is-selected': currentlySelectedDomainName === domain.domain,
 			} ) }
+			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
