@@ -568,11 +568,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							{ config.isEnabled( 'stats/locations' ) ? (
 								<>
 									<StatsModuleLocations
-										path="countryviews"
 										moduleStrings={ moduleStrings.locations }
 										period={ props.period }
 										query={ query }
-										summaryUrl={ getStatHref( 'countryviews', query ) }
+										summaryUrl={ getStatHref( 'locations', query ) }
 										className={ clsx( 'stats__flexible-grid-item--full' ) }
 									/>
 								</>

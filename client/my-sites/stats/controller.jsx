@@ -252,6 +252,7 @@ export function summary( context, next ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
