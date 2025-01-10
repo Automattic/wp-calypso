@@ -13,6 +13,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
@@ -23,6 +24,15 @@ import './style.scss';
 
 interface RecentProps {
 	viewToggle?: React.ReactNode;
+}
+
+interface PaddingItem {
+	isPadding: true;
+	postId: string;
+}
+
+function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
+	return 'isPadding' in item;
 }
 
 const Recent = ( { viewToggle }: RecentProps ) => {
@@ -65,7 +75,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
+		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
+			if ( isPaddingItem( item ) ) {
+				return acc;
+			}
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
@@ -90,7 +103,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost } ) => {
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return <Skeleton height="24px" width="24px" shape="circle" />;
+					}
 					const post = getPostFromItem( item );
 					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
 					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
@@ -101,9 +117,19 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost } ) =>
-					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost } ) => {
+				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
+					isPaddingItem( item )
+						? ''
+						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return (
+							<>
+								<Skeleton height="10px" width="100%" style={ { marginBottom: '8px' } } />
+								<Skeleton height="8px" width="50%" />
+							</>
+						);
+					}
 					return (
 						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
 							<RecentPostField
@@ -181,7 +207,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				const focusedItem = shownData.find(
 					( item ) => item.postId?.toString() === focusedIndexRef.current
 				);
-				if ( focusedItem ) {
+				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
 					setSelectedItem( focusedItem );
 					setTimeout( () => {
 						postColumnRef.current?.focus();

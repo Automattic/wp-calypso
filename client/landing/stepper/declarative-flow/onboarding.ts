@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -57,21 +57,27 @@ const onboarding: Flow = {
 			[]
 		);
 
+		// we are only interested in the initial values and not when they values change
+		const initialGoals = useRef( goals );
+		const initialLoggedOut = useRef( ! userIsLoggedIn );
+
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
 					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
-					is_logged_out: ( ! userIsLoggedIn ).toString(),
+					is_logged_out: initialLoggedOut.current.toString(),
 				},
 				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
 					...( isGoalsAtFrontExperiment && {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
 					} ),
-					...( goals.length && { goals: goals.join( ',' ) } ),
+					...( initialGoals.current.length && {
+						goals: initialGoals.current.join( ',' ),
+					} ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn, goals ]
+			[ isGoalsAtFrontExperiment, initialGoals, initialLoggedOut ]
 		);
 	},
 	useSteps() {

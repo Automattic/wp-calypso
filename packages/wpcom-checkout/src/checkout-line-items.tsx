@@ -480,7 +480,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) along with your plan renewal will be removed from the cart, and your plan will keep its current expiry date.'
+							"Some of your other product(s) depend on your plan to be renewed. When you press Continue, the plan renewal will be removed from the cart and your plan will keep its current expiry date. When the plan expires these product(s) will stop working even if they haven't expired yet."
 						)
 					),
 				};
