@@ -25,33 +25,46 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	const externalPreviewText = DataHelper.getRandomPhrase();
-
+	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'atomicUser',
+		},
+		{
+			gutenberg: 'edge',
+			siteType: 'simple',
+			accountName: 'atomicUser',
+		},
+	] );
+	const testAccount = new TestAccount( accountName );
+	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 	let page: Page;
-	let testAccount: TestAccount;
 	let marketingPage: MarketingPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		// Simple sites do not have the ability to change SEO parameters.
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
-			{
-				gutenberg: 'stable',
-				siteType: 'simple',
-				accountName: 'atomicUser',
-			},
-			{
-				gutenberg: 'edge',
-				siteType: 'simple',
-				accountName: 'atomicUser',
-			},
-		] );
-		testAccount = new TestAccount( accountName );
-		const siteUrl = DataHelper.getAccountSiteURL( accountName, { protocol: false } );
-		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteUrl }` );
-		await testAccount.authenticate( page, { url: calypsoSiteUrl } );
+		await testAccount.authenticate( page );
 
 		marketingPage = new MarketingPage( page );
+	} );
+
+	it( 'Dismiss the Sites Guide and pick a site', async function () {
+		try {
+			// Wait for the Guide's close button to appear
+			await page.waitForSelector(
+				'button.components-button.is-small.has-icon[aria-label="Close"]'
+			);
+			// Dismiss the Sites guide
+			await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+		} catch ( e ) {
+			// No guide was shown, continue
+		}
+
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ testAccountSiteDomain }` );
+		await page.goto( calypsoSiteUrl );
 	} );
 
 	it( 'Navigate to Tools > Marketing > Traffic page', async function () {

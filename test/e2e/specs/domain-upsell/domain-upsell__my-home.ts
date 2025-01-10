@@ -8,6 +8,7 @@ import {
 	RestAPIClient,
 	MyHomePage,
 	PlansPage,
+	DataHelper,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -19,9 +20,10 @@ describe( 'Domain: Upsell (Home)', function () {
 	let suggestedDomain: string;
 	let page: Page;
 
-	beforeAll( async function () {
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+	const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+	const siteDomain = testAccount.getSiteURL( { protocol: false } );
 
+	beforeAll( async function () {
 		const restAPIClient = new RestAPIClient( testAccount.credentials );
 		await restAPIClient.clearShoppingCart(
 			testAccount.credentials.testSites?.primary?.id as number
@@ -31,6 +33,23 @@ describe( 'Domain: Upsell (Home)', function () {
 		await BrowserManager.setStoreCookie( page );
 
 		await testAccount.authenticate( page );
+	} );
+
+	it( 'Dismiss the Sites Guide and pick a site', async function () {
+		try {
+			// Wait for the Guide's close button to appear
+			await page.waitForSelector(
+				'button.components-button.is-small.has-icon[aria-label="Close"]'
+			);
+			// Dismiss the Sites guide
+			await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+		} catch ( e ) {
+			// No guide was shown, continue
+		}
+
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+		await page.goto( calypsoSiteUrl );
 	} );
 
 	it( 'Wait for Home dashboard to fully load', async function () {

@@ -38,6 +38,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 		let notificationsComponent: NotificationsComponent;
 		let page: Page;
+		let siteDomain: string;
 
 		beforeAll( async function () {
 			// Create an instance of RestAPI as the user making the comment.
@@ -47,6 +48,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			// Create an instance of RestAPI as the user receiving notification.
 			notificationsUser = new TestAccount( 'notificationsUser' );
 			notificationUserRestAPIClient = new RestAPIClient( notificationsUser.credentials );
+			siteDomain = notificationsUser.getSiteURL( { protocol: false } );
 
 			// Create a new post and store the response.
 			newPost = await notificationUserRestAPIClient.createPost(
@@ -65,6 +67,23 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			// Log in as the user receiving the notification.
 			page = await browser.newPage();
 			await notificationsUser.authenticate( page, { waitUntilStable: true } );
+		} );
+
+		it( 'Dismiss the Sites Guide and pick a site', async function () {
+			try {
+				// Wait for the Guide's close button to appear
+				await page.waitForSelector(
+					'button.components-button.is-small.has-icon[aria-label="Close"]'
+				);
+				// Dismiss the Sites guide
+				await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+				await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			} catch ( e ) {
+				// No guide was shown, continue
+			}
+
+			const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+			await page.goto( calypsoSiteUrl );
 		} );
 
 		it( 'Open Notifications panel', async function () {

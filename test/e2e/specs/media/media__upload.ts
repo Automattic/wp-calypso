@@ -33,10 +33,11 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let page: Page;
 	let mediaPage: MediaPage;
-	let testAccount: TestAccount;
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 
 	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const testAccount = new TestAccount( accountName );
+	const siteDomain = testAccount.getSiteURL( { protocol: false } );
 
 	beforeAll( async () => {
 		testFiles = {
@@ -47,7 +48,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 		page = await browser.newPage();
 
-		testAccount = new TestAccount( accountName );
 		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
 			// Switching to or logging into eCommerce plan sites inevitably
 			// loads WP-Admin instead of Calypso, but the rediret occurs
@@ -58,6 +58,23 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		}
 
 		mediaPage = new MediaPage( page );
+	} );
+
+	it( 'Dismiss the Sites Guide and pick a site', async function () {
+		try {
+			// Wait for the Guide's close button to appear
+			await page.waitForSelector(
+				'button.components-button.is-small.has-icon[aria-label="Close"]'
+			);
+			// Dismiss the Sites guide
+			await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+		} catch ( e ) {
+			// No guide was shown, continue
+		}
+
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+		await page.goto( calypsoSiteUrl );
 	} );
 
 	it( 'Navigate to Media', async function () {

@@ -29,7 +29,6 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
-	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
 	const features = envToFeatureKey( envVariables );
@@ -65,11 +64,12 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 			accountName: 'siteEditorAtomicSiteEdgeUser',
 		},
 	] );
+	const testAccount = new TestAccount( accountName );
+	const siteDomain = testAccount.getSiteURL( { protocol: false } );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		testAccount = new TestAccount( accountName );
 		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
 			// eCommerce plan sites attempt to load Calypso, but with
 			// third-party cookies disabled the fallback route to WP-Admin
@@ -78,6 +78,23 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 		} else {
 			await testAccount.authenticate( page );
 		}
+	} );
+
+	it( 'Dismiss the Sites Guide and pick a site', async function () {
+		try {
+			// Wait for the Guide's close button to appear
+			await page.waitForSelector(
+				'button.components-button.is-small.has-icon[aria-label="Close"]'
+			);
+			// Dismiss the Sites guide
+			await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+		} catch ( e ) {
+			// No guide was shown, continue
+		}
+
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+		await page.goto( calypsoSiteUrl );
 	} );
 
 	it( 'Navigate to Full Site Editor', async function () {

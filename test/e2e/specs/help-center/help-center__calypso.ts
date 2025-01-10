@@ -18,15 +18,16 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
-	let testAccount: TestAccount;
 	let helpCenterComponent: HelpCenterComponent;
 	let helpCenterLocator: Locator;
+
+	const testAccount = new TestAccount( 'defaultUser' );
+	const siteDomain = testAccount.getSiteURL( { protocol: false } );
 
 	// Setup the page and test account
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page, { waitUntilStable: true } );
 
 		helpCenterComponent = new HelpCenterComponent( page );
@@ -45,6 +46,23 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 * These tests check the general interaction with the Help Center popover.
 	 */
 	describe( 'General Interaction', () => {
+		it( 'Dismiss the Sites Guide and pick a site', async function () {
+			try {
+				// Wait for the Guide's close button to appear
+				await page.waitForSelector(
+					'button.components-button.is-small.has-icon[aria-label="Close"]'
+				);
+				// Dismiss the Sites guide
+				await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+				await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			} catch ( e ) {
+				// No guide was shown, continue
+			}
+
+			const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+			await page.goto( calypsoSiteUrl );
+		} );
+
 		it( 'is initially closed', async () => {
 			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
 		} );
