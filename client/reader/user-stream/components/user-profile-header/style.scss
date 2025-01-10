@@ -2,11 +2,16 @@
 	.user-profile-header {
 		max-width: 768px;
 		margin: 0 auto;
+		padding: 0 16px;
 
 		&__main {
 			display: flex;
 			padding: 36px 0 24px;
 			align-items: center;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				padding-top: 20px;
+			}
 		}
 
 		&__avatar {
@@ -34,10 +39,6 @@
 			line-height: 1.5;
 			margin-bottom: 8px;
 
-			a {
-				color: var( --color-neutral-100 );
-			}
-
 			&::after {
 				@include long-content-fade( $size: 15% );
 				height: 16px * 1.7;
@@ -48,7 +49,6 @@
 		&__bio {
 			font-size: $font-body-large;
 			color: var( --color-text-subtle );
-			margin-bottom: 12px;
 		}
 
 		&__bio-desc {

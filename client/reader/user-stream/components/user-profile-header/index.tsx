@@ -16,18 +16,20 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
+	const currentPath = window.location.pathname;
+	const userId = user.ID;
 	const narrowDisplay = width < 480;
 
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: `/read/users/${ user.ID }`,
-			selected: window.location.pathname === `/read/users/${ user.ID }`,
+			path: `/read/users/${ userId }`,
+			selected: currentPath === `/read/users/${ userId }`,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `/read/users/${ user.ID }/lists`,
-			selected: window.location.pathname === `/read/users/${ user.ID }/lists`,
+			path: `/read/users/${ userId }/lists`,
+			selected: currentPath === `/read/users/${ userId }/lists`,
 		},
 	];
 
