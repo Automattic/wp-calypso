@@ -118,7 +118,13 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
  * Can pass any properties that should be recorded for the respective events.
  */
 export type UseTracksEventPropsHook = () => {
-	[ key in ( typeof STEPPER_TRACKS_EVENTS )[ number ] ]?: Record< string, string | number | null >;
+	/**
+	 * This flag is needed to indicate that the custom props are still loading. And the return value will be ignored until it's false.
+	 */
+	isLoading?: boolean;
+	eventsProperties: Partial<
+		Record< ( typeof STEPPER_TRACKS_EVENTS )[ number ], Record< string, string | number | null > >
+	>;
 };
 
 export type Flow = {

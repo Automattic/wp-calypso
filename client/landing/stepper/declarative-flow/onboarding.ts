@@ -50,7 +50,7 @@ const onboarding: Flow = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
-		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const [ isLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
@@ -63,21 +63,25 @@ const onboarding: Flow = {
 
 		return useMemo(
 			() => ( {
-				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-					is_goals_first: isGoalsAtFrontExperiment.toString(),
-					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
-					is_logged_out: initialLoggedOut.current.toString(),
-				},
-				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-					...( isGoalsAtFrontExperiment && {
+				isLoading,
+				eventsProperties: {
+					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
-					} ),
-					...( initialGoals.current.length && {
-						goals: initialGoals.current.join( ',' ),
-					} ),
+						...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+						is_logged_out: initialLoggedOut.current.toString(),
+					},
+
+					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+						...( isGoalsAtFrontExperiment && {
+							is_goals_first: 'true',
+						} ),
+						...( initialGoals.current.length && {
+							goals: initialGoals.current.join( ',' ),
+						} ),
+					},
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, initialGoals, initialLoggedOut ]
+			[ isGoalsAtFrontExperiment, initialLoggedOut, initialGoals, isLoading ]
 		);
 	},
 	useSteps() {

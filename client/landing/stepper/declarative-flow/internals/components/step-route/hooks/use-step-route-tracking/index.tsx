@@ -51,8 +51,10 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 	const pathname = window.location.pathname;
 	const flowVariantSlug = flow.variantSlug;
 	const flowName = flow.name;
+	const customProperties = flow.useTracksEventProps?.();
+	const isLoading = customProperties?.isLoading;
 	const signupStepStartProps = useSnakeCasedKeys( {
-		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
+		input: customProperties?.eventsProperties[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
 	} );
 
 	/**
@@ -71,7 +73,8 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 
 	useEffect( () => {
 		// We wait for the site to be fetched before tracking the step route.
-		if ( ! hasRequestedSelectedSite ) {
+		// And if `isLoading` is true, it means the flow is still loading custom properties.
+		if ( ! hasRequestedSelectedSite || isLoading ) {
 			return;
 		}
 
@@ -134,5 +137,5 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		// We also leave out pathname. The respective event (calypso_page_view) is recorded behind a timeout and we don't want to trigger it again.
 		//     - window.location.pathname called inside the effect keeps referring to the previous path on a redirect. So we moved it outside.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender, isLoading ] );
 };

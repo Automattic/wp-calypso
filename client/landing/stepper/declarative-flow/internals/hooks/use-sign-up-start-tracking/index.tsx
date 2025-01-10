@@ -21,8 +21,10 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 	const flowName = flow.name;
 	const flowVariant = flow.variantSlug;
 	const isSignupFlow = flow.isSignupFlow;
+	const customPropsConfig = flow.useTracksEventProps?.();
+	const isLoading = customPropsConfig?.isLoading;
 	const signupStartEventProps = useSnakeCasedKeys( {
-		input: flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
+		input: customPropsConfig?.eventsProperties[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
 	} );
 
 	/**
@@ -44,7 +46,7 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 	}, [ isSignupFlow, flowName ] );
 
 	useEffect( () => {
-		if ( ! isSignupFlow ) {
+		if ( ! isSignupFlow || isLoading ) {
 			return;
 		}
 
@@ -56,5 +58,5 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 				...( flowVariant && { flow_variant: flowVariant } ),
 			},
 		} );
-	}, [ isSignupFlow, flowName, ref, signupStartEventProps, flowVariant ] );
+	}, [ isSignupFlow, flowName, ref, signupStartEventProps, isLoading, flowVariant ] );
 };

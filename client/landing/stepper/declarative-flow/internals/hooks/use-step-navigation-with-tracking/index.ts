@@ -1,6 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useMemo, useRef } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
@@ -36,8 +36,6 @@ export const useStepNavigationWithTracking = ( {
 	}, [] );
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
-	const tracksEventPropsFromFlowRef = useRef( tracksEventPropsFromFlow );
-	tracksEventPropsFromFlowRef.current = tracksEventPropsFromFlow;
 
 	const handleRecordStepNavigation = useCallback(
 		( {
@@ -56,11 +54,16 @@ export const useStepNavigationWithTracking = ( {
 				providedDependencies: dependencies,
 				additionalProps: {
 					...( eventProps ?? {} ),
-					...( tracksEventPropsFromFlowRef.current?.[ event ] ?? {} ),
+					// Don't add eventProps if `useTracksEventProps` is still loading.
+					// It's not tight, but it's a trade-off to avoid firing events with incorrect props.
+					// It's a tiny edge case where the use navigates before this hook is ready.
+					...( tracksEventPropsFromFlow?.isLoading
+						? undefined
+						: tracksEventPropsFromFlow?.eventsProperties?.[ event ] ?? {} ),
 				},
 			} );
 		},
-		[ intent, goals, currentStepRoute, flow ]
+		[ intent, tracksEventPropsFromFlow, goals, currentStepRoute, flow ]
 	);
 
 	return useMemo(
