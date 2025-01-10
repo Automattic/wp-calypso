@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	AI_ASSEMBLER_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -68,9 +67,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
-
-	[ AI_ASSEMBLER_FLOW ]: () =>
-		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
 
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),

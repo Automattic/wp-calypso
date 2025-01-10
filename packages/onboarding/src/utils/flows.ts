@@ -1,5 +1,4 @@
 export const ACCOUNT_FLOW = 'account';
-export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
@@ -171,7 +170,7 @@ export const isDomainUpsellFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ AI_ASSEMBLER_FLOW, ASSEMBLER_FIRST_FLOW ];
+	const SITE_ASSEMBLER_FLOWS = [ ASSEMBLER_FIRST_FLOW ];
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
 

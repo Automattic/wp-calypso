@@ -254,11 +254,9 @@
 
 /**
  * Layout for the following flows
- * - ai-assembler
  * - assembler-first
  * - domain-upsell
  */
-.ai-assembler.domains,
 .assembler-first.domains,
 .domain-upsell.domains {
 	$domain-stepper-component-width: 1040px;
