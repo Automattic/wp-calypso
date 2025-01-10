@@ -47,7 +47,16 @@ export function requestPage( {
 	};
 }
 
-export function receivePage( { streamKey, pageHandle, streamItems, gap, totalItems, totalPages } ) {
+export function receivePage( {
+	streamKey,
+	pageHandle,
+	streamItems,
+	gap,
+	totalItems,
+	totalPages,
+	page,
+	perPage,
+} ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
@@ -57,6 +66,8 @@ export function receivePage( { streamKey, pageHandle, streamItems, gap, totalIte
 			gap,
 			totalItems,
 			totalPages,
+			page,
+			perPage,
 		},
 	};
 }

@@ -185,16 +185,6 @@ body.is-reader-full-post {
 				padding: $recent-feed-spacing;
 			}
 		}
-
-		// This is a temporary fix to disable the pagination page selector because of this issue: Automattic/loop#247
-		// Once that issue is fixed, this code should be removed.
-		.dataviews-pagination__page-select {
-			display: none;
-
-			& + div {
-				margin-left: auto;
-			}
-		}
 	}
 
 	&__post-column {

@@ -36,14 +36,50 @@ export const items = ( state = [], action ) => {
 	let gap;
 	let newState;
 	let newXPosts;
+	let perPage;
+	let page;
+	let streamKey;
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			gap = action.payload.gap;
 			streamItems = action.payload.streamItems;
+			perPage = action.payload.perPage;
+			page = action.payload.page;
+			streamKey = action.payload.streamKey;
 
 			if ( ! Array.isArray( streamItems ) ) {
 				return state;
+			}
+
+			// For the Recent feeds, we need to pad the stream with empty items
+			// for the DataViews pagination to work correctly
+			// see Automattic/loop#238
+			if ( streamKey?.startsWith( 'recent' ) && streamItems.length > 0 && perPage && page > 1 ) {
+				// Calculate where new items should start
+				const startIndex = ( page - 1 ) * perPage;
+				const existingLength = state.length;
+				const paddingNeeded = startIndex - existingLength;
+
+				// Case 1: Need to add padding before new items
+				if ( paddingNeeded > 0 ) {
+					const paddingItems = Array( paddingNeeded )
+						.fill( undefined )
+						.map( ( _, index ) => ( {
+							isPadding: true,
+							postId: `padding-${ index }`,
+						} ) );
+
+					return combineXPosts( [ ...state, ...paddingItems, ...streamItems ] );
+				}
+
+				// Case 2: Replace existing items at correct index
+				const updatedState = [ ...state ];
+				streamItems.forEach( ( item, index ) => {
+					updatedState[ startIndex + index ] = item;
+				} );
+
+				return combineXPosts( updatedState );
 			}
 
 			if ( gap ) {
