@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-options';
+import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 
 type Props = {
