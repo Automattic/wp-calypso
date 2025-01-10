@@ -57,8 +57,9 @@ const onboarding: Flow = {
 			[]
 		);
 
-		// we are only interested in the initial goals value when the user enters the goals step
+		// we are only interested in the initial values and not when they values change
 		const initialGoals = useRef( goals );
+		const initialLoggedOut = useRef( ! userIsLoggedIn );
 
 		return useMemo(
 			() => ( {
@@ -67,8 +68,9 @@ const onboarding: Flow = {
 					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
 						...( isGoalsAtFrontExperiment && { step: 'goals' } ),
-						is_logged_out: ( ! userIsLoggedIn ).toString(),
+						is_logged_out: initialLoggedOut.current.toString(),
 					},
+
 					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
 						...( isGoalsAtFrontExperiment && {
 							is_goals_first: 'true',
@@ -79,7 +81,7 @@ const onboarding: Flow = {
 					},
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn, initialGoals, isLoading ]
+			[ isGoalsAtFrontExperiment, initialLoggedOut, initialGoals, isLoading ]
 		);
 	},
 	useSteps() {
