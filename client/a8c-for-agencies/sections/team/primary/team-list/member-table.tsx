@@ -25,6 +25,7 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: [ 'user', 'role', 'added-date', 'actions' ],
 		layout: {
 			styles: {
 				actions: {
