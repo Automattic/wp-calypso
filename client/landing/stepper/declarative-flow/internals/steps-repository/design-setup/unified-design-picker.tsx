@@ -964,7 +964,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				showActiveThemeBadge={ intent !== 'build' }
 				isMultiFilterEnabled={ isGoalCentricFeature }
 				isBigSkyEligible={ isBigSkyEligible }
-				recommendedDesignSlugs={ allDesigns?.recommendation || [] }
 			/>
 		</>
 	);
