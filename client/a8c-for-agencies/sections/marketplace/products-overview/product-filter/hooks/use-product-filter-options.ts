@@ -1,8 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import {
 	PRODUCT_CATEGORY_CONVERSION,
 	PRODUCT_CATEGORY_CUSTOMER_SERVICE,
 	PRODUCT_CATEGORY_GROWTH,
+	PRODUCT_CATEGORY_JETPACK,
 	PRODUCT_CATEGORY_MERCHANDISING,
 	PRODUCT_CATEGORY_PAYMENTS,
 	PRODUCT_CATEGORY_PERFORMANCE,
@@ -11,6 +13,7 @@ import {
 	PRODUCT_CATEGORY_SOCIAL,
 	PRODUCT_CATEGORY_STORE_CONTENT,
 	PRODUCT_CATEGORY_STORE_MANAGEMENT,
+	PRODUCT_CATEGORY_WOOCOMMERCE,
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
@@ -27,6 +30,12 @@ export default function useProductFilterOptions() {
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
+			...( isEnabled( 'a4a-product-page-redesign' )
+				? [
+						{ key: PRODUCT_CATEGORY_JETPACK, label: translate( 'Jetpack' ) as string },
+						{ key: PRODUCT_CATEGORY_WOOCOMMERCE, label: translate( 'Woocommerce' ) as string },
+				  ]
+				: [] ),
 			{ key: PRODUCT_CATEGORY_SECURITY, label: translate( 'Security' ) as string },
 			{ key: PRODUCT_CATEGORY_PERFORMANCE, label: translate( 'Performance' ) as string },
 			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) as string },
