@@ -130,16 +130,6 @@
 	}
 }
 
-// TODO: remove when updating to dataviews@4.3.0.
-//
-// This is a hotfix to hiding the properties section in the view config menu
-// when no field is hidable.
-// This has been fixed upstream as of
-// https://github.com/WordPress/gutenberg/pull/64711
-.dataviews-settings-section:has( .dataviews-settings-section__content:empty ) {
-	display: none;
-}
-
 // TODO: remove when this is implemented upstream.
 //
 // https://github.com/WordPress/gutenberg/pull/65086
