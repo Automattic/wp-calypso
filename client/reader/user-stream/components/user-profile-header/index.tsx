@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { ComponentType } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -77,4 +78,6 @@ const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.E
 	);
 };
 
-export default withDimensions( UserProfileHeader );
+export default withDimensions( UserProfileHeader ) as ComponentType<
+	Omit< UserProfileHeaderProps, 'width' >
+>;
