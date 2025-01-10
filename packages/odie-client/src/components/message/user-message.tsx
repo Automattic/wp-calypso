@@ -9,19 +9,7 @@ import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Chat, Message } from '../../types';
-
-const isWordPressRelatedQuestion = ( message: Message ) => {
-	return ! (
-		message.context?.question_tags?.category === 'Other (everything else)' &&
-		message.context?.question_tags?.inquiry_type === 'other' &&
-		message.context?.question_tags?.product === 'unknown'
-	);
-};
-
-const shouldRenderRatingButtons = ( chat: Chat, message: Message ) => {
-	return isWordPressRelatedQuestion( message ) && chat.provider !== 'zendesk';
-};
+import type { Message } from '../../types';
 
 export const UserMessage = ( {
 	message,
@@ -34,6 +22,7 @@ export const UserMessage = ( {
 } ) => {
 	const {
 		extraContactOptions,
+		experimentName,
 		isUserEligibleForPaidSupport,
 		shouldUseHelpCenterExperience,
 		trackEvent,
@@ -42,13 +31,20 @@ export const UserMessage = ( {
 	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
+	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
-	const showExtraContactOptions =
-		hasFeedback && ! isPositiveFeedback && userHasEverEscalatedToHumanSupport;
+	const isConnectedToZendesk = chat?.provider === 'zendesk';
+
+	let showExtraContactOptions: boolean;
+
+	if ( experimentName === 'give_a_chance' ) {
+		showExtraContactOptions = userHasEverEscalatedToHumanSupport && isRequestingHumanSupport;
+	} else {
+		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
@@ -88,7 +84,7 @@ export const UserMessage = ( {
 
 	const renderDisclaimers = () => (
 		<>
-			{ shouldRenderRatingButtons( chat, message ) && (
+			{ ! isConnectedToZendesk && (
 				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 			) }
 
@@ -137,7 +133,7 @@ export const UserMessage = ( {
 					{ showExtraContactOptions &&
 						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
 
-					{ shouldRenderRatingButtons( chat, message ) && (
+					{ ! showExtraContactOptions && (
 						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 					) }
 

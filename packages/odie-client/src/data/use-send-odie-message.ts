@@ -41,6 +41,7 @@ export const useSendOdieMessage = () => {
 		setChat,
 		odieBroadcastClientId,
 		setChatStatus,
+		setExperimentName,
 		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 
@@ -113,12 +114,13 @@ export const useSendOdieMessage = () => {
 				message_id: returnedChat.messages[ 0 ].message_id,
 				internal_message_id,
 				content: returnedChat.messages[ 0 ].content,
+				experimentName: returnedChat.messages[ 0 ].experimentName,
 				role: 'bot',
-				simulateTyping: returnedChat.messages[ 0 ].simulateTyping,
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
 
+			setExperimentName( botMessage.experimentName );
 			addMessage( botMessage, { odieId: returnedChat.chat_id } );
 			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},

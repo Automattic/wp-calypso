@@ -41,6 +41,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
 	odieBroadcastClientId: '',
+	setExperimentName: noop,
 	setChat: noop,
 	setChatStatus: noop,
 	setMessageLikedStatus: noop,
@@ -72,6 +73,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	children,
 	shouldUseHelpCenterExperience,
 } ) => {
+	const [ experimentName, setExperimentName ] = useState< string | undefined >( undefined );
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
@@ -182,6 +184,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				botName,
 				botNameSlug,
 				chat: mainChatState,
+				experimentName,
 				setChat: setMainChatState,
 				clearChat,
 				currentUser,
@@ -194,6 +197,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				selectedSiteId,
 				selectedSiteURL,
 				setChatStatus,
+				setExperimentName,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
 				shouldUseHelpCenterExperience: shouldUseHelpCenterExperience ?? false,

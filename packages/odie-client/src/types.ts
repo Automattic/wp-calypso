@@ -11,6 +11,7 @@ export type OdieAssistantContextInterface = {
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
+	experimentName?: string;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	extraContactOptions?: ReactNode;
@@ -21,6 +22,7 @@ export type OdieAssistantContextInterface = {
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
+	setExperimentName: ( experimentName: string | undefined ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	userHasEverEscalatedToHumanSupport: boolean;
@@ -147,13 +149,13 @@ export type MessageType =
 export type Message = {
 	content: string;
 	context?: Context;
+	experimentName?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;
 	liked?: boolean | null;
 	rating_value?: number;
 	role: MessageRole;
-	simulateTyping?: boolean;
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
