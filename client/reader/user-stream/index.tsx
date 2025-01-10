@@ -43,7 +43,7 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 			case `/read/users/${ userId }`:
 				return <UserPosts streamKey={ streamKey as string } user={ user } />;
 			case `/read/users/${ userId }/lists`:
-				return <UserLists user={ user } />;
+				return <UserLists user={ user } userSlug={ user.user_login } />;
 			default:
 				return null;
 		}

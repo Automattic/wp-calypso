@@ -1,12 +1,21 @@
 import { formatListBullets, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
 import UserProfileHeader from 'calypso/reader/user-stream/components/user-profile-header';
-import { requestUserLists } from 'calypso/state/reader/users/actions';
+import { requestUserLists } from 'calypso/state/reader/lists/actions';
+
+interface AppState {
+	reader: {
+		lists: {
+			userLists: Record< string, List[] >;
+			isRequestingUserLists: Record< string, boolean >;
+		};
+	};
+}
 
 interface UserListsProps {
 	user: UserData;
@@ -14,24 +23,27 @@ interface UserListsProps {
 	userSlug: string;
 	lists: List[];
 	isLoading: boolean;
-	requestUserLists: ( userId: string, userSlug: string ) => void;
+	requestUserLists: ( userSlug: string ) => void;
 }
 
 const UserLists = ( {
 	user,
-	userId,
 	userSlug,
 	lists,
 	isLoading,
 	requestUserLists,
 }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
+	const [ hasRequested, setHasRequested ] = useState( false );
 
 	useEffect( () => {
-		requestUserLists( userId, userSlug );
-	}, [ userId, userSlug, requestUserLists ] );
+		if ( ! hasRequested ) {
+			requestUserLists( userSlug );
+			setHasRequested( true );
+		}
+	}, [ userSlug, requestUserLists, hasRequested ] );
 
-	if ( isLoading ) {
+	if ( isLoading || ! hasRequested ) {
 		return <></>;
 	}
 
@@ -52,22 +64,24 @@ const UserLists = ( {
 	return (
 		<div className="user-stream__lists">
 			<UserProfileHeader user={ user } />
-			{ lists.map( ( list: List ) => (
-				<div className="user-profile__list" key={ list.ID }>
-					<h3>{ list.title }</h3>
-				</div>
-			) ) }
+			<div className="user-profile__lists-body">
+				{ lists.map( ( list: List ) => (
+					<div className="user-profile__list" key={ list.ID }>
+						<h3>
+							<a href={ `/read/list/${ list.owner }/${ list.slug }` }>{ list.title }</a>
+						</h3>
+					</div>
+				) ) }
+			</div>
 		</div>
 	);
 };
 
 export default connect(
-	( state: UserStreamState, ownProps: UserStreamProps ) => {
-		return {
-			lists: state.reader.users.lists[ ownProps.userId ],
-			isLoading: state.reader.users.listRequests[ ownProps.userId ] ?? false,
-		};
-	},
+	( state: AppState, ownProps: UserListsProps ) => ( {
+		lists: state.reader.lists.userLists[ ownProps.userSlug ] ?? [],
+		isLoading: state.reader.lists.isRequestingUserLists[ ownProps.userSlug ] ?? false,
+	} ),
 	{
 		requestUserLists,
 	}
