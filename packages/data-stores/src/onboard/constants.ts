@@ -35,6 +35,7 @@ export enum SiteIntent {
 	Import = 'import', // deprecated
 	AssemblerFirst = 'assembler-first',
 	ReadyMadeTemplate = 'readymade-template',
+	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',
 	FreePostSetup = 'free-post-setup', // non-signup flow
 	SiteMigration = 'site-migration',
