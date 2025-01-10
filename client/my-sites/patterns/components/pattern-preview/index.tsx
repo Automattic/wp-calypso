@@ -22,6 +22,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
+
 import './style.scss';
 
 export const GRID_VIEW_VIEWPORT_WIDTH = 1200;
