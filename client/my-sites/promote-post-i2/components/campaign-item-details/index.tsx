@@ -189,6 +189,16 @@ export default function CampaignItemDetails( props: Props ) {
 			const [ minValue, maxValue ] = tempValues.map( Number );
 			median = ( minValue + maxValue ) / 2;
 		}
+		if ( is_evergreen ) {
+			// Calculate the duration in weeks from the start date.
+			// Add 1 to ensure the minimum value is 1 week (avoiding division by zero or values less than 1).
+			// This ensures clicks are divided by the total whole number of weeks that have elapsed since the start date.
+			const durationInWeeksFromStartDate =
+				moment.utc().diff( moment.utc( start_date ), 'weeks' ) + 1;
+			// The total is divided by the number of weeks,
+			// as the estimated values are calculated on a weekly basis.
+			total = Math.round( total / durationInWeeksFromStartDate );
+		}
 		if ( total > median && median > 0 ) {
 			return Math.round( ( ( total - median ) / median ) * 100 );
 		}
@@ -795,7 +805,9 @@ export default function CampaignItemDetails( props: Props ) {
 													{ translate( 'Duration' ) }
 												</span>
 												<span className="campaign-item-details__text wp-brand-font">
-													{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+													{ isLoading && <FlexibleSkeleton /> }
+													{ ! isLoading && is_evergreen && translate( 'Until stopped' ) }
+													{ ! isLoading && ! is_evergreen && durationFormatted }
 												</span>
 											</div>
 											<div>
@@ -1225,6 +1237,11 @@ export default function CampaignItemDetails( props: Props ) {
 													};
 
 													const durationFormatted = formatDuration( createdAt );
+
+													if ( order.status !== 'COMPLETED' ) {
+														// we only want to display data when orders are in completed state
+														return null;
+													}
 
 													return (
 														<div key={ index } className="campaign-item-details__weekly-orders-row">
