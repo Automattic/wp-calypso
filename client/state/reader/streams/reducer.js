@@ -54,7 +54,7 @@ export const items = ( state = [], action ) => {
 			// for the DataViews pagination to work correctly
 			// see Automattic/loop#238
 			if (
-				action.payload?.streamKey.startsWith( 'recent' ) &&
+				action.payload?.streamKey?.startsWith( 'recent' ) &&
 				streamItems.length > 0 &&
 				perPage &&
 				page > 1
