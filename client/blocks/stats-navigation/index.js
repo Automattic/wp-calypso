@@ -21,6 +21,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getJetpackStatsAdminVersion,
 	getSiteOption,
+	isJetpackSite,
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
@@ -67,6 +68,7 @@ class StatsNavigation extends Component {
 		isWordAds: PropTypes.bool,
 		isSubscriptionsModuleActive: PropTypes.bool,
 		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -146,6 +148,7 @@ class StatsNavigation extends Component {
 			isWordAds,
 			isSubscriptionsModuleActive,
 			isSimple,
+			isSiteJetpackNotAtomic,
 			siteId,
 		} = this.props;
 
@@ -168,7 +171,10 @@ class StatsNavigation extends Component {
 					return false;
 				}
 
-				return isSimple || isSubscriptionsModuleActive;
+				// The value of isSubscriptionsModuleActive is null in Odyssey Stats so we default to showing the tab.
+				// Maintains existing behaviour inside wp-admin for self-hosted sites.
+				// For DotCom sites, it will only be shown on Simple sites or if subs are enabled.
+				return isSiteJetpackNotAtomic || isSimple || isSubscriptionsModuleActive;
 
 			default:
 				return true;
@@ -313,6 +319,7 @@ export default connect(
 				canCurrentUser( state, siteId, 'manage_options' ),
 			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
 			isSimple: isSimpleSite( state, siteId ),
+			isSiteJetpackNotAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
