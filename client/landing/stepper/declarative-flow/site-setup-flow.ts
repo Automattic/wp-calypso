@@ -354,7 +354,6 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 
-						case SiteIntent.Write:
 						case SiteIntent.Sell:
 							// If we're not in the holdout, intentionally fall through to the default case
 							if ( isGoalsHoldout ) {
