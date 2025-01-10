@@ -28,8 +28,8 @@ import { useProductBundleSize } from '../products-overview/product-listing/hooks
 import useSelectedProductFilters from '../products-overview/product-listing/hooks/use-selected-product-filters';
 import ShoppingCart from '../shopping-cart';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
+import ProductActionPanel from './product-action-panel';
 import ProductCategoryMenu from './product-category-menu';
-import ProductFilterActions from './product-filter-actions';
 
 import './style.scss';
 
@@ -128,7 +128,7 @@ export function ProductsOverviewV2( {
 				<ProductCategoryMenu />
 			</LayoutTop>
 
-			<ProductFilterActions
+			<ProductActionPanel
 				searchQuery={ productSearchQuery }
 				onSearchQueryChange={ setProductSearchQuery }
 				selectedFilters={ selectedFilters }

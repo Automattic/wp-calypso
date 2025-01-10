@@ -22,7 +22,7 @@ type Props = {
 	setSelectedBundleSize: ( value: number ) => void;
 };
 
-export default function ProductFilterActions( {
+export default function ProductActionPanel( {
 	searchQuery,
 	onSearchQueryChange,
 	selectedFilters,
@@ -43,8 +43,8 @@ export default function ProductFilterActions( {
 	);
 
 	return (
-		<LayoutSection className="product-filter-actions">
-			<div className="product-filter-actions__search-and-filter">
+		<LayoutSection className="product-action-panel">
+			<div className="product-action-panel__filter">
 				<FilterSearch
 					label={ translate( 'Search' ) }
 					onSearch={ onSearchQueryChange }

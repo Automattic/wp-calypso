@@ -1,5 +1,5 @@
 
-.product-filter-actions.hosting-dashboard-layout__body {
+.product-action-panel.hosting-dashboard-layout__body {
 	background: var( --color-surface );
 	padding-block: 16px;
 
@@ -11,7 +11,7 @@
 	}
 }
 
-.product-filter-actions__search-and-filter {
+.product-action-panel__filter {
 	display: flex;
 	flex-direction: row;
 	gap: 16px;
