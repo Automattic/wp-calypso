@@ -594,7 +594,7 @@ const Settings = ( {
 		} );
 	};
 
-	const renderTranferInMappedDomainSection = () => {
+	const renderTransferInMappedDomainSection = () => {
 		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) ) {
 			return null;
 		}
@@ -751,7 +751,7 @@ const Settings = ( {
 				{ renderStatusSection() }
 				{ renderGravatarSection() }
 				{ renderDetailsSection() }
-				{ renderTranferInMappedDomainSection() }
+				{ renderTransferInMappedDomainSection() }
 				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
