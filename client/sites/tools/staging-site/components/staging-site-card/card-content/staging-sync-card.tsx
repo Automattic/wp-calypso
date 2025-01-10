@@ -431,7 +431,7 @@ const SyncCardContainer = ( {
 							icon="mention"
 							showDismiss={ false }
 							text={ translate(
-								"We couldn't synchronize the %(siteType)s environment. %(errorMessage)s",
+								"We couldn't synchronize the %(siteType)s environment.%(errorMessage)s",
 								{
 									args: {
 										siteType: siteToSync ?? '',
