@@ -129,7 +129,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		if ( hasEmptyActionRun && ! isSubmittedRef.current ) {
 			// Let's ensure the submit function is called only once,
 			// but only for the onboarding flow to mitigate risks.
-			isSubmittedRef.current = flow === 'onboarding' ? true : false;
+			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 			submit?.( {}, ProcessingResult.NO_ACTION );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,7 +161,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 			// Let's ensure the submit function is called only once,
 			// but only for the onboarding flow to mitigate risks.
-			isSubmittedRef.current = flow === 'onboarding' ? true : false;
+			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 
 			// Default processing handler.
 			submit?.( destinationState, ProcessingResult.SUCCESS );
