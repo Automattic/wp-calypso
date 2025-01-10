@@ -11,7 +11,10 @@ interface Props {
 }
 
 export default function WPCOMSitesTableContent( { items, fields }: Props ) {
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState( {
+		...initialDataViewsState,
+		fields: [ 'site', 'date', 'type' ],
+	} );
 
 	const { data, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( items, dataViewsState, fields );
