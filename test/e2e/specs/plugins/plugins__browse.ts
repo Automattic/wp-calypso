@@ -20,22 +20,42 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 	let pluginsPage: PluginsPage;
 	let siteUrl: string;
 
+	const testUser = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'defaultUser',
+		},
+	] );
+	const testAccount = new TestAccount( testUser );
+	const siteDomain = testAccount.getSiteURL( { protocol: false } );
+
 	beforeAll( async () => {
 		page = await browser.newPage();
-		const testUser = getTestAccountByFeature( envToFeatureKey( envVariables ), [
-			{
-				gutenberg: 'stable',
-				siteType: 'simple',
-				accountName: 'defaultUser',
-			},
-		] );
-		const testAccount = new TestAccount( testUser );
+
 		await testAccount.authenticate( page );
 
 		siteUrl = testAccount
 			.getSiteURL( { protocol: false } )
 			.replace( 'https://', '' )
 			.replace( '/wp-admin', '' );
+	} );
+
+	it( 'Dismiss the Sites Guide and pick a site', async function () {
+		try {
+			// Wait for the Guide's close button to appear
+			await page.waitForSelector(
+				'button.components-button.is-small.has-icon[aria-label="Close"]'
+			);
+			// Dismiss the Sites guide
+			await page.click( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+			await page.isHidden( 'button.components-button.is-small.has-icon[aria-label="Close"]' );
+		} catch ( e ) {
+			// No guide was shown, continue
+		}
+
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteDomain }` );
+		await page.goto( calypsoSiteUrl );
 	} );
 
 	it( 'Visit plugins page', async function () {
