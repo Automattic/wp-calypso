@@ -88,24 +88,26 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
 									footer={ preventWidows(
-										translate(
-											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
-											{
-												components: {
-													a: (
-														<a
-															href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-															target="_blank"
-															rel="noreferrer noopener"
-															onClick={ ( event ) => {
-																recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-																event.stopPropagation();
-															} }
-														/>
-													),
-												},
-											}
-										)
+										isOpenAIDown
+											? translate( 'AI services are currently experiencing issues' )
+											: translate(
+													'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
+													{
+														components: {
+															a: (
+																<a
+																	href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
+																	target="_blank"
+																	rel="noreferrer noopener"
+																	onClick={ ( event ) => {
+																		recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
+																		event.stopPropagation();
+																	} }
+																/>
+															),
+														},
+													}
+											  )
 									) }
 									onSelect={ () => {
 										if ( isLoading || isOpenAIDown ) {
