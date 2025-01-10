@@ -1,47 +1,59 @@
-import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
+import withDimensions from 'calypso/lib/with-dimensions';
 
 import './style.scss';
 
 interface UserProfileHeaderProps {
 	user: UserData;
+	width?: number;
 }
 
-const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
+const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const currentPath = page.current;
-	const userId = user.ID;
+	const narrowDisplay = width < 480;
 
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: `/read/users/${ userId }`,
-			selected: currentPath === `/read/users/${ userId }`,
+			path: `/read/users/${ user.ID }`,
+			selected: window.location.pathname === `/read/users/${ user.ID }`,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `/read/users/${ userId }/lists`,
-			selected: currentPath === `/read/users/${ userId }/lists`,
+			path: `/read/users/${ user.ID }/lists`,
+			selected: window.location.pathname === `/read/users/${ user.ID }/lists`,
 		},
 	];
 
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
+	const avatarElement = (
+		<div className="user-profile-header__avatar">
+			<ReaderAvatar
+				author={ { ...user, has_avatar: !! user.avatar_URL } }
+				iconSize={ narrowDisplay ? 72 : 116 }
+			/>
+		</div>
+	);
+
+	const classes = clsx( 'user-profile-header', {
+		'is-narrow': narrowDisplay,
+	} );
+
 	return (
-		<div className="user-profile-header">
+		<div className={ classes }>
 			<header className="user-profile-header__main">
-				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+				{ ! narrowDisplay && avatarElement }
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
-						<ReaderAuthorLink author={ { name: user.display_name } }>
-							{ user.display_name }
-						</ReaderAuthorLink>
+						{ narrowDisplay && avatarElement }
+						{ user.display_name }
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">
@@ -63,4 +75,4 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	);
 };
 
-export default UserProfileHeader;
+export default withDimensions( UserProfileHeader );
