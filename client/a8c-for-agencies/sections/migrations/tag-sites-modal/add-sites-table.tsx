@@ -42,7 +42,10 @@ export default function MigrationsAddSitesTable( {
 		return items.filter( ( item ) => ! taggedSitesIds.includes( item.id ) );
 	}, [ items, taggedSitesIds ] );
 
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState( {
+		...initialDataViewsState,
+		fields: [ 'site', 'date' ],
+	} );
 
 	const onSelectAllSites = useCallback( () => {
 		const isAllSitesSelected = selectedSites.length === availableSites.length;
