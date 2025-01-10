@@ -101,11 +101,11 @@ body.is-reader-full-post {
 			padding: $recent-feed-spacing;
 		}
 
-		ul {
+		.dataviews-view-list {
 			list-style: none;
 			margin: 0;
 
-			li {
+			div[role="row"] {
 				border-top: 1px solid var( --studio-gray-0 );
 
 				&.is-selected + li {
