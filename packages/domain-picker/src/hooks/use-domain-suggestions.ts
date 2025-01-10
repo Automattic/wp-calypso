@@ -32,7 +32,11 @@ export function useDomainSuggestions(
 		invalidateResolutionForStoreSelector: ( selectorName: string ) => void;
 	};
 
-	return useSelect(
+	const retryRequest = (): void => {
+		invalidateResolutionForStoreSelector( '__internalGetDomainSuggestions' );
+	};
+
+	const domainSuggestions = useSelect(
 		( select ) => {
 			if ( ! domainSearch || domainSearch.length < DOMAIN_QUERY_MINIMUM_LENGTH ) {
 				return;
@@ -42,10 +46,6 @@ export function useDomainSuggestions(
 				getDomainState,
 				getDomainErrorMessage,
 			}: DomainSuggestionsSelect = select( DOMAIN_SUGGESTIONS_STORE );
-
-			const retryRequest = (): void => {
-				invalidateResolutionForStoreSelector( '__internalGetDomainSuggestions' );
-			};
 
 			const allDomainSuggestions = getDomainSuggestions( domainSearch, {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
@@ -61,8 +61,17 @@ export function useDomainSuggestions(
 
 			const errorMessage = getDomainErrorMessage();
 
-			return { allDomainSuggestions, state, errorMessage, retryRequest };
+			return { allDomainSuggestions, state, errorMessage };
 		},
 		[ domainSearch, domainCategory, quantity, locale, extraOptions ]
 	);
+
+	if ( ! domainSuggestions ) {
+		return;
+	}
+
+	return {
+		...domainSuggestions,
+		retryRequest,
+	};
 }
