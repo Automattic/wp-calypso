@@ -8,12 +8,9 @@ import './style.scss';
 
 type SurveyProps = {
 	slug: string;
-	onClose: ( remindTimeInSeconds: number, buttonName: string ) => void;
+	onClose: ( context: string ) => void;
 	onSurveyClick: () => void;
 };
-
-const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
-const ONE_YEAR_IN_SECONDS = 365 * ONE_DAY_IN_SECONDS;
 
 const Survey = ( { slug, onSurveyClick, onClose }: SurveyProps ) => {
 	const surveyWrapper = useRef( document.createElement( 'div' ) ).current;
@@ -21,7 +18,7 @@ const Survey = ( { slug, onSurveyClick, onClose }: SurveyProps ) => {
 	const content = SURVEYS[ slug ];
 
 	useEffect( () => {
-		surveyWrapper.setAttribute( 'aria-modal', true );
+		surveyWrapper.setAttribute( 'aria-modal', 'true' );
 		document.body.appendChild( surveyWrapper );
 
 		return () => {
@@ -35,16 +32,10 @@ const Survey = ( { slug, onSurveyClick, onClose }: SurveyProps ) => {
 
 	return ReactDOM.createPortal(
 		<div className="survey">
-			<Button
-				className="survey__backdrop"
-				onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'backdrop' ) }
-			/>
+			<Button className="survey__backdrop" onClick={ () => onClose( 'backdrop' ) } />
 			<div className="survey__popup">
 				<div className="survey__popup-head">
-					<Button
-						onClick={ () => onClose( ONE_YEAR_IN_SECONDS, 'close-button' ) }
-						className="survey__popup-head-close"
-					>
+					<Button onClick={ () => onClose( 'close-button' ) } className="survey__popup-head-close">
 						<Gridicon icon="cross" size={ 16 } />
 					</Button>
 				</div>
@@ -55,10 +46,7 @@ const Survey = ( { slug, onSurveyClick, onClose }: SurveyProps ) => {
 					<div className="survey__popup-content-title">{ content.title }</div>
 					<div className="survey__popup-content-description">{ content.description }</div>
 					<div className="survey__popup-content-buttons">
-						<Button
-							variant="tertiary"
-							onClick={ () => onClose( ONE_DAY_IN_SECONDS, 'remind-later-button' ) }
-						>
+						<Button variant="tertiary" onClick={ () => onClose( 'decline' ) }>
 							{ translate( 'No thanks' ) }
 						</Button>
 						<Button

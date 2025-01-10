@@ -135,7 +135,7 @@ const SitesDashboard = ( {
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
-	const [ showSurvey ] = useState( true );
+	const [ showSurvey, setShowSurvey ] = useState( true );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -455,7 +455,21 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-			{ shouldShowSurvey && <Survey slug={ SURVEY_SITES_DASHBOARD } /> }
+			{ shouldShowSurvey && (
+				<Survey
+					slug={ SURVEY_SITES_DASHBOARD }
+					onClose={ ( context ) => {
+						recordTracksEvent( 'calypso_sites_survey_close', {
+							slug: SURVEY_SITES_DASHBOARD,
+							context,
+						} );
+						setShowSurvey( false );
+					} }
+					onSurveyClick={ () => {
+						recordTracksEvent( 'calypso_sites_survey_click', { slug: SURVEY_SITES_DASHBOARD } );
+					} }
+				/>
+			) }
 		</Layout>
 	);
 };
