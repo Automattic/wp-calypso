@@ -1,139 +1,127 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.get-apps__body {
-	background: var(--studio-white);
-	--color-surface-backdrop: var(--studio-white);
-
-	.layout__content,
-	.layout__primary .main {
-		padding-bottom: 0;
-		// Setting the min-height is necessary to ensure the desktop panel's background
-		// extends the full height of larger screens.
-		min-height: calc(100vh - 79px);
-	}
-}
-
-.get-apps__wrapper {
-	display: flex;
-	flex-direction: column;
-}
-
-.get-apps__section {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 24px;
-	gap: 24px;
-
-	@include break-huge {
-		flex-direction: row;
-	}
-}
-
-.get-apps__section > div {
-	width: 100%;
-
-	@include break-huge {
-		width: 50%;
-	}
-}
-
-.get-apps__section-title {
-	font-size: $font-body;
-	font-weight: 500;
-	color: var(--studio-gray-50);
-	margin-bottom: 16px;
-}
-
-.get-apps__card-logo {
-	margin-bottom: 16px;
-}
-
-.get-apps__card-title {
-	font-size: $font-body;
-	font-weight: 500;
-	color: var(--studio-gray-80);
-	margin-bottom: 6px;
-}
-
-.get-apps__card-subtitle {
-	font-size: $font-body-small;
-	color: var(--studio-gray-50);
-	font-weight: 400;
-}
-
-.get-apps__card-content {
-	margin-top: 16px;
-}
-
-.get-apps__badges > .app-promo__qr-code {
-	margin: 0;
-}
-
-.get-apps__badges > .app-promo__qr-code > .get-apps__card-text {
-	font-size: $font-body-extra-small;
-}
-
-.get-apps__desktop-link {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 3px;
-	font-size: $font-body-extra-small;
-}
-
-.get-apps__desktop-button-label {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 3px;
-}
-
-.get-apps__not-available {
-	font-size: $font-body-extra-small;
-}
-
-.get-apps__not-available > div {
-	margin-top: 16px;
-}
-
-.get-apps__also-available {
-	margin-top: 16px;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	font-size: $font-body-extra-small;
-
-	@include break-small {
-		flex-direction: row;
-	}
-
-	@include break-medium {
+main.get-apps {
+	.get-apps__wrapper {
+		display: flex;
 		flex-direction: column;
 	}
 
-	@include break-large {
+	.get-apps__section {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 24px;
+		gap: 24px;
+
+		@include break-huge {
+			flex-direction: row;
+		}
+	}
+
+	.get-apps__section > div {
+		width: 100%;
+
+		@include break-huge {
+			width: 50%;
+		}
+	}
+
+	.get-apps__card-header {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.get-apps__card-title-container {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.get-apps__section-title {
+		font-size: $font-body;
+		font-weight: 500;
+		color: var(--studio-gray-50);
+	}
+
+	.get-apps__card-title {
+		font-size: $font-body;
+		font-weight: 500;
+		color: var(--studio-gray-80);
+	}
+
+	.get-apps__card-subtitle {
+		font-size: $font-body-small;
+		color: var(--studio-gray-50);
+		font-weight: 400;
+	}
+
+	.components-card-body  {
+		padding: 24px;
+		height: 100%;
+		display: flex;
+		gap: 16px;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.get-apps__badges > .app-promo__qr-code {
+		margin: 0;
+	}
+
+	.get-apps__badges > .app-promo__qr-code > .get-apps__card-text {
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__desktop-link {
+		display: flex;
 		flex-direction: row;
-	}
-}
-
-.get-apps__also-available-list {
-	display: flex;
-	flex-direction: row;
-	gap: 16px;
-}
-
-.get-apps__desktop-button {
-	margin-right: 8px;
-
-	.split-button__main {
-		display: inline-flex;
 		align-items: center;
-		gap: 8px;
-		white-space: nowrap;
+		gap: 3px;
+		font-size: $font-body-extra-small;
 	}
 
-	.split-button.has-icon-text .gridicon {
-		margin-right: 0;
+	.get-apps__desktop-button-label {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 3px;
+	}
+
+	.get-apps__not-available {
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__not-available > div {
+		margin-top: 16px;
+	}
+
+	.get-apps__also-available {
+		margin-top: 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__also-available-list {
+		display: flex;
+		flex-direction: row;
+		gap: 16px;
+	}
+
+	.get-apps__desktop-button {
+		margin-right: 8px;
+
+		.split-button__main {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			white-space: nowrap;
+		}
+
+		.split-button.has-icon-text .gridicon {
+			margin-right: 0;
+		}
 	}
 }

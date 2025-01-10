@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { createWordPressDesktopConfig, createWordPressStudioConfig } from './apps-config';
 import DesktopDownloadCard from './desktop-download-card';
 import MobileDownloadCard from './mobile-download-card';
@@ -22,7 +21,6 @@ export const GetApps = () => {
 		<>
 			<NavigationHeader title={ translate( 'Apps' ) } />
 			<div className="get-apps__wrapper">
-				<BodySectionCssClass bodyClass={ [ 'get-apps__body' ] } />
 				<h2 className="get-apps__section-title">{ translate( 'Mobile' ) }</h2>
 				<div className="get-apps__section">
 					<MobileDownloadCard />
