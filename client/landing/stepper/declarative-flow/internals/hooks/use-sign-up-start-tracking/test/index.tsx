@@ -88,7 +88,9 @@ describe( 'useSignUpTracking', () => {
 				flow: {
 					...signUpFlow,
 					useTracksEventProps: () => ( {
-						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						eventsProperties: {
+							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						},
 					} ),
 				} satisfies Flow,
 				queryParams: { ref: 'another-flow-or-cta' },
@@ -136,7 +138,9 @@ describe( 'useSignUpTracking', () => {
 				flow: {
 					...signUpFlow,
 					useTracksEventProps: () => ( {
-						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						eventsProperties: {
+							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						},
 					} ),
 				} satisfies Flow,
 			} );
