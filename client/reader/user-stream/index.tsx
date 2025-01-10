@@ -30,8 +30,10 @@ interface UserStreamProps {
 type UserStreamState = {
 	reader: {
 		users: {
-			items: Record< string, UserData >;
-			requesting: Record< string, boolean >;
+			profiles: Record< string, UserData >;
+			profileRequests: Record< string, boolean >;
+			lists: Record< string, List[] >;
+			listRequests: Record< string, boolean >;
 		};
 	};
 };
@@ -71,7 +73,7 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 			case `/read/users/${ userId }`:
 				return <UserPosts streamKey={ streamKey as string } />;
 			case `/read/users/${ userId }/lists`:
-				return <UserLists />;
+				return <UserLists userId={ userId } userSlug={ user.user_login } />;
 		}
 	};
 
@@ -110,8 +112,8 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 
 export default connect(
 	( state: UserStreamState, ownProps: UserStreamProps ) => ( {
-		user: state.reader.users.items[ ownProps.userId ],
-		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
+		user: state.reader.users.profiles[ ownProps.userId ],
+		isLoading: state.reader.users.profileRequests[ ownProps.userId ] ?? false,
 	} ),
 	{ requestUser }
 )( UserStream );
