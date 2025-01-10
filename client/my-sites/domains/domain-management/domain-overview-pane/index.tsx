@@ -167,18 +167,19 @@ const DomainOverviewPane = ( {
 				</div>
 			) }
 
-		<ItemView
-			itemData={ itemData }
-			closeItemView={ () => {
-				inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
-			} }
-			features={ features }
-			enforceTabsView
-			itemViewHeaderExtraProps={ {
-				headerButtons: PreviewPaneHeaderButtons,
-			} }
-			hideHeader={ inSiteContext }
-		/>
+			<ItemView
+				itemData={ itemData }
+				closeItemView={ () => {
+					inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
+				} }
+				features={ features }
+				enforceTabsView
+				itemViewHeaderExtraProps={ {
+					headerButtons: PreviewPaneHeaderButtons,
+				} }
+				hideHeader={ inSiteContext }
+			/>
+		</>
 	);
 };
 
