@@ -1,51 +1,8 @@
 .is-section-reader {
-
 	.user-profile {
 		.empty-content {
 			margin-top: 150px;
 		}
-	}
-
-	.user-profile__header {
-		align-items: center;
-		display: flex;
-		padding: 36px 0 24px;
-
-		.reader-avatar {
-			margin-right: 24px;
-		}
-	}
-
-	.user-profile-header__display-name {
-		font-family: Recoleta, sans-serif;
-		font-size: 2rem;
-		line-height: 1.5;
-	}
-
-	.user-profile-header__bio {
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 1.125rem;
-	}
-
-	.user-profile-header__bio-desc {
-		margin-bottom: 0;
-	}
-
-	.section-nav {
-		box-shadow: none;
-		border-bottom: 1px solid var(--color-border-subtle);
-		height: auto !important;
-	}
-
-	.section-nav-tab__link {
-		&:hover {
-			background: none;
-		}
-	}
-
-	.section-nav-tab__text {
-		font-weight: 500;
-		color: var(--studio-black);
 	}
 
 	div.user-profile__content {

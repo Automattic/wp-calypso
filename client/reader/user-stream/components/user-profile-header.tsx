@@ -7,6 +7,8 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
 
+import './user-profile-header.style.scss';
+
 interface UserProfileHeaderProps {
 	user: UserData;
 }
@@ -43,7 +45,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">
-							<p>{ user.bio }</p>
+							<p className="user-profile-header__bio-desc">{ user.bio }</p>
 						</div>
 					) }
 				</div>
