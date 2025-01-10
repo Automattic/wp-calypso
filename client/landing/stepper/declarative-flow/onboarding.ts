@@ -121,6 +121,7 @@ const onboarding: Flow = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
@@ -281,6 +282,12 @@ const onboarding: Flow = {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
 					}
+
+					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
+					if ( cartItems?.length > 0 ) {
+						setProductCartItems( cartItems.slice( 1 ) );
+					}
+
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
 				}
