@@ -1,4 +1,19 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { WooCommerceWooLogo } from '@automattic/components';
+import JetpackLogo from '@automattic/components/src/logos/jetpack-logo';
+import {
+	lock,
+	people,
+	shipping,
+	percent,
+	commentAuthorName,
+	siteLogo,
+	postContent,
+	store,
+	currencyDollar,
+	trendingUp,
+	next,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import {
 	PRODUCT_CATEGORY_CONVERSION,
@@ -32,27 +47,67 @@ export default function useProductFilterOptions() {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
 			...( isEnabled( 'a4a-product-page-redesign' )
 				? [
-						{ key: PRODUCT_CATEGORY_JETPACK, label: translate( 'Jetpack' ) as string },
-						{ key: PRODUCT_CATEGORY_WOOCOMMERCE, label: translate( 'Woocommerce' ) as string },
+						{
+							key: PRODUCT_CATEGORY_JETPACK,
+							label: translate( 'Jetpack' ) as string,
+							image: <JetpackLogo full />,
+						},
+						{
+							key: PRODUCT_CATEGORY_WOOCOMMERCE,
+							label: translate( 'Woocommerce' ) as string,
+							image: <WooCommerceWooLogo width={ 80 } height={ 80 } />,
+						},
 				  ]
 				: [] ),
-			{ key: PRODUCT_CATEGORY_SECURITY, label: translate( 'Security' ) as string },
-			{ key: PRODUCT_CATEGORY_PERFORMANCE, label: translate( 'Performance' ) as string },
-			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) as string },
-			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string },
-			{ key: PRODUCT_CATEGORY_PAYMENTS, label: translate( 'Payments' ) as string },
+			{
+				key: PRODUCT_CATEGORY_SECURITY,
+				label: translate( 'Security' ) as string,
+				icon: lock,
+			},
+			{
+				key: PRODUCT_CATEGORY_PERFORMANCE,
+				label: translate( 'Performance' ) as string,
+				icon: next,
+			},
+			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) as string, icon: people },
+			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string, icon: trendingUp },
+			{
+				key: PRODUCT_CATEGORY_PAYMENTS,
+				label: translate( 'Payments' ) as string,
+				icon: currencyDollar,
+			},
 			{
 				key: PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT,
 				label: translate( 'Shipping, Delivery, and Fulfillment' ) as string,
+				shortLabel: translate( 'Shipping' ) as string,
+				icon: shipping,
 			},
-			{ key: PRODUCT_CATEGORY_CONVERSION, label: translate( 'Conversion' ) as string },
-			{ key: PRODUCT_CATEGORY_CUSTOMER_SERVICE, label: translate( 'Customer Service' ) as string },
-			{ key: PRODUCT_CATEGORY_MERCHANDISING, label: translate( 'Merchandising' ) as string },
+			{
+				key: PRODUCT_CATEGORY_CONVERSION,
+				label: translate( 'Conversion' ) as string,
+				icon: percent,
+			},
+			{
+				key: PRODUCT_CATEGORY_CUSTOMER_SERVICE,
+				label: translate( 'Customer Service' ) as string,
+				icon: commentAuthorName,
+			},
+			{
+				key: PRODUCT_CATEGORY_MERCHANDISING,
+				label: translate( 'Merchandising' ) as string,
+				icon: siteLogo,
+			},
 			{
 				key: PRODUCT_CATEGORY_STORE_CONTENT,
 				label: translate( 'Store Content and Customization' ) as string,
+				shortLabel: translate( 'Store content' ) as string,
+				icon: postContent,
 			},
-			{ key: PRODUCT_CATEGORY_STORE_MANAGEMENT, label: translate( 'Store Management' ) as string },
+			{
+				key: PRODUCT_CATEGORY_STORE_MANAGEMENT,
+				label: translate( 'Store Management' ) as string,
+				icon: store,
+			},
 		],
 		[ PRODUCT_FILTER_KEY_TYPES ]: [
 			{ key: PRODUCT_TYPE_EXTENSION, label: translate( 'Extension' ) as string },

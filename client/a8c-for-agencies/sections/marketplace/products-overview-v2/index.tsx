@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -17,9 +17,11 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';
+import { PRODUCT_FILTER_KEY_CATEGORIES } from '../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
@@ -54,6 +56,8 @@ export function ProductsOverviewV2( {
 
 	const sites = useSelector( getSites );
 
+	const dispatch = useDispatch();
+
 	const {
 		selectedCartItems,
 		setSelectedCartItems,
@@ -86,6 +90,23 @@ export function ProductsOverviewV2( {
 		availableSizes: availableBundleSizes,
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
+
+	const onCategorySelected = useCallback(
+		( category: string ) => {
+			setSelectedFilters( ( prevFilters ) => ( {
+				...prevFilters,
+				[ PRODUCT_FILTER_KEY_CATEGORIES ]: {
+					[ category ]: true,
+				},
+			} ) );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_product_category_selected', {
+					category,
+				} )
+			);
+		},
+		[ dispatch, setSelectedFilters ]
+	);
 
 	return (
 		<Layout
@@ -125,7 +146,7 @@ export function ProductsOverviewV2( {
 					</Actions>
 				</LayoutHeader>
 
-				<ProductCategoryMenu />
+				<ProductCategoryMenu onSelect={ onCategorySelected } />
 			</LayoutTop>
 
 			<ProductActionPanel

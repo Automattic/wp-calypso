@@ -10,7 +10,7 @@ $header-compact-height-mobile: 128px;
 .products-overview-v2.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__container {
 		height: auto;
-		overflow: auto;
+		overflow-y: scroll;
 		display: block;
 	}
 

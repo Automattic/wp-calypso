@@ -12,6 +12,7 @@
 }
 
 .product-category-menu-item {
+	@include a4a-font-heading-md;
 	width: 200px;
 	height: 100px;
 	display: flex;
