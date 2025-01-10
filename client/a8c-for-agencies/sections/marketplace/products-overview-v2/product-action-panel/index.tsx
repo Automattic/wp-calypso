@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import LayoutSection from 'calypso/layout/hosting-dashboard/body';
 import { SelectedFilters } from '../../lib/product-filter';
 import ProductTypeFilter from '../../products-overview/product-filter';
-import VolumePriceSelector from '../../products-overview/product-listing/volume-price-selector';
+import { BundlePriceSelector } from './bundle-price-selector';
 
 import './style.scss';
 
@@ -49,10 +49,10 @@ export default function ProductActionPanel( {
 			</div>
 
 			{ ! isReferralMode && (
-				<VolumePriceSelector
-					selectedBundleSize={ selectedBundleSize }
-					onBundleSizeChange={ setSelectedBundleSize }
-					availableBundleSizes={ availableBundleSizes }
+				<BundlePriceSelector
+					options={ availableBundleSizes }
+					value={ selectedBundleSize }
+					onChange={ setSelectedBundleSize }
 				/>
 			) }
 		</LayoutSection>

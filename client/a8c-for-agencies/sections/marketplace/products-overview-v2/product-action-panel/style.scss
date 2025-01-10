@@ -16,3 +16,23 @@
 	flex-direction: row;
 	gap: 16px;
 }
+
+.bundle-price-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: center;
+}
+
+.bundle-price-selector__label {
+	@include a4a-font-heading-sm;
+	text-transform: uppercase;
+}
+
+.bundle-price-selector__menu-button b {
+	margin-inline-start: 4px;
+}
+
+.bundle-price-selector__popover {
+	margin-inline-start: -135px;
+}
