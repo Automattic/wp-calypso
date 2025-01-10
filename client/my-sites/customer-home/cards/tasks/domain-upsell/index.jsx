@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
-import { useHasEnTranslation, useLocale } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { Icon, lock } from '@wordpress/icons';
@@ -147,7 +147,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			? translate( 'That perfect domain is waiting' )
 			: translate( 'Own a domain. Build a site.' );
 
-	const updatedCopy = translate(
+	const cardSubtitleFreePlansCopy = translate(
 		'{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It’s available, easy to find, share, and follow. Get it now and claim a corner of the web.',
 		{
 			components: {
@@ -159,25 +159,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			},
 		}
 	);
-
-	const oldCopy = translate(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
-		{
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				domainSuggestion: domainSuggestionName,
-				domainPrice: domainProductCost,
-			},
-		}
-	);
-
-	const hasTranslationForNewCopy = useHasEnTranslation()(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is the perfect site address. It's available and easy to find and follow. And .com, .net, and .org domains start at just %(domainPrice)s—Get it now and claim a corner of the web."
-	);
-
-	const cardSubtitleFreePlansCopy = hasTranslationForNewCopy ? updatedCopy : oldCopy;
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan

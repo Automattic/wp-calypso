@@ -25,14 +25,12 @@
 		}
 
 		th {
-			border-bottom: 1px solid var( --color-neutral-5 );
 			font-size: rem( 13px );
 			font-weight: 400;
 			vertical-align: middle;
 		}
 
 		td {
-			border-bottom: 1px solid var( --color-neutral-5 );
 			vertical-align: middle;
 
 			&:has( .sites-dataviews__site ) {
@@ -154,13 +152,6 @@
 .is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two,
 .is-section-a8c-for-agencies-client .dataviews-settings-section__content .is-divided-in-two {
 	display: none !important;
-}
-
-// TODO: remove when the site connectivity notice
-// is updated to be part of a field.
-.is-section-a8c-for-agencies-sites .dataviews-view-table tr,
-.is-section-a8c-for-agencies-sites .dataviews-view-list li {
-	border-top: none;
 }
 
 // TODO: remove when updating dataviews to have this built-in.

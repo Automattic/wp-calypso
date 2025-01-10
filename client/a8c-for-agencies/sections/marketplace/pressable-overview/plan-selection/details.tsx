@@ -11,7 +11,7 @@ import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { useGetProductPricingInfo } from '../../wpcom-overview/hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
 
 type Props = {

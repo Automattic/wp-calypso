@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -13,10 +13,12 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
@@ -49,15 +51,32 @@ const onboarding: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
 		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+
+		// we are only interested in the initial goals value when the user enters the goals step
+		const initialGoals = useRef( goals );
 
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
 					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+					is_logged_out: ( ! userIsLoggedIn ).toString(),
+				},
+				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+					...( isGoalsAtFrontExperiment && {
+						is_goals_first: isGoalsAtFrontExperiment.toString(),
+					} ),
+					...( initialGoals.current.length && {
+						goals: initialGoals.current.join( ',' ),
+					} ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn, initialGoals ]
 		);
 	},
 	useSteps() {

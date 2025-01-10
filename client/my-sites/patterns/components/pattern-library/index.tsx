@@ -1,11 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import {
-	useLocale,
-	addLocaleToPathLocaleInFront,
-	useHasEnTranslation,
-} from '@automattic/i18n-utils';
+import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon, category as iconCategory } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -93,7 +89,6 @@ export const PatternLibrary = ( {
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
-	const hasTranslation = useHasEnTranslation();
 	const navRef = useRef< HTMLDivElement >( null );
 	const readymadeTemplateSectionRef = useRef< HTMLDivElement >( null );
 
@@ -248,18 +243,6 @@ export const PatternLibrary = ( {
 		} );
 	}
 
-	const pageLayoutsHeading = hasTranslation( 'Beautiful, curated page layouts' )
-		? translate( 'Beautiful, curated page layouts', {
-				comment:
-					'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
-				textOnly: true,
-		  } )
-		: translate( 'Beautifully curated page layouts', {
-				comment:
-					'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
-				textOnly: true,
-		  } );
-
 	return (
 		<>
 			{ isHomePage ? (
@@ -390,7 +373,11 @@ export const PatternLibrary = ( {
 				{ isHomePage && (
 					<>
 						<CategoryGallery
-							title={ pageLayoutsHeading }
+							title={ translate( 'Beautiful, curated page layouts', {
+								comment:
+									'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
+								textOnly: true,
+							} ) }
 							description={ translate(
 								'Our page layouts are exactly what you need to easily create professional-looking pages using preassembled patterns.'
 							) }

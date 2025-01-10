@@ -185,14 +185,21 @@
 		top: 3.4rem;
 
 		&::after {
-			background-color: #a7aaad;
+			background-color: var(--studio-gray-20);
 			border-radius: 3px;
 			box-shadow: none;
-			height: 50px;
+			height: 70px;
+			max-height: 90%;
 			right: 50%;
 			top: 50%;
 			transform: translate(50%, -50%);
+			transition: background-color 0.2s linear;
 			width: 6px;
+		}
+
+		&:hover::after,
+		&:active::after {
+			background-color: var(--studio-gray-40);
 		}
 
 		&::before {
