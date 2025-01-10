@@ -29,8 +29,7 @@ export default function NeedSetupTable( {
 	const fields: Field< AvailablePlans >[] = [
 		{
 			id: 'site',
-			// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-			label: (
+			header: (
 				<SiteSort isSortable={ false } columnKey="site">
 					{ translate( 'Site' ).toUpperCase() }
 				</SiteSort>
@@ -64,6 +63,7 @@ export default function NeedSetupTable( {
 				type: DATAVIEWS_TABLE,
 				perPage: 1,
 				page: 1,
+				fields: [ 'site' ],
 			} }
 			onChangeView={ () => {} }
 			search={ false }
