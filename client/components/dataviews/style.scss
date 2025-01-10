@@ -140,20 +140,6 @@
 	display: none;
 }
 
-// TODO: remove when updating to dataviews@4.3.0
-//
-// This is a hotfix for the sort direction control within the view config.
-// It shouldn't be visible when there are no sortable fields.
-// Fixed at https://github.com/WordPress/gutenberg/issues/64816
-.is-section-a8c-for-agencies-team .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-sites.modal-open
-	.dataviews-settings-section__content
-	.is-divided-in-two,
-.is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-client .dataviews-settings-section__content .is-divided-in-two {
-	display: none !important;
-}
-
 // TODO: remove when this is implemented upstream.
 //
 // https://github.com/WordPress/gutenberg/pull/65086
