@@ -35,6 +35,7 @@ import {
 	hasPlan,
 	hasDomainRegistration,
 	getDomainsInCart,
+	hasPersonalPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -186,6 +187,19 @@ export class RenderDomainsStep extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps?.cart?.products?.length !== this.props?.cart?.products?.length ) {
+			if (
+				shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+				hasDomainRegistration( this.props.cart ) &&
+				! hasPersonalPlan( this.props.cart )
+			) {
+				// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
+				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
+			}
+		}
+	}
+
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
@@ -229,7 +243,8 @@ export class RenderDomainsStep extends Component {
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
 			position,
-			suggestion?.is_premium
+			suggestion?.is_premium,
+			this.props.flowName
 		);
 
 		await this.props.saveSignupStep( stepData );
@@ -346,6 +361,7 @@ export class RenderDomainsStep extends Component {
 			stepName: this.props.stepName,
 			suggestion: undefined,
 			domainCart: {},
+			siteUrl: '',
 		};
 
 		this.props.saveSignupStep( stepData );
@@ -479,7 +495,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInMapDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -522,7 +542,11 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInTransferDomain(
+			domain,
+			this.getAnalyticsSection(),
+			this.props.flowName
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(

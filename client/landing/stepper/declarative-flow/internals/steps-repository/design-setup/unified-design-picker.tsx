@@ -20,7 +20,6 @@ import {
 	useCategorization,
 	useDesignPickerFilters,
 	getDesignPreviewUrl,
-	isAssemblerDesign,
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
@@ -28,7 +27,7 @@ import { StepContainer, DESIGN_FIRST_FLOW, ONBOARDING_FLOW } from '@automattic/o
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
@@ -79,7 +78,6 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
-	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
 	getVirtualDesignProps,
@@ -89,6 +87,7 @@ import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import { EligibilityWarningsModal } from './eligibility-warnings-modal';
+import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -124,6 +123,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
+
+	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
 	const { isEligible } = useIsBigSkyEligible();
 	const isBigSkyEligible = isEligible && isGoalCentricFeature;
@@ -228,19 +229,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const designs = allDesigns?.designs ?? EMPTY_ARRAY;
-	const hasTrackedView = useRef( false );
-	useEffect( () => {
-		if ( ! hasTrackedView.current && designs.length > 0 ) {
-			hasTrackedView.current = true;
-			recordTracksEvent( 'calypso_signup_unified_design_picker_view' );
-		}
-	}, [ hasTrackedView, designs ] );
-
 	const categorizationOptions = getCategorizationOptions( goals, {
 		isMultiSelection: isGoalCentricFeature,
 	} );
 
-	const { commonFilterProperties } = useTrackFilters( {
+	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
 		preselectedFilters: categorizationOptions.defaultSelections,
 		isBigSkyEligible,
 		isMultiSelection: isGoalCentricFeature,
@@ -249,6 +242,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
 		isMultiSelection: isGoalCentricFeature,
+		handleSelect: handleSelectFilter,
+		handleDeselect: handleDeselectFilter,
 	} );
 
 	const designPickerFilters = useDesignPickerFilters();
@@ -704,22 +699,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
-		if ( ! isAssemblerDesign( _selectedDesign ) ) {
-			recordSelectedDesign( {
-				...commonFilterProperties,
-				flow,
-				intent,
-				design: _selectedDesign,
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-				optionalProps,
-			} );
-		}
+		recordSelectedDesign( {
+			...commonFilterProperties,
+			flow,
+			intent,
+			design: _selectedDesign,
+			styleVariation: selectedStyleVariation,
+			colorVariation: selectedColorVariation,
+			fontVariation: selectedFontVariation,
+			optionalProps,
+		} );
 
 		submit?.( {
 			...providedDependencies,
-			...getDesignTypeProps( _selectedDesign ),
 			eventProps: commonFilterProperties,
 		} );
 	}
@@ -748,12 +740,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
-		const tracksProps = {
-			step: 'design-step',
-			intent: intent,
-		};
-
-		recordTracksEvent( eventName, tracksProps );
+		recordTracksEvent( eventName, {
+			step: 'design-setup',
+			flow,
+			intent,
+		} );
 	}
 	function getPrimaryActionButtonAction(): () => void {
 		if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
@@ -904,7 +895,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
-				hideSkip
+				hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
+				skipLabelText={ translate( 'Skip setup' ) }
+				skipButtonAlign="top"
 				hideBack={ shouldHideActionButtons }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
@@ -962,10 +955,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				// We may want to modify the ThemeCard component once the experiment is completed
+				// TODO: Update the ThemeCard component once the new design is rolled out completely
 				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
-				getBadge={ isGoalsAtFrontExperiment ? undefined : getBadge }
-				getOptionsMenu={ isGoalsAtFrontExperiment ? getBadge : undefined }
+				getBadge={ isUpdatedBadgeDesign ? undefined : getBadge }
+				getOptionsMenu={ isUpdatedBadgeDesign ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }
@@ -982,7 +975,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip
+			hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
+			skipLabelText={ translate( 'Skip setup' ) }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }

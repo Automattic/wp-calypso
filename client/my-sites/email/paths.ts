@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
@@ -125,7 +126,15 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+};
 
 // Retrieves the URL to set up Titan mailboxes
 export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
@@ -149,8 +158,10 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	relativeTo,
 	urlParameters
 ) => {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
-		return getPath( siteName, domainName, null, relativeTo, urlParameters );
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
+			urlParameters
+		) }`;
 	}
 
 	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
@@ -181,12 +192,21 @@ export const getEmailInDepthComparisonPath = (
 	relativeTo?: string,
 	source?: string,
 	intervalLength?: string
-) =>
-	getPath( siteName, domainName, 'compare', relativeTo, {
+) => {
+	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+			interval: intervalLength,
+			referrer: relativeTo,
+			source,
+		} ) }`;
+	}
+
+	return getPath( siteName, domainName, 'compare', relativeTo, {
 		interval: intervalLength,
 		referrer: relativeTo,
 		source,
 	} );
+};
 
 export const getProfessionalEmailCheckoutUpsellPath = (
 	siteName: string,

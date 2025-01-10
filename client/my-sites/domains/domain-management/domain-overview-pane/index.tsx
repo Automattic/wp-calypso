@@ -5,14 +5,19 @@ import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { FEATURE_TO_ROUTE_MAP, DOMAIN_OVERVIEW, EMAIL_MANAGEMENT } from './constants';
+import {
+	FEATURE_TO_ROUTE_MAP,
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+	FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT,
+} from './constants';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+} from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
 
@@ -22,6 +27,7 @@ interface Props {
 	selectedFeature: string;
 	siteSlug: string;
 	site: SiteExcerptData;
+	inSiteContext?: boolean;
 }
 
 export function showDomainManagementPage( route: string ) {
@@ -56,6 +62,7 @@ const DomainOverviewPane = ( {
 	selectedFeature,
 	siteSlug,
 	site,
+	inSiteContext,
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
@@ -72,23 +79,22 @@ const DomainOverviewPane = ( {
 
 	const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane }: BtnProps ) => {
 		const adminButtonRef = useRef< HTMLButtonElement | null >( null );
-
+		const mergedRef = useMergeRefs( [ adminButtonRef, focusRef ] );
 		return (
 			<>
-				<Button
-					onClick={ closeSitePreviewPane }
-					className="button item-preview__close-preview-button"
-				>
+				<Button onClick={ closeSitePreviewPane } className="button item-view__close-button">
 					{ __( 'Close' ) }
 				</Button>
-				<Button
-					primary
-					className="button item-preview__admin-button"
-					href={ adminUrl }
-					ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
-				>
-					{ translate( 'Manage site' ) }
-				</Button>
+				{ ! site.options?.is_domain_only && (
+					<Button
+						primary
+						className="button item-preview__admin-button"
+						href={ adminUrl }
+						ref={ mergedRef }
+					>
+						{ translate( 'Manage site' ) }
+					</Button>
+				) }
 			</>
 		);
 	};
@@ -118,8 +124,12 @@ const DomainOverviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
+							const featureMap = inSiteContext
+								? FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT
+								: FEATURE_TO_ROUTE_MAP;
+
 							showDomainManagementPage(
-								FEATURE_TO_ROUTE_MAP[ defaultFeatureId ]
+								featureMap[ defaultFeatureId ]
 									.replace( ':domain', selectedDomain )
 									.replace( ':site', siteSlug )
 							);
@@ -133,14 +143,14 @@ const DomainOverviewPane = ( {
 	}, [ __, selectedDomain, selectedFeature, selectedDomainPreview ] );
 
 	return (
-		<ItemPreviewPane
+		<ItemView
 			itemData={ itemData }
-			closeItemPreviewPane={ () => {
-				page.show( paths.domainManagementRoot() );
+			closeItemView={ () => {
+				inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
 			} }
 			features={ features }
 			enforceTabsView
-			itemPreviewPaneHeaderExtraProps={ {
+			itemViewHeaderExtraProps={ {
 				headerButtons: PreviewPaneHeaderButtons,
 			} }
 		/>

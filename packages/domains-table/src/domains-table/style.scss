@@ -284,7 +284,6 @@
 .domains-table-mobile-cards {
 	overflow-y: auto;
 	max-height: calc(100vh - 326px);
-	padding-inline: 5px;
 
 	.domains-table-mobile-cards-select-all {
 		display: flex;
@@ -425,7 +424,7 @@ a.domains-table-view-email-button {
 	}
 }
 
-main.domains-overview main.domains-overview__list .multi-sites-dashboard-layout-column__container {
+main.domains-overview main.domains-overview__list .hosting-dashboard-layout-column__container {
 	.domains-table {
 		margin-top: 0;
 	}

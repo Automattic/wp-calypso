@@ -3,6 +3,7 @@ import { Operator } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
@@ -12,7 +13,7 @@ import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
-	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
+	openPluginSitesPane: ( plugin: Plugin ) => void
 ) {
 	const dispatch = useDispatch();
 
@@ -68,7 +69,7 @@ export function useFields(
 								className="sites-manage-plugin-status-button"
 								onClick={ () => {
 									trackPluginNameClick();
-									toggleDialogForPlugin( item );
+									openPluginSitesPane( item );
 								} }
 							>
 								<PluginActionStatus
@@ -84,12 +85,20 @@ export function useFields(
 							<Button
 								onClick={ () => {
 									trackPluginNameClick();
-									toggleDialogForPlugin( item );
+									openPluginSitesPane( item );
 								} }
 								className="plugin-name-button"
 							>
-								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
+								{ item.icon ? (
+									<PluginIcon className="plugin-icon" image={ item.icon } size={ 35 } />
+								) : (
+									<Icon
+										size={ 32 }
+										icon={ plugins }
+										className="plugin-icon"
+										style={ { maxWidth: '35px', maxHeight: '35px' } }
+									/>
+								) }
 								{ item.name }
 							</Button>
 							{ pluginActionStatus }
@@ -119,7 +128,7 @@ export function useFields(
 									} )
 								);
 
-								toggleDialogForPlugin( item );
+								openPluginSitesPane( item );
 							} }
 						>
 							{ numberOfSites }
@@ -163,7 +172,7 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog, toggleDialogForPlugin ]
+		[ bulkActionDialog, openPluginSitesPane ]
 	);
 
 	return fields;

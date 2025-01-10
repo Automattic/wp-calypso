@@ -158,12 +158,12 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 			<span className="display-price__prices" aria-hidden="true">
 				{ displayFrom && <span className="display-price__from">from</span> }
 				{ priceComponent }
+				{ tooltipText && (
+					<InfoPopover position="top" className="display-price__price-tooltip">
+						{ tooltipText }
+					</InfoPopover>
+				) }
 			</span>
-			{ tooltipText && (
-				<InfoPopover position="top" className="display-price__price-tooltip">
-					{ tooltipText }
-				</InfoPopover>
-			) }
 			{ ! displayPriceText && (
 				<>
 					<span className="display-price__details" aria-hidden="true">

@@ -11,11 +11,11 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';

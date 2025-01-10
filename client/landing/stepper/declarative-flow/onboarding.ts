@@ -1,22 +1,30 @@
-import { OnboardSelect, Onboard } from '@automattic/data-stores';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
+import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
+	clearSignupCompleteSlug,
+	clearSignupCompleteFlowName,
+	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useQuery } from '../hooks/use-query';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
@@ -43,15 +51,32 @@ const onboarding: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
 		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+
+		// we are only interested in the initial goals value when the user enters the goals step
+		const initialGoals = useRef( goals );
 
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 					is_goals_first: isGoalsAtFrontExperiment.toString(),
 					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+					is_logged_out: ( ! userIsLoggedIn ).toString(),
+				},
+				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+					...( isGoalsAtFrontExperiment && {
+						is_goals_first: isGoalsAtFrontExperiment.toString(),
+					} ),
+					...( initialGoals.current.length && {
+						goals: initialGoals.current.join( ',' ),
+					} ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn, initialGoals ]
 		);
 	},
 	useSteps() {
@@ -83,7 +108,7 @@ const onboarding: Flow = {
 
 		if ( isGoalsAtFrontExperiment ) {
 			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP );
+			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT );
 		}
 
 		return steps;
@@ -101,11 +126,12 @@ const onboarding: Flow = {
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin } = useSelect(
-			( select: ( key: string ) => OnboardSelect ) => ( {
-				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+		const { planCartItem, signupDomainOrigin, isUserLoggedIn } = useSelect(
+			( select ) => ( {
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			} ),
 			[]
 		);
@@ -122,6 +148,11 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
+					const goalsUrl =
+						locale && locale !== 'en'
+							? `/setup/onboarding/goals/${ locale }`
+							: '/setup/onboarding/goals';
+
 					const { intent } = providedDependencies;
 
 					switch ( intent ) {
@@ -130,17 +161,15 @@ const onboarding: Flow = {
 								locale && locale !== 'en'
 									? `/setup/hosted-site-migration/${ locale }`
 									: '/setup/hosted-site-migration';
-							return window.location.assign( migrationFlowLink );
+							return window.location.assign(
+								addQueryArgs( migrationFlowLink, {
+									back_to: goalsUrl,
+								} )
+							);
 						}
 
-						case SiteIntent.DIFM: {
-							const difmFlowLink =
-								locale && locale !== 'en'
-									? `/start/do-it-for-me/${ locale }`
-									: '/start/do-it-for-me';
-
-							return window.location.assign( difmFlowLink );
-						}
+						case SiteIntent.DIFM:
+							return navigate( 'difmStartingPoint' );
 
 						default: {
 							return navigate( 'designSetup' );
@@ -150,6 +179,32 @@ const onboarding: Flow = {
 
 				case 'designSetup': {
 					return navigate( 'domains' );
+				}
+
+				case 'difmStartingPoint': {
+					const { newOrExistingSiteChoice } = providedDependencies;
+					const difmFlowLink = addQueryArgs(
+						locale && locale !== 'en' ? `/start/do-it-for-me/${ locale }` : '/start/do-it-for-me',
+						{
+							back_to: window.location.href.replace( window.location.origin, '' ),
+							newOrExistingSiteChoice,
+						}
+					);
+
+					if ( isUserLoggedIn ) {
+						return window.location.assign( difmFlowLink );
+					}
+
+					const loginUrl = getLoginUrl( {
+						variationName: flowName,
+						redirectTo: difmFlowLink,
+						locale,
+						extra: {
+							back_to: window.location.href.replace( window.location.origin, '' ),
+						},
+					} );
+
+					return window.location.assign( loginUrl );
 				}
 
 				case 'domains':
@@ -236,6 +291,7 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 					} );
+
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSlug( providedDependencies.siteSlug );
@@ -296,6 +352,8 @@ const onboarding: Flow = {
 					if ( isGoalsAtFrontExperiment ) {
 						return navigate( 'goals' );
 					}
+				case 'difmStartingPoint':
+					return navigate( 'goals' );
 				default:
 					return;
 			}
@@ -309,6 +367,26 @@ const onboarding: Flow = {
 		return {
 			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
 		};
+	},
+	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		/**
+		 * Clears every state we're persisting during the flow
+		 * when entering it. This is to ensure that the user
+		 * starts on a clean slate.
+		 */
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+				reduxDispatch( setSelectedSiteId( null ) );
+				clearStepPersistedState( this.name );
+				clearSignupDestinationCookie();
+				clearSignupCompleteFlowName();
+				clearSignupCompleteSlug();
+			}
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 	},
 };
 

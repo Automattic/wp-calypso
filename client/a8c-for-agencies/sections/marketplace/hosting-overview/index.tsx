@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -13,18 +11,17 @@ import {
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import LayoutBody from 'calypso/layout/multi-sites-dashboard/body';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/layout/multi-sites-dashboard/header';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ReferralToggle from '../common/referral-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
-import HostingList from './hosting-list';
 import HostingV2 from './hosting-v2';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
@@ -37,8 +34,6 @@ type Props = {
 function Hosting( { section }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const isNarrowView = useBreakpoint( '<660px' );
 
@@ -111,13 +106,9 @@ function Hosting( { section }: Props ) {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody className={ clsx( { 'is-full-width': isNewHostingPage } ) }>
+			<LayoutBody className="is-full-width">
 				<QueryProductsList currency="USD" />
-				{ isNewHostingPage ? (
-					<HostingV2 section={ section } onAddToCart={ onAddToCart } />
-				) : (
-					<HostingList />
-				) }
+				<HostingV2 section={ section } onAddToCart={ onAddToCart } />
 			</LayoutBody>
 		</Layout>
 	);

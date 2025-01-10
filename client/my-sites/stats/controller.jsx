@@ -5,6 +5,7 @@ import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -15,6 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
+import { appendQueryStringForRedirection } from './utils';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -63,11 +65,6 @@ function getWordAdsFilters( siteId ) {
 			period: 'year',
 		},
 	];
-}
-
-function getMomentSiteZone( state, siteId ) {
-	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export function redirectToActivity( context ) {
@@ -226,12 +223,11 @@ export function site( context, next ) {
 }
 
 export function redirectToDaySummary( context ) {
-	// Query string from window.location.search differs depending on environment.
-	// Make sure to append the query if we are working inside wp-admin otherwise it will be lost.
-	const isWpAdmin = context.canonicalPath.includes( '/wp-admin/' );
-	const query =
-		isWpAdmin && context.query ? `&${ new URLSearchParams( context.query ).toString() }` : '';
-	const url = `/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }${ query }`;
+	const url = appendQueryStringForRedirection(
+		`/stats/day/${ context.params.module }/${ context.params.site }`,
+		context.query
+	);
+
 	page.redirect( url );
 }
 

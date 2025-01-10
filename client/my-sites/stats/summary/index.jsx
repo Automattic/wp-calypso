@@ -20,6 +20,7 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleLocations from '../features/modules/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
@@ -146,13 +147,23 @@ class StatsSummary extends Component {
 				summaryView = (
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleCountries
-							moduleStrings={ StatsStrings.countries }
-							period={ this.props.period }
-							query={ moduleQuery }
-							summary
-							listItemClassName={ listItemClassName }
-						/>
+						{ isEnabled( 'stats/locations' ) ? (
+							<StatsModuleLocations
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) : (
+							<StatsModuleCountries
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) }
 					</Fragment>
 				);
 				break;

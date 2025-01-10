@@ -247,7 +247,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipSelectedDesign' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -491,7 +491,12 @@ const siteSetupFlow: Flow = {
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
-					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+					const backUrl = window.location.href.replace( window.location.origin, '' );
+					return exitFlow(
+						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
+							backUrl
+						) }`
+					);
 				}
 			}
 		}

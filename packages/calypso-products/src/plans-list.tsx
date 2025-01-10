@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -408,6 +408,9 @@ import {
 	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+	PRODUCT_JETPACK_AI_BI_YEARLY,
+	PRODUCT_JETPACK_AI_YEARLY,
+	PRODUCT_JETPACK_AI_MONTHLY,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
 	GROUP_P2,
@@ -3113,6 +3116,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 			PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
+			PRODUCT_JETPACK_AI_BI_YEARLY,
 			PRODUCT_JETPACK_CRM,
 		],
 		getWhatIsIncluded: () => [
@@ -3148,6 +3152,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SOCIAL_ADVANCED,
 			PRODUCT_JETPACK_SEARCH,
 			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_AI_YEARLY,
 			PRODUCT_JETPACK_CRM,
 		],
 		getWhatIsIncluded: () => [
@@ -3183,6 +3188,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 			PRODUCT_JETPACK_SEARCH_MONTHLY,
 			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_AI_MONTHLY,
 			PRODUCT_JETPACK_CRM_MONTHLY,
 		],
 		getWhatIsIncluded: () => [
@@ -3500,10 +3506,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getPathSlug: () => 'starter',
 	getDescription: () =>
-		i18n.hasTranslation( 'Start with a custom domain name, simple payments, and extra storage.' ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
-			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
 	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [

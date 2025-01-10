@@ -27,8 +27,8 @@ export default {
 				<EmailForwardsAdd
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showFormHeader={ pageContext.params.showFormHeader }
 					showPageHeader={ pageContext.params.showPageHeader }
-					formHeader={ pageContext.params.formHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -103,6 +103,9 @@ export default {
 					provider={ EmailProvider.Titan }
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showPageHeader={ pageContext?.params?.showPageHeader }
+					showFormHeader={ pageContext?.params?.showFormHeader }
+					customFormHeader={ pageContext?.params?.customFormHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -172,6 +175,7 @@ export default {
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 					source={ pageContext.query.source }
+					context={ pageContext.section.name }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

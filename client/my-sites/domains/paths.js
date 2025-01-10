@@ -61,7 +61,10 @@ export function isUnderDomainManagementAll( path ) {
 }
 
 export function isUnderDomainManagementOverview( path ) {
-	return path?.startsWith( domainManagementOverviewRoot() + '/' );
+	return (
+		path?.startsWith( domainManagementOverviewRoot() + '/' ) ||
+		path?.startsWith( '/overview/site-domain/' )
+	);
 }
 
 export function domainAddNew( siteName, searchTerm ) {
@@ -194,6 +197,10 @@ export function domainManagementEmail( siteName, domainName ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/dns/' + siteName;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }
 
@@ -203,6 +210,10 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/dns/add/' + siteName;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
 }
 
@@ -212,10 +223,18 @@ export function domainManagementDnsEditRecord(
 	relativeTo = null,
 	recordId = null
 ) {
-	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	let path;
+
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		path = domainManagementOverviewRoot() + '/' + domainName + '/dns/edit/' + siteName;
+	} else {
+		path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	}
+
 	if ( recordId ) {
 		path += '?recordId=' + encodeURI( recordId );
 	}
+
 	return path;
 }
 

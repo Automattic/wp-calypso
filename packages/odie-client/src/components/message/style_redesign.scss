@@ -400,7 +400,7 @@
 
 			.odie-feedback-component-button-liked-pressed,
 			.odie-feedback-component-button-disliked-pressed {
-				background-color: var(--color-primary);
+				background-color: $blueberry-color;
 				cursor: default;
 				pointer-events: none;
 			}
@@ -420,7 +420,7 @@
 	}
 
 	.odie-feedback-component-button-icon-pressed {
-		background-color: var(--color-primary);
+		background-color: $blueberry-color;
 		fill: var(--color-text-inverted);
 	}
 
@@ -582,7 +582,7 @@
 	}
 
 	.odie-question-collapse {
-		animation: odie-question-collapse-animation 0.3s ease-in-out 1s forwards;
+		animation: odie-question-collapse-animation 0.3s ease-in-out 2.5s forwards;
 		overflow: hidden;
 	}
 

@@ -1,4 +1,3 @@
-import ItemPreviewPaneFooter from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-footer';
 import DocumentHead from 'calypso/components/data/document-head';
 import InsightsStats from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/insights-stats';
 import { Site } from '../../types';
@@ -31,7 +30,6 @@ export function JetpackStatsPreview( { site, trackEvent }: Props ) {
 					trackEvent={ trackEvent }
 				/>
 			</div>
-			<ItemPreviewPaneFooter />
 		</>
 	);
 }

@@ -5,20 +5,12 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
-.main.multi-sites-dashboard-layout.sites-dashboard {
-	padding-block-start: 0;
-
-	.multi-sites-dashboard-layout__header-actions {
-		white-space: nowrap;
-	}
-
-	.item-preview-pane .multi-sites-dashboard-layout-column__container {
-		display: flex;
-	}
-
-	.multi-sites-dashboard-layout-column {
-		@include breakpoint-deprecated( "<660px" ) {
-			border-radius: 0;
+.main.hosting-dashboard-layout.sites-dashboard {
+	.hosting-dashboard-layout-column {
+		.hosting-dashboard-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 		}
 	}
 
@@ -34,7 +26,7 @@
 		margin-right: 10px;
 	}
 
-	.multi-sites-dashboard-layout__top-wrapper:not(.preview-hidden) {
+	.hosting-dashboard-layout__top-wrapper {
 		padding-block-start: 24px;
 	}
 
@@ -55,12 +47,6 @@
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
-			display: none;
-		}
-	}
-
-	@media (max-width: 660px) {
-		.multi-sites-dashboard-layout__header-main {
 			display: none;
 		}
 	}
@@ -105,16 +91,10 @@
 				.sites-overview__tabs {
 					border-bottom: 1px solid var(--color-accent-5);
 				}
-
-				.sites-overview__content {
-					padding: 0;
-					margin: 0;
-					margin-top: 16px;
-				}
 			}
 		}
 
-		.item-preview__content {
+		.hosting-dashboard-item-view__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -135,10 +115,6 @@
 				overflow: hidden;
 			}
 
-			.sites-overview__content {
-				display: none;
-			}
-
 			.sites-overview {
 				width: unset;
 				display: none;
@@ -151,16 +127,12 @@
 			.sites-overview {
 				padding: 0;
 
-				.multi-sites-dashboard-layout__header-title {
+				// FIXME: Remove this style, as the list view will likely be removed in the future.
+				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 					letter-spacing: normal;
 				}
-			}
-
-			.sites-overview__content {
-				padding: 0;
-				padding-inline: 0 !important;
 			}
 
 			.sites-overview__issue-license-button-short-caption {
@@ -194,21 +166,7 @@
 		}
 	}
 
-	.sites-overview__content-wrapper {
-		max-width: none;
-	}
-
 	&.sites-dashboard__layout:not(.preview-hidden) {
-
-
-		.multi-sites-dashboard-layout__top-wrapper {
-			padding-block-start: 16px;
-
-			.multi-sites-dashboard-layout__header {
-				padding: 0;
-			}
-		}
-
 		.components-base-control {
 			margin-right: 6px;
 		}
@@ -216,10 +174,6 @@
 		.site-preview__open {
 			display: none;
 		}
-	}
-
-	&.sites-dashboard__layout:not(.preview-hidden) .multi-sites-dashboard-layout__navigation-wrapper {
-		display: none;
 	}
 
 	&.sites-dashboard__layout {
@@ -261,18 +215,11 @@
 
 		.sites-overview {
 			height: 100%;
+
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
-			background: var(--color-light-backdrop);
-
-			.sites-overview__content {
-				display: flex;
-				flex: 1;
-				height: 100%;
-				overflow: auto;
-				margin-top: 24px;
-			}
 		}
 
 		@media only screen and (min-width: $break-large) {
@@ -290,7 +237,7 @@
 			font-size: rem(24px);
 		}
 
-		.item-preview__pane {
+		.hosting-dashboard-item-view {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -300,7 +247,7 @@
 			@media (max-width: $break-small) {
 				max-height: calc(100vh - var(--masterbar-height));
 			}
-			.preview-pane__navigation {
+			.hosting-dashboard-item-view__navigation {
 				box-shadow: none;
 				border-bottom: 1px solid var(--color-border-subtle);
 				padding-top: 1px;
@@ -312,12 +259,13 @@
 		}
 
 		&.preview-hidden {
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			.sites-overview {
 				flex-grow: 1;
 				transition: flex-grow 0.2s;
 			}
 
-			.item-preview__pane {
+			.hosting-dashboard-item-view {
 				max-width: 0;
 				padding: 0;
 			}
@@ -824,5 +772,23 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+}
+
+/*
+ * For Domain and Email related pages under site context.
+ */
+.wpcom-site .hosting-dashboard-layout.domains-overview.main .hosting-dashboard-item-view {
+	.hosting-dashboard-item-view__content {
+		padding: 0;
+		padding-bottom: 48px;
+
+		@include break-medium {
+			padding: 24px;
+		}
+
+		@include break-large {
+			padding: 32px 48px 48px;
+		}
 	}
 }
