@@ -30,9 +30,9 @@ import {
 } from 'calypso/state/plugins/installed/actions';
 import {
 	getSiteObjectsWithPlugin,
-	getPlugins,
 	isRequestingForAllSites,
 	getPluginsWithUpdateStatuses,
+	getCurrentPlugins,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -108,7 +108,7 @@ const PluginsDashboard = ( {
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
 	);
-	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
+	const allPlugins = useSelector( ( state ) => getCurrentPlugins( state, siteIds, 'all' ) ).map(
 		( plugin: Plugin ) => {
 			const pluginData = wporgPlugins?.[ plugin.slug ];
 			return Object.assign( {}, plugin, pluginData ) as Plugin;

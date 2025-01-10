@@ -122,6 +122,24 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
 
+/**
+ * Retrieves plugins from the state without considering loading states.
+ * This selector returns plugins that are already in the state, regardless of whether
+ * new data is being fetched. This improves UX by avoiding loading indicators when
+ * we already have data to display, even if it's being refreshed.
+ * @param {Object} state Global state tree
+ * @param {Array} siteIds Array of site IDs to fetch plugins for
+ * @param {string} [pluginFilter] Optional filter to apply to the plugin list
+ * @returns {Array} Array of plugins
+ */
+export const getCurrentPlugins = createSelector(
+	getPluginsSelector,
+	( state ) => [ state.plugins.installed.plugins ],
+	( state, siteIds, pluginFilter ) => {
+		return [ siteIds, pluginFilter ].flat().join( '-' );
+	}
+);
+
 export const getPlugins = createSelector(
 	getPluginsSelector,
 	( state, siteIds ) => [
