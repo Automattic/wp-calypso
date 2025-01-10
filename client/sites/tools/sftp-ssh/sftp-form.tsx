@@ -177,12 +177,14 @@ export const SftpForm = ( {
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
-			dispatch( requestAtomicSftpUsers( siteId ) );
+			if ( siteHasSftpFeature ) {
+				dispatch( requestAtomicSftpUsers( siteId ) );
+			}
 			if ( siteHasSshFeature ) {
 				dispatch( requestAtomicSshAccess( siteId ) );
 			}
 		}
-	}, [ disabled, siteId, siteHasSshFeature, dispatch ] );
+	}, [ disabled, siteId, siteHasSshFeature, siteHasSftpFeature, dispatch ] );
 
 	// For security reasons we remove the password from the state when the component is unmounted
 	// Since users should reset it every time they want to see it
