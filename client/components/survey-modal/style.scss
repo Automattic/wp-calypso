@@ -95,7 +95,7 @@
 
 				.modal-survey-notice__popup-content-buttons-ok {
 					padding: 8px 14px;
-					background: var(--studio-blue-50);
+					background: var(--wp-admin-theme-color, #3858e9);
 					color: var(--studio-white);
 					font-size: rem(14px);
 					line-height: 20px;
@@ -104,7 +104,7 @@
 
 				.modal-survey-notice__popup-content-buttons-cancel {
 					padding: 8px 14px;
-					color: var(--studio-blue-50);
+					color: var(--wp-admin-theme-color, #3858e9);
 					text-align: center;
 					font-size: rem(14px);
 					line-height: 20px;
