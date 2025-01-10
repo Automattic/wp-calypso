@@ -421,9 +421,18 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize the %s environment.', {
-								args: [ siteToSync ?? '' ],
-							} ) }
+							text={
+								error === 'studio_import_in_progress'
+									? translate(
+											'We couldn’t synchronize the %s environment. Studio push operation is currently in progress.',
+											{
+												args: [ siteToSync ?? '' ],
+											}
+									  )
+									: translate( 'We couldn’t synchronize the %s environment.', {
+											args: [ siteToSync ?? '' ],
+									  } )
+							}
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
