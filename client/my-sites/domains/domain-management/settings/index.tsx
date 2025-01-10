@@ -507,7 +507,7 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
-	const renderContactInformationSecion = () => {
+	const renderContactInformationSection = () => {
 		if ( ! domain ) {
 			return null;
 		}
@@ -757,7 +757,7 @@ const Settings = ( {
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
 				{ renderForwardingSection() }
-				{ renderContactInformationSecion() }
+				{ renderContactInformationSection() }
 				{ renderContactVerificationSection() }
 				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }
