@@ -75,6 +75,7 @@ const ActiveDomainsCard: FC = () => {
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
 				isAllSitesView={ false }
+				isHostingOverview
 				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
 				isHostingOverview
