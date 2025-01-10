@@ -45,9 +45,10 @@ export const UserMessage = ( {
 	const displayMessage =
 		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
-	const handleContactSupportClick = () => {
+	const handleContactSupportClick = ( destination: string ) => {
 		trackEvent( 'chat_get_support', {
 			location: 'chat',
+			destination,
 		} );
 	};
 
