@@ -1,13 +1,16 @@
 import { Icon, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
+import { UserData } from 'calypso/lib/user/user';
 import Stream from 'calypso/reader/stream';
+import UserProfileHeader from 'calypso/reader/user-stream/components/user-profile-header';
 
 interface UserPostsProps {
 	streamKey: string;
+	user: UserData;
 }
 
-const UserPosts = ( { streamKey }: UserPostsProps ): JSX.Element => {
+const UserPosts = ( { streamKey, user }: UserPostsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (
@@ -28,7 +31,9 @@ const UserPosts = ( { streamKey }: UserPostsProps ): JSX.Element => {
 					line={ translate( 'No posts yet.' ) }
 				/>
 			) }
-		/>
+		>
+			<UserProfileHeader user={ user } />
+		</Stream>
 	);
 };
 

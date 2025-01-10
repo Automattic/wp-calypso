@@ -1,0 +1,48 @@
+.is-section-reader {
+	.user-profile-header {
+		max-width: 768px;
+		margin: 0 auto;
+
+		&__main {
+			align-items: center;
+			display: flex;
+			padding: 36px 0 24px;
+
+			.reader-avatar {
+				margin: 0 24px 0 0;
+			}
+		}
+
+		&__display-name {
+			font-family: Recoleta, sans-serif;
+			font-size: 2rem;
+			line-height: 1.5;
+		}
+
+		&__bio {
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: 1.125rem;
+		}
+
+		&__bio-desc {
+			margin-bottom: 0;
+		}
+
+		.section-nav {
+			box-shadow: none;
+			border-bottom: 1px solid var( --color-border-subtle );
+			height: auto !important;
+		}
+
+		.section-nav-tab__link {
+			&:hover {
+				background: none;
+			}
+		}
+
+		.section-nav-tab__text {
+			font-weight: 500;
+			color: var( --studio-black );
+		}
+	}
+}
