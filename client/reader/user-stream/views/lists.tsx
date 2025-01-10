@@ -25,7 +25,7 @@ const UserLists = ( {
 
 	useEffect( () => {
 		requestUserLists( userId, userSlug );
-	}, [ userId, userSlug, isLoading, requestUserLists ] );
+	}, [ userId, userSlug, requestUserLists ] );
 
 	if ( isLoading ) {
 		return <></>;
