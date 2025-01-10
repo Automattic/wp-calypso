@@ -47,7 +47,8 @@ export const HelpCenterSupportChatMessage = ( {
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const messageDisplayName = message.role === 'business' ? 'Happiness Engineer' : displayName;
+	const messageDisplayName =
+		message.role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
 	const renderAvatar = () => {
 		if ( message.role === 'business' ) {
