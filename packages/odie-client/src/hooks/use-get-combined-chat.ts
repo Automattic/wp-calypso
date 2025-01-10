@@ -40,6 +40,7 @@ export const useGetCombinedChat = (
 	useEffect( () => {
 		if ( odieId && ( ! conversationId || ! shouldUseHelpCenterExperience ) ) {
 			if ( odieChat ) {
+				console.log( 'first useGetCombinedChat' );
 				setMainChatState( {
 					...odieChat,
 					provider: 'odie',
@@ -50,11 +51,13 @@ export const useGetCombinedChat = (
 			}
 		} else if ( odieId && conversationId && shouldUseHelpCenterExperience && canConnectToZendesk ) {
 			if ( odieChat && isChatLoaded ) {
+				console.log( 'second useGetCombinedChat' );
 				getZendeskConversation( {
 					chatId: odieChat.odieId,
 					conversationId: conversationId.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
+						console.log( 'second odiechat', { odieChat } );
 						setMainChatState( {
 							...odieChat,
 							supportInteractionId: currentSupportInteraction!.uuid,
@@ -71,6 +74,7 @@ export const useGetCombinedChat = (
 				} );
 			}
 		} else if ( currentSupportInteraction ) {
+			console.log( 'third useGetCombinedChat' );
 			setMainChatState( ( prevChat ) => ( {
 				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
 					? emptyChat

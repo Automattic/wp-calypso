@@ -5,6 +5,7 @@ import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
 
 import './get-support.scss';
+import { useEffect, useState } from '@wordpress/element';
 
 interface GetSupportProps {
 	onClickAdditionalEvent?: () => void;
@@ -14,6 +15,7 @@ interface GetSupportProps {
 interface ButtonConfig {
 	text: string;
 	action: () => Promise< void >;
+	waitTimeText?: string;
 }
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
@@ -49,6 +51,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk,
+		setOdieSupportTransferType,
+		odieSupportTransferType,
 	} = useOdieAssistantContext();
 
 	// Early return if user is already talking to a human
@@ -63,36 +67,62 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		return <NewThirdPartyCookiesNotice />;
 	}
 
-	const getButtonConfig = (): ButtonConfig => {
+	const getButtonConfig = (): ButtonConfig[] => {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			return {
-				text: __( 'Get instant support', __i18n_text_domain__ ),
-				action: async () => {
-					onClickAdditionalEvent?.();
-					await newConversation();
+			return [
+				{
+					text: __( 'Get instant support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Wait < 2 min', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.();
+						setOdieSupportTransferType( 'CHAT' );
+						await newConversation();
+					},
 				},
-			};
+				{
+					text: __( 'Hear back soon', __i18n_text_domain__ ),
+					waitTimeText: __( 'Wait < 8 hrs', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.();
+						console.log( 'hear back soon', { odieSupportTransferType } );
+						setOdieSupportTransferType( 'EMAIL' );
+						await newConversation();
+					},
+				},
+			];
 		}
 
-		return {
-			text: __( 'Ask in our forums', __i18n_text_domain__ ),
-			action: async () => {
-				onClickAdditionalEvent?.();
-				navigate( '/contact-form?mode=FORUM' );
+		return [
+			{
+				text: __( 'Ask in our forums', __i18n_text_domain__ ),
+				action: async () => {
+					onClickAdditionalEvent?.();
+					navigate( '/contact-form?mode=FORUM' );
+				},
 			},
-		};
+		];
 	};
 
 	const buttonConfig = getButtonConfig();
 
-	const handleClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
+	const handleClick = async (
+		event: React.MouseEvent< HTMLButtonElement >,
+		button: ButtonConfig
+	) => {
 		event.preventDefault();
-		await buttonConfig.action();
+		await button.action();
 	};
 
 	return (
 		<div className="odie__transfer-chat">
-			<button onClick={ handleClick }>{ buttonConfig.text }</button>
+			{ buttonConfig.map( ( button, index ) => (
+				<div className="odie__transfer-chat-button-container" key={ index }>
+					<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
+					{ button.waitTimeText && (
+						<span className="odie__transfer-chat-button-wait-time">{ button.waitTimeText }</span>
+					) }
+				</div>
+			) ) }
 		</div>
 	);
 };

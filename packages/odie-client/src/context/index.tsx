@@ -48,6 +48,8 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	shouldUseHelpCenterExperience: false,
 	trackEvent: noop,
 	waitAnswerToFirstMessageFromHumanSupport: false,
+	setOdieSupportTransferType: noop,
+	odieSupportTransferType: null,
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -157,6 +159,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
+	const [ odieSupportTransferType, setOdieSupportTransferType ] = useState<
+		'EMAIL' | 'CHAT' | null
+	>( null );
+
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
 
 	/**
@@ -192,6 +198,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,
+				setOdieSupportTransferType,
+				odieSupportTransferType,
 			} }
 		>
 			{ children }

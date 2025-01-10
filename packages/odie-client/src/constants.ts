@@ -95,10 +95,36 @@ export const ODIE_TRANSFER_MESSAGE_NEW: Message[] = [
 	},
 ];
 
+export const ODIE_TRANSFER_MESSAGE_EMAIL_SUPPORT: Message[] = [
+	{
+		content: __(
+			"Drop a few details below, along with any screenshots, and we'll get back to you as soon as possible. Feel free to close this window.",
+			__i18n_text_domain__
+		),
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: false,
+			},
+			site_id: null,
+		},
+	},
+];
+
 export const getOdieTransferMessageConstant = (
-	shouldUseHelpCenterExperience: boolean | undefined
+	shouldUseHelpCenterExperience: boolean | undefined,
+	odieSupportTransferType?: 'CHAT' | 'EMAIL'
 ) => {
+	console.log( 'getOdieTransferMessageConstant', {
+		shouldUseHelpCenterExperience,
+		odieSupportTransferType,
+	} );
 	if ( shouldUseHelpCenterExperience ) {
+		if ( odieSupportTransferType === 'EMAIL' ) {
+			return ODIE_TRANSFER_MESSAGE_EMAIL_SUPPORT;
+		}
 		return ODIE_TRANSFER_MESSAGE_NEW;
 	}
 	return ODIE_TRANSFER_MESSAGE;

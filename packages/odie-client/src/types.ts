@@ -27,6 +27,8 @@ export type OdieAssistantContextInterface = {
 	setWaitAnswerToFirstMessageFromHumanSupport: (
 		waitAnswerToFirstMessageFromHumanSupport: boolean
 	) => void;
+	setOdieSupportTransferType: ( odieSupportTransferType: 'EMAIL' | 'CHAT' ) => void;
+	odieSupportTransferType: 'EMAIL' | 'CHAT' | null;
 };
 
 export type OdieAssistantProviderProps = {

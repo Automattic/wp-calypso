@@ -2,6 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import Smooch from 'smooch';
 import { getOdieTransferMessageConstant } from '../constants';
 import { useOdieAssistantContext } from '../context';
@@ -16,6 +17,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
 		shouldUseHelpCenterExperience,
+		odieSupportTransferType,
 	} = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -27,19 +29,70 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
+
+	const [ transferType, setTransferType ] = useState< 'CHAT' | 'EMAIL' >();
+
+	useEffect( () => {
+		if ( odieSupportTransferType ) {
+			setTransferType( odieSupportTransferType );
+		}
+	}, [ odieSupportTransferType ] );
+
+	const odieSupportTransferTypeRef = useRef();
+	if ( odieSupportTransferType ) {
+		odieSupportTransferTypeRef.current = odieSupportTransferType;
+	}
+
 	const createConversation = async () => {
 		if ( ! chatId || isSubmittingZendeskUserFields || chat.conversationId ) {
 			return;
 		}
 
-		setChat( ( prevChat ) => ( {
-			...prevChat,
+		console.log( 'Creating Zendesk conversation', {
+			odieSupportTransferType,
+			odieSupportTransferTypeRef,
+			chat,
+			transferType,
+		} );
+
+		console.log( 'odieSupportTransferTypeRef', { odieSupportTransferTypeRef } );
+
+		const transferMessage = getOdieTransferMessageConstant(
+			shouldUseHelpCenterExperience,
+			odieSupportTransferTypeRef.current
+		);
+		console.log( { transferMessage } );
+		// return;
+
+		const updatedChat = {
+			...chat,
 			messages: [
-				...prevChat.messages,
-				...getOdieTransferMessageConstant( shouldUseHelpCenterExperience ),
+				...chat.messages,
+				...getOdieTransferMessageConstant(
+					shouldUseHelpCenterExperience,
+					odieSupportTransferTypeRef.current
+				),
 			],
 			status: 'transfer',
-		} ) );
+		};
+
+		return;
+
+		setChat( updatedChat );
+
+		// setChat( ( prevChat ) => {
+		// 	console.log('setChat', {prevChat});
+		// 	return {
+		// 		...prevChat,
+		// 		messages: [
+		// 			...prevChat.messages,
+		// 			...getOdieTransferMessageConstant( shouldUseHelpCenterExperience ),
+		// 		],
+		// 		status: 'transfer',
+		// 	};
+		// } );
+
+		return;
 
 		await submitUserFields( {
 			messaging_initial_message: '',
