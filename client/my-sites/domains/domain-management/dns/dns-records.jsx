@@ -252,7 +252,7 @@ class DnsRecords extends Component {
 				/>
 				<div className="dns-records-notice__message">
 					{ translate(
-						'Your domain is not using the default WWW CNAME record. This means your WordPress.com may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+						'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
 						{
 							components: {
 								defaultRecordsLink: (
