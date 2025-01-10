@@ -18,6 +18,7 @@ body.is-reader-full-post {
 	);
 
 	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
+	overflow-y: hidden !important; // Keeps the scrolling container consistent between one and two column layouts.
 
 	@media ( min-width: $break-wide ) {
 		display: flex;
@@ -200,6 +201,7 @@ body.is-reader-full-post {
 		@extend %column-shared;
 		display: none;
 		overflow-y: auto;
+		height: 100%;
 
 		&.overlay {
 			display: block;
