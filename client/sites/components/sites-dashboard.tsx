@@ -50,6 +50,8 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
+import Survey from './survey';
+import { SURVEY_SITES_DASHBOARD } from './survey/constants';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -133,10 +135,12 @@ const SitesDashboard = ( {
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
+	const [ showSurvey ] = useState( true );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
+	const shouldShowSurvey = isEnabled( 'sites/dashboard-survey' ) && showSurvey;
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -451,6 +455,7 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
+			{ shouldShowSurvey && <Survey slug={ SURVEY_SITES_DASHBOARD } /> }
 		</Layout>
 	);
 };

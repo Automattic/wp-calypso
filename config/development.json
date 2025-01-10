@@ -214,6 +214,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
+		"sites/dashboard-survey": true,
 		"ssr/prefetch-timebox": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
