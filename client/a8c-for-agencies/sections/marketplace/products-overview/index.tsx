@@ -98,6 +98,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery
 								label: translate( 'Products' ),
 							},
 						] }
+						hideOnMobile
 					/>
 
 					<Actions className="a4a-marketplace__header-actions">

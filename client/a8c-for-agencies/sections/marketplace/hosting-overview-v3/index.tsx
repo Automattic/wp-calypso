@@ -102,6 +102,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 								label: translate( 'Hosting' ),
 							},
 						] }
+						hideOnMobile
 					/>
 
 					<Actions className="a4a-marketplace__header-actions">

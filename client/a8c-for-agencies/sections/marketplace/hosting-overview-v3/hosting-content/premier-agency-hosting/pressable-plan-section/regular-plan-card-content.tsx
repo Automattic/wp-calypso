@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-total-invoice-value';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
