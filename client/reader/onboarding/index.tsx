@@ -62,6 +62,9 @@ const ReaderOnboarding = ( {
 	const closeInterestsModal = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		setIsInterestsModalOpen( false );
+		if ( ! hasSeenOnboarding ) {
+			dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+		}
 	};
 
 	const openDiscoverModal = () => {
@@ -98,7 +101,6 @@ const ReaderOnboarding = ( {
 	useEffect( () => {
 		if ( shouldShowOnboarding && ! hasSeenOnboarding ) {
 			openInterestsModal();
-			dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
 		}
 	}, [ shouldShowOnboarding, hasSeenOnboarding, dispatch ] );
 
