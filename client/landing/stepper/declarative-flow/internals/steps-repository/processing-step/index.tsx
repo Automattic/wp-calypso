@@ -127,7 +127,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	// As for hasActionSuccessfullyRun, in this case we submit the no action result.
 	useEffect( () => {
 		if ( hasEmptyActionRun && ! isSubmittedRef.current ) {
-			isSubmittedRef.current = true;
+			// Let's ensure the submit function is called only once,
+			// but only for the onboarding flow to mitigate risks.
+			isSubmittedRef.current = flow === 'onboarding' ? true : false;
 			submit?.( {}, ProcessingResult.NO_ACTION );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,8 +159,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				wccom_from: getWccomFrom( destinationState ),
 			} );
 
+			// Let's ensure the submit function is called only once,
+			// but only for the onboarding flow to mitigate risks.
+			isSubmittedRef.current = flow === 'onboarding' ? true : false;
+
 			// Default processing handler.
-			isSubmittedRef.current = true;
 			submit?.( destinationState, ProcessingResult.SUCCESS );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
