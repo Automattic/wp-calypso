@@ -23,13 +23,13 @@ import ReferralToggle from '../common/referral-toggle';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import ProductListing from '../products-overview/product-listing';
 import { useProductBundleSize } from '../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSelectedProductFilters from '../products-overview/product-listing/hooks/use-selected-product-filters';
 import ShoppingCart from '../shopping-cart';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
 import ProductActionPanel from './product-action-panel';
 import ProductCategoryMenu from './product-category-menu';
+import ProductListing from './product-listing';
 
 import './style.scss';
 
@@ -148,7 +148,10 @@ export function ProductsOverviewV2( {
 							selectedSite={ selectedSite }
 							suggestedProduct={ suggestedProduct }
 							productBrand={ productBrand }
-							searchQuery={ searchQuery }
+							productSearchQuery={ productSearchQuery }
+							isReferralMode={ isReferralMode }
+							selectedBundleSize={ selectedBundleSize }
+							selectedFilters={ selectedFilters }
 						/>
 					}
 				</ShoppingCartContext.Provider>
