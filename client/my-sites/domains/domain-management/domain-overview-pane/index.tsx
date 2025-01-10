@@ -5,8 +5,11 @@ import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
+import SiteFavicon from 'calypso/blocks/site-favicon';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
+import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import {
 	FEATURE_TO_ROUTE_MAP,
@@ -140,20 +143,42 @@ const DomainOverviewPane = ( {
 				preview: enabled ? selectedDomainPreview : null,
 			};
 		} );
-	}, [ __, selectedDomain, selectedFeature, selectedDomainPreview ] );
+	}, [ selectedFeature, selectedDomainPreview, inSiteContext, selectedDomain, siteSlug ] );
+
+	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const faviconFallback = isMigrationPending ? 'migration' : 'first-grapheme';
 
 	return (
-		<ItemView
-			itemData={ itemData }
-			closeItemView={ () => {
-				inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
-			} }
-			features={ features }
-			enforceTabsView
-			itemViewHeaderExtraProps={ {
-				headerButtons: PreviewPaneHeaderButtons,
-			} }
-		/>
+		<>
+			{ inSiteContext && (
+				<div className="domain-overview__breadcrumb">
+					<NavigationHeader
+						navigationItems={ [
+							{
+								label: site.name || selectedDomain,
+								href: `/overview/${ siteSlug }`,
+								icon: <SiteFavicon blogId={ site.ID } size={ 24 } fallback={ faviconFallback } />,
+							},
+							{
+								label: selectedDomain,
+							},
+						] }
+					/>
+				</div>
+			) }
+
+			<ItemView
+				itemData={ itemData }
+				closeItemView={ () => {
+					inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
+				} }
+				features={ features }
+				enforceTabsView
+				itemViewHeaderExtraProps={ {
+					headerButtons: PreviewPaneHeaderButtons,
+				} }
+			/>
+		</>
 	);
 };
 

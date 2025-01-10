@@ -73,6 +73,10 @@ const HelpBubble = styled( InfoPopover )`
 	}
 `;
 
+const StyledIcon = styled.div`
+	margin-right: 10px;
+`;
+
 const renderHelpBubble = ( item: Item ) => {
 	if ( ! item.helpBubble ) {
 		return null;
@@ -89,6 +93,7 @@ export type Item = {
 	label: string;
 	href?: string;
 	helpBubble?: React.ReactElement;
+	icon?: React.ReactElement;
 	onClick?: () => void;
 };
 interface Props {
@@ -113,6 +118,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		const [ item ] = items;
 		return (
 			<StyledItem>
+				{ item.icon && <StyledIcon>{ item.icon }</StyledIcon> }
 				<StyledRootLabel>{ item.label }</StyledRootLabel>
 				{ renderHelpBubble( item ) }
 			</StyledItem>
@@ -135,6 +141,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		<StyledUl className="breadcrumbs">
 			{ items.map( ( item: Item, index: Key ) => (
 				<StyledLi key={ index }>
+					{ item.icon && <StyledIcon>{ item.icon }</StyledIcon> }
 					{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
 					{ item.href && index !== items.length - 1 ? (
 						<a href={ item.href } onClick={ item.onClick }>
