@@ -7,7 +7,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
 
-import './user-profile-header.style.scss';
+import './style.scss';
 
 interface UserProfileHeaderProps {
 	user: UserData;
@@ -34,8 +34,8 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
 	return (
-		<>
-			<header className="user-profile__header">
+		<div className="user-profile-header">
+			<header className="user-profile-header__main">
 				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
@@ -59,7 +59,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					) ) }
 				</NavTabs>
 			</SectionNav>
-		</>
+		</div>
 	);
 };
 
