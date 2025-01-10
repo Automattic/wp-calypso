@@ -76,7 +76,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
 		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-		window.location.replace( `/home/${ siteSlug }` );
+		// Query param is a guard to prevent infinite loops (#98122)
+		window.location.replace( `/home/${ siteSlug }?from=full-launchpad` );
 	}
 
 	useEffect( () => {
