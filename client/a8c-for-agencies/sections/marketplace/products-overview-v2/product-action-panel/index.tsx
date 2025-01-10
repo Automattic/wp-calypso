@@ -1,9 +1,6 @@
+import { SearchControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import FilterSearch from 'calypso/a8c-for-agencies/components/filter-search';
 import LayoutSection from 'calypso/layout/hosting-dashboard/body';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SelectedFilters } from '../../lib/product-filter';
 import ProductTypeFilter from '../../products-overview/product-filter';
 import VolumePriceSelector from '../../products-overview/product-listing/volume-price-selector';
@@ -34,22 +31,14 @@ export default function ProductActionPanel( {
 	setSelectedBundleSize,
 }: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-
-	const onSearchClick = useCallback(
-		() => () =>
-			dispatch( recordTracksEvent( `calypso_a4a_marketplace_products_overview_search_click` ) ),
-		[ dispatch ]
-	);
 
 	return (
 		<LayoutSection className="product-action-panel">
 			<div className="product-action-panel__filter">
-				<FilterSearch
+				<SearchControl
 					label={ translate( 'Search' ) }
-					onSearch={ onSearchQueryChange }
-					onClick={ onSearchClick() }
-					initialValue={ searchQuery }
+					value={ searchQuery }
+					onChange={ onSearchQueryChange }
 				/>
 
 				<ProductTypeFilter
