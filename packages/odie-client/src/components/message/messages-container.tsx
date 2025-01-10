@@ -38,7 +38,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, shouldUseHelpCenterExperience, botNameSlug } = useOdieAssistantContext();
+	const { chat, botNameSlug, experimentName } = useOdieAssistantContext();
 	const [ chatMessagesLoaded, setChatLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
@@ -47,24 +47,28 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatLoaded( true );
 	}, [ chat ] );
 
-	const shouldLoadChat: boolean =
-		! shouldUseHelpCenterExperience || ( shouldUseHelpCenterExperience && chatMessagesLoaded );
+	const shouldLoadChat: boolean = chatMessagesLoaded;
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 		return currentMessage === nextMessage;
 	};
 
+	const statusArray =
+		experimentName === 'give_a_chance'
+			? [ 'sending', 'transfer' ]
+			: [ 'sending', 'dislike', 'transfer' ];
+
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
-				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
+				<ChatDate chat={ chat } />
 				{ ! shouldLoadChat ? (
 					<LoadingChatSpinner />
 				) : (
 					<>
 						<ChatMessage
-							message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
+							message={ getOdieInitialMessage( botNameSlug, true ) }
 							key={ 0 }
 							currentUser={ currentUser }
 							isNextMessageFromSameSender={ false }
@@ -83,8 +87,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
-						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
+						{ chat.status === 'dislike' && experimentName !== 'give_a_chance' && <DislikeThumb /> }
+						{ statusArray.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
 								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }

@@ -157,7 +157,6 @@ export type Message = {
 	rating_value?: number;
 	role: MessageRole;
 	type: MessageType;
-	directEscalationSupport?: boolean;
 	created_at?: string;
 };
 
