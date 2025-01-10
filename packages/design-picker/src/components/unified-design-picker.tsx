@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -323,6 +324,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isBigSkyEligible = false,
 } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 
 	const categories = categorization?.categories || [];
@@ -406,7 +408,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
-					title={ translate( 'Best matching themes' ) }
+					title={
+						hasEnTranslation( 'Best theme matches' )
+							? translate( 'Best theme matches' )
+							: translate( 'Best matching themes' )
+					}
 					category="best"
 					designs={ best }
 				/>
