@@ -35,7 +35,9 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		await testAccount.authenticate( page );
+		const siteUrl = DataHelper.getAccountSiteURL( accountName, { protocol: false } );
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteUrl }` );
+		await testAccount.authenticate( page, { url: calypsoSiteUrl } );
 	} );
 
 	it( 'Navigate to Appearance > Themes', async function () {

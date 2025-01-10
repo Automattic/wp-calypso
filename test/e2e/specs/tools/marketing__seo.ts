@@ -47,7 +47,9 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 			},
 		] );
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		const siteUrl = DataHelper.getAccountSiteURL( accountName, { protocol: false } );
+		const calypsoSiteUrl = DataHelper.getCalypsoURL( `/home/${ siteUrl }` );
+		await testAccount.authenticate( page, { url: calypsoSiteUrl } );
 
 		marketingPage = new MarketingPage( page );
 	} );
