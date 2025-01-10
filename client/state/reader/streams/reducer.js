@@ -38,6 +38,7 @@ export const items = ( state = [], action ) => {
 	let newXPosts;
 	let perPage;
 	let page;
+	let streamKey;
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
@@ -45,6 +46,7 @@ export const items = ( state = [], action ) => {
 			streamItems = action.payload.streamItems;
 			perPage = action.payload.perPage;
 			page = action.payload.page;
+			streamKey = action.payload.streamKey;
 
 			if ( ! Array.isArray( streamItems ) ) {
 				return state;
@@ -53,12 +55,7 @@ export const items = ( state = [], action ) => {
 			// For the Recent feeds, we need to pad the stream with empty items
 			// for the DataViews pagination to work correctly
 			// see Automattic/loop#238
-			if (
-				action.payload?.streamKey?.startsWith( 'recent' ) &&
-				streamItems.length > 0 &&
-				perPage &&
-				page > 1
-			) {
+			if ( streamKey?.startsWith( 'recent' ) && streamItems.length > 0 && perPage && page > 1 ) {
 				// Calculate where new items should start
 				const startIndex = ( page - 1 ) * perPage;
 				const existingLength = state.length;
