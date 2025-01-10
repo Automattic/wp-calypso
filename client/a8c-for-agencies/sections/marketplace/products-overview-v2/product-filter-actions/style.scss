@@ -1,0 +1,18 @@
+
+.product-filter-actions.hosting-dashboard-layout__body {
+	background: var( --color-surface );
+	padding-block: 16px;
+
+	.hosting-dashboard-layout__body-wrapper {
+		display: flex;
+		flex-direction: row;
+		gap: 16px;
+		justify-content: space-between;
+	}
+}
+
+.product-filter-actions__search-and-filter {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+}

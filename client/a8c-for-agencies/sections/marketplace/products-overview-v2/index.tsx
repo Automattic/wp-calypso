@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -20,13 +20,16 @@ import LayoutHeader, {
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';
-import { ShoppingCartContext } from '../context';
+import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ProductListing from '../products-overview/product-listing';
+import { useProductBundleSize } from '../products-overview/product-listing/hooks/use-product-bundle-size';
+import useSelectedProductFilters from '../products-overview/product-listing/hooks/use-selected-product-filters';
 import ShoppingCart from '../shopping-cart';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
 import ProductCategoryMenu from './product-category-menu';
+import ProductFilterActions from './product-filter-actions';
 
 import './style.scss';
 
@@ -69,6 +72,21 @@ export function ProductsOverviewV2( {
 
 	const { onScroll, isCompact } = useCompactOnScroll();
 
+	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( searchQuery ?? '' );
+
+	const { selectedFilters, setSelectedFilters, resetFilters } = useSelectedProductFilters( {
+		productBrand,
+	} );
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isReferralMode = marketplaceType === 'referral';
+
+	const {
+		selectedSize: selectedBundleSize,
+		availableSizes: availableBundleSizes,
+		setSelectedSize: setSelectedBundleSize,
+	} = useProductBundleSize();
+
 	return (
 		<Layout
 			className={ clsx( 'products-overview-v2', { 'is-compact': isCompact } ) }
@@ -109,6 +127,18 @@ export function ProductsOverviewV2( {
 
 				<ProductCategoryMenu />
 			</LayoutTop>
+
+			<ProductFilterActions
+				searchQuery={ productSearchQuery }
+				onSearchQueryChange={ setProductSearchQuery }
+				selectedFilters={ selectedFilters }
+				setSelectedFilters={ setSelectedFilters }
+				resetSelectedFilters={ resetFilters }
+				isReferralMode={ isReferralMode }
+				selectedBundleSize={ selectedBundleSize }
+				availableBundleSizes={ availableBundleSizes }
+				setSelectedBundleSize={ setSelectedBundleSize }
+			/>
 
 			<LayoutBody className="products-overview-v2__body">
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>

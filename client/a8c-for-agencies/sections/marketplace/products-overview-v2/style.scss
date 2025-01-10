@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 $background-color: #05374A;
+$header-height: 300px;
+$header-height-mobile: 330px;
+$header-compact-height: 114px;
+$header-compact-height-mobile: 128px;
 
 .products-overview-v2.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__container {
@@ -18,11 +22,12 @@ $background-color: #05374A;
 		top: 0;
 		z-index: 100;
 		overflow: hidden;
-		height: 306px;
 		transition: height .25s ease-out;
+		box-sizing: border-box;
+		height: $header-height-mobile;
 
 		@include break-medium {
-			height: 252px;
+			height: $header-height;
 		}
     }
 
@@ -53,14 +58,24 @@ $background-color: #05374A;
 		opacity: 1;
 		transition: opacity .25s ease-out;
 	}
+
+	.product-filter-actions {
+		position: sticky;
+		top: $header-compact-height-mobile;
+		z-index: 2;
+
+		@include break-medium {
+			top: 114px;
+		}
+	}
 }
 
 .products-overview-v2.main.hosting-dashboard-layout.is-compact {
 	.hosting-dashboard-layout__top-wrapper {
-		height: 104px;
+		height: $header-compact-height-mobile;
 
 		@include break-medium {
-			height: 66px;
+			height: $header-compact-height;
 		}
 	}
 
