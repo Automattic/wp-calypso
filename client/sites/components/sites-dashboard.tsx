@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -32,9 +33,11 @@ import {
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isEligibleForProductSampling } from 'calypso/utils';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
@@ -134,13 +137,20 @@ const SitesDashboard = ( {
 	selectedSiteFeaturePreview = undefined,
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const [ showSurvey, setShowSurvey ] = useState( true );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
-	const shouldShowSurvey = isEnabled( 'sites/dashboard-survey' ) && showSurvey;
+	const userId = useSelector( getCurrentUserId );
+
+	const urlParams = new URLSearchParams( window.location.search );
+	const isEligibleSurvey =
+		isEnabled( 'sites/dashboard-survey' ) &&
+		isEnglishLocale &&
+		( isEligibleForProductSampling( userId, 15 ) || urlParams.has( 'show_survey' ) );
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -455,7 +465,7 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-			{ shouldShowSurvey && (
+			{ isEligibleSurvey && showSurvey && (
 				<Survey
 					slug={ SURVEY_SITES_DASHBOARD }
 					onClose={ ( context ) => {
