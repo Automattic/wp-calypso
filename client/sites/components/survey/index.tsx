@@ -34,19 +34,21 @@ const Survey = ( { slug, onDismiss }: SurveyProps ) => {
 	const setDismissCookie = () => {
 		document.cookie = cookie.serialize( slug, 'dismiss', {
 			path: '/',
-			ONE_YEAR_IN_SECONDS,
+			maxAge: ONE_YEAR_IN_SECONDS,
 		} );
 	};
 
 	const handleCTAClick = () => {
 		recordTracksEvent( 'calypso_survey_clicked', { slug } );
-		setDismissCookie();
 	};
 
 	const handleDismiss = ( context: string ) => {
 		recordTracksEvent( 'calypso_survey_dismissed', { slug, context } );
-		setDismissCookie();
-		onDismiss();
+		if ( context !== 'backdrop' ) {
+			setDismissCookie();
+		}
+
+		onDismiss( context );
 	};
 
 	if ( ! content || ! content.href || hasDismissedCookie ) {
