@@ -38,6 +38,7 @@ import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors'
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isEligibleForProductSampling } from 'calypso/utils';
+import surveySitesDashboardImage from '../assets/images/survey-sites-dashboard.svg';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
@@ -54,7 +55,6 @@ import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import Survey from './survey';
-import { SURVEY_SITES_DASHBOARD } from './survey/constants';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -467,7 +467,15 @@ const SitesDashboard = ( {
 				</GuidedTourContextProvider>
 			) }
 			{ isEligibleSurvey && showSurvey && (
-				<Survey slug={ SURVEY_SITES_DASHBOARD } onDismiss={ () => setShowSurvey( false ) } />
+				<Survey
+					slug="survey_sites_dashboard"
+					title="Shape the Future of WordPress.com"
+					description="Got a minute? We’d love to get your feedback on some upcoming changes to the WordPress.com dashboard."
+					image={ surveySitesDashboardImage }
+					imageAlt="WordPress.com dashboard"
+					url="https://wordpressdotcom.crowdsignal.net/wordpress-com-dashboard-feedback"
+					onDismiss={ () => setShowSurvey( false ) }
+				/>
 			) }
 		</Layout>
 	);

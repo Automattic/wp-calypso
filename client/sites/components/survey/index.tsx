@@ -5,20 +5,23 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { SURVEYS } from './constants';
 import './style.scss';
 
 type SurveyProps = {
 	slug: string;
+	title: string;
+	description: string;
+	image: string;
+	imageAlt: string;
+	url: string;
 	onDismiss: ( context: string ) => void;
 };
 
 const ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
 
-const Survey = ( { slug, onDismiss }: SurveyProps ) => {
+const Survey = ( { slug, title, description, image, imageAlt, url, onDismiss }: SurveyProps ) => {
 	const surveyWrapper = useRef( document.createElement( 'div' ) ).current;
 	const translate = useTranslate();
-	const content = SURVEYS[ slug ];
 	const hasDismissedCookie = cookie.parse( document.cookie )?.[ slug ];
 
 	useEffect( () => {
@@ -51,7 +54,7 @@ const Survey = ( { slug, onDismiss }: SurveyProps ) => {
 		onDismiss( context );
 	};
 
-	if ( ! content || ! content.href || hasDismissedCookie ) {
+	if ( hasDismissedCookie ) {
 		return null;
 	}
 
@@ -60,7 +63,7 @@ const Survey = ( { slug, onDismiss }: SurveyProps ) => {
 			<Button className="survey__backdrop" onClick={ () => handleDismiss( 'backdrop' ) } />
 			<div className="survey__popup">
 				<div className="survey__popup-img">
-					<img src={ content.image } alt={ content.imageAlt } />
+					<img src={ image } alt={ imageAlt } />
 					<Button
 						onClick={ () => handleDismiss( 'close-button' ) }
 						className="survey__popup-img-close"
@@ -69,15 +72,15 @@ const Survey = ( { slug, onDismiss }: SurveyProps ) => {
 					</Button>
 				</div>
 				<div className="survey__popup-content">
-					<div className="survey__popup-content-title">{ content.title }</div>
-					<div className="survey__popup-content-description">{ content.description }</div>
+					<div className="survey__popup-content-title">{ title }</div>
+					<div className="survey__popup-content-description">{ description }</div>
 					<div className="survey__popup-content-buttons">
 						<Button variant="tertiary" onClick={ () => handleDismiss( 'decline' ) }>
 							{ translate( 'No thanks' ) }
 						</Button>
 						<Button
 							variant="primary"
-							href={ content.href }
+							href={ url }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ handleCTAClick }

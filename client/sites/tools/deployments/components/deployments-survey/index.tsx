@@ -20,7 +20,6 @@ export const GitHubDeploymentSurvey = () => {
 			) }
 			dismissText={ translate( 'Remind later' ) }
 			confirmText={ translate( 'Take survey' ) }
-			showOverlay={ false }
 		/>,
 		document.body
 	);
