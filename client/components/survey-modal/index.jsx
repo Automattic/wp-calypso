@@ -126,6 +126,7 @@ SurveyModal.propTypes = {
 	heading: PropTypes.string,
 	title: PropTypes.string,
 	surveyImage: PropTypes.string,
+	surveyImageAlt: PropTypes.string,
 	description: PropTypes.string.isRequired,
 	dismissText: PropTypes.string.isRequired,
 	confirmText: PropTypes.string.isRequired,
