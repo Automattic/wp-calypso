@@ -18,6 +18,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import SurveyModal from 'calypso/components/survey-modal';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -54,7 +55,6 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import Survey from './survey';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -139,7 +139,6 @@ const SitesDashboard = ( {
 }: SitesDashboardProps ) => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
-	const [ showSurvey, setShowSurvey ] = useState( true );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -466,15 +465,19 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-			{ isEligibleSurvey && showSurvey && (
-				<Survey
-					slug="survey_sites_dashboard"
+
+			{ isEligibleSurvey(
+				<SurveyModal
+					name="survey-sites-dashboard"
+					eventName="calypso_survey_sites_dashboard"
 					title="Shape the Future of WordPress.com"
 					description="Got a minute? We’d love to get your feedback on some upcoming changes to the WordPress.com dashboard."
-					image={ surveySitesDashboardImage }
-					imageAlt="WordPress.com dashboard"
+					surveyImage={ surveySitesDashboardImage }
+					surveyImageAlt="WordPress.com dashboard"
 					url="https://wordpressdotcom.crowdsignal.net/wordpress-com-dashboard-feedback"
-					onDismiss={ () => setShowSurvey( false ) }
+					dismissText="No thanks"
+					confirmText="Take survey"
+					showOverlay={ false }
 				/>
 			) }
 		</Layout>
