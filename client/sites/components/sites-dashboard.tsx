@@ -466,7 +466,7 @@ const SitesDashboard = ( {
 				</GuidedTourContextProvider>
 			) }
 
-			{ isEligibleSurvey(
+			{ isEligibleSurvey && (
 				<SurveyModal
 					name="survey-sites-dashboard"
 					eventName="calypso_survey_sites_dashboard"
