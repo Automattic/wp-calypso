@@ -150,6 +150,7 @@ const SitesDashboard = ( {
 	const isEligibleSurvey =
 		isEnabled( 'sites/dashboard-survey' ) &&
 		isEnglishLocale &&
+		userId &&
 		( isEligibleForProductSampling( userId, 15 ) || urlParams.has( 'show_survey' ) );
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {

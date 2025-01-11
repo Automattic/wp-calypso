@@ -34,13 +34,11 @@ const Survey = ( { slug, onSurveyClick, onClose }: SurveyProps ) => {
 		<div className="survey">
 			<Button className="survey__backdrop" onClick={ () => onClose( 'backdrop' ) } />
 			<div className="survey__popup">
-				<div className="survey__popup-head">
-					<Button onClick={ () => onClose( 'close-button' ) } className="survey__popup-head-close">
-						<Gridicon icon="cross" size={ 16 } />
-					</Button>
-				</div>
 				<div className="survey__popup-img">
 					<img src={ content.image } alt={ content.imageAlt } />
+					<Button onClick={ () => onClose( 'close-button' ) } className="survey__popup-img-close">
+						<Gridicon icon="cross" size={ 24 } />
+					</Button>
 				</div>
 				<div className="survey__popup-content">
 					<div className="survey__popup-content-title">{ content.title }</div>

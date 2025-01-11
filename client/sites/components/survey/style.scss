@@ -26,64 +26,61 @@
 		width: 416px;
 		max-width: calc(100% - 50px);
 		z-index: 2;
-		border-radius: 2px;
-		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		box-shadow:
+			0 5px 15px 0 rgba(0, 0, 0, 0.08),
+			0 15px 27px 0 rgba(0, 0, 0, 0.07),
+			0 30px 36px 0 rgba(0, 0, 0, 0.04),
+			0 50px 43px 0 rgba(0, 0, 0, 0.02);
 		overflow: hidden;
 		font-family: $font-sf-pro-text;
 
-		.survey__popup-head {
-			background: var(--color-accent);
-			border-bottom: 1px solid var(--color-accent-0);
-			height: 56px;
-			padding: 0 14px 0 16px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-
-			.survey__popup-head-title {
-				color: var(--studio-white);
-				font-size: rem(14px);
-				font-weight: 500;
-				line-height: 20px;
-				letter-spacing: -0.15px;
-			}
-
-			.survey__popup-head-close svg {
-				fill: var(--studio-white);
-			}
-		}
-
 		.survey__popup-img {
 			background: var(--color-accent);
-			padding-bottom: 57.9%;
-			height: 0;
+			height: 270px;
+			overflow: hidden;
+			position: relative;
 
 			img {
-				width: 100%;
 				display: block;
+				inset-block-start: 42px;
+				inset-inline-start: 32px;
+				position: absolute;
+				width: 100%;
+			}
+
+			.survey__popup-img-close {
+				padding: 8px;
+				position: absolute;
+				inset-block-start: 4px;
+				inset-inline-end: 0;
+
+				svg {
+					fill: var(--studio-white);
+				}
 			}
 		}
 
 		.survey__popup-content {
-			padding: 18px 24px 30px;
+			padding: 24px 32px;
 			background: var(--studio-white);
 
 			.survey__popup-content-title {
-				font-size: rem(16px);
+				color: var(--studio-gray-90);
+				font-size: $font-title-small;
 				font-weight: 500;
 				line-height: 24px;
-				letter-spacing: -0.32px;
-				padding-bottom: 8px;
+				margin-bottom: 16px;
 			}
 
 			.survey__popup-content-description {
-				font-size: rem(14px);
+				font-size: rem(13px);
 				line-height: 20px;
-				letter-spacing: -0.15px;
-				padding-bottom: 18px;
+				margin-bottom: 16px;
 			}
 
 			.survey__popup-content-buttons {
+				color: var(--studio-gray-90);
 				display: flex;
 				gap: 8px;
 				justify-content: flex-end;
