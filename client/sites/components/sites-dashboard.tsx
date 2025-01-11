@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -18,7 +17,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
-import SurveyModal from 'calypso/components/survey-modal';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -34,12 +32,9 @@ import {
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isEligibleForProductSampling } from 'calypso/utils';
-import surveySitesDashboardImage from '../assets/images/survey-sites-dashboard.svg';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
@@ -53,6 +48,7 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
+import SitesDashboardSurvey from './sites-dashboard-survey';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { View } from '@wordpress/dataviews';
@@ -137,20 +133,11 @@ const SitesDashboard = ( {
 	selectedSiteFeaturePreview = undefined,
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
-	const isEnglishLocale = useIsEnglishLocale();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
-	const userId = useSelector( getCurrentUserId );
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const isEligibleSurvey =
-		isEnabled( 'sites/dashboard-survey' ) &&
-		isEnglishLocale &&
-		userId &&
-		( isEligibleForProductSampling( userId, 15 ) || urlParams.has( 'show_survey' ) );
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -466,20 +453,7 @@ const SitesDashboard = ( {
 				</GuidedTourContextProvider>
 			) }
 
-			{ isEligibleSurvey && (
-				<SurveyModal
-					name="survey-sites-dashboard"
-					eventName="calypso_survey_sites_dashboard"
-					title="Shape the Future of WordPress.com"
-					description="Got a minute? We’d love to get your feedback on some upcoming changes to the WordPress.com dashboard."
-					surveyImage={ surveySitesDashboardImage }
-					surveyImageAlt="WordPress.com dashboard"
-					url="https://wordpressdotcom.crowdsignal.net/wordpress-com-dashboard-feedback"
-					dismissText="No thanks"
-					confirmText="Take survey"
-					showOverlay={ false }
-				/>
-			) }
+			<SitesDashboardSurvey />
 		</Layout>
 	);
 };
