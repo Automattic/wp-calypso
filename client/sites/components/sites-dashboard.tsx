@@ -467,19 +467,7 @@ const SitesDashboard = ( {
 				</GuidedTourContextProvider>
 			) }
 			{ isEligibleSurvey && showSurvey && (
-				<Survey
-					slug={ SURVEY_SITES_DASHBOARD }
-					onClose={ ( context ) => {
-						recordTracksEvent( 'calypso_sites_survey_close', {
-							slug: SURVEY_SITES_DASHBOARD,
-							context,
-						} );
-						setShowSurvey( false );
-					} }
-					onSurveyClick={ () => {
-						recordTracksEvent( 'calypso_sites_survey_click', { slug: SURVEY_SITES_DASHBOARD } );
-					} }
-				/>
+				<Survey slug={ SURVEY_SITES_DASHBOARD } onDismiss={ () => setShowSurvey( false ) } />
 			) }
 		</Layout>
 	);

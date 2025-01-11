@@ -11,7 +11,7 @@ type SurveyContentProps = {
 export const SURVEY_SITES_DASHBOARD = 'survey-sites-dashboard';
 
 // English-locale only. No need for translation.
-export const SURVEY_SITES_DASHBOARD_CONTENT: SurveyContentProps = {
+const SURVEY_SITES_DASHBOARD_CONTENT: SurveyContentProps = {
 	title: 'Shape the Future of WordPress.com',
 	description:
 		'Got a minute? We’d love to get your feedback on some upcoming changes to the WordPress.com dashboard.',
