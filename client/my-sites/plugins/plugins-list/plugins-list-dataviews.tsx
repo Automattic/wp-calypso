@@ -3,7 +3,10 @@ import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import {
+	DATAVIEWS_LIST,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
@@ -29,9 +32,9 @@ const pluginsListFields = [ 'plugins', 'sites', 'update' ];
 const pluginViewFields = [ 'plugins' ];
 
 const getFieldsPerView = ( pluginSlug: string | null ) => {
-	if ( pluginSlug ) {
-		return pluginViewFields;
-	}
+	// if ( pluginSlug ) {
+	// 	return pluginViewFields;
+	// }
 	return pluginsListFields;
 };
 
@@ -63,7 +66,9 @@ export default function PluginsListDataViews( {
 		perPage: 15,
 		search: initialSearch,
 		fields: getFieldsPerView( pluginSlug ),
+		type: DATAVIEWS_LIST,
 		layout: {
+			primaryField: 'plugins',
 			styles: {
 				plugins: {
 					width: '60%',
@@ -124,14 +129,14 @@ export default function PluginsListDataViews( {
 		}
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
-	useEffect( () => {
-		// Sets the correct fields when route changes
-		setDataViewsState( {
-			...dataViewsState,
-			fields: getFieldsPerView( pluginSlug ),
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginSlug ] );
+	// useEffect( () => {
+	// 	// Sets the correct fields when route changes
+	// 	setDataViewsState( {
+	// 		...dataViewsState,
+	// 		fields: getFieldsPerView( pluginSlug ),
+	// 	} );
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [ pluginSlug ] );
 
 	useEffect( () => {
 		if (
