@@ -11,11 +11,17 @@ type Sort =
 
 type Filters = undefined | Filter[];
 
+interface ViewStateUpdateResult {
+	view: ViewState;
+	updateView: ( newView: ViewStateUpdate ) => void;
+}
+
+function scrollToTop(): void {
+	window.scrollTo( { top: 0, behavior: 'smooth' } );
+}
+
 function verifySortField( field: string ): field is SortableField {
-	if ( ! [ 'date', 'service', 'type', 'amount' ].includes( field ) ) {
-		return false;
-	}
-	return true;
+	return [ 'date', 'service', 'type', 'amount' ].includes( field );
 }
 
 function areSortsEqual( a: Sort, b: Sort ): boolean {
@@ -46,67 +52,95 @@ function areFiltersEqual( a: Filters, b: Filters ): boolean {
 	);
 }
 
-export function useViewStateUpdate() {
+function handlePageUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
+	if ( newView.page !== undefined ) {
+		updatedView.page = newView.page;
+		scrollToTop();
+	}
+}
+
+function handlePerPageUpdate(
+	updatedView: ViewState,
+	currentView: ViewState,
+	newView: ViewStateUpdate
+): void {
+	if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
+		updatedView.perPage = newView.perPage;
+		updatedView.page = 1;
+		scrollToTop();
+	}
+}
+
+function handleSortUpdate(
+	updatedView: ViewState,
+	currentView: ViewState,
+	newView: ViewStateUpdate
+): void {
+	if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
+		if ( verifySortField( newView.sort.field ) ) {
+			updatedView.sort = {
+				field: newView.sort.field,
+				direction: newView.sort.direction,
+			};
+			if ( newView.page === undefined ) {
+				updatedView.page = 1;
+				scrollToTop();
+			}
+		}
+	}
+}
+
+function handleFiltersUpdate(
+	updatedView: ViewState,
+	currentView: ViewState,
+	newView: ViewStateUpdate
+): void {
+	if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
+		updatedView.filters = newView.filters;
+		if ( newView.page === undefined ) {
+			updatedView.page = 1;
+			scrollToTop();
+		}
+	}
+}
+
+function handleSearchUpdate(
+	updatedView: ViewState,
+	currentView: ViewState,
+	newView: ViewStateUpdate
+): void {
+	if ( newView.search !== undefined && newView.search !== currentView.search ) {
+		updatedView.search = newView.search;
+		if ( newView.page === undefined ) {
+			updatedView.page = 1;
+			scrollToTop();
+		}
+	}
+}
+
+function handleFieldsUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
+	if ( newView.fields !== undefined ) {
+		updatedView.fields = newView.fields;
+	}
+}
+
+export function useViewStateUpdate(): ViewStateUpdateResult {
 	const [ view, setView ] = useState< ViewState >( defaultDataViewsState );
 
-	const scrollToTop = useCallback( () => {
-		window.scrollTo( { top: 0, behavior: 'smooth' } );
+	const updateView = useCallback( ( newView: ViewStateUpdate ) => {
+		setView( ( currentView ) => {
+			const updatedView = { ...currentView };
+
+			handlePageUpdate( updatedView, newView );
+			handlePerPageUpdate( updatedView, currentView, newView );
+			handleSortUpdate( updatedView, currentView, newView );
+			handleFiltersUpdate( updatedView, currentView, newView );
+			handleSearchUpdate( updatedView, currentView, newView );
+			handleFieldsUpdate( updatedView, newView );
+
+			return updatedView;
+		} );
 	}, [] );
-
-	const updateView = useCallback(
-		( newView: ViewStateUpdate ) => {
-			setView( ( currentView ) => {
-				const updatedView = { ...currentView };
-
-				if ( newView.page !== undefined ) {
-					updatedView.page = newView.page;
-					scrollToTop();
-				}
-
-				if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
-					updatedView.perPage = newView.perPage;
-					updatedView.page = 1;
-					scrollToTop();
-				}
-
-				if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
-					if ( verifySortField( newView.sort.field ) ) {
-						updatedView.sort = {
-							field: newView.sort.field,
-							direction: newView.sort.direction,
-						};
-						if ( newView.page === undefined ) {
-							updatedView.page = 1;
-							scrollToTop();
-						}
-					}
-				}
-
-				if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
-					updatedView.filters = newView.filters;
-					if ( newView.page === undefined ) {
-						updatedView.page = 1;
-						scrollToTop();
-					}
-				}
-
-				if ( newView.search !== undefined && newView.search !== currentView.search ) {
-					updatedView.search = newView.search;
-					if ( newView.page === undefined ) {
-						updatedView.page = 1;
-						scrollToTop();
-					}
-				}
-
-				if ( newView.fields !== undefined ) {
-					updatedView.fields = newView.fields;
-				}
-
-				return updatedView;
-			} );
-		},
-		[ scrollToTop ]
-	);
 
 	return {
 		view,
