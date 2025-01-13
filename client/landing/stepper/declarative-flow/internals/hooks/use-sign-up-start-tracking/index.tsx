@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { STEPPER_TRACKS_EVENT_SIGNUP_START } from 'calypso/landing/stepper/constants';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
@@ -16,8 +15,6 @@ interface Props {
 }
 
 export const useSignUpStartTracking = ( { flow }: Props ) => {
-	const [ queryParams ] = useSearchParams();
-	const ref = queryParams.get( 'ref' ) || '';
 	const flowName = flow.name;
 	const flowVariant = flow.variantSlug;
 	const isSignupFlow = flow.isSignupFlow;
@@ -50,6 +47,9 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 			return;
 		}
 
+		// Read the ref here to avoid re-rendering the hook when it changes.
+		const ref = new URLSearchParams( window.location.search ).get( 'ref' ) || '';
+
 		recordSignupStart( {
 			flow: flowName,
 			ref,
@@ -58,5 +58,5 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 				...( flowVariant && { flow_variant: flowVariant } ),
 			},
 		} );
-	}, [ isSignupFlow, flowName, ref, signupStartEventProps, isLoading, flowVariant ] );
+	}, [ isSignupFlow, flowName, signupStartEventProps, isLoading, flowVariant ] );
 };

@@ -43,11 +43,14 @@ const render = ( { flow, queryParams = {} } ) => {
 				flow,
 			} ),
 		{
-			wrapper: ( { children } ) => (
-				<MemoryRouter initialEntries={ [ addQueryArgs( `/setup/${ flow.name }`, queryParams ) ] }>
-					{ children }
-				</MemoryRouter>
-			),
+			wrapper: ( { children } ) => {
+				// The hook depends on window.location.search to determine the query params.
+				Reflect.deleteProperty( global.window, 'location' );
+				window.location = new URL(
+					'https://example.com/' + addQueryArgs( `/setup/${ flow.name }`, queryParams )
+				) as unknown as Location;
+				return <MemoryRouter initialEntries={ [ '/setup' ] }>{ children }</MemoryRouter>;
+			},
 		}
 	);
 };

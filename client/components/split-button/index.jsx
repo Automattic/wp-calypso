@@ -13,7 +13,7 @@ class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.node,
 		toggleTitle: PropTypes.string,
 		position: PropTypes.string,
 		disabled: PropTypes.bool,
@@ -117,7 +117,7 @@ class SplitButton extends PureComponent {
 						onClick={ onClick }
 						href={ this.props.href }
 					>
-						{ icon && <Gridicon icon={ icon } /> }
+						{ icon && ( typeof icon === 'string' ? <Gridicon icon={ icon } /> : icon ) }
 						{ label }
 					</Button>
 				) }
