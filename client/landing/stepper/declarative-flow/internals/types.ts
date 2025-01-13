@@ -191,8 +191,14 @@ export type FlowV2 = {
 
 	/**
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
+	 * Use `getSteps` instead.
 	 */
 	__flowSteps?: readonly StepperStep[];
+
+	/**
+	 * Use this method to define the steps of the flow.
+	 */
+	getSteps(): readonly StepperStep[];
 
 	name: string;
 	/**

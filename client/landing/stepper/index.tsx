@@ -41,7 +41,8 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
-import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
+import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
+import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
@@ -135,23 +136,28 @@ window.AppBoot = async () => {
 	setupErrorLogger( reduxStore );
 
 	const flowLoader = determineFlow();
-	const { default: rawFlow } = await flowLoader();
-	const flowSteps = 'initialize' in rawFlow ? await rawFlow.initialize() : null;
+	let { default: flow } = await flowLoader();
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
 
 	/**
 	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
 	 */
-	if ( ! flowSteps ) {
+	if ( flowSteps === false ) {
 		return;
 	}
 
 	// Checking for initialize implies this a V2 flow.
-	if ( 'initialize' in rawFlow ) {
+	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
+	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
+	if ( 'initialize' in flow && flowSteps ) {
 		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
-		rawFlow.__flowSteps = flowSteps;
+		flowSteps = injectUserStepInSteps( flowSteps );
+		flow.__flowSteps = flowSteps;
+		enhanceFlowWithUtilityFunctions( flow );
+	} else if ( 'useSteps' in flow ) {
+		// V1 flows have to be enhanced by changing their `useSteps` hook.
+		flow = enhanceFlowWithAuth( flow );
 	}
-
-	const flow = enhanceFlowWithAuth( rawFlow, flowSteps );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
