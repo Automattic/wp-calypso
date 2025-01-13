@@ -14,6 +14,8 @@ import { useViewStateUpdate } from './hooks/use-view-state-update';
 import 'calypso/components/dataviews/style.scss';
 import './style-data-view.scss';
 
+const DEFAULT_LAYOUT = { table: {} };
+
 export interface BillingHistoryListProps {
 	getReceiptUrlFor: ( receiptId: string ) => string;
 }
@@ -40,7 +42,6 @@ export default function BillingHistoryListDataView( {
 	);
 	const translate = useTranslate();
 	const fields = useFieldDefinitions( transactions );
-	const defaultLayout = { table: {} };
 
 	return (
 		<div className="billing-history">
@@ -56,7 +57,7 @@ export default function BillingHistoryListDataView( {
 					search
 					searchLabel={ translate( 'Search receipts' ) }
 					onChangeView={ viewState.updateView }
-					defaultLayouts={ defaultLayout }
+					defaultLayouts={ DEFAULT_LAYOUT }
 					actions={ actions }
 					isLoading={ isLoading }
 				/>
