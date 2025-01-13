@@ -35,7 +35,13 @@ export function useReceiptActions(
 				isPrimary: true,
 				iconName: 'pages',
 				callback: ( items: BillingTransaction[] ) => {
+					if ( ! items || ! Array.isArray( items ) ) {
+						return;
+					}
 					const item = items[ 0 ];
+					if ( ! item?.id ) {
+						return;
+					}
 					pageRedirect.redirect( getReceiptUrlFor( item.id ) );
 				},
 			},
@@ -45,7 +51,13 @@ export function useReceiptActions(
 				isPrimary: true,
 				iconName: 'mail',
 				callback: ( items: BillingTransaction[] ) => {
+					if ( ! items || ! Array.isArray( items ) ) {
+						return;
+					}
 					const item = items[ 0 ];
+					if ( ! item?.id ) {
+						return;
+					}
 					recordClickEvent( 'Email Receipt in Billing History' );
 					dispatch( sendBillingReceiptEmail( item.id ) );
 				},
