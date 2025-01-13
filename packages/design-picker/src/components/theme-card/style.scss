@@ -223,7 +223,7 @@ $theme-card-info-margin-top: 16px;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 
-	&-badge {
+	&-badge, .theme-tier-badge {
 		border-radius: 20px;  /* stylelint-disable-line scales/radii */
 		flex: 0 0 auto;
 		text-transform: none;
@@ -231,6 +231,7 @@ $theme-card-info-margin-top: 16px;
 		font-weight: 600;
 		line-height: 20px;
 		padding: 0 10px;
+		margin-right: -20px;
 
 		&-active {
 			background-color: var(--color-primary-0);
@@ -270,21 +271,6 @@ $theme-card-info-margin-top: 16px;
 	white-space: nowrap;
 	width: 0;
 	text-overflow: ellipsis;
-}
-
-.theme-card__info-style-variations {
-	align-items: center;
-	display: flex;
-	font-size: 0;
-	gap: 4px;
-	height: 24px;
-
-	.style-variation__badge-wrapper,
-	.style-variation__badge-more-wrapper {
-		&:focus-visible span {
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--color-primary-light);
-		}
-	}
 }
 
 .theme-card__info-options,
