@@ -1,6 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
-import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import {
+	isUnderDomainManagementAll,
+	isUnderDomainSiteContext,
+	domainManagementRoot,
+	domainSiteContextRoot,
+} from 'calypso/my-sites/domains/paths';
 
 type QueryStringParameters = { [ key: string ]: string | undefined };
 
@@ -14,6 +19,7 @@ type EmailPathUtilityFunction = (
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 export const domainsManagementPrefix = '/domains/manage/all/email';
+export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
@@ -78,7 +84,11 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => {
 	if ( isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
 			urlParameters
 		) }`;
 	}
@@ -155,13 +165,17 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 export const getEmailManagementPath: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
-	relativeTo,
-	urlParameters
+	relativeTo = null,
+	urlParameters = {},
+	inSiteContext = false
 ) => {
-	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
-			urlParameters
-		) }`;
+	if ( inSiteContext || isUnderDomainManagementAll( relativeTo ) ) {
+		const prefix =
+			inSiteContext || isUnderDomainSiteContext( relativeTo )
+				? emailSiteContextPrefix
+				: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
 	}
 
 	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
