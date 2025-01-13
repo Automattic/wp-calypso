@@ -88,13 +88,14 @@ export const getShortcuts = createSelector(
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.MONTH,
 			},
-			{
-				id: 'year_to_date',
-				label: translate( 'Year to date' ),
-				startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
-				endDate: siteTodayStr,
-				period: DATERANGE_PERIOD.MONTH,
-			},
+			// Temporarily hide this shortcut before we resolve the issue of identifying shortcuts.
+			// {
+			// 	id: 'year_to_date',
+			// 	label: translate( 'Year to date' ),
+			// 	startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
+			// 	endDate: siteTodayStr,
+			// 	period: DATERANGE_PERIOD.MONTH,
+			// },
 			{
 				id: 'last_3_years',
 				label: translate( 'Last 3 years' ),
