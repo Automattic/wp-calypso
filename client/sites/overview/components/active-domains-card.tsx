@@ -78,7 +78,6 @@ const ActiveDomainsCard: FC = () => {
 				isHostingOverview
 				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
-				isHostingOverview
 				userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 				onDomainAction={ ( action, domain ) => {
 					if ( action === 'set-primary-address' && site ) {
