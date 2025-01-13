@@ -6,7 +6,7 @@ import {
 } from '../action-types';
 
 // Stores the user data
-const profiles = ( state = {}, action ) => {
+const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_REQUEST_SUCCESS:
 			return {
@@ -24,7 +24,7 @@ const profiles = ( state = {}, action ) => {
 };
 
 // Tracks loading states
-const profileRequests = ( state = {}, action ) => {
+const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_REQUEST:
 			return {
@@ -43,6 +43,6 @@ const profileRequests = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
-	profiles,
-	profileRequests,
+	items,
+	requesting,
 } );

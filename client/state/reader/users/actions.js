@@ -7,26 +7,26 @@ import {
 
 import 'calypso/state/reader/init';
 
-const userRequestsInFlight = new Set();
+const requestsInFlight = new Set();
 export function requestUser( userId ) {
 	return async ( dispatch ) => {
-		if ( userRequestsInFlight.has( userId ) ) {
+		if ( requestsInFlight.has( userId ) ) {
 			return;
 		}
 
 		dispatch( { type: READER_USER_REQUEST, userId } );
-		userRequestsInFlight.add( userId );
+		requestsInFlight.add( userId );
 
 		try {
 			const userData = await wpcom.req.get( `/users/${ encodeURIComponent( userId ) }/` );
-			userRequestsInFlight.delete( userId );
+			requestsInFlight.delete( userId );
 			dispatch( {
 				type: READER_USER_REQUEST_SUCCESS,
 				userId,
 				userData,
 			} );
 		} catch ( error ) {
-			userRequestsInFlight.delete( userId );
+			requestsInFlight.delete( userId );
 			dispatch( {
 				type: READER_USER_REQUEST_FAILURE,
 				userId,
