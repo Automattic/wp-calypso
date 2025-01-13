@@ -262,7 +262,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	);
 }
 
-const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 10000;
+const FEEDBACK_HIGH_TRAFFIC_SITE_THRESHOLD = 1000;
 
 function getHighTrafficThreshold() {
 	const value = Number( localStorage.getItem( 'StatsHighTrafficThreshold' ) );
