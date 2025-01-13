@@ -196,7 +196,7 @@ export type FlowV2 = {
 	__flowSteps?: readonly StepperStep[];
 
 	/**
-	 * Use this method to define the steps of the flow.
+	 * Use this method to retrieve the steps of the flow.
 	 */
 	getSteps?(): readonly StepperStep[];
 
