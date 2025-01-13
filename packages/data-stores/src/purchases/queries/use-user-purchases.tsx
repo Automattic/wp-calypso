@@ -29,6 +29,20 @@ async function fetchSitePurchases( siteId: number ): Promise< RawPurchase[] > {
 	} );
 }
 
+async function fetchSinglePurchase( purchaseId: number ): Promise< RawPurchase > {
+	return await wpcomRequest( {
+		path: `/me/purchases/${ encodeURIComponent( purchaseId ) }`,
+		apiVersion: '1.1',
+	} );
+}
+
+async function fetchAndTransformPurchaseById(
+	purchaseId: number
+): Promise< Purchase | undefined > {
+	const rawPurchase = await fetchSinglePurchase( purchaseId );
+	return rawPurchase ? createPurchaseObject( rawPurchase ) : undefined;
+}
+
 async function fetchAndTransformSitePurchases( siteId: number ): Promise< Purchase[] > {
 	const rawPurchases = await fetchSitePurchases( siteId );
 	return rawPurchases.map( createPurchaseObject );
@@ -39,39 +53,63 @@ async function fetchAndTransformUserPurchases(): Promise< Purchase[] > {
 	return rawPurchases.map( createPurchaseObject );
 }
 
-function getUserPurchasesQueryKey() {
+function getPurchasesQueryKey( { siteId, purchaseId }: { siteId?: number; purchaseId?: number } ) {
+	if ( purchaseId ) {
+		return [ 'single-purchase', purchaseId ];
+	}
+	if ( siteId ) {
+		return [ 'site-purchases', siteId ];
+	}
 	return [ 'user-purchases' ];
 }
 
-function getSitePurchasesQueryKey( siteId: number ) {
-	return [ 'site-purchases', siteId ];
-}
-
-export function useUserPurchases( siteId?: number ): UserPurchasesState {
+export function useUserPurchases( params?: {
+	siteId?: number;
+	purchaseId?: number;
+} ): UserPurchasesState {
+	const { siteId, purchaseId } = params ?? {};
 	const queryClient = useQueryClient();
 	const result = useQuery< Purchase[] >( {
-		// eslint can't tell that we are providing the siteId when it is needed
-		// so we must disable the rule.
-		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: siteId ? getSitePurchasesQueryKey( siteId ) : getUserPurchasesQueryKey(),
+		queryKey: getPurchasesQueryKey( { siteId, purchaseId } ),
 		queryFn: async () => {
+			if ( purchaseId ) {
+				// If we are looking for just a single purchase, return it from
+				// the user-purchases state, if it exists there already.
+				const userPurchases = queryClient.getQueryData< Purchase[] >( getPurchasesQueryKey( {} ) );
+				const purchasesMatchingId =
+					userPurchases?.filter( ( purchase ) => purchase.id === purchaseId ) ?? [];
+				if ( purchasesMatchingId.length > 0 ) {
+					return purchasesMatchingId;
+				}
+				// If the user-purchases state does not contain this purchase,
+				// fetch it and store it in the user-purchases state for later.
+				const purchaseForId = await fetchAndTransformPurchaseById( purchaseId );
+				if ( purchaseForId ) {
+					queryClient.setQueryData( getPurchasesQueryKey( {} ), [ purchaseForId ] );
+					return [ purchaseForId ];
+				}
+				return [];
+			}
+
+			if ( siteId ) {
+				// If we are looking for just the user purchases for a site, return
+				// site purchases from user-purchases state if they exist there already.
+				const userPurchases = queryClient.getQueryData< Purchase[] >( getPurchasesQueryKey( {} ) );
+				const sitePurchasesFromUser =
+					userPurchases?.filter( ( purchase ) => purchase.siteId === siteId ) ?? [];
+				if ( sitePurchasesFromUser.length > 0 ) {
+					return sitePurchasesFromUser;
+				}
+				// If no site purchases exist in the user-purchases state for
+				// this site, fetch them and store them in the user-purchases
+				// state for later.
+				const sitePurchases = await fetchAndTransformSitePurchases( siteId );
+				queryClient.setQueryData( getPurchasesQueryKey( {} ), sitePurchases );
+				return sitePurchases;
+			}
+
 			// If we are looking for all user purchases, fetch them.
-			if ( ! siteId ) {
-				return fetchAndTransformUserPurchases();
-			}
-			// If we are looking for just the user purchases for a site, return
-			// site purchases from user-purchases state if they exist.
-			const userPurchases = queryClient.getQueryData< Purchase[] >( getUserPurchasesQueryKey() );
-			const sitePurchasesFromUser =
-				userPurchases?.filter( ( purchase ) => purchase.siteId === siteId ) ?? [];
-			if ( sitePurchasesFromUser.length > 0 ) {
-				return sitePurchasesFromUser;
-			}
-			// If no site purchases exist in the user-purchases state, fetch
-			// them and store them in the user-purchases state for later.
-			const sitePurchases = await fetchAndTransformSitePurchases( siteId );
-			queryClient.setQueryData( getUserPurchasesQueryKey(), sitePurchases );
-			return sitePurchases;
+			return fetchAndTransformUserPurchases();
 		},
 		meta: {
 			persist: false,
