@@ -90,7 +90,7 @@ export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
 	return (
-		<HelpCenterRequiredContextProvider value={ { ...props } }>
+		<HelpCenterRequiredContextProvider value={ props }>
 			<HelpCenter { ...props } />
 		</HelpCenterRequiredContextProvider>
 	);
