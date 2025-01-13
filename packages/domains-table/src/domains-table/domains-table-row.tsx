@@ -56,6 +56,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isCompact,
 		currentlySelectedDomainName,
 		selectedFeature,
+		isHostingOverview,
 	} = useDomainsTable();
 
 	const renderSiteCell = () => {
@@ -80,7 +81,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink( domain, siteSlug, isAllSitesView, selectedFeature )
+		? getDomainManagementLink(
+				domain,
+				siteSlug,
+				isAllSitesView,
+				selectedFeature,
+				isHostingOverview
+		  )
 		: '';
 
 	const renderOwnerCell = () => {
@@ -100,7 +107,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const handleSelect = () => {
 		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
-		if ( isAllDomainManagementEnabled ) {
+		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
 			page.show( domainManagementLink );
 			return;
 		}

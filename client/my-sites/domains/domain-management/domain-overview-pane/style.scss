@@ -148,3 +148,42 @@
 		padding: 0;
 	}
 }
+
+.domains-overview {
+	.hosting-dashboard-layout-with-columns__container {
+		background: var(--color-sidebar-background);
+	}
+
+	.hosting-dashboard-item-view {
+		background: var(--color-light-backdrop);
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		flex-grow: 1;
+		max-height: calc(100vh - 32px - var(--masterbar-height));
+		transition: flex-grow 0.2s;
+		width: auto;
+	}
+
+	.hosting-dashboard-item-view__header-info {
+		flex-wrap: wrap;
+	}
+
+	.hosting-dashboard-item-view__content div {
+		flex-grow: 1;
+	}
+
+	.domain-settings-page {
+		margin-left: 0;
+		max-width: 1200px;
+	}
+
+	.domains-overview__details.main {
+		&,
+		.hosting-dashboard-layout-column__container {
+			height: 100%;
+		}
+	}
+}
+
+.sites-dashboard.domains-overview .hosting-dashboard-item-view__content {
+	height: 0; /* Quick fix for scrolling issue in domain overview in site-context, will be replaced with a better solution in the future */
+}
