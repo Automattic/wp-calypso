@@ -168,6 +168,25 @@ class StatsSummary extends Component {
 				);
 				break;
 
+			case 'locations':
+				title = translate( 'Locations' );
+				path = 'locations';
+				statType = 'statsCountryViews';
+
+				summaryView = (
+					<Fragment key="countries-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleLocations
+							moduleStrings={ StatsStrings.countries }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
+				);
+				break;
+
 			case 'posts':
 				title = translate( 'Posts & pages' );
 				path = 'posts';
