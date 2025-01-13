@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 import { useFieldDefinitions } from './hooks/use-field-definitions';
@@ -19,9 +18,9 @@ export interface BillingHistoryListProps {
 	getReceiptUrlFor: ( receiptId: string ) => string;
 }
 
-const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
+export default function BillingHistoryListDataView( {
 	getReceiptUrlFor,
-} ) => {
+}: BillingHistoryListProps ) {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
 	const viewState = useViewStateUpdate();
@@ -63,6 +62,4 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 			</div>
 		</div>
 	);
-};
-
-export default withLocalizedMoment( BillingHistoryListDataView );
+}
