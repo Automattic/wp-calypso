@@ -7,17 +7,11 @@ export default function usePressableOwnershipType() {
 
 	const pressableOwnership = useMemo( () => {
 		// Agencies can have pressable through A4A Licenses or via Pressable itself
-		const hasPressablePlan = !! activeAgency?.third_party?.pressable?.pressable_id;
+		const hasPressablePlan =
+			!! activeAgency?.third_party?.pressable?.pressable_id &&
+			activeAgency?.third_party?.pressable?.a4a_id;
 
-		if ( ! hasPressablePlan ) {
-			return 'none';
-		}
-
-		// If the agency has a regular Pressable plan (not brought through A4A marketplace), A4A id is null.
-		const hasRegularPressablePlan =
-			hasPressablePlan && activeAgency?.third_party?.pressable?.a4a_id === null;
-
-		return hasRegularPressablePlan ? 'regular' : 'agency';
+		return hasPressablePlan ? 'agency' : 'none';
 	}, [ activeAgency ] );
 
 	return pressableOwnership;
