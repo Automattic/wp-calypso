@@ -1,18 +1,31 @@
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
-import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './apps-badge.scss';
 
+interface StoreConfig {
+	defaultSrc: string;
+	src: string;
+	tracksEvent: string;
+	getStoreLink: ( utm_campaign: string, utm_source?: string, utm_medium?: string ) => string;
+	getTitleText: () => string;
+	getAltText: () => string;
+	getLocaleSlug: () => string;
+}
+
+interface AppStoreBadgeUrls {
+	ios: StoreConfig;
+	android: StoreConfig;
+}
+
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
-const APP_STORE_BADGE_URLS = {
+const APP_STORE_BADGE_URLS: AppStoreBadgeUrls = {
 	ios: {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
@@ -41,28 +54,35 @@ const APP_STORE_BADGE_URLS = {
 	},
 };
 
-export class AppsBadge extends PureComponent {
-	static propTypes = {
-		altText: TranslatableString,
-		storeLink: PropTypes.string,
-		storeName: PropTypes.oneOf( [ 'ios', 'android' ] ).isRequired,
-		titleText: TranslatableString,
-		utm_source: PropTypes.string.isRequired,
-		utm_campaign: PropTypes.string,
-		utm_medium: PropTypes.string,
-	};
+interface AppsBadgeProps {
+	altText?: string;
+	storeLink?: string | null;
+	storeName: 'ios' | 'android';
+	titleText?: string;
+	utm_source: string;
+	utm_campaign?: string;
+	utm_medium?: string;
+	recordTracksEvent: ( event: string, props: { utm_source_string: string } ) => void;
+}
 
+interface AppsBadgeState {
+	imageSrc: string;
+	hasExternalImageLoaded?: boolean;
+}
+
+export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 	static defaultProps = {
 		altText: '',
 		storeLink: null,
 		titleText: '',
 	};
 
-	constructor( props ) {
+	private image: HTMLImageElement | null = null;
+
+	constructor( props: AppsBadgeProps ) {
 		super( props );
 
 		const localeSlug = APP_STORE_BADGE_URLS[ props.storeName ].getLocaleSlug().toLowerCase();
-
 		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
 
 		this.state = {
@@ -77,27 +97,27 @@ export class AppsBadge extends PureComponent {
 		}
 	}
 
-	loadImage() {
+	loadImage(): void {
 		this.image = new globalThis.Image();
 		this.image.src = this.state.imageSrc;
 		this.image.onload = this.onLoadImageComplete;
 		this.image.onerror = this.onLoadImageError;
 	}
 
-	onLoadImageComplete = () => {
+	onLoadImageComplete = (): void => {
 		this.setState( {
 			hasExternalImageLoaded: true,
 		} );
 	};
 
-	onLoadImageError = () => {
+	onLoadImageError = (): void => {
 		this.setState( {
 			hasExternalImageLoaded: false,
 			imageSrc: APP_STORE_BADGE_URLS[ this.props.storeName ].defaultSrc,
 		} );
 	};
 
-	onLinkClick = () => {
+	onLinkClick = (): void => {
 		const { storeName, utm_source } = this.props;
 		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {
 			utm_source_string: utm_source,
@@ -120,7 +140,7 @@ export class AppsBadge extends PureComponent {
 			<figure className={ figureClassNames }>
 				<a
 					href={
-						storeLink ? storeLink : badge.getStoreLink( utm_campaign, utm_source, utm_medium )
+						storeLink ? storeLink : badge.getStoreLink( utm_campaign!, utm_source, utm_medium )
 					}
 					onClick={ this.onLinkClick }
 					target="_blank"

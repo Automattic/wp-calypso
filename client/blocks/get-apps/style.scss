@@ -1,292 +1,127 @@
-body.get-apps__body {
-	background: var(--studio-white);
-	--color-surface-backdrop: var(--studio-white);
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	.layout__content,
-	.layout__primary .main {
-		padding-bottom: 0;
-		// Setting the min-height is necessary to ensure the desktop panel's background
-		// extends the full height of larger screens.
-		min-height: calc(100vh - 79px);
-	}
-}
-
-.get-apps__wrapper {
-	display: flex;
-	flex-direction: column;
-}
-
-.get-apps__wrapper > div {
-	width: 100%;
-}
-
-.get-apps__wrapper .card {
-	box-shadow: none;
-
-	@include breakpoint-deprecated("<480px") {
-		padding: 30px;
+main.get-apps {
+	.get-apps__wrapper {
+		display: flex;
+		flex-direction: column;
 	}
 
-}
+	.get-apps__section {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 24px;
+		gap: 24px;
 
-.get-apps__card-title {
-	margin-bottom: 4px;
-	font-size: $font-headline-small;
-	line-height: 41px;
-	@extend .wp-brand-font;
-
-	@include breakpoint-deprecated(">480px") {
-		font-size: $font-headline-medium;
-		line-height: 52px;
-	}
-}
-
-.get-apps__jetpack-branded-text {
-	color: var(--studio-jetpack-green-40);
-}
-
-.get-apps__jetpack-branded-link {
-	color: var(--studio-jetpack-green-40);
-	font-weight: 700;
-	cursor: pointer;
-
-	&:visited {
-		color: var(--studio-jetpack-green-40);
+		@include break-huge {
+			flex-direction: row;
+		}
 	}
 
-	&:hover,
-	&:active,
-	&.is-active,
-	&:focus {
-		color: var(--studio-jetpack-green-60);
-		text-decoration: underline;
-		text-underline-offset: 3px;
+	.get-apps__section > div {
+		width: 100%;
+
+		@include break-huge {
+			width: 50%;
+		}
 	}
-}
 
-.get-apps__desktop {
-	background: #e9eff5;
-	margin-bottom: 0;
+	.get-apps__card-header {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
 
-	&::before {
-		content: "";
-		background-color: #e9eff5;
-		position: absolute;
-		height: 100vh;
-		width: 200vw;
-		top: 0;
-		left: -100vw;
-		z-index: -1;
-		overflow: hidden;
+	.get-apps__card-title-container {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.get-apps__section-title {
+		font-size: $font-body;
+		font-weight: 500;
+		color: var(--studio-gray-50);
 	}
 
 	.get-apps__card-title {
-		margin-bottom: 20px;
-		font-size: $font-title-large;
+		font-size: $font-body;
+		font-weight: 500;
+		color: var(--studio-gray-80);
 	}
 
-	@include breakpoint-deprecated(">480px") {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-
-		.get-apps__card-title {
-			margin-bottom: 10px;
-			font-size: $font-headline-small;
-		}
-	}
-}
-
-.get-apps__mobile > div {
-	width: 100%;
-}
-
-.get-apps__desktop-icon {
-	margin-bottom: 14px;
-
-	@include breakpoint-deprecated(">480px") {
-		height: 60px;
-		width: 60px;
-		margin-top: 56px;
-		margin-bottom: 30px;
-	}
-
-}
-
-.get-apps__desktop-link {
-	color: var(--studio-blue-50);
-	font-weight: 700;
-	cursor: pointer;
-
-	&:visited {
-		color: var(--studio-blue-50);
-	}
-
-	&:hover,
-	&:active,
-	&.is-active,
-	&:focus {
-		color: var(--studio-blue-80);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-	}
-}
-
-.get-apps__mobile-icon {
-	width: 132px;
-	height: 70px;
-	margin-bottom: 30px;
-
-	@include breakpoint-deprecated(">480px") {
-		margin-bottom: 32px;
-	}
-}
-
-.get-apps__mobile {
-
-	.get-apps__store-subpanel {
-
-		@include breakpoint-deprecated(">800px") {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-		}
-
-		.get-apps__badges {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			margin-top: 30px;
-
-			.get-apps__app-badge {
-				margin-left: 0;
-			}
-		}
-
-		.get-apps__graphic {
-			display: none;
-
-			@include breakpoint-deprecated( ">1040px" ) {
-				display: flex;
-				align-self: end;
-				justify-content: flex-end;
-				min-width: 250px;
-			}
-		}
-	}
-
-	.get-apps__badges {
-		margin-top: 30px;
-
-		.get-apps__app-badge {
-			margin-left: 0;
-		}
-	}
-}
-
-.get-apps__illustration {
-	background-color: var(--color-surface);
-	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
-		0 1px 2px var(--color-neutral-0);
-	box-sizing: border-box;
-	color: var(--color-primary-dark);
-	max-width: 980px;
-	overflow: hidden;
-	padding: 16px;
-	text-align: center;
-
-	@include breakpoint-deprecated(">480px") {
-		padding: 24px;
-	}
-}
-
-.get-apps__illustration-heading {
-	font-size: $font-body;
-	font-weight: 600;
-	padding: 0 24px;
-
-	@include breakpoint-deprecated(">480px") {
-		font-size: $font-title-medium;
-	}
-}
-
-.get-apps__illustration-tagline {
-	font-size: $font-body-extra-small;
-	margin-bottom: 0;
-	padding: 0 24px;
-
-	@include breakpoint-deprecated(">480px") {
+	.get-apps__card-subtitle {
 		font-size: $font-body-small;
-	}
-}
-
-.get-apps__card-text {
-	color: var(--studio-blue-80);
-	font-size: $font-body-large;
-
-	@include breakpoint-deprecated(">480px") {
-		flex: 1;
-	}
-}
-
-.get-apps__also-available {
-	color: var(--studio-blue-80);
-	margin-top: 50px;
-	margin-bottom: 80px;
-	font-size: $font-body-large;
-
-	p {
-		margin-bottom: 15px;
-	}
-
-	a {
-		padding-right: 35px;
-		color: var(--studio-blue-50);
-		display: flex;
-		align-items: center;
+		color: var(--studio-gray-50);
 		font-weight: 400;
 	}
 
-	.svg-icon {
-		padding-right: 5px;
-	}
-
-	.get-apps__also-available-link-group {
+	.components-card-body  {
+		padding: 24px;
+		height: 100%;
 		display: flex;
-	}
-}
-
-.get-apps__desktop-button.button {
-	margin: 25px 10px 25px 0;
-	font-weight: 500;
-	padding: 10px 24px;
-	width: fit-content;
-	max-width: 366px;
-	min-width: 110px;
-	display: inline-block;
-	font-size: rem(18px); //typography-exception;
-
-	&:visited {
-		color: var(--studio-blue-80);
-	}
-}
-
-.get-apps__requirements-wrapper {
-	display: flex;
-	align-items: center;
-
-	.svg-icon {
-		filter: brightness(0.5);
+		gap: 16px;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 
-	.get-apps__requirements-paragraph {
-		margin-bottom: 0;
-		padding-left: 5px;
-		color: var(--studio-blue-80);
+	.get-apps__badges > .app-promo__qr-code {
+		margin: 0;
 	}
-}
 
-.get-apps__desktop-download-subpanel {
-	color: var(--studio-gray-70);
+	.get-apps__badges > .app-promo__qr-code > .get-apps__card-text {
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__desktop-link {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 3px;
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__desktop-button-label {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 3px;
+	}
+
+	.get-apps__not-available {
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__not-available > div {
+		margin-top: 16px;
+	}
+
+	.get-apps__also-available {
+		margin-top: 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		font-size: $font-body-extra-small;
+	}
+
+	.get-apps__also-available-list {
+		display: flex;
+		flex-direction: row;
+		gap: 16px;
+	}
+
+	.get-apps__desktop-button {
+		margin-right: 8px;
+
+		.split-button__main {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			white-space: nowrap;
+		}
+
+		.split-button.has-icon-text .gridicon {
+			margin-right: 0;
+		}
+	}
 }
