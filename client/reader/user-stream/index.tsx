@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import UserLists from 'calypso/reader/user-stream/views/lists';
 import UserPosts from 'calypso/reader/user-stream/views/posts';
@@ -29,8 +30,21 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 		requestUser( userId );
 	}, [ userId, requestUser ] );
 
-	if ( isLoading || ! user ) {
+	if ( isLoading ) {
 		return <></>;
+	}
+
+	if ( ! user ) {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title="Uh oh. User not found."
+				line="Sorry, the user you were looking for could not be found."
+				action="Return to Reader"
+				actionURL="/read"
+				className="user-profile__404"
+			/>
+		);
 	}
 
 	const currentPath = page.current;
