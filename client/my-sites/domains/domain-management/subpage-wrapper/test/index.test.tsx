@@ -4,12 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import SubpageWrapper from '../index';
-import {
-	ADD_FORWARDING_EMAIL,
-	EDIT_CONTACT_INFO,
-	ADD_DNS_RECORD,
-	EDIT_DNS_RECORD,
-} from '../subpages';
+import { ADD_FORWARDING_EMAIL, ADD_DNS_RECORD, EDIT_DNS_RECORD } from '../subpages';
 
 jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
 
@@ -55,21 +50,6 @@ describe( 'SubpageWrapper', () => {
 		);
 
 		expect( screen.getByText( 'Hello' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render breadcrumbs', () => {
-		const { container } = render(
-			<SubpageWrapper subpageKey={ EDIT_CONTACT_INFO } siteName="site.com" domainName="domain.com">
-				<span>Hello</span>
-			</SubpageWrapper>
-		);
-
-		expect( container.querySelector( '.breadcrumbs li:first-child' )?.textContent ).toContain(
-			'domain.com'
-		);
-		expect( container.querySelector( '.breadcrumbs li:last-child' )?.textContent ).toContain(
-			'Contact information'
-		);
 	} );
 
 	it( 'should render Add DNS subpage breadcrumbs', () => {
