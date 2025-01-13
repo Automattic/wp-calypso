@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, View } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
@@ -10,6 +10,7 @@ import { useReceiptActions } from './hooks/use-receipt-actions';
 import { useTransactionsFiltering } from './hooks/use-transactions-filtering';
 import { useTransactionsSorting } from './hooks/use-transactions-sorting';
 import { useViewStateUpdate } from './hooks/use-view-state-update';
+import type { ViewStateUpdate } from './data-views-types';
 
 import 'calypso/components/dataviews/style.scss';
 import './style-data-view.scss';
@@ -43,6 +44,8 @@ export default function BillingHistoryListDataView( {
 	const translate = useTranslate();
 	const fields = useFieldDefinitions( transactions );
 
+	const handleViewChange = ( view: View ) => viewState.updateView( view as ViewStateUpdate );
+
 	return (
 		<div className="billing-history">
 			<div className="dataviews-wrapper">
@@ -56,7 +59,7 @@ export default function BillingHistoryListDataView( {
 					view={ viewState.view }
 					search
 					searchLabel={ translate( 'Search receipts' ) }
-					onChangeView={ viewState.updateView }
+					onChangeView={ handleViewChange }
 					defaultLayouts={ DEFAULT_LAYOUT }
 					actions={ actions }
 					isLoading={ isLoading }

@@ -4,6 +4,11 @@ export type SortableField = 'date' | 'service' | 'type' | 'amount';
 export type ViewType = 'table';
 export type SortDirection = 'asc' | 'desc';
 
+export interface Sort {
+	field: SortableField;
+	direction: SortDirection;
+}
+
 export interface Filter {
 	field: string;
 	operator: Operator;
@@ -13,10 +18,7 @@ export interface Filter {
 export interface ViewStateUpdate {
 	page?: number;
 	perPage?: number;
-	sort?: {
-		field: string;
-		direction: SortDirection;
-	};
+	sort?: Sort;
 	filters?: Filter[];
 	search?: string;
 	fields?: string[];
@@ -28,10 +30,7 @@ export interface ViewState {
 	filters: Filter[];
 	page: number;
 	perPage: number;
-	sort: {
-		field: SortableField;
-		direction: SortDirection;
-	};
+	sort: Sort;
 	fields: string[];
 	hiddenFields: string[];
 	layout?: {

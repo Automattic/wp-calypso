@@ -1,13 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { defaultDataViewsState } from '../constants';
-import type { ViewState, ViewStateUpdate, SortableField, Filter } from '../data-views-types';
-
-type Sort =
-	| undefined
-	| {
-			field: string;
-			direction: 'asc' | 'desc';
-	  };
+import type { ViewState, ViewStateUpdate, SortableField, Filter, Sort } from '../data-views-types';
 
 type Filters = undefined | Filter[];
 
@@ -24,7 +17,7 @@ function verifySortField( field: string ): field is SortableField {
 	return [ 'date', 'service', 'type', 'amount' ].includes( field );
 }
 
-function areSortsEqual( a: Sort, b: Sort ): boolean {
+function areSortsEqual( a: Sort | undefined, b: Sort | undefined ): boolean {
 	if ( a?.field !== b?.field ) {
 		return false;
 	}
@@ -142,8 +135,10 @@ export function useViewStateUpdate(): ViewStateUpdateResult {
 		} );
 	}, [] );
 
-	return {
-		view,
-		updateView,
-	};
+	return useMemo( () => {
+		return {
+			view,
+			updateView,
+		};
+	}, [ view, updateView ] );
 }
