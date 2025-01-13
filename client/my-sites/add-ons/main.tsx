@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { AddOns } from '@automattic/data-stores';
+import { AddOns, Purchases } from '@automattic/data-stores';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -56,6 +57,40 @@ const ContainerMain = styled.div`
 	}
 `;
 
+export const StorageAddonsNotice = () => {
+	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite ) ?? null;
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: selectedSite?.ID } );
+	const storageAddOnPurchases = Purchases.useSitePurchasesByProductSlug( {
+		siteId: selectedSite?.ID,
+		productSlug: availableStorageAddOns?.[ 0 ]?.productSlug,
+	} );
+
+	// No storage add-ons available for purchase, so no need to show the notice
+	if ( ! availableStorageAddOns.length ) {
+		return null;
+	}
+
+	// No storage add-ons purchased, so no need to show the notice
+	if ( ! storageAddOnPurchases || ! Object.values( storageAddOnPurchases ).length ) {
+		return null;
+	}
+
+	return (
+		<Notice showDismiss={ false }>
+			{ translate(
+				'Purchasing a storage add-on will replace your current %(currentExtraStorage)sGB extra storage (not add to it).',
+				{
+					args: {
+						currentExtraStorage:
+							Object.values( storageAddOnPurchases )[ 0 ].purchaseRenewalQuantity || '0',
+					},
+				}
+			) }
+		</Notice>
+	);
+};
+
 const ContentWithHeader = ( props: { children: ReactElement } ) => {
 	const translate = useTranslate();
 
@@ -69,6 +104,7 @@ const ContentWithHeader = ( props: { children: ReactElement } ) => {
 						'Expand the functionality of your WordPress.com site by enabling any of the following features.'
 					) }
 				/>
+				<StorageAddonsNotice />
 				<div className="add-ons__main-content">{ props.children }</div>
 			</Main>
 		</ContainerMain>
