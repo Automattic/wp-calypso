@@ -434,9 +434,14 @@
 		}
 
 		.empty-content__title,
-		.empty-content__line,
-		.empty-content__action {
+		.empty-content__line {
 			margin-top: 32px;
+		}
+
+		.empty-content__action {
+			margin-right: 8px;
+			margin-left: 8px;
+			margin-bottom: 16px;
 		}
 	}
 }
