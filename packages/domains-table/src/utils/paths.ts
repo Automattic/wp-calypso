@@ -196,8 +196,9 @@ export function domainManagementDNS(
 	isHostingOverview?: boolean
 ) {
 	if ( isHostingOverview ) {
-		return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
 	}
+
 	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
