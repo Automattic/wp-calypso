@@ -10,6 +10,7 @@ export const DATERANGE_PERIOD = {
 	DAY: 'day',
 	WEEK: 'week',
 	MONTH: 'month',
+	YEAR: 'year',
 };
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -46,8 +47,6 @@ export const getShortcuts = createSelector(
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
-		const siteYesterday = siteToday.clone().subtract( 1, 'days' );
-		const yesterdayStr = siteYesterday.format( DATE_FORMAT );
 
 		const supportedShortcutList = [
 			{
@@ -55,14 +54,7 @@ export const getShortcuts = createSelector(
 				label: translate( 'Today' ),
 				startDate: siteTodayStr,
 				endDate: siteTodayStr,
-				period: DATERANGE_PERIOD.DAY,
-			},
-			{
-				id: 'yesterday',
-				label: translate( 'Yesterday' ),
-				startDate: yesterdayStr,
-				endDate: yesterdayStr,
-				period: DATERANGE_PERIOD.DAY,
+				period: DATERANGE_PERIOD.HOUR,
 			},
 			{
 				id: 'last_7_days',
@@ -79,18 +71,37 @@ export const getShortcuts = createSelector(
 				period: DATERANGE_PERIOD.DAY,
 			},
 			{
-				id: 'last_3_months',
-				label: translate( 'Last 90 Days' ),
-				startDate: siteToday.clone().subtract( 89, 'days' ).format( DATE_FORMAT ),
+				id: 'month_to_date',
+				label: translate( 'Month to date' ),
+				startDate: siteToday.clone().startOf( 'month' ).format( DATE_FORMAT ),
 				endDate: siteTodayStr,
-				period: DATERANGE_PERIOD.WEEK,
+				period: DATERANGE_PERIOD.DAY,
 			},
 			{
-				id: 'last_year',
-				label: translate( 'Last Year' ),
-				startDate: siteToday.clone().subtract( 364, 'days' ).format( DATE_FORMAT ),
+				id: 'last_12_months',
+				label: translate( 'Last 12 months' ),
+				startDate: siteToday
+					.clone()
+					.startOf( 'month' )
+					.subtract( 11, 'months' )
+					.format( DATE_FORMAT ),
 				endDate: siteTodayStr,
 				period: DATERANGE_PERIOD.MONTH,
+			},
+			// Temporarily hide this shortcut before we resolve the issue of identifying shortcuts.
+			// {
+			// 	id: 'year_to_date',
+			// 	label: translate( 'Year to date' ),
+			// 	startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
+			// 	endDate: siteTodayStr,
+			// 	period: DATERANGE_PERIOD.MONTH,
+			// },
+			{
+				id: 'last_3_years',
+				label: translate( 'Last 3 years' ),
+				startDate: siteToday.clone().startOf( 'year' ).subtract( 2, 'years' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
+				period: DATERANGE_PERIOD.YEAR,
 			},
 			{
 				id: 'custom_date_range',

@@ -31,11 +31,12 @@ interface StatsDateControlProps {
 // Define the event name keys for tracking events
 type EventNameKey =
 	| 'today'
-	| 'yesterday'
 	| 'last_7_days'
 	| 'last_30_days'
-	| 'last_3_months'
-	| 'last_year'
+	| 'month_to_date'
+	| 'last_12_months'
+	| 'year_to_date'
+	| 'last_3_years'
 	| 'custom_date_range'
 	| 'apply_button'
 	| 'trigger_button';
@@ -50,22 +51,24 @@ interface EventNames {
 const eventNames: EventNames = {
 	jetpack_odyssey: {
 		today: 'jetpack_odyssey_stats_date_picker_shortcut_today_clicked',
-		yesterday: 'jetpack_odyssey_stats_date_picker_shortcut_yesterday_clicked',
 		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_clicked',
 		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_clicked',
-		last_3_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_months_clicked',
-		last_year: 'jetpack_odyssey_stats_date_picker_shortcut_last_year_clicked',
+		month_to_date: 'jetpack_odyssey_stats_date_picker_shortcut_month_to_date_clicked',
+		last_12_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_12_months_clicked',
+		year_to_date: 'jetpack_odyssey_stats_date_picker_shortcut_year_to_date_clicked',
+		last_3_years: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_years_clicked',
 		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_clicked',
 		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_clicked',
 		trigger_button: 'jetpack_odyssey_stats_date_picker_opened',
 	},
 	calypso: {
 		today: 'calypso_stats_date_picker_shortcut_today_clicked',
-		yesterday: 'calypso_stats_date_picker_shortcut_yesterday_clicked',
 		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_clicked',
 		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_clicked',
-		last_3_months: 'calypso_stats_date_picker_shortcut_last_3_months_clicked',
-		last_year: 'calypso_stats_date_picker_shortcut_last_year_clicked',
+		month_to_date: 'calypso_stats_date_picker_shortcut_month_to_date_clicked',
+		last_12_months: 'calypso_stats_date_picker_shortcut_last_12_months_clicked',
+		year_to_date: 'calypso_stats_date_picker_shortcut_year_to_date_clicked',
+		last_3_years: 'calypso_stats_date_picker_shortcut_last_3_years_clicked',
 		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_clicked',
 		apply_button: 'calypso_stats_date_picker_apply_button_clicked',
 		trigger_button: 'calypso_stats_date_picker_opened',
@@ -142,7 +145,7 @@ const StatsDateControl = ( {
 	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
-		const period = bestPeriodForDays( rangeInDays );
+		let period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
@@ -154,6 +157,8 @@ const StatsDateControl = ( {
 
 		if ( appliedShortcut && appliedShortcut.id ) {
 			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+			// Apply the period from the found shortcut.
+			period = appliedShortcut.period;
 		}
 
 		// Update chart via routing.
