@@ -91,7 +91,7 @@
 			gap: 8px;
 
 			&.design-picker__category-group--flex {
-				flex: 0 0 43%;
+				flex: 0 1 40%;
 			}
 
 			&.design-picker__category-group--grow {
@@ -129,6 +129,9 @@
 
 	.design-picker__design-with-ai {
 		display: none;
+		margin-bottom: 0;
+		padding-top: 6px; // vertically align with filters
+		padding-bottom: 6px;
 		
 		@include break-large {
 			display: block;
