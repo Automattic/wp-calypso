@@ -80,7 +80,6 @@
 		"p2-enabled": false,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
-		"subscriber-csv-upload": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,

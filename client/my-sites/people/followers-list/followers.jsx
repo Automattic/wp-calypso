@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
@@ -147,7 +146,7 @@ class Followers extends Component {
 									hasSubscriberLimit={ hasSubscriberLimit }
 									flowName="people"
 									showSubtitle
-									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									showCsvUpload
 									showFormManualListLabel
 									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
