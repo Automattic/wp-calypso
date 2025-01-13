@@ -42,7 +42,8 @@ export const DislikeFeedbackMessage = () => {
 		);
 	};
 
-	if ( experimentName === 'give_a_chance' ) {
+	// Stops conflating the escalating to human support with the dislike feedback message
+	if ( experimentName === 'give_wapuu_a_chance' ) {
 		return null;
 	}
 

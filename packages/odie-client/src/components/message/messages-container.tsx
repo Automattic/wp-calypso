@@ -55,7 +55,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	};
 
 	const statusArray =
-		experimentName === 'give_a_chance'
+		experimentName === 'give_wapuu_a_chance'
 			? [ 'sending', 'transfer' ]
 			: [ 'sending', 'dislike', 'transfer' ];
 
@@ -87,7 +87,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && experimentName !== 'give_a_chance' && <DislikeThumb /> }
+						{ chat.status === 'dislike' && experimentName !== 'give_wapuu_a_chance' && (
+							<DislikeThumb />
+						) }
 						{ statusArray.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }

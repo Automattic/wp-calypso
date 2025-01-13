@@ -114,13 +114,12 @@ export const useSendOdieMessage = () => {
 				message_id: returnedChat.messages[ 0 ].message_id,
 				internal_message_id,
 				content: returnedChat.messages[ 0 ].content,
-				experimentName: returnedChat.messages[ 0 ].experimentName,
 				role: 'bot',
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
 
-			setExperimentName( botMessage.experimentName );
+			setExperimentName( returnedChat.experiment_name );
 			addMessage( botMessage, { odieId: returnedChat.chat_id } );
 			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},

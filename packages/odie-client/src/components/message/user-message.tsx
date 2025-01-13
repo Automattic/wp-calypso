@@ -40,7 +40,7 @@ export const UserMessage = ( {
 
 	let showExtraContactOptions: boolean;
 
-	if ( experimentName === 'give_a_chance' ) {
+	if ( experimentName === 'give_wapuu_a_chance' ) {
 		showExtraContactOptions = userHasEverEscalatedToHumanSupport && isRequestingHumanSupport;
 	} else {
 		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
