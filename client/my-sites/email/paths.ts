@@ -13,7 +13,8 @@ type EmailPathUtilityFunction = (
 	siteName: string | null | undefined,
 	domainName?: string | null,
 	relativeTo?: string | null,
-	urlParameters?: QueryStringParameters
+	urlParameters?: QueryStringParameters,
+	inSiteContext?: boolean
 ) => string;
 
 export const emailManagementPrefix = '/email';
