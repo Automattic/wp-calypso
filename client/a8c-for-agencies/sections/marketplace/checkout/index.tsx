@@ -252,6 +252,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 									<ProductInfo
 										key={ `product-info-${ items.product_id }-${ items.quantity }` }
 										product={ items }
+										isAutomatedReferrals={ isAutomatedReferrals }
 									/>
 								) )
 							) }
