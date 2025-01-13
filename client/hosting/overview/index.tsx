@@ -15,6 +15,7 @@ import {
 	DOMAIN_OVERVIEW,
 	EMAIL_MANAGEMENT,
 } from 'calypso/my-sites/domains/domain-management/domain-overview-pane/constants';
+import { EDIT_CONTACT_INFO } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
 import emailController from 'calypso/my-sites/email/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
@@ -115,6 +116,15 @@ export default function () {
 		controllers: [
 			emailController.emailManagement,
 			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/contact-info/edit/:domain/:site',
+		controllers: [
+			domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
+			domainManagementController.domainManagementEditContactInfo,
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 }
