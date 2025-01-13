@@ -18,13 +18,15 @@ export default function SiteIcon( {
 	site,
 	openSitePreviewPane,
 	viewType,
+	disableClick,
 }: {
 	site: SiteExcerptData;
-	openSitePreviewPane: (
+	openSitePreviewPane?: (
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	viewType: 'list' | 'table' | 'grid';
+	viewType: 'list' | 'table' | 'grid' | 'breadcrumb';
+	disableClick?: boolean;
 } ) {
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );
 	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
@@ -52,13 +54,28 @@ export default function SiteIcon( {
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
+	const size = React.useMemo( () => {
+		switch ( viewType ) {
+			case 'list':
+				return 52;
+			case 'breadcrumb':
+				return 24;
+			default:
+				return 32;
+		}
+	}, [ viewType ] );
+
 	return (
-		<ThumbnailLink title={ siteTitle } onClick={ onClick } className="sites-dataviews__site-icon">
+		<ThumbnailLink
+			title={ siteTitle }
+			onClick={ disableClick ? undefined : onClick }
+			className="sites-dataviews__site-icon"
+		>
 			<SiteFavicon
 				className="sites-site-favicon"
 				blogId={ site.ID }
 				fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
-				size={ viewType === 'list' ? 52 : 32 }
+				size={ size }
 			/>
 		</ThumbnailLink>
 	);
