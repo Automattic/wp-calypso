@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import MailboxHeader from './headers/add-mailbox-header';
 import CompareEmailProvidersHeader from './headers/compare-email-providers';
+import ContactInformationHeader from './headers/contact-information-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 import DnsRecordHeader, {
 	addDnsRecordTitle,
@@ -48,8 +49,8 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		showDetails: false,
 	},
 	[ EDIT_CONTACT_INFO ]: {
-		title: __( 'Contact information' ),
-		subtitle: __( "Manage your domain's contact details." ),
+		CustomHeader: ContactInformationHeader,
+		showPageHeader: false,
 	},
 	[ ADD_DNS_RECORD ]: {
 		CustomHeader: DnsRecordHeader,

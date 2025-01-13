@@ -424,6 +424,7 @@ export default {
 				subpageKey={ pageContext.params.subPageKey }
 				siteName={ pageContext.params.site }
 				domainName={ pageContext.params.domain }
+				inSiteContext={ pageContext.inSiteContext }
 			>
 				{ pageContext.primary }
 			</SubpageWrapper>
