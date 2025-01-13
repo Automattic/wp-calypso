@@ -138,6 +138,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			],
 		} ),
 	],
+	// Request pulic and private lists for the current user
 	[ READER_LISTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
@@ -153,6 +154,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onError: () => noop,
 		} ),
 	],
+	// Request only public lists for a specific user
 	[ READER_USER_LISTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
