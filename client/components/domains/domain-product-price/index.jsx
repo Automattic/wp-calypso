@@ -1,9 +1,7 @@
 import {
 	PLAN_100_YEARS,
-	PLAN_PERSONAL,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -35,42 +33,6 @@ class DomainProductPrice extends Component {
 		isMappingProduct: false,
 	};
 
-	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
-
-		let message;
-		switch ( this.props.rule ) {
-			case 'FREE_WITH_PLAN':
-				if ( isMappingProduct ) {
-					message = translate( 'Free with your plan' );
-				} else {
-					return this.renderReskinFreeWithPlanText();
-				}
-				break;
-			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( isMappingProduct ) {
-					message = translate( 'Included in paid plans' );
-				} else {
-					return this.renderReskinFreeWithPlanText();
-				}
-				break;
-			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( '%(planName)s plan required', {
-					args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-				} );
-				break;
-		}
-
-		return <div className="domain-product-price__free-text">{ message }</div>;
-	}
-
-	renderFreeWithPlanPrice() {
-		if ( this.props.isMappingProduct ) {
-			return;
-		}
-		return this.renderReskinDomainPrice();
-	}
-
 	renderRenewalPrice() {
 		const { price, renewPrice, translate } = this.props;
 		const isRenewCostDifferent = renewPrice && price !== renewPrice;
@@ -88,7 +50,7 @@ class DomainProductPrice extends Component {
 		}
 	}
 
-	renderReskinFreeWithPlanText() {
+	renderFreeWithPlanText() {
 		const {
 			isMappingProduct,
 			translate,
@@ -125,7 +87,7 @@ class DomainProductPrice extends Component {
 		return domainPriceElement( message );
 	}
 
-	renderReskinDomainPrice() {
+	renderDomainPrice() {
 		const priceText = this.props.translate( '%(cost)s/year', {
 			args: { cost: this.props.price },
 		} );
@@ -152,7 +114,7 @@ class DomainProductPrice extends Component {
 						{ translate( 'Free for the first year' ) }
 					</span>
 				</div>
-				{ this.renderReskinDomainPrice() }
+				{ this.renderDomainPrice() }
 			</div>
 		);
 	}
@@ -162,19 +124,10 @@ class DomainProductPrice extends Component {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
-		if ( this.props.isReskinned ) {
-			return (
-				<div className={ className }>
-					{ this.renderReskinFreeWithPlanText() }
-					{ this.renderReskinDomainPrice() }
-				</div>
-			);
-		}
-
 		return (
 			<div className={ className }>
 				{ this.renderFreeWithPlanText() }
-				{ this.renderFreeWithPlanPrice() }
+				{ this.renderDomainPrice() }
 			</div>
 		);
 	}
