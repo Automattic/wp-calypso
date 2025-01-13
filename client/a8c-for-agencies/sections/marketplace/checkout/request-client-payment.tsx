@@ -249,7 +249,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 			<div className="checkout__summary-notice-item">
 				{ translate(
-					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}12 hours{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
+					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}7 days{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
 					{
 						components: {
 							b: <b />,
