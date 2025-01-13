@@ -52,21 +52,24 @@ $theme-card-info-margin-top: 16px;
 }
 
 .theme-card__image-container {
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 12px 20px rgba(0, 0, 0, 0.04);
+	border: 1px solid rgba(220,220,222,0.4);
 	overflow: hidden;
 	padding-top: 74%;
 	position: relative;
+	border-radius: 4px;
+	transition: transform 100ms ease-out;
 }
 
 .theme-card--is-actionable {
 	.theme-card__image {
+		transition: transform 300ms ease-in-out;
+		
 		&:hover,
 		&:focus {
-			opacity: 0.9;
+			transform: scale(1.03);
 
 			.theme-card__image-label {
-				opacity: 1;
 				animation: theme-card__image-label 150ms ease-in-out;
 			}
 		}
