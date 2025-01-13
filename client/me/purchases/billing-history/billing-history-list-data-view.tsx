@@ -24,7 +24,7 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 } ) => {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
-	const { view, updateView } = useViewStateUpdate();
+	const viewState = useViewStateUpdate();
 	const receiptActions = useReceiptActions( getReceiptUrlFor );
 
 	const actions = receiptActions.map( ( action ) => ( {
@@ -32,12 +32,12 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 		icon: <Gridicon icon={ action.iconName } />,
 	} ) );
 
-	const filteredTransactions = useTransactionsFiltering( transactions, view );
-	const sortedTransactions = useTransactionsSorting( filteredTransactions, view );
+	const filteredTransactions = useTransactionsFiltering( transactions, viewState.view );
+	const sortedTransactions = useTransactionsSorting( filteredTransactions, viewState.view );
 	const { paginatedItems, totalPages, totalItems } = usePagination(
 		sortedTransactions,
-		view.page,
-		view.perPage
+		viewState.view.page,
+		viewState.view.perPage
 	);
 	const translate = useTranslate();
 	const fields = useFieldDefinitions( transactions, translate );
@@ -52,10 +52,10 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 						totalPages,
 					} }
 					fields={ fields }
-					view={ view }
+					view={ viewState.view }
 					search
 					searchLabel={ translate( 'Search receipts' ) }
-					onChangeView={ updateView }
+					onChangeView={ viewState.updateView }
 					defaultLayouts={ { table: {} } }
 					actions={ actions }
 					isLoading={ isLoading }
