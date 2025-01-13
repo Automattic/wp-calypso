@@ -44,7 +44,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		line = translate( 'You have no domains added to this site.' );
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
-		secondaryAction = translate( 'I have a domain' );
+		secondaryAction = translate( 'Use a domain I own' );
 		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
 		contentType = 'paid_plan_with_no_free_domain_credits';
 	}
@@ -72,7 +72,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		}
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
-		secondaryAction = translate( 'I have a domain' );
+		secondaryAction = translate( 'Use a domain I own' );
 		secondaryActionURL = domainUseMyDomain( selectedSite.slug, {
 			redirectTo: `/domains/manage/${ selectedSite.slug }`,
 		} );
