@@ -270,11 +270,12 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 5px;
     display: flex;
+    justify-content: space-between;
 
 	div.spotlight-plan__buttons  {
 		display: flex;
 		align-items: center;
-		margin-top: -70px;
+		justify-content: center;
 	}
 
 	div.plan-features-2023-grid__table-item {
