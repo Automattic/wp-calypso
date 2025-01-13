@@ -1,25 +1,21 @@
-import clsx from 'clsx';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { ComponentType } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
-import withDimensions from 'calypso/lib/with-dimensions';
 
 import './style.scss';
 
 interface UserProfileHeaderProps {
 	user: UserData;
-	width?: number;
 }
 
-const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.Element => {
+const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const currentPath = window.location.pathname;
+	const currentPath = page.current;
 	const userId = user.ID;
-	const narrowDisplay = width < 480;
 
 	const navigationItems = [
 		{
@@ -37,25 +33,20 @@ const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.E
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
 	const avatarElement = (
-		<div className="user-profile-header__avatar">
-			<ReaderAvatar
-				author={ { ...user, has_avatar: !! user.avatar_URL } }
-				iconSize={ narrowDisplay ? 72 : 116 }
-			/>
-		</div>
+		<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 116 } />
 	);
 
-	const classes = clsx( 'user-profile-header', {
-		'is-narrow': narrowDisplay,
-	} );
-
 	return (
-		<div className={ classes }>
+		<div className="user-profile-header">
 			<header className="user-profile-header__main">
-				{ ! narrowDisplay && avatarElement }
+				<div className="user-profile-header__avatar user-profile-header__avatar-desktop">
+					{ avatarElement }
+				</div>
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
-						{ narrowDisplay && avatarElement }
+						<div className="user-profile-header__avatar user-profile-header__avatar-mobile">
+							{ avatarElement }
+						</div>
 						{ user.display_name }
 					</div>
 					{ user.bio && (
@@ -78,6 +69,4 @@ const UserProfileHeader = ( { user, width = 0 }: UserProfileHeaderProps ): JSX.E
 	);
 };
 
-export default withDimensions( UserProfileHeader ) as ComponentType<
-	Omit< UserProfileHeaderProps, 'width' >
->;
+export default UserProfileHeader;
