@@ -17,6 +17,7 @@ import {
 } from 'calypso/my-sites/domains/domain-management/domain-overview-pane/constants';
 import {
 	DNS_RECORDS,
+	EDIT_DNS_RECORD,
 	ADD_FORWARDING_EMAIL,
 	EDIT_CONTACT_INFO,
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
@@ -129,6 +130,15 @@ export default function () {
 			domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
 			domainManagementController.domainManagementDns,
 			domainManagementController.domainManagementSubpageView,
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/domain/:domain/dns/edit/:site',
+		controllers: [
+			domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
+			domainManagementController.domainManagementDnsEditRecord,
+			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
 		],
 	} );
 

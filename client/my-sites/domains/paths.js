@@ -254,7 +254,9 @@ export function domainManagementDnsEditRecord(
 ) {
 	let path;
 
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		path = `/overview/site-domain/domain/${ domainName }/dns/edit/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		path = domainManagementOverviewRoot() + '/' + domainName + '/dns/edit/' + siteName;
 	} else {
 		path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
