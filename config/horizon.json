@@ -16,7 +16,6 @@
 		"automated-migration/application-password": true,
 		"automated-migration/pending-status": true,
 		"calypso/ai-blogging-prompts": false,
-		"calypso/ai-assembler": true,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"calypso/help-center": true,

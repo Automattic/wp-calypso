@@ -16,10 +16,8 @@ import HostingOverview from './hosting-overview';
 import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
-import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
-import WpcomOverview from './wpcom-overview';
 
 export const marketplaceContext: Callback = () => {
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
@@ -74,30 +72,6 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 			) : (
 				<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
 			) }
-		</>
-	);
-	next();
-};
-
-export const marketplacePressableContext: Callback = ( context, next ) => {
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<>
-			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview />
-		</>
-	);
-	next();
-};
-
-export const marketplaceWpcomContext: Callback = ( context, next ) => {
-	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<>
-			<PageViewTracker title="Marketplace > Hosting > WordPress.com" path={ context.path } />
-			<WpcomOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();

@@ -67,6 +67,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/donations/',
 		post_id: 171110,
 	},
+	dns_default_records: {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/',
+		post_id: 386585,
+	},
 	earn: {
 		link: 'https://wordpress.com/support/monetize-your-site/',
 		post_id: 120172,
@@ -186,6 +190,10 @@ const contextLinks = {
 	menus: {
 		link: 'https://wordpress.com/support/menus/',
 		post_id: 59580,
+	},
+	nameservers: {
+		link: 'https://wordpress.com/support/domains/change-name-servers/#changing-name-servers-to-point-to-word-press-com',
+		post_id: 41383,
 	},
 	pages: {
 		link: 'https://wordpress.com/support/pages/',
