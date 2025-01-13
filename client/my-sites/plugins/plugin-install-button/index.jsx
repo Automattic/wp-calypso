@@ -4,6 +4,7 @@
 import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	hasMarketplaceProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
@@ -279,7 +280,10 @@ export class PluginInstallButton extends Component {
 			siteIsWpcomAtomic,
 			translate,
 			canInstallPurchasedPlugins,
+			productsList,
 		} = this.props;
+
+		const isMarketplaceProduct = hasMarketplaceProduct( productsList, plugin.slug );
 
 		if ( siteIsConnected === false ) {
 			return (
@@ -325,7 +329,7 @@ export class PluginInstallButton extends Component {
 			) : null;
 		}
 
-		if ( siteIsJetpackSite && ! siteIsWpcomAtomic && plugin.isMarketplaceProduct ) {
+		if ( siteIsJetpackSite && ! siteIsWpcomAtomic && isMarketplaceProduct ) {
 			return (
 				<PluginInstallNotice
 					warningText={
@@ -342,7 +346,7 @@ export class PluginInstallButton extends Component {
 			);
 		}
 
-		if ( ! plugin.isMarketplaceProduct ) {
+		if ( ! isMarketplaceProduct ) {
 			return this.renderButton();
 		}
 
