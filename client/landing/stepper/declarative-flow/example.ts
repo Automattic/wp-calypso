@@ -43,32 +43,14 @@ const newsletter: Flow = {
 		setIntent( Onboard.SiteIntent.Newsletter );
 
 		const privateSteps = stepsWithRequiredLogin( [
-			{
-				slug: 'newsletterSetup',
-				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
-			},
-			{
-				slug: 'newsletterGoals',
-				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
-			},
-			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'subscribers',
-				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
-			},
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'launchpad',
-				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
-			},
+			STEPS.NEWSLETTER_SETUP,
+			STEPS.NEWSLETTER_GOALS,
+			STEPS.DOMAINS,
+			STEPS.PLANS,
+			STEPS.PROCESSING,
+			STEPS.SUBSCRIBERS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.LAUNCHPAD,
 		] );
 
 		if ( ! isComingFromMarketingPage ) {
