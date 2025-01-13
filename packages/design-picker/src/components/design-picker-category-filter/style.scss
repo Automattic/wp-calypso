@@ -7,11 +7,7 @@
 	justify-content: space-between;
 	flex-direction: column;
 	gap: 10px;
-	margin-bottom: 16px;
-
-	@include break-medium {
-		margin-bottom: 24px;
-	}
+	margin-bottom: 24px;
 
 	@include break-large {
 		flex-direction: row;
