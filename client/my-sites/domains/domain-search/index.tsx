@@ -244,7 +244,13 @@ class DomainSearch extends Component< DomainSearchProps > {
 			// Nothing needs to be done here. CartMessages will display the error to the user.
 			return;
 		}
-		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
+
+		let domainUpsellURL = domainAddEmailUpsell( this.props.selectedSiteSlug, domain );
+
+		if ( this.props.context?.querystring ) {
+			domainUpsellURL += `?${ this.props.context?.querystring }`;
+		}
+		page( domainUpsellURL );
 	}
 
 	removeDomain( suggestion: DomainSuggestion ) {

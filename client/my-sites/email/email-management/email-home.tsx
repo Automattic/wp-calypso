@@ -184,9 +184,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	if ( nonWpcomDomains.length < 1 ) {
 		return (
-			<ContentWithHeader>
+			<Main wideLayout>
 				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
-			</ContentWithHeader>
+			</Main>
 		);
 	}
 

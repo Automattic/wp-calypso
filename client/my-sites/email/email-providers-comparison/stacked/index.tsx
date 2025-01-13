@@ -27,6 +27,7 @@ import {
 import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import { addQueryArgs } from 'calypso/lib/url';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
@@ -48,6 +49,7 @@ import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsu
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { Context } from '@automattic/calypso-router';
 
 import './style.scss';
 
@@ -61,6 +63,7 @@ export type EmailProvidersStackedComparisonProps = {
 	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	source: string;
+	context: Context;
 };
 
 const EmailProvidersStackedComparison = ( {
@@ -72,6 +75,7 @@ const EmailProvidersStackedComparison = ( {
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
+	context,
 }: EmailProvidersStackedComparisonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -255,7 +259,7 @@ const EmailProvidersStackedComparison = ( {
 				<EmailUpsellNavigation
 					backUrl={
 						isDomainInCart
-							? domainAddNew( selectedSite?.slug )
+							? addQueryArgs( context?.query, domainAddNew( selectedSite?.slug ) )
 							: getEmailManagementPath( selectedSite?.slug, null )
 					}
 					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }

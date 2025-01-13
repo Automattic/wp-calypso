@@ -150,6 +150,7 @@ export default {
 					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 					source={ pageContext.query.source }
+					context={ pageContext }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
