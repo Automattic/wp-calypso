@@ -4,6 +4,12 @@ import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-u
 import { TabType } from 'calypso/performance-profiler/components/header';
 
 function isValidURL( url: string ) {
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
 	return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url );
 }
 
