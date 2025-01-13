@@ -13,7 +13,7 @@ interface FlowCardProps {
 	disabled?: boolean;
 	badge?: {
 		type: BadgeType;
-		text: string;
+		text: ReactNode;
 	};
 	className?: string;
 }
