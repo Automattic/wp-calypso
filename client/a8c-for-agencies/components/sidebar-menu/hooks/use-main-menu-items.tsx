@@ -43,7 +43,6 @@ const useMainMenuItems = ( path: string ) => {
 
 	const menuItems = useMemo( () => {
 		const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-		const isTrackingSiteMigrationsEnabled = config.isEnabled( 'a4a-tracking-site-migrations' );
 
 		let referralItems = [] as any[];
 
@@ -74,30 +73,18 @@ const useMainMenuItems = ( path: string ) => {
 				  ];
 		}
 
-		let migrationMenuItem = {};
-
-		if ( isSectionNameEnabled( 'a8c-for-agencies-migrations' ) ) {
-			migrationMenuItem = isTrackingSiteMigrationsEnabled
-				? {
-						icon: moveTo,
-						path: A4A_MIGRATIONS_LINK,
-						link: A4A_MIGRATIONS_OVERVIEW_LINK,
-						title: translate( 'Migrations' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Migrations',
-						},
-						withChevron: true,
-				  }
-				: {
-						icon: moveTo,
-						path: '/',
-						link: A4A_MIGRATIONS_LINK,
-						title: translate( 'Migrations' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Migrations',
-						},
-				  };
-		}
+		const migrationMenuItem = isSectionNameEnabled( 'a8c-for-agencies-migrations' )
+			? {
+					icon: moveTo,
+					path: A4A_MIGRATIONS_LINK,
+					link: A4A_MIGRATIONS_OVERVIEW_LINK,
+					title: translate( 'Migrations' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Migrations',
+					},
+					withChevron: true,
+			  }
+			: {};
 
 		return [
 			{

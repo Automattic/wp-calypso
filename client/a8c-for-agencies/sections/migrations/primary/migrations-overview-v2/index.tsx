@@ -1,7 +1,4 @@
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -10,8 +7,6 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrateSiteButton from './migrate-site-button';
 import MigrationsBanner from './sections/migrations-banner';
 import MigrationsClientRelationship from './sections/migrations-client-relationship';
@@ -24,19 +19,10 @@ import MigrationsTestimonials from './sections/migrations-testimonials';
 
 import './style.scss';
 
-export default function MigrationsOverviewV2( {
-	isSiteMigrationsEnabled = false,
-}: {
-	isSiteMigrationsEnabled?: boolean;
-} ) {
+export default function MigrationsOverviewV2() {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const title = translate( 'Migrations' );
-
-	const onMigrateSitesClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_migrations_migrate_sites_button_click' ) );
-	}, [ dispatch ] );
 
 	return (
 		<Layout className="migrations-overview-v2" title={ title } wide>
@@ -45,18 +31,7 @@ export default function MigrationsOverviewV2( {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
-
-						{ isSiteMigrationsEnabled ? (
-							<MigrateSiteButton />
-						) : (
-							<Button
-								variant="primary"
-								onClick={ onMigrateSitesClick }
-								href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
-							>
-								{ translate( 'Migrate your sites' ) }
-							</Button>
-						) }
+						<MigrateSiteButton />
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
