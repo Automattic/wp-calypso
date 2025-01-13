@@ -224,7 +224,9 @@ export function domainManagementEmail( siteName, domainName ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		return domainManagementOverviewRoot() + '/' + domainName + '/dns/' + siteName;
 	}
 

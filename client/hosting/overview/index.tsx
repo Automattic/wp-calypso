@@ -123,6 +123,14 @@ export default function () {
 	} );
 
 	registerSiteDomainPage( {
+		path: '/overview/site-domain/domain/:domain/dns/:site',
+		controllers: [
+			domainManagementController.domainManagementDns,
+			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		],
+	} );
+
+	registerSiteDomainPage( {
 		path: '/overview/site-domain/contact-info/edit/:domain/:site',
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
