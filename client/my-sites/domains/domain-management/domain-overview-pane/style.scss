@@ -183,3 +183,7 @@
 		}
 	}
 }
+
+.sites-dashboard.domains-overview .hosting-dashboard-item-view__content {
+	height: 0; /* Quick fix for scrolling issue in domain overview in site-context, will be replaced with a better solution in the future */
+}
