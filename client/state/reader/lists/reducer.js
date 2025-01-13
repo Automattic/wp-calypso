@@ -34,13 +34,17 @@ import { itemsSchema, subscriptionsSchema } from './schema';
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return {
-				...state,
-				...keyBy( action.lists, 'ID' ),
-			};
-		default:
-			return state;
+			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
+		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_UPDATE_SUCCESS:
+			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
+	return state;
 } );
 
 function removeItemBy( state, action, predicate ) {
