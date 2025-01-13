@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -26,6 +27,8 @@ type UserStreamState = {
 };
 
 export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
+	const translate = useTranslate();
+
 	useEffect( () => {
 		requestUser( userId );
 	}, [ userId, requestUser ] );
@@ -38,9 +41,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title="Uh oh. User not found."
-				line="Sorry, the user you were looking for could not be found."
-				action="Return to Reader"
+				title={ translate( 'Uh oh. User not found.' ) }
+				line={ translate( 'Sorry, the user you were looking for could not be found.' ) }
+				action={ translate( 'Return to Reader' ) }
 				actionURL="/read"
 				className="user-profile__404"
 			/>
