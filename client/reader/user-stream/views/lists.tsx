@@ -19,25 +19,18 @@ interface AppState {
 
 interface UserListsProps {
 	user: UserData;
-	userId: string;
-	userSlug: string;
-	lists: List[];
-	isLoading: boolean;
-	requestUserLists: ( userSlug: string ) => void;
+	requestUserLists?: ( userSlug: string ) => void;
+	lists?: List[];
+	isLoading?: boolean;
 }
 
-const UserLists = ( {
-	user,
-	userSlug,
-	lists,
-	isLoading,
-	requestUserLists,
-}: UserListsProps ): JSX.Element => {
+const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
+	const userSlug = user.user_login;
 
 	useEffect( () => {
-		if ( ! hasRequested ) {
+		if ( ! hasRequested && requestUserLists && userSlug ) {
 			requestUserLists( userSlug );
 			setHasRequested( true );
 		}
@@ -86,12 +79,10 @@ const UserLists = ( {
 };
 
 export default connect(
-	( state: AppState, ownProps: UserListsProps ) => {
-		return {
-			lists: state.reader.lists.userLists[ ownProps.userSlug ] ?? [],
-			isLoading: state.reader.lists.isRequestingUserLists[ ownProps.userSlug ] ?? false,
-		};
-	},
+	( state: AppState, ownProps: UserListsProps ) => ( {
+		lists: state.reader.lists.userLists[ ownProps.user.user_login ?? '' ] ?? [],
+		isLoading: state.reader.lists.isRequestingUserLists[ ownProps.user.user_login ?? '' ] ?? false,
+	} ),
 	{
 		requestUserLists,
 	}
