@@ -6,7 +6,7 @@ type TrashedMenuItems = 'Restore' | 'Copy link' | 'Delete Permanently';
 type GenericMenuItems = 'Trash';
 
 type MenuItems = TrashedMenuItems | GenericMenuItems;
-type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trashed';
+type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trash';
 
 const selectors = {
 	// General
