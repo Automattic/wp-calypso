@@ -16,6 +16,7 @@ import {
 	EMAIL_MANAGEMENT,
 } from 'calypso/my-sites/domains/domain-management/domain-overview-pane/constants';
 import {
+	ADD_MAILBOX,
 	DNS_RECORDS,
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
@@ -121,6 +122,15 @@ export default function () {
 		path: '/overview/site-domain/email/:domain/:site',
 		controllers: [
 			emailController.emailManagement,
+			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/email/:domain/titan/new/:site',
+		controllers: [
+			domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
+			emailController.emailManagementNewTitanAccount,
 			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
 		],
 	} );
