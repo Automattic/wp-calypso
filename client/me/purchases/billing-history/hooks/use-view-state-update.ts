@@ -53,58 +53,60 @@ export function useViewStateUpdate() {
 		window.scrollTo( { top: 0, behavior: 'smooth' } );
 	}, [] );
 
-	const updateView = ( newView: ViewStateUpdate ) => {
-		setView( ( currentView ) => {
-			const updatedView = { ...currentView };
+	const updateView = useCallback(
+		( newView: ViewStateUpdate ) => {
+			setView( ( currentView ) => {
+				const updatedView = { ...currentView };
 
-			if ( newView.page !== undefined ) {
-				updatedView.page = newView.page;
-				scrollToTop();
-			}
+				if ( newView.page !== undefined ) {
+					updatedView.page = newView.page;
+					scrollToTop();
+				}
 
-			if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
-				updatedView.perPage = newView.perPage;
-				updatedView.page = 1;
-				scrollToTop();
-			}
+				if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
+					updatedView.perPage = newView.perPage;
+					updatedView.page = 1;
+					scrollToTop();
+				}
 
-			if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
-				// Skip invalid sort fields, keeping the current sort settings
-				if ( verifySortField( newView.sort.field ) ) {
-					updatedView.sort = {
-						field: newView.sort.field,
-						direction: newView.sort.direction,
-					};
+				if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
+					if ( verifySortField( newView.sort.field ) ) {
+						updatedView.sort = {
+							field: newView.sort.field,
+							direction: newView.sort.direction,
+						};
+						if ( newView.page === undefined ) {
+							updatedView.page = 1;
+							scrollToTop();
+						}
+					}
+				}
+
+				if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
+					updatedView.filters = newView.filters;
 					if ( newView.page === undefined ) {
 						updatedView.page = 1;
 						scrollToTop();
 					}
 				}
-			}
 
-			if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
-				updatedView.filters = newView.filters;
-				if ( newView.page === undefined ) {
-					updatedView.page = 1;
-					scrollToTop();
+				if ( newView.search !== undefined && newView.search !== currentView.search ) {
+					updatedView.search = newView.search;
+					if ( newView.page === undefined ) {
+						updatedView.page = 1;
+						scrollToTop();
+					}
 				}
-			}
 
-			if ( newView.search !== undefined && newView.search !== currentView.search ) {
-				updatedView.search = newView.search;
-				if ( newView.page === undefined ) {
-					updatedView.page = 1;
-					scrollToTop();
+				if ( newView.fields !== undefined ) {
+					updatedView.fields = newView.fields;
 				}
-			}
 
-			if ( newView.fields !== undefined ) {
-				updatedView.fields = newView.fields;
-			}
-
-			return updatedView;
-		} );
-	};
+				return updatedView;
+			} );
+		},
+		[ scrollToTop ]
+	);
 
 	return {
 		view,
