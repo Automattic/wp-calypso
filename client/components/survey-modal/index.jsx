@@ -17,6 +17,7 @@ const SurveyModal = ( {
 	heading,
 	title,
 	surveyImage,
+	surveyImageAlt,
 	description,
 	dismissText,
 	confirmText,
@@ -90,7 +91,7 @@ const SurveyModal = ( {
 
 				{ surveyImage && (
 					<div className="modal-survey-notice__popup-img">
-						<img src={ surveyImage } alt={ heading } />
+						<img src={ surveyImage } alt={ heading || surveyImageAlt } />
 					</div>
 				) }
 
@@ -98,14 +99,11 @@ const SurveyModal = ( {
 					{ title && <div className="modal-survey-notice__popup-content-title">{ title }</div> }
 					<div className="modal-survey-notice__popup-content-description">{ description }</div>
 					<div className="modal-survey-notice__popup-content-buttons">
-						<Button
-							className="modal-survey-notice__popup-content-buttons-cancel"
-							onClick={ onClose }
-						>
+						<Button variant="tertiary" onClick={ onClose }>
 							{ dismissText }
 						</Button>
 						<Button
-							className="modal-survey-notice__popup-content-buttons-ok"
+							variant="primary"
 							href={ href.toString() }
 							target="_blank"
 							rel="noopener noreferrer"
@@ -128,6 +126,7 @@ SurveyModal.propTypes = {
 	heading: PropTypes.string,
 	title: PropTypes.string,
 	surveyImage: PropTypes.string,
+	surveyImageAlt: PropTypes.string,
 	description: PropTypes.string.isRequired,
 	dismissText: PropTypes.string.isRequired,
 	confirmText: PropTypes.string.isRequired,
