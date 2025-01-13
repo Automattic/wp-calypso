@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $background-color: #05374A;
 
 .products-overview-v2.main.hosting-dashboard-layout {
@@ -14,6 +17,13 @@ $background-color: #05374A;
 		position: sticky;
 		top: 0;
 		z-index: 100;
+		overflow: hidden;
+		height: 306px;
+		transition: height .25s ease-out;
+
+		@include break-medium {
+			height: 252px;
+		}
     }
 
 	.hosting-dashboard-layout__header-breadcrumb {
@@ -37,5 +47,24 @@ $background-color: #05374A;
 
 	.components-button:is(.is-primary, .is-secondary) {
 		min-height: 40px;
+	}
+
+	.product-category-menu {
+		opacity: 1;
+		transition: opacity .25s ease-out;
+	}
+}
+
+.products-overview-v2.main.hosting-dashboard-layout.is-compact {
+	.hosting-dashboard-layout__top-wrapper {
+		height: 104px;
+
+		@include break-medium {
+			height: 66px;
+		}
+	}
+
+	.product-category-menu {
+		opacity: 0;
 	}
 }

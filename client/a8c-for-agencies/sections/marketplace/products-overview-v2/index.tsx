@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
@@ -24,6 +25,8 @@ import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ProductListing from '../products-overview/product-listing';
 import ShoppingCart from '../shopping-cart';
+import useCompactOnScroll from './hooks/use-compact-on-scroll';
+import ProductCategoryMenu from './product-category-menu';
 
 import './style.scss';
 
@@ -64,10 +67,13 @@ export function ProductsOverviewV2( {
 		}
 	}, [ siteId, sites ] );
 
+	const { onScroll, isCompact } = useCompactOnScroll();
+
 	return (
 		<Layout
-			className="products-overview-v2"
+			className={ clsx( 'products-overview-v2', { 'is-compact': isCompact } ) }
 			title={ isNarrowView ? '' : translate( 'Products Marketplace' ) }
+			onScroll={ onScroll }
 			wide
 		>
 			<LayoutTop>
@@ -100,6 +106,8 @@ export function ProductsOverviewV2( {
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductCategoryMenu />
 			</LayoutTop>
 
 			<LayoutBody className="products-overview-v2__body">

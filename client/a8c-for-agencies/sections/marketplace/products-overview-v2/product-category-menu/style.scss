@@ -1,0 +1,22 @@
+.product-category-menu {
+	margin-block-start: 32px;
+}
+
+.product-category-menu-title {
+	@include a4a-font-heading-xl;
+	color: var(--color-text-inverted);
+}
+
+.product-category-menu-items {
+	margin-block-start: -24px;
+}
+
+.product-category-menu-item {
+	width: 200px;
+	height: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--color-primary-0);
+	border-radius: 4px; // eslint-disable-line wpcalypso-border-radius-theme
+}
