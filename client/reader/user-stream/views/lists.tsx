@@ -66,10 +66,18 @@ const UserLists = ( {
 			<UserProfileHeader user={ user } />
 			<div className="user-profile__lists-body">
 				{ lists.map( ( list: List ) => (
-					<div className="user-profile__list" key={ list.ID }>
-						<h3>
-							<a href={ `/read/list/${ list.owner }/${ list.slug }` }>{ list.title }</a>
-						</h3>
+					<div className="card reader-post-card is-compact is-clickable" key={ list.ID }>
+						<div className="reader-post-card__post-heading">
+							<h2 className="reader-post-card__title">
+								<a
+									className="reader-post-card__title-link"
+									href={ `/read/list/${ list.owner }/${ list.slug }` }
+								>
+									{ list.title }
+								</a>
+							</h2>
+						</div>
+						<div className="reader-post-card__post-content">{ list.description }</div>
 					</div>
 				) ) }
 			</div>
@@ -78,10 +86,12 @@ const UserLists = ( {
 };
 
 export default connect(
-	( state: AppState, ownProps: UserListsProps ) => ( {
-		lists: state.reader.lists.userLists[ ownProps.userSlug ] ?? [],
-		isLoading: state.reader.lists.isRequestingUserLists[ ownProps.userSlug ] ?? false,
-	} ),
+	( state: AppState, ownProps: UserListsProps ) => {
+		return {
+			lists: state.reader.lists.userLists[ ownProps.userSlug ] ?? [],
+			isLoading: state.reader.lists.isRequestingUserLists[ ownProps.userSlug ] ?? false,
+		};
+	},
 	{
 		requestUserLists,
 	}

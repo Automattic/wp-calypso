@@ -15,5 +15,13 @@
 	.user-profile__lists-body {
 		max-width: 768px;
 		margin: 0 auto;
+
+		.user-profile__lists .reader-post-card__title {
+			margin-top: 0;
+
+			.reader-post-card__title-link {
+				font-size: 1.25rem;
+			}
+		}
 	}
 }
