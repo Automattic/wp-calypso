@@ -269,7 +269,6 @@
 			padding-right: 0;
 			overflow-y: initial;
 			max-height: initial;
-			max-width: 1400px;
 			width: 100%;
 		}
 
@@ -310,6 +309,14 @@
 		line-height: 20px;
 		color: var(--studio-gray-50);
 		text-transform: initial;
+	}
+}
+
+.wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
+	.hosting-dashboard-item-view__content {
+		> * {
+			max-width: 1400px;
+		}
 	}
 }
 
