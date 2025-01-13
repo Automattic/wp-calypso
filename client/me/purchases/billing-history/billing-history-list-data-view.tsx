@@ -40,7 +40,7 @@ const BillingHistoryListDataView: React.FC< BillingHistoryListProps > = ( {
 		viewState.view.perPage
 	);
 	const translate = useTranslate();
-	const fields = useFieldDefinitions( transactions, translate );
+	const fields = useFieldDefinitions( transactions );
 
 	return (
 		<div className="billing-history">
