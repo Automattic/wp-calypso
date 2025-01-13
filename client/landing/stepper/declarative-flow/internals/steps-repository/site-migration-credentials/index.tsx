@@ -94,9 +94,9 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 						align="center"
 					/>
 				}
-				stepContent={ <CredentialsForm onSubmit={ handleSubmit } onSkip={ handleSkip } /> }
+				stepContent={ <CredentialsForm onSubmit={ handleSubmit } /> }
 				recordTracksEvent={ recordTracksEvent }
-				customizedActionButtons={ <NeedHelpLink onSkip={ handleSkip } /> }
+				customizedActionButtons={ <NeedHelpLink onHelpLinkClicked={ handleSkip } /> }
 			/>
 		</>
 	);
