@@ -9,9 +9,9 @@ import type { IAppState } from 'calypso/state/types';
 import type { Action } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
-const recordClickEvent = ( eventAction: string ) => {
+function recordClickEvent( eventAction: string ): void {
 	recordGoogleEvent( 'Me', eventAction );
-};
+}
 
 export type ReceiptAction = {
 	id: 'view-receipt' | 'email-receipt';
@@ -21,10 +21,30 @@ export type ReceiptAction = {
 	callback: ( items: BillingTransaction[] ) => void;
 };
 
+type AppDispatch = ThunkDispatch< IAppState, undefined, Action >;
+
+function handleViewReceipt(
+	items: BillingTransaction[],
+	getReceiptUrlFor: ( receiptId: string ) => string
+): void {
+	if ( ! items?.length || ! items[ 0 ]?.id ) {
+		return;
+	}
+	pageRedirect.redirect( getReceiptUrlFor( items[ 0 ].id ) );
+}
+
+function handleEmailReceipt( items: BillingTransaction[], dispatch: AppDispatch ): void {
+	if ( ! items?.length || ! items[ 0 ]?.id ) {
+		return;
+	}
+	recordClickEvent( 'Email Receipt in Billing History' );
+	dispatch( sendBillingReceiptEmail( items[ 0 ].id ) );
+}
+
 export function useReceiptActions(
 	getReceiptUrlFor: ( receiptId: string ) => string
 ): ReceiptAction[] {
-	const dispatch = useDispatch< ThunkDispatch< IAppState, undefined, Action > >();
+	const dispatch = useDispatch< AppDispatch >();
 	const translate = useTranslate();
 
 	return useMemo(
@@ -34,33 +54,14 @@ export function useReceiptActions(
 				label: translate( 'View receipt' ),
 				isPrimary: true,
 				iconName: 'pages',
-				callback: ( items: BillingTransaction[] ) => {
-					if ( ! items || ! Array.isArray( items ) ) {
-						return;
-					}
-					const item = items[ 0 ];
-					if ( ! item?.id ) {
-						return;
-					}
-					pageRedirect.redirect( getReceiptUrlFor( item.id ) );
-				},
+				callback: ( items: BillingTransaction[] ) => handleViewReceipt( items, getReceiptUrlFor ),
 			},
 			{
 				id: 'email-receipt',
 				label: translate( 'Email receipt' ),
 				isPrimary: true,
 				iconName: 'mail',
-				callback: ( items: BillingTransaction[] ) => {
-					if ( ! items || ! Array.isArray( items ) ) {
-						return;
-					}
-					const item = items[ 0 ];
-					if ( ! item?.id ) {
-						return;
-					}
-					recordClickEvent( 'Email Receipt in Billing History' );
-					dispatch( sendBillingReceiptEmail( item.id ) );
-				},
+				callback: ( items: BillingTransaction[] ) => handleEmailReceipt( items, dispatch ),
 			},
 		],
 		[ dispatch, getReceiptUrlFor, translate ]
