@@ -44,28 +44,32 @@ const SpotlightPlan = ( {
 
 	return (
 		<div className={ spotlightPlanClasses }>
-			<PlanLogos renderedGridPlans={ [ gridPlanForSpotlight ] } isInSignup={ false } />
-			<PlanHeaders renderedGridPlans={ [ gridPlanForSpotlight ] } />
-			{ isNotFreePlan && <PlanTagline renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
-			{ isNotFreePlan && (
-				<PlanPrices
+			<div>
+				<PlanLogos renderedGridPlans={ [ gridPlanForSpotlight ] } isInSignup={ false } />
+				<PlanHeaders renderedGridPlans={ [ gridPlanForSpotlight ] } />
+				{ isNotFreePlan && <PlanTagline renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
+				{ isNotFreePlan && (
+					<PlanPrices
+						renderedGridPlans={ [ gridPlanForSpotlight ] }
+						currentSitePlanSlug={ currentSitePlanSlug }
+					/>
+				) }
+				{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
+				<PlanFeaturesList
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
-					currentSitePlanSlug={ currentSitePlanSlug }
+					featureGroupSlug={ FEATURE_GROUP_STORAGE }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					showUpgradeableStorage={ showUpgradeableStorage }
 				/>
-			) }
-			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
-			<PlanFeaturesList
-				renderedGridPlans={ [ gridPlanForSpotlight ] }
-				featureGroupSlug={ FEATURE_GROUP_STORAGE }
-				onStorageAddOnClick={ onStorageAddOnClick }
-				showUpgradeableStorage={ showUpgradeableStorage }
-			/>
-			<TopButtons
-				renderedGridPlans={ [ gridPlanForSpotlight ] }
-				isInSignup={ isInSignup }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				planActionOverrides={ planActionOverrides }
-			/>
+			</div>
+			<div className="spotlight-plan__buttons">
+				<TopButtons
+					renderedGridPlans={ [ gridPlanForSpotlight ] }
+					isInSignup={ isInSignup }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					planActionOverrides={ planActionOverrides }
+				/>
+			</div>
 		</div>
 	);
 };
