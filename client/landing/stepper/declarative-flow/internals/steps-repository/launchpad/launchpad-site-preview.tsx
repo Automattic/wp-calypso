@@ -7,7 +7,6 @@ import {
 	DESIGN_FIRST_FLOW,
 	ASSEMBLER_FIRST_FLOW,
 	READYMADE_TEMPLATE_FLOW,
-	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import SitePreview from '../../components/site-preview';
 
@@ -26,7 +25,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 			case DESIGN_FIRST_FLOW:
 			case ASSEMBLER_FIRST_FLOW:
 			case READYMADE_TEMPLATE_FLOW:
-			case AI_ASSEMBLER_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;

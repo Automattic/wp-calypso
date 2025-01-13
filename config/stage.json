@@ -27,7 +27,6 @@
 		"automated-migration/pending-status": true,
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": false,
-		"calypso/ai-assembler": true,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"calypso/help-center": true,

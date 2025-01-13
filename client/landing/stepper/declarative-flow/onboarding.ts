@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -57,6 +57,9 @@ const onboarding: Flow = {
 			[]
 		);
 
+		// we are only interested in the initial goals value when the user enters the goals step
+		const initialGoals = useRef( goals );
+
 		return useMemo(
 			() => ( {
 				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
@@ -68,10 +71,12 @@ const onboarding: Flow = {
 					...( isGoalsAtFrontExperiment && {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
 					} ),
-					...( goals.length && { goals: goals.join( ',' ) } ),
+					...( initialGoals.current.length && {
+						goals: initialGoals.current.join( ',' ),
+					} ),
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn, goals ]
+			[ isGoalsAtFrontExperiment, userIsLoggedIn, initialGoals ]
 		);
 	},
 	useSteps() {
