@@ -57,9 +57,9 @@ body:
       label: Site owner impact
       description: Approximately what percentage of the total users of the platform are impacted? Unsure? Please provide your most educated guess!
       options:
-        - Less than 20% of all
-        - Between 20% and 60% of all
-        - More than 60% of all
+        - Fewer than 20% of the total website/platform users
+        - Between 20% and 60% of the total website/platform users
+        - More than 60% of the total website/platform users
     validations:
       required: true
   - type: dropdown
