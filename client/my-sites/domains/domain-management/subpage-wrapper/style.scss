@@ -214,6 +214,15 @@
 
             @media ( max-width: $break-medium ) {
                 padding-top: 16px;
+
+                .breadcrumbs li {
+                    > a,
+                    > span {
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                        white-space: normal;
+                    }
+                }
             }
         }
 
