@@ -1,7 +1,40 @@
-import { isEqual } from 'lodash';
 import { useState, useCallback } from 'react';
 import { defaultDataViewsState } from '../constants';
 import type { ViewState, ViewStateUpdate, SortableField } from '../data-views-types';
+
+type Sort =
+	| undefined
+	| {
+			field: string;
+			direction: 'asc' | 'desc';
+	  };
+
+type Filters = undefined | Record< string, unknown >;
+
+function areSortsEqual( a: Sort, b: Sort ): boolean {
+	if ( a?.field !== b?.field ) {
+		return false;
+	}
+	if ( a?.direction !== b?.direction ) {
+		return false;
+	}
+	return true;
+}
+
+function areFiltersEqual( a: Filters, b: Filters ): boolean {
+	if ( a === b ) {
+		return true;
+	}
+	if ( ! a || ! b ) {
+		return false;
+	}
+	const aKeys = Object.keys( a );
+	const bKeys = Object.keys( b );
+	if ( aKeys.length !== bKeys.length ) {
+		return false;
+	}
+	return aKeys.every( ( key ) => a[ key ] === b[ key ] );
+}
 
 export function useViewStateUpdate() {
 	const [ view, setView ] = useState< ViewState >( defaultDataViewsState );
@@ -25,7 +58,7 @@ export function useViewStateUpdate() {
 				scrollToTop();
 			}
 
-			if ( newView.sort && ! isEqual( newView.sort, currentView.sort ) ) {
+			if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
 				updatedView.sort = {
 					field: newView.sort.field as SortableField,
 					direction: newView.sort.direction,
@@ -36,7 +69,7 @@ export function useViewStateUpdate() {
 				}
 			}
 
-			if ( newView.filters && ! isEqual( newView.filters, currentView.filters ) ) {
+			if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
 				updatedView.filters = newView.filters;
 				if ( newView.page === undefined ) {
 					updatedView.page = 1;
