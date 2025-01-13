@@ -50,7 +50,7 @@ export default function useProductFilterOptions() {
 						{
 							key: PRODUCT_CATEGORY_JETPACK,
 							label: translate( 'Jetpack' ) as string,
-							image: <JetpackLogo full />,
+							image: <JetpackLogo />,
 						},
 						{
 							key: PRODUCT_CATEGORY_WOOCOMMERCE,
