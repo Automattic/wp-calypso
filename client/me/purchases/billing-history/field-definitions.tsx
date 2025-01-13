@@ -1,13 +1,14 @@
 import { type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { capitalPDangit } from 'calypso/lib/formatting';
-import { DATE_FORMATS } from './constants';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	TransactionAmount,
 	renderTransactionQuantitySummary,
+	formatDisplayDate,
+	formatMonthYear,
+	formatMonthYearLabel,
 } from './utils';
 import type {
 	BillingTransaction,
@@ -55,18 +56,19 @@ const serviceName = (
 const getUniqueMonths = (
 	transactions: BillingTransaction[]
 ): Array< { value: string; label: string } > => {
-	const uniqueMonths = new Set(
-		transactions.map( ( transaction ) =>
-			moment( transaction.date ).format( DATE_FORMATS.MONTH_YEAR )
-		)
-	);
+	const monthsMap = new Map< string, Date >();
 
-	return Array.from( uniqueMonths )
-		.sort()
-		.reverse()
-		.map( ( monthStr ) => ( {
-			value: monthStr,
-			label: moment( monthStr ).format( DATE_FORMATS.MONTH_YEAR_LABEL ),
+	transactions.forEach( ( transaction ) => {
+		const date = new Date( transaction.date );
+		const formatted = formatMonthYear( date );
+		monthsMap.set( formatted, date );
+	} );
+
+	return Array.from( monthsMap.entries() )
+		.sort( ( [ , dateA ], [ , dateB ] ) => dateB.getTime() - dateA.getTime() )
+		.map( ( [ value, date ] ) => ( {
+			value,
+			label: formatMonthYearLabel( date ),
 		} ) );
 };
 
@@ -121,10 +123,10 @@ export const getFieldDefinitions = (
 			operators: [ 'is' as Operator ],
 		},
 		getValue: ( { item }: { item: BillingTransaction } ) => {
-			return moment( item.date ).format( DATE_FORMATS.MONTH_YEAR );
+			return formatMonthYear( new Date( item.date ) );
 		},
 		render: ( { item }: { item: BillingTransaction } ) => {
-			return <time>{ moment( item.date ).format( DATE_FORMATS.DISPLAY ) }</time>;
+			return <time>{ formatDisplayDate( new Date( item.date ) ) }</time>;
 		},
 	},
 	service: {

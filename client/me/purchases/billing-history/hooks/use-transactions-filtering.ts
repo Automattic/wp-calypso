@@ -1,9 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { BillingTransaction } from 'calypso/state/billing-transactions/types';
-import { DATE_FORMATS } from '../constants';
-import { groupDomainProducts } from '../utils';
+import { groupDomainProducts, formatDisplayDate, formatMonthYear } from '../utils';
 import type { ViewState, Filter } from '../data-views-types';
 
 export function useTransactionsFiltering(
@@ -23,7 +21,7 @@ export function useTransactionsFiltering(
 					transactionItem.product,
 					transactionItem.variation,
 					transactionItem.domain,
-					moment( transaction.date ).format( DATE_FORMATS.DISPLAY ),
+					formatDisplayDate( new Date( transaction.date ) ),
 				];
 
 				if (
@@ -47,8 +45,11 @@ export function useTransactionsFiltering(
 					const [ firstItem ] = groupDomainProducts( transaction.items, translate );
 					return firstItem.type === filter.value;
 				}
-				if ( filter.field === 'date' && filter.value ) {
-					return moment( transaction.date ).format( DATE_FORMATS.MONTH_YEAR ) === filter.value;
+				if ( filter.field === 'date' && filter.value && typeof filter.value === 'string' ) {
+					const [ year, month ] = filter.value.split( '-' ).map( Number );
+					const filterDate = new Date( year, month - 1 );
+					const transactionDate = new Date( transaction.date );
+					return formatMonthYear( transactionDate ) === formatMonthYear( filterDate );
 				}
 				return true;
 			} );

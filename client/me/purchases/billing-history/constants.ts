@@ -3,12 +3,6 @@ import type { ViewState } from './data-views-types';
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PER_PAGE = 10;
 
-export const DATE_FORMATS = {
-	MONTH_YEAR: 'YYYY-MM',
-	MONTH_YEAR_LABEL: 'MMMM YYYY',
-	DISPLAY: 'll',
-} as const;
-
 export const defaultDataViewsState: ViewState = {
 	type: 'table',
 	search: '',

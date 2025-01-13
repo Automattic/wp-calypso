@@ -40,6 +40,7 @@ export default function BillingHistoryListDataView( {
 	);
 	const translate = useTranslate();
 	const fields = useFieldDefinitions( transactions );
+	const defaultLayout = { table: {} };
 
 	return (
 		<div className="billing-history">
@@ -55,7 +56,7 @@ export default function BillingHistoryListDataView( {
 					search
 					searchLabel={ translate( 'Search receipts' ) }
 					onChangeView={ viewState.updateView }
-					defaultLayouts={ { table: {} } }
+					defaultLayouts={ defaultLayout }
 					actions={ actions }
 					isLoading={ isLoading }
 				/>
