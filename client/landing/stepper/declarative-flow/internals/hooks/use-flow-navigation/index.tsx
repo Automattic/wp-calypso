@@ -1,4 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
+import { HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { generatePath, createPath, useMatch, useNavigate } from 'react-router';
@@ -110,8 +111,14 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				...extraData,
 			} );
 
+			// For HOSTED_SITE_MIGRATION_FLOW, we must use the flow.variantSlug instead of flow.name
+			// to prevent navigation errors.
+			const exceptionFlowsToUseVariantSlug = [ HOSTED_SITE_MIGRATION_FLOW ];
+
 			const newPath = generatePath( `/:flow/:step/:lang?`, {
-				flow: flow.name,
+				flow: exceptionFlowsToUseVariantSlug.includes( flow.variantSlug ?? '' )
+					? flow.variantSlug ?? ''
+					: flow.name,
 				lang,
 				step: nextStep,
 			} );
