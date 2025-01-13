@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -79,7 +80,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					if ( ! this.state.isSiteTitleTaskCompleted && this.state.blogNameChanged ) {
 						noticeSettings.button = this.props.translate( 'Next steps' );
 						noticeSettings.onClick = () => {
-							window.location.assign( `/home/${ this.props.siteSlug }` );
+							page( `/home/${ this.props.siteSlug }` );
 						};
 					}
 

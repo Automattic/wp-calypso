@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
@@ -292,6 +292,7 @@ import {
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 	FEATURE_STATS_PAID,
+	FEATURE_STATS_COMMERCIAL,
 	FEATURE_SENSEI_SUPPORT,
 	FEATURE_SENSEI_UNLIMITED,
 	FEATURE_SENSEI_INTERACTIVE,
@@ -1863,6 +1864,18 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
+		getTitle: () => {
+			return isEnabled( 'stats/paid-wpcom-v3' )
+				? i18n.translate( 'Detailed traffic stats beyond the last 7 days and site insights' )
+				: i18n.translate( 'In-depth site analytics dashboard' );
+		},
+		getDescription: () =>
+			i18n.translate(
+				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
+			),
+	},
+	[ FEATURE_STATS_COMMERCIAL ]: {
+		getSlug: () => FEATURE_STATS_COMMERCIAL,
 		getTitle: () => i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(
@@ -2425,36 +2438,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => {
-			if (
-				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-				i18n.hasTranslation( 'Fast support from our expert team' )
-			) {
-				return i18n.translate( 'Fast support from our expert team' );
-			}
-
-			return i18n.translate( 'Expert support' );
-		},
+		getTitle: () => i18n.translate( 'Fast support from our expert team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
-		getTitle: () => {
-			if (
-				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-				i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
-			) {
-				return i18n.translate( 'Priority 24/7 support from our expert team' );
-			}
-
-			return i18n.translate( '24/7 priority support' );
-		},
+		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert team' ),
 		getDescription: () =>
-			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
-				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
-				: i18n.translate( '24/7 priority support' ),
+			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2622,11 +2614,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SENSEI_SELL_COURSES ]: {
 		getSlug: () => FEATURE_SENSEI_SELL_COURSES,
-		getTitle: () =>
-			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-			i18n.hasTranslation( 'Sell courses' )
-				? i18n.translate( 'Sell courses' )
-				: i18n.translate( 'Sell courses and subscriptions' ),
+		getTitle: () => i18n.translate( 'Sell courses' ),
 	},
 	[ FEATURE_SENSEI_STORAGE ]: {
 		getSlug: () => FEATURE_SENSEI_STORAGE,

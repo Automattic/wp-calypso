@@ -32,6 +32,7 @@ export const UserMessage = ( {
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
+	const isConnectedToZendesk = chat?.provider === 'zendesk';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
@@ -44,6 +45,13 @@ export const UserMessage = ( {
 	const displayMessage =
 		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
+	const handleContactSupportClick = ( destination: string ) => {
+		trackEvent( 'chat_get_support', {
+			location: 'chat',
+			destination,
+		} );
+	};
+
 	const renderExtraContactOptions = () => {
 		const currentMessageIndex = chat.messages.findIndex(
 			( msg ) => msg.message_id === message.message_id
@@ -51,20 +59,27 @@ export const UserMessage = ( {
 		const isLastMessage = currentMessageIndex === chat.messages.length - 1;
 
 		return (
-			isLastMessage && ( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions )
+			isLastMessage &&
+			( shouldUseHelpCenterExperience ? (
+				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+			) : (
+				extraContactOptions
+			) )
 		);
 	};
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const handleClick = () => {
+	const handleGuidelinesClick = () => {
 		trackEvent?.( 'ai_guidelines_link_clicked' );
 	};
 
 	const renderDisclaimers = () => (
 		<>
-			<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			{ ! isConnectedToZendesk && (
+				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			) }
 
 			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 
@@ -75,8 +90,13 @@ export const UserMessage = ( {
 						__i18n_text_domain__
 					),
 					{
-						// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
-						a: <ExternalLink href="https://automattic.com/ai-guidelines" onClick={ handleClick } />,
+						a: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
+							<ExternalLink
+								href="https://automattic.com/ai-guidelines"
+								onClick={ handleGuidelinesClick }
+							/>
+						),
 					}
 				) }
 			</div>

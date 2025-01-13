@@ -2,12 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { UrlPerformanceInsightsQueryResponse } from './types';
 
-function mapResult( response: UrlPerformanceInsightsQueryResponse ) {
-	return response.pagespeed;
-}
-
 export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) => {
-	return useQuery( {
+	return useQuery< UrlPerformanceInsightsQueryResponse >( {
 		queryKey: [ 'url', 'performance', url, hash ],
 		queryFn: () =>
 			wp.req.get(
@@ -20,11 +16,13 @@ export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) =>
 		meta: {
 			persist: false,
 		},
-		select: mapResult,
 		enabled: !! url && !! hash,
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>
-			query.state.data?.pagespeed?.status === 'completed' ? false : 5000, // 5 second
+			query.state.data?.pagespeed?.status === 'completed' &&
+			query.state.data?.wpscan?.status === 'completed'
+				? false
+				: 5000, // 5 second
 	} );
 };

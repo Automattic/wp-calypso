@@ -7,7 +7,7 @@ import { useCreateZendeskConversation } from '../../hooks';
 import './get-support.scss';
 
 interface GetSupportProps {
-	onClickAdditionalEvent?: () => void;
+	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 }
 
@@ -68,7 +68,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 			return {
 				text: __( 'Get instant support', __i18n_text_domain__ ),
 				action: async () => {
-					onClickAdditionalEvent?.();
+					onClickAdditionalEvent?.( 'chat' );
 					await newConversation();
 				},
 			};
@@ -77,7 +77,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		return {
 			text: __( 'Ask in our forums', __i18n_text_domain__ ),
 			action: async () => {
-				onClickAdditionalEvent?.();
+				onClickAdditionalEvent?.( 'forum' );
 				navigate( '/contact-form?mode=FORUM' );
 			},
 		};

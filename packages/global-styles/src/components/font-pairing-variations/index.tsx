@@ -83,14 +83,14 @@ const FontPairingVariation = ( {
 };
 
 const FontPairingVariations = ( {
-	siteId,
+	//siteId,
 	stylesheet,
 	selectedFontPairingVariation,
 	onSelect,
 	limitGlobalStyles,
 }: FontPairingVariationsProps ) => {
 	// The theme font pairings don't include the default font pairing
-	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
+	const fontPairingVariations = useFontPairingVariations( stylesheet ) ?? [];
 	const composite = useCompositeState();
 	return (
 		<Composite

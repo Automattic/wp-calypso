@@ -57,7 +57,8 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 			'Upgrade now to unlock your premium styles and get access to tons of other features. Or you can decide later and try them out first.',
 			{ count: numOfSelectedGlobalStyles }
 		),
-		cancel: translate( 'Decide later' ),
+		try: translate( 'Decide later' ),
+		cancel: translate( 'Cancel' ),
 		upgrade: translate( 'Upgrade plan' ),
 		upgradeWithPlan: translate( 'Get %(planTitle)s plan', {
 			args: { planTitle },

@@ -199,7 +199,7 @@ export type ZendeskMessage = {
 	received: number;
 	role: string;
 	actions?: MessageAction[];
-	source: {
+	source?: {
 		type: 'web' | 'slack' | 'zd:surveys';
 		id: string;
 		integrationId: string;
@@ -217,6 +217,7 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'image-placeholder'
 	| 'list'
 	| 'location'
 	| 'template';

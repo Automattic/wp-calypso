@@ -3,20 +3,16 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
@@ -25,6 +21,12 @@ import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
@@ -61,6 +63,8 @@ export default function ReferralsOverview( {
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
 	);
+
+	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -175,18 +179,23 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					<LayoutBodyContent
-						isAutomatedReferral={ isAutomatedReferral }
-						tipaltiData={ tipaltiData }
-						referrals={ referrals }
-						isLoading={ isLoading }
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-						referralInvoices={ referralInvoices ?? [] }
-						isFetchingInvoices={ isFetchingReferralInvoices }
-						isArchiveView={ isArchiveView }
-						onReferralRefetch={ refetchReferrals }
-					/>
+					{ showFeedback ? (
+						<A4AFeedback { ...feedbackProps } />
+					) : (
+						<LayoutBodyContent
+							isAutomatedReferral={ isAutomatedReferral }
+							tipaltiData={ tipaltiData }
+							referrals={ referrals }
+							isLoading={ isLoading }
+							dataViewsState={ dataViewsState }
+							setDataViewsState={ setDataViewsState }
+							referralInvoices={ referralInvoices ?? [] }
+							isFetchingInvoices={ isFetchingReferralInvoices }
+							isArchiveView={ isArchiveView }
+							onReferralRefetch={ refetchReferrals }
+						/>
+					) }
+
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
 			</LayoutColumn>

@@ -145,11 +145,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-options' ),
 	},
 
-	PATTERN_ASSEMBLER: {
-		slug: 'pattern-assembler',
-		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
-	},
-
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
@@ -170,11 +165,6 @@ export const STEPS = {
 	SITE_PICKER: {
 		slug: 'site-picker',
 		asyncComponent: () => import( './steps-repository/site-picker-list' ),
-	},
-
-	SITE_PROMPT: {
-		slug: 'site-prompt',
-		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
 	},
 
 	STORE_ADDRESS: {
@@ -252,10 +242,10 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-fallback-credentials' ),
 	},
 
-	SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL: {
-		slug: 'application-passwords-approval',
+	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION: {
+		slug: 'site-migration-application-password-authorization',
 		asyncComponent: () =>
-			import( './steps-repository/site-migration-application-passwords-approval' ),
+			import( './steps-repository/site-migration-application-password-authorization' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {
@@ -328,5 +318,16 @@ export const STEPS = {
 	MIGRATION_UPGRADE_PLAN: {
 		slug: 'migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
+	},
+} satisfies Record< string, StepperStep >;
+
+/**
+ * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
+ */
+export const PRIVATE_STEPS = {
+	USER: {
+		slug: 'user',
+		asyncComponent: () =>
+			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
 } satisfies Record< string, StepperStep >;

@@ -1,0 +1,7 @@
+.site-logs-container {
+	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
+	.pagination__page-number,
+	.pagination__ellipsis {
+		display: none;
+	}
+}

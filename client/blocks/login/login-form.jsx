@@ -133,7 +133,7 @@ export class LoginForm extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		} );
 		// Remove url param to keep the last used login consistent upon refresh
 		const url = new URL( window.location );
@@ -898,7 +898,10 @@ export class LoginForm extends Component {
 		);
 
 		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod && lastUsedAuthenticationMethod !== 'password' && isSocialFirst;
+			lastUsedAuthenticationMethod &&
+			lastUsedAuthenticationMethod !== 'password' &&
+			lastUsedAuthenticationMethod !== 'magic-login' &&
+			isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (

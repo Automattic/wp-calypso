@@ -23,11 +23,11 @@ const useGridPlansForComparisonGrid = ( {
 	selectedPlan,
 	showLegacyStorageFeature,
 	siteId,
-	storageAddOns,
 	term,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
+	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -41,11 +41,11 @@ const useGridPlansForComparisonGrid = ( {
 		selectedPlan,
 		siteId,
 		showLegacyStorageFeature,
-		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
+		reflectStorageSelectionInPlanPrices,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {

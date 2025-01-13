@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "mixins";
+@import "variables";
 
 // More resources
 .help-center-more-resources {
@@ -60,7 +61,7 @@
 					&:active,
 					&:focus {
 						box-shadow: none;
-						outline: var(--color-primary-light) solid 2px;
+						outline: $help-center-blue solid 2px;
 					}
 				}
 			}

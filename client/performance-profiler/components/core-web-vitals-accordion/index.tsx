@@ -5,7 +5,7 @@ import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	metricsNames,
+	getMetricsNames,
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
@@ -67,6 +67,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 		}
 	};
 
+	const metricsNames = getMetricsNames( translate );
 	const entries = Object.entries( metricsNames );
 	const overallEntry = entries.find( ( [ key ] ) => key === 'overall' );
 	const otherEntries = entries.filter( ( [ key ] ) => key !== 'overall' );

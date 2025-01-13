@@ -2,7 +2,7 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -13,6 +13,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
@@ -25,11 +26,27 @@ interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
 
+interface PaddingItem {
+	isPadding: true;
+	postId: string;
+}
+
+function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
+	return 'isPadding' in item;
+}
+
 const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const postColumnRef = useRef< HTMLDivElement | null >( null );
+	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
+	const focusedIndexRef = useRef< string | null >( null ); // Keep track of the currently focused row index
+
+	const handleItemFocus = useCallback( ( itemIndex: string ) => {
+		focusedIndexRef.current = itemIndex;
+	}, [] );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -58,7 +75,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
+		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
+			if ( isPaddingItem( item ) ) {
+				return acc;
+			}
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
@@ -83,7 +103,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost } ) => {
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return <Skeleton height="24px" width="24px" shape="circle" />;
+					}
 					const post = getPostFromItem( item );
 					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
 					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
@@ -94,10 +117,29 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost } ) =>
-					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost } ) => {
-					return <RecentPostField post={ getPostFromItem( item ) } />;
+				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
+					isPaddingItem( item )
+						? ''
+						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return (
+							<>
+								<Skeleton height="10px" width="100%" style={ { marginBottom: '8px' } } />
+								<Skeleton height="8px" width="50%" />
+							</>
+						);
+					}
+					return (
+						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
+							<RecentPostField
+								ref={ ( el ) => {
+									itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+								} }
+								post={ getPostFromItem( item ) }
+							/>
+						</div>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -157,13 +199,33 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		setIsLoading( data?.isRequesting );
 	}, [ data?.isRequesting ] );
 
+	// Handle key events
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( event.key === 'Enter' && focusedIndexRef.current !== null ) {
+				// Use the focused index to determine the selected item
+				const focusedItem = shownData.find(
+					( item ) => item.postId?.toString() === focusedIndexRef.current
+				);
+				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
+					setSelectedItem( focusedItem );
+					setTimeout( () => {
+						postColumnRef.current?.focus();
+					}, 0 );
+				}
+			}
+		},
+		[ shownData ]
+	);
+
 	return (
-		<div className="recent-feed">
+		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
+		<div className="recent-feed" onKeyDown={ handleKeyDown }>
 			<div className={ `recent-feed__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="recent-feed__list-column-header">
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
-				<div className="recent-feed__list-column-content">
+				<aside className="recent-feed__list-column-content">
 					<DataViews
 						getItemId={ ( item: ReaderPost, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
@@ -190,11 +252,20 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
+							// Focus the post column after a short delay to ensure DOM updates.
+							setTimeout( () => {
+								postColumnRef.current?.focus();
+							}, 0 );
 						} }
 					/>
-				</div>
+				</aside>
 			</div>
-			<div className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }>
+			<section
+				aria-labelledby={ selectedItem ? `post-${ selectedItem.postId }` : undefined }
+				ref={ postColumnRef }
+				className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }
+				tabIndex={ -1 }
+			>
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
@@ -212,13 +283,21 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							require="calypso/blocks/reader-full-post"
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
-							onClose={ () => setSelectedItem( null ) }
+							onClose={ () => {
+								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								if ( ! isWide ) {
+									setSelectedItem( null );
+								}
+								requestAnimationFrame( () => {
+									focusItem?.focus();
+								} );
+							} }
 							layout="recent"
 						/>
 						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
 					</>
 				) }
-			</div>
+			</section>
 		</div>
 	);
 };

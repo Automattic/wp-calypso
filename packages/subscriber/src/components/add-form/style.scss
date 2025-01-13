@@ -224,4 +224,48 @@
 			padding: 0;
 		}
 	}
+
+	.add-subscriber__categories-container {
+		margin-top: 28px;
+		margin-bottom: 20px;
+
+		h3 {
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+		 
+		span {
+			font-weight: normal;
+		}
+
+		label {
+			margin: 0;
+		}
+
+		.categories-toggle-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+
+			p {
+				font-size: 0.875rem;
+				margin: 0;
+			}
+		}
+
+		.components-button {
+			border: none;
+		}
+	}
+}
+
+.categories-info-popover {
+	padding: 16px;
+	min-width: 280px;
+
+	p {
+		font-size: 0.875rem;
+		margin: 0;
+	}
 }

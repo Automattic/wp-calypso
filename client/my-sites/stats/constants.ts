@@ -26,6 +26,7 @@ export const STAT_TYPE_CLICKS = 'statsClicks';
 export const STAT_TYPE_COMMENT_FOLLOWERS = 'statsCommentFollowers';
 export const STAT_TYPE_COMMENTS = 'statsComments';
 export const STAT_TYPE_COUNTRY_VIEWS = 'statsCountryViews';
+export const STAT_TYPE_FILE_DOWNLOADS = 'statsFileDownloads';
 export const STAT_TYPE_FOLLOWERS = 'statsFollowers';
 export const STAT_TYPE_INSIGHTS_ALL_TIME_STATS = 'statsInsightsAllTimeStats';
 export const STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME = 'statsInsightsMostPopularTime';
@@ -49,10 +50,13 @@ export const STATS_TYPE_DEVICE_STATS = 'stats_devices_module';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
+export const STATS_FEATURE_DATE_CONTROL_TODAY = 'StatsDateControl/today';
 export const STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS = 'StatsDateControl/last_7_days';
 export const STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS = 'StatsDateControl/last_30_days';
-export const STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS = 'StatsDateControl/last_3_months';
-export const STATS_FEATURE_DATE_CONTROL_LAST_YEAR = 'StatsDateControl/last_year';
+export const STATS_FEATURE_DATE_CONTROL_MONTH_TO_DATE = 'StatsDateControl/month_to_date';
+export const STATS_FEATURE_DATE_CONTROL_LAST_12_MONTHS = 'StatsDateControl/last_12_months';
+export const STATS_FEATURE_DATE_CONTROL_YEAR_TO_DATE = 'StatsDateControl/year_to_date';
+export const STATS_FEATURE_DATE_CONTROL_LAST_3_YEARS = 'StatsDateControl/last_3_years';
 export const STATS_FEATURE_DATE_CONTROL_CUSTOM_DATE_RANGE = 'StatsDateControl/custom_date_range';
 export const STATS_FEATURE_INTERVAL_DROPDOWN = 'StatsIntervalDropdown';
 export const STATS_FEATURE_INTERVAL_DROPDOWN_HOUR = `StatsIntervalDropdown/${ STATS_PERIOD.HOUR }`;

@@ -343,6 +343,11 @@ const streamApis = {
 			};
 		},
 	},
+	user: {
+		path: ( { streamKey } ) => `/users/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'date',
+		apiVersion: '1',
+	},
 };
 
 /**
@@ -352,7 +357,7 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug, page, perPage },
+		payload: { streamKey, streamType, feedId, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
 	const api = streamApis[ streamType ];
 
@@ -385,6 +390,7 @@ export function requestPage( action ) {
 	// There is a race condition in switchLocale when retrieving the language file
 	// The stream request can occur before the language file is loaded, so we need a way to explicitly set the lang in the request
 	const lang = localeSlug || i18n.getLocaleSlug();
+	const commonQueryParams = { ...algorithm, feed_id: feedId };
 
 	return http( {
 		method: 'GET',
@@ -392,8 +398,8 @@ export function requestPage( action ) {
 		apiVersion,
 		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
-			? pollQuery( [], { ...algorithm } )
-			: query( { ...pageHandle, ...algorithm, number, lang, page }, action.payload ),
+			? pollQuery( [], commonQueryParams )
+			: query( { ...commonQueryParams, ...pageHandle, number, lang, page }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
@@ -421,7 +427,7 @@ function get_page_handle( streamType, action, data ) {
 
 export function handlePage( action, data ) {
 	const { posts, sites, cards } = data;
-	const { streamKey, query, isPoll, gap, streamType } = action.payload;
+	const { streamKey, query, isPoll, gap, streamType, page, perPage } = action.payload;
 	const pageHandle = get_page_handle( streamType, action, data );
 	const { dateProperty } = streamApis[ streamType ];
 
@@ -496,6 +502,8 @@ export function handlePage( action, data ) {
 				gap,
 				totalItems,
 				totalPages,
+				page,
+				perPage,
 			} )
 		);
 	}

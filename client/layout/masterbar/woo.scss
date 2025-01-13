@@ -6,6 +6,87 @@
 
 $breakpoint-mobile: 660px;
 
+@mixin button-primary {
+	background-color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-secondary {
+	border: 2px solid var(--woo-purple-40);
+	background-color: transparent;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-70);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-tertiary {
+	background-color: transparent;
+	color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-0);
+		color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: transparent;
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-size-small {
+	padding: 5.5px 16px;
+	font-weight: 500;
+	font-size: rem(14px);
+	line-height: 21px;
+}
+
+@mixin button-size-base {
+	padding: 12px 24px;
+	font-weight: 500;
+	font-size: rem(16px);
+	line-height: 24px;
+}
+
+@mixin button-size-large {
+	padding: 14.5px 24px;
+	font-weight: 500;
+	font-size: rem(18px);
+	line-height: 27px;
+}
+
+@mixin link-woo {
+	color: var(--woo-purple-40);
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	font-weight: 400;
+
+	&:hover,
+	&:focus {
+		color: var(--woo-purple-60);
+	}
+}
+
 .woo {
 	--woo-purple-40: #966ccf;
 	--woo-purple-50: #7f54b3;
@@ -348,6 +429,12 @@ $breakpoint-mobile: 660px;
 
 		@media (max-width: $break-mobile) {
 			text-align: left;
+		}
+
+		@media (min-width: $break-large) {
+			br.hide-on-desktop {
+				display: none;
+			}
 		}
 	}
 
@@ -706,6 +793,15 @@ $breakpoint-mobile: 660px;
 		a {
 			color: $gray-50;
 			font-size: inherit;
+		}
+	}
+
+	.login__lost-password-form-wrapper {
+		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved. Otherwise we will see a flash of content.
+		.async-load__placeholder {
+			visibility: hidden;
+			height: 185px;
+			margin: 48px auto 0;
 		}
 	}
 
@@ -1414,7 +1510,7 @@ $breakpoint-mobile: 660px;
 			align-items: center;
 			width: 100%;
 			flex-direction: column;
-			margin: 40px auto 0;
+			margin: 12px auto 0;
 
 			@media (max-width: $break-mobile) {
 				max-width: $max-width;
@@ -1446,7 +1542,7 @@ $breakpoint-mobile: 660px;
 
 			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
 				padding: 0;
-				margin-top: 24px;
+				margin: 24px 0 0 0;
 			}
 		}
 
@@ -1681,6 +1777,7 @@ $breakpoint-mobile: 660px;
 
 				strong {
 					font-weight: 600;
+					display: inline-block;
 				}
 			}
 
@@ -1734,13 +1831,19 @@ $breakpoint-mobile: 660px;
 		}
 
 		.login__lostpassword-form {
+			margin-bottom: 44px;
+
 			.login__form-action {
-				margin: 8px 0 32px;
+				margin: 24px 0 0;
 				width: 100%;
 			}
 
 			.login__form-userdata {
 				width: 100%;
+			}
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
 			}
 		}
 
@@ -1914,6 +2017,10 @@ $breakpoint-mobile: 660px;
 
 		.login__lost-password-link {
 			color: var(--wp-admin-theme-color);
+
+			&:hover {
+				color: var(--wp-admin-theme-color);
+			}
 		}
 
 		.login__form-forgot-password {
@@ -1932,6 +2039,11 @@ $breakpoint-mobile: 660px;
 			border-radius: 2px;
 			&:hover:not(:disabled) {
 				background-color: var(--color-primary);
+			}
+
+			&:disabled {
+				background-color: var(--studio-gray-0);
+				color: var(--studio-gray-20);
 			}
 		}
 
@@ -1969,6 +2081,13 @@ $breakpoint-mobile: 660px;
 				font-weight: inherit;
 				font-size: inherit;
 				color: var(--wp-admin-theme-color);
+				line-height: inherit;
+				text-decoration: none;
+				text-underline-offset: 0;
+
+				&:hover {
+					color: var(--wp-admin-theme-color);
+				}
 			}
 
 			@media (max-width: $break-mobile) {
@@ -1987,7 +2106,8 @@ $breakpoint-mobile: 660px;
 			border: 1px solid var(--Gutenberg-Gray-500, #bbb);
 			background: var(--Gutenberg-White, #fff);
 			&:hover,
-			&:focus {
+			&:focus,
+			&:focus:hover {
 				border: 2px solid var(--Gutenberg-Gray-500, #bbb);
 			}
 		}
@@ -2121,27 +2241,12 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.feature-flag-woocommerce-rebrand-2-0,
-.woo.feature-flag-woocommerce-rebrand-2-0.is-woo-passwordless {
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0 {
+	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
 	--woo-purple-70: #5007AA;
-
-	&.is-woo-passwordless {
-		.security-key-form__help-text,
-		.formatted-header__subtitle {
-			a {
-				color: var(--woo-purple-40);
-				text-decoration: underline;
-				text-underline-offset: 4px;
-
-				&:hover {
-					color: var(--woo-purple-60);
-				}
-			}
-		}
-	}
 
 	.masterbar__woo {
 		.masterbar__woo-nav {
@@ -2167,51 +2272,42 @@ $breakpoint-mobile: 660px;
 	.button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
-		background-color: var(--woo-purple-40);
-
-		&:hover {
-			background-color: var(--woo-purple-60);
-		}
+		@include button-primary;
 	}
 
 	.notice__text a,
 	.notice__text a:visited {
-		color: var(--woo-purple-40);
-		text-decoration: underline;
-		text-underline-offset: 4px;
-
-		&:hover {
-			color: var(--woo-purple-60);
-		}
+		@include link-woo;
 	}
 
 	.login__header-subtitle a {
-		color: var(--woo-purple-40);
-		text-decoration: underline;
-		text-underline-offset: 4px;
-
-		&:hover {
-			color: var(--woo-purple-60);
-		}
+		@include link-woo;
 	}
 
 	.continue-as-user__change-user-link {
-		color: var(--woo-purple-50);
-
-		&:hover {
-			color: var(--woo-purple-70);
-		}
+		@include button-tertiary;
+		@include button-size-small;
 	}
 
 	.magic-login__footer a {
-		color: var(--woo-purple-50);
-
-		&:hover {
-			color: var(--woo-purple-40);
-		}
+		@include link-woo;
 	}
 
 	.auth-form__social-buttons-tos a {
 		text-underline-offset: 2px;
+	}
+
+	.login__lost-password-no-account a {
+		@include link-woo;
+	}
+
+	.login__lost-password-link {
+		@include link-woo;
+	}
+	.security-key-form__help-text,
+	.formatted-header__subtitle {
+		a {
+			@include link-woo;
+		}
 	}
 }

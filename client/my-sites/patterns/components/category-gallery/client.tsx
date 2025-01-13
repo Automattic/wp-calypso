@@ -3,7 +3,6 @@ import { usePatternsRendererContext } from '@automattic/block-renderer/src/compo
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
@@ -12,6 +11,7 @@ import {
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { encodePatternId } from 'calypso/my-sites/patterns/lib/encode-pattern-id';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, Category, CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import MigrationContactSupportForm from '../a4a-migration-offer-v2/migration-contact-support-form';
@@ -18,8 +17,6 @@ export default function A4AContactSupportWidget() {
 		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
 
 	const [ showUserSupportForm, setShowUserSupportForm ] = useState( supportFormHash );
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const onCloseUserSupportForm = useCallback( () => {
 		// Remove any hash from the URL.
@@ -43,8 +40,7 @@ export default function A4AContactSupportWidget() {
 			? getDefaultProduct()
 			: undefined;
 
-	return isNewHostingPage &&
-		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ? (
+	return window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT ? (
 		<MigrationContactSupportForm show={ showUserSupportForm } onClose={ onCloseUserSupportForm } />
 	) : (
 		<UserContactSupportModalForm

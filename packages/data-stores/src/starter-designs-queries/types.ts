@@ -1,15 +1,4 @@
-import type { Category, DesignRecipe, Design } from '@automattic/design-picker/src/types';
-
-export interface StarterDesignsGeneratedQueryParams {
-	seed?: string;
-	_locale: string;
-}
-
-export interface StarterDesignsGenerated {
-	slug: string;
-	title: string;
-	recipe: DesignRecipe;
-}
+import type { Category, Design } from '@automattic/design-picker/src/types';
 
 export interface StarterDesigns {
 	filters: { subject: Record< string, Category > };

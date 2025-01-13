@@ -12,7 +12,7 @@ import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
-	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteFlowName,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -165,13 +165,12 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
 		} );
 
 		it( 'records recordStepStart with additional props when the step is re-entered', () => {
-			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
 
 			render( { step: regularStep } );
@@ -181,13 +180,12 @@ describe( 'StepRoute', () => {
 				signup_complete_flow_name: 'some-flow',
 				signup_complete_step_name: 'some-step-slug',
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
 		} );
 
 		it( 'records step-complete when the step is unmounted and step-start was previously recorded', () => {
-			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );
 
@@ -206,14 +204,13 @@ describe( 'StepRoute', () => {
 
 		it( 'records skip_step_render on start, complete and page view when the login is required and the user is not logged in', async () => {
 			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 
 			const { unmount } = render( { step: requiresLoginStep } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
 				signup_complete_flow_name: 'some-other-flow',
@@ -241,13 +238,12 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records skip_step_render on start, complete and page view when renderStep returns null', async () => {
-			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep, renderStep: () => null } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
 				signup_complete_flow_name: 'some-other-flow',

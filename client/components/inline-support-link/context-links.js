@@ -67,6 +67,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/donations/',
 		post_id: 171110,
 	},
+	dns_default_records: {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/',
+		post_id: 386585,
+	},
 	earn: {
 		link: 'https://wordpress.com/support/monetize-your-site/',
 		post_id: 120172,
@@ -187,6 +191,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/menus/',
 		post_id: 59580,
 	},
+	nameservers: {
+		link: 'https://wordpress.com/support/domains/change-name-servers/#changing-name-servers-to-point-to-word-press-com',
+		post_id: 41383,
+	},
 	pages: {
 		link: 'https://wordpress.com/support/pages/',
 		post_id: 86,
@@ -222,6 +230,10 @@ const contextLinks = {
 	performance: {
 		link: 'https://wordpress.com/support/settings/performance-settings/',
 		post_id: 179952,
+	},
+	personal_plan: {
+		link: 'https://wordpress.com/support/plan-features/personal-plan/',
+		post_id: 294086,
 	},
 	plugins: {
 		link: 'https://wordpress.com/support/plugins/',

@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
@@ -36,7 +37,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
-	const isSubscriberCsvUploadEnabled = isEnabled( 'subscriber-csv-upload' );
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
@@ -95,7 +95,13 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		recordTracksEvent( `calypso_subscribers_add_question`, {
 			method: 'substack',
 		} );
-		page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
+		if ( isJetpackCloud() ) {
+			window.location.href = `https://wordpress.com/import/newsletter/substack/${
+				site?.slug || site?.ID || ''
+			}`;
+		} else {
+			page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
+		}
 	};
 
 	const renderLearnMoreLink = ( isJetpack: boolean | null ) => {
@@ -158,21 +164,23 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 								trackAndSetAddingMethod( 'manually' );
 							} }
 						/>
-						{ isSubscriberCsvUploadEnabled && (
-							<FlowQuestion
-								icon={ upload }
-								title={ translate( 'Use a CSV file' ) }
-								text={ translate( 'Upload a file with your existing subscribers list.' ) }
-								onClick={ () => {
-									trackAndSetAddingMethod( 'upload' );
-								} }
-							/>
-						) }
+						<FlowQuestion
+							icon={ upload }
+							title={ translate( 'Use a CSV file' ) }
+							text={ translate( 'Upload a file with your existing subscribers list.' ) }
+							onClick={ () => {
+								trackAndSetAddingMethod( 'upload' );
+							} }
+						/>
 						{ isSubstackSubscriberImporterEnabled && (
 							<FlowQuestion
 								icon={ reusableBlock }
 								title={ translate( 'Import from Substack' ) }
-								text={ translate( 'Quickly bring your subscribers (and even your content!).' ) }
+								text={
+									isJetpack
+										? translate( 'Quickly bring your free and paid subscribers.' )
+										: translate( 'Quickly bring your subscribers (and even your content!).' )
+								}
 								onClick={ importFromSubstack }
 							/>
 						) }
@@ -226,6 +234,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
@@ -286,12 +295,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					) }
 					<UploadSubscribersForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
+						isWPCOMSite={ ! isJetpack }
 					/>
 				</>
 			) }
