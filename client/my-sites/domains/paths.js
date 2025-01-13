@@ -239,7 +239,9 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/domain/${ domainName }/dns/add/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		return domainManagementOverviewRoot() + '/' + domainName + '/dns/add/' + siteName;
 	}
 
