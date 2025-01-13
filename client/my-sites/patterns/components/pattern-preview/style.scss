@@ -184,26 +184,27 @@
 		right: initial;
 		top: 3.4rem;
 
+		&::before,
 		&::after {
-			background-color: var(--studio-gray-20);
-			border-radius: 3px;
-			box-shadow: none;
-			height: 70px;
-			max-height: 90%;
-			right: 50%;
-			top: 50%;
-			transform: translate(50%, -50%);
-			transition: background-color 0.2s linear;
-			width: 6px;
-		}
-
-		&:hover::after,
-		&:active::after {
-			background-color: var(--studio-gray-40);
-		}
-
-		&::before {
 			content: none;
+		}
+	}
+
+	.pattern-preview__resizer-handle {
+		background-color: var(--studio-gray-20);
+		border-radius: 3px;
+		box-shadow: none;
+		height: 70px;
+		max-height: 90%;
+		position: absolute;
+		right: 50%;
+		top: 50%;
+		transform: translate(50%, -50%);
+		transition: background-color 0.2s linear;
+		width: 6px;
+
+		&:hover {
+			background-color: var(--studio-gray-40);
 		}
 	}
 }
