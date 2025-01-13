@@ -54,7 +54,7 @@ export const getShortcuts = createSelector(
 				label: translate( 'Today' ),
 				startDate: siteTodayStr,
 				endDate: siteTodayStr,
-				period: DATERANGE_PERIOD.DAY,
+				period: DATERANGE_PERIOD.HOUR,
 			},
 			{
 				id: 'last_7_days',
