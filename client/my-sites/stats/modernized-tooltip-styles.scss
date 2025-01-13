@@ -82,6 +82,10 @@
 				letter-spacing: inherit;
 				word-break: break-word;
 			}
+			// Override the default gradient.
+			.value::before {
+				background: none;
+			}
 		}
 	}
 }
