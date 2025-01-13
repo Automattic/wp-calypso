@@ -1,8 +1,14 @@
-import { URL } from 'url';
 import { useState, useCallback, useEffect } from 'react';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { TabType } from 'calypso/performance-profiler/components/header';
+
+function isValidURL( url: string ) {
+	if ( 'canParse' in URL ) {
+		return URL.canParse( url );
+	}
+	return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url );
+}
 
 export const usePerformanceReport = (
 	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
@@ -30,7 +36,7 @@ export const usePerformanceReport = (
 	const { final_url: finalUrl, token } = basicMetrics || {};
 
 	useEffect( () => {
-		if ( token && finalUrl && URL.canParse( finalUrl ) ) {
+		if ( token && finalUrl && isValidURL( finalUrl ) ) {
 			setIsSavingPerformanceReportUrl( true );
 			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } )
 				.then( () => {
