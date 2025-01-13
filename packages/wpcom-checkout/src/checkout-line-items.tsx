@@ -670,12 +670,16 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		const productQuantity = product?.quantity ?? 1;
 		const currentQuantity = product?.current_quantity ?? 1;
-		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
+		const spaceQuantity = productQuantity > 1 ? productQuantity - currentQuantity : currentQuantity;
 
 		return (
 			<>
 				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
 					args: { quantity: spaceQuantity, price },
+				} ) }
+				<br></br>
+				{ translate( 'Total extra space after purchase: %(totalSpace)s GB', {
+					args: { totalSpace: product.is_renewal ? currentQuantity : productQuantity },
 				} ) }
 			</>
 		);
