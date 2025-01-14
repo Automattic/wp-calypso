@@ -6,6 +6,7 @@
 		max-width: 768px;
 		margin: 0 auto;
 		padding: 0 16px;
+		overflow: hidden;
 
 		&::after {
 			@include long-content-fade( $size: 16px );
