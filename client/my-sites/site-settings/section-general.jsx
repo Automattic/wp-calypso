@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import GeneralForm from 'calypso/my-sites/site-settings/form-general';
-import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import SiteTools from 'calypso/sites/settings/administration/tools';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -17,7 +16,6 @@ const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub, isWpcomStagingS
 	<div className="site-settings__main general-settings">
 		{ site && <GeneralForm site={ site } /> }
 		{ isWPForTeamsSite && isP2Hub && <P2PreapprovedDomainsForm siteId={ site?.ID } /> }
-		{ ! isWpcomStagingSite && ! isEnabled( 'untangling/hosting-menu' ) && <JetpackMonitor /> }
 		{ ! isWpcomStagingSite && ! isEnabled( 'untangling/hosting-menu' ) && (
 			<SiteTools headerTitle={ translate( 'Site tools' ) } source={ SOURCE_SETTINGS_GENERAL } />
 		) }
