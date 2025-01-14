@@ -76,27 +76,14 @@ function AccountDeletedPage() {
 					}
 				/>
 				<div className="account-deleted__buttons">
-					<Button variant="secondary" onClick={ onCancelClick }>
+					{ config.isEnabled( 'me/account-restore' ) && restoreToken && (
+						<Button variant="secondary" onClick={ onRestoreClick } isBusy={ isRestoring }>
+							{ translate( 'I made a mistake! Restore my account' ) }
+						</Button>
+					) }
+					<Button variant="link" onClick={ onCancelClick } className="account-deleted__button-link">
 						{ translate( 'Return to WordPress.com' ) }
 					</Button>
-					{ config.isEnabled( 'me/account-restore' ) &&
-						restoreToken &&
-						( isRestoring ? (
-							<div className="account-deleted__restoring">
-								<Spinner />
-								<span className="account-deleted__restoring-text">
-									{ translate( 'Restoring your account' ) }
-								</span>
-							</div>
-						) : (
-							<Button
-								variant="link"
-								className="account-deleted__button-link"
-								onClick={ onRestoreClick }
-							>
-								{ translate( 'I made a mistake! Restore my account' ) }
-							</Button>
-						) ) }
 				</div>
 			</BlankCanvas.Content>
 		</BlankCanvas>
