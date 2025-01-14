@@ -69,6 +69,7 @@
 			margin-bottom: 16px;
 			display: flex;
 			align-items: center;
+			text-wrap: nowrap;
 
 			@include break-mobile {
 				font-size: $font-title-large;
