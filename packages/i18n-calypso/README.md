@@ -216,7 +216,7 @@ The numberFormat method is also available to format numbers using the loaded loc
 // locale-formatted numbers
 i18n.numberFormat( 2500.25 ); // '2.500'
 i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
-i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@' } ); // '2*500@330'
+i18n.numberFormat( 2500.33, { decimals: 3 } ); // '2.500,330'
 ```
 
 ## fixMe Method

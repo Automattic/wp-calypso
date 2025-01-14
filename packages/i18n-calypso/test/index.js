@@ -235,10 +235,8 @@ describe( 'I18n', function () {
 				expect(
 					numberFormat( 2500.33, {
 						decimals: 3,
-						thousandsSep: '*',
-						decPoint: '@',
 					} )
-				).toBe( '2*500@330' );
+				).toBe( '2.500,330' );
 			} );
 		} );
 	} );
