@@ -93,12 +93,14 @@ export class FullPostView extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+		currentPath: PropTypes.string,
 	};
 
 	hasScrolledToCommentAnchor = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
+	mountedPath;
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
@@ -119,6 +121,7 @@ export class FullPostView extends Component {
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
+		this.mountedPath = this.props.currentPath;
 
 		this.checkForCommentAnchor();
 
@@ -264,6 +267,7 @@ export class FullPostView extends Component {
 			recordTrackForPost( 'calypso_reader_article_engaged_time', post, {
 				context: 'full-post',
 				engagement_time: engagementTime / 1000,
+				path: this.mountedPath,
 			} );
 			// check if the user exited early
 			this.checkFastExit( post, engagementTime );
@@ -299,6 +303,7 @@ export class FullPostView extends Component {
 			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
 				context: 'full-post',
 				scroll_depth: maxScrollDepth,
+				path: this.mountedPath,
 			} );
 		}
 	};
@@ -315,6 +320,7 @@ export class FullPostView extends Component {
 			recordTrackForPost( 'calypso_reader_article_exit_before_completion', post, {
 				context: 'full-post',
 				scroll_depth: maxScrollDepth,
+				path: this.mountedPath,
 			} );
 		}
 	};
@@ -325,6 +331,7 @@ export class FullPostView extends Component {
 			estimated_reading_time: post.minutes_to_read,
 			elapsed_seconds: elapsedSeconds,
 			fast_exit_threshold: fastExitThreshold,
+			path: this.mountedPath,
 		} );
 	};
 
@@ -833,6 +840,7 @@ export default connect(
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
@@ -843,6 +851,7 @@ export default connect(
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
+			currentPath,
 		};
 
 		if ( ! isExternal && siteId ) {
