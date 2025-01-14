@@ -38,7 +38,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const FeedbackButtons = () => {
 		return (
 			<>
-				<p>{ __( 'Was this helpful?' ) }</p>
+				<p>{ __( 'Was this helpful?', __i18n_text_domain__ ) }</p>
 				<div className="help-center-feedback-form__buttons">
 					<button
 						// 1 is used as `yes` in crowdsignal as well, do not change
