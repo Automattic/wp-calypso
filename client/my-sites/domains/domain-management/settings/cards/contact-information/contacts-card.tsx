@@ -187,7 +187,11 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
 		props;
 	const editContactInfoLink = isUnderDomainManagementOverview( currentRoute )
-		? domainManagementAllEditContactInfo( props.selectedSite.slug, props.selectedDomainName )
+		? domainManagementAllEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  )
 		: domainManagementEditContactInfo(
 				props.selectedSite.slug,
 				props.selectedDomainName,

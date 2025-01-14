@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
@@ -15,6 +14,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
+import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import FlowCard from '../components/flow-card';
 import { DIYOption } from './diy-option';
 import type { StepProps } from '../../types';
@@ -26,8 +26,8 @@ interface Props extends StepProps {
 }
 
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
-	const { navigation, headerText, stepName, subHeaderText } = props;
-	const isMigrationExperimentEnabled = config.isEnabled( 'migration-flow/experiment' );
+	const { navigation, headerText, stepName, subHeaderText, flow } = props;
+	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 	const translate = useTranslate();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const site = useSite();
