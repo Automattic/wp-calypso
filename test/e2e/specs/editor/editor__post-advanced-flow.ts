@@ -10,7 +10,7 @@ import {
 	TestAccount,
 	PostsPage,
 	ParagraphBlock,
-	NoticeComponent,
+	WpAdminNoticeComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
 	ElementHelper,
@@ -177,30 +177,30 @@ describe( `Editor: Advanced Post Flow`, function () {
 
 		it( 'Trash post', async function () {
 			await postsPage.clickTab( 'Drafts' );
-			await postsPage.clickMenuItemForPost( { title: postTitle, action: 'Trash' } );
+			await postsPage.clickActionItemForPost( { title: postTitle, action: 'Trash' } );
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'Post successfully moved to trash.', {
-				type: 'Success',
+			const noticeComponent = new WpAdminNoticeComponent( page );
+			await noticeComponent.noticeShown( '1 post moved to the Trash.', {
+				type: 'Updated',
 			} );
 		} );
 	} );
 
 	describe( 'Permanently delete post', function () {
 		it( 'View trashed posts', async function () {
-			await postsPage.clickTab( 'Trashed' );
+			await postsPage.clickTab( 'Trash' );
 		} );
 
 		it( 'Hard trash post', async function () {
-			await postsPage.clickMenuItemForPost( { title: postTitle, action: 'Delete Permanently' } );
+			await postsPage.clickActionItemForPost( { title: postTitle, action: 'Delete Permanently' } );
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'Post successfully deleted', {
-				type: 'Success',
+			const noticeComponent = new WpAdminNoticeComponent( page );
+			await noticeComponent.noticeShown( '1 post permanently deleted', {
+				type: 'Updated',
 			} );
 		} );
 	} );
