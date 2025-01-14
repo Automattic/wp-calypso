@@ -167,6 +167,22 @@ export const STEPS = {
 
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
+	/**
+	 * Plan step shared between /start and /setup.
+	 */
+	UNIFIED_PLANS: {
+		slug: 'plans',
+		asyncComponent: () => import( './steps-repository/unified-plans' ),
+	},
+
+	/**
+	 * Domains step shared between /start and /setup.
+	 */
+	UNIFIED_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/unified-domains' ),
+	},
+
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),

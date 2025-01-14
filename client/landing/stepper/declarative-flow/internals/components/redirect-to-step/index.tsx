@@ -13,7 +13,7 @@ export const RedirectToStep: FC< Props > = ( { slug, sessionId } ) => {
 	const { flow, lang = null } = useParams();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const to = generatePath( '/:flow/:step/:lang?/:sessionId?', {
+	const to = generatePath( '/:flow/:step/:sessionId?/:lang?', {
 		flow: flow!,
 		step: slug,
 		lang: lang === 'en' || isLoggedIn ? null : lang,

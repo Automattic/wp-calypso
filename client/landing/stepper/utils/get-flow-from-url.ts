@@ -9,12 +9,12 @@ export const getFlowFromURL = () => {
 
 export const getSessionIdFromURL = () => {
 	const params = matchPath(
-		{ path: '/setup/:flow/:step?/:lang?/:sessionId' },
+		{ path: '/setup/:flow/:step?/:sessionId/:lang?' },
 		window.location.pathname
 	)?.params;
 
-	const sessionId = params?.sessionId;
-	const lang = params?.lang;
+	const sessionId = params?.sessionId?.startsWith( '~' ) ? params?.sessionId : null;
+	const lang = params?.lang?.startsWith( '~' ) ? params?.lang : null;
 
 	return sessionId || lang;
 };

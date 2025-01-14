@@ -32,6 +32,24 @@ export class StepperPersistenceManager {
 			// };
 		} );
 	}
+	async getStateItem( key: string, defaultValue?: unknown ) {
+		if ( ! this.database ) {
+			return defaultValue;
+		}
+
+		const transaction = this.database.transaction( 'sessions', 'readonly' );
+		const store = transaction.objectStore( 'sessions' );
+
+		return new Promise( ( resolve ) => {
+			const request = store.get( key );
+			request.onsuccess = () => {
+				resolve( request.result ? request.result.value : defaultValue );
+			};
+			request.onerror = () => {
+				resolve( defaultValue );
+			};
+		} );
+	}
 	async createSession() {
 		if ( ! this.initiated ) {
 			await this.initiate();

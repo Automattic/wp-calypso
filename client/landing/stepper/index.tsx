@@ -38,7 +38,8 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
-import { StepperPersistenceManager } from './declarative-flow/internals/state-manager/create-persistence-session';
+import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
+import { StepperSession } from './declarative-flow/internals/state-manager/provider';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -103,10 +104,8 @@ window.AppBoot = async () => {
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
-	const stateManager = new StepperPersistenceManager();
-
 	if ( ! sessionId ) {
-		sessionId = await stateManager.createSession();
+		sessionId = createSessionId();
 		//history.replaceState( null, '', `${ window.location.pathname }/${ sessionId }` );
 	}
 
@@ -126,7 +125,7 @@ window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
-	const { queryClient } = await createQueryClient( userId );
+	const { queryClient } = await createQueryClient( 'stepper-persistence-session-' + sessionId );
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
@@ -178,27 +177,29 @@ window.AppBoot = async () => {
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
 	root.render(
-		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
-			<Provider store={ reduxStore }>
-				<QueryClientProvider client={ queryClient }>
-					<WindowLocaleEffectManager />
-					<BrowserRouter basename="setup">
-						<FlowRenderer flow={ flow } steps={ flowSteps } sessionId={ sessionId as string } />
-						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
+		<StepperSession.Provider value={ { sessionId } }>
+			<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
+				<Provider store={ reduxStore }>
+					<QueryClientProvider client={ queryClient }>
+						<WindowLocaleEffectManager />
+						<BrowserRouter basename="setup">
+							<FlowRenderer flow={ flow } steps={ flowSteps } sessionId={ sessionId } />
+							{ config.isEnabled( 'cookie-banner' ) && (
+								<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
+							) }
+							<AsyncLoad
+								require="calypso/components/global-notices"
+								placeholder={ null }
+								id="notices"
+							/>
+						</BrowserRouter>
+						<AsyncHelpCenter />
+						{ 'development' === process.env.NODE_ENV && (
+							<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 						) }
-						<AsyncLoad
-							require="calypso/components/global-notices"
-							placeholder={ null }
-							id="notices"
-						/>
-					</BrowserRouter>
-					<AsyncHelpCenter />
-					{ 'development' === process.env.NODE_ENV && (
-						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
-					) }
-				</QueryClientProvider>
-			</Provider>
-		</CalypsoI18nProvider>
+					</QueryClientProvider>
+				</Provider>
+			</CalypsoI18nProvider>
+		</StepperSession.Provider>
 	);
 };

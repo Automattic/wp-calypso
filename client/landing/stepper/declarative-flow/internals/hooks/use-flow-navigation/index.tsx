@@ -1,6 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { generatePath, createPath, useMatch, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
@@ -9,6 +9,7 @@ import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { StepperSession } from '../../state-manager/provider';
 import { PRIVATE_STEPS } from '../../steps';
 import type { Flow, Navigate, StepperStep } from '../../types';
 
@@ -43,8 +44,10 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const intent = useOnboardingIntent();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();
-	const match = useMatch( '/:flow/:step?/:lang?' );
+	const { sessionId } = useContext( StepperSession );
+	const match = useMatch( `/:flow/:step/${ sessionId }/:lang?` );
 	const { step: currentStepSlug = null, lang = null } = match?.params || {};
+
 	const [ currentSearchParams ] = useSearchParams();
 	const steps = 'useSteps' in flow ? flow.useSteps() : flow.__flowSteps ?? [];
 	const flowName = flow.variantSlug ?? flow.name;
@@ -62,10 +65,11 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			) {
 				// In-stepper auth.
 				if ( flow.__experimentalUseBuiltinAuth ) {
-					const signInPath = generatePath( `/:flow/:step/:lang?`, {
+					const signInPath = generatePath( `/:flow/:step/:sessionId?/:lang?`, {
 						flow: flowName,
 						lang,
 						step: PRIVATE_STEPS.USER.slug,
+						sessionId,
 					} );
 
 					// Inform the user step where to go after the user is authenticated.
@@ -79,10 +83,11 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				// Classic /login auth.
 				const nextStepPath = createPath( {
 					// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
-					pathname: generatePath( `/setup/:flow/:step/:lang?`, {
+					pathname: generatePath( `/setup/:flow/:step/:sessionId?/:lang?`, {
 						flow: flowName,
 						lang,
 						step: nextStep,
+						sessionId,
 					} ),
 					search: currentSearchParams.toString(),
 					hash: window.location.hash,
@@ -111,10 +116,11 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				...extraData,
 			} );
 
-			const newPath = generatePath( `/:flow/:step/:lang?`, {
+			const newPath = generatePath( `/:flow/:step/:sessionId?/:lang?`, {
 				flow: flowName,
-				lang,
 				step: nextStep,
+				sessionId,
+				lang,
 			} );
 
 			navigate( addQueryParams( newPath, queryParams ), { replace } );

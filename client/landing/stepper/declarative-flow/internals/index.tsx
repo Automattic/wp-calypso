@@ -174,16 +174,18 @@ export const FlowRenderer: React.FC< {
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const previousAuthStepSlug = stepData?.previousStep;
-			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
+			const postAuthStepPath = generatePath( '/setup/:flow/:step/:sessionId?/:lang?', {
 				flow: flow.name,
 				step: postAuthStepSlug,
 				lang: lang === 'en' || isLoggedIn ? null : lang,
+				sessionId,
 			} );
 
-			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
+			const signupUrl = generatePath( '/setup/:flow/:step/:sessionId?/:lang?', {
 				flow: flow.name,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
+				sessionId,
 			} );
 
 			return (
@@ -239,7 +241,7 @@ export const FlowRenderer: React.FC< {
 				{ flowSteps.map( ( step ) => (
 					<Route
 						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?/:sessionId?` }
 						element={
 							<StepRoute
 								key={ step.slug }

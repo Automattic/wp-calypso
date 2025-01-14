@@ -19,12 +19,14 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { getQuery } from '../utils/get-query';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
 const newsletter: Flow = {
 	name: EXAMPLE_FLOW,
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return translate( 'Newsletter Example Flow' );
 	},
@@ -45,8 +47,8 @@ const newsletter: Flow = {
 		const privateSteps = stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
-			STEPS.DOMAINS,
-			STEPS.PLANS,
+			STEPS.UNIFIED_DOMAINS,
+			STEPS.UNIFIED_PLANS,
 			STEPS.PROCESSING,
 			STEPS.SUBSCRIBERS,
 			STEPS.SITE_CREATION_STEP,
@@ -67,7 +69,9 @@ const newsletter: Flow = {
 		const query = useQuery();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+		const [ domains, setDomains ] = useFlowState< any >( 'domains', [] );
 
+		console.log( { domains } );
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
@@ -85,7 +89,6 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-
 			switch ( _currentStep ) {
 				case 'intro':
 					return navigate( 'newsletterSetup' );
@@ -97,6 +100,7 @@ const newsletter: Flow = {
 					return navigate( 'domains' );
 
 				case 'domains':
+					setDomains( providedDependencies );
 					return navigate( 'plans' );
 
 				case 'plans':
