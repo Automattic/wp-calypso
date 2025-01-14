@@ -470,6 +470,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
 	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
+	const shouldDisplaySearchModule = false;
 
 	return (
 		<div className="stats">
@@ -633,13 +634,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								/>
 							) }
 
-							<StatsModuleSearch
-								moduleStrings={ moduleStrings.search }
-								period={ props.period }
-								query={ query }
-								summaryUrl={ getStatHref( 'searchterms', query ) }
-								className={ halfWidthModuleClasses }
-							/>
+							{ shouldDisplaySearchModule && (
+								<StatsModuleSearch
+									moduleStrings={ moduleStrings.search }
+									period={ props.period }
+									query={ query }
+									summaryUrl={ getStatHref( 'searchterms', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+							) }
 
 							{ ! isModuleHidden( 'videos' ) && (
 								<StatsModuleVideos
