@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -303,7 +304,6 @@ interface DesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
-	recommendedDesignSlugs?: string[];
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -322,9 +322,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
-	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 
 	const categories = categorization?.categories || [];
@@ -341,32 +341,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const recommendedDesigns = useMemo( () => {
-		const recommendedDesignSlugsSet = new Set( recommendedDesignSlugs );
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
-		// The number should be a multiple of 3 but no more than 5
-		return designs
-			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
-			.slice( 0, 3 );
-	}, [ designs, recommendedDesignSlugs ] );
-
-	// Show recommended themes only when the selected categories are never changed.
-	const showRecommendedAtTop =
-		isMultiFilterEnabled &&
-		! categorization?.isSelectionsChanged &&
-		recommendedDesigns.length === 3;
-	const showRecommendedAtBottom =
-		isMultiFilterEnabled && categorization?.isSelectionsChanged && recommendedDesigns.length === 3;
-	const showRecommendedDesigns = showRecommendedAtTop || showRecommendedAtBottom;
-
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
-		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
-	} );
-
-	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
-	const showNoResults =
-		! showRecommendedDesigns &&
-		Object.values( designsByGroup ).every( ( categoryDesigns ) => categoryDesigns.length === 0 );
+	// Show no results only when no design matches the selected categories and tiers.
+	const showNoResults = Object.values( designsByGroup ).every(
+		( categoryDesigns ) => categoryDesigns.length === 0
+	);
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -428,23 +408,20 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
-					title={ translate( 'Best matching themes' ) }
+					title={
+						hasEnTranslation( 'Best theme matches' )
+							? translate( 'Best theme matches' )
+							: translate( 'Best matching themes' )
+					}
 					category="best"
 					designs={ best }
-				/>
-			) }
-			{ showRecommendedAtTop && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Trending for your goals' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
 				/>
 			) }
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
+
 			{ /* We want to show the last one on top first. */ }
 			{ Object.entries( designsByGroup )
 				.reverse()
@@ -466,15 +443,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
 				) ) }
-
-			{ showRecommendedAtBottom && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Trending for your goals' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
 		</div>
 	);
 };
@@ -497,7 +465,6 @@ export interface UnifiedDesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
-	recommendedDesignSlugs?: string[];
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -518,7 +485,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
-	recommendedDesignSlugs = [],
 } ) => {
 	const hasCategories = !! ( categorization?.categories || [] ).length;
 
@@ -546,7 +512,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					isBigSkyEligible={ isBigSkyEligible }
-					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

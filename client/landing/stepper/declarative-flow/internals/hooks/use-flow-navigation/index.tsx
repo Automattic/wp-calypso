@@ -47,6 +47,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const { step: currentStepSlug = null, lang = null } = match?.params || {};
 	const [ currentSearchParams ] = useSearchParams();
 	const steps = 'useSteps' in flow ? flow.useSteps() : flow.__flowSteps ?? [];
+	const flowName = flow.variantSlug ?? flow.name;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const stepsSlugs = steps.map( ( step ) => step.slug );
 	const locale = useFlowLocale();
@@ -62,7 +63,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				// In-stepper auth.
 				if ( flow.__experimentalUseBuiltinAuth ) {
 					const signInPath = generatePath( `/:flow/:step/:lang?`, {
-						flow: flow.name,
+						flow: flowName,
 						lang,
 						step: PRIVATE_STEPS.USER.slug,
 					} );
@@ -79,7 +80,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				const nextStepPath = createPath( {
 					// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
 					pathname: generatePath( `/setup/:flow/:step/:lang?`, {
-						flow: flow.name,
+						flow: flowName,
 						lang,
 						step: nextStep,
 					} ),
@@ -111,7 +112,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			} );
 
 			const newPath = generatePath( `/:flow/:step/:lang?`, {
-				flow: flow.name,
+				flow: flowName,
 				lang,
 				step: nextStep,
 			} );
@@ -137,7 +138,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	return {
 		navigate: customNavigate,
 		params: {
-			flow: flow.name,
+			flow: flowName,
 			step: currentStepSlug,
 		},
 		search: currentSearchParams,

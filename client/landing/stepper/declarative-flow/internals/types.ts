@@ -118,7 +118,13 @@ export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
  * Can pass any properties that should be recorded for the respective events.
  */
 export type UseTracksEventPropsHook = () => {
-	[ key in ( typeof STEPPER_TRACKS_EVENTS )[ number ] ]?: Record< string, string | number | null >;
+	/**
+	 * This flag is needed to indicate that the custom props are still loading. And the return value will be ignored until it's false.
+	 */
+	isLoading?: boolean;
+	eventsProperties: Partial<
+		Record< ( typeof STEPPER_TRACKS_EVENTS )[ number ], Record< string, string | number | null > >
+	>;
 };
 
 /**
@@ -185,8 +191,14 @@ export type FlowV2 = {
 
 	/**
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
+	 * Use `getSteps` instead.
 	 */
 	__flowSteps?: readonly StepperStep[];
+
+	/**
+	 * Use this method to retrieve the steps of the flow.
+	 */
+	getSteps?(): readonly StepperStep[];
 
 	name: string;
 	/**
