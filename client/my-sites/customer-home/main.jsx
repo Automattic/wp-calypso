@@ -90,6 +90,9 @@ const Home = ( {
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
 	const primaryDomain = customDomains?.find( ( domain ) => domain.isPrimary );
 
+	const homeLaunchpad =
+		config.isEnabled( 'home-launchpad' ) && getQueryArgs().launchpadOnly === 'true';
+
 	const {
 		data: domainDiagnosticData,
 		isFetching: isFetchingDomainDiagnostics,
@@ -318,8 +321,8 @@ const Home = ( {
 			{ renderDnsSettingsDiagnosticNotice() }
 
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
-			{ config.isEnabled( 'home-launchpad' ) && <LaunchpadPreLaunch></LaunchpadPreLaunch> }
-			{ ! isLoading && layout && ! homeLayoutError && ! config.isEnabled( 'home-launchpad' ) && (
+			{ homeLaunchpad && <LaunchpadPreLaunch></LaunchpadPreLaunch> }
+			{ ! isLoading && layout && ! homeLayoutError && ! homeLaunchpad && (
 				<>
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
