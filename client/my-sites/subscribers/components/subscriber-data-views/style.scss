@@ -1,0 +1,26 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/dataviews/build-style/style.css';
+
+.subscribers.subscribers--dataviews.main {
+    .navigation-header {
+        padding: 0 48px;
+
+        @media ( max-width: $break-small ) {
+            padding: 0 24px;
+        }
+    }
+}
+
+.subscriber-data-views {
+	.subscriber-profile.subscriber-profile--compact {
+		@media ( max-width: $break-xlarge ) {
+            max-width: 225px;
+        }
+
+		.subscriber-profile__user-details {
+			.subscriber-profile__name {
+				text-align: left;
+			}
+		}
+	}
+}
