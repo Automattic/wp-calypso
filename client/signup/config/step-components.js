@@ -86,6 +86,8 @@ export function getStepModuleMap() {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	if ( ! moduleName ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error: unknown `stepName` to retrieve the component for.' );
 		return;
 	}
 	const module = await import(
