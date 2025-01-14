@@ -9,6 +9,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
 import { requestUser } from 'calypso/state/reader/users/actions';
+import { getUserProfileUrl } from './user-profile.utils';
 import UserLists from './views/lists';
 import UserPosts from './views/posts';
 import './style.scss';
@@ -48,17 +49,17 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 	}
 
 	const currentPath = page.current;
-
+	const userProfileUrl = getUserProfileUrl( Number( userId ) );
 	const navigationItems: NavigationItem[] = [
 		{
 			label: translate( 'Posts' ),
-			path: `/read/users/${ userId }`,
-			selected: currentPath === `/read/users/${ userId }`,
+			path: userProfileUrl,
+			selected: currentPath === userProfileUrl,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `/read/users/${ userId }/lists`,
-			selected: currentPath === `/read/users/${ userId }/lists`,
+			path: `${ userProfileUrl }/lists`,
+			selected: currentPath === `${ userProfileUrl }/lists`,
 		},
 	];
 
@@ -68,9 +69,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 		const basePath = currentPath.split( '?' )[ 0 ];
 
 		switch ( basePath ) {
-			case `/read/users/${ userId }`:
+			case userProfileUrl:
 				return <UserPosts streamKey={ streamKey as string } />;
-			case `/read/users/${ userId }/lists`:
+			case `${ userProfileUrl }/lists`:
 				return <UserLists />;
 		}
 	};

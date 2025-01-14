@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
+import { getUserProfileUrl } from 'calypso/reader/user-stream/user-profile.utils';
 
 import './style.scss';
 
@@ -39,7 +40,7 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 
 	const authorLinkUrl =
 		config.isEnabled( 'reader/user-profile' ) && author.ID
-			? `/read/users/${ author.ID }`
+			? getUserProfileUrl( author.ID )
 			: props.siteUrl ?? author.URL;
 
 	const authorName = author.name;
