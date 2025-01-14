@@ -66,17 +66,13 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
-		const basePathParts = basePath.split( '/' );
-		const isListsPath = basePathParts[ basePathParts.length - 1 ] === 'lists';
 
-		if ( isListsPath ) {
-			return <UserLists />;
+		switch ( basePath ) {
+			case `/read/users/${ userId }`:
+				return <UserPosts streamKey={ streamKey as string } />;
+			case `/read/users/${ userId }/lists`:
+				return <UserLists />;
 		}
-
-		if ( ! streamKey ) {
-			return null;
-		}
-		return <UserPosts streamKey={ streamKey } />;
 	};
 
 	return (
