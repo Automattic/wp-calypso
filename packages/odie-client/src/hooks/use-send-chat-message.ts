@@ -10,7 +10,6 @@ import type { Message } from '../types';
  */
 export const useSendChatMessage = () => {
 	const {
-		shouldUseHelpCenterExperience,
 		addMessage,
 		odieBroadcastClientId,
 		waitAnswerToFirstMessageFromHumanSupport,
@@ -28,7 +27,7 @@ export const useSendChatMessage = () => {
 			addMessage( message );
 			broadcastOdieMessage( message, odieBroadcastClientId );
 
-			if ( shouldUseHelpCenterExperience && chat.provider === 'zendesk' ) {
+			if ( chat.provider === 'zendesk' ) {
 				if (
 					message.role === 'user' &&
 					message.type === 'message' &&
@@ -51,7 +50,6 @@ export const useSendChatMessage = () => {
 			return sendOdieMessage( message );
 		},
 		[
-			shouldUseHelpCenterExperience,
 			sendOdieMessage,
 			sendZendeskMessage,
 			addMessage,

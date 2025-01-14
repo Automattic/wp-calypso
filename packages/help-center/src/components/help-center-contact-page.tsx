@@ -244,33 +244,21 @@ const HelpCenterFooterButton = ( {
 };
 
 export const HelpCenterContactButton: FC = () => {
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 	const { canConnectToZendesk } = useHelpCenterContext();
 	const { __ } = useI18n();
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
 		100,
-		'resolved',
-		undefined,
-		shouldUseHelpCenterExperience
+		'resolved'
 	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions(
-		'zendesk',
-		10,
-		'open',
-		undefined,
-		shouldUseHelpCenterExperience
-	);
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
 
 	const supportInteractions = [
 		...( supportInteractionsResolved || [] ),
 		...( supportInteractionsOpen || [] ),
 	];
 
-	return shouldUseHelpCenterExperience &&
-		canConnectToZendesk &&
-		supportInteractions &&
-		supportInteractions?.length > 0 ? (
+	return canConnectToZendesk && supportInteractions && supportInteractions?.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }

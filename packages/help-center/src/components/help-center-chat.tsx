@@ -23,8 +23,7 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, shouldUseHelpCenterExperience, canConnectToZendesk } =
-		useHelpCenterContext();
+	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
 	const { id: conversationId = null } = useParams();
 
 	useEffect( () => {
@@ -37,11 +36,8 @@ export function HelpCenterChat( {
 		}
 	}, [] );
 
-	const odieVersion = null; // Use the default version specified on the back-end
-
 	return (
 		<OdieAssistantProvider
-			shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
 			selectedSiteId={ site?.ID as number }
@@ -51,7 +47,6 @@ export function HelpCenterChat( {
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
 			}
-			version={ odieVersion }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

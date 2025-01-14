@@ -8,7 +8,7 @@ import './style.scss';
 
 export const ClosedConversationFooter = () => {
 	const { __ } = useI18n();
-	const { trackEvent, chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { trackEvent, chat } = useOdieAssistantContext();
 
 	const { startNewInteraction } = useManageSupportInteraction();
 
@@ -20,7 +20,7 @@ export const ClosedConversationFooter = () => {
 		} );
 	};
 
-	if ( ! shouldUseHelpCenterExperience || chat.status !== 'closed' ) {
+	if ( chat.status !== 'closed' ) {
 		return null;
 	}
 

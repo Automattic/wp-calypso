@@ -1,4 +1,4 @@
-import { getOdieInitialMessageConstant } from '../constants';
+import { ODIE_INITIAL_MESSAGE } from '../constants';
 import type { Context, Message, OdieAllowedBots } from '../types';
 
 const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | undefined => {
@@ -15,12 +15,9 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 	}
 };
 
-export const getOdieInitialMessage = (
-	botNameSlug: OdieAllowedBots,
-	shouldUseHelpCenterExperience?: boolean
-): Message => {
+export const getOdieInitialMessage = ( botNameSlug: OdieAllowedBots ): Message => {
 	return {
-		content: getOdieInitialMessageConstant( shouldUseHelpCenterExperience ),
+		content: ODIE_INITIAL_MESSAGE,
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
