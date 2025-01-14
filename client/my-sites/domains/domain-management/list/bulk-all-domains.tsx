@@ -296,7 +296,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						margin-inline: 48px;
 					}
 					table {
-						grid-template-columns: 75px 2fr 1fr 1fr 1fr auto auto auto auto;
+						grid-template-columns: 2fr 1fr 1fr 1fr auto auto auto auto auto;
+
+						&.has-checkbox {
+							grid-template-columns: 75px 2fr 1fr 1fr 1fr auto auto auto auto;
+						}
 
 						th:last-child,
 						td:last-child {
