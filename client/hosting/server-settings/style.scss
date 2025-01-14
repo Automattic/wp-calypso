@@ -98,15 +98,12 @@
 	}
 }
 
-// Jetpack downtime monitoring hack: Duplicates style from site-settings/style.scss
-.site-settings__child-settings {
+// Downtime monitoring indent child toggles
+.jetpack-monitor-settings__child-settings {
 	margin: 16px 48px 0;
 }
 
-// Jetpack downtime monitoring hack: Duplicates style from site-settings/style.scss
-.support-info + .jetpack-module-toggle,
-.support-info + .components-toggle-control,
-.support-info + .custom-content-types__module-settings,
-.support-info + .verbum-comments-toggle {
+// Downtime monitoring duplicates style from site-settings/style.scss
+.support-info + .jetpack-module-toggle {
 	display: flex;
 }
