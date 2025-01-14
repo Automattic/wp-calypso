@@ -1,77 +1,45 @@
 name: Bug Report
-description: Helps us improve our product!
+description: Help us improve our product!
 labels: ["Needs triage", "[Type] Bug"]
 type: 'Bug'
 body:
   - type: markdown
     attributes:
       value: |
-        ### Thanks for contributing!
 
-        Please write a clear title, then fill in the fields below and submit.
+        > [!IMPORTANT]
+        > **Thanks for contributing!**
+        >
+        > Please write a clear title, then fill in the fields below and submit.
+        >
+        > **Do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
+        > Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
+        >
+        > Automattician? Ask any questions about this process in: `#dotcom-triage-alerts`.
 
-        Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
-        Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
-
-        If you have any questions, please ask in: `#dotcom-triage-alerts`.
   - type: markdown
     attributes:
       value: |
-        ---
+        <br>
+
         ## Core Information
+
   - type: textarea
-    id: summary
+    id: context
     attributes:
-        label: Quick summary
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to reproduce
+      label: Context and steps to reproduce
       placeholder: |
+        E.g., What happened, and what did you expect to happen? Add images,
+        GIFs, and videos if you have them on hand.
+
         1. Start at `site-domain.com/blog`.
         2. Click on any blog post.
         3. Click on the 'Like' button.
-        4. ...
-    validations:
-      required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: What you expected to happen
-      placeholder: |
-        e.g. The post should be liked.
-    validations:
-      required: true
-  - type: textarea
-    id: actual
-    attributes:
-      label: What actually happened
-      placeholder: |
-        e.g. Clicking the button does nothing visibly.
-    validations:
-      required: true
-  - type: dropdown
-    id: users-affected
-    attributes:
-      label: Impact
-      description: Approximately how many users are impacted?
-      options:
-        - One
-        - Some (< 50%)
-        - Most (> 50%)
-        - All
-    validations:
-      required: true
-  - type: dropdown
-    id: workarounds
-    attributes:
-      label: Available workarounds?
-      options:
-        - No and the platform is unusable
-        - No but the platform is still usable
-        - Yes, difficult to implement
-        - Yes, easy to implement
-        - There is no user impact
+
+        Add any information that may be relevant, such as:
+
+        - Theme
+        - Logs/Errors
     validations:
       required: true
 
@@ -80,15 +48,47 @@ body:
       value: |
         <br>
 
-  - type: textarea
-    id: workaround-detail
+        ## Impact
+        Please help us understand more about the impact of this issue to help determine next steps.
+        If you are unsure about anything, please use your judgment to make an educated guess.
+  - type: dropdown
+    id: impact
     attributes:
-      label: If the above answer is "Yes...", outline the workaround.
-      placeholder: |
-        Provide details of the specific steps to take that resolve the issue, e.g.:
-          - Open "Setting X".
-          - Toggle "Option Y".
-          - Click "Button Z".
+      label: Site owner impact
+      description: Approximately what percentage of the total users of the platform are impacted? Unsure? Please provide your most educated guess!
+      options:
+        - Fewer than 20% of the total website/platform users
+        - Between 20% and 60% of the total website/platform users
+        - More than 60% of the total website/platform users
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: What is the severity of this issue? Please take a look at the descriptions below for further context.<br>
+        <br> - **Critical:** Prevents core functionality or has severe impact on the website/platform.
+        <br> - **Major:** Significantly impairs important features or has notable impact on the website/platform.
+        <br> - **Moderate:** Affects non-critical features or has limited impact on the website/platform.
+        <br> - **Minor:** Causes inconvenience or has minimal impact on functionality.
+      options:
+        - Critical
+        - Major
+        - Moderate
+        - Minor
+    validations:
+      required: true
+  - type: dropdown
+    id: additional-impact
+    attributes:
+      label: What other impact(s) does this issue have?
+      description: You may select more than one
+      options:
+        - Platform revenue
+        - Agency or developer revenue
+        - Individual site owner revenue
+        - No revenue impact
+      multiple: true
 
   - type: markdown
     attributes:
@@ -97,23 +97,32 @@ body:
 
         ## Optional Information
 
-        The following section is optional.
+  - type: textarea
+    id: workaround
+    attributes:
+      label: If a workaround is available, please outline it here.
+      placeholder: |
+        Provide details of the specific steps to take that resolve the issue, e.g.:
+          - Open "Setting X".
+          - Toggle "Option Y".
+          - Click "Button Z".
+
   - type: dropdown
     id: site-type
     attributes:
-      label: Platform (Simple and/or Atomic)
+      label: Platform
       description: (You may select more than one)
       options:
         - Simple
         - Atomic
         - Self-hosted
       multiple: true
-  - type: textarea
-    id: logs
+
+  - type: markdown
     attributes:
-      label: Logs or notes
-      placeholder: |
-        Add any information that may be relevant, such as:
-          - Browser/Platform
-          - Theme
-          - Logs/Errors
+      value: |
+        <br>
+
+        ## Next steps
+
+        Feel free to add any `[Feature]` labels you feel fit. Once you submit this issue, we'll process it, add additional labels, set a priority, and add it to our new issue queue for triage.
