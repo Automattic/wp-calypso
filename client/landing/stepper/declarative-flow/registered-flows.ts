@@ -137,7 +137,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ MIGRATION_FLOW ]: () =>
 		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 	[ EXAMPLE_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/example' ),
+		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {

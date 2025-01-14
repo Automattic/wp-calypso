@@ -190,7 +190,7 @@ export type FlowV2 = {
 	__experimentalUseBuiltinAuth?: boolean;
 
 	/**
-	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
+	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
 	 * Use `getSteps` instead.
 	 */
 	__flowSteps?: readonly StepperStep[];

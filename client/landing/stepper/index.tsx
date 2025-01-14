@@ -146,7 +146,7 @@ window.AppBoot = async () => {
 		return;
 	}
 
-	// Checking for initialize implies this a V2 flow.
+	// Checking for initialize implies this is a V2 flow.
 	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
 	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
 	if ( 'initialize' in flow && flowSteps ) {
