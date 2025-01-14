@@ -73,6 +73,7 @@ export interface CreateSiteParams {
 		is_blank_canvas?: boolean;
 		is_videopress_initial_purchase?: boolean;
 		wpcom_admin_interface?: string;
+		wpcom_show_action_bar?: number;
 	};
 }
 

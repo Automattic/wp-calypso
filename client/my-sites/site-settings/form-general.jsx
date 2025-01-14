@@ -1,6 +1,7 @@
 import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -361,6 +362,31 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	showActionbar() {
+		const { translate, fields, updateFields } = this.props;
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="site-settings__wpcom_show_action_bar">
+					{ translate( 'Action Bar visibility' ) }
+				</FormLabel>
+				<ToggleControl
+					id="site-settings__wpcom_show_action_bar"
+					__nextHasNoMarginBottom
+					label={ translate( 'Show the Action Bar on the front end of the site.' ) }
+					checked={ !! fields?.wpcom_show_action_bar }
+					onChange={ ( newValue ) => {
+						updateFields( { wpcom_show_action_bar: newValue ? 1 : undefined } );
+					} }
+				/>
+				<FormSettingExplanation>
+					<a href="https://en.support.wordpress.com/action-bar/">
+						{ translate( 'Learn more about Action Bar.' ) }
+					</a>
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	}
+
 	recordTracksEventForTrialNoticeClick = () => {
 		const { recordTracksEvent, isSiteOnECommerceTrial } = this.props;
 		const eventName = isSiteOnECommerceTrial
@@ -416,6 +442,7 @@ export class SiteSettingsFormGeneral extends Component {
 								{ this.blogAddress() }
 								{ this.languageOptions() }
 								{ this.Timezone() }
+								{ this.showActionbar() }
 								{ siteIsJetpack && this.WordPressVersion() }
 							</form>
 						</Card>
@@ -470,6 +497,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_gifting_subscription: false,
 		admin_url: '',
 		is_fully_managed_agency_site: true,
+		wpcom_show_action_bar: 1,
 	};
 
 	if ( ! settings ) {
@@ -494,6 +522,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
+		wpcom_show_action_bar: settings.wpcom_show_action_bar,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
