@@ -7,6 +7,10 @@
 		margin: 0 auto;
 		padding: 0 16px;
 
+		&::after {
+			@include long-content-fade( $size: 16px );
+		}
+
 		&__main {
 			display: flex;
 			padding: 36px 0 24px;
@@ -70,12 +74,6 @@
 				font-size: $font-title-large;
 				margin-bottom: 8px;
 				display: block;
-			}
-
-			&::after {
-				@include long-content-fade( $size: 15% );
-				height: 16px * 1.7;
-				top: auto;
 			}
 		}
 
