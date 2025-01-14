@@ -16,7 +16,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { isE2ETest } from 'calypso/lib/e2e';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -397,7 +396,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 	const duplicateViewsExperimentAssignment = await loadExperimentAssignment(
 		'calypso_post_onboarding_holdout_120924'
 	);
-	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+	if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
