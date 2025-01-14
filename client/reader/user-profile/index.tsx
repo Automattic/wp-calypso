@@ -4,12 +4,13 @@ import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
-import { getUserProfileUrl } from 'calypso/reader/user-stream/user-profile.utils';
-import UserLists from 'calypso/reader/user-stream/views/lists';
-import UserPosts from 'calypso/reader/user-stream/views/posts';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import UserLists from 'calypso/reader/user-profile/views/lists';
+import UserPosts from 'calypso/reader/user-profile/views/posts';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import './style.scss';
-interface UserStreamProps {
+
+interface UserProfileProps {
 	streamKey?: string;
 	userId: string;
 	user: UserData;
@@ -17,7 +18,7 @@ interface UserStreamProps {
 	requestUser: ( userId: string ) => Promise< void >;
 }
 
-type UserStreamState = {
+type UserProfileState = {
 	reader: {
 		users: {
 			items: Record< string, UserData >;
@@ -26,7 +27,8 @@ type UserStreamState = {
 	};
 };
 
-export function UserStream( { userId, requestUser, user, streamKey, isLoading }: UserStreamProps ) {
+export function UserProfile( props: UserProfileProps ) {
+	const { userId, requestUser, user, streamKey, isLoading } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -75,9 +77,9 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 }
 
 export default connect(
-	( state: UserStreamState, ownProps: UserStreamProps ) => ( {
+	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
 		user: state.reader.users.items[ ownProps.userId ],
 		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
 	} ),
 	{ requestUser }
-)( UserStream );
+)( UserProfile );

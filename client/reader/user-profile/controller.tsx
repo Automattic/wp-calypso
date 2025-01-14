@@ -1,22 +1,21 @@
+import { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
 import { getUserProfileBasePath } from 'calypso/reader/user-stream/user-profile.utils';
 import type { AppState } from 'calypso/types';
 
-interface Context {
+interface UserPostsContext extends Context {
 	params: {
 		user_id: string;
-	};
-	store: {
-		getState: () => AppState;
 	};
 	primary: ReactElement;
 }
 
 const analyticsPageTitle = 'Reader';
 
-export function userPosts( context: Context, next: () => void ): void {
+export function userPosts( ctx: Context, next: () => void ): void {
+	const context = ctx as UserPostsContext;
 	const userId = context.params.user_id;
 	const basePath = getUserProfileBasePath();
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId + ' > Posts';
@@ -27,7 +26,7 @@ export function userPosts( context: Context, next: () => void ): void {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/user-stream"
+			require="calypso/reader/user-profile"
 			key={ 'user-posts-' + userId }
 			streamKey={ streamKey }
 			userId={ userId }
@@ -54,7 +53,7 @@ export function userLists( context: Context, next: () => void ): void {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/user-stream"
+			require="calypso/reader/user-profile"
 			key={ 'user-lists-' + userId }
 			userId={ userId }
 		/>
