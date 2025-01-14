@@ -470,6 +470,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
 	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
+
+	// Temporarily hide the search terms module while we evaluate fixes for the
+	// underlying data. Discussion here: https://github.com/Automattic/jetpack/issues/39919
+	// Still accessible for testing at: /stats/day/searchterms/SITE_SLUG
 	const shouldDisplaySearchModule = false;
 
 	return (
