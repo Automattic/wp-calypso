@@ -31,8 +31,8 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 			{
 				label: translate( 'Email' ),
 				href: getEmailManagementPath(
-					selectedDomainName,
 					selectedSiteSlug,
+					selectedDomainName,
 					null,
 					undefined,
 					inSiteContext
