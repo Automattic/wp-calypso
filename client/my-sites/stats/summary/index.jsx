@@ -89,11 +89,14 @@ class StatsSummary extends Component {
 		};
 
 		// Update query with date range if it provided.
+		// Note that we force the period to 'day' for custom date ranges as other periods do not make sense
+		// in the context of our updated Traffic page and do not match the results as shown there.
 		const dateRange = this.props.dateRange;
 		if ( dateRange ) {
 			query.start_date = dateRange.startDate.format( 'YYYY-MM-DD' );
 			query.date = dateRange.endDate.format( 'YYYY-MM-DD' );
 			query.summarize = 1;
+			query.period = 'day'; // Override for custom date ranges.
 		}
 
 		const moduleQuery = merge( {}, statsQueryOptions, query );
