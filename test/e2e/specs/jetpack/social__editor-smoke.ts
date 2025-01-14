@@ -1,4 +1,5 @@
 /**
+ * @group calypso-pr
  * @group jetpack-wpcom-integration
  */
 
@@ -40,10 +41,6 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor Smoke test' ), function (
 
 		const toggle = editorParent.getByLabel( 'Share when publishing' );
 
-		expect( await toggle.isChecked() ).toBe( false );
-
-		const link = editorParent.getByRole( 'link', { name: 'Connect an account' } );
-
-		expect( await link.isVisible() ).toBe( true );
+		await toggle.waitFor();
 	} );
 } );

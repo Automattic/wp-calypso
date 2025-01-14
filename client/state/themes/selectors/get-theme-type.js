@@ -1,5 +1,6 @@
 import {
 	FREE_THEME,
+	PERSONAL_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
@@ -7,6 +8,7 @@ import {
 } from '@automattic/design-picker';
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
+import { isThemePersonal } from 'calypso/state/themes/selectors/is-theme-personal';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
@@ -32,7 +34,11 @@ export function getThemeType( state, themeId ) {
 		return PREMIUM_THEME;
 	}
 
-	if ( isWpcomTheme( state, themeId ) && ! isThemePremium( state, themeId ) ) {
+	if ( isThemePersonal( state, themeId ) ) {
+		return PERSONAL_THEME;
+	}
+
+	if ( isWpcomTheme( state, themeId ) ) {
 		return FREE_THEME;
 	}
 

@@ -39,6 +39,8 @@ export const setSignupCompleteSlug = ( value ) =>
 	ignoreFatalsForStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
 	);
+export const clearSignupCompleteSlug = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_site_slug' ) );
 export const getSignupCompleteSiteID = () =>
 	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_id' ) );
 export const setSignupCompleteSiteID = ( value ) =>
@@ -60,6 +62,7 @@ export const setSignupCheckoutPageUnloaded = ( value ) =>
 	);
 export const getSignupCompleteFlowName = () =>
 	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_flow_name' ) );
+
 export const setSignupCompleteFlowName = ( value ) =>
 	ignoreFatalsForStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_flow_name', value )

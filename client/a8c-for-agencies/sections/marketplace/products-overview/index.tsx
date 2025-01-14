@@ -3,19 +3,20 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderActions as Actions,
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';
@@ -85,6 +86,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery
 			withBorder
 		>
 			<LayoutTop withNavigation>
+				<A4AAgencyApprovalNotice />
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [
@@ -96,6 +98,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery
 								label: translate( 'Products' ),
 							},
 						] }
+						hideOnMobile
 					/>
 
 					<Actions className="a4a-marketplace__header-actions">

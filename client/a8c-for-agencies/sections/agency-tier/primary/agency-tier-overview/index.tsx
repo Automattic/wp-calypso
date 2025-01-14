@@ -2,19 +2,18 @@ import { Card, Badge } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+} from 'calypso/layout/hosting-dashboard/header';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DownloadBadges from '../../download-badges';
-import EarlyAccessBanner from '../../early-access-banner';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
 import { AgencyTier } from '../../types';
@@ -58,8 +57,6 @@ export default function AgencyTierOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<EarlyAccessBanner />
-
 				{ currentAgencyTierInfo && (
 					<div className="agency-tier-overview__top-content">
 						<div className="agency-tier-overview__top-content-left">

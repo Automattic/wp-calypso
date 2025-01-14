@@ -5,16 +5,18 @@ import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import {
+	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding/constants';
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getCurrentUserDate,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -33,9 +35,14 @@ const ReaderOnboarding = ( {
 	const hasCompletedOnboarding = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
 	);
+	const hasSeenOnboarding = useSelector( ( state ) =>
+		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
+	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+
+	const dispatch = useDispatch();
 
 	const shouldShowOnboarding =
 		forceShow ||
@@ -46,20 +53,6 @@ const ReaderOnboarding = ( {
 			isEmailVerified &&
 			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
 
-	// Track if user viewed Reader Onboarding.
-	useEffect( () => {
-		if ( shouldShowOnboarding ) {
-			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
-		}
-	}, [ shouldShowOnboarding ] );
-
-	// Notify the parent component if onboarding will render.
-	onRender?.( shouldShowOnboarding );
-
-	if ( ! shouldShowOnboarding ) {
-		return null;
-	}
-
 	// Modal state handlers with tracking.
 	const openInterestsModal = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
@@ -69,6 +62,9 @@ const ReaderOnboarding = ( {
 	const closeInterestsModal = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		setIsInterestsModalOpen( false );
+		if ( ! hasSeenOnboarding ) {
+			dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+		}
 	};
 
 	const openDiscoverModal = () => {
@@ -93,6 +89,27 @@ const ReaderOnboarding = ( {
 		} );
 		task?.actionDispatch?.();
 	};
+
+	// Track if user viewed Reader Onboarding.
+	useEffect( () => {
+		if ( shouldShowOnboarding ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
+		}
+	}, [ shouldShowOnboarding, dispatch ] );
+
+	// Auto-open the interests modal if onboarding should render and it has never been opened before
+	useEffect( () => {
+		if ( shouldShowOnboarding && ! hasSeenOnboarding ) {
+			openInterestsModal();
+		}
+	}, [ shouldShowOnboarding, hasSeenOnboarding, dispatch ] );
+
+	// Notify the parent component if onboarding will render.
+	onRender?.( shouldShowOnboarding );
+
+	if ( ! shouldShowOnboarding ) {
+		return null;
+	}
 
 	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
 

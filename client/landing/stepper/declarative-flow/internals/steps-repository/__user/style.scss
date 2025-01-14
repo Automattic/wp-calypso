@@ -2,11 +2,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.is-section-stepper .step-route {
-	//--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-}
-
 .step-route.user {
 	display: flex;
 	flex-direction: column;
@@ -21,7 +16,6 @@ body.is-section-stepper .step-route {
 			width: 100%;
 		}
 	}
-
 
 	a.step-wrapper__navigation-link {
 		color: #1d2327;
@@ -101,6 +95,7 @@ body.is-section-stepper .step-route {
 
 	.signup-form-social-first-email {
 		.card {
+			background: transparent;
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
@@ -158,11 +153,11 @@ body.is-section-stepper .step-route {
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-blue-50, #0675c4);
+				color: var(--color-accent, #3858e9);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--color-accent, #3858e9);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;

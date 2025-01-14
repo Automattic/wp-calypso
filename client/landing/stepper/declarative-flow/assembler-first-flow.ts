@@ -71,7 +71,6 @@ const assemblerFirstFlow: Flow = {
 			STEPS.NEW_OR_EXISTING_SITE,
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
@@ -167,10 +166,6 @@ const assemblerFirstFlow: Flow = {
 					return;
 				}
 
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
-				}
-
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
@@ -213,14 +208,6 @@ const assemblerFirstFlow: Flow = {
 				case 'freePostSetup':
 				case 'domains': {
 					return navigate( 'launchpad' );
-				}
-
-				case 'pattern-assembler': {
-					const params = new URLSearchParams( window.location.search );
-					params.delete( 'siteSlug' );
-					params.delete( 'siteId' );
-					setSelectedSite( null );
-					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
@@ -275,10 +262,7 @@ function enableAssemblerTheme(
 	siteSlug: string,
 	reduxDispatch: CalypsoDispatch
 ) {
-	const params = new URLSearchParams( {
-		canvas: 'edit',
-		assembler: '1',
-	} );
+	const params = new URLSearchParams( { canvas: 'edit' } );
 
 	return () =>
 		Promise.resolve()

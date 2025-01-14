@@ -1,7 +1,9 @@
 import page from '@automattic/calypso-router';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
+import { Global, css } from '@emotion/react';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import SubpageWrapper from 'calypso/my-sites/domains/domain-management/subpage-wrapper';
 import {
 	domainManagementAllEditSelectedContactInfo,
 	domainManagementEditSelectedContactInfo,
@@ -27,7 +29,24 @@ import {
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSubpageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
+
+const sitesDashboardGlobalStyles = css`
+	body.is-bulk-all-domains-page {
+		@media only screen and ( min-width: 782px ) {
+			.is-global-sidebar-visible {
+				.layout__primary > main {
+					background: var( --color-surface );
+					border-radius: 8px;
+					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
+					overflow: hidden;
+					max-width: none;
+				}
+			}
+		}
+	}
+`;
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -42,10 +61,13 @@ export default {
 
 	domainManagementListAllSites( pageContext, next ) {
 		pageContext.primary = (
-			<DomainManagement.BulkAllDomains
-				analyticsPath={ domainManagementRoot() }
-				analyticsTitle="Domain Management > All Domains"
-			/>
+			<>
+				<Global styles={ sitesDashboardGlobalStyles } />
+				<DomainManagement.BulkAllDomains
+					analyticsPath={ domainManagementRoot() }
+					analyticsTitle="Domain Management > All Domains"
+				/>
+			</>
 		);
 		next();
 	},
@@ -326,8 +348,15 @@ export default {
 
 	// The main layout that wraps all the domain management pages.
 	domainDashboardLayout( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+		const selectedFeature = pageContext.primary?.props?.selectedFeature;
+
 		pageContext.primary = (
-			<DomainManagement.DomainDashboardLayout innerContent={ pageContext.primary } />
+			<DomainManagement.DomainDashboardLayout
+				innerContent={ pageContext.primary }
+				selectedDomainName={ selectedDomainName }
+				selectedFeature={ selectedFeature }
+			/>
 		);
 
 		next();
@@ -365,10 +394,41 @@ export default {
 					selectedFeature={ feature }
 					siteSlug={ siteSlug }
 					site={ site }
+					inSiteContext={ pageContext.inSiteContext }
 				/>
 			);
 
 			next();
 		};
+	},
+
+	domainManagementSubpageParams( subPageKey ) {
+		return ( pageContext, next ) => {
+			pageContext.params = {
+				...pageContext.params,
+				...getSubpageParams( subPageKey ),
+				subPageKey,
+			};
+			next();
+		};
+	},
+
+	domainManagementSiteContext( pageContext, next ) {
+		pageContext.inSiteContext = true;
+		next();
+	},
+
+	domainManagementSubpageView( pageContext, next ) {
+		pageContext.primary = (
+			<SubpageWrapper
+				subpageKey={ pageContext.params.subPageKey }
+				siteName={ pageContext.params.site }
+				domainName={ pageContext.params.domain }
+				inSiteContext={ pageContext.inSiteContext }
+			>
+				{ pageContext.primary }
+			</SubpageWrapper>
+		);
+		next();
 	},
 };

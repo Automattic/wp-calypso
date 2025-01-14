@@ -1,11 +1,12 @@
-import { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
-import { AddOns } from '@automattic/data-stores';
+import { PlanSlug } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
-import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
+import usePlanStorage from '../hooks/use-plan-storage';
+import usePurchasedStorageAddOn from '../hooks/use-purchased-storage-add-on';
+import useStorageString from '../hooks/use-storage-string';
 
 interface Props {
 	planSlug: PlanSlug;
@@ -13,23 +14,14 @@ interface Props {
 
 const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
-	const { siteId, gridPlansIndex, enableStorageAsBadge = true } = usePlansGridContext();
+	const { gridPlansIndex, enableStorageAsBadge = true } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
-		features: { storageFeature },
 	} = gridPlansIndex[ planSlug ];
-	const storageSlug = storageFeature?.getSlug() as WPComPlanStorageFeatureSlug | undefined;
-	const storageStringFromFeature = useStorageStringFromFeature( {
-		siteId,
-		storageSlug,
-	} );
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const storageAddOnsPurchased = storageAddOns.filter( ( addOn ) => addOn?.purchased );
-	const monthlyAddedCost = storageAddOnsPurchased
-		? Object.values( storageAddOnsPurchased ).reduce( ( total, addOn ) => {
-				return total + ( addOn?.prices?.monthlyPrice ?? 0 );
-		  }, 0 )
-		: 0;
+	const planStorage = usePlanStorage( planSlug );
+	const purchasedStorageAddOn = usePurchasedStorageAddOn();
+
+	const monthlyAddedCost = purchasedStorageAddOn?.prices?.monthlyPrice ?? 0;
 	const formattedMonthlyAddedCost =
 		monthlyAddedCost &&
 		currencyCode &&
@@ -39,19 +31,22 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 		isAddOn: true,
 		currencyCode: currencyCode ?? 'USD',
 	} );
+	const totalStorageString = useStorageString(
+		planStorage + ( purchasedStorageAddOn?.quantity ?? 0 )
+	);
 
 	const containerClasses = clsx( 'plans-grid-next-storage-feature-label__container', {
 		'is-row': ! isLargeCurrency,
 	} );
 
 	const volumeJSX = enableStorageAsBadge ? (
-		<div className="plans-grid-next-storage-feature-label__volume is-badge" key={ storageSlug }>
-			{ storageStringFromFeature }
+		<div className="plans-grid-next-storage-feature-label__volume is-badge">
+			{ totalStorageString }
 		</div>
 	) : (
 		<div className="plans-grid-next-storage-feature-label__volume">
 			{ translate( '%s storage', {
-				args: [ storageStringFromFeature ],
+				args: [ totalStorageString ],
 				comment: '%s is the amount of storage, including the unit. For example "10 GB"',
 			} ) }
 		</div>

@@ -3,13 +3,16 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
-import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import {
+	DeviceTabProvider,
+	useDeviceTab,
+} from 'calypso/hosting/performance/contexts/device-tab-context';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -24,8 +27,9 @@ import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
 import { ReportUnavailable } from './components/ReportUnavailable';
-import { DeviceTabControls, Tab } from './components/device-tab-control';
+import { DeviceTabControls } from './components/device-tab-control';
 import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
+import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 
 import './style.scss';
@@ -39,106 +43,9 @@ const statsQuery = {
 	max: 0,
 };
 
-const usePerformanceReport = (
-	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
-	refetchPages: () => void,
-	savePerformanceReportUrl: (
-		pageId: string,
-		wpcom_performance_report_url: { url: string; hash: string }
-	) => Promise< void >,
-	currentPageId: string,
-	wpcom_performance_report_url: { url: string; hash: string } | undefined,
-	activeTab: Tab
-) => {
-	const { url = '', hash = '' } = wpcom_performance_report_url || {};
-
-	const [ retestState, setRetestState ] = useState( 'idle' );
-
-	const {
-		data: basicMetrics,
-		isError: isBasicMetricsError,
-		isFetched: isBasicMetricsFetched,
-		isLoading: isLoadingBasicMetrics,
-		refetch: requeueAdvancedMetrics,
-	} = useUrlBasicMetricsQuery( url, hash, true );
-	const { final_url: finalUrl, token } = basicMetrics || {};
-	useEffect( () => {
-		if ( token && finalUrl ) {
-			setIsSavingPerformanceReportUrl( true );
-			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } )
-				.then( () => {
-					refetchPages();
-				} )
-				.finally( () => {
-					setIsSavingPerformanceReportUrl( false );
-				} );
-		}
-		// We only want to run this effect when the token changes.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ token ] );
-	const {
-		data: performanceInsights,
-		status: insightsStatus,
-		isError: isInsightsError,
-		isLoading: isLoadingInsights,
-	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
-
-	const mobileReport =
-		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
-	const desktopReport =
-		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
-
-	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
-
-	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
-	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
-
-	const getHashOrToken = (
-		hash: string | undefined,
-		token: string | undefined,
-		isReportLoaded: boolean
-	) => {
-		if ( hash ) {
-			return hash;
-		} else if ( token && isReportLoaded ) {
-			return token;
-		}
-		return '';
-	};
-
-	const testAgain = useCallback( async () => {
-		setRetestState( 'queueing-advanced' );
-		const result = await requeueAdvancedMetrics();
-		setRetestState( 'polling-for-insights' );
-		return result;
-	}, [ requeueAdvancedMetrics ] );
-
-	if (
-		retestState === 'polling-for-insights' &&
-		insightsStatus === 'success' &&
-		( activeTab === 'mobile' ? mobileLoaded : desktopLoaded )
-	) {
-		setRetestState( 'idle' );
-	}
-
-	return {
-		performanceReport,
-		url: finalUrl ?? url,
-		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
-		isLoading:
-			isLoadingBasicMetrics ||
-			isLoadingInsights ||
-			( activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded ),
-		isError: isBasicMetricsError || isInsightsError,
-		isBasicMetricsFetched,
-		testAgain,
-		isRetesting: retestState !== 'idle',
-	};
-};
-
-export const SitePerformance = () => {
-	const [ activeTab, setActiveTab ] = useState< Tab >( 'mobile' );
+const SitePerformanceContent = () => {
 	const dispatch = useDispatch();
+	const { activeTab, setActiveTab } = useDeviceTab();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 	const { getSiteSetting } = useSiteSettings( site?.slug );
@@ -271,7 +178,7 @@ export const SitePerformance = () => {
 		! isSitePublic ||
 		isSavingPerformanceReportUrl;
 
-	const handleDeviceTabChange = ( tab: Tab ) => {
+	const handleDeviceTabChange = ( tab: TabType ) => {
 		setActiveTab( tab );
 		recordTracksEvent( 'calypso_performance_profiler_device_tab_change', {
 			device: tab,
@@ -436,5 +343,13 @@ export const SitePerformance = () => {
 				</>
 			) }
 		</div>
+	);
+};
+
+export const SitePerformance = () => {
+	return (
+		<DeviceTabProvider>
+			<SitePerformanceContent />
+		</DeviceTabProvider>
 	);
 };

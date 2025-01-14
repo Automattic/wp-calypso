@@ -157,6 +157,8 @@ const StyledFoldableCard = styled( FoldableCard )`
 	}
 
 	&.card.foldable-card {
+		background: var( --studio-gray-100 );
+		color: var( --studio-gray-0 );
 		margin: 0;
 		.foldable-card__header {
 			.foldable-card__main {
@@ -167,7 +169,7 @@ const StyledFoldableCard = styled( FoldableCard )`
 			.foldable-card__action {
 				width: 32px;
 			}
-			.gridicons-chevron-down {
+			.gridicon {
 				fill: var( --studio-gray-0 );
 				height: 16px;
 				width: 16px;
@@ -245,7 +247,7 @@ function InfoColumn( {
 					<WordPressWordmark size={ { width: 200, height: 25 } } />
 				</WordPressLogoWrapper>
 
-				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
+				{ ! isMobile && <HundredYearPlanLogo /> }
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
 					<Description isMobile={ isMobile }>

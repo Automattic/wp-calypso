@@ -41,7 +41,6 @@ export const FEATURE_CATEGORIES = {
 	BLOG: 'blog',
 	NEWSLETTER: 'newsletter',
 	PORTFOLIO: 'portfolio',
-	PODCAST: 'podcast',
 	STORE: 'store',
 };
 

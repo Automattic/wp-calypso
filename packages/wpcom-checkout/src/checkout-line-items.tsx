@@ -480,7 +480,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) along with your plan renewal will be removed from the cart, and your plan will keep its current expiry date.'
+							"Some of your other product(s) depend on your plan to be renewed. When you press Continue, the plan renewal will be removed from the cart and your plan will keep its current expiry date. When the plan expires these product(s) will stop working even if they haven't expired yet."
 						)
 					),
 				};
@@ -670,12 +670,16 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		const productQuantity = product?.quantity ?? 1;
 		const currentQuantity = product?.current_quantity ?? 1;
-		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
+		const spaceQuantity = productQuantity > 1 ? productQuantity - currentQuantity : currentQuantity;
 
 		return (
 			<>
 				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
 					args: { quantity: spaceQuantity, price },
+				} ) }
+				<br></br>
+				{ translate( 'Total extra space after purchase: %(totalSpace)s GB', {
+					args: { totalSpace: product.is_renewal ? currentQuantity : productQuantity },
 				} ) }
 			</>
 		);

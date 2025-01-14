@@ -14,17 +14,17 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import DocumentHead from 'calypso/components/data/document-head';
+import GuidedTour from 'calypso/components/guided-tour';
+import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import Layout from 'calypso/layout/hosting-dashboard';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import DocumentHead from 'calypso/components/data/document-head';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+} from 'calypso/layout/hosting-dashboard/header';
+import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import {
@@ -38,6 +38,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import { useTracksEventOnFilterChange } from '../hooks/use-tracks-event-on-filter-change';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
@@ -47,6 +48,7 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
+import SitesDashboardSurvey from './sites-dashboard-survey';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { View } from '@wordpress/dataviews';
@@ -64,6 +66,7 @@ interface SitesDashboardProps {
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
 	sectionName?: string;
+	isOnlyLayoutView?: boolean;
 }
 
 const siteSortingKeys = [
@@ -88,7 +91,7 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
-export function showSitesPage( route: string ) {
+export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
 
@@ -102,7 +105,17 @@ export function showSitesPage( route: string ) {
 		}
 	} );
 
-	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	if ( openInNewTab ) {
+		const newWindow = window.open(
+			newUrl.toString().replace( window.location.origin, '' ),
+			'_blank'
+		);
+		if ( newWindow ) {
+			newWindow.opener = null;
+		}
+	} else {
+		pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
+	}
 }
 
 const SitesDashboard = ( {
@@ -118,6 +131,7 @@ const SitesDashboard = ( {
 	},
 	initialSiteFeature = isEnabled( 'untangling/hosting-menu' ) ? OVERVIEW : DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
+	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -324,6 +338,8 @@ const SitesDashboard = ( {
 		}
 	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
+	useTracksEventOnFilterChange( dataViewsState.filters ?? [] );
+
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = () => {
 		if ( selectedSite ) {
@@ -333,14 +349,16 @@ const SitesDashboard = ( {
 
 	const openSitePreviewPane = (
 		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+		openInNewTab?: boolean
 	) => {
 		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 			site_id: site.ID,
 			source,
 		} );
 		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`
+			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
+			openInNewTab
 		);
 	};
 
@@ -369,11 +387,11 @@ const SitesDashboard = ( {
 			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! selectedSite && 'preview-hidden'
+				! selectedSite && 'preview-hidden',
+				isOnlyLayoutView && 'domains-overview'
 			) }
 			wide
 			title={ selectedSite ? null : dashboardTitle }
-			disableGuidedTour
 		>
 			<DocumentHead title={ dashboardTitle } />
 
@@ -412,18 +430,30 @@ const SitesDashboard = ( {
 					preferenceNames={ CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME }
 					eventNames={ CALYPSO_ONBOARDING_TOURS_EVENT_NAMES }
 				>
-					<LayoutColumn className="site-preview-pane" wide>
-						<DotcomPreviewPane
-							site={ selectedSite }
-							selectedSiteFeature={ initialSiteFeature }
-							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
-							closeSitePreviewPane={ closeSitePreviewPane }
-							changeSitePreviewPane={ changeSitePreviewPane }
-						/>
+					<LayoutColumn
+						className={ clsx(
+							'site-preview-pane',
+							isOnlyLayoutView && 'domains-overview__details'
+						) }
+						wide
+					>
+						{ isOnlyLayoutView ? (
+							selectedSiteFeaturePreview
+						) : (
+							<DotcomPreviewPane
+								site={ selectedSite }
+								selectedSiteFeature={ initialSiteFeature }
+								selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
+								closeSitePreviewPane={ closeSitePreviewPane }
+								changeSitePreviewPane={ changeSitePreviewPane }
+							/>
+						) }
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
+
+			<SitesDashboardSurvey />
 		</Layout>
 	);
 };

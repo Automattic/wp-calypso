@@ -27,6 +27,7 @@ const SITE_DASHBOARD_ROUTES = [
 	// Domain Management
 	'/domains/manage/all/overview',
 	'/domains/manage/all/email',
+	'/domains/manage/all/contact-info',
 ];
 
 function isInRoute( state: AppState, routes: string[] ) {
@@ -69,7 +70,9 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	return isSiteDashboard || isPluginsScheduledUpdatesEditMode;
+	const isPluginsManageSites = isInRoute( state, [ '/plugins/manage/sites/' ] );
+
+	return isSiteDashboard || isPluginsScheduledUpdatesEditMode || isPluginsManageSites;
 };
 
 export const getShouldShowUnifiedSiteSidebar = (

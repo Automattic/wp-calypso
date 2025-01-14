@@ -1,20 +1,25 @@
-import { useSelect } from '@wordpress/data';
-import { useLocation } from './use-location';
+import { subscribe, useSelect } from '@wordpress/data';
+import { useEffect, useState } from 'react';
 
 const useCanvasMode = () => {
-	const location = useLocation();
+	const [ canvasMode, setCanvasMode ] = useState( null );
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 
-	return useSelect(
-		( select ) => {
-			// The canvas mode is limited to the site editor.
-			if ( ! select( 'core/edit-site' ) ) {
-				return null;
-			}
+	useEffect( () => {
+		// The canvas mode is limited to the site editor.
+		if ( ! isSiteEditor ) {
+			return;
+		}
 
-			return new URLSearchParams( location?.search ).get( 'canvas' ) || 'view';
-		},
-		[ location?.search ]
-	);
+		const unsubscribe = subscribe( () => {
+			const mode = new URLSearchParams( window.location?.search ).get( 'canvas' ) || 'view';
+			setCanvasMode( mode );
+		} );
+
+		return () => unsubscribe();
+	}, [ isSiteEditor ] );
+
+	return canvasMode;
 };
 
 export { useCanvasMode };

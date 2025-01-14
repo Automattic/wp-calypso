@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -108,7 +109,8 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 	isActive: boolean;
 }
@@ -122,6 +124,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	isActive,
 } ) => {
@@ -157,7 +160,8 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
-			badge={ getBadge( design.slug, isLocked ) }
+			optionsMenu={ getOptionsMenu && getOptionsMenu( design.slug, isLocked ) }
+			badge={ getBadge && getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onStyleVariationClick={ ( variation ) => {
@@ -176,6 +180,7 @@ interface DesignCardGroup {
 	designs: Design[];
 	locale: string;
 	category?: string | null;
+	categoryName?: string;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
@@ -184,13 +189,15 @@ interface DesignCardGroup {
 	showNoResults?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignCardGroup = ( {
 	title,
 	designs,
 	category,
+	categoryName,
 	locale,
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
@@ -201,10 +208,16 @@ const DesignCardGroup = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	getOptionsMenu,
 }: DesignCardGroup ) => {
+	const translate = useTranslate();
+	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
+	const collapsedDesignCount = 6;
+	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
+
 	const content = (
 		<div className="design-picker__grid">
-			{ designs.map( ( design, index ) => {
+			{ visibleDesigns.map( ( design, index ) => {
 				return (
 					<DesignCard
 						key={ design.recipe?.slug ?? design.slug ?? index }
@@ -216,8 +229,13 @@ const DesignCardGroup = ( {
 						onChangeVariation={ onChangeVariation }
 						onPreview={ onPreview }
 						getBadge={ getBadge }
+						getOptionsMenu={ getOptionsMenu }
 						oldHighResImageLoading={ oldHighResImageLoading }
-						isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
+						isActive={
+							showActiveThemeBadge &&
+							design.recipe?.stylesheet === siteActiveTheme &&
+							! design.is_virtual
+						}
 					/>
 				);
 			} ) }
@@ -229,16 +247,24 @@ const DesignCardGroup = ( {
 		return null;
 	}
 
-	if ( ! title || designs.length === 0 ) {
-		return content;
-	}
-
 	return (
 		<div className="design-picker__design-card-group">
-			<div className="design-picker__design-card-title">
-				{ title } ({ designs.length })
-			</div>
+			{ title && designs.length > 0 && (
+				<div className="design-picker__design-card-title">
+					{ title } ({ designs.length })
+				</div>
+			) }
 			{ content }
+			{ isCollapsed && designs.length > collapsedDesignCount && (
+				<div className="design-picker__design-card-group-footer">
+					<Button onClick={ () => setIsCollapsed( false ) }>
+						{ translate( 'Show all %s themes', {
+							args: categoryName,
+							comment: '%s will be a name of the theme category. e.g. Blog.',
+						} ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };
@@ -271,13 +297,13 @@ interface DesignPickerProps {
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
-	recommendedDesignSlugs?: string[];
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -290,14 +316,15 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
-	recommendedDesignSlugs = [],
 } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 
 	const categories = categorization?.categories || [];
@@ -314,29 +341,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const recommendedDesigns = useMemo( () => {
-		const recommendedDesignSlugsSet = new Set( recommendedDesignSlugs );
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
 
-		// The number should be a multiple of 3 but no more than 5
-		return designs
-			.filter( ( design ) => recommendedDesignSlugsSet.has( design.recipe?.stylesheet || '' ) )
-			.slice( 0, 3 );
-	}, [ designs, recommendedDesignSlugs ] );
-
-	// Show recommended themes only when the selected categories are never changed.
-	const showRecommendedDesigns =
-		isMultiFilterEnabled &&
-		! categorization?.isSelectionsChanged &&
-		recommendedDesigns.length === 3;
-
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, {
-		excludeDesigns: showRecommendedDesigns ? recommendedDesigns : [],
-	} );
-
-	// Show no results only when the recommended themes is hidden and no design matches the selected categories and tiers.
-	const showNoResults =
-		! showRecommendedDesigns &&
-		Object.values( designsByGroup ).every( ( categoryDesigns ) => categoryDesigns.length === 0 );
+	// Show no results only when no design matches the selected categories and tiers.
+	const showNoResults = Object.values( designsByGroup ).every(
+		( categoryDesigns ) => categoryDesigns.length === 0
+	);
 
 	const getCategoryName = ( value: string ) =>
 		categories.find( ( { slug } ) => slug === value )?.name || '';
@@ -348,6 +358,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		onChangeVariation,
 		onPreview,
 		getBadge,
+		getOptionsMenu,
 		oldHighResImageLoading,
 		showActiveThemeBadge,
 		siteActiveTheme,
@@ -394,26 +405,23 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 			</div>
 
-			{ showRecommendedDesigns && (
-				<DesignCardGroup
-					{ ...designCardProps }
-					title={ translate( 'Recommended themes' ) }
-					category="recommended"
-					designs={ recommendedDesigns }
-				/>
-			) }
-
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
-					title={ translate( 'Best matching themes' ) }
+					title={
+						hasEnTranslation( 'Best theme matches' )
+							? translate( 'Best theme matches' )
+							: translate( 'Best matching themes' )
+					}
 					category="best"
 					designs={ best }
 				/>
 			) }
+
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length === 0 && (
 				<DesignCardGroup { ...designCardProps } designs={ all } />
 			) }
+
 			{ /* We want to show the last one on top first. */ }
 			{ Object.entries( designsByGroup )
 				.reverse()
@@ -430,6 +438,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								: ''
 						}
 						category={ categorySlug }
+						categoryName={ isMultiFilterEnabled ? getCategoryName( categorySlug ) : '' }
 						designs={ categoryDesigns }
 						showNoResults={ index === array.length - 1 && showNoResults }
 					/>
@@ -449,13 +458,13 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
-	recommendedDesignSlugs?: string[];
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -470,12 +479,12 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	getOptionsMenu,
 	oldHighResImageLoading,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
-	recommendedDesignSlugs = [],
 } ) => {
 	const hasCategories = !! ( categorization?.categories || [] ).length;
 
@@ -497,12 +506,12 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
+					getOptionsMenu={ getOptionsMenu }
 					oldHighResImageLoading={ oldHighResImageLoading }
 					siteActiveTheme={ siteActiveTheme }
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					isBigSkyEligible={ isBigSkyEligible }
-					recommendedDesignSlugs={ recommendedDesignSlugs }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

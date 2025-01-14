@@ -52,12 +52,14 @@ const UserStepComponent: Step = function UserStep( {
 		}
 	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
 
+	const locale = useFlowLocale();
+
 	const loginLink = login( {
 		signupUrl,
 		redirectTo,
+		locale,
 	} );
 
-	const locale = useFlowLocale();
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
@@ -77,7 +79,8 @@ const UserStepComponent: Step = function UserStep( {
 				isWideLayout={ false }
 				isFullLayout
 				isLargeSkipLayout={ false }
-				hideBack
+				hideBack={ ! navigation.goBack }
+				goBack={ navigation.goBack }
 				stepContent={
 					<>
 						<FormattedHeader

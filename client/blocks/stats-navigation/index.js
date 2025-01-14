@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -14,9 +15,15 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getJetpackStatsAdminVersion,
+	getSiteOption,
+	isJetpackSite,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -59,6 +66,9 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isSubscriptionsModuleActive: PropTypes.bool,
+		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -101,11 +111,6 @@ class StatsNavigation extends Component {
 			}
 		);
 
-		// toggle the visibility of video module itself
-		if ( ! nextProps.hasVideoPress ) {
-			nextProps.pageModuleToggles.videos = false;
-		}
-
 		if (
 			prevState.pageModules !== nextProps.pageModuleToggles ||
 			prevState.availableModuleToggles !== nextProps.availableModuleToggles
@@ -137,7 +142,15 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const {
+			isGoogleMyBusinessLocationConnected,
+			isStore,
+			isWordAds,
+			isSubscriptionsModuleActive,
+			isSimple,
+			isSiteJetpackNotAtomic,
+			siteId,
+		} = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -157,6 +170,11 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+
+				// The value of isSubscriptionsModuleActive is null in Odyssey Stats so we default to showing the tab.
+				// Maintains existing behaviour inside wp-admin for self-hosted sites.
+				// For DotCom sites, it will only be shown on Simple sites or if subs are enabled.
+				return isSiteJetpackNotAtomic || isSimple || isSubscriptionsModuleActive;
 
 			default:
 				return true;
@@ -179,6 +197,7 @@ class StatsNavigation extends Component {
 			hideModuleSettings,
 			delayTooltipPresentation,
 			gatedTrafficPage,
+			siteId,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -205,6 +224,7 @@ class StatsNavigation extends Component {
 
 		return (
 			<div className={ wrapperClass }>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
@@ -297,6 +317,9 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
+			isSimple: isSimpleSite( state, siteId ),
+			isSiteJetpackNotAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),

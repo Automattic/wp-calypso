@@ -117,7 +117,7 @@
 
 	.cancel-purchase-form__atomic-revert-checkbox-enabled {
 		.components-base-control__field {
-			border: 1px solid var(--studio-blue-50);
+			border: 1px solid var(--color-accent);
 			background: #f9fbfd;
 		}
 	}
@@ -151,7 +151,7 @@
 	border: 1px solid var(--studio-gray-5);
 	padding: 12px 10px 12px 20px;
 	font-size: 0.75rem;
-	border-left: 3px solid var(--studio-blue-50);
+	border-left: 3px solid var(--color-accent);
 
 	h4 {
 		color: var(--studio-gray-70);
@@ -279,6 +279,10 @@
 	.blank-canvas__back {
 		z-index: 1;
 		font-size: 0.875rem;
+	}
+
+	.components-base-control__label {
+		text-transform: none;
 	}
 
 	.components-base-control__field {

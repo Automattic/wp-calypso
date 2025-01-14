@@ -1,0 +1,14 @@
+.is-section-reader {
+	.user-profile {
+		.empty-content {
+			margin-top: 150px;
+		}
+	}
+
+	div.user-profile__content {
+		main.main.is-user-stream {
+			padding: 0;
+			border-block-end: none;
+		}
+	}
+}

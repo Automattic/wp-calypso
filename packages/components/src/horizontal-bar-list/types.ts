@@ -32,6 +32,10 @@ export type HorizontalBarListItemProps = {
 	 * @property {boolean} hasNoBackground - don't render the background bar and adjust indentation
 	 */
 	hasNoBackground?: boolean;
+	/**
+	 * @property {Function} formatValue - function to format the value display. Can optionally receive the full item data.
+	 */
+	formatValue?: ( value: number, item?: StatDataObject ) => React.ReactNode;
 };
 
 type StatDataObject = {

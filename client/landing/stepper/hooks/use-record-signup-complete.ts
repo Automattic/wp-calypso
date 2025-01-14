@@ -10,19 +10,31 @@ import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
-	const theme = site?.options?.theme_slug || '';
-	const { userId, domainCartItem, planCartItem, selectedDomain, signupDomainOrigin } = useSelect(
-		( select ) => {
-			return {
-				userId: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.ID,
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-			};
-		},
-		[]
-	);
+
+	const {
+		userId,
+		domainCartItem,
+		planCartItem,
+		selectedDomain,
+		signupDomainOrigin,
+		goals,
+		selectedDesign,
+	} = useSelect( ( select ) => {
+		return {
+			userId: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.ID,
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+			goals: ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		};
+	}, [] );
+
+	const theme = site?.options?.theme_slug || selectedDesign?.slug || '';
+
+	// Avoid generating new reference on each call
+	const stringifiedGoals = goals.length && goals?.join( ',' );
 
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
@@ -61,6 +73,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
 					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 					framework: 'stepper',
+					goals: stringifiedGoals,
 				},
 				true
 			);
@@ -74,6 +87,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			siteId,
 			theme,
 			userId,
+			stringifiedGoals,
 		]
 	);
 };

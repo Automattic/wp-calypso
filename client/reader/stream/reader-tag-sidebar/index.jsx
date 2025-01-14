@@ -3,27 +3,21 @@ import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import FollowButton from 'calypso/blocks/follow-button/button';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
-import { getReaderTagBySlug } from 'calypso/state/reader/tags/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import '../style.scss';
 
 const ReaderTagSidebar = ( {
 	tag,
-	showFollow,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 } ) => {
 	const primarySiteId = useSelector( getPrimarySiteId );
@@ -31,7 +25,6 @@ const ReaderTagSidebar = ( {
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
 	const dispatch = useDispatch();
-	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
@@ -87,27 +80,6 @@ const ReaderTagSidebar = ( {
 	) );
 	const tagsPageUrl = addLocaleToPathLocaleInFront( '/tags' );
 
-	const toggleFollowing = () => {
-		const toggleAction = isFollowing ? requestUnfollowTag : requestFollowTag;
-		if ( ! isLoggedIn ) {
-			return registerLastActionRequiresLoginProp( {
-				type: 'follow-tag',
-				tag: tag,
-			} );
-		}
-
-		dispatch( toggleAction( tag ) );
-		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
-		recordGaEvent( isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', tag );
-		dispatch(
-			recordReaderTracksEvent(
-				isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
-				{
-					tag: tag,
-				}
-			)
-		);
-	};
 	return (
 		<>
 			{ tagStats && (
@@ -124,18 +96,6 @@ const ReaderTagSidebar = ( {
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>
-				</div>
-			) }
-			{ showFollow && (
-				<div className="reader-tag-sidebar-related-tags__follow-button">
-					<FollowButton
-						followLabel={ translate( 'Follow tag' ) }
-						followingLabel={ translate( 'Following tag' ) }
-						following={ isFollowing }
-						onFollowToggle={ toggleFollowing }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-					/>
 				</div>
 			) }
 			{ tagLinks && (

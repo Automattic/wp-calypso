@@ -4,6 +4,7 @@ interface ReferralPurchaseAPIResponse {
 	quantity: number;
 	license: {
 		license_key: string;
+		issued_at: string;
 		attached_at: string | null;
 		revoked_at: string | null;
 	};

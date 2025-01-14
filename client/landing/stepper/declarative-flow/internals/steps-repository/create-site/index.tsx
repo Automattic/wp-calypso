@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -25,7 +24,6 @@ import {
 	isReadymadeFlow,
 	isOnboardingFlow,
 	setThemeOnSite,
-	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -133,8 +131,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
-	} else if ( flow === AI_ASSEMBLER_FLOW ) {
-		theme = 'pub/assembler';
 	}
 
 	let preselectedThemeSlug = '';
@@ -195,7 +191,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
-	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
+	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -212,11 +208,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent =
-			config.isEnabled( 'migration-flow/enable-white-labeled-plugin' ) &&
-			isMigrationSignupFlow( flow )
-				? 'migration'
-				: '';
+		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(

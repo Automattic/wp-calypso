@@ -249,14 +249,11 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		[]
 	);
 
-	const handleClick = useCallback(
-		( event: React.SyntheticEvent ) => {
-			if ( event.target === event.currentTarget ) {
-				onMaximize?.();
-			}
-		},
-		[ onMaximize ]
-	);
+	const handleClick = useCallback( () => {
+		if ( isMinimized ) {
+			onMaximize?.();
+		}
+	}, [ onMaximize, isMinimized ] );
 
 	const classNames = clsx(
 		'help-center__container-header',

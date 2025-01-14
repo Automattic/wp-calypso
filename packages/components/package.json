@@ -69,6 +69,7 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-actions": "^7.6.19",
+		"@storybook/cli": "^7.6.19",
 		"@storybook/react": "^7.6.19",
 		"@testing-library/dom": "^10.1.0",
 		"@testing-library/jest-dom": "^6.4.5",
@@ -79,11 +80,12 @@
 		"postcss": "^8.4.5",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.95.0"
+		"webpack": "^5.97.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "yarn run clean && yarn run build",
+		"storybook": "sb dev"
 	}
 }

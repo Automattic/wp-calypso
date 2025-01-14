@@ -12,7 +12,6 @@ import {
 	DESIGN_FIRST_FLOW,
 	ASSEMBLER_FIRST_FLOW,
 	READYMADE_TEMPLATE_FLOW,
-	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -68,7 +67,6 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 		case START_WRITING_FLOW:
 		case ASSEMBLER_FIRST_FLOW:
 		case READYMADE_TEMPLATE_FLOW:
-		case AI_ASSEMBLER_FLOW:
 			return [
 				{
 					key: 'existing-site',

@@ -1,8 +1,11 @@
-.reader-author-link:hover,
-.reader-author-link:active {
-	color: var(--color-text-subtle);
-}
+.reader-author-link {
 
-.reader-author-link:focus {
-	color: var(--color-text-subtle);
+	&:hover,
+	&:active {
+		color: var(--color-text-subtle);
+	}
+
+	&:focus {
+		color: var(--color-text-subtle);
+	}
 }

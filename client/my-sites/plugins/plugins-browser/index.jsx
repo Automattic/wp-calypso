@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -110,10 +109,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const { __, hasTranslation } = useI18n();
+	const { __ } = useI18n();
 	const translate = useTranslate();
-	const locale = useLocale();
-
 	const categories = useCategories();
 	const fallbackCategoryName = category
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
@@ -209,17 +206,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							isSticky={ isAboveElement }
 							searchTerm={ search }
 							isSearching={ isFetchingPluginsBySearchTerm }
-							title={
-								'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
-									? __( 'Flex your site’s features with plugins' )
-									: __( 'Plugins you need to get your projects done' )
-							}
+							title={ __( 'Flex your site’s features with plugins' ) }
 							subtitle={
 								! isLoggedIn &&
-								( 'en' === locale ||
-									hasTranslation(
-										'Add new functionality and integrations to your site with thousands of plugins.'
-									) ) &&
 								__(
 									'Add new functionality and integrations to your site with thousands of plugins.'
 								)

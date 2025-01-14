@@ -89,4 +89,32 @@ describe( 'SitesDashboardBannersManager', () => {
 			queryByText( "Building sites for customers? Here's how to earn more." )
 		).not.toBeInTheDocument();
 	} );
+
+	it( 'renders restore sites banner when ?restored=true param exists', () => {
+		// Setup URLSearchParams mock
+		const urlSearchParamsGetSpy = jest.spyOn( URLSearchParams.prototype, 'get' );
+		urlSearchParamsGetSpy.mockImplementation( ( param ) =>
+			param === 'restored' ? 'true' : null
+		);
+
+		const { getByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+			</Provider>
+		);
+
+		expect( getByText( 'Choose which sites you’d like to restore' ) ).toBeInTheDocument();
+
+		// Cleanup
+		urlSearchParamsGetSpy.mockRestore();
+	} );
+
+	it( 'does not render restore sites banner when ?restored=true param does not exist', () => {
+		const { queryByText } = render(
+			<Provider store={ store }>
+				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+			</Provider>
+		);
+		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();
+	} );
 } );

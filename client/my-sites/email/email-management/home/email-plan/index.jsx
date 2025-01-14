@@ -101,6 +101,7 @@ function EmailPlan( {
 	domain,
 	selectedSite,
 	source,
+	context,
 	hideHeader = false,
 	hideHeaderCake = false,
 	hidePlanActions = false,
@@ -360,11 +361,17 @@ function EmailPlan( {
 				/>
 			) }
 			<EmailPlanMailboxesList
+				context={ context }
 				account={ getAccount( emailAccounts ) }
 				domain={ domain }
 				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
-				addMailboxPath={ hidePlanActions && getAddMailboxProps()?.path }
+				actionPathProps={ hidePlanActions && getAddMailboxProps() }
+				purchaseNewEmailAccountPath={ getPurchaseNewEmailAccountPath(
+					selectedSite.slug,
+					domain.name,
+					currentRoute
+				) }
 			/>
 			{ ! hidePlanActions && (
 				<div className="email-plan__actions">
@@ -388,6 +395,7 @@ EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
+	context: PropTypes.string,
 	hideHeader: PropTypes.bool,
 	hideHeaderCake: PropTypes.bool,
 	hidePlanActions: PropTypes.bool,

@@ -29,7 +29,8 @@ type Props = {
 	site: SiteExcerptData;
 	openSitePreviewPane?: (
 		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
+		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+		openInNewTab?: boolean
 	) => void;
 };
 
@@ -77,17 +78,27 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
+		event.preventDefault();
+
+		let openInNewTab = false;
+		if ( event.ctrlKey || event.metaKey ) {
+			openInNewTab = true;
+		}
+		// Support middle click to open in new tab
+		if ( event.button === 1 ) {
+			openInNewTab = true;
+		}
+
 		if (
 			isAdmin &&
 			! isP2Site &&
 			! isNotAtomicJetpack( site ) &&
 			! isDisconnectedJetpackAndNotAtomic( site )
 		) {
-			openSitePreviewPane && openSitePreviewPane( site, 'site_field' );
+			openSitePreviewPane && openSitePreviewPane( site, 'site_field', openInNewTab );
 		} else {
-			navigate( adminUrl );
+			navigate( adminUrl, openInNewTab );
 		}
-		event.preventDefault();
 	};
 
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
@@ -97,6 +108,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 		<Button
 			className="sites-dataviews__site"
 			onClick={ onSiteClick }
+			onAuxClick={ onSiteClick }
 			borderless
 			disabled={ site.is_deleted }
 		>
