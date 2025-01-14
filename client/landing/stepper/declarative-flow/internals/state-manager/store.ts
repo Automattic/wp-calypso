@@ -1,32 +1,45 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import {
+	getFlowFromURL,
+	getSessionIdFromURL,
+} from 'calypso/landing/stepper/utils/get-flow-from-url';
 
 const PREFIX = 'stepper-state-item';
 const VERSION = 'v1';
 
-type StateTuple< ValueType > = [ ValueType, ( newValue: ValueType ) => void ];
+type FlowState = Record< string, unknown >;
 
-export function useFlowState< ValueType >(
-	key: string,
-	defaultValue: ValueType
-): StateTuple< ValueType > {
+const PERSISTENCE_CONFIG = {
+	staleTime: Infinity,
+	refetchOnMount: false,
+	refetchOnWindowFocus: false,
+	refetchOnReconnect: false,
+	networkMode: 'always',
+} as const;
+
+export function useFlowState() {
 	const queryClient = useQueryClient();
+	const flow = getFlowFromURL() || 'flow';
+	const session = getSessionIdFromURL();
 
-	const { data } = useQuery< ValueType >( {
-		queryKey: [ PREFIX, key, VERSION ],
-		staleTime: Infinity,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
-		networkMode: 'always',
+	const { data: state } = useQuery< FlowState >( {
+		queryKey: [ PREFIX, flow, session, VERSION ],
+		...PERSISTENCE_CONFIG,
 	} );
 
-	const setState = useCallback(
-		( newValue: ValueType ) => {
-			queryClient.setQueryData( [ PREFIX, key, VERSION ], newValue );
-		},
-		[ key, queryClient ]
-	);
+	function get( key: string ): unknown {
+		return state?.[ key ];
+	}
 
-	return [ data || defaultValue, setState ];
+	function set( key: string, value: unknown ) {
+		queryClient.setQueryData( [ PREFIX, flow, session, VERSION ], {
+			...state,
+			[ key ]: value,
+		} );
+	}
+
+	return {
+		get,
+		set,
+	};
 }

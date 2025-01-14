@@ -29,7 +29,7 @@ interface GetNewSiteParams {
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
 	username: string;
-	partnerBundle: string | null;
+	partnerBundle?: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
 }
@@ -153,7 +153,7 @@ export const createSiteWithCart = async (
 	useThemeHeadstart: boolean,
 	username: string,
 	domainCartItems: MinimalRequestCartProduct[],
-	partnerBundle: string | null,
+	partnerBundle?: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
@@ -374,7 +374,7 @@ export async function setThemeOnSite(
 	}
 }
 
-async function processItemCart(
+export async function processItemCart(
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,

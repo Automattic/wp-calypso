@@ -13,6 +13,8 @@ export {
 	addProductsToCart,
 	replaceProductsInCart,
 	setThemeOnSite,
+	getNewSiteParams,
+	processItemCart,
 } from './cart';
 export { setupSiteAfterCreation, base64ImageToBlob } from './setup-tailored-site-after-creation';
 export { uploadAndSetSiteLogo } from './upload-and-set-site-logo';

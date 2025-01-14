@@ -1,28 +1,20 @@
-import { Onboard, OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
-import { EXAMPLE_FLOW } from '@automattic/onboarding';
-import { dispatch } from '@wordpress/data';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { createSiteWithCart, EXAMPLE_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import {
-	clearSignupDestinationCookie,
-	setSignupCompleteSlug,
-	persistSignupDestination,
-	setSignupCompleteFlowName,
-} from 'calypso/signup/storageUtils';
 import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../stores';
-import { getQuery } from '../utils/get-query';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
+import { setPendingAction } from '@automattic/data-stores/src/onboard/actions';
 
 const newsletter: Flow = {
 	name: EXAMPLE_FLOW,
@@ -32,18 +24,6 @@ const newsletter: Flow = {
 	},
 	isSignupFlow: true,
 	initialize() {
-		const query = getQuery();
-		const isComingFromMarketingPage = query[ 'ref' ] === 'newsletter-lp';
-
-		const { setHidePlansFeatureComparison, setIntent } = dispatch(
-			ONBOARD_STORE
-		) as OnboardActions;
-
-		// We can just call these. They're guaranteed to run once.
-		setHidePlansFeatureComparison( true );
-		clearSignupDestinationCookie();
-		setIntent( Onboard.SiteIntent.Newsletter );
-
 		const privateSteps = stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
@@ -55,9 +35,7 @@ const newsletter: Flow = {
 			STEPS.LAUNCHPAD,
 		] );
 
-		if ( ! isComingFromMarketingPage ) {
-			return [ STEPS.INTRO, ...privateSteps ];
-		}
+		return [ STEPS.INTRO, ...privateSteps ];
 
 		return privateSteps;
 	},
@@ -69,9 +47,8 @@ const newsletter: Flow = {
 		const query = useQuery();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-		const [ domains, setDomains ] = useFlowState< any >( 'domains', [] );
+		const { get, set } = useFlowState();
 
-		console.log( { domains } );
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
@@ -100,47 +77,55 @@ const newsletter: Flow = {
 					return navigate( 'domains' );
 
 				case 'domains':
-					setDomains( providedDependencies );
+					set( 'domains', providedDependencies );
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
+					set( 'plan', providedDependencies );
+					const domains = get('domains');
 
-				case 'createSite':
-					return navigate( 'processing' );
+					setPendingAction( () => {
+						return createSiteWithCart( 
+							flowName,
+							userIsLoggedIn: true,
+							siteVisibility: 'public',
+							planSlug: providedDependencies.planSlug,
+							domainCartItems: domains?.domainCart,
+							isPurchasingDomainItem: domains?.isPurchasingDomainItem,
+					 );
+					} );
 
+					return navigate( 'processing' )
 				case 'processing':
-					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+					const site = get( 'site' );
+					debugger;
+					if ( site?.goToHome && site?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? site?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
 						);
 					}
 
-					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
-						persistSignupDestination( launchpadUrl );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
-
+					if ( site?.goToCheckout && site?.siteSlug ) {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								providedDependencies?.siteSlug as string
+								site?.siteSlug as string
 							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
 
 					initializeLaunchpadState( {
-						siteId: providedDependencies?.siteId as number,
-						siteSlug: providedDependencies?.siteSlug as string,
+						siteId: site?.siteId as number,
+						siteSlug: site?.siteSlug as string,
 					} );
 
 					return window.location.assign(
 						getPostFlowUrl( {
 							flow: flowName,
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
+							siteId: site?.siteId as number,
+							siteSlug: site?.siteSlug as string,
 						} )
 					);
 
