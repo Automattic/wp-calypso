@@ -33,7 +33,7 @@ export class PagesPage {
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page
-				.getByRole( 'link', { name: /(Add new|Start a|Add New) (page|Page)/ } )
+				.getByRole( 'link', { name: /Add New Page/ } )
 				.first()
 				.click(),
 		] );
