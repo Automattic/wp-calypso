@@ -22,6 +22,7 @@ const setTrackingPrefs = ( newPrefs: TrackingPrefsData ): TrackingPrefs => {
 	document.cookie = cookie.serialize( TRACKING_PREFS_COOKIE_V2, JSON.stringify( newOptions ), {
 		path: '/',
 		maxAge: COOKIE_MAX_AGE,
+		domain: '.wordpress.com',
 	} );
 
 	return newOptions;
