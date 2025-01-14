@@ -259,7 +259,8 @@ export default {
 
 			window.location.replace( url );
 			// skip the rest to avoid the `page.redirect` call below.
-			next();
+			// Don't call next() here, we don't need the subsequent middlewares to run.
+			// next();
 			return;
 		}
 
