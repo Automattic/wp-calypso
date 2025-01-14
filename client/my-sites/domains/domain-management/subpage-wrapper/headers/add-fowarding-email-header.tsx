@@ -34,12 +34,12 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 					selectedDomainName,
 					selectedSiteSlug,
 					null,
-					null,
+					undefined,
 					inSiteContext
 				),
 			},
 			{
-				label: translate( 'Contact information' ),
+				label: translate( 'Add email forwarding' ),
 			},
 		];
 
