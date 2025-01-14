@@ -74,10 +74,6 @@ main.get-apps {
 	}
 
 	.get-apps__desktop-link {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 3px;
 		font-size: $font-body-extra-small;
 	}
 

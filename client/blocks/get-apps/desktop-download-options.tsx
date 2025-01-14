@@ -39,15 +39,7 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	if ( isMobile ) {
-		return (
-			<div className="get-apps__desktop-link">
-				{ translate( 'Visit {{a}}desktop.wordpress.com{{/a}} on your desktop.', {
-					components: {
-						a: <a href="https://desktop.wordpress.com" />,
-					},
-				} ) }
-			</div>
-		);
+		return <div className="get-apps__desktop-link">{ appConfig.link }</div>;
 	}
 
 	return (
