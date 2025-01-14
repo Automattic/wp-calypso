@@ -449,10 +449,10 @@
 /**
  * Context: All Domain Management
  */
-.wpcom-site .hosting-dashboard-item-view__content .context-all-domain-management, /* For Domain and Email related pages under site context. */
+.wpcom-site .hosting-dashboard-layout.sites-dashboard  .hosting-dashboard-item-view__content .context-all-domain-management, /* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
-		margin-left: 0;
+		margin: 0 auto;
 		width: 100%;
 
 		header.domains-email__navigation-header.navigation-header {
