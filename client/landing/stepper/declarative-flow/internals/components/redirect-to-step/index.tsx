@@ -6,16 +6,18 @@ import { type StepperStep } from '../../types';
 
 interface Props {
 	slug: StepperStep[ 'slug' ];
+	sessionId: string;
 }
 
-export const RedirectToStep: FC< Props > = ( { slug } ) => {
+export const RedirectToStep: FC< Props > = ( { slug, sessionId } ) => {
 	const { flow, lang = null } = useParams();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const to = generatePath( '/:flow/:step/:lang?', {
+	const to = generatePath( '/:flow/:step/:lang?/:sessionId?', {
 		flow: flow!,
 		step: slug,
 		lang: lang === 'en' || isLoggedIn ? null : lang,
+		sessionId,
 	} );
 
 	return <Navigate to={ `${ to }${ window.location.search }` } replace />;

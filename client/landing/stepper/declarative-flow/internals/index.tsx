@@ -61,12 +61,14 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
  * @param props
  * @param props.flow the flow you want to render
  * @param props.steps the steps of the flow.
+ * @param props.sessionId the session ID of the current signup session.
  * @returns A React router switch will all the routes
  */
-export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[] | null } > = ( {
-	flow,
-	steps,
-} ) => {
+export const FlowRenderer: React.FC< {
+	flow: Flow;
+	steps: readonly StepperStep[] | null;
+	sessionId: string;
+} > = ( { flow, steps, sessionId } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const deprecatedFlowSteps = 'useSteps' in flow ? flow.useSteps() : null;
@@ -255,6 +257,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					element={
 						<RedirectToStep
 							slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+							sessionId={ sessionId }
 						/>
 					}
 				/>

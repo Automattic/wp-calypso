@@ -38,12 +38,13 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
+import { StepperPersistenceManager } from './declarative-flow/internals/state-manager/create-persistence-session';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { getFlowFromURL } from './utils/get-flow-from-url';
+import { getFlowFromURL, getSessionIdFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { AnyAction } from 'redux';
@@ -94,10 +95,18 @@ window.AppBoot = async () => {
 
 	const flowName = getFlowFromURL();
 	const siteId = getSiteIdFromURL();
+	let sessionId = getSessionIdFromURL();
 
 	if ( ! flowName ) {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
+	}
+
+	const stateManager = new StepperPersistenceManager();
+
+	if ( ! sessionId ) {
+		sessionId = await stateManager.createSession();
+		//history.replaceState( null, '', `${ window.location.pathname }/${ sessionId }` );
 	}
 
 	// Start tracking performance, bearing in mind this is a full page load.
@@ -168,7 +177,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowRenderer flow={ flow } steps={ flowSteps } />
+						<FlowRenderer flow={ flow } steps={ flowSteps } sessionId={ sessionId as string } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
