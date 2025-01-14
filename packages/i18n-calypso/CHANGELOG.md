@@ -1,3 +1,7 @@
+## 7.1.0
+
+- Add new `fixMe` method for conditionally loading a copy given a respective translation exists
+
 ## 7.0.0
 
 - Update React peer dependency to v18.

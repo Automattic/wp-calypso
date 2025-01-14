@@ -27,3 +27,4 @@ export const stateObserver = i18n.stateObserver;
 export const on = i18n.on.bind( i18n );
 export const off = i18n.off.bind( i18n );
 export const emit = i18n.emit.bind( i18n );
+export const fixMe = i18n.fixMe.bind( i18n );
