@@ -20,7 +20,7 @@ import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = {
-	context: 'domains' | 'email';
+	context: 'domains' | 'email' | 'hosting-overview';
 	domain: ResponseDomain;
 	account: EmailAccount;
 	mailboxes: Mailbox[];
@@ -101,7 +101,7 @@ function EmailPlanMailboxesList( {
 							/>
 							{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 						</div>
-						{ context === 'domains' && (
+						{ ( context === 'domains' || context === 'hosting-overview' ) && (
 							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 								<EmailForwardSecondaryDetails
 									mailbox={ mailbox }
@@ -156,6 +156,7 @@ function EmailPlanMailboxesList( {
 	// Rendering based on the context
 	switch ( context ) {
 		case 'domains':
+		case 'hosting-overview':
 			return (
 				<>
 					{ ( isGoogleConfiguring || isAccountWarningPresent ) && (

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
@@ -14,6 +15,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
+import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
@@ -179,7 +181,12 @@ const SubscribersPage = ( {
 			sortTermChanged={ sortTermChanged }
 		>
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
-			<Main wideLayout className="subscribers">
+			<Main
+				wideLayout
+				className={ `subscribers${
+					isEnabled( 'subscribers-dataviews' ) ? ' subscribers--dataviews' : ''
+				}` }
+			>
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
 				<SubscribersHeader
@@ -187,12 +194,23 @@ const SubscribersPage = ( {
 					disableCta={ isUnverified || isStagingSite }
 				/>
 				<SubscriberValidationGate siteId={ siteId }>
-					<SubscriberListContainer
-						siteId={ siteId }
-						onClickView={ onClickView }
-						onGiftSubscription={ onGiftSubscription }
-						onClickUnsubscribe={ onClickUnsubscribe }
-					/>
+					{ isEnabled( 'subscribers-dataviews' ) ? (
+						// Your new dataviews component
+						<SubscriberDataViews
+							siteId={ siteId }
+							onClickView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onClickUnsubscribe={ onClickUnsubscribe }
+						/>
+					) : (
+						// Existing subscriber list
+						<SubscriberListContainer
+							siteId={ siteId }
+							onClickView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onClickUnsubscribe={ onClickUnsubscribe }
+						/>
+					) }
 
 					<UnsubscribeModal
 						subscriber={ currentSubscriber }

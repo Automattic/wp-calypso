@@ -70,4 +70,53 @@ describe( 'LineItemSublabelAndPrice', () => {
 			);
 		} );
 	} );
+
+	describe( 'Tiered Volume Space AddOn', () => {
+		const spaceAddOnProduct = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'wordpress_com_1gb_space_addon_yearly',
+		};
+
+		test( 'should display correct space quantities for new purchase with current quantity as 0', async () => {
+			const product = {
+				...spaceAddOnProduct,
+				quantity: 50,
+				current_quantity: 0,
+				item_original_subtotal_integer: 1000,
+				is_renewal: false,
+			};
+			const { container } = render( <LineItemSublabelAndPrice product={ product } /> );
+			expect( container.innerHTML ).toEqual(
+				'50 GB extra space, $10 per year<br>Total extra space after purchase: 50 GB'
+			);
+		} );
+
+		test( 'should display correct space quantities for new purchase with current quantity > 0', async () => {
+			const product = {
+				...spaceAddOnProduct,
+				quantity: 100,
+				current_quantity: 50,
+				item_original_subtotal_integer: 1000,
+				is_renewal: false,
+			};
+			const { container } = render( <LineItemSublabelAndPrice product={ product } /> );
+			expect( container.innerHTML ).toEqual(
+				'50 GB extra space, $10 per year<br>Total extra space after purchase: 100 GB'
+			);
+		} );
+
+		test( 'should display correct space quantities for renewal purchase', async () => {
+			const product = {
+				...spaceAddOnProduct,
+				quantity: null,
+				current_quantity: 50,
+				item_original_subtotal_integer: 1000,
+				is_renewal: true,
+			};
+			const { container } = render( <LineItemSublabelAndPrice product={ product } /> );
+			expect( container.innerHTML ).toEqual(
+				'50 GB extra space, $10 per year<br>Total extra space after purchase: 50 GB'
+			);
+		} );
+	} );
 } );
