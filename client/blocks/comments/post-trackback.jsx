@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,7 +18,12 @@ export default class PostTrackback extends Component {
 		if ( ! comment ) {
 			return null;
 		}
+
 		const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
+		const authorUrlLink =
+			config.isEnabled( 'reader/user-profile' ) && comment.author?.ID
+				? `/read/users/${ comment.author.ID }`
+				: comment.author?.URL;
 
 		return (
 			<li className="comments__comment depth-0">
@@ -26,9 +32,9 @@ export default class PostTrackback extends Component {
 						<Gridicon icon="link" size={ 24 } />
 					</div>
 
-					{ get( comment, 'author.URL' ) ? (
+					{ authorUrlLink ? (
 						<a
-							href={ comment.author.URL }
+							href={ authorUrlLink }
 							target="_blank"
 							rel="noopener noreferrer"
 							className="comments__comment-username"
