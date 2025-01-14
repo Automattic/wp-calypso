@@ -128,7 +128,7 @@ export default function () {
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
 			domainManagementController.domainManagementDns,
-			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 
