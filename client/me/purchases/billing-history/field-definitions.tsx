@@ -15,10 +15,10 @@ import type {
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
 
-const serviceNameDescription = (
+function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >
-) => {
+) {
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 	return (
@@ -31,12 +31,12 @@ const serviceNameDescription = (
 			) }
 		</div>
 	);
-};
+}
 
-const serviceName = (
+function renderServiceName(
 	transaction: BillingTransaction,
 	translate: ReturnType< typeof useTranslate >
-) => {
+) {
 	const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
 		transaction.items,
 		translate
@@ -50,12 +50,12 @@ const serviceName = (
 		return transactionItem.product;
 	}
 
-	return serviceNameDescription( transactionItem, translate );
-};
+	return renderServiceNameDescription( transactionItem, translate );
+}
 
-const getUniqueMonths = (
+function getUniqueMonths(
 	transactions: BillingTransaction[]
-): Array< { value: string; label: string } > => {
+): Array< { value: string; label: string } > {
 	const monthsMap = new Map< string, Date >();
 
 	transactions.forEach( ( transaction ) => {
@@ -70,11 +70,11 @@ const getUniqueMonths = (
 			value,
 			label: formatMonthYearLabel( date ),
 		} ) );
-};
+}
 
-const getUniqueServices = (
+function getUniqueServices(
 	transactions: BillingTransaction[]
-): Array< { value: string; label: string } > => {
+): Array< { value: string; label: string } > {
 	const uniqueServices = new Set( transactions.map( ( transaction ) => transaction.service ) );
 
 	return Array.from( uniqueServices )
@@ -83,11 +83,11 @@ const getUniqueServices = (
 			value: service,
 			label: service,
 		} ) );
-};
+}
 
-const getUniqueTransactionTypes = (
+function getUniqueTransactionTypes(
 	transactions: BillingTransaction[]
-): Array< { value: string; label: string } > => {
+): Array< { value: string; label: string } > {
 	const typeMap = new Map< string, string >();
 
 	transactions
@@ -104,91 +104,93 @@ const getUniqueTransactionTypes = (
 			value,
 			label,
 		} ) );
-};
+}
 
-export const getFieldDefinitions = (
+export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >
-) => ( {
-	date: {
-		id: 'date',
-		label: translate( 'Date' ),
-		type: 'text' as const,
-		width: '15%',
-		elements: getUniqueMonths( transactions ?? [] ),
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
+) {
+	return {
+		date: {
+			id: 'date',
+			label: translate( 'Date' ),
+			type: 'text' as const,
+			width: '15%',
+			elements: getUniqueMonths( transactions ?? [] ),
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				return formatMonthYear( new Date( item.date ) );
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <time>{ formatDisplayDate( new Date( item.date ) ) }</time>;
+			},
 		},
-		getValue: ( { item }: { item: BillingTransaction } ) => {
-			return formatMonthYear( new Date( item.date ) );
+		service: {
+			id: 'service',
+			label: translate( 'App' ),
+			type: 'text' as const,
+			width: '45%',
+			elements: getUniqueServices( transactions ?? [] ),
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <div>{ renderServiceName( item, translate ) }</div>;
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				if ( transactionItem.product === transactionItem.variation ) {
+					return transactionItem.product;
+				}
+				return capitalPDangit( transactionItem.variation );
+			},
 		},
-		render: ( { item }: { item: BillingTransaction } ) => {
-			return <time>{ formatDisplayDate( new Date( item.date ) ) }</time>;
+		type: {
+			id: 'type',
+			label: translate( 'Type' ),
+			type: 'text' as const,
+			width: '20%',
+			elements: getUniqueTransactionTypes( transactions ?? [] ),
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				return <div>{ transactionItem.type_localized || transactionItem.type }</div>;
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				const [ transactionItem ] = groupDomainProducts( item.items, translate );
+				return transactionItem.type;
+			},
 		},
-	},
-	service: {
-		id: 'service',
-		label: translate( 'App' ),
-		type: 'text' as const,
-		width: '45%',
-		elements: getUniqueServices( transactions ?? [] ),
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
+		amount: {
+			id: 'amount',
+			label: translate( 'Amount' ),
+			type: 'text' as const,
+			width: '20%',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: BillingTransaction } ) => {
+				return item.amount_integer;
+			},
+			render: ( { item }: { item: BillingTransaction } ) => {
+				return <TransactionAmount transaction={ item } />;
+			},
 		},
-		render: ( { item }: { item: BillingTransaction } ) => {
-			return <div>{ serviceName( item, translate ) }</div>;
-		},
-		getValue: ( { item }: { item: BillingTransaction } ) => {
-			const [ transactionItem ] = groupDomainProducts( item.items, translate );
-			if ( transactionItem.product === transactionItem.variation ) {
-				return transactionItem.product;
-			}
-			return capitalPDangit( transactionItem.variation );
-		},
-	},
-	type: {
-		id: 'type',
-		label: translate( 'Type' ),
-		type: 'text' as const,
-		width: '20%',
-		elements: getUniqueTransactionTypes( transactions ?? [] ),
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		render: ( { item }: { item: BillingTransaction } ) => {
-			const [ transactionItem ] = groupDomainProducts( item.items, translate );
-			return <div>{ transactionItem.type_localized || transactionItem.type }</div>;
-		},
-		getValue: ( { item }: { item: BillingTransaction } ) => {
-			const [ transactionItem ] = groupDomainProducts( item.items, translate );
-			return transactionItem.type;
-		},
-	},
-	amount: {
-		id: 'amount',
-		label: translate( 'Amount' ),
-		type: 'text' as const,
-		width: '20%',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		getValue: ( { item }: { item: BillingTransaction } ) => {
-			return item.amount_integer;
-		},
-		render: ( { item }: { item: BillingTransaction } ) => {
-			return <TransactionAmount transaction={ item } />;
-		},
-	},
-} );
+	};
+}
