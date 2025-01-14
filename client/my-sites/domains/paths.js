@@ -57,14 +57,21 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
+	return (
+		path?.startsWith( domainManagementAllRoot() + '/' ) ||
+		path?.startsWith( domainSiteContextRoot() + '/' )
+	);
 }
 
 export function isUnderDomainManagementOverview( path ) {
 	return (
 		path?.startsWith( domainManagementOverviewRoot() + '/' ) ||
-		path?.startsWith( '/overview/site-domain/' )
+		path?.startsWith( domainSiteContextRoot() + '/domain/' )
 	);
+}
+
+export function isUnderDomainSiteContext( path ) {
+	return path?.startsWith( domainSiteContextRoot() + '/' );
 }
 
 export function domainAddNew( siteName, searchTerm ) {
@@ -91,6 +98,10 @@ export function domainManagementAllRoot() {
 
 export function domainManagementOverviewRoot() {
 	return domainManagementAllRoot() + '/overview';
+}
+
+export function domainSiteContextRoot() {
+	return '/overview/site-domain';
 }
 
 export function domainManagementAllEmailRoot() {
@@ -144,17 +155,33 @@ export function domainManagementEditContactInfo( siteName, domainName, relativeT
 /**
  * @param {string} siteName
  * @param {string} domainName
+ * @param {string?} relativeTo
  */
-export function domainManagementAllOverview( siteName, domainName ) {
-	return domainManagementOverviewRoot() + '/' + domainName + '/' + siteName;
+export function domainManagementAllOverview(
+	siteName,
+	domainName,
+	relativeTo = null,
+	inSiteContext = false
+) {
+	if ( inSiteContext || isUnderDomainSiteContext( relativeTo ) ) {
+		return `${ domainSiteContextRoot() }/domain/${ domainName }/${ siteName }`;
+	}
+
+	return `${ domainManagementOverviewRoot() }/${ domainName }/${ siteName }`;
 }
 
 /**
  * @param {string} siteName
  * @param {string} domainName
+ * @param {string?} relativeTo
  */
-export function domainManagementAllEditContactInfo( siteName, domainName ) {
-	return domainManagementAllRoot() + '/contact-info/edit/' + domainName + '/' + siteName;
+export function domainManagementAllEditContactInfo( siteName, domainName, relativeTo = null ) {
+	const pathSegment = `contact-info/edit/${ domainName }/${ siteName }`;
+	const rootPath = isUnderDomainSiteContext( relativeTo )
+		? domainSiteContextRoot()
+		: domainManagementAllRoot();
+
+	return `${ rootPath }/${ pathSegment }`;
 }
 
 export function domainManagementAllEditSelectedContactInfo() {

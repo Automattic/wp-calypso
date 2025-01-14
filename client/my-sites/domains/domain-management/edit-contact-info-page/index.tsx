@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
@@ -12,11 +12,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	isUnderDomainManagementAll,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import { IAppState } from 'calypso/state/types';
@@ -31,6 +27,7 @@ const EditContactInfoPage = ( {
 	isRequestingWhois,
 	selectedDomainName,
 	selectedSite,
+	context = { showPageHeader: true },
 }: EditContactInfoPageProps ) => {
 	const translate = useTranslate();
 
@@ -47,13 +44,8 @@ const EditContactInfoPage = ( {
 		return ! getSelectedDomain( { domains, selectedDomainName } ) || isRequestingWhois;
 	};
 
-	const isAllDomainManagementScreen = useMemo(
-		() => isUnderDomainManagementAll( currentRoute ),
-		[ currentRoute ]
-	);
-
 	const renderHeader = () => {
-		if ( ! selectedSite || isAllDomainManagementScreen ) {
+		if ( ! selectedSite ) {
 			return null;
 		}
 
@@ -65,7 +57,7 @@ const EditContactInfoPage = ( {
 
 		const items = [
 			{
-				label: isAllDomainManagementScreen ? translate( 'All Domains' ) : translate( 'Domains' ),
+				label: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					currentRoute,
@@ -101,7 +93,7 @@ const EditContactInfoPage = ( {
 			/>
 		);
 
-		return isAllDomainManagementScreen ? <Card>{ pageContent }</Card> : pageContent;
+		return <Card>{ pageContent }</Card>;
 	};
 
 	const renderSidebar = () => {
@@ -162,7 +154,7 @@ const EditContactInfoPage = ( {
 	return (
 		<Main className="edit-contact-info-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderHeader() }
+			{ context?.showPageHeader && renderHeader() }
 			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</Main>
 	);

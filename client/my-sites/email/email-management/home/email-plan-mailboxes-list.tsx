@@ -101,7 +101,7 @@ function EmailPlanMailboxesList( {
 							/>
 							{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 						</div>
-						{ context === 'domains' && (
+						{ ( context === 'domains' || context === 'hosting-overview' ) && (
 							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 								<EmailForwardSecondaryDetails
 									mailbox={ mailbox }
