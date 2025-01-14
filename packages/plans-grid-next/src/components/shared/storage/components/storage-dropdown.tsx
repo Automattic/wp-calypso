@@ -173,6 +173,7 @@ const StorageDropdown = ( {
 	return (
 		<>
 			<CustomSelectControl
+				__next40pxDefaultSize
 				hideLabelFromVision
 				options={ selectControlOptions || [] }
 				value={ selectedOption }

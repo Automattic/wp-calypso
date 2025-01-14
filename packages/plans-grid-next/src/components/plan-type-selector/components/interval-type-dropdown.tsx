@@ -37,6 +37,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	return (
 		<div className="plan-type-selector__interval-type-dropdown-container">
 			<CustomSelectControl
+				__next40pxDefaultSize
 				onFocus={ () => {
 					if ( ! hasOpenedDropdown.current ) {
 						recordTracksEvent( 'calypso_plans_plan_type_selector_open', {

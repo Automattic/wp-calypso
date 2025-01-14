@@ -40,6 +40,7 @@ export default function SubscriptionGiftingForm( {
 					label={ translate( 'Allow site visitors to gift your plan and domain renewal costs' ) }
 					checked={ fields.wpcom_gifting_subscription }
 					onChange={ handleToggle( 'wpcom_gifting_subscription' ) }
+					__next40pxDefaultSize
 				/>
 				{ ! isUntangled && (
 					<FormSettingExplanation>
