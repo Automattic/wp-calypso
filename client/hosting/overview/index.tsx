@@ -131,7 +131,7 @@ export default function () {
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
 			emailController.emailManagementNewTitanAccount,
-			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 
