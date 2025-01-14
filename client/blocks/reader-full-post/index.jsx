@@ -264,11 +264,16 @@ export class FullPostView extends Component {
 		if ( this.readingStartTime && post.ID ) {
 			const endTime = Math.floor( Date.now() );
 			const engagementTime = endTime - this.readingStartTime;
-			recordTrackForPost( 'calypso_reader_article_engaged_time', post, {
-				context: 'full-post',
-				engagement_time: engagementTime / 1000,
-				path: this.mountedPath,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_engaged_time',
+				post,
+				{
+					context: 'full-post',
+					engagement_time: engagementTime / 1000,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 			// check if the user exited early
 			this.checkFastExit( post, engagementTime );
 		}
@@ -300,11 +305,16 @@ export class FullPostView extends Component {
 
 		if ( this.scrollableContainer && post.ID ) {
 			const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
-			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
-				context: 'full-post',
-				scroll_depth: maxScrollDepth,
-				path: this.mountedPath,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_scroll_depth',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 		}
 	};
 
@@ -317,22 +327,32 @@ export class FullPostView extends Component {
 		const hasCompleted = maxScrollDepth >= 90; // User has read 90% of the post
 
 		if ( this.scrollableContainer && post.ID && ! hasCompleted ) {
-			recordTrackForPost( 'calypso_reader_article_exit_before_completion', post, {
-				context: 'full-post',
-				scroll_depth: maxScrollDepth,
-				path: this.mountedPath,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_exit_before_completion',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 		}
 	};
 
 	trackFastExit = ( post, elapsedSeconds, fastExitThreshold ) => {
-		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
-			context: 'full-post',
-			estimated_reading_time: post.minutes_to_read,
-			elapsed_seconds: elapsedSeconds,
-			fast_exit_threshold: fastExitThreshold,
-			path: this.mountedPath,
-		} );
+		recordTrackForPost(
+			'calypso_reader_article_fast_exit',
+			post,
+			{
+				context: 'full-post',
+				estimated_reading_time: post.minutes_to_read,
+				elapsed_seconds: elapsedSeconds,
+				fast_exit_threshold: fastExitThreshold,
+				path: this.mountedPath,
+			},
+			{ pathnameOverride: this.mountedPath }
+		);
 	};
 
 	checkFastExit = ( post = null, engagementTime ) => {
