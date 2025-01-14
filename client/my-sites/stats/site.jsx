@@ -342,7 +342,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	useEffect( () => {
 		// Use the stored period if it's different from the current period.
-		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		const storedPeriod =
+			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
+			localStorage.getItem( 'jetpack_stats_stored_period' );
 		if (
 			hasSiteLoadedFeatures &&
 			! shouldForceDefaultPeriod &&
