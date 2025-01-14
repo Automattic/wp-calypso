@@ -74,7 +74,7 @@ export const getShortcuts = createSelector(
 				id: 'month_to_date',
 				label: translate( 'Month to date' ),
 				startDate: siteToday.clone().startOf( 'month' ).format( DATE_FORMAT ),
-				endDate: siteTodayStr,
+				endDate: siteToday.clone().endOf( 'month' ).format( DATE_FORMAT ),
 				period: DATERANGE_PERIOD.DAY,
 			},
 			{
@@ -83,19 +83,18 @@ export const getShortcuts = createSelector(
 				startDate: siteToday
 					.clone()
 					.startOf( 'month' )
-					.subtract( 11, 'months' )
+					.subtract( 12, 'months' )
 					.format( DATE_FORMAT ),
-				endDate: siteTodayStr,
+				endDate: siteToday.clone().endOf( 'month' ).subtract( 1, 'months' ).format( DATE_FORMAT ),
 				period: DATERANGE_PERIOD.MONTH,
 			},
-			// Temporarily hide this shortcut before we resolve the issue of identifying shortcuts.
-			// {
-			// 	id: 'year_to_date',
-			// 	label: translate( 'Year to date' ),
-			// 	startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
-			// 	endDate: siteTodayStr,
-			// 	period: DATERANGE_PERIOD.MONTH,
-			// },
+			{
+				id: 'year_to_date',
+				label: translate( 'Year to date' ),
+				startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
+				endDate: siteToday.clone().endOf( 'year' ).format( DATE_FORMAT ),
+				period: DATERANGE_PERIOD.MONTH,
+			},
 			{
 				id: 'last_3_years',
 				label: translate( 'Last 3 years' ),
