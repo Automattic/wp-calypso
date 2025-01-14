@@ -8,7 +8,7 @@
 /* Heading XXL */
 @mixin a4a-font-heading-xxl (
 	$font-size: rem(32px),
-	$font-weight: 600,
+	$font-weight: 500,
 	$line-height: 125%,
 	$letter-spacing: -1px,
 ) {
@@ -20,9 +20,9 @@
 
 /* Heading XL */
 @mixin a4a-font-heading-xl (
-	$font-size: rem(24px),
-	$font-weight: 600,
-	$line-height: 125%,
+	$font-size: rem(20px),
+	$font-weight: 500,
+	$line-height: 120%,
 	$letter-spacing: -0.5px,
 ) {
 	font-size: $font-size;
@@ -33,9 +33,9 @@
 
 /* Heading LG */
 @mixin a4a-font-heading-lg (
-	$font-size: rem(20px),
-	$font-weight: 600,
-	$line-height: 125%,
+	$font-size: rem(15px),
+	$font-weight: 500,
+	$line-height: 133.333%,
 	$letter-spacing: -0.5px,
 ) {
 	font-size: $font-size;
@@ -46,9 +46,31 @@
 
 /* Heading MD */
 @mixin a4a-font-heading-md (
-	$font-size: rem(16px),
+	$font-size: rem(13px),
 	$font-weight: 500,
-	$line-height: 125%,
+	$line-height: 153.846%,
+) {
+	font-size: $font-size;
+	font-weight: $font-weight;
+	line-height: $line-height;
+}
+
+/* Heading SM */
+@mixin a4a-font-heading-sm (
+	$font-size: rem(11px),
+	$font-weight: 500,
+	$line-height: 145.455%,
+) {
+	font-size: $font-size;
+	font-weight: $font-weight;
+	line-height: $line-height;
+}
+
+/* Body XL */
+@mixin a4a-font-body-xl (
+	$font-size: rem(20px),
+	$font-weight: 400,
+	$line-height: 160%,
 ) {
 	font-size: $font-size;
 	font-weight: $font-weight;
@@ -57,9 +79,9 @@
 
 /* Body LG */
 @mixin a4a-font-body-lg (
-	$font-size: rem(16px),
+	$font-size: rem(15px),
 	$font-weight: 400,
-	$line-height: 150%,
+	$line-height: 160%,
 ) {
 	font-size: $font-size;
 	font-weight: $font-weight;
@@ -68,9 +90,9 @@
 
 /* Body MD */
 @mixin a4a-font-body-md (
-	$font-size: rem(14px),
+	$font-size: rem(13px),
 	$font-weight: 400,
-	$line-height: 140%,
+	$line-height: 153.846%,
 ) {
 	font-size: $font-size;
 	font-weight: $font-weight;
@@ -81,7 +103,7 @@
 @mixin a4a-font-body-sm (
 	$font-size: rem(12px),
 	$font-weight: 400,
-	$line-height: 130%,
+	$line-height: 133.333%,
 ) {
 	font-size: $font-size;
 	font-weight: $font-weight;
