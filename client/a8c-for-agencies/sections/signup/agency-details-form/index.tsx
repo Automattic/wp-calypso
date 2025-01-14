@@ -131,11 +131,13 @@ export default function AgencyDetailsForm( {
 		]
 	);
 
+	const isRequestInProgress = isLoading || isValidating;
+
 	const handleSubmit = useCallback(
 		async ( e: React.SyntheticEvent ) => {
 			e.preventDefault();
 
-			if ( ! showCountryFields || isLoading ) {
+			if ( ! showCountryFields || isRequestInProgress ) {
 				return;
 			}
 
@@ -154,7 +156,7 @@ export default function AgencyDetailsForm( {
 
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, onSubmit, payload, validate ]
+		[ showCountryFields, isRequestInProgress, onSubmit, payload, validate ]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -240,7 +242,7 @@ export default function AgencyDetailsForm( {
 								setFirstName( event.target.value );
 								updateValidationError( { firstName: undefined } );
 							} }
-							disabled={ isLoading }
+							disabled={ isRequestInProgress }
 						/>
 						<div
 							className={ clsx( 'agency-details-form__footer-error', {
@@ -262,7 +264,7 @@ export default function AgencyDetailsForm( {
 								setLastName( event.target.value );
 								updateValidationError( { lastName: undefined } );
 							} }
-							disabled={ isLoading }
+							disabled={ isRequestInProgress }
 						/>
 						<div
 							className={ clsx( 'agency-details-form__footer-error', {
@@ -285,7 +287,7 @@ export default function AgencyDetailsForm( {
 							setAgencyName( event.target.value );
 							updateValidationError( { agencyName: undefined } );
 						} }
-						disabled={ isLoading }
+						disabled={ isRequestInProgress }
 					/>
 					<div
 						className={ clsx( 'agency-details-form__footer-error', {
@@ -307,7 +309,7 @@ export default function AgencyDetailsForm( {
 							setAgencyUrl( event.target.value );
 							updateValidationError( { agencyUrl: undefined } );
 						} }
-						disabled={ isLoading }
+						disabled={ isRequestInProgress }
 					/>
 					<div
 						className={ clsx( 'agency-details-form__footer-error', {
@@ -327,6 +329,7 @@ export default function AgencyDetailsForm( {
 						id="user_type"
 						value={ userType }
 						onChange={ handleSetUserType }
+						disabled={ isRequestInProgress }
 					>
 						<option value="agency_owner">{ translate( "I'm an agency owner" ) }</option>
 						<option value="developer_at_agency">
@@ -352,6 +355,7 @@ export default function AgencyDetailsForm( {
 								id="managed_sites"
 								value={ managedSites }
 								onChange={ handleSetManagedSites }
+								disabled={ isRequestInProgress }
 							>
 								<option value="1-5">{ translate( '1-5' ) }</option>
 								<option value="6-20">{ translate( '6-20' ) }</option>
@@ -376,6 +380,7 @@ export default function AgencyDetailsForm( {
 								// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
 								// the expected custom event type for `onChange` and the standard event types.
 								onChange={ handleSetServicesOffered as any }
+								disabled={ isRequestInProgress }
 							/>
 						</FormFieldset>
 						<FormFieldset>
@@ -390,6 +395,7 @@ export default function AgencyDetailsForm( {
 								// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
 								// the expected custom event type for `onChange` and the standard event types.
 								onChange={ handleSetProductsOffered as any }
+								disabled={ isRequestInProgress }
 							/>
 						</FormFieldset>
 						<FormFieldset>
@@ -401,7 +407,7 @@ export default function AgencyDetailsForm( {
 										updateValidationError( { country: undefined } );
 									} }
 									options={ countryOptions }
-									disabled={ isLoading }
+									disabled={ isRequestInProgress }
 									label={ translate( 'Country' ) }
 								/>
 							) }
@@ -422,7 +428,7 @@ export default function AgencyDetailsForm( {
 									value={ addressState }
 									onChange={ ( value ) => setAddressState( value ?? '' ) }
 									options={ stateOptions }
-									disabled={ isLoading }
+									disabled={ isRequestInProgress }
 									allowReset={ false }
 									label={ translate( 'State' ) }
 								/>
@@ -440,7 +446,7 @@ export default function AgencyDetailsForm( {
 									setLine1( event.target.value );
 									updateValidationError( { line1: undefined } );
 								} }
-								disabled={ isLoading }
+								disabled={ isRequestInProgress }
 							/>
 							<div
 								className={ clsx( 'agency-details-form__footer-error', {
@@ -459,7 +465,7 @@ export default function AgencyDetailsForm( {
 								onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 									setLine2( event.target.value )
 								}
-								disabled={ isLoading }
+								disabled={ isRequestInProgress }
 							/>
 						</FormFieldset>
 						<FormFieldset>
@@ -473,7 +479,7 @@ export default function AgencyDetailsForm( {
 									setCity( event.target.value );
 									updateValidationError( { city: undefined } );
 								} }
-								disabled={ isLoading }
+								disabled={ isRequestInProgress }
 							/>
 
 							{ !! validationError?.city && (
@@ -493,7 +499,7 @@ export default function AgencyDetailsForm( {
 								onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 									setPostalCode( event.target.value )
 								}
-								disabled={ isLoading }
+								disabled={ isRequestInProgress }
 							/>
 						</FormFieldset>
 
@@ -507,7 +513,7 @@ export default function AgencyDetailsForm( {
 								phoneInputProps={ {
 									'data-testid': 'a4a-signup-phone-number-input',
 								} }
-								isDisabled={ noCountryList }
+								isDisabled={ noCountryList || isRequestInProgress }
 								countriesList={ countriesList }
 								initialCountryCode={ phone.countryCode }
 								initialPhoneNumber={ phone.phoneNumber }
@@ -544,8 +550,8 @@ export default function AgencyDetailsForm( {
 								primary
 								type="submit"
 								className="company-details-form__submit"
-								disabled={ ! showCountryFields || isLoading || isValidating }
-								busy={ isLoading || isValidating }
+								disabled={ ! showCountryFields || isRequestInProgress }
+								busy={ isRequestInProgress }
 							>
 								{ submitLabel }
 							</Button>
