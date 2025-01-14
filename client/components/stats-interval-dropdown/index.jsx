@@ -6,8 +6,10 @@ import clsx from 'clsx';
 import { capitalize } from 'lodash';
 import qs from 'qs';
 import { useRef } from 'react';
-import './style.scss';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import { useSelector } from 'calypso/state';
+import getSiteId from 'calypso/state/sites/selectors/get-site-id';
+import './style.scss';
 
 const StatsIntervalDropdownListing = ( {
 	selected,
@@ -80,6 +82,8 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	// New interval listing that preserves date range.
 	// TODO: Figure out how to dismiss on select.
 
+	const siteId = useSelector( ( state ) => getSiteId( state, slug ) );
+
 	function generateNewLink( newPeriod ) {
 		const newRangeQuery = qs.stringify( Object.assign( {}, queryParams, {} ), {
 			addQueryPrefix: true,
@@ -101,7 +105,9 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			return;
 		}
 
-		localStorage.setItem( 'jetpack_stats_stored_period', interval );
+		localStorage.setItem( `jetpack_stats_stored_period_${ siteId }`, interval );
+		// Remove legacy item key.
+		localStorage.removeItem( 'jetpack_stats_stored_period' );
 
 		page( generateNewLink( interval ) );
 	}

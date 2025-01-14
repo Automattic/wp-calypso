@@ -6,6 +6,8 @@ import qs from 'qs';
 import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
+import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import DateControl from '../date-control';
 import { DateRangePickerShortcut } from '../date-range/shortcuts';
 
@@ -89,6 +91,7 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const siteId = useSelector( ( state ) => getSiteId( state, slug ) );
 
 	/**
 	 * Remove start date from query params if it's out of range.
@@ -156,7 +159,13 @@ const StatsDateControl = ( {
 		} );
 
 		if ( appliedShortcut && appliedShortcut.id ) {
-			localStorage.setItem( 'jetpack_stats_stored_date_range_shortcut_id', appliedShortcut.id );
+			localStorage.setItem(
+				`jetpack_stats_stored_date_range_shortcut_id_${ siteId }`,
+				appliedShortcut.id
+			);
+			// Remove legacy item key.
+			localStorage.removeItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
 			// Apply the period from the found shortcut.
 			period = appliedShortcut.period;
 		}
