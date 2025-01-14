@@ -78,6 +78,7 @@ export default function AgencyDetailsForm( {
 	const [ userType, setUserType ] = useState( initialValues?.userType ?? 'agency_owner' );
 	const [ servicesOffered, setServicesOffered ] = useState( initialValues?.servicesOffered ?? [] );
 	const [ productsOffered, setProductsOffered ] = useState( initialValues?.productsOffered ?? [] );
+	const [ isValidating, setIsValidating ] = useState( false );
 
 	const { validate, validationError, updateValidationError } = useSignupFormValidation();
 
@@ -138,7 +139,11 @@ export default function AgencyDetailsForm( {
 				return;
 			}
 
+			// Set the validation flag to true to show loading to restrict the user from submitting the form multiple times
+			setIsValidating( true );
 			const error = await validate( payload );
+			setIsValidating( false );
+
 			if ( error ) {
 				// Scrolling only for fields positioned on top
 				if ( error.firstName || error.lastName || error.agencyName || error.agencyUrl ) {
@@ -539,8 +544,8 @@ export default function AgencyDetailsForm( {
 								primary
 								type="submit"
 								className="company-details-form__submit"
-								disabled={ ! showCountryFields || isLoading }
-								busy={ isLoading }
+								disabled={ ! showCountryFields || isLoading || isValidating }
+								busy={ isLoading || isValidating }
 							>
 								{ submitLabel }
 							</Button>
