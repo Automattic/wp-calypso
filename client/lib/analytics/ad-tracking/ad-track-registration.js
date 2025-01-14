@@ -1,6 +1,7 @@
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -69,5 +70,8 @@ export async function adTrackRegistration() {
 		window.twq( ...params );
 	}
 
-	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug(
+		'adTrackRegistration: dataLayer:',
+		circularReferenceSafeJSONStringify( window.dataLayer, 2 )
+	);
 }

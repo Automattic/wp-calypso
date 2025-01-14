@@ -6,6 +6,7 @@ import {
 	ICON_MEDIA_RETARGETING_PIXEL_URL,
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL,
 } from './constants';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { recordPageViewInFloodlight } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -127,5 +128,5 @@ export async function retarget( urlPath ) {
 	}
 
 	// uses JSON.stringify for consistency with recordOrder()
-	debug( 'retarget: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'retarget: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }

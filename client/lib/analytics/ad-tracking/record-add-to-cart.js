@@ -4,6 +4,7 @@ import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -137,5 +138,5 @@ export async function recordAddToCart( cartItem ) {
 		window.pintrk( ...params );
 	}
 
-	debug( 'recordAddToCart: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'recordAddToCart: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }

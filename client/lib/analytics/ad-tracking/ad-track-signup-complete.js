@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS, ICON_MEDIA_SIGNUP_PIXEL_URL } from './constants';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -163,5 +164,5 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		window.twq( ...params );
 	}
 
-	debug( 'recordSignup: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'recordSignup: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }
