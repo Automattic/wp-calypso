@@ -35,6 +35,12 @@
 		font-size: $font-body-small;
 		padding: 16px 24px;
 
+		// Default tooltip is 230px wide. We need a bit more room
+		// to account for longer date labels and post titles.
+		width: fit-content;
+		min-width: 230px;
+		max-width: 300px;
+
 		ul {
 			li {
 				font-size: $font-body-small;
@@ -74,7 +80,6 @@
 			font-size: $font-body-extra-small;
 			margin-bottom: 0;
 			padding-left: 30px;
-			text-decoration: underline;
 
 			.label {
 				height: auto;
@@ -82,6 +87,10 @@
 				color: inherit;
 				letter-spacing: inherit;
 				word-break: break-word;
+			}
+			// Override the default gradient.
+			.value::before {
+				background: none;
 			}
 		}
 	}
