@@ -139,7 +139,7 @@ export default function () {
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
 			domainManagementController.domainManagementDnsEditRecord,
-			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 
@@ -148,7 +148,7 @@ export default function () {
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
 			domainManagementController.domainManagementDnsEditRecord,
-			domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 
