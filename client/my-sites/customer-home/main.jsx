@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
@@ -50,6 +51,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import LaunchpadPreLaunch from './cards/launchpad/pre-launch';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
@@ -293,27 +295,31 @@ const Home = ( {
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
-			<DocumentHead title={ translate( 'My Home' ) } />
-			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
-				<JetpackConnectionHealthBanner siteId={ siteId } />
+			{ ! config.isEnabled( 'home-launchpad' ) && (
+				<>
+					<DocumentHead title={ translate( 'My Home' ) } />
+					{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
+						<JetpackConnectionHealthBanner siteId={ siteId } />
+					) }
+					{ header }
+					{ ! isLoading && ! layout && homeLayoutError && (
+						<TrackComponentView
+							eventName="calypso_customer_home_my_site_view_layout_error"
+							eventProperties={ {
+								site_id: siteId,
+								error: homeLayoutError?.message ?? 'Layout is not available.',
+							} }
+						/>
+					) }
+				</>
 			) }
-			{ header }
-			{ ! isLoading && ! layout && homeLayoutError ? (
-				<TrackComponentView
-					eventName="calypso_customer_home_my_site_view_layout_error"
-					eventProperties={ {
-						site_id: siteId,
-						error: homeLayoutError?.message ?? 'Layout is not available.',
-					} }
-				/>
-			) : null }
-
 			{ renderStudioSyncNotice() }
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
 
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
-			{ ! isLoading && layout && ! homeLayoutError ? (
+			{ config.isEnabled( 'home-launchpad' ) && <LaunchpadPreLaunch></LaunchpadPreLaunch> }
+			{ ! isLoading && layout && ! homeLayoutError && ! config.isEnabled( 'home-launchpad' ) && (
 				<>
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
@@ -329,7 +335,7 @@ const Home = ( {
 						</div>
 					</div>
 				</>
-			) : null }
+			) }
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
