@@ -20,6 +20,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
+import { isUseHelpCenterExperienceEnabled } from './utils';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
@@ -27,6 +28,7 @@ const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
+	shouldUseHelpCenterExperience,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
@@ -78,7 +80,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			{ canConnectToZendesk && (
+			{ shouldUseHelpCenterExperience && canConnectToZendesk && (
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
 		</>,
@@ -89,9 +91,11 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
+	const shouldUseHelpCenterExperience = isUseHelpCenterExperienceEnabled();
+
 	return (
-		<HelpCenterRequiredContextProvider value={ props }>
-			<HelpCenter { ...props } />
+		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
+			<HelpCenter { ...props } shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience } />
 		</HelpCenterRequiredContextProvider>
 	);
 }

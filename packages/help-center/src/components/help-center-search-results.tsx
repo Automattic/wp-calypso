@@ -189,6 +189,7 @@ function HelpSearchResults( {
 	currentRoute,
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -346,7 +347,7 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
-			<HelpCenterRecentConversations />
+			{ shouldUseHelpCenterExperience && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">

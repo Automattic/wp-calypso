@@ -13,6 +13,7 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	canConnectToZendesk: boolean;
+	shouldUseHelpCenterExperience?: boolean;
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( {
@@ -35,6 +36,7 @@ const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	canConnectToZendesk: false,
+	shouldUseHelpCenterExperience: false,
 } );
 
 export const HelpCenterRequiredContextProvider: React.FC< {

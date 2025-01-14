@@ -45,6 +45,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChatStatus: noop,
 	setMessageLikedStatus: noop,
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
+	shouldUseHelpCenterExperience: false,
 	trackEvent: noop,
 	waitAnswerToFirstMessageFromHumanSupport: false,
 } );
@@ -68,6 +69,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	version = null,
 	currentUser,
 	children,
+	shouldUseHelpCenterExperience,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -87,7 +89,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat( canConnectToZendesk );
+	const { mainChatState, setMainChatState } = useGetCombinedChat(
+		canConnectToZendesk,
+		shouldUseHelpCenterExperience
+	);
 
 	/**
 	 * Tracking event.
@@ -183,6 +188,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
+				shouldUseHelpCenterExperience: shouldUseHelpCenterExperience ?? false,
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,

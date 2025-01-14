@@ -123,3 +123,7 @@ export const matchSupportInteractionId = (
 		return foundMatch;
 	}
 };
+
+export const isUseHelpCenterExperienceEnabled = (): boolean => {
+	return true;
+};
