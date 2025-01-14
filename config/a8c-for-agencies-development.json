@@ -71,5 +71,6 @@
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
+	"theme_color_override_with_admin_color_scheme": false,
 	"hotjar_enabled": true
 }
