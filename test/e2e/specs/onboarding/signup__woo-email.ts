@@ -58,8 +58,8 @@ describe(
 				activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
 			} );
 
-			it.skip( 'Activate account', async function () {
-				await page.goto( activationLink, { timeout: 20000 } );
+			it( 'Activate account', async function () {
+				await page.goto( activationLink, { waitUntil: 'networkidle' } );
 			} );
 		} );
 

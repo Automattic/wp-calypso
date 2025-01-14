@@ -164,7 +164,7 @@ export class UserSignupPage {
 		}
 
 		const [ , response ] = await Promise.all( [
-			this.page.waitForURL( /.*woo\.com*/ ),
+			this.page.waitForURL( /.*woocommerce\.com*/, { waitUntil: 'networkidle' } ),
 			this.page.waitForResponse( /.*new\?.*/ ),
 			this.page.click( selectors.submitButton ),
 		] );

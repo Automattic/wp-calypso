@@ -99,7 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 		} );
 
 		it( 'Redirected to woo.com upon successful login', async function () {
-			await page.waitForURL( /.*woo\.com*/ );
+			await page.waitForURL( /.*woocommerce\.com*/ );
 		} );
 	} );
 } );
