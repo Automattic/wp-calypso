@@ -291,9 +291,11 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const appliedShortcutId = localStorage.getItem(
-				'jetpack_stats_stored_date_range_shortcut_id'
-			);
+			const appliedShortcutId =
+				localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+				// Fallback for the compatibility.
+				localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
 			const appliedShortcut = supportedShortcutList.find(
 				( shortcut ) => shortcut.id === appliedShortcutId
 			);
