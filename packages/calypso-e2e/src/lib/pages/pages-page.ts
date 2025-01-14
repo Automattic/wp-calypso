@@ -32,7 +32,10 @@ export class PagesPage {
 	async addNewPage(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } ).click(),
+			this.page
+				.getByRole( 'link', { name: /(Add new|Start a|Add New) (page|Page)/ } )
+				.first()
+				.click(),
 		] );
 	}
 }
