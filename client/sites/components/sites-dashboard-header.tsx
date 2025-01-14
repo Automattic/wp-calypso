@@ -6,12 +6,14 @@ import styled from '@emotion/styled';
 import { download, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useState, useRef } from 'react';
+import AddNewSiteContent from 'calypso/components/add-new-site/content';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { LinkWithRedirect } from './link-with-redirect';
+import 'calypso/components/add-new-site/style.scss';
 
 interface SitesDashboardHeaderProps {
 	isPreviewPaneOpen: boolean;
@@ -102,15 +104,16 @@ const popoverHoverStyles = css`
 const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPreviewPaneOpen } ) => {
 	const { __ } = useI18n();
 	const isMobile = useMobileBreakpoint();
-
-	const createSiteUrl = useAddNewSiteUrl( {
-		source: TRACK_SOURCE_NAME,
-		ref: 'topbar',
-	} );
+	const [ isMenuVisible, setMenuVisible ] = useState( false );
+	const popoverMenuContext = useRef( null );
 
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
 		ref: 'topbar',
 	} );
+
+	const toggleMenu = () => {
+		setMenuVisible( ( isVisible ) => ! isVisible );
+	};
 
 	return (
 		<PageHeader>
@@ -122,10 +125,11 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 					label={ __( 'Add new site' ) }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+						toggleMenu();
 					} }
-					href={ createSiteUrl }
 					toggleIcon={ isMobile ? 'plus' : undefined }
 					isMobile={ isMobile }
+					ref={ popoverMenuContext }
 				>
 					<PopoverMenuItem
 						onClick={ () => {
@@ -151,6 +155,13 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 						<span>{ __( 'Import an existing site' ) }</span>
 					</PopoverMenuItem>
 				</AddNewSiteSplitButton>
+
+				<AddNewSiteContent
+					isMenuVisible={ isMenuVisible }
+					toggleMenu={ toggleMenu }
+					popoverMenuContext={ popoverMenuContext }
+					setMenuVisible={ setMenuVisible }
+				/>
 			</HeaderControls>
 		</PageHeader>
 	);
