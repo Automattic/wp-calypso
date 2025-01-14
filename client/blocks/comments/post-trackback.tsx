@@ -1,8 +1,10 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { get } from 'lodash';
 import TimeSince from 'calypso/components/time-since';
-import { getUserProfileUrl } from 'calypso/reader/user-stream/user-profile.utils';
+import {
+	getUserProfileUrl,
+	isUserProfileEnabled,
+} from 'calypso/reader/user-stream/user-profile.utils';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
@@ -36,7 +38,7 @@ export default function PostTrackback( props: PostTrackbackProps ): JSX.Element 
 	const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
 
 	const authorUrlLink =
-		config.isEnabled( 'reader/user-profile' ) && comment.author?.ID
+		isUserProfileEnabled() && comment.author?.ID
 			? getUserProfileUrl( comment.author.ID )
 			: comment.author?.URL;
 

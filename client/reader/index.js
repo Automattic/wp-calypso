@@ -27,6 +27,7 @@ import {
 	pendingSubscriptionsManager,
 } from './controller';
 import { userPosts, userLists } from './user-stream/controller';
+import { isUserProfileEnabled } from './user-stream/user-profile.utils';
 
 import './style.scss';
 
@@ -96,8 +97,8 @@ export default async function () {
 			clientRender
 		);
 
-		// User stream
-		if ( config.isEnabled( 'reader/user-profile' ) ) {
+		// User profile
+		if ( isUserProfileEnabled() ) {
 			page(
 				'/read/users/:user_id',
 				blogDiscoveryByFeedId,
