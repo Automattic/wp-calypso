@@ -13,7 +13,6 @@ import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate
 import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
@@ -49,7 +48,6 @@ interface StatsModuleLocationsProps {
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summaryUrl } ) => {
-	const { locations: moduleStrings } = statsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
@@ -79,6 +77,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	};
 
 	const geoMode = GEO_MODES[ selectedOption ];
+	const title = optionLabels[ selectedOption ]?.selectLabel;
 
 	const {
 		data = [],
@@ -138,19 +137,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && (
-				<StatsCardSkeleton
-					isLoading={ isRequestingData }
-					title={ moduleStrings.title }
-					type={ 3 }
-					withHero
-				/>
+				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
 			{ ( ( ! isRequestingData && ! isError && data ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
-						title={ moduleStrings.title }
+						title={ title }
 						titleNodes={
 							<StatsInfoArea>
 								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {

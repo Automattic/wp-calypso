@@ -24,6 +24,11 @@
 
 	.stats-card--hero {
 		padding-bottom: $card-vertical-space;
+
+		@media (min-width: $break-medium) {
+			min-height: 512px;
+			min-width: 860px;
+		}
 	}
 
 	.stats-card-header {

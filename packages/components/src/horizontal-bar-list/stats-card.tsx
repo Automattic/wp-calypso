@@ -56,10 +56,7 @@ const StatsCard = ( {
 		<div
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
-			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-				{ titleNode }
-				{ toggleControl }
-			</div>
+			<div className={ `${ BASE_CLASS_NAME }-header--main` }> { toggleControl } </div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
 					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
@@ -87,7 +84,12 @@ const StatsCard = ( {
 			} ) }
 		>
 			<div className={ `${ BASE_CLASS_NAME }__content` }>
-				{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
+				{ !! heroElement && (
+					<div className={ `${ BASE_CLASS_NAME }--hero` }>
+						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }
+						{ heroElement }
+					</div>
+				) }
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
 					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
 					<div
