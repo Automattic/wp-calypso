@@ -11,7 +11,6 @@ import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
 import ThemeTierFreeBadge from './theme-tier-free-badge';
 import ThemeTierPartnerBadge from './theme-tier-partner-badge';
-import ThemeTierStyleVariationBadge from './theme-tier-style-variation-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
 
 import './style.scss';
@@ -19,7 +18,6 @@ import './style.scss';
 export default function ThemeTierBadge( {
 	canGoToCheckout = true,
 	className = '',
-	isLockedStyleVariation,
 	showUpgradeBadge = true,
 	themeId,
 	showPartnerPrice = false,
@@ -39,10 +37,6 @@ export default function ThemeTierBadge( {
 
 		if ( BUNDLED_THEME === themeType ) {
 			return <ThemeTierBundledBadge />;
-		}
-
-		if ( isLockedStyleVariation ) {
-			return <ThemeTierStyleVariationBadge />;
 		}
 
 		if ( DOT_ORG_THEME === themeType ) {
