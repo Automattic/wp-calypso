@@ -54,7 +54,10 @@ const ecommerceFlow: Flow = {
 			[]
 		);
 
-		return useMemo( () => ( { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { recur } } ), [ recur ] );
+		return useMemo(
+			() => ( { eventsProperties: { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { recur } } } ),
+			[ recur ]
+		);
 	},
 	useSteps() {
 		const steps = [

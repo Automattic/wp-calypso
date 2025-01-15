@@ -29,6 +29,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
 import CacheCard from 'calypso/sites/settings/caching/form';
 import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
@@ -101,6 +102,7 @@ type AllCardsProps = {
 	isBusinessTrial?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
+	isJetpack: boolean | null;
 };
 
 const AllCards = ( {
@@ -108,6 +110,7 @@ const AllCards = ( {
 	isBasicHostingDisabled,
 	siteId,
 	siteSlug,
+	isJetpack,
 }: AllCardsProps ) => {
 	const allCards: CardEntry[] = [
 		{
@@ -153,6 +156,14 @@ const AllCards = ( {
 		content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
 		type: 'advanced',
 	} );
+
+	if ( isJetpack && siteId ) {
+		allCards.push( {
+			feature: 'jetpack-monitor',
+			content: <JetpackMonitor />,
+			type: 'basic',
+		} );
+	}
 
 	const availableTypes: CardEntry[ 'type' ][] = [];
 
@@ -282,6 +293,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
+							isJetpack={ isJetpack }
 						/>
 					</MasonryGrid>
 				</WrapperComponent>

@@ -107,10 +107,10 @@ const filterObjectByProperties = ( object: Record< string, any >, properties: st
  * @returns {boolean} Whether the variation contains only the specified properties.
  */
 const isVariationWithProperties = ( variation: GlobalStylesObject, properties: string[] ) => {
-	const variationWithProperties = filterObjectByProperties(
-		window.structuredClone( variation ),
-		properties
-	);
+	const clonedVariation = window.structuredClone
+		? window.structuredClone( variation )
+		: JSON.parse( JSON.stringify( variation ) );
+	const variationWithProperties = filterObjectByProperties( clonedVariation, properties );
 
 	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
 };

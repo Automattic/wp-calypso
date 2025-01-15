@@ -44,7 +44,7 @@ const EditContactInfoPageContent = ( {
 	}
 
 	const backUrl = isUnderDomainManagementAll( currentRoute )
-		? domainManagementAllOverview( selectedSite?.slug ?? '', selectedDomainName )
+		? domainManagementAllOverview( selectedSite?.slug ?? '', selectedDomainName, currentRoute )
 		: domainManagementEdit( selectedSite?.slug ?? '', selectedDomainName, currentRoute );
 
 	return (

@@ -5,7 +5,8 @@ import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-clien
 /**
  * The plans page URL regex.
  */
-export const plansPageUrl = /.*start\/plans|start\/with-theme\/plans-theme-preselected.*/;
+export const plansPageUrl =
+	/.*setup\/onboarding\/plans|start\/plans|start\/with-theme\/plans-theme-preselected.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.

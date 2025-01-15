@@ -10,7 +10,7 @@ import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
-	domainMagementDNS,
+	domainManagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
@@ -93,7 +93,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="manageDNS"
 					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
-					href={ domainMagementDNS( siteSlug, domain.name ) }
+					href={ domainManagementDNS( siteSlug, domain.name ) }
 				>
 					{ __( 'Manage DNS' ) }
 				</MenuItemLink>
