@@ -6,7 +6,7 @@ The stepper framework is a new framework for quickly spinning up sign-up flows. 
 
 ## Non-linearity
 
-It has been tricky for us to create flows with input-driven steps configuration. Stepper makes it easy by using `useStepNavigation`. This hook has access to the state of the flow so it make navigation decisions based on it at every stage of the flow.
+It has been tricky for us to create flows with input-driven steps configuration. Stepper makes it easy by using `useStepNavigation`. This hook has access to the state of the flow so it makes navigation decisions based on it at every stage of the flow.
 
 ### Example flow
 
