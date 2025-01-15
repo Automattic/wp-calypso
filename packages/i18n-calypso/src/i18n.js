@@ -168,9 +168,9 @@ I18N.prototype.emit = function ( ...args ) {
 
 /**
  * Formats numbers using locale settings and/or passed options.
- * @param   {string|number}  number to format (required)
+ * @param   {string | number}  number to format (required)
  * @param   {number | Object}  options  Number of decimal places or options object (optional)
- * @returns {string}         Formatted number as string
+ * @returns {string | number}  Formatted number as string, or original number if formatting fails
  */
 I18N.prototype.numberFormat = function ( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
