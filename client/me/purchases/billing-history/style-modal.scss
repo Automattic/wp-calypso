@@ -1,0 +1,140 @@
+@media print {
+
+	body > *:not(.components-modal__screen-overlay),
+	.components-modal__screen-overlay > *:not(.components-modal__frame),
+	.components-modal__frame > *:not(.components-modal__content),
+	.components-modal__header,
+	.components-modal__header-heading-container,
+	.interface-interface-skeleton__header,
+	.interface-interface-skeleton__footer,
+	.interface-interface-skeleton__sidebar,
+	.interface-interface-skeleton__secondary-sidebar {
+		display: none !important;
+	}
+
+	.components-modal__content {
+		position: static !important;
+		transform: none !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		height: auto !important;
+		box-shadow: none !important;
+		background: none !important;
+		overflow: visible !important;
+		width: 100% !important;
+	}
+
+	.components-modal__frame {
+		position: static !important;
+		transform: none !important;
+		height: auto !important;
+		max-height: none !important;
+		background: none !important;
+		box-shadow: none !important;
+		overflow: visible !important;
+		width: 100% !important;
+		margin: 0 !important;
+		top: 0 !important;
+	}
+
+	.billing-history-receipt-modal {
+		margin: 0;
+		padding: 20px;
+		width: 100%;
+		max-width: none;
+		position: static !important;
+		overflow: visible !important;
+		
+		.billing-history__receipt-links {
+			display: none !important;
+		}
+
+		.billing-history__billing-details-description {
+			display: none !important;
+		}
+
+		.billing-history__billing-details-editable {
+			background: transparent;
+			border: 0;
+			padding: 0;
+			margin: 0;
+		}
+
+		.receipt__no-print {
+			display: none !important;
+		}
+
+		.billing-history__receipt-line-items {
+			width: 100%;
+			border-collapse: collapse;
+		}
+	}
+
+	body {
+		font-family: $sans;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	@page {
+		margin: 20px;
+	}
+}
+
+.billing-history-receipt-modal {
+	.billing-history__billing-details {
+		margin: 15px 0;
+	}
+
+    .billing-history__receipt-detail {
+        color: var(--color-neutral-50);
+        display: block;
+        font-size: 0.75rem;
+        margin: 0 5px 0 0;
+        text-transform: uppercase;
+    }
+
+    .billing-history__receipt-detail strong {
+        display: block;
+        font-weight: 600;
+    }
+
+    .billing-history__receipt-detail span {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+	.billing-history__billing-details-description {
+		display: block;
+		font-size: $font-body-small;
+		font-style: italic;
+		margin-bottom: 5px;
+	}
+
+	.billing-history__billing-details-editable {
+		width: 100%;
+		min-height: 20px;
+		padding: 8px;
+		border: 1px solid var(--color-neutral-20);
+		border-radius: 2px;
+		font-size: $font-body-small;
+		resize: vertical;
+	}
+    
+}
+
+.dataviews-action-modal__view-receipt {
+	@media ( min-width: 600px ) {
+		.components-modal__frame.has-size-small {
+			max-width: 840vw;
+			width: 80vw;
+		}
+	}
+
+    @media (min-width: 960px) {
+		.components-modal__frame {
+			max-height: 80vh;
+			height: 80vh;
+		}
+    }
+}
