@@ -8,6 +8,8 @@
 		display: table;
 	}
 	border: 1px solid var(--studio-gray-5);
+	border-left: none;
+	border-right: none;
 	border-collapse: collapse;
 	tr {
 		height: 1px;
