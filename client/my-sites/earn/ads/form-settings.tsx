@@ -272,6 +272,14 @@ const AdsFormSettings = () => {
 							label={ translate( 'Inline within post content' ) }
 						/>
 					) }
+					{ ! siteIsJetpack && (
+						<ToggleControl
+							checked={ !! settings.display_options?.sidebar }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'sidebar' ) }
+							label={ translate( 'Sidebar' ) }
+						/>
+					) }
 					<ToggleControl
 						checked={ !! settings.display_options?.bottom_sticky_enabled }
 						disabled={ isDisabled }
@@ -284,14 +292,6 @@ const AdsFormSettings = () => {
 						onChange={ () => handleDisplayToggle( 'sidebar_sticky_right_enabled' ) }
 						label={ translate( 'Stick to the right side of each page' ) }
 					/>
-					{ ! siteIsJetpack && (
-						<ToggleControl
-							checked={ !! settings.display_options?.sidebar }
-							disabled={ isDisabled }
-							onChange={ () => handleDisplayToggle( 'sidebar' ) }
-							label={ translate( 'Sidebar' ) }
-						/>
-					) }
 				</FormFieldset>
 			</div>
 		);
