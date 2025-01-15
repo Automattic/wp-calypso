@@ -27,10 +27,6 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
 	const getLabel = () => {
-		if ( ! isUpdatedBadgeDesign ) {
-			return translate( 'Upgrade' );
-		}
-
 		if ( showPartnerPrice && subscriptionPrices.month ) {
 			const fullLabel = translate( 'Available on %(planName)s plus %(price)s/month', {
 				args: {

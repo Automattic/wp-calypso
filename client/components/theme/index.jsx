@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Badge, Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
 	PREMIUM_THEME,
@@ -6,18 +6,20 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import ThemeTierFreeBadge from 'calypso/components/theme-tier/theme-tier-badge/theme-tier-free-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
@@ -154,8 +156,7 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug, translate } =
-			this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme, siteSlug } = this.props;
 		const { isScreenshotLoaded } = this.state;
 		const { description, screenshot } = theme;
 
@@ -232,7 +233,7 @@ export class Theme extends Component {
 	};
 
 	renderUpdateAlert = () => {
-		const { isUpdated, isUpdating, errorOnUpdate, theme, translate } = this.props;
+		const { isUpdated, isUpdating, errorOnUpdate, theme } = this.props;
 
 		if ( ! theme.update && ! isUpdated && ! isUpdating && ! errorOnUpdate ) {
 			return;
@@ -325,7 +326,7 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, theme } = this.props;
+		const { selectedStyleVariation, shouldLimitGlobalStyles, theme, isThemeAllowed } = this.props;
 
 		const isPremiumTheme = theme.theme_tier?.slug === PREMIUM_THEME;
 
@@ -334,6 +335,16 @@ export class Theme extends Component {
 			styleVariationSlug: selectedStyleVariation?.slug,
 			shouldLimitGlobalStyles,
 		} );
+
+		const isFreeTheme = theme.theme_tier?.slug === 'free';
+
+		if ( isFreeTheme ) {
+			return <ThemeTierFreeBadge />;
+		}
+
+		if ( isThemeAllowed ) {
+			return <Badge type="info">{ translate( 'Included with plan' ) }</Badge>;
+		}
 
 		return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
 	};
@@ -391,5 +402,12 @@ const ConnectedTheme = connect(
 
 export default ( props ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
-	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+	const isThemeAllowed = useIsThemeAllowedOnSite( props.siteId, props.theme.id );
+	return (
+		<ConnectedTheme
+			{ ...props }
+			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+			isThemeAllowed={ isThemeAllowed }
+		/>
+	);
 };
