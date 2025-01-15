@@ -202,3 +202,8 @@ export default function useSiteActions( {
 		translate,
 	] );
 }
+
+const EMPTY_ARRAY: any[] = [];
+export function useSiteActionsDataViews() {
+	return EMPTY_ARRAY;
+}

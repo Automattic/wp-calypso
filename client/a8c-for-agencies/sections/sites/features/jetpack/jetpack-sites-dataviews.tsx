@@ -20,6 +20,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import SiteActions from '../../site-actions';
+import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
 import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Field } from '@wordpress/dataviews';
@@ -553,13 +554,15 @@ export const JetpackSitesDataViews = ( {
 		[ translate ]
 	);*/
 
+	const actions = useSiteActionsDataViews();
+
 	// Update the data packet
 	useEffect( () => {
 		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
 			...prevState,
 			items: sites,
 			fields: fields,
-			//actions: actions,
+			actions,
 			pagination: {
 				totalItems: totalSites,
 				totalPages: totalPages,
