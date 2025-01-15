@@ -1,8 +1,14 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SiteExcerptData } from '@automattic/sites';
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import React, { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { domainManagementAllOverview, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
+import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSite } from 'calypso/state/sites/selectors';
 import { CustomHeaderComponentType } from './custom-header-component-type';
 
 export const addDnsRecordTitle = translate( 'Add a new DNS record' );
@@ -22,36 +28,51 @@ const DnsRecordHeader: CustomHeaderComponentType = ( {
 	selectedDomainName,
 	selectedSiteSlug,
 	context = 'add',
+	inSiteContext,
 } ) => {
+	const site = useSelector( ( state ) => getSite( state, selectedSiteSlug ) as SiteExcerptData );
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const navigationItems = useMemo( () => {
+		const baseNavigationItems = [
+			{
+				label: selectedDomainName,
+				href: domainManagementAllOverview(
+					selectedSiteSlug,
+					selectedDomainName,
+					null,
+					inSiteContext
+				),
+			},
+			{
+				label: translate( 'DNS records' ),
+				href: domainManagementDns( selectedSiteSlug, selectedDomainName, currentRoute ),
+			},
+			{
+				label: context === 'add' ? addDnsRecordTitle : editDnsRecordTitle,
+			},
+		];
+
+		if ( inSiteContext ) {
+			return [
+				{
+					label: site?.name || selectedDomainName,
+					href: `/overview/${ selectedSiteSlug }`,
+					icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
+				},
+				...baseNavigationItems,
+			];
+		}
+
+		return baseNavigationItems;
+	}, [ context, currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
+
 	return (
 		<NavigationHeader
 			className="navigation-header__breadcrumb"
-			navigationItems={ [
-				{
-					label: selectedDomainName,
-					href: `/domains/manage/all/overview/${ selectedDomainName }/${ selectedSiteSlug }`,
-				},
-				{
-					label: translate( 'DNS records' ),
-					href: `/domains/manage/all/overview/${ selectedDomainName }/dns/${ selectedSiteSlug }`,
-				},
-				{
-					label:
-						context === 'add'
-							? translate( 'Add a new DNS record' )
-							: translate( 'Edit DNS record' ),
-				},
-			] }
+			navigationItems={ navigationItems }
 			title={ translate( 'DNS records' ) }
-			subtitle={ translate( 'DNS records change how your domain works. {a}Learn more{/a}', {
-				components: {
-					a: (
-						<ExternalLink
-							href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
-						/>
-					),
-				},
-			} ) }
+			subtitle={ addDnsRecordsSubtitle }
 		/>
 	);
 };
