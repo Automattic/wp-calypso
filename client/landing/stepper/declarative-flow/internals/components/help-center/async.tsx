@@ -1,11 +1,11 @@
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter, User as UserStore } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const AsyncHelpCenter = () => {
+const AsyncHelpCenter: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
 	const handleClose = useCallback( () => {
@@ -23,6 +23,7 @@ const AsyncHelpCenter = () => {
 			require="@automattic/help-center?stepper"
 			placeholder={ null }
 			handleClose={ handleClose }
+			currentUser={ user }
 		/>
 	);
 };
