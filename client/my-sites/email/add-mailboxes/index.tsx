@@ -20,7 +20,9 @@ import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	domainManagementAllEmailRoot,
+	domainSiteContextRoot,
 	isUnderDomainManagementAll,
+	isUnderDomainSiteContext,
 } from 'calypso/my-sites/domains/paths';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
@@ -328,7 +330,10 @@ const MailboxesForm = ( {
 
 		if ( isUnderDomainManagementAll( currentRoute ) ) {
 			const newEmail = mailboxOperations.mailboxes[ 0 ].getAsCartItem().email;
-			const redirectTo = `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`;
+			const redirectTo = isUnderDomainSiteContext( currentRoute )
+				? `${ domainSiteContextRoot() }/email/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`
+				: `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`;
+
 			checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
 		}
 

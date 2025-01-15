@@ -138,7 +138,11 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	relativeTo,
 	urlParameters
 ) => {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/email/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	} else if ( isUnderDomainManagementAll( relativeTo ) ) {
 		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
 			urlParameters
 		) }`;
