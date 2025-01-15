@@ -307,7 +307,7 @@ export function redirectJetpack( context, next ) {
  * @param {Object} context.params - The parameters from the URL, including the action.
  * @param {Object} context.query - The query string from the URL, including the `redirect_to` URL.
  * @param {Function} next - The next middleware function to call if conditions are met.
- * @returns {void} Redirects the user or calls the `next()` middleware.
+ * @returns {void} Either redirects the user or invokes the `next()` middleware function.
  */
 export function redirectLostPassword( context, next ) {
 	const { action } = context.params;
