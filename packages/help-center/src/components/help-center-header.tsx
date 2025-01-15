@@ -10,7 +10,6 @@ import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@w
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -102,8 +101,6 @@ const HeaderText = () => {
 		};
 	}, [] );
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
-
 	useEffect( () => {
 		if ( currentSupportInteraction ) {
 			const zendeskEvent = currentSupportInteraction?.events.find(
@@ -119,27 +116,22 @@ const HeaderText = () => {
 
 	const headerText = useMemo( () => {
 		const getOdieHeader = () => {
-			if ( shouldUseHelpCenterExperience ) {
-				return isConversationWithZendesk
-					? __( 'Support Team', __i18n_text_domain__ )
-					: __( 'Support Assistant', __i18n_text_domain__ );
-			}
-			return __( 'Wapuu', __i18n_text_domain__ );
+			return isConversationWithZendesk
+				? __( 'Support Team', __i18n_text_domain__ )
+				: __( 'Support Assistant', __i18n_text_domain__ );
 		};
 
 		switch ( pathname ) {
 			case '/odie':
 				return getOdieHeader();
 			case '/contact-form':
-				return shouldUseHelpCenterExperience
-					? __( 'Support Assistant', __i18n_text_domain__ )
-					: __( 'Wapuu', __i18n_text_domain__ );
+				return __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, isConversationWithZendesk, pathname, shouldUseHelpCenterExperience ] );
+	}, [ __, isConversationWithZendesk, pathname ] );
 
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
@@ -152,10 +144,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
-
-	const shouldDisplayClearChatButton =
-		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
+	const shouldDisplayClearChatButton = pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
 
 	return (
@@ -187,7 +176,6 @@ const ContentMinimized = ( {
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 	return (
 		<>
 			<p
@@ -207,14 +195,7 @@ const ContentMinimized = ( {
 					<Route path="/contact-form" element={ <SupportModeTitle /> } />
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route
-						path="/odie"
-						element={
-							shouldUseHelpCenterExperience
-								? __( 'Support Assistant', __i18n_text_domain__ )
-								: __( 'Wapuu', __i18n_text_domain__ )
-						}
-					/>
+					<Route path="/odie" element={ __( 'Support Assistant', __i18n_text_domain__ ) } />
 					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
@@ -242,14 +223,11 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		[]
 	);
 
-	const handleClick = useCallback(
-		( event: React.SyntheticEvent ) => {
-			if ( event.target === event.currentTarget ) {
-				onMaximize?.();
-			}
-		},
-		[ onMaximize ]
-	);
+	const handleClick = useCallback( () => {
+		if ( isMinimized ) {
+			onMaximize?.();
+		}
+	}, [ onMaximize, isMinimized ] );
 
 	const classNames = clsx(
 		'help-center__container-header',

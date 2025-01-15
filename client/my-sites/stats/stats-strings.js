@@ -92,6 +92,32 @@ export default function () {
 		),
 	};
 
+	statsStrings.locations = {
+		title: translate( 'Locations', { context: 'Stats: title of module', textOnly: true } ),
+		item: translate( 'Location', {
+			context: 'Stats: module row header for views by country, region or city.',
+		} ),
+		value: translate( 'Views', {
+			context: 'Stats: module row header for number of views from a country, region or city.',
+		} ),
+		empty: translate(
+			'Stats on visitors and {{link}}their viewing location{{/link}} will appear here.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ SUPPORT_URL }#countries` ) }
+						/>
+					),
+				},
+				context: 'Stats: Info box label when the Locations module is empty',
+			}
+		),
+	};
+
 	statsStrings.utm = {
 		title: translate( 'UTM', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'UTM', { context: 'Stats: module row header for UTM module.' } ),

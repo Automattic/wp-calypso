@@ -1,0 +1,37 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.sites-banner-container {
+	.notice-banner {
+		width: 100%;
+		box-shadow: none;
+		padding: 16px;
+
+		.notice-banner__icon-wrapper {
+			margin-right: 8px;
+			position: unset;
+		}
+
+		.notice-banner__action-bar {
+			margin-top: 12px;
+		}
+
+		@media screen and (max-width: $break-medium) {
+			.notice-banner__close-button {
+				position: unset;
+				top: unset;
+				right: unset;
+			}
+		}
+	}
+
+	.notice-banner.is-info {
+		border: none;
+		background-color: $studio-wordpress-blue-5;
+		color: $studio-wordpress-blue-80;
+
+		.notice-banner__icon {
+			fill: $studio-wordpress-blue-80;
+		}
+	}
+}

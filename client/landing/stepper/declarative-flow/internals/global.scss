@@ -69,10 +69,12 @@ button {
 /**
  * Site Setup
  */
-.ai-assembler,
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.onboarding.goals,
+.onboarding.design-setup,
+.onboarding.difm-starting-point,
 .site-migration,
 .migration,
 .migration-signup,
@@ -94,7 +96,6 @@ button {
 .free-setup,
 .free-post-setup,
 .free,
-.with-theme-assembler,
 .assembler-first,
 .setup-blog,
 .celebration-step,
@@ -113,7 +114,8 @@ button {
 		padding: 60px 0 0;
 
 		// Launchpad has its own header
-		&.launchpad {
+		&.launchpad,
+		&.hundred-year-plan {
 			margin-top: -60px;
 		}
 
@@ -121,6 +123,13 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
+			&.domains:not(.copy-site):not(.onboarding) {
+				margin-top: -60px;
+			}
+		}
+
+		@include break-xlarge {
+			&.goals,
 			&.domains {
 				margin-top: -60px;
 			}

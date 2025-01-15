@@ -195,6 +195,10 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-complete-plan';
 	}
 
+	if ( isJetpackGrowthPlan( planKey ) ) {
+		return 'is-jetpack-growth-plan';
+	}
+
 	if ( isFreeHostingTrial( planKey ) ) {
 		return 'is-free-hosting-trial';
 	}

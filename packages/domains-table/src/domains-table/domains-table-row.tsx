@@ -5,6 +5,7 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
@@ -49,7 +50,14 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		sslStatus,
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
+	const {
+		canSelectAnyDomains,
+		domainsTableColumns,
+		isCompact,
+		currentlySelectedDomainName,
+		selectedFeature,
+		isHostingOverview,
+	} = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -72,8 +80,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
+		? getDomainManagementLink(
+				domain,
+				siteSlug,
+				isAllSitesView,
+				selectedFeature,
+				isHostingOverview
+		  )
 		: '';
 
 	const renderOwnerCell = () => {
@@ -91,9 +107,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
-		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
-
-		if ( isAllDomainManagementEnabled && isAllSitesView ) {
+		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
 			page.show( domainManagementLink );
 			return;
 		}
@@ -101,10 +115,15 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		window.location.href = domainManagementLink;
 	};
 
+	const handleDomainLinkClick = ( e: MouseEvent ) =>
+		isAllDomainManagementEnabled ? e.preventDefault() : e.stopPropagation();
+
 	return (
 		<tr
 			key={ domain.domain }
-			className="domains-table__row"
+			className={ clsx( 'domains-table__row', {
+				'is-selected': currentlySelectedDomainName === domain.domain,
+			} ) }
 			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (
@@ -140,7 +159,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<a
 									className="domains-table__domain-name"
 									href={ domainManagementLink }
-									onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+									onClick={ handleDomainLinkClick }
 								>
 									{ domain.domain }
 								</a>

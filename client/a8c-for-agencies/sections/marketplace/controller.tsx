@@ -13,12 +13,12 @@ import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
+import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
-import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
-import WpcomOverview from './wpcom-overview';
+import ProductsOverviewV2 from './products-overview-v2';
 
 export const marketplaceContext: Callback = () => {
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
@@ -30,23 +30,34 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
-			<ProductsOverview
-				siteId={ site_id }
-				suggestedProduct={ product_slug }
-				defaultMarketplaceType={ purchaseType }
-				productBrand={ getValidBrand( productBrand ) }
-				searchQuery={ search_query }
-			/>
+			{ isEnabled( 'a4a-product-page-redesign' ) ? (
+				<ProductsOverviewV2
+					siteId={ site_id }
+					suggestedProduct={ product_slug }
+					defaultMarketplaceType={ purchaseType }
+					productBrand={ getValidBrand( productBrand ) }
+					searchQuery={ search_query }
+				/>
+			) : (
+				<ProductsOverview
+					siteId={ site_id }
+					suggestedProduct={ product_slug }
+					defaultMarketplaceType={ purchaseType }
+					productBrand={ getValidBrand( productBrand ) }
+					searchQuery={ search_query }
+				/>
+			) }
 		</>
 	);
 	next();
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
-	if ( isEnabled( 'a4a-hosting-page-redesign' ) && ! context.params.section ) {
+	if ( ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
 		page.redirect(
 			// If the agency is managing less than 5 sites, then we make wpcom as default section.
@@ -62,35 +73,17 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 
 	const section = getValidHostingSection( context.params.section );
 
+	const isV3Enabled = isEnabled( 'a4a-hosting-page-redesign-v3' );
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
-		</>
-	);
-	next();
-};
-
-export const marketplacePressableContext: Callback = ( context, next ) => {
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<>
-			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview />
-		</>
-	);
-	next();
-};
-
-export const marketplaceWpcomContext: Callback = ( context, next ) => {
-	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<>
-			<PageViewTracker title="Marketplace > Hosting > WordPress.com" path={ context.path } />
-			<WpcomOverview defaultMarketplaceType={ purchaseType } />
+			{ isV3Enabled ? (
+				<HostingOverviewV3 section={ section } />
+			) : (
+				<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
+			) }
 		</>
 	);
 	next();

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -223,27 +222,6 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'migrate redirects from the how-to-migrate (do it for me) page to assisted migration page', () => {
-			config.disable( 'automated-migration/collect-credentials' );
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
-				dependencies: {
-					destination: 'migrate',
-					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
-				state: {
-					siteSlug: 'example.wordpress.com',
-				},
-			} );
-			config.enable( 'automated-migration/collect-credentials' );
-		} );
-
 		it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -300,33 +278,6 @@ describe( 'Site Migration Flow', () => {
 				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
-		} );
-
-		it( 'redirects the user to the checkout page with the credentials step as success destination', () => {
-			config.enable( 'automated-migration/collect-credentials' );
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com&how=${ HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME }`,
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				dependencies: {
-					goToCheckout: true,
-					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-					sendIntentWhenCreatingTrial: true,
-				},
-				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com&how=${ HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME }`,
-			} );
-
-			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
-				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
-				flowName: 'site-migration',
-				siteSlug: 'example.wordpress.com',
-				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&how=${ HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME }`,
-				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-			} );
-			config.disable( 'automated-migration/collect-credentials' );
 		} );
 
 		it( 'redirects back to the credentials step when failing to create the ticket', () => {
@@ -451,6 +402,38 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&preventTicketCreation=true`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentails step to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'application-passwords-approval',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentails step to FALLBACK_CREDENTIALS when credentials are required', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'credentials-required',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -651,6 +634,47 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the credentials step when going back from the application password authorization step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the credentials step when going back from the fallback step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the application password authorization step when going back from the fallback step with the backTo query param', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug,
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug }?siteSlug=example.wordpress.com&backTo=${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }`,
+			} );
+
+			//TODO: Check if really make sense to have this backTo url here
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }?siteSlug=example.wordpress.com&backTo=${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }`,
 				state: null,
 			} );
 		} );

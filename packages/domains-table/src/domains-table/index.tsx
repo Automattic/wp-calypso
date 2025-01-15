@@ -21,7 +21,7 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 
 	const state = useGenerateDomainsTableState( allProps );
 
-	const { isAllSitesView, domains } = props;
+	const { isAllSitesView, domains, sidebarMode } = props;
 
 	const showDomainsToolbar =
 		isAllSitesView ||
@@ -43,7 +43,7 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 							'has-checkbox': state.canSelectAnyDomains && ! hideCheckbox,
 						} ) }
 					>
-						<DomainsTableHeader />
+						{ ! sidebarMode && <DomainsTableHeader /> }
 						<DomainsTableBody />
 					</table>
 				) }

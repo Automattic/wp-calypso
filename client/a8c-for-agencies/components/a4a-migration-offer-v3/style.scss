@@ -1,0 +1,111 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-migration-offer-v3 {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+
+	border-radius: 4px;
+	background-color: var(--color-surface);
+	transition: padding 0.15s linear;
+	padding: 8px 16px;
+	cursor: pointer;
+
+	@include break-medium {
+		padding: 20px 32px;
+		&.is-expanded {
+			padding: 20px 32px 24px;
+		}
+	}
+}
+
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle {
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.a4a-migration-offer-v3__main {
+	flex-direction: column;
+	gap: 8px;
+	flex-grow: 1;
+}
+
+.a4a-migration-offer-v3__title {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	@include a4a-font-heading-md($font-weight: 400);
+
+	@include break-medium {
+		@include a4a-font-heading-lg($font-weight: 400);
+		margin-block-start: 10px;
+		margin-block-end: 8px;
+	}
+}
+
+.a4a-migration-offer-v3__body {
+	display: flex;
+	gap: 24px;
+	align-content: center;
+	flex-direction: column;
+
+	.simple-list {
+		max-width: 800px;
+		margin-block-start: 24px;
+		margin-inline-start: 16px;
+	}
+}
+
+.a4a-migration-offer-v3__body-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	@include break-xlarge {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.a4a-migration-offer-v3__body-actions-footnote {
+	@include a4a-font-body-sm;
+}
+
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle-mobile {
+	display: block;
+
+	@include break-medium {
+		display: none;
+	}
+}
+
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle,
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle-mobile {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		background-color: transparent;
+
+		&:not(:focus-visible) {
+			border: none;
+			box-shadow: none;
+		}
+	}
+
+	svg {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+	}
+}
+
+.a4a-migration-offer-v3.is-expanded {
+	.components-button.a4a-migration-offer-v3__view-toggle svg,
+	.components-button.a4a-migration-offer-v3__view-toggle-mobile svg {
+		transform: rotate(180deg);
+	}
+}

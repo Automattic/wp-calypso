@@ -4,19 +4,17 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect, useRef } from '@wordpress/element';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
-import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepComplete, {
 	type RecordStepCompleteProps,
 } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
-import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
-	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteFlowName,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -48,14 +46,15 @@ interface Props {
  */
 export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props ) => {
 	const intent = useIntent();
-	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 	const pathname = window.location.pathname;
 	const flowVariantSlug = flow.variantSlug;
 	const flowName = flow.name;
+	const customProperties = flow.useTracksEventProps?.();
+	const isLoading = customProperties?.isLoading;
 	const signupStepStartProps = useSnakeCasedKeys( {
-		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
+		input: customProperties?.eventsProperties[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
 	} );
 
 	/**
@@ -74,11 +73,12 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 
 	useEffect( () => {
 		// We wait for the site to be fetched before tracking the step route.
-		if ( ! hasRequestedSelectedSite ) {
+		// And if `isLoading` is true, it means the flow is still loading custom properties.
+		if ( ! hasRequestedSelectedSite || isLoading ) {
 			return;
 		}
 
-		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteFlowName = getSignupCompleteFlowName();
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
 		const isReEnteringStepAfterSignupComplete =
 			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
@@ -94,7 +94,6 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		recordStepStart( flowName, kebabCase( stepSlug ), {
 			intent,
 			is_in_hosting_flow: isAnyHostingFlow( flowName ),
-			...( design && { assembler_source: getAssemblerSource( design ) } ),
 			...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
 			...reenteringStepAfterSignupCompleteProps,
@@ -117,7 +116,6 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			recordStepStart( flowName, kebabCase( stepOldSlug ), {
 				intent,
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
-				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
 				...reenteringStepAfterSignupCompleteProps,
@@ -139,5 +137,5 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		// We also leave out pathname. The respective event (calypso_page_view) is recorded behind a timeout and we don't want to trigger it again.
 		//     - window.location.pathname called inside the effect keeps referring to the previous path on a redirect. So we moved it outside.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender, isLoading ] );
 };

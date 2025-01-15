@@ -61,7 +61,7 @@ project {
 		// as supported (even though both TeamCity and chalk support that.)
 		param("env.FORCE_COLOR", "1")
 		param("env.NODE_OPTIONS", "--max-old-space-size=16384")
-		text("JEST_E2E_WORKERS", "100%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
+		text("JEST_E2E_WORKERS", "50%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)

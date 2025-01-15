@@ -2,8 +2,10 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { getOdieTransferMessageConstant } from '../constants';
+import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
+import { useGetZendeskConversation, useOdieChat } from '../data';
+import type { Chat, Message } from '../types';
 import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, ChatStatus, Message } from '../types';
 
@@ -11,10 +13,7 @@ import type { Chat, ChatStatus, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = (
-	canConnectToZendesk: boolean,
-	shouldUseHelpCenterExperience: boolean | undefined
-) => {
+export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { currentSupportInteraction, conversationId, odieId, isChatLoaded } = useSelect(
 		( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -41,6 +40,7 @@ export const useGetCombinedChat = (
 	);
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
@@ -57,11 +57,7 @@ export const useGetCombinedChat = (
 		/**
 		 * Odie only chat
 		 */
-		if (
-			! isOdieChatLoading &&
-			odieChat &&
-			( ! shouldUseHelpCenterExperience || ! conversationId )
-		) {
+		if ( ! isOdieChatLoading && odieChat && ! conversationId ) {
 			setMainChatState( {
 				...odieChat,
 				provider: 'odie',
@@ -105,27 +101,25 @@ export const useGetCombinedChat = (
 							conversationId: conversation.id,
 							messages: [
 								...odieChat.messages,
-								...getOdieTransferMessageConstant( true ),
+								...ODIE_TRANSFER_MESSAGE,
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
-							status: ( currentSupportInteraction?.status === 'closed'
-								? 'closed'
-								: 'loaded' ) as ChatStatus,
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 						} );
 					}
 				} );
 			}
 		}
 	}, [
-		canConnectToZendesk,
-		shouldUseHelpCenterExperience,
-		isChatLoaded,
 		isOdieChatLoading,
-		odieId,
+		isChatLoaded,
 		odieChat,
 		conversationId,
+		odieId,
 		currentSupportInteraction,
+		canConnectToZendesk,
+		getZendeskConversation,
 	] );
 
 	return { mainChatState, setMainChatState };

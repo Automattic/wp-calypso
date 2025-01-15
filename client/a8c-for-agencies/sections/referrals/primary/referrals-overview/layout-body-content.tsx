@@ -43,6 +43,8 @@ interface Props {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	referralInvoices: ReferralInvoice[];
 	isFetchingInvoices: boolean;
+	isArchiveView?: boolean;
+	onReferralRefetch?: () => void;
 }
 
 export default function LayoutBodyContent( {
@@ -53,7 +55,8 @@ export default function LayoutBodyContent( {
 	dataViewsState,
 	setDataViewsState,
 	referralInvoices,
-	isFetchingInvoices,
+	isArchiveView,
+	onReferralRefetch,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -121,11 +124,10 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && (
+				{ ! dataViewsState.selectedItem && ! isArchiveView && (
 					<ConsolidatedViews
 						referrals={ referrals }
-						referralInvoices={ referralInvoices }
-						isFetchingInvoices={ isFetchingInvoices }
+						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
 					/>
 				) }
 				<ReferralList
@@ -133,6 +135,8 @@ export default function LayoutBodyContent( {
 					referralInvoices={ referralInvoices }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
+					isArchiveView={ isArchiveView }
+					onArchiveReferral={ () => onReferralRefetch?.() }
 				/>
 			</>
 		);

@@ -74,6 +74,9 @@ $blueberry-color: #3858e9;
 	height: 40px;
 	width: 40px;
 
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&[disabled] {
 		background-color: var(--color-neutral-20) !important;

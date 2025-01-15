@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
@@ -40,7 +40,6 @@ import './style.scss';
 export const QuickLinks = ( {
 	canEditPages,
 	canCustomize,
-	canSwitchThemes,
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
@@ -178,15 +177,6 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
-			{ canSwitchThemes && (
-				<ActionBox
-					href={ `/themes/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackChangeThemeAction }
-					label={ translate( 'Change theme' ) }
-					materialIcon="view_quilt"
-				/>
-			) }
 			{ canManageSite && ! isWpcomStagingSite && (
 				<>
 					{ canAddEmail ? (
@@ -228,6 +218,18 @@ export const QuickLinks = ( {
 			{ canManageSite && (
 				<>
 					<ActionBox
+						href={ usesWpAdminInterface ? `${ siteAdminUrl }themes.php` : `/themes/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackChangeThemeAction }
+						label={ translate( 'Change theme' ) }
+						iconComponent={
+							<span
+								className="quick-links__action-box-icon dashicons dashicons-admin-appearance"
+								aria-hidden
+							/>
+						}
+					/>
+					<ActionBox
 						href={
 							usesWpAdminInterface ? `${ siteAdminUrl }plugins.php` : `/plugins/${ siteSlug }`
 						}
@@ -240,13 +242,7 @@ export const QuickLinks = ( {
 						href="https://wp.me/logo-maker/?utm_campaign=my_home"
 						onClick={ trackDesignLogoAction }
 						target="_blank"
-						label={
-							getLocaleSlug() === 'en' ||
-							getLocaleSlug() === 'en-gb' ||
-							i18n.hasTranslation( 'Create a logo with Fiverr' )
-								? translate( 'Create a logo with Fiverr' )
-								: translate( 'Create a logo' )
-						}
+						label={ translate( 'Create a logo with Fiverr' ) }
 						external
 						iconSrc={ fiverrIcon }
 					/>
@@ -479,7 +475,6 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
-		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),

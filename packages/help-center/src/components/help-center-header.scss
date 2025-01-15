@@ -14,12 +14,16 @@
 		padding: 16px;
 
 		&.has-unread {
-			background: #3858E9;
+			background: $help-center-blue;
 			color: var(--studio-white);
 			border-radius: 0;
 
 			button {
 				color: var(--studio-white);
+			}
+
+			.help-center-header__text > svg {
+				fill: var(--studio-white);
 			}
 		}
 
@@ -34,7 +38,7 @@
 		.help-center-header__minimize,
 		.help-center-header__close {
 			&:focus {
-				outline: var(--color-primary-light) solid 2px;
+				outline: $help-center-blue solid 2px;
 			}
 		}
 
@@ -76,7 +80,7 @@
 				background: var(--studio-white);
 				border-radius: 45%;
 				font-size: $font-body-extra-small;
-				color: #3858E9;
+				color: $help-center-blue;
 			}
 		}
 
@@ -106,7 +110,7 @@
 			fill: var(--studio-white);
 		}
 	}
-	
+
 	button {
 		display: flex;
 		align-items: center;

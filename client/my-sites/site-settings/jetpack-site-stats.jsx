@@ -9,7 +9,7 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { PanelHeading, PanelSection } from 'calypso/components/panel';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -121,10 +121,10 @@ class JetpackSiteStats extends Component {
 		);
 
 		return (
-			<PanelSection className="site-settings__traffic-settings">
+			<PanelCard className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
 
-				<PanelHeading>{ translate( 'Jetpack Stats' ) }</PanelHeading>
+				<PanelCardHeading>{ translate( 'Jetpack Stats' ) }</PanelCardHeading>
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
@@ -179,7 +179,7 @@ class JetpackSiteStats extends Component {
 				<Button href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
 				</Button>
-			</PanelSection>
+			</PanelCard>
 		);
 	}
 }

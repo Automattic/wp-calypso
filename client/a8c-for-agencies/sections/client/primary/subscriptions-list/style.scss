@@ -1,15 +1,15 @@
 .subscriptions-list__layout {
-	&.main.a4a-layout.is-with-border .a4a-layout__top-wrapper:not(.has-navigation) {
+	&.main.hosting-dashboard-layout.is-with-border .hosting-dashboard-layout__top-wrapper:not(.has-navigation) {
 		padding-block-start: 24px;
 		padding-block-end: 0;
 	}
 
 	&.is-mobile-view {
-		.a4a-layout__top-wrapper {
+		.hosting-dashboard-layout__top-wrapper {
 			display: none;
 		}
 
-		.a4a-layout__body-wrapper {
+		.hosting-dashboard-layout__body-wrapper {
 			padding-inline: 16px;
 			padding-block-end: 48px;
 

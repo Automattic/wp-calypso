@@ -13,13 +13,14 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	isDisliked?: boolean;
 } ) => {
-	const { setMessageLikedStatus, trackEvent, setChatStatus, shouldUseHelpCenterExperience } =
-		useOdieAssistantContext();
+	const { setMessageLikedStatus, trackEvent, setChatStatus } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
 
-	const liked = message.liked === true;
-	const notLiked = message.liked === false;
-	const rated = message.liked !== null && message.liked !== undefined;
+	const liked = message.rating_value?.toString() === '1' || message.liked || false;
+	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
+	const rated =
+		( message.rating_value !== null && message.rating_value !== undefined ) ||
+		( message.liked !== null && message.liked !== undefined );
 
 	const handleIsHelpful = ( isHelpful: boolean ) => {
 		sendOdieMessageFeedback( {
@@ -75,17 +76,15 @@ const WasThisHelpfulButtons = ( {
 		'odie-question-collapse': rated || isDisliked,
 	} );
 
-	const feedbackThankYouMessage = shouldUseHelpCenterExperience
-		? __( 'We appreciate your feedback.', __i18n_text_domain__ )
-		: __( 'Thanks!', __i18n_text_domain__ );
-
 	return (
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
 				<span className={ questionClasses }>
 					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
 				</span>
-				<span className={ thanksClasses }>{ feedbackThankYouMessage }</span>
+				<span className={ thanksClasses }>
+					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
+				</span>
 			</div>
 			<span className="odie-feedback-component-button-container">
 				<button

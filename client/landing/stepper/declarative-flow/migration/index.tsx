@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_BUSINESS,
@@ -30,7 +29,6 @@ const {
 	SITE_CREATION_STEP,
 	MIGRATION_UPGRADE_PLAN,
 	MIGRATION_HOW_TO_MIGRATE,
-	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -38,6 +36,8 @@ const {
 	SITE_MIGRATION_ALREADY_WPCOM,
 	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+	SITE_MIGRATION_FALLBACK_CREDENTIALS,
 } = STEPS;
 
 const steps = [
@@ -46,7 +46,6 @@ const steps = [
 	PROCESSING,
 	MIGRATION_UPGRADE_PLAN,
 	MIGRATION_HOW_TO_MIGRATE,
-	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -54,6 +53,8 @@ const steps = [
 	SITE_MIGRATION_ALREADY_WPCOM,
 	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+	SITE_MIGRATION_FALLBACK_CREDENTIALS,
 ];
 
 const plans: { [ key: string ]: string } = {
@@ -225,7 +226,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					}
 
 					const destinationStep = migrationDealAccepted
-						? MIGRATION_SOURCE_URL
+						? SITE_MIGRATION_CREDENTIALS
 						: MIGRATION_HOW_TO_MIGRATE;
 
 					return navigateToCheckout( { siteId, siteSlug, plan, from, props, destinationStep } );
@@ -248,12 +249,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigateWithQueryParams( SITE_MIGRATION_INSTRUCTIONS, [], props );
 				}
 
-				// @deprecated Remove the MIGRATION_SOURCE_URL when SITE_MIGRATION_CREDENTIALS is considered stable.
-				const SOURCE_STEP = config.isEnabled( 'automated-migration/collect-credentials' )
-					? SITE_MIGRATION_CREDENTIALS
-					: MIGRATION_SOURCE_URL;
-
-				return navigateWithQueryParams( SOURCE_STEP, [], props );
+				return navigateWithQueryParams( SITE_MIGRATION_CREDENTIALS, [], props );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
@@ -262,21 +258,13 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			},
 		},
 
-		// @deprecated Remove the MIGRATION_SOURCE_URL when SITE_MIGRATION_CREDENTIALS is considered stable.
-		[ MIGRATION_SOURCE_URL.slug ]: {
-			submit: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
-			},
-			goBack: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
-			},
-		},
-
 		[ SITE_MIGRATION_CREDENTIALS.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const action = getFromPropsOrUrl( 'action', props ) as
 					| 'skip'
 					| 'submit'
+					| 'application-passwords-approval'
+					| 'credentials-required'
 					| 'already-wpcom'
 					| 'site-is-not-using-wordpress';
 
@@ -284,6 +272,18 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigateWithQueryParams( SITE_MIGRATION_ALREADY_WPCOM, [], props, {
 						replaceHistory: true,
 					} );
+				}
+
+				if ( action === 'application-passwords-approval' ) {
+					return navigateWithQueryParams(
+						SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						[ 'siteId', 'from', 'siteSlug', 'authorizationUrl' ],
+						props
+					);
+				}
+
+				if ( action === 'credentials-required' ) {
+					return navigateWithQueryParams( SITE_MIGRATION_FALLBACK_CREDENTIALS, [], props );
 				}
 
 				if ( action === 'site-is-not-using-wordpress' ) {
@@ -310,6 +310,66 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
 			},
 		},
+		[ SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const action = getFromPropsOrUrl( 'action', props ) as
+					| 'authorization'
+					| 'fallback-credentials';
+
+				const authorizationUrl = getFromPropsOrUrl( 'authorizationUrl', props ) as string;
+
+				if ( action === 'authorization' ) {
+					const currentUrl = window.location.href;
+					const successUrl = encodeURIComponent( currentUrl );
+					window.location.assign( authorizationUrl + `&success_url=${ successUrl }` );
+					return;
+				}
+
+				if ( action === 'fallback-credentials' ) {
+					return navigateWithQueryParams(
+						SITE_MIGRATION_FALLBACK_CREDENTIALS,
+						[ 'authorizationUrl', 'backTo' ],
+						{
+							...props,
+							backTo: SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
+							authorizationUrl,
+						},
+						{ replaceHistory: true }
+					);
+				}
+
+				return navigateWithQueryParams(
+					SITE_MIGRATION_ASSISTED_MIGRATION,
+					[ 'preventTicketCreation' ],
+					{ ...props, preventTicketCreation: true }
+				);
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams( SITE_MIGRATION_CREDENTIALS, [], props );
+			},
+		},
+		[ SITE_MIGRATION_FALLBACK_CREDENTIALS.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams(
+					SITE_MIGRATION_ASSISTED_MIGRATION,
+					[ 'preventTicketCreation' ],
+					{ ...props, preventTicketCreation: true }
+				);
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const backTo = getFromPropsOrUrl( 'backTo', props );
+
+				if ( backTo === SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug ) {
+					return navigateWithQueryParams(
+						SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						[ 'authorizationUrl', 'backTo' ],
+						props
+					);
+				}
+				return navigateWithQueryParams( SITE_MIGRATION_CREDENTIALS, [], props );
+			},
+		},
+
 		[ SITE_MIGRATION_ASSISTED_MIGRATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const hasError = getFromPropsOrUrl( 'hasError', props );

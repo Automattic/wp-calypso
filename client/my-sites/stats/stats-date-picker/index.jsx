@@ -3,6 +3,7 @@ import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getSiteStatsQueryDate,
@@ -10,9 +11,12 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DateLabelDrill from './date-label-drill';
+import withIsDrillingDownHook from './with-is-drilling-down-hook';
 
 import './style.scss';
 
+// TODO: Rename this component to `StatsDateLabel` and refactor it as a Functional Component.
 class StatsDatePicker extends Component {
 	static propTypes = {
 		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
@@ -59,12 +63,15 @@ class StatsDatePicker extends Component {
 	dateForCustomRange( startDate, endDate ) {
 		const { moment } = this.props;
 
+		// Generate a full date range for the label.
 		const localizedStartDate = moment( startDate );
 		const localizedEndDate = moment( endDate );
 
 		// If it's the same day, show single date.
 		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
-			return localizedStartDate.format( 'LL' );
+			return localizedStartDate.isSame( moment(), 'year' )
+				? localizedStartDate.format( 'MMM D' )
+				: localizedStartDate.format( 'll' );
 		}
 
 		// If it's a full month.
@@ -85,20 +92,20 @@ class StatsDatePicker extends Component {
 			return localizedStartDate.format( 'YYYY' );
 		}
 
-		// Only show year for the second date.
-		if (
-			localizedStartDate.year() === localizedEndDate.year() &&
-			localizedStartDate.isSame( moment(), 'year' )
-		) {
-			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
-				`MMM D, YYYY`
-			) }`;
+		if ( localizedStartDate.year() === localizedEndDate.year() ) {
+			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format( `MMM D` ) }${
+				localizedStartDate.isSame( moment(), 'year' ) ? '' : localizedEndDate.format( ', YYYY' ) // Only append year if it's not the current year.
+			}`;
 		}
 
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	dateForDisplay() {
+	dateForDisplay( selectedShortcut = null ) {
+		if ( selectedShortcut?.label && selectedShortcut?.id !== 'custom_date_range' ) {
+			return selectedShortcut.label;
+		}
+
 		const { date, moment, period, translate, isShort, dateRange } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
@@ -139,24 +146,22 @@ class StatsDatePicker extends Component {
 		return formattedDate;
 	}
 
-	// TODO: need the align today with site timezone.
 	renderQueryDate() {
 		const { query, queryDate, moment, translate } = this.props;
 
-		if ( ! queryDate || ! isAutoRefreshAllowedForQuery( query ) ) {
-			return null;
+		let content = '';
+		if ( queryDate && isAutoRefreshAllowedForQuery( query ) ) {
+			const today = moment();
+			const date = moment( queryDate );
+			const isToday = today.isSame( date, 'day' );
+
+			content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
+				args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+				components: {
+					b: <span className="stats-date-picker__last-update" />,
+				},
+			} );
 		}
-
-		const today = moment();
-		const date = moment( queryDate );
-		const isToday = today.isSame( date, 'day' );
-
-		const content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
-			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
-			components: {
-				b: <span className="stats-date-picker__last-update" />,
-			},
-		} );
 
 		return (
 			<div className="stats-date-picker__refresh-status">
@@ -171,8 +176,20 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity, isShort } = this.props;
+		const {
+			summary,
+			translate,
+			query,
+			showQueryDate,
+			isActivity,
+			isShort,
+			dateRange,
+			reduxState,
+			// Used for drill-downs of the date range chart from `withIsDrillingDownHook`.
+			isDrillingDown,
+		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
+		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
@@ -181,7 +198,9 @@ class StatsDatePicker extends Component {
 						period: (
 							<span className="period">
 								<span className="date">
-									{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }
+									{ isSummarizeQuery
+										? this.dateForSummarize()
+										: this.dateForDisplay( selectedShortcut ) }
 								</span>
 							</span>
 						),
@@ -194,7 +213,9 @@ class StatsDatePicker extends Component {
 						period: (
 							<span className="period">
 								<span className="date">
-									{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }
+									{ isSummarizeQuery
+										? this.dateForSummarize()
+										: this.dateForDisplay( selectedShortcut ) }
 								</span>
 							</span>
 						),
@@ -207,7 +228,7 @@ class StatsDatePicker extends Component {
 		if ( isShort ) {
 			sectionTitle = (
 				<span className="period">
-					<span className="date">{ this.dateForDisplay() }</span>
+					<span className="date">{ this.dateForDisplay( selectedShortcut ) }</span>
 				</span>
 			);
 		}
@@ -218,7 +239,9 @@ class StatsDatePicker extends Component {
 					<span>{ sectionTitle }</span>
 				) : (
 					<div className="stats-section-title">
-						<h3>{ sectionTitle }</h3>
+						<h3>
+							{ isDrillingDown ? <DateLabelDrill>{ sectionTitle }</DateLabelDrill> : sectionTitle }
+						</h3>
 						{ showQueryDate && this.renderQueryDate() }
 					</div>
 				) }
@@ -234,7 +257,13 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 		requesting: showQueryDate
 			? isRequestingSiteStatsForQuery( state, siteId, statsType, query )
 			: false,
+		reduxState: state,
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDatePicker );
+export default flowRight(
+	connectComponent,
+	localize,
+	withLocalizedMoment,
+	withIsDrillingDownHook
+)( StatsDatePicker );

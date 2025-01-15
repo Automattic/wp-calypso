@@ -73,7 +73,7 @@ const MarketplaceThankYou = ( {
 	useEffect( () => {
 		if ( firstTheme && styleVariationSlug ) {
 			const styleVariation = firstTheme.style_variations.find(
-				( variation: { slug: string } ) => variation.slug === styleVariationSlug
+				( variation: { slug?: string } ) => variation.slug === styleVariationSlug
 			);
 
 			if ( styleVariation ) {
@@ -103,7 +103,7 @@ const MarketplaceThankYou = ( {
 		allThemesFetched &&
 		isAtomicTransferCheckComplete &&
 		isLoadedPlugins &&
-		isLoadedThemes;
+		( ! hasThemes || isLoadedThemes );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );

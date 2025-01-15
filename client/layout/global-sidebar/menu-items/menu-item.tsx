@@ -49,8 +49,7 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 			return getShouldShowCollapsedGlobalSidebar(
 				state,
 				selectedSiteId,
-				currentSection !== false ? currentSection?.group ?? '' : '',
-				currentSection !== false ? currentSection?.name ?? '' : ''
+				currentSection !== false ? currentSection?.group ?? '' : ''
 			);
 		} );
 

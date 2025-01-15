@@ -19,9 +19,15 @@
 		display: flex;
 		font-size: $font-body-extra-small;
 		line-height: 20px;
+		gap: 16px;
 
 		.jetpack-ai-logo-generator-icon {
 			margin-right: 4px;
+
+			// tricky SVG
+			path {
+				fill: currentColor
+			};
 		}
 	}
 }

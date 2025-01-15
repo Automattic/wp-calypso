@@ -1,4 +1,3 @@
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useEffect, useRef, useState } from 'react';
@@ -45,8 +44,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, shouldUseHelpCenterExperience, botNameSlug, isChatLoaded } =
-		useOdieAssistantContext();
+	const { chat, botNameSlug } = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams ] = useSearchParams();
@@ -77,9 +75,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		}
 	}, [ isForwardingToZendesk, isChatLoaded ] );
 
-	const shouldLoadChat: boolean =
-		! shouldUseHelpCenterExperience || ( shouldUseHelpCenterExperience && chatMessagesLoaded );
-
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 		return currentMessage === nextMessage;
@@ -88,14 +83,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
-				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
-				{ ! shouldLoadChat ? (
+				<ChatDate chat={ chat } />
+				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
 				) : (
 					<>
 						{ ( chat.odieId || chat.provider === 'odie' ) && (
 							<ChatMessage
-								message={ getOdieInitialMessage( botNameSlug, shouldUseHelpCenterExperience ) }
+								message={ getOdieInitialMessage( botNameSlug ) }
 								key={ 0 }
 								currentUser={ currentUser }
 								isNextMessageFromSameSender={ false }
@@ -115,7 +110,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
+						{ chat.status === 'dislike' && <DislikeThumb /> }
 						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }

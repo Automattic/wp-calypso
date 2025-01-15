@@ -29,6 +29,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
 import CacheCard from 'calypso/sites/settings/caching/form';
 import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
@@ -38,6 +39,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -100,6 +102,7 @@ type AllCardsProps = {
 	isBusinessTrial?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
+	isJetpack: boolean | null;
 };
 
 const AllCards = ( {
@@ -107,6 +110,7 @@ const AllCards = ( {
 	isBasicHostingDisabled,
 	siteId,
 	siteSlug,
+	isJetpack,
 }: AllCardsProps ) => {
 	const allCards: CardEntry[] = [
 		{
@@ -153,6 +157,14 @@ const AllCards = ( {
 		type: 'advanced',
 	} );
 
+	if ( isJetpack && siteId ) {
+		allCards.push( {
+			feature: 'jetpack-monitor',
+			content: <JetpackMonitor />,
+			type: 'basic',
+		} );
+	}
+
 	const availableTypes: CardEntry[ 'type' ][] = [];
 
 	if ( ! isAdvancedHostingDisabled ) {
@@ -177,6 +189,10 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
 
 	const siteId = useSelector( getSelectedSiteId );
+
+	const requestingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, siteId )
+	);
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
 	);
@@ -277,6 +293,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
+							isJetpack={ isJetpack }
 						/>
 					</MasonryGrid>
 				</WrapperComponent>
@@ -295,6 +312,10 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
+	if ( requestingSiteFeatures ) {
+		return null;
+	}
+
 	return (
 		<Panel wide className="page-server-settings">
 			{ ! isLoadingSftpData && (
@@ -302,7 +323,8 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					offset={ HEADING_OFFSET }
 					timeout={ 250 }
 					container={
-						document.querySelector< HTMLElement >( '.item-preview__content' ) ?? undefined
+						document.querySelector< HTMLElement >( '.hosting-dashboard-item-view__content' ) ??
+						undefined
 					}
 				/>
 			) }

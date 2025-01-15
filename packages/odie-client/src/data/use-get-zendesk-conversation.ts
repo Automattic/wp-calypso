@@ -1,5 +1,6 @@
 import Smooch from 'smooch';
 import { zendeskMessageConverter } from '../utils';
+import { useGetUnreadConversations } from './use-get-unread-conversations';
 import type { ZendeskMessage } from '../types';
 
 const parseResponse = ( conversation: Conversation ) => {
@@ -18,36 +19,44 @@ const parseResponse = ( conversation: Conversation ) => {
 /**
  * Get the conversation for the Zendesk conversation.
  */
-export const getZendeskConversation = ( {
-	chatId,
-	conversationId,
-}: {
-	chatId?: number | string | null;
-	conversationId?: string;
-} ) => {
-	if ( ! chatId && ! conversationId ) {
-		return null;
-	}
+export const useGetZendeskConversation = () => {
+	const getUnreadNotifications = useGetUnreadConversations();
 
-	const conversation = Smooch.getConversations().find( ( conversation ) => {
-		if ( conversationId ) {
-			return conversation.id === conversationId;
-		} else if ( chatId ) {
-			return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
-		}
+	return useCallback(
+		( {
+			chatId,
+			conversationId,
+		}: {
+			chatId: number | string | null | undefined;
+			conversationId?: string | null | undefined;
+		} ) => {
+			if ( ! chatId && ! conversationId ) {
+				return null;
+			}
 
-		return false;
-	} );
+			const conversation = Smooch.getConversations().find( ( conversation ) => {
+				if ( conversationId ) {
+					return conversation.id === conversationId;
+				} else if ( chatId ) {
+					return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
+				}
 
-	if ( ! conversation ) {
-		return null;
-	}
+				return false;
+			} );
 
-	// We need to ensure that more than one message is loaded
-	return Smooch.getConversationById( conversation.id || conversationId )
-		.then( ( conversation ) => {
-			Smooch.markAllAsRead( conversation.id );
-			return parseResponse( conversation );
-		} )
-		.catch( () => parseResponse( conversation ) );
+			if ( ! conversation ) {
+				return null;
+			}
+
+			// We need to ensure that more than one message is loaded
+			return Smooch.getConversationById( conversation.id || conversationId )
+				.then( ( conversation ) => {
+					Smooch.markAllAsRead( conversation.id );
+					getUnreadNotifications();
+					return parseResponse( conversation );
+				} )
+				.catch( () => parseResponse( conversation ) );
+		},
+		[ getUnreadNotifications ]
+	);
 };

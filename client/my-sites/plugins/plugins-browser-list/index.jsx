@@ -119,6 +119,7 @@ const PluginsBrowserList = ( {
 					resultCount={ resultCount }
 					browseAllLink={ browseAllLink }
 					listName={ listName }
+					isRootPage={ listType !== 'browse' }
 				/>
 			) }
 			{ listName === 'paid' && (

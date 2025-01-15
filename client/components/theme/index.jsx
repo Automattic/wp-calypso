@@ -204,6 +204,7 @@ export class Theme extends Component {
 
 		return (
 			<img
+				loading="lazy"
 				alt={ isScreenshotLoaded ? decodeEntities( description ) : '' }
 				className="theme__img"
 				src={ themeImgSrc }
@@ -339,8 +340,7 @@ export class Theme extends Component {
 
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
-		const { name, description, style_variations = [], isCustomGeneratedTheme } = theme;
-		const themeDescription = decodeEntities( description );
+		const { name, style_variations = [] } = theme;
 
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
@@ -350,7 +350,6 @@ export class Theme extends Component {
 			<ThemeCard
 				ref={ this.props.bookmarkRef }
 				name={ name }
-				description={ themeDescription }
 				image={ this.renderScreenshot() }
 				imageClickUrl={ this.props.screenshotClickUrl }
 				imageActionLabel={ this.props.actionLabel }
@@ -362,7 +361,6 @@ export class Theme extends Component {
 				isActive={ this.props.active }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
-				isShowDescriptionOnImageHover={ ! isCustomGeneratedTheme }
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }

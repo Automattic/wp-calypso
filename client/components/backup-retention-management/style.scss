@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .backup-retention-management {
+	--color-accent: var(--studio-jetpack-green-50);
 	box-sizing: border-box;
 	margin: auto;
 	margin-top: 1px;
@@ -142,41 +143,8 @@
 			color: var(--studio-gray-80);
 		}
 
-		&__headline	.headline__input {
-			-webkit-appearance: none;
-			appearance: none;
-			margin: 0;
-			padding: 0;
-			width: 20px;
-			height: 20px;
-			border-width: 1px;
-			border-color: var(--studio-gray-40);
-
-			&:focus {
-				box-shadow: none;
-			}
-
-			&::before {
-				content: none;
-			}
-
-			&::after {
-				content: "";
-				display: block;
-				border-radius: 50%;
-				width: 10px;
-				height: 10px;
-				margin: 1px;
-			}
-
-			&:checked {
-				&::after {
-					border: 3px solid #fff;
-				}
-
-				border-color: var(--studio-jetpack-green-50);
-				background: var(--studio-jetpack-green-50);
-			}
+		&__headline .components-radio-control__input[type="radio"]:focus {
+			box-shadow: none;
 		}
 
 		&__space-needed {

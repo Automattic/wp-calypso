@@ -60,6 +60,10 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 		}
 	};
 
+	if ( ! isSiteAtomic ) {
+		return null;
+	}
+
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 	return (
 		<Panel wide className="github-deployments tools-deployments">

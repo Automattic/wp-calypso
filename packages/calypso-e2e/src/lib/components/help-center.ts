@@ -57,6 +57,7 @@ export class HelpCenterComponent {
 			await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
 		}
 
+		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
 		await this.popup.waitFor( { state: 'visible' } );
 	}
 
@@ -95,10 +96,25 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Maximizes the support popover.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async maximizePopover(): Promise< void > {
+		const maximizeButton = await this.popup.getByRole( 'button', {
+			name: 'Maximize Help Center',
+			exact: true,
+		} );
+
+		await maximizeButton.click();
+		await this.popup.locator( '.help-center__container-content' ).waitFor( { state: 'visible' } );
+	}
+
+	/**
 	 * Go back to the previous page.
 	 */
 	async goBack(): Promise< void > {
-		await this.popup.locator( 'span.back-button__help-center' ).click();
+		await this.popup.getByTestId( 'help-center-back-button' ).click();
 	}
 
 	/**

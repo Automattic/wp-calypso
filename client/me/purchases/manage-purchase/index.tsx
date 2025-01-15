@@ -288,7 +288,9 @@ class ManagePurchase extends Component<
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 		const isSitelessRenewal =
-			isAkismetTemporarySitePurchase( purchase ) || isMarketplaceTemporarySitePurchase( purchase );
+			purchase &&
+			( isAkismetTemporarySitePurchase( purchase ) ||
+				isMarketplaceTemporarySitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
@@ -671,6 +673,23 @@ class ManagePurchase extends Component<
 		return null;
 	}
 
+	renderRefundText() {
+		const { purchase, translate } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		// Hide if refund window has lapsed.
+		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
+			return;
+		}
+
+		return (
+			<span className="manage-purchase__refund-text">{ translate( 'Refund available' ) }</span>
+		);
+	}
+
 	renderRemovePurchaseNavItem() {
 		const {
 			hasLoadedSites,
@@ -719,6 +738,7 @@ class ManagePurchase extends Component<
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
+				{ this.renderRefundText() }
 			</RemovePurchase>
 		);
 	}
@@ -923,6 +943,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
@@ -1638,7 +1659,6 @@ const WrappedManagePurchase = (
 		planSlugs: [ relatedMonthlyPlanSlug as PlanSlug ],
 		siteId,
 		coupon: undefined,
-		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
@@ -1692,10 +1712,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 		),
-		hasCompletedCancelPurchaseSurvey: getPreference(
-			state,
-			getCancelPurchaseSurveyCompletedPreferenceKey( purchase?.id )
-		),
+		hasCompletedCancelPurchaseSurvey: purchase
+			? getPreference( state, getCancelPurchaseSurveyCompletedPreferenceKey( purchase.id ) )
+			: false,
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,
