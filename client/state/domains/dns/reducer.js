@@ -219,6 +219,7 @@ export default function reducer( state = {}, action ) {
 			break;
 		case DOMAINS_DNS_UPDATE:
 			state = updateDomainState( state, action.domainName, {
+				isSubmittingForm: true,
 				isFetching: true,
 			} );
 			break;
@@ -227,11 +228,13 @@ export default function reducer( state = {}, action ) {
 				records: action.records,
 				isFetching: false,
 				hasLoadedFromServer: true,
+				isSubmittingForm: false,
 			} );
 			break;
 		case DOMAINS_DNS_UPDATE_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
+				isSubmittingForm: false,
 			} );
 			break;
 	}

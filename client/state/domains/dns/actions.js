@@ -85,7 +85,7 @@ export const applyDnsTemplate = ( domainName, provider, service, variables ) => 
 
 export const updateDns =
 	( domainName, recordsToAdd, recordsToRemove, restoreDefaultARecords ) => ( dispatch ) => {
-		dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
+		dispatch( { type: DOMAINS_DNS_UPDATE, domainName, recordsToAdd, recordsToRemove } );
 
 		const updateResult = updateDnsRequest( domainName, {
 			records_to_add: recordsToAdd,
