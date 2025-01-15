@@ -1,6 +1,21 @@
 import JetpackUpsellCard from '..';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export default { title: 'packages/components/Jetpack Upsell Card' };
+const meta: Meta< typeof JetpackUpsellCard > = {
+	title: 'packages/components/Jetpack Upsell Card',
+	component: JetpackUpsellCard,
+	decorators: [
+		( Story ) => (
+			<div
+				className="jetpack-upsell-section-story"
+				style={ { margin: 'auto', maxWidth: '1000px' } }
+			>
+				<Story />
+			</div>
+		),
+	],
+};
+export default meta;
 
 const upgradeUrls = {
 	backup: 'https://jetpack.com',
@@ -10,17 +25,29 @@ const upgradeUrls = {
 	social: 'https://jetpack.com',
 	video: 'https://jetpack.com',
 };
-const UpsellSection = ( props: any ) => (
-	<div className="jetpack-upsell-section-story" style={ { margin: 'auto', maxWidth: '1000px' } }>
-		<JetpackUpsellCard purchasedProducts={ [] } upgradeUrls={ upgradeUrls } { ...props } />
-	</div>
-);
 
-export const Default = () => <UpsellSection />;
-export const WithACustomSiteSlug = () => <UpsellSection siteSlug="YourCustomDomain.com" />;
-export const WithNoUpgradeUrls = () => (
-	<>
-		<UpsellSection upgradeUrls={ {} } />
-		<p>Nothing should be rendered for this story.</p>
-	</>
-);
+export const Default: StoryObj< typeof JetpackUpsellCard > = {
+	args: {
+		purchasedProducts: [],
+		upgradeUrls,
+	},
+};
+export const WithACustomSiteSlug: StoryObj< typeof JetpackUpsellCard > = {
+	args: {
+		...Default.args,
+		siteSlug: 'YourCustomDomain.com',
+	},
+};
+
+export const WithNoUpgradeUrls: StoryObj< typeof JetpackUpsellCard > = {
+	render: ( props ) => (
+		<>
+			<JetpackUpsellCard { ...props } />
+			<p>Nothing should be rendered for this story.</p>
+		</>
+	),
+	args: {
+		...Default.args,
+		upgradeUrls: {},
+	},
+};
