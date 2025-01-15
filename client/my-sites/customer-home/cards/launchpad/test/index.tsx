@@ -3,8 +3,8 @@
  */
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import apiFetch from '@wordpress/api-fetch';
 import React from 'react';
+import wpcom from 'calypso/lib/wp';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHomeLaunchPad from '../';
@@ -39,14 +39,12 @@ const initialState = {
 	},
 };
 
-// Due to an unknown issue, the following mock is required to <prevent> the following error:
-// TypeError: (0 , _wpcomProxyRequest.canAccessWpcomApis) is not a function
-// Probably there is a test leaking a mock or something like that.
-jest.mock( 'wpcom-proxy-request', () => ( {
-	...jest.requireActual( 'wpcom-proxy-request' ),
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: {
+		get: jest.fn(),
+		put: jest.fn(),
+	},
 } ) );
-
-jest.mock( '@wordpress/api-fetch' );
 
 const render = ( el ) => {
 	return renderWithProvider( el, {
@@ -55,7 +53,7 @@ const render = ( el ) => {
 	} );
 };
 
-const DEFAULT_TAKS_RESPONSE = {
+const DEFAULT_TASKS_RESPONSE = {
 	site_intent: 'build',
 	launchpad_screen: 'off',
 	checklist_statuses: {
@@ -94,7 +92,7 @@ const DEFAULT_TAKS_RESPONSE = {
 
 describe( 'CustomerHomeLaunchPad', () => {
 	beforeAll( () => {
-		jest.mocked( apiFetch ).mockResolvedValue( DEFAULT_TAKS_RESPONSE );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( DEFAULT_TASKS_RESPONSE );
 	} );
 
 	it( 'renders the launchpad title', async () => {
@@ -126,10 +124,10 @@ describe( 'CustomerHomeLaunchPad', () => {
 	describe( 'when the launchpad was previously dismissed', () => {
 		it( "doesn't renders the launchpad", () => {
 			const data = {
-				...DEFAULT_TAKS_RESPONSE,
+				...DEFAULT_TASKS_RESPONSE,
 				is_dismissable: true,
 			};
-			jest.mocked( apiFetch ).mockResolvedValueOnce( data );
+			jest.mocked( wpcom.req.get ).mockResolvedValueOnce( data );
 
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
@@ -139,7 +137,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 
 	describe( 'when all tasks are completed', () => {
 		const data = {
-			...DEFAULT_TAKS_RESPONSE,
+			...DEFAULT_TASKS_RESPONSE,
 			checklist: [
 				{
 					id: 'setup_general',
@@ -155,7 +153,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		};
 
 		beforeEach( () => {
-			jest.mocked( apiFetch ).mockResolvedValueOnce( data );
+			jest.mocked( wpcom.req.get ).mockResolvedValueOnce( data );
 		} );
 
 		it( "doesn't renders skip button", async () => {
@@ -182,12 +180,12 @@ describe( 'CustomerHomeLaunchPad', () => {
 
 	describe( 'when the launchpad is NOT dismissible', () => {
 		const dismissibleTask = {
-			...DEFAULT_TAKS_RESPONSE,
+			...DEFAULT_TASKS_RESPONSE,
 			is_dismissed: false,
 		};
 
 		beforeAll( () => {
-			jest.mocked( apiFetch ).mockResolvedValue( dismissibleTask );
+			jest.mocked( wpcom.req.get ).mockResolvedValue( dismissibleTask );
 		} );
 
 		it( 'renders the dismiss settings menu when the tasks are not completed', () => {

@@ -29,9 +29,8 @@ const CustomerHomeLaunchpad = ( { checklistSlug, onSiteLaunched }: CustomerHomeL
 
 	const { mutate: dismiss } = useLaunchpadDismisser( wpcom, siteSlug, checklistSlug );
 
-	const {
-		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
-	} = useSortedLaunchpadTasks( wpcom, siteSlug, checklistSlug, launchpadContext );
+	const { data } = useSortedLaunchpadTasks( wpcom, siteSlug, checklistSlug, launchpadContext );
+	const { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title } = data;
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
