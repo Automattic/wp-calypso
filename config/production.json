@@ -85,7 +85,6 @@
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
-		"launchpad/navigator": false,
 		"launchpad/new-task-definition-parser": true,
 		"launchpad/new-task-definition-parser/free": true,
 		"launchpad/new-task-definition-parser/start-writing": true,

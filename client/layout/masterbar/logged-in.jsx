@@ -552,14 +552,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderLaunchpadNavigator() {
-		if ( config.isEnabled( 'launchpad/navigator' ) ) {
-			return <AsyncLoad require="./masterbar-launchpad-navigator" />;
-		}
-
-		return null;
-	}
-
 	renderBackHomeButton() {
 		const { translate } = this.props;
 
@@ -611,7 +603,6 @@ class MasterbarLoggedIn extends Component {
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
-					{ this.renderLaunchpadNavigator() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
