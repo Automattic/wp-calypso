@@ -110,13 +110,13 @@ const PluginsDashboard = ( {
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
 	);
-	const dotcomPlugins = useWPCOMPluginsList( 'all' );
+	const { data: dotComPlugins }: { data: Plugin[] | undefined } = useWPCOMPluginsList( 'all' );
 	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
 		( plugin: Plugin ) => {
 			const pluginData = wporgPlugins?.[ plugin.slug ];
-			let dotComPluginData = {};
-			if ( dotcomPlugins.data ) {
-				dotComPluginData = dotcomPlugins.data.find(
+			let dotComPluginData: Plugin | undefined;
+			if ( dotComPlugins ) {
+				dotComPluginData = dotComPlugins.find(
 					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
 				);
 			}
