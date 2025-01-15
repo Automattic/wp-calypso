@@ -34,6 +34,8 @@ type WordAdSettings = {
 		enable_header_ad: boolean;
 		second_belowpost: boolean;
 		inline_enabled: boolean;
+		bottom_sticky_enabled: boolean;
+		sidebar_sticky_right_enabled: boolean;
 		sidebar: boolean;
 		display_archive: boolean;
 	};

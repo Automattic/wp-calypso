@@ -38,6 +38,8 @@ export const getWordadsSettings = createSelector(
 					enable_header_ad: siteSettings.enable_header_ad,
 					second_belowpost: siteSettings.wordads_second_belowpost,
 					inline_enabled: siteSettings.wordads_inline_enabled,
+					bottom_sticky_enabled: siteSettings.wordads_bottom_sticky_enabled,
+					sidebar_sticky_right_enabled: siteSettings.wordads_sidebar_sticky_right_enabled,
 				},
 				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
 				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,

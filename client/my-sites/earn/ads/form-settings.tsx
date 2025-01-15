@@ -37,6 +37,8 @@ type DisplayOptions = {
 	enable_header_ad?: boolean;
 	second_belowpost?: boolean;
 	inline_enabled?: boolean;
+	bottom_sticky_enabled?: boolean;
+	sidebar_sticky_right_enabled?: boolean;
 	sidebar?: boolean;
 };
 
@@ -270,6 +272,18 @@ const AdsFormSettings = () => {
 							label={ translate( 'Inline within post content' ) }
 						/>
 					) }
+					<ToggleControl
+						checked={ !! settings.display_options?.bottom_sticky_enabled }
+						disabled={ isDisabled }
+						onChange={ () => handleDisplayToggle( 'bottom_sticky_enabled' ) }
+						label={ translate( 'Stick to bottom of the page' ) }
+					/>
+					<ToggleControl
+						checked={ !! settings.display_options?.sidebar_sticky_right_enabled }
+						disabled={ isDisabled }
+						onChange={ () => handleDisplayToggle( 'sidebar_sticky_right_enabled' ) }
+						label={ translate( 'Stick to right side of the page' ) }
+					/>
 					{ ! siteIsJetpack && (
 						<ToggleControl
 							checked={ !! settings.display_options?.sidebar }
