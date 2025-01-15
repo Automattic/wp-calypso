@@ -1,0 +1,64 @@
+$font-family-headings: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-family-body: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-family-mono: Menlo, Consolas, monaco, monospace;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+
+$font-line-height-x-small: 16px;
+$font-line-height-small: 20px;
+$font-line-height-medium: 24px;
+$font-line-height-large: 28px;
+$font-line-height-x-large: 32px;
+$font-line-height-2x-large: 40px;
+
+$font-size-x-small: 11px;
+$font-size-small: 12px;
+$font-size-medium: 13px;
+$font-size-large: 15px;
+$font-size-x-large: 20px;
+$font-size-2x-large: 32px;
+
+/* Heading XXL */
+@mixin heading-2x-large () {
+	font-family: $font-family-headings;
+	font-weight: $font-weight-medium;
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-2x-large;
+}
+
+@mixin heading-2x-large-rem () {
+	font-family: $font-family-headings;
+	font-weight: $font-weight-medium;
+	font-size: rem($font-size-2x-large);
+	line-height: rem($font-line-height-2x-large);
+}
+
+/* Body XL */
+@mixin body-medium () {
+	font-family: $font-family-body;
+	font-weight: $font-weight-regular;
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+}
+
+@mixin body-medium-rem () {
+	font-family: $font-family-body;
+	font-weight: $font-weight-regular;
+	font-size: rem($font-size-medium);
+	line-height: rem($font-line-height-small);
+}
+
+@mixin body-medium-unitless () {
+	font-family: $font-family-body;
+	font-weight: $font-weight-regular;
+	font-size: $font-size-medium;
+	line-height: 1.5385; // 20px ($font-line-height-small) / 13px ($font-size-medium)
+}
+
+@mixin body-medium-unitless-rounded () {
+	font-family: $font-family-body;
+	font-weight: $font-weight-regular;
+	font-size: $font-size-medium;
+	line-height: 1.54 // 20px ($font-line-height-small) / 13px ($font-size-medium)
+}

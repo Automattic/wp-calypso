@@ -23,3 +23,33 @@
 		}
 	}
 }
+
+.a4a-table {
+	th, td {
+		border: 1px solid #ddd;
+		padding: 16px;
+		vertical-align: middle;
+	}
+	.heading-2x-large {
+		@include heading-2x-large;
+	}
+
+	.heading-2x-large-rem {
+		@include heading-2x-large-rem;
+	}
+
+	.body-medium {
+		@include body-medium;
+	}
+
+	.body-medium-rem {
+		@include body-medium-rem;
+	}
+
+	.body-medium-unitless {
+		@include body-medium-unitless;
+	}
+	.body-medium-unitless-rounded {
+		@include body-medium-unitless-rounded;
+	}
+}
