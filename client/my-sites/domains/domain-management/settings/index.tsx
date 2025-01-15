@@ -507,7 +507,7 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
-	const renderContactInformationSecion = () => {
+	const renderContactInformationSection = () => {
 		if ( ! domain ) {
 			return null;
 		}
@@ -594,7 +594,7 @@ const Settings = ( {
 		} );
 	};
 
-	const renderTranferInMappedDomainSection = () => {
+	const renderTransferInMappedDomainSection = () => {
 		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) ) {
 			return null;
 		}
@@ -751,13 +751,13 @@ const Settings = ( {
 				{ renderStatusSection() }
 				{ renderGravatarSection() }
 				{ renderDetailsSection() }
-				{ renderTranferInMappedDomainSection() }
+				{ renderTransferInMappedDomainSection() }
 				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
 				{ renderForwardingSection() }
-				{ renderContactInformationSecion() }
+				{ renderContactInformationSection() }
 				{ renderContactVerificationSection() }
 				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }

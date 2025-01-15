@@ -2,10 +2,15 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.domains-overview.main .subpage-wrapper {
+.domains-overview.main .subpage-wrapper,
+.domains-overview.main .site-preview-pane.domains-overview__details {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+	.navigation-header__actions, .foldable-card__action {
+		flex-grow: initial;
+	}
 
 	.form-text-input-with-affixes .form-text-input {
 		border-radius: 2px 0 0 2px;

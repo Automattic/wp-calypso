@@ -16,6 +16,7 @@ import {
 	EMAIL_MANAGEMENT,
 } from 'calypso/my-sites/domains/domain-management/domain-overview-pane/constants';
 import {
+	DNS_RECORDS,
 	ADD_FORWARDING_EMAIL,
 	EDIT_CONTACT_INFO,
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
@@ -119,6 +120,15 @@ export default function () {
 		controllers: [
 			emailController.emailManagement,
 			domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/domain/:domain/dns/:site',
+		controllers: [
+			domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
+			domainManagementController.domainManagementDns,
+			domainManagementController.domainManagementSubpageView,
 		],
 	} );
 
