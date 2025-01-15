@@ -5,7 +5,9 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -108,10 +110,17 @@ const PluginsDashboard = ( {
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
 	);
+	const dotcomPlugins = useWPCOMPluginsList( 'all' );
 	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
 		( plugin: Plugin ) => {
 			const pluginData = wporgPlugins?.[ plugin.slug ];
-			return Object.assign( {}, plugin, pluginData ) as Plugin;
+			let dotComPluginData = {};
+			if ( dotcomPlugins.data ) {
+				dotComPluginData = dotcomPlugins.data.find(
+					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
+				);
+			}
+			return Object.assign( {}, plugin, pluginData, dotComPluginData ) as Plugin;
 		}
 	);
 	const currentPlugins = useSelector( ( state ) =>
@@ -323,6 +332,7 @@ const PluginsDashboard = ( {
 			/>
 			<QueryJetpackSitesFeatures />
 			<QueryPlugins />
+			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
