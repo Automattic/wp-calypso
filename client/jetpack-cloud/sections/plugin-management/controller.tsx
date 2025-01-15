@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
@@ -8,10 +7,8 @@ import PluginsOverview from './plugins-overview';
 const redirectIfHasNoAccess = ( context: Context ) => {
 	const state = context.store.getState();
 	const isAgency = isAgencyUser( state );
-	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
-	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
 
-	if ( ! isAgency || ! isAgencyEnabled || ! isPluginManagementEnabled ) {
+	if ( ! isAgency ) {
 		page.redirect( '/' );
 		return;
 	}

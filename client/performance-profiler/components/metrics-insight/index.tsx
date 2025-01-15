@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -112,7 +111,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		insight,
 		hash,
 		isWpcom,
-		isEnabled( 'performance-profiler/llm' ) && retrieveInsight,
+		retrieveInsight,
 		translate.localeSlug,
 		activeTab
 	);
@@ -162,14 +161,12 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
-						...( isEnabled( 'performance-profiler/llm' )
-							? { description: llmAnswer?.messages }
-							: {} ),
+						description: llmAnswer?.messages,
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
-					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
+					isLoading={ isLoadingLlmAnswer }
 					isWpscanLoading={ isWpscanLoading }
-					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
+					AIGenerated
 					hash={ hash }
 					url={ props.url }
 					chatId={ llmAnswer?.chatId }

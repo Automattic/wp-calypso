@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import debugModule from 'debug';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
@@ -50,10 +49,9 @@ export const landForPrimarySite: Callback = ( context, next ) => {
 
 	const state = context.store.getState();
 
-	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	const isAgency = isAgencyUser( state );
 	const dashboardRedirectLink = dashboardPath();
-	if ( isAgencyEnabled && isAgency ) {
+	if ( isAgency ) {
 		debug( '[landForPrimarySite]: redirecting to agency dashboard' );
 
 		page.redirect( dashboardRedirectLink );

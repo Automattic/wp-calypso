@@ -119,7 +119,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
+				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
