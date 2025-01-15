@@ -125,8 +125,8 @@ const ThemeCard = forwardRef(
 							<span>{ name }</span>
 						</h2>
 						{ ! isActive && badge && <>{ badge }</> }
-						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 						{ isActive && <ActiveBadge /> }
+						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 					</div>
 				</div>
 			</Card>
