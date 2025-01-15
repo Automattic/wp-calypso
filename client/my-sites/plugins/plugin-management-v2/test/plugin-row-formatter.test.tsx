@@ -34,7 +34,9 @@ const initialReduxState = {
 		},
 	},
 	productsList: {
-		items: {},
+		items: {
+			[ paidPlugin.slug ]: paidPlugin,
+		},
 	},
 	marketplace: {
 		billingInterval: {
