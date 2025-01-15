@@ -1,25 +1,23 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useCallback } from 'react';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
-import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
 import { preventWidows } from 'calypso/lib/formatting';
-import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
+import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
-const AddNewSiteSiteListMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) => {
+const AddNewSiteSiteListMenuItems = () => {
 	const translate = useTranslate();
-
-	const { setVisibleModalType } = useContext( AddNewSiteContext );
 
 	const pressableOwnership = usePressableOwnershipType();
 
@@ -28,14 +26,6 @@ const AddNewSiteSiteListMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsPro
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-
-	const handleOnClick = useCallback(
-		( modalType: string ) => {
-			setVisibleModalType( modalType );
-			setMenuVisible( false );
-		},
-		[ setVisibleModalType, setMenuVisible ]
-	);
 
 	return (
 		<>
@@ -60,7 +50,8 @@ const AddNewSiteSiteListMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsPro
 					) }
 					buttonProps={ {
 						onClick: () => {
-							handleOnClick( 'jetpack-connection' );
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+							page( `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` );
 						},
 					} }
 				/>
