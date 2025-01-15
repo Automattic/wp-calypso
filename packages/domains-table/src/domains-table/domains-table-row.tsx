@@ -80,6 +80,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
 	const domainManagementLink = isManageableDomain
 		? getDomainManagementLink(
 				domain,
@@ -105,8 +107,6 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
-		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
-
 		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
 			page.show( domainManagementLink );
 			return;
@@ -114,6 +114,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 		window.location.href = domainManagementLink;
 	};
+
+	const handleDomainLinkClick = ( e: MouseEvent ) =>
+		isAllDomainManagementEnabled ? e.preventDefault() : e.stopPropagation();
 
 	return (
 		<tr
@@ -156,7 +159,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<a
 									className="domains-table__domain-name"
 									href={ domainManagementLink }
-									onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+									onClick={ handleDomainLinkClick }
 								>
 									{ domain.domain }
 								</a>
