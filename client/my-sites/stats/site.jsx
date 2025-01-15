@@ -291,9 +291,11 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const appliedShortcutId = localStorage.getItem(
-				'jetpack_stats_stored_date_range_shortcut_id'
-			);
+			const appliedShortcutId =
+				localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+				// Fallback for the compatibility.
+				localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
 			const appliedShortcut = supportedShortcutList.find(
 				( shortcut ) => shortcut.id === appliedShortcutId
 			);
@@ -340,7 +342,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	useEffect( () => {
 		// Use the stored period if it's different from the current period.
-		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		const storedPeriod =
+			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
+			localStorage.getItem( 'jetpack_stats_stored_period' );
 		if (
 			hasSiteLoadedFeatures &&
 			! shouldForceDefaultPeriod &&
@@ -568,11 +572,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							{ config.isEnabled( 'stats/locations' ) ? (
 								<>
 									<StatsModuleLocations
-										path="countryviews"
 										moduleStrings={ moduleStrings.locations }
 										period={ props.period }
 										query={ query }
-										summaryUrl={ getStatHref( 'countryviews', query ) }
+										summaryUrl={ getStatHref( 'locations', query ) }
 										className={ clsx( 'stats__flexible-grid-item--full' ) }
 									/>
 								</>

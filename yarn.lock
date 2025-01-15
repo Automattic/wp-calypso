@@ -1164,7 +1164,6 @@ __metadata:
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
-    "@storybook/addon-backgrounds": "npm:^7.6.19"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/smooch": "npm:^5.3.7"
     "@wordpress/base-styles": "npm:^5.8.0"
@@ -6556,17 +6555,6 @@ __metadata:
     polished: "npm:^4.2.2"
     uuid: "npm:^9.0.0"
   checksum: 9a3b8c84088f78c7a9c2178fe0c741615e76abc89ab5a37d35fc2943c92371653a5feb6fca49ca9ed651fecbad47c50d7a8577105e6046ab5f8a433a4c5b6f13
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-backgrounds@npm:^7.6.19":
-  version: 7.6.19
-  resolution: "@storybook/addon-backgrounds@npm:7.6.19"
-  dependencies:
-    "@storybook/global": "npm:^5.0.0"
-    memoizerific: "npm:^1.11.3"
-    ts-dedent: "npm:^2.0.0"
-  checksum: 62dc38c7e36034f998d851860b5c9b2d6bc5847506ab53e63292d3a6c817847ae95e7608daad541ab120583e29213f38c038b314ea07636ee8ac12a1df5bcf63
   languageName: node
   linkType: hard
 

@@ -71,6 +71,7 @@ interface BaseDomainsTableProps {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	selectedFeature?: string;
+	isHostingOverview?: boolean;
 }
 
 export type DomainsTableProps =
@@ -128,6 +129,7 @@ type Value = {
 	isCompact: boolean;
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
+	isHostingOverview?: boolean;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -152,6 +154,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		sidebarMode = false,
 		selectedDomainName,
 		selectedFeature,
+		isHostingOverview = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -454,6 +457,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isCompact,
 		currentlySelectedDomainName: selectedDomainName,
 		selectedFeature,
+		isHostingOverview,
 	};
 
 	return value;

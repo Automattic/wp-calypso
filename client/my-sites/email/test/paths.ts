@@ -43,6 +43,11 @@ describe( 'path helper functions', () => {
 		expect( getAddEmailForwardsPath( ':site', ':domain', domainsManagementPrefix ) ).toEqual(
 			'/domains/manage/all/email/:domain/forwarding/add/:site'
 		);
+
+		const relativeTo = '/overview/site-domain/email';
+		expect( getAddEmailForwardsPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/forwarding/add/${ siteName }`
+		);
 	} );
 
 	it( 'getAddGSuiteUsersPath', () => {
@@ -135,6 +140,16 @@ describe( 'path helper functions', () => {
 		expect( getEmailManagementPath( ':site' ) ).toEqual( '/email/:site' );
 		expect( getEmailManagementPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getEmailManagementPath( null, null ) ).toEqual( '/email' );
+
+		const relativeTo = '/domains/manage/all/email';
+		expect( getEmailManagementPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/domains/manage/all/email/${ domainName }/${ siteName }`
+		);
+
+		const inSiteContext = true;
+		expect( getEmailManagementPath( siteName, domainName, relativeTo, {}, inSiteContext ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/${ siteName }`
+		);
 	} );
 
 	it( 'getForwardingPath', () => {

@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect, useState } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -481,20 +480,10 @@ const Settings = ( {
 			return null;
 		}
 
-		let translatedTitle;
-		if (
-			englishLocales.includes( getLocaleSlug() || '' ) ||
-			i18n.hasTranslation( 'Domain forwarding' )
-		) {
-			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
-		} else {
-			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
-		}
-
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translatedTitle }
+				title={ translate( 'Domain forwarding', { textOnly: true } ) }
 				subtitle={ translate( 'Forward your domain to another' ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>

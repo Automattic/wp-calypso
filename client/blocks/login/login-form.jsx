@@ -898,7 +898,10 @@ export class LoginForm extends Component {
 		);
 
 		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod && lastUsedAuthenticationMethod !== 'password' && isSocialFirst;
+			lastUsedAuthenticationMethod &&
+			lastUsedAuthenticationMethod !== 'password' &&
+			lastUsedAuthenticationMethod !== 'magic-login' &&
+			isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
