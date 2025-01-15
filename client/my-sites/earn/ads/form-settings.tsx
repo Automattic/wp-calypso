@@ -276,13 +276,13 @@ const AdsFormSettings = () => {
 						checked={ !! settings.display_options?.bottom_sticky_enabled }
 						disabled={ isDisabled }
 						onChange={ () => handleDisplayToggle( 'bottom_sticky_enabled' ) }
-						label={ translate( 'Stick to bottom of the page' ) }
+						label={ translate( 'Stick to the bottom of each page' ) }
 					/>
 					<ToggleControl
 						checked={ !! settings.display_options?.sidebar_sticky_right_enabled }
 						disabled={ isDisabled }
 						onChange={ () => handleDisplayToggle( 'sidebar_sticky_right_enabled' ) }
-						label={ translate( 'Stick to right side of the page' ) }
+						label={ translate( 'Stick to the right side of each page' ) }
 					/>
 					{ ! siteIsJetpack && (
 						<ToggleControl
