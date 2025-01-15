@@ -37,12 +37,14 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	canConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
+	experimentVariationName: null,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
 	odieBroadcastClientId: '',
 	setChat: noop,
 	setChatStatus: noop,
+	setExperimentVariationName: noop,
 	setMessageLikedStatus: noop,
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
@@ -83,6 +85,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 			isChatLoaded: store.getIsChatLoaded(),
 		};
 	}, [] );
+
+	const [ experimentVariationName, setExperimentVariationName ] = useState<
+		string | null | undefined
+	>( null );
 
 	/**
 	 * The main chat thread.
@@ -176,6 +182,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				extraContactOptions,
 				isChatLoaded,
 				isMinimized,
+				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
 				odieBroadcastClientId,
@@ -183,6 +190,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				selectedSiteURL,
 				userFieldMessage,
 				setChatStatus,
+				setExperimentVariationName,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
 				trackEvent,

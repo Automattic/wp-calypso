@@ -34,8 +34,15 @@ export const useSendOdieMessage = () => {
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
 
-	const { botNameSlug, selectedSiteId, version, setChat, odieBroadcastClientId, setChatStatus } =
-		useOdieAssistantContext();
+	const {
+		botNameSlug,
+		selectedSiteId,
+		version,
+		setChat,
+		odieBroadcastClientId,
+		setChatStatus,
+		setExperimentVariationName,
+	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
 		setChat( ( prevChat ) => ( {
@@ -111,7 +118,7 @@ export const useSendOdieMessage = () => {
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
-
+			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( botMessage, { odieId: returnedChat.chat_id } );
 			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},
