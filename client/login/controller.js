@@ -318,10 +318,6 @@ export function redirectLostPassword( context, next ) {
 		return;
 	}
 
-	/**
-	 * The redirect_to URI will be set if it's WooCommerce.
-	 */
-
 	const exclusions = [ 'blazepro.tumblr.com', 'woocommerce.com' ];
 
 	if (
