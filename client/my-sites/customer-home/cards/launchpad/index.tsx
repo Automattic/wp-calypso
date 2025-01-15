@@ -7,9 +7,9 @@ import {
 import { Launchpad, type Task } from '@automattic/launchpad';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -21,20 +21,17 @@ interface CustomerHomeLaunchpadProps {
 	onSiteLaunched?: () => void;
 }
 
-const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
-	checklistSlug,
-	onSiteLaunched,
-}: CustomerHomeLaunchpadProps ) => {
+const CustomerHomeLaunchpad = ( { checklistSlug, onSiteLaunched }: CustomerHomeLaunchpadProps ) => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
-	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug );
+	const { mutate: dismiss } = useLaunchpadDismisser( wpcom, siteSlug, checklistSlug );
 
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	} = useSortedLaunchpadTasks( wpcom, siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
@@ -100,6 +97,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 				) }
 			</div>
 			<Launchpad
+				wpcom={ wpcom }
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }

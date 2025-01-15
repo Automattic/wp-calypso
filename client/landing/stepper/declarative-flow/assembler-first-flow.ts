@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -171,7 +172,7 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( wpcom, siteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
@@ -179,7 +180,7 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'domains': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( wpcom, siteId, {
 						checklist_statuses: { domain_upsell_deferred: true },
 					} );
 

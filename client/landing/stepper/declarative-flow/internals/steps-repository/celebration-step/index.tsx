@@ -8,6 +8,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import SitePreview from '../../components/site-preview';
 import useCelebrationData from './use-celebration-data';
 import type { Step } from '../../types';
@@ -28,7 +29,7 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 
 	const {
 		data: { checklist_statuses: checklistStatuses },
-	} = useLaunchpad( siteSlug );
+	} = useLaunchpad( wpcom, siteSlug );
 
 	const {
 		title,

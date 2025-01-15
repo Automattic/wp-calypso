@@ -50,6 +50,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import {
@@ -632,7 +633,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setSelectedDesign( _selectedDesign );
 
 		if ( siteSlugOrId ) {
-			await updateLaunchpadSettings( siteSlugOrId, {
+			await updateLaunchpadSettings( wpcom, siteSlugOrId, {
 				checklist_statuses: { design_completed: true },
 			} );
 		}

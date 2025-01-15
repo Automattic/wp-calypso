@@ -6,7 +6,6 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -143,6 +142,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 };
 
 export const createSiteWithCart = async (
+	wpcom: any,
 	flowName: string,
 	userIsLoggedIn: boolean,
 	isPurchasingDomainItem: boolean,
@@ -189,10 +189,9 @@ export const createSiteWithCart = async (
 	const segmentationSurveyAnswersAnonId = localStorage.getItem( 'ss-anon-id' );
 	localStorage.removeItem( 'ss-anon-id' );
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post( {
 		path: '/sites/new',
 		apiVersion: '1.1',
-		method: 'POST',
 		body: {
 			...newSiteParams,
 			locale,
@@ -225,12 +224,13 @@ export const createSiteWithCart = async (
 	};
 
 	if ( isTailoredSignupFlow( flowName ) || HUNDRED_YEAR_PLAN_FLOW === flowName ) {
-		await setupSiteAfterCreation( { siteId, flowName } );
+		await setupSiteAfterCreation( { wpcom, siteId, flowName } );
 	}
 
 	if ( domainCartItems.length ) {
 		for ( const domainCartItem of domainCartItems ) {
 			await processItemCart(
+				wpcom,
 				siteSlug,
 				isFreeThemePreselected,
 				themeSlugWithRepo,
@@ -256,6 +256,7 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 }
 
 export async function addPlanToCart(
+	wpcom: any,
 	siteSlug: string,
 	flowName: string,
 	userIsLoggedIn: boolean,
@@ -270,6 +271,7 @@ export async function addPlanToCart(
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	await processItemCart(
+		wpcom,
 		siteSlug,
 		isFreeThemePreselected,
 		themeSlugWithRepo,
@@ -349,6 +351,7 @@ export async function addProductsToCart(
 }
 
 export async function setThemeOnSite(
+	wpcom: any,
 	siteSlug: string,
 	themeSlugWithRepo: string,
 	themeStyleVariation?: string
@@ -360,9 +363,8 @@ export async function setThemeOnSite(
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	try {
-		await wpcomRequest( {
+		await wpcom.req.post( {
 			path: `/sites/${ siteSlug }/themes/mine`,
-			method: 'POST',
 			apiVersion: '1.1',
 			body: {
 				theme,
@@ -375,6 +377,7 @@ export async function setThemeOnSite(
 }
 
 async function processItemCart(
+	wpcom: any,
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,
@@ -383,10 +386,10 @@ async function processItemCart(
 	newCartItem?: MinimalRequestCartProduct
 ) {
 	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
-		await setThemeOnSite( siteSlug, themeSlugWithRepo );
+		await setThemeOnSite( wpcom, siteSlug, themeSlugWithRepo );
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
-		await setThemeOnSite( siteSlug, themeSlugWithRepo );
+		await setThemeOnSite( wpcom, siteSlug, themeSlugWithRepo );
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else {
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );

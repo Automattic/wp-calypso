@@ -1358,7 +1358,6 @@ __metadata:
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.97.1"
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.8.0
     "@wordpress/element": ^6.8.0

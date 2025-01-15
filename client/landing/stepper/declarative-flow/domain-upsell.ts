@@ -2,6 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings, useLaunchpad } from '@automatti
 import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp';
 import { useQuery } from '../hooks/use-query';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -37,7 +38,10 @@ const domainUpsell: Flow = {
 			[]
 		);
 		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
-		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
+		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad(
+			wpcom,
+			siteSlug
+		);
 
 		const returnUrl =
 			launchpadScreenOption === 'skipped'
@@ -61,7 +65,7 @@ const domainUpsell: Flow = {
 						try {
 							const siteIdentifier = siteSlug || siteId;
 							if ( siteIdentifier ) {
-								await updateLaunchpadSettings( siteIdentifier, {
+								await updateLaunchpadSettings( wpcom, siteIdentifier, {
 									checklist_statuses: { domain_upsell_deferred: true },
 								} );
 							}
@@ -77,7 +81,7 @@ const domainUpsell: Flow = {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
 						if ( planCartItem && siteSlug && flowName ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+							await addPlanToCart( wpcom, siteSlug, flowName, true, '', planCartItem );
 						}
 
 						if ( domainCartItem && siteSlug && flowName ) {

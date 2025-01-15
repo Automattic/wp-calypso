@@ -10,6 +10,7 @@ import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import wpcom from 'calypso/lib/wp';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { useSelector } from 'calypso/state';
 import {
@@ -159,7 +160,7 @@ export const SftpForm = ( {
 		setIsLoading( true );
 		dispatch( createSftpUser( siteId, currentUserId ) );
 		if ( 'host-site' === siteIntent ) {
-			updateLaunchpadSettings( siteId, {
+			updateLaunchpadSettings( wpcom, siteId, {
 				checklist_statuses: { setup_ssh: true },
 			} );
 		}

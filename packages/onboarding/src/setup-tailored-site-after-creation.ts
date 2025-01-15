@@ -7,7 +7,6 @@ import {
 	updateLaunchpadSettings,
 } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
@@ -43,11 +42,12 @@ export const base64ImageToBlob = ( base64String: string ) => {
 };
 
 interface SetupOnboardingSiteOptions {
+	wpcom: any;
 	siteId: number;
 	flowName: string | null;
 }
 
-export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
+export function setupSiteAfterCreation( { wpcom, siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
 	const goals = ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals();
 	const selectedDesign = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign();
@@ -78,17 +78,19 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 				if ( selectedDesign && selectedDesign.is_virtual ) {
 					const { assembleSite } = dispatch( SITE_STORE ) as SiteActions;
 					promises.push(
-						wpcomRequest< ActiveTheme[] >( {
-							path: `/sites/${ encodeURIComponent( siteId ) }/themes?status=active`,
-							apiNamespace: 'wp/v2',
-						} ).then( ( activeThemes ) => {
-							assembleSite( String( siteId ), activeThemes[ 0 ].stylesheet, {
-								homeHtml: selectedDesign.recipe?.pattern_html,
-								headerHtml: selectedDesign.recipe?.header_html,
-								footerHtml: selectedDesign.recipe?.footer_html,
-								siteSetupOption: 'assembler-virtual-theme',
-							} );
-						} )
+						wpcom.req
+							.get( {
+								path: `/sites/${ encodeURIComponent( siteId ) }/themes?status=active`,
+								apiNamespace: 'wp/v2',
+							} )
+							.then( ( activeThemes: ActiveTheme[] ) => {
+								assembleSite( String( siteId ), activeThemes[ 0 ].stylesheet, {
+									homeHtml: selectedDesign.recipe?.pattern_html,
+									headerHtml: selectedDesign.recipe?.header_html,
+									footerHtml: selectedDesign.recipe?.footer_html,
+									siteSetupOption: 'assembler-virtual-theme',
+								} );
+							} )
 					);
 				}
 			} else {
@@ -113,30 +115,30 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		}
 
 		promises.push(
-			wpcomRequest< { updated: object } >( {
-				path: `/sites/${ siteId }/onboarding-customization`,
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
-				formData,
-			} ).then( () => {
-				recordTracksEvent( 'calypso_signup_site_options_submit', {
-					has_site_title: !! siteTitle,
-					has_tagline: !! siteDescription,
-				} );
-				/**
-				 * We need to wait the site being created, then go to checkout and wait for the user
-				 * to buy the plan before we can set a premium theme to the site. If we reset the store
-				 * here we loose this information.
-				 */
-				// resetOnboardStore();
-			} )
+			wpcom.req
+				.post( {
+					path: `/sites/${ siteId }/onboarding-customization`,
+					apiNamespace: 'wpcom/v2',
+					formData,
+				} )
+				.then( () => {
+					recordTracksEvent( 'calypso_signup_site_options_submit', {
+						has_site_title: !! siteTitle,
+						has_tagline: !! siteDescription,
+					} );
+					/**
+					 * We need to wait the site being created, then go to checkout and wait for the user
+					 * to buy the plan before we can set a premium theme to the site. If we reset the store
+					 * here we loose this information.
+					 */
+					// resetOnboardStore();
+				} )
 		);
 
 		if ( isFreeFlow( flowName ) ) {
 			if ( siteTitle || siteDescription || siteLogo ) {
 				promises.push(
-					updateLaunchpadSettings( siteId, {
+					updateLaunchpadSettings( wpcom, siteId, {
 						checklist_statuses: { setup_free: true },
 					} )
 				);

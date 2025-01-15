@@ -1,5 +1,6 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -9,7 +10,7 @@ const useSubscriberLaunchpadTasks = () => {
 
 	const {
 		data: { checklist },
-	} = useLaunchpad( site?.slug ?? null, checklistSlug );
+	} = useLaunchpad( wpcom, site?.slug ?? null, checklistSlug );
 
 	// We can alter the tasks here, keeping this in for future use
 	const taskFilter = ( tasks: Task[] ): Task[] => {

@@ -13,6 +13,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import wpcom from 'calypso/lib/wp';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
@@ -108,7 +109,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				return setDesignOnSite( site?.ID, defaultDesign, {
 					styleVariation: defaultDesign?.style_variations?.[ 0 ],
 				} ).then( async ( theme: ActiveTheme ) => {
-					await updateLaunchpadSettings( site?.ID || '', {
+					await updateLaunchpadSettings( wpcom, site?.ID || '', {
 						checklist_statuses: { design_completed: false },
 					} );
 					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );

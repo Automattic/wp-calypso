@@ -11,6 +11,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { getSiteIdOrSlug } from '../../task-helper';
 import { recordGlobalStylesGattingPlanSelectedResetStylesEvent } from '../../tracking';
@@ -102,7 +103,7 @@ const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
 //TODO: Move the updateLaunchpadSettings to be a hoook and use queryclient to invalidate the hook.
 const completePaidNewsletterTask = async ( siteSlug: string | null, queryClient: QueryClient ) => {
 	if ( siteSlug ) {
-		await updateLaunchpadSettings( siteSlug, {
+		await updateLaunchpadSettings( wpcom, siteSlug, {
 			checklist_statuses: { newsletter_plan_created: true },
 		} );
 		queryClient?.invalidateQueries( { queryKey: [ 'launchpad' ] } );

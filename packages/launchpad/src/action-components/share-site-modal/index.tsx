@@ -10,11 +10,12 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface ShareSiteModalProps {
+	wpcom: any;
 	setModalIsOpen: ( isOpen: boolean ) => void;
 	site: SiteDetails | null;
 }
 
-const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
+const ShareSiteModal = ( { wpcom, setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const queryClient = useQueryClient();
 	const getSiteSlug = ( site: SiteDetails | null ): string | null => {
 		if ( ! site ) {
@@ -38,7 +39,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ siteSlug }` );
 		if ( siteSlug ) {
-			await updateLaunchpadSettings( siteSlug, {
+			await updateLaunchpadSettings( wpcom, siteSlug, {
 				checklist_statuses: { share_site: true },
 			} );
 		}

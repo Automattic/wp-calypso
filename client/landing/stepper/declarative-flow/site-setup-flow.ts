@@ -12,6 +12,7 @@ import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-b
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
@@ -729,7 +730,7 @@ const siteSetupFlow: Flow = {
 
 				// Complete the "Select a design" task only when there is a selected design.
 				const design_completed = selectedDesign?.default ? false : true;
-				await updateLaunchpadSettings( siteSlugOrId, {
+				await updateLaunchpadSettings( wpcom, siteSlugOrId, {
 					checklist_statuses: { design_completed },
 				} );
 
@@ -759,7 +760,7 @@ const siteSetupFlow: Flow = {
 				} )
 					.then( async ( theme: ActiveTheme ) => {
 						const design_completed = selectedDesign?.default ? false : true;
-						await updateLaunchpadSettings( siteSlugOrId, {
+						await updateLaunchpadSettings( wpcom, siteSlugOrId, {
 							checklist_statuses: { design_completed },
 						} );
 						return dispatch( setActiveTheme( siteId, theme ) );

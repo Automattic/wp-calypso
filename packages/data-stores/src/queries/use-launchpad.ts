@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -62,25 +61,22 @@ export type UseLaunchpadOptions = {
 };
 
 export const fetchLaunchpad = (
+	wpcom: any,
 	siteSlug: SiteSlug,
 	checklistSlug?: string | null,
 	launchpadContext?: string
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
-	const checklistSlugEncoded = checklistSlug ? encodeURIComponent( checklistSlug ) : null;
-	const launchpadContextEncoded = launchpadContext ? encodeURIComponent( launchpadContext ) : null;
 	const queryArgs = {
 		_locale: 'user',
-		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
-		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
+		...( checklistSlug && { checklist_slug: encodeURIComponent( checklistSlug ) } ),
+		...( launchpadContext && { launchpad_context: encodeURIComponent( launchpadContext ) } ),
 	};
 
-	return canAccessWpcomApis()
-		? wpcomRequest( {
+	return wpcom
+		? wpcom.req.get( {
 				path: addQueryArgs( `/sites/${ slug }/launchpad`, queryArgs ),
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
-				method: 'GET',
 		  } )
 		: apiFetch( {
 				global: true,
@@ -115,6 +111,7 @@ const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
 type SiteSlug = string | number | null;
 
 export const useLaunchpad = (
+	wpcom: any,
 	siteSlug: SiteSlug,
 	checklistSlug?: string | null,
 	options?: UseLaunchpadOptions,
@@ -126,7 +123,7 @@ export const useLaunchpad = (
 	return useQuery( {
 		queryKey: key,
 		queryFn: () =>
-			fetchLaunchpad( siteSlug, checklistSlug, launchpad_context ).then( onSuccessCallback ),
+			fetchLaunchpad( wpcom, siteSlug, checklistSlug, launchpad_context ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
@@ -142,6 +139,7 @@ export const useLaunchpad = (
 };
 
 export const useSortedLaunchpadTasks = (
+	wpcom: any,
 	siteSlug: SiteSlug,
 	checklistSlug?: string | null,
 	launchpadContext?: string
@@ -150,20 +148,20 @@ export const useSortedLaunchpadTasks = (
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	};
 
-	return useLaunchpad( siteSlug, checklistSlug, launchpadOptions, launchpadContext );
+	return useLaunchpad( wpcom, siteSlug, checklistSlug, launchpadOptions, launchpadContext );
 };
 
 export const updateLaunchpadSettings = (
+	wpcom: any,
 	siteSlug: SiteSlug,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = siteSlug ? encodeURIComponent( siteSlug ) : null;
 
-	return canAccessWpcomApis()
-		? wpcomRequest( {
+	return wpcom
+		? wpcom.req.put( {
 				path: `/sites/${ slug }/launchpad`,
 				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
 				body: settings,
 		  } )
 		: apiFetch( {
@@ -203,13 +201,13 @@ const getDismissParams = ( settings: DismissSettings ) => {
 	}
 };
 
-export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
+export const useLaunchpadDismisser = ( wpcom: any, siteSlug: SiteSlug, checklistSlug: string ) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
 
 	return useMutation( {
 		mutationFn: ( settings: DismissSettings ) => {
-			return updateLaunchpadSettings( siteSlug, {
+			return updateLaunchpadSettings( wpcom, siteSlug, {
 				is_checklist_dismissed: {
 					slug: checklistSlug,
 					...getDismissParams( settings ),

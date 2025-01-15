@@ -15,6 +15,7 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import wpcom from 'calypso/lib/wp';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
@@ -152,7 +153,7 @@ const designFirst: Flow = {
 						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
-							updateLaunchpadSettings( siteSlug as string, {
+							updateLaunchpadSettings( wpcom, siteSlug as string, {
 								checklist_statuses: { design_completed: true },
 							} );
 
@@ -193,7 +194,7 @@ const designFirst: Flow = {
 				}
 				case 'domains':
 					if ( siteId ) {
-						await updateLaunchpadSettings( siteId, {
+						await updateLaunchpadSettings( wpcom, siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
@@ -205,21 +206,21 @@ const designFirst: Flow = {
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					if ( siteId ) {
-						await updateLaunchpadSettings( siteId, {
+						await updateLaunchpadSettings( wpcom, siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 					return navigate( 'plans' );
 				case 'plans':
 					if ( siteId ) {
-						await updateLaunchpadSettings( siteId, {
+						await updateLaunchpadSettings( wpcom, siteId, {
 							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':
 					if ( siteId ) {
-						await updateLaunchpadSettings( siteId, {
+						await updateLaunchpadSettings( wpcom, siteId, {
 							checklist_statuses: { setup_blog: true },
 						} );
 					}

@@ -13,6 +13,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -43,7 +44,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( launchpadKey, siteIntentOption );
+	} = useLaunchpad( wpcom, launchpadKey, siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );

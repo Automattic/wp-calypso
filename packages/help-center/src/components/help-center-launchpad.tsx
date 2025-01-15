@@ -31,7 +31,7 @@ export const HelpCenterLaunchpad = () => {
 	const siteIntent = site?.options.site_intent;
 	const siteSlug = useSiteSlug();
 
-	const { data } = useLaunchpad( siteSlug, siteIntent );
+	const { data } = useLaunchpad( null, siteSlug, siteIntent );
 	const totalLaunchpadSteps = data?.checklist?.length || 4;
 	const completeLaunchpadSteps =
 		data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
@@ -54,9 +54,7 @@ export const HelpCenterLaunchpad = () => {
 				rel="noreferrer"
 				target="_top"
 				aria-label="Link to Launchpad screen"
-				onClick={ () => {
-					handleLaunchpadHelpLinkClick();
-				} }
+				onClick={ handleLaunchpadHelpLinkClick }
 			>
 				<CircularProgressBar
 					size={ 32 }

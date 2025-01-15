@@ -15,6 +15,7 @@ import type { EventHandlers, Task } from './types';
 export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 type LaunchpadProps = {
+	wpcom: any;
 	siteSlug: string | null;
 	checklistSlug: string;
 	launchpadContext: string;
@@ -24,6 +25,7 @@ type LaunchpadProps = {
 };
 
 const Launchpad = ( {
+	wpcom,
 	siteSlug,
 	checklistSlug,
 	launchpadContext,
@@ -33,7 +35,7 @@ const Launchpad = ( {
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	} = useSortedLaunchpadTasks( wpcom, siteSlug, checklistSlug, launchpadContext );
 
 	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
 
@@ -49,6 +51,7 @@ const Launchpad = ( {
 
 	const taskFilter = ( tasks: Task[] ) => {
 		const baseTasks = setUpActionsForTasks( {
+			wpcom,
 			tasks,
 			siteSlug,
 			tracksData,
@@ -75,9 +78,10 @@ const Launchpad = ( {
 	return (
 		<>
 			{ shareSiteModalIsOpen && site && (
-				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
+				<ShareSiteModal wpcom={ wpcom } setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }
 			<LaunchpadInternal
+				wpcom={ wpcom }
 				site={ site }
 				siteSlug={ siteSlug }
 				checklistSlug={ checklistSlug }

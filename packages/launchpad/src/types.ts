@@ -69,6 +69,7 @@ export type EventHandlers = {
 };
 
 export interface LaunchpadTaskActionsProps {
+	wpcom: any;
 	siteSlug: string | null;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;

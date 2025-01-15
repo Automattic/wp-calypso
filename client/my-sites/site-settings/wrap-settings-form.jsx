@@ -10,6 +10,7 @@ import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { protectForm } from 'calypso/lib/protect-form';
 import trackForm from 'calypso/lib/track-form';
+import wpcom from 'calypso/lib/wp';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
@@ -48,12 +49,13 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			this.props.replaceFields( getFormSettings( this.props.settings, this.props ) );
 
 			// Check if site_title task is completed
-			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
-				this.setState( {
-					...this.state,
-					isSiteTitleTaskCompleted: !! checklist_statuses?.site_title,
-				} );
-			} );
+			fetchLaunchpad( wpcom, this.props.siteSlug, 'intent-build' ).then(
+				( { checklist_statuses } ) => {
+					this.setState( {
+						isSiteTitleTaskCompleted: !! checklist_statuses?.site_title,
+					} );
+				}
+			);
 		}
 
 		componentDidUpdate( prevProps ) {

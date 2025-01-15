@@ -1,5 +1,6 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { ExperimentAssignment } from '@automattic/explat-client';
+import wpcom from 'calypso/lib/wp';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
@@ -30,7 +31,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 
 	const setLaunchpadSkipState = ( siteIdOrSlug: string | number | null ) => {
 		if ( siteIdOrSlug && launchpadStateOnSkip ) {
-			updateLaunchpadSettings( siteIdOrSlug, { launchpad_screen: launchpadStateOnSkip } );
+			updateLaunchpadSettings( wpcom, siteIdOrSlug, { launchpad_screen: launchpadStateOnSkip } );
 		}
 	};
 

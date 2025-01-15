@@ -3,6 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
+import wpcom from 'calypso/lib/wp';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -38,7 +39,10 @@ const updateDesign: Flow = {
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
+		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad(
+			wpcom,
+			siteSlug
+		);
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {

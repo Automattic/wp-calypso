@@ -5,7 +5,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,6 +15,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import generateAIContentForTemplate from './api/generate-content';
 import ReadymadeTemplatePreview from './components/readymade-template-preview';
@@ -34,6 +35,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	siteSlug,
 	next = () => {},
 } ) => {
+	const translate = useTranslate();
 	const [ aiContext, setAiContext ] = useState( '' );
 	const [ numberOfGenerations, setNumberOfGenerations ] = useState( 0 );
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
@@ -44,7 +46,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	const locale = useLocale();
 
 	const markContentGenerationTaskComplete = () =>
-		updateLaunchpadSettings( siteSlug, {
+		updateLaunchpadSettings( wpcom, siteSlug, {
 			checklist_statuses: { generate_content: true },
 		} );
 

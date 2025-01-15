@@ -8,6 +8,7 @@ import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/in
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -94,7 +95,7 @@ const newsletter: Flow = {
 
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
-				await updateLaunchpadSettings( siteSlug, {
+				await updateLaunchpadSettings( wpcom, siteSlug, {
 					checklist_statuses: { subscribers_added: true },
 				} );
 			}

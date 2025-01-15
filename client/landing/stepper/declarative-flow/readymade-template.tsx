@@ -140,7 +140,7 @@ const readymadeTemplateFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( wpcom, siteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
@@ -148,7 +148,7 @@ const readymadeTemplateFlow: Flow = {
 				}
 
 				case 'domains': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( wpcom, siteId, {
 						checklist_statuses: { domain_upsell_deferred: true },
 					} );
 

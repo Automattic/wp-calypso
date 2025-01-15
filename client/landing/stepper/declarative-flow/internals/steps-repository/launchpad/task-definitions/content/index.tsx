@@ -1,10 +1,11 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { isNewsletterFlow } from '@automattic/onboarding';
+import wpcom from 'calypso/lib/wp';
 import { TaskAction } from '../../types';
 
 const completeMigrateContentTask = async ( siteSlug: string | null ) => {
 	if ( siteSlug ) {
-		await updateLaunchpadSettings( siteSlug, {
+		await updateLaunchpadSettings( wpcom, siteSlug, {
 			checklist_statuses: { migrate_content: true },
 		} );
 	}

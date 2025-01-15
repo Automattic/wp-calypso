@@ -7,6 +7,7 @@ import type { Task } from './types';
 import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
 
 interface Props {
+	wpcom: any;
 	site?: SiteDetails | null;
 	siteSlug: string | null;
 	checklistSlug: string | null;
@@ -22,6 +23,7 @@ interface Props {
  * Please use the main Launchpad component whenever possible.
  */
 const LaunchpadInternal: FC< Props > = ( {
+	wpcom,
 	flow,
 	site,
 	siteSlug,
@@ -32,6 +34,7 @@ const LaunchpadInternal: FC< Props > = ( {
 	launchpadContext,
 } ) => {
 	const launchpadData = useLaunchpad(
+		wpcom,
 		siteSlug || '',
 		checklistSlug,
 		useLaunchpadOptions,

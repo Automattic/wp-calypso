@@ -2,6 +2,7 @@ import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useState } from 'react';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import wpcom from 'calypso/lib/wp';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -44,7 +45,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 		// currently the action to update site_launch status on atomic doesn't fire
 		// this is a workaround until that is fixed
 		if ( site?.is_wpcom_atomic ) {
-			updateLaunchpadSettings( siteId, {
+			updateLaunchpadSettings( wpcom, siteId, {
 				checklist_statuses: { site_launched: true },
 			} );
 		}

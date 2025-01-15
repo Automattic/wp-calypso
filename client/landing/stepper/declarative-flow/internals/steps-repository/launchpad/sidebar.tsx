@@ -20,6 +20,7 @@ import { type NavigationControls } from 'calypso/landing/stepper/declarative-flo
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { type ResponseDomain } from 'calypso/lib/domains/types';
+import wpcom from 'calypso/lib/wp';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
@@ -75,7 +76,7 @@ const Sidebar = ( {
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-	} = useLaunchpad( launchpadKey, siteIntentOption, {
+	} = useLaunchpad( wpcom, launchpadKey, siteIntentOption, {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	} );
 
@@ -282,6 +283,7 @@ const Sidebar = ( {
 					</div>
 				) }
 				<LaunchpadInternal
+					wpcom={ wpcom }
 					flow={ flow }
 					site={ site }
 					siteSlug={ launchpadKey }

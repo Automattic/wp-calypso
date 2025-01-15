@@ -1,6 +1,7 @@
 import { CircularProgressBar } from '@automattic/components';
 import { Launchpad } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp';
 import { useSubscriberLaunchpadTasks } from 'calypso/my-sites/subscribers/hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -36,6 +37,7 @@ const SubscriberLaunchpad = ( {
 			</div>
 
 			<Launchpad
+				wpcom={ wpcom }
 				siteSlug={ site?.slug ?? null }
 				checklistSlug={ checklistSlug }
 				onPostFilterTasks={ taskFilter }

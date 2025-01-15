@@ -3,7 +3,6 @@ import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
@@ -20,6 +19,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 ];
 
 export const setUpActionsForTasks = ( {
+	wpcom,
 	siteSlug,
 	tasks,
 	tracksData,
@@ -50,7 +50,7 @@ export const setUpActionsForTasks = ( {
 
 			action = () => {
 				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
-					updateLaunchpadSettings( siteSlug, {
+					updateLaunchpadSettings( wpcom, siteSlug, {
 						checklist_statuses: { [ task.id ]: true },
 					} );
 				}
@@ -114,10 +114,9 @@ export const setUpActionsForTasks = ( {
 				case 'blog_launched':
 				case 'link_in_bio_launched':
 					action = async () => {
-						await wpcomRequest( {
+						await wpcom.req.post( {
 							path: `/sites/${ siteSlug }/launch`,
 							apiVersion: '1.1',
-							method: 'post',
 						} );
 						onSiteLaunched?.();
 					};
@@ -128,7 +127,7 @@ export const setUpActionsForTasks = ( {
 					action = () => {
 						// redirects to the site slug home page in a new tab
 						window.open( `https://${ siteSlug }`, '_blank' );
-						updateLaunchpadSettings( siteSlug, {
+						updateLaunchpadSettings( wpcom, siteSlug, {
 							checklist_statuses: { [ task.id ]: true },
 						} );
 					};

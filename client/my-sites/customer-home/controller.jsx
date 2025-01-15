@@ -3,6 +3,7 @@ import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import wpcom from 'calypso/lib/wp';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -66,7 +67,7 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = await fetchLaunchpad( wpcom, slug );
 
 		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 

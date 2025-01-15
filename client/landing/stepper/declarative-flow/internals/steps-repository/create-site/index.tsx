@@ -38,6 +38,7 @@ import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-s
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import {
 	retrieveSignupDestination,
 	getSignupCompleteFlowName,
@@ -198,7 +199,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			const slug = getSignupCompleteSlug();
 
 			if ( planCartItem && slug ) {
-				await addPlanToCart( slug, flow, true, theme, planCartItem );
+				await addPlanToCart( wpcom, slug, flow, true, theme, planCartItem );
 			}
 
 			return {
@@ -212,6 +213,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
+			wpcom,
 			flow,
 			true,
 			isPaidDomainItem,
@@ -249,7 +251,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		if ( planCartItem && site?.siteSlug ) {
-			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
+			await addPlanToCart( wpcom, site.siteSlug, flow, true, theme, planCartItem );
 		}
 
 		if ( productCartItems?.length && site?.siteSlug ) {

@@ -1,5 +1,6 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -15,7 +16,7 @@ export const useEarnLaunchpadTasks = () => {
 
 	const {
 		data: { checklist },
-	} = useLaunchpad( site?.slug ?? null, checklistSlug );
+	} = useLaunchpad( wpcom, site?.slug ?? null, checklistSlug );
 
 	const taskFilter = ( tasks: Task[] ): Task[] => {
 		if ( ! tasks ) {

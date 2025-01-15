@@ -4,6 +4,7 @@ import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
+import wpcom from 'calypso/lib/wp';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
@@ -133,7 +134,7 @@ export const SubscribersPageProvider = ( {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const completeImportSubscribersTask = async () => {
 		if ( selectedSiteSlug ) {
-			await updateLaunchpadSettings( selectedSiteSlug, {
+			await updateLaunchpadSettings( wpcom, selectedSiteSlug, {
 				checklist_statuses: { import_subscribers: true },
 			} );
 		}

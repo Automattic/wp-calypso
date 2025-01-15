@@ -2,12 +2,13 @@ import { isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import {
 	getSitePurchases,
@@ -27,6 +28,7 @@ export default function ThankYouPlanProduct( {
 	siteSlug,
 	siteId,
 }: ThankYouPlanProductProps ) {
+	const translate = useTranslate();
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
@@ -48,7 +50,7 @@ export default function ThankYouPlanProduct( {
 
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 
-	const { data: launchpad, isLoading } = useLaunchpad( siteSlug, 'intent-build' );
+	const { data: launchpad, isLoading } = useLaunchpad( wpcom, siteSlug, 'intent-build' );
 
 	const hasRemainingTasks =
 		launchpad && launchpad.checklist
