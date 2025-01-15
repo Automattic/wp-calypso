@@ -806,7 +806,7 @@ export default function CampaignItemDetails( props: Props ) {
 												</span>
 												<span className="campaign-item-details__text wp-brand-font">
 													{ isLoading && <FlexibleSkeleton /> }
-													{ ! isLoading && is_evergreen && translate( 'Until stopped' ) }
+													{ ! isLoading && is_evergreen ? translate( 'Until stopped' ) : '' }
 													{ ! isLoading && ! is_evergreen && durationFormatted }
 												</span>
 											</div>
