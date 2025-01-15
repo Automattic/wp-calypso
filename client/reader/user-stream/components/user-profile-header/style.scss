@@ -1,31 +1,95 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
 .is-section-reader {
 	.user-profile-header {
 		max-width: 768px;
 		margin: 0 auto;
+		padding: 0 16px;
+		overflow: hidden;
+
+		&::after {
+			@include long-content-fade( $size: 16px );
+		}
 
 		&__main {
-			align-items: center;
 			display: flex;
 			padding: 36px 0 24px;
+			align-items: center;
 
-			.reader-avatar {
-				margin: 0 24px 0 0;
+			@include breakpoint-deprecated( '<660px' ) {
+				padding-top: 20px;
 			}
 		}
 
+		&__avatar {
+			margin-right: 24px;
+			flex-shrink: 0;
+			width: 116px;
+			height: 116px;
+
+			img {
+				border-radius: 100%;
+				width: 100%;
+				height: 100%;
+			}
+
+			&-mobile {
+				width: 72px;
+				height: 72px;
+				margin-right: 16px;
+				display: block;
+
+				@include break-mobile {
+					display: none;
+				}
+			}
+
+			&-desktop {
+				display: none;
+
+				@include break-mobile {
+					display: block;
+					margin-right: 24px;
+					width: 116px;
+					height: 116px;
+				}
+			}
+		}
+
+		&__details {
+			flex: 1;
+			min-width: 0;
+		}
+
 		&__display-name {
-			font-family: Recoleta, sans-serif;
-			font-size: 2rem;
+			font-family: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+			font-size: $font-title-medium;
+			font-weight: 600;
 			line-height: 1.5;
+			margin-bottom: 16px;
+			display: flex;
+			align-items: center;
+			text-wrap: nowrap;
+
+			@include break-mobile {
+				font-size: $font-title-large;
+				margin-bottom: 8px;
+				display: block;
+			}
 		}
 
 		&__bio {
-			/* stylelint-disable-next-line scales/font-sizes */
-			font-size: 1.125rem;
+			font-size: $font-body-large;
+			color: var( --color-text-subtle );
+
+			@include break-mobile {
+				font-size: $font-body;
+			}
 		}
 
 		&__bio-desc {
-			margin-bottom: 0;
+			margin: 0;
 		}
 
 		.section-nav {
