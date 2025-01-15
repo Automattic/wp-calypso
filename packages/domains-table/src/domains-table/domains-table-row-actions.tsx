@@ -18,7 +18,7 @@ import {
 } from '../utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
-import { useDomainsTable } from './domains-table';
+import { useDomainsTable, DomainsTableContext } from './domains-table';
 
 export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
 
@@ -36,6 +36,7 @@ interface DomainsTableRowActionsProps {
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
 	isHostingOverview?: boolean;
+	context?: DomainsTableContext;
 }
 
 export const DomainsTableRowActions = ( {
@@ -45,7 +46,7 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
-	isHostingOverview,
+	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
 		onDomainAction,
@@ -95,7 +96,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="manageDNS"
 					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
-					href={ domainManagementDNS( siteSlug, domain.name, isHostingOverview ) }
+					href={ domainManagementDNS( siteSlug, domain.name, context ) }
 				>
 					{ __( 'Manage DNS' ) }
 				</MenuItemLink>

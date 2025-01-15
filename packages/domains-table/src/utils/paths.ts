@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
 import { ResponseDomain } from './types';
+import type { DomainsTableContext } from '../domains-table/domains-table';
 
 export const emailManagementAllSitesPrefix = '/email/all';
 
@@ -193,13 +194,16 @@ export function isUnderEmailManagementAll( path: string ) {
 export function domainManagementDNS(
 	siteName: string,
 	domainName: string,
-	isHostingOverview?: boolean
+	context?: DomainsTableContext
 ) {
-	if ( isHostingOverview ) {
-		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'dns' );
 	}
-
-	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
 export function emailManagementEdit( siteSlug: string, domainName: string ) {
