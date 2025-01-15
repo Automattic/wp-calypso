@@ -17,13 +17,13 @@ class SecurityCheckupPassword extends Component {
 
 		if ( userSettings.is_passwordless_user ) {
 			return {
-				description: translate( 'You do not have a password configured.' ),
+				description: translate( 'You don’t have a password set.' ),
 				materialIcon: getWarningIcon(),
 			};
 		}
 
 		return {
-			description: translate( 'You have a password configured, but can change it at any time.' ),
+			description: translate( 'You have a password set, but you can change it at any time.' ),
 			materialIcon: getOKIcon(),
 		};
 	}
