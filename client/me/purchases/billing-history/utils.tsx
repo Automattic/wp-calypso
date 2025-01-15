@@ -342,3 +342,24 @@ export function getTransactionTermLabel(
 			return getPlanTermLabel( transaction.wpcom_product_slug, translate );
 	}
 }
+
+export function formatDisplayDate( date: Date ): string {
+	return date.toLocaleDateString( undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
+export function formatMonthYearLabel( date: Date ): string {
+	return date.toLocaleDateString( undefined, {
+		year: 'numeric',
+		month: 'long',
+	} );
+}
+
+export function formatMonthYear( date: Date ): string {
+	const year = date.getFullYear();
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	return `${ year }-${ month }`;
+}

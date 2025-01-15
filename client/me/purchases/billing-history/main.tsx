@@ -9,6 +9,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
+import BillingHistoryListDataView from 'calypso/me/purchases/billing-history/billing-history-list-data-view';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
@@ -24,9 +25,15 @@ export function BillingHistoryContent( {
 	siteId: number | null;
 	getReceiptUrlFor: ( receiptId: string | number ) => string;
 } ) {
+	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
+
 	return (
 		<Card className="billing-history__receipts">
-			<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
+			{ useDataViewBillingHistoryList ? (
+				<BillingHistoryListDataView getReceiptUrlFor={ getReceiptUrlFor } />
+			) : (
+				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
+			) }
 		</Card>
 	);
 }
