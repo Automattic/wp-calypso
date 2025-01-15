@@ -1,14 +1,17 @@
 import page from '@automattic/calypso-router';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
@@ -206,15 +209,97 @@ export default function useSiteActions( {
 
 type SiteActions = {
 	isLargeScreen: boolean;
+	onRefetchSite?: any;
 };
 
-export function useSiteActionsDataViews( { isLargeScreen }: SiteActions ) {
+const createRemoveSiteActionModal =
+	( onRefetchSite: any ) =>
+	( {
+		items,
+		closeModal,
+		onActionPerformed,
+	}: {
+		items: SiteData[];
+		closeModal: () => void;
+		onActionPerformed?: () => void;
+	} ) => {
+		const translate = useTranslate();
+		const dispatch = useDispatch();
+		const { mutate: removeSite } = useRemoveSiteMutation();
+
+		const item = items[ 0 ];
+		const siteName = item.site.value.url;
+		const siteId = item.site.value.a4a_site_id;
+
+		const onRemoveSite = () => {
+			if ( ! siteId ) {
+				return;
+			}
+
+			removeSite(
+				{ siteId },
+				{
+					onSuccess: () => {
+						// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+						setTimeout( () => {
+							onRefetchSite?.()?.then( () => {
+								closeModal?.();
+								onActionPerformed?.();
+								dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
+							} );
+						}, 1000 );
+					},
+				}
+			);
+		};
+
+		const onSubmit = ( event: React.FormEvent ) => {
+			event.preventDefault();
+			onRemoveSite();
+		};
+
+		return (
+			<form onSubmit={ onSubmit }>
+				{ translate(
+					'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
+					{
+						args: { siteName },
+						components: {
+							b: <b />,
+						},
+						comment: '%(siteName)s is the site name',
+					}
+				) }
+				<HStack justify="right">
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						onClick={ () => {
+							closeModal?.();
+						} }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button __next40pxDefaultSize variant="primary" type="submit" isDestructive>
+						{ translate( 'Remove site' ) }
+					</Button>
+				</HStack>
+			</form>
+		);
+	};
+
+export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteActions ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const isUrlOnly = ( item: SiteData ) =>
 		item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 	const isWPComSite = ( item: SiteData ) => item.site.value.is_atomic || item.site.value.is_simple;
+	const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
+	const hasRemoveManagedSitesCapability = () => {
+		// TODO: implement this based on the item data.
+		return true;
+	};
 
 	return useMemo(
 		() => [
@@ -228,6 +313,15 @@ export function useSiteActionsDataViews( { isLargeScreen }: SiteActions ) {
 					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
 					// TODO: implement modal. See setShowDeleteDevSiteDialog in SiteActions.
 				},
+			},
+			{
+				id: 'remove_site',
+				label: translate( 'Remove site' ),
+				isEligible( item: SiteData ) {
+					return ! isDevSite( item ) && hasRemoveManagedSitesCapability( item );
+				},
+				RenderModal: createRemoveSiteActionModal( onRefetchSite ),
+				isDestructive: true,
 			},
 			{
 				id: 'issue_license',

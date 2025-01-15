@@ -554,7 +554,7 @@ export const JetpackSitesDataViews = ( {
 		[ translate ]
 	);*/
 
-	const actions = useSiteActionsDataViews( { isLargeScreen } );
+	const actions = useSiteActionsDataViews( { isLargeScreen, onRefetchSite } );
 
 	// Update the data packet
 	useEffect( () => {
