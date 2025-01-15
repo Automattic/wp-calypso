@@ -5,10 +5,8 @@ import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSelector } from 'calypso/state';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { CustomHeaderComponentType } from './custom-header-component-type';
 
@@ -31,7 +29,6 @@ const DNSRecordsHeader: CustomHeaderComponentType = ( {
 	inSiteContext,
 } ) => {
 	const site = useSelector( ( state ) => getSite( state, selectedSiteSlug ) as SiteExcerptData );
-	const currentRoute = useSelector( getCurrentRoute );
 
 	const navigationItems = useMemo( () => {
 		const baseNavigationItems = [
@@ -45,11 +42,7 @@ const DNSRecordsHeader: CustomHeaderComponentType = ( {
 				),
 			},
 			{
-				label: translate( 'Email' ),
-				href: getEmailManagementPath( selectedSiteSlug, selectedDomainName, currentRoute ),
-			},
-			{
-				label: translate( 'DNS records' ),
+				label: dnsRecordsTitle,
 			},
 		];
 
