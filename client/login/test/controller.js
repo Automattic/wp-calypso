@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import { redirectJetpack, login } from '../controller';
+import { redirectJetpack, redirectLostPassword, login } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
 	...jest.requireActual( 'calypso/state/oauth2-clients/actions' ),
@@ -102,6 +102,68 @@ describe( 'login', () => {
 		await login( context, next );
 
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
+		expect( next ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'redirectLostPassword', () => {
+	let context;
+	let next;
+
+	beforeEach( () => {
+		context = {
+			params: {},
+			query: {},
+			redirect: jest.fn(),
+		};
+		next = jest.fn();
+	} );
+
+	it( 'should call next() if action is not "lostpassword"', () => {
+		context.params.action = 'someOtherAction';
+
+		redirectLostPassword( context, next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( context.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should redirect to "/wp-login.php?action=lostpassword" if redirect_to is undefined', () => {
+		context.params.action = 'lostpassword';
+
+		redirectLostPassword( context, next );
+
+		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
+	} );
+
+	it( 'should redirect to "/wp-login.php?action=lostpassword" if redirect_to does not include the WooCommerce URI', () => {
+		context.params.action = 'lostpassword';
+		context.query.redirect_to = 'https://example.com/some-other-uri';
+
+		redirectLostPassword( context, next );
+
+		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
+	} );
+
+	it( 'should not redirect if redirect_to includes the WooCommerce URI', () => {
+		context.params.action = 'lostpassword';
+		context.query.redirect_to =
+			'https://example.com?redirect_uri=https://woocommerce.com/wc-api/wpcom-signin';
+
+		redirectLostPassword( context, next );
+
+		expect( context.redirect ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'should not redirect if redirect_to includes the Blaze Pro URI', () => {
+		context.params.action = 'lostpassword';
+		context.query.redirect_to =
+			'https://example.com?redirect_uri=https://blazepro.tumblr.com/auth/connected';
+
+		redirectLostPassword( context, next );
+
+		expect( context.redirect ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 } );

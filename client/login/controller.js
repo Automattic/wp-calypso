@@ -300,3 +300,36 @@ export function redirectJetpack( context, next ) {
 	}
 	next();
 }
+
+/**
+ * Redirect clients to use PHP lost password. Excludes WooCommerce and Tumblr Blaze Pro.
+ * @param {Object} context - The context object containing request parameters and query strings.
+ * @param {Object} context.params - The parameters from the URL, including the action.
+ * @param {Object} context.query - The query string from the URL, including the `redirect_to` URL.
+ * @param {Function} next - The next middleware function to call if conditions are met.
+ * @returns {void} Redirects the user or calls the `next()` middleware.
+ */
+export function redirectLostPassword( context, next ) {
+	const { action } = context.params;
+	const { redirect_to } = context.query;
+
+	if ( action !== 'lostpassword' ) {
+		next();
+		return;
+	}
+
+	/**
+	 * The redirect_to URI will be set if it's WooCommerce.
+	 */
+
+	const exclusions = [ 'blazepro.tumblr.com', 'woocommerce.com' ];
+
+	if (
+		redirect_to === undefined ||
+		! exclusions.some( ( exclusion ) => redirect_to.includes( exclusion ) )
+	) {
+		return context.redirect( 301, '/wp-login.php?action=lostpassword' );
+	}
+
+	next();
+}
