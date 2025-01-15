@@ -36,7 +36,6 @@ exports[`Theme rendering should match snapshot 1`] = `
         </span>
       </h2>
       <components--theme-tier-badge
-        islockedstylevariation="false"
         themeid="twentyseventeen"
       />
     </div>
