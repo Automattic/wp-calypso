@@ -10,7 +10,7 @@ const meta: Meta< typeof JetpackUpsellCard > = {
 				className="jetpack-upsell-section-story"
 				style={ { margin: 'auto', maxWidth: '1000px' } }
 			>
-				{ Story() }
+				<Story />
 			</div>
 		),
 	],
