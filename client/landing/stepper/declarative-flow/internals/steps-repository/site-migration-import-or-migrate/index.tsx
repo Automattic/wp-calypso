@@ -55,7 +55,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 			},
 			{
 				label: translate( 'Import content only' ),
-				description: translate( 'Import posts, pages, comments, and media only.' ),
+				description: translate( 'Import just posts, pages, comments and media.' ),
 				value: 'import',
 			},
 		];
