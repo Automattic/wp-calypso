@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData, SiteDetails } from '@automattic/data-stores';
 import { DomainsTableStatusCell } from '@automattic/domains-table/src/domains-table/domains-table-status-cell';
 import { resolveDomainStatus } from '@automattic/domains-table/src/utils/resolve-domain-status';
@@ -11,6 +12,7 @@ interface Props {
 const DomainStatusField = ( props: Props ) => {
 	const {
 		sites,
+		isLoadingSites,
 		getSiteSlug,
 		getFullDomain,
 		domainResults,
@@ -20,8 +22,8 @@ const DomainStatusField = ( props: Props ) => {
 	const translate = useTranslate();
 
 	const domain = getFullDomain( props.domain );
-	if ( ! domain ) {
-		return <></>;
+	if ( ! domain || isLoadingSites ) {
+		return <LoadingPlaceholder />;
 	}
 
 	const siteSlug = getSiteSlug( props.domain );
