@@ -219,7 +219,18 @@ export function useSiteActionsDataViews( { isLargeScreen }: SiteActions ) {
 	return useMemo(
 		() => [
 			{
-				id: 'issue-new-license',
+				id: 'delete_site',
+				label: translate( 'Delete site' ),
+				isEligible() {
+					return false; // Feature is always disabled, see canDelete above.
+				},
+				callback() {
+					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
+					// TODO: implement modal. See setShowDeleteDevSiteDialog in SiteActions.
+				},
+			},
+			{
+				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
 					return ! item.site.error && ! isWPComSite( item ) && ! isUrlOnly( item );
