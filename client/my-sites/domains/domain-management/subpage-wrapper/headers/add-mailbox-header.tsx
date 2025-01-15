@@ -22,6 +22,10 @@ const AddMailboxHeader: CustomHeaderComponentType = ( {
 	const navigationItems = useMemo( () => {
 		const baseNavigationItems = [
 			{
+				label: selectedDomainName,
+				href: `${ domainManagementOverviewRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`,
+			},
+			{
 				label: translate( 'Email' ),
 				href: getEmailManagementPath( selectedSiteSlug, selectedDomainName, currentRoute ),
 			},
@@ -40,14 +44,8 @@ const AddMailboxHeader: CustomHeaderComponentType = ( {
 				...baseNavigationItems,
 			];
 		}
-		return [
-			{
-				label: selectedDomainName,
-				href: `${ domainManagementOverviewRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`,
-			},
-			...baseNavigationItems,
-		];
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
+		return baseNavigationItems;
+	}, [ currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
 
 	return (
 		<>
