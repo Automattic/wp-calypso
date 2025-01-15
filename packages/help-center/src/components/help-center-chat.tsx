@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useEffect } from '@wordpress/element';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { ExtraContactOptions } from './help-center-extra-contact-option';
@@ -24,7 +24,6 @@ export function HelpCenterChat( {
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
 	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
-	const { id: conversationId = null } = useParams();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -42,7 +41,6 @@ export function HelpCenterChat( {
 			canConnectToZendesk={ canConnectToZendesk }
 			selectedSiteId={ site?.ID as number }
 			selectedSiteURL={ site?.URL as string }
-			selectedConversationId={ conversationId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />

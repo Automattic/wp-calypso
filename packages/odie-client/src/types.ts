@@ -17,7 +17,6 @@ export type OdieAssistantContextInterface = {
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	initialMessage?: string | null;
-	selectedConversationId?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
