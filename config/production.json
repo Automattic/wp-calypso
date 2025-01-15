@@ -31,7 +31,6 @@
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
 		"bilmur-script": true,
-		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,

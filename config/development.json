@@ -40,7 +40,6 @@
 		"calypso/ai-blogging-prompts": true,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
-		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"checkout/ebanx-pix": true,

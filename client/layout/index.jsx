@@ -498,9 +498,6 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
-
 		const colorScheme = isWooPasswordlessJPC
 			? getColorSchemeFromCurrentQuery( currentQuery )
 			: getColorScheme( {
@@ -539,7 +536,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
-			userAllowedToHelpCenter,
+			userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 			currentRoute,
 			isGlobalSidebarVisible,
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
