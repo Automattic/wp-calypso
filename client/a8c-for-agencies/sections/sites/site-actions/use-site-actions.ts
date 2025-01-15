@@ -15,6 +15,7 @@ import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import { JETPACK_ACTIVITY_ID, JETPACK_BACKUP_ID } from '../features/features';
 import SitesDashboardContext from '../sites-dashboard-context';
 import getActionEventName from './get-action-event-name';
+import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
 type Props = {
@@ -203,7 +204,32 @@ export default function useSiteActions( {
 	] );
 }
 
-const EMPTY_ARRAY: any[] = [];
-export function useSiteActionsDataViews() {
-	return EMPTY_ARRAY;
+type SiteActions = {
+	isLargeScreen: boolean;
+};
+
+export function useSiteActionsDataViews( { isLargeScreen }: SiteActions ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const isUrlOnly = ( item: SiteData ) =>
+		item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+	const isWPComSite = ( item: SiteData ) => item.site.value.is_atomic || item.site.value.is_simple;
+
+	return useMemo(
+		() => [
+			{
+				id: 'issue-new-license',
+				label: translate( 'Issue new license' ),
+				isEligible( item: SiteData ) {
+					return ! item.site.error && ! isWPComSite( item ) && ! isUrlOnly( item );
+				},
+				callback: () => {
+					page( A4A_MARKETPLACE_LINK );
+					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
+				},
+			},
+		],
+		[ isLargeScreen, translate, dispatch ]
+	);
 }
