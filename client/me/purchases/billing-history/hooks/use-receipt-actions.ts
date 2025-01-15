@@ -1,37 +1,23 @@
-import pageRedirect from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { createElement, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
+import type { Action, ActionModal } from '@wordpress/dataviews';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 import type { IAppState } from 'calypso/state/types';
-import type { Action } from 'redux';
+import type { Action as ReduxAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
 function recordClickEvent( eventAction: string ): void {
 	recordGoogleEvent( 'Me', eventAction );
 }
 
-export type ReceiptAction = {
-	id: 'view-receipt' | 'email-receipt';
-	label: string;
-	isPrimary: boolean;
+export type ReceiptAction = ( Action< BillingTransaction > | ActionModal< BillingTransaction > ) & {
 	iconName: string;
-	callback: ( items: BillingTransaction[] ) => void;
 };
 
-type AppDispatch = ThunkDispatch< IAppState, undefined, Action >;
-
-function handleViewReceipt(
-	items: BillingTransaction[],
-	getReceiptUrlFor: ( receiptId: string ) => string
-): void {
-	if ( ! items?.length || ! items[ 0 ]?.id ) {
-		return;
-	}
-	pageRedirect.redirect( getReceiptUrlFor( items[ 0 ].id ) );
-}
+type AppDispatch = ThunkDispatch< IAppState, undefined, ReduxAction >;
 
 function handleEmailReceipt( items: BillingTransaction[], dispatch: AppDispatch ): void {
 	if ( ! items?.length || ! items[ 0 ]?.id ) {
@@ -42,7 +28,7 @@ function handleEmailReceipt( items: BillingTransaction[], dispatch: AppDispatch 
 }
 
 export function useReceiptActions(
-	getReceiptUrlFor: ( receiptId: string ) => string
+	getReceiptUrlFor?: ( receiptId: string ) => string
 ): ReceiptAction[] {
 	const dispatch = useDispatch< AppDispatch >();
 	const translate = useTranslate();
@@ -54,7 +40,15 @@ export function useReceiptActions(
 				label: translate( 'View receipt' ),
 				isPrimary: true,
 				iconName: 'pages',
-				callback: ( items: BillingTransaction[] ) => handleViewReceipt( items, getReceiptUrlFor ),
+				modalHeader: translate( 'View receipt' ),
+				modalProps: {
+					size: 'large',
+				},
+				RenderModal: ( props ) => {
+					const ReceiptModal = require( '../receipt-modal' ).default;
+					const [ item ] = props.items;
+					return createElement( ReceiptModal, { item, closeModal: props.closeModal } );
+				},
 			},
 			{
 				id: 'email-receipt',
@@ -64,6 +58,6 @@ export function useReceiptActions(
 				callback: ( items: BillingTransaction[] ) => handleEmailReceipt( items, dispatch ),
 			},
 		],
-		[ dispatch, getReceiptUrlFor, translate ]
+		[ dispatch, translate ]
 	);
 }

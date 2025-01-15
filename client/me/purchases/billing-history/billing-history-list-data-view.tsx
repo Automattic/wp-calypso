@@ -27,7 +27,7 @@ export default function BillingHistoryListDataView( {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
 	const viewState = useViewStateUpdate();
-	const receiptActions = useReceiptActions( getReceiptUrlFor );
+	const receiptActions = useReceiptActions();
 
 	const actions = receiptActions.map( ( action ) => ( {
 		...action,
