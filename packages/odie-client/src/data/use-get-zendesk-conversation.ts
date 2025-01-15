@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import Smooch from 'smooch';
 import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
@@ -27,7 +28,7 @@ export const useGetZendeskConversation = () => {
 			chatId,
 			conversationId,
 		}: {
-			chatId: number | string | null | undefined;
+			chatId?: number | string | null | undefined;
 			conversationId?: string | null | undefined;
 		} ) => {
 			if ( ! chatId && ! conversationId ) {
@@ -49,7 +50,7 @@ export const useGetZendeskConversation = () => {
 			}
 
 			// We need to ensure that more than one message is loaded
-			return Smooch.getConversationById( conversation.id || conversationId )
+			return Smooch.getConversationById( conversation.id || conversationId! )
 				.then( ( conversation ) => {
 					Smooch.markAllAsRead( conversation.id );
 					getUnreadNotifications();

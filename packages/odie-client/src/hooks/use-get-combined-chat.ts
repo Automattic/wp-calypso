@@ -5,8 +5,6 @@ import { useState, useEffect } from '@wordpress/element';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useOdieChat } from '../data';
-import type { Chat, Message } from '../types';
-import { getZendeskConversation, useOdieChat } from '../data';
 import type { Chat, ChatStatus, Message } from '../types';
 
 /**
