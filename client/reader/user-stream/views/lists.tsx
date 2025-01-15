@@ -42,7 +42,7 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 
 	if ( ! lists || lists.length === 0 ) {
 		return (
-			<div className="user-stream__lists">
+			<div className="user-profile__lists">
 				<UserProfileHeader user={ user } />
 				<EmptyContent
 					illustration={ null }
@@ -55,23 +55,22 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 	}
 
 	return (
-		<div className="user-stream__lists">
+		<div className="user-profile__lists">
 			<UserProfileHeader user={ user } />
 			<div className="user-profile__lists-body">
 				{ lists.map( ( list: List ) => (
-					<div className="card reader-post-card is-compact is-clickable" key={ list.ID }>
-						<div className="reader-post-card__post-heading">
-							<h2 className="reader-post-card__title">
-								<a
-									className="reader-post-card__title-link"
-									href={ `/read/list/${ list.owner }/${ list.slug }` }
-								>
-									{ list.title }
-								</a>
-							</h2>
+					<a
+						className="user-profile__lists-body-link"
+						href={ `/read/list/${ list.owner }/${ list.slug }` }
+						key={ list.ID }
+					>
+						<div className="card reader-post-card is-compact is-clickable">
+							<div className="reader-post-card__post-heading">
+								<h2 className="reader-post-card__title">{ list.title }</h2>
+							</div>
+							<div className="reader-post-card__post-content">{ list.description }</div>
 						</div>
-						<div className="reader-post-card__post-content">{ list.description }</div>
-					</div>
+					</a>
 				) ) }
 			</div>
 		</div>

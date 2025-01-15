@@ -16,11 +16,17 @@
 		max-width: 768px;
 		margin: 0 auto;
 
-		.user-profile__lists .reader-post-card__title {
-			margin-top: 0;
+		&-link {
+			color: var(--color-neutral-100);
+			cursor: pointer;
+			display: block;
+			line-height: 29px;
+			text-wrap: pretty;
 
-			.reader-post-card__title-link {
+			.reader-post-card__title {
+				margin-top: 0;
 				font-size: 1.25rem;
+				font-weight: 600;
 			}
 		}
 	}
