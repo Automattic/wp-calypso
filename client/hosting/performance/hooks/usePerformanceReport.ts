@@ -59,6 +59,8 @@ export const usePerformanceReport = (
 
 	const performanceInsights = data?.pagespeed;
 
+	const isReportFailed = ( report: unknown ) => report === 'failed';
+
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
 	const desktopReport =
@@ -66,8 +68,16 @@ export const usePerformanceReport = (
 
 	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
 
-	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
-	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+	const desktopLoaded =
+		typeof performanceInsights?.desktop === 'object' || performanceInsights?.desktop === 'failed';
+	const mobileLoaded =
+		typeof performanceInsights?.mobile === 'object' || performanceInsights?.mobile === 'failed';
+
+	const isError =
+		isBasicMetricsError ||
+		isInsightsError ||
+		isReportFailed( performanceInsights?.mobile ) ||
+		isReportFailed( performanceInsights?.desktop );
 
 	const getHashOrToken = (
 		hash: string | undefined,
@@ -105,7 +115,7 @@ export const usePerformanceReport = (
 			isLoadingBasicMetrics ||
 			isLoadingInsights ||
 			( activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded ),
-		isError: isBasicMetricsError || isInsightsError,
+		isError,
 		isBasicMetricsFetched,
 		testAgain,
 		isRetesting: retestState !== 'idle',
