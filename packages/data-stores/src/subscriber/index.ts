@@ -1,5 +1,4 @@
 import { register, createReduxStore } from '@wordpress/data';
-import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducers';
@@ -9,7 +8,6 @@ export type { State };
 
 export const store = createReduxStore( STORE_KEY, {
 	actions: createActions(),
-	controls,
 	reducer,
 	selectors,
 } );
