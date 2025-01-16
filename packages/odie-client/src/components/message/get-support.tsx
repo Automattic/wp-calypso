@@ -68,16 +68,16 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			return [
 				{
-					text: __( 'Get instant support', __i18n_text_domain__ ),
-					waitTimeText: __( 'Wait < 2 min', __i18n_text_domain__ ),
+					text: __( 'Chat with support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'chat' );
 						await newConversation();
 					},
 				},
 				{
-					text: __( 'Hear back soon', __i18n_text_domain__ ),
-					waitTimeText: __( 'Wait < 8 hrs', __i18n_text_domain__ ),
+					text: __( 'Email support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Average wait time < 8 hours', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
 						await newConversation();
