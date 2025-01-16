@@ -311,9 +311,16 @@ class PostComment extends PureComponent {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
-		const commentAuthorUrl = commentAuthor.site_ID
-			? getStreamUrl( null, commentAuthor.site_ID )
-			: commentAuthor && commentAuthor.URL;
+
+		let commentAuthorUrl;
+		if ( config.isEnabled( 'reader/user-profile' ) && commentAuthor.ID ) {
+			commentAuthorUrl = `/read/users/${ commentAuthor.ID }`;
+		} else if ( commentAuthor.site_ID ) {
+			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
+		} else {
+			commentAuthorUrl = commentAuthor?.URL;
+		}
+
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 

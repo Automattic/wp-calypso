@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -33,15 +32,22 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
+	const avatarElement = (
+		<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 116 } />
+	);
+
 	return (
 		<div className="user-profile-header">
 			<header className="user-profile-header__main">
-				<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } />
+				<div className="user-profile-header__avatar user-profile-header__avatar-desktop">
+					{ avatarElement }
+				</div>
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
-						<ReaderAuthorLink author={ { name: user.display_name } }>
-							{ user.display_name }
-						</ReaderAuthorLink>
+						<div className="user-profile-header__avatar user-profile-header__avatar-mobile">
+							{ avatarElement }
+						</div>
+						{ user.display_name }
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">

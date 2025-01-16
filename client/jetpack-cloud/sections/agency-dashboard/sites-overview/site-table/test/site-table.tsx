@@ -191,7 +191,7 @@ describe( '<SiteTable>', () => {
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
-			`${ siteObj.url_with_scheme }/wp-admin/plugins.php`
+			`/plugins/updates/${ urlToSlug( siteUrl ) }`
 		);
 		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
 	} );

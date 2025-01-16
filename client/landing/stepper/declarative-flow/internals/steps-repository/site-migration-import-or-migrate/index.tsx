@@ -1,9 +1,10 @@
-import { getPlan, isWpComBusinessPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
@@ -22,56 +23,33 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
-
-	const isBusinessPlan = site?.plan?.product_slug
-		? isWpComBusinessPlan( site?.plan?.product_slug )
-		: false;
-
-	let options;
-
+	const siteCanInstallPlugins = canInstallPlugins( site );
+	const isUpgradeRequired = ! siteCanInstallPlugins;
 	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 
-	if ( isMigrationExperimentEnabled ) {
-		const badgeText = isBusinessPlan
-			? translate( 'Included with your plan' )
-			: // translators: %(planName)s is a plan name (e.g. Commerce plan).
-			  ( translate( 'Available on %(planName)s with 50% off', {
+	const options = useMemo( () => {
+		const upgradeRequiredLabel = isMigrationExperimentEnabled
+			? translate( 'Available on %(planName)s with 50% off', {
 					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			  } ) as string );
+			  } )
+			: translate( 'Requires %(planName)s plan', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+			  } );
 
-		options = [
-			{
-				label: translate( 'Migrate site' ),
-				description: translate(
+		const migrateOptionDescription = isMigrationExperimentEnabled
+			? translate(
 					"Best for WordPress sites. Seamlessly move all your site's content, themes, plugins, users, and customizations to WordPress.com."
-				),
-				value: 'migrate',
-				badge: {
-					type: 'info-blue' as BadgeType,
-					text: badgeText,
-				},
-				selected: true,
-			},
-			{
-				label: translate( 'Import content only' ),
-				description: translate( 'Import posts, pages, comments, and media only.' ),
-				value: 'import',
-			},
-		];
-	} else {
-		options = [
+			  )
+			: translate( "All your site's content, themes, plugins, users and customizations." );
+
+		return [
 			{
 				label: translate( 'Migrate site' ),
-				description: translate(
-					"All your site's content, themes, plugins, users and customizations."
-				),
+				description: migrateOptionDescription,
 				value: 'migrate',
 				badge: {
 					type: 'info-blue' as BadgeType,
-					// translators: %(planName)s is a plan name (e.g. Commerce plan).
-					text: translate( 'Requires %(planName)s plan', {
-						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-					} ) as string,
+					text: isUpgradeRequired ? upgradeRequiredLabel : translate( 'Included with your plan' ),
 				},
 				selected: true,
 			},
@@ -81,14 +59,12 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 				value: 'import',
 			},
 		];
-	}
+	}, [ isMigrationExperimentEnabled, isUpgradeRequired, translate ] );
 
 	const { data: hostingProviderDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const hostingProviderName = hostingProviderDetails.name;
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
-
-	const siteCanInstallPlugins = canInstallPlugins( site );
 
 	const handleClick = ( destination: string ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {

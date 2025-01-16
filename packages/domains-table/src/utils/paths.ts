@@ -190,7 +190,15 @@ export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
-export function domainManagementDNS( siteName: string, domainName: string ) {
+export function domainManagementDNS(
+	siteName: string,
+	domainName: string,
+	isHostingOverview?: boolean
+) {
+	if ( isHostingOverview ) {
+		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 

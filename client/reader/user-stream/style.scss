@@ -5,6 +5,12 @@
 		}
 	}
 
+	.user-profile__404.empty-content {
+		max-width: initial;
+		margin: initial;
+		padding-top: initial;
+	}
+
 	div.user-profile__content {
 		main.main.is-user-stream {
 			padding: 0;
