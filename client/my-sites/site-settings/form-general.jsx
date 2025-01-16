@@ -362,25 +362,25 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	showActionbar() {
+	hideActionbar() {
 		const { translate, fields, updateFields } = this.props;
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="site-settings__wpcom_show_action_bar">
+				<FormLabel htmlFor="site-settings__wpcom_hide_action_bar">
 					{ translate( 'Action Bar visibility' ) }
 				</FormLabel>
 				<ToggleControl
-					id="site-settings__wpcom_show_action_bar"
+					id="site-settings__wpcom_hide_action_bar"
 					__nextHasNoMarginBottom
-					label={ translate( 'Show the Action Bar on the front end of the site.' ) }
-					checked={ !! fields?.wpcom_show_action_bar }
+					label={ translate( 'Hide the Action Bar on the front end of the site.' ) }
+					checked={ !! fields?.wpcom_hide_action_bar }
 					onChange={ ( newValue ) => {
-						updateFields( { wpcom_show_action_bar: newValue ? 1 : undefined } );
+						updateFields( { wpcom_hide_action_bar: newValue } );
 					} }
 				/>
 				<FormSettingExplanation>
 					<a href="https://en.support.wordpress.com/action-bar/">
-						{ translate( 'Learn more about Action Bar.' ) }
+						{ translate( 'Learn more about the Action Bar.' ) }
 					</a>
 				</FormSettingExplanation>
 			</FormFieldset>
@@ -442,7 +442,7 @@ export class SiteSettingsFormGeneral extends Component {
 								{ this.blogAddress() }
 								{ this.languageOptions() }
 								{ this.Timezone() }
-								{ this.showActionbar() }
+								{ this.hideActionbar() }
 								{ siteIsJetpack && this.WordPressVersion() }
 							</form>
 						</Card>
@@ -497,7 +497,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_gifting_subscription: false,
 		admin_url: '',
 		is_fully_managed_agency_site: true,
-		wpcom_show_action_bar: 1,
+		wpcom_hide_action_bar: false,
 	};
 
 	if ( ! settings ) {
@@ -522,7 +522,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
-		wpcom_show_action_bar: settings.wpcom_show_action_bar,
+		wpcom_hide_action_bar: settings.wpcom_hide_action_bar,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

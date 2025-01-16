@@ -73,7 +73,7 @@ export interface CreateSiteParams {
 		is_blank_canvas?: boolean;
 		is_videopress_initial_purchase?: boolean;
 		wpcom_admin_interface?: string;
-		wpcom_show_action_bar?: number;
+		wpcom_hide_action_bar?: boolean;
 	};
 }
 
@@ -302,6 +302,7 @@ export interface SiteDetailsOptions {
 	is_commercial?: boolean | null;
 	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
+	wpcom_hide_action_bar?: boolean;
 }
 
 export type SiteOption = keyof NonNullable< SiteDetails[ 'options' ] >;
