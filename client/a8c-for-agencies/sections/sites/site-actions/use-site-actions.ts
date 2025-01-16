@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { external, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -241,12 +242,20 @@ export function useSiteActionsDataViews( {
 				: item.site.value.url_with_scheme;
 		};
 
+		// This implements logic that was previously in the Actions field.
+		// TODO: review isEligible logic for all actions and make sure there are no duplicate ones.
+		const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
+		const canHaveActions = ( item: SiteData ) =>
+			( ! item.site.value.sticker?.includes( 'migration-in-process' ) || isNotProduction ) &&
+			! item.site.error &&
+			! item.site.value.is_simple;
+
 		return [
 			{
 				label: translate( 'Prepare for launch' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isDevSite( item );
+					return canHaveActions( item ) && isDevSite( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
@@ -260,7 +269,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Set up site' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
@@ -272,7 +281,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Change domain' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
@@ -284,7 +293,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Hosting configuration' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
@@ -297,7 +306,12 @@ export function useSiteActionsDataViews( {
 				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
-					return ! item.site.error && ! isWPComSite( item ) && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						! item.site.error &&
+						! isWPComSite( item ) &&
+						! isUrlOnly( item )
+					);
 				},
 				callback: () => {
 					page( A4A_MARKETPLACE_LINK );
@@ -308,7 +322,12 @@ export function useSiteActionsDataViews( {
 				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
 				isEligible( item: SiteData ) {
-					return ! isWPComSite( item ) && ! item.site.error && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						! isWPComSite( item ) &&
+						! item.site.error &&
+						! isUrlOnly( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					const item = items[ 0 ];
@@ -326,7 +345,12 @@ export function useSiteActionsDataViews( {
 				label: translate( 'View activity' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && ! item.site.error && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						isWPComSite( item ) &&
+						! item.site.error &&
+						! isUrlOnly( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
@@ -338,7 +362,12 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Copy this site' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && hasBackup( item ) && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						isWPComSite( item ) &&
+						hasBackup( item ) &&
+						! isUrlOnly( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/backup/${ getSiteSlug( items[ 0 ] ) }/clone` );
@@ -349,7 +378,12 @@ export function useSiteActionsDataViews( {
 				id: 'clone_site_not_wpcom',
 				label: translate( 'Copy this site' ),
 				isEligible( item: SiteData ) {
-					return ! isWPComSite( item ) && hasBackup( item ) && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						! isWPComSite( item ) &&
+						hasBackup( item ) &&
+						! isUrlOnly( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					setDataViewsState( ( prevState: DataViewsState ) => ( {
@@ -366,7 +400,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Site settings' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
@@ -377,8 +411,8 @@ export function useSiteActionsDataViews( {
 				id: 'view_site',
 				label: translate( 'View site' ),
 				icon: external,
-				isEligible() {
-					return true;
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && true;
 				},
 				callback( items: SiteData[] ) {
 					page( getUrlWithScheme( items[ 0 ] ) );
@@ -390,7 +424,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Visit WP Admin' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return ! isUrlOnly( item );
+					return canHaveActions( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `${ getUrlWithScheme( items[ 0 ] ) }/wp-admin` );
@@ -402,7 +436,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Remove site' ),
 				icon: trash,
 				isEligible( item: SiteData ) {
-					return ! isDevSite( item ) && hasRemoveManagedSitesCapability();
+					return canHaveActions( item ) && ! isDevSite( item ) && hasRemoveManagedSitesCapability();
 				},
 				RenderModal: createRemoveSiteActionModal( onRefetchSite ),
 				isDestructive: true,
@@ -410,8 +444,8 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'delete_site',
 				label: translate( 'Delete site' ),
-				isEligible() {
-					return false; // Feature is always disabled, see canDelete above.
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && false; // Feature is always disabled, see canDelete above.
 				},
 				callback() {
 					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
