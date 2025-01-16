@@ -156,6 +156,7 @@ function showAppWindow() {
 	} );
 
 	const appWindow = { view: mainView, window: mainWindow };
+	require( '../window-handlers/login' )( appWindow );
 	require( '../window-handlers/failed-to-load' )( appWindow );
 	require( '../window-handlers/login-status' )( appWindow );
 	require( '../window-handlers/notifications' )( appWindow );
