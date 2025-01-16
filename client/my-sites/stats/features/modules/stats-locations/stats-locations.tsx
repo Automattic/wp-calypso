@@ -154,6 +154,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
 		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
 	];
+	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
 	return (
 		<>
@@ -163,7 +164,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ isRequestingData && (
 				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
-			{ ( ( ! isRequestingData && ! isError && data ) || shouldGate ) && (
+			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
@@ -221,7 +222,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					/>
 				</>
 			) }
-			{ ! isRequestingData && Array.isArray( data ) && ! data?.length && ! shouldGate && (
+			{ ! isRequestingData && ! hasLocationData && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
 					title={ translate( 'Locations' ) }
