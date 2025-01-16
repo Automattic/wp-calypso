@@ -107,12 +107,7 @@ export type UseStepsHook = () => StepperStep[];
 
 export type UseStepNavigationHook = (
 	// Once all the steps are put in steps.tsx, we should remove `| string`.
-	currentStepSlug: ActualStepperStepSlug | string,
-	navigate: Navigate
-) => NavigationControls;
-
-export type UseStepNavigationHookV2 = (
-	currentStepSlug: StateItemKey,
+	currentStepSlug: StateItemKey | ActualStepperStepSlug | string,
 	navigate: Navigate
 ) => NavigationControls;
 
@@ -244,7 +239,12 @@ export type FlowV2 = {
 		| Promise< false >
 		| Promise< readonly StepperStep[] >
 		| readonly StepperStep[];
-	useStepNavigation: UseStepNavigationHookV2;
+
+	useStepNavigation: (
+		// Once all the steps are put in steps.tsx, we should remove `| string`.
+		currentStepSlug: StateItemKey | ActualStepperStepSlug | string,
+		navigate: Navigate
+	) => NavigationControls;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */

@@ -4,8 +4,6 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useCreateSite } from '../hooks/use-create-site';
 import { useExitFlow } from '../hooks/use-exit-flow';
@@ -45,9 +43,7 @@ const newsletter: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const query = useQuery();
 		const { exitFlow } = useExitFlow();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { set } = useFlowState();
 		const createSite = useCreateSite();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -138,30 +134,11 @@ const newsletter: Flow = {
 			}
 		}
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = async () => {
-			switch ( _currentStep ) {
-				case 'launchpad':
-					skipLaunchpad( {
-						checklistSlug: 'newsletter',
-						siteId,
-						siteSlug,
-					} );
-					return;
-
-				default:
-					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
-			}
-		};
-
 		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goToStep, submit };
 	},
 } as const;
 
