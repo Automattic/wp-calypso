@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
@@ -8,7 +9,8 @@ import './style.scss';
 
 const noop = () => undefined;
 
-type Author = {
+export type ReaderAvatarAuthor = {
+	ID?: number;
 	avatar_URL?: string;
 	has_avatar?: boolean;
 	display_name?: string;
@@ -16,18 +18,23 @@ type Author = {
 };
 
 type ReaderAvatarProps = {
-	author?: Author | null;
-	siteIcon?: string;
-	feedIcon?: string;
-	siteUrl?: string;
-	preferGravatar?: boolean;
+	author?: ReaderAvatarAuthor | null; // An author object to pull the author info from.
+	siteIcon?: string; // URL to the site icon image.
+	feedIcon?: string; // URL to the feed icon image.
+	siteUrl?: string; // If present, the avatar will be linked to this URL.
+	preferGravatar?: boolean; // If we have an avatar and we prefer it, don't even consider the site icon.
 	preferBlavatar?: boolean;
-	showPlaceholder?: boolean;
-	isCompact?: boolean;
-	onClick?: () => void;
+	showPlaceholder?: boolean; // Show a loading placeholder if the icons/author are not yet available.
+	isCompact?: boolean; // Show a small version of the avatar. Used in post cards and streams.
+	onClick?: () => void; // Click handler to be executed when avatar is clicked.
 	iconSize?: number | null;
 };
 
+/**
+ * Display an avatar for a feed, site and/or author.
+ *
+ * If both a feed/site icon and author Gravatar are available, they will be overlaid on top of each other.
+ */
 export default function ReaderAvatar( {
 	author,
 	siteIcon,
@@ -104,16 +111,18 @@ export default function ReaderAvatar( {
 		'has-site-icon': hasSiteIcon,
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
-
 	const defaultIconElement = ! hasSiteIcon && ! hasAvatar && ! showPlaceholder && (
 		<Gridicon key="globe-icon" icon="globe" size={ siteIconSize } />
 	);
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
-	const avatarElement = ( hasAvatar || showPlaceholder ) && (
+	const avatarUrl =
+		config.isEnabled( 'reader/user-profile' ) && author?.ID ? `/read/users/${ author.ID }` : null;
+	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);
+	const avatarElement = avatarUrl ? <a href={ avatarUrl }> { authorAvatar }</a> : authorAvatar;
 	const iconElements = [ defaultIconElement, siteIconElement, avatarElement ];
 
 	return (
