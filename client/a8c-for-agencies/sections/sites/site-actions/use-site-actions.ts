@@ -400,7 +400,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'View site' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && true;
+					return canHaveActions( item );
 				},
 				callback( items: SiteData[] ) {
 					page( getUrlWithScheme( items[ 0 ] ) );
