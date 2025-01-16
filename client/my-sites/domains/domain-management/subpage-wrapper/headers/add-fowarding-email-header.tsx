@@ -6,6 +6,7 @@ import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { CustomHeaderComponentType } from './custom-header-component-type';
 
@@ -16,6 +17,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 } ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSite( state, selectedSiteSlug ) as SiteExcerptData );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	const navigationItems = useMemo( () => {
 		const baseNavigationItems = [
@@ -24,7 +26,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 				href: domainManagementAllOverview(
 					selectedSiteSlug,
 					selectedDomainName,
-					null,
+					currentRoute,
 					inSiteContext
 				),
 			},
@@ -33,7 +35,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 				href: getEmailManagementPath(
 					selectedSiteSlug,
 					selectedDomainName,
-					null,
+					currentRoute,
 					undefined,
 					inSiteContext
 				),
