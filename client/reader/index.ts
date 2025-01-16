@@ -11,7 +11,7 @@ import {
 import {
 	getUserProfileBasePath,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 import {
 	blogListing,
 	feedDiscovery,

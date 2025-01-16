@@ -2,8 +2,7 @@ import { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
-import { getUserProfileBasePath } from 'calypso/reader/user-stream/user-profile.utils';
-import type { AppState } from 'calypso/types';
+import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
 
 interface UserPostsContext extends Context {
 	params: {

@@ -4,7 +4,7 @@ import TimeSince from 'calypso/components/time-since';
 import {
 	getUserProfileUrl,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
