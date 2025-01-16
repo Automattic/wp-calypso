@@ -136,4 +136,19 @@ describe( 'Site Migration Import or Migrate Step', () => {
 
 		expect( deleteMigrationSticker ).toHaveBeenCalledWith( 123 );
 	} );
+
+	it( 'shows the upgrade required badge when the site can not install plugins', () => {
+		render();
+
+		expect( screen.getByText( /Requires Business plan/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the included with your plan badge when the site can install plugins', () => {
+		( useSite as jest.Mock ).mockReturnValue( {
+			plan: { features: { active: [ 'install-plugins' ] } },
+		} );
+		render();
+
+		expect( screen.getByText( /Included with your plan/ ) ).toBeInTheDocument();
+	} );
 } );
