@@ -12,7 +12,7 @@ import { isRecentlyRegistered } from '@automattic/domains-table/src/utils/is-rec
 import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable';
 import { isDomainUpdateable } from '@automattic/domains-table/src/utils/is-updateable';
 import {
-	domainMagementDNS,
+	domainManagementDNS,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
 	domainUseMyDomain,
@@ -69,7 +69,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 				const domain = domains.length > 0 && domains[ 0 ];
 				if ( domain ) {
 					onDomainAction?.( 'manage-dns-settings', domain.processed );
-					const url = domainMagementDNS( domain.original.site_slug, domain.processed.domain );
+					const url = domainManagementDNS( domain.original.site_slug, domain.processed.domain );
 					navigate( url );
 				}
 			},
