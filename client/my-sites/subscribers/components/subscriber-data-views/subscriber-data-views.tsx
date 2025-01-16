@@ -13,9 +13,9 @@ import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
-import { SubscribersHeader } from '../../main';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscriberProfile } from '../subscriber-profile';
+import { SubscribersHeader } from '../subscribers-header';
 import type { View, Action } from '@wordpress/dataviews';
 import './style.scss';
 
@@ -273,6 +273,7 @@ const SubscriberDataViews = ( {
 				<SubscribersHeader
 					selectedSiteId={ siteId || undefined }
 					disableCta={ isUnverified || isStagingSite }
+					hideSubtitle={ !! selectedSubscriber }
 				/>
 				{ shouldShowLaunchpad ? (
 					<EmptyComponent />

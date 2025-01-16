@@ -41,7 +41,7 @@ type SubscribersHeaderProps = {
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-export const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -154,7 +154,7 @@ const SubscribersPage = ( {
 		if ( siteId ) {
 			getSubscribersImports( siteId );
 		}
-	}, [ siteId ] );
+	}, [ siteId, getSubscribersImports ] );
 
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
@@ -181,12 +181,7 @@ const SubscribersPage = ( {
 			sortTermChanged={ sortTermChanged }
 		>
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
-			<Main
-				wideLayout
-				className={ `subscribers${
-					isEnabled( 'subscribers-dataviews' ) ? ' subscribers--dataviews' : ''
-				}` }
-			>
+			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
 				{ ! isEnabled( 'subscribers-dataviews' ) && (
@@ -199,7 +194,7 @@ const SubscribersPage = ( {
 					{ isEnabled( 'subscribers-dataviews' ) ? (
 						// Your new dataviews component
 						<SubscriberDataViews
-							siteId={ siteId }
+							siteId={ selectedSite?.ID }
 							onClickView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }
 							onClickUnsubscribe={ onClickUnsubscribe }
