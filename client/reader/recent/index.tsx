@@ -51,7 +51,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		search: '',
-		fields: [ 'icon', 'post' ],
+		fields: [],
 		perPage: 10,
 		page: 1,
 		layout: {
@@ -236,7 +236,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						onChangeView={ ( newView ) =>
 							setView( {
 								type: newView.type,
-								fields: newView.fields ?? [],
+								fields: [],
 								layout: view.layout,
 								perPage: newView.perPage,
 								page: newView.page,
