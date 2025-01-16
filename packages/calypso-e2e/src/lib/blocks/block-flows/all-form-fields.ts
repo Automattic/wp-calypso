@@ -48,7 +48,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 		const remainingBlocksToAdd = [
 			[ 'Name Field', 'Add label…' ],
 			[ 'Email Field', 'Add label…' ],
-			[ 'Website Field', 'Add label…' ],
+			[ 'URL Field', 'Add label…' ],
 			[ 'Date Picker', 'Add label…' ],
 			[ 'Phone Number Field', 'Add label…' ],
 			[ 'Multi-line Text Field', 'Add label…' ],
@@ -92,7 +92,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Text Input Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
-			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Website Field' ) },
+			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'URL Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Phone Number Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Multi-line Text Field' ) },
 			{ type: 'checkbox', accessibleName: this.addLabelPrefix( 'Checkbox' ) },
@@ -132,7 +132,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	private async addFieldBlockToForm( context: EditorContext, blockName: string ) {
 		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
 			await context.editorPage.selectParentBlock( 'Form' );
-			const addBlockLocater = await editorCanvas.getByRole( 'button', { name: 'Add block' } );
+			const addBlockLocater = editorCanvas.getByRole( 'button', { name: 'Add block' } );
+			console.log( addBlockLocater );
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 				// See: https://github.com/Automattic/jetpack/issues/32695
 				// On mobile, we can't click the inline button directly due to an overlay z-index bug.
