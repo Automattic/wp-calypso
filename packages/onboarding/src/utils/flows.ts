@@ -15,7 +15,6 @@ export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
-export const MIGRATION_FLOW = 'migration';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';

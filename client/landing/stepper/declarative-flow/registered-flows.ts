@@ -9,7 +9,6 @@ import {
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -133,8 +132,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
-	[ MIGRATION_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {

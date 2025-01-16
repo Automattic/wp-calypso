@@ -3,7 +3,6 @@ import {
 	updateLaunchpadSettings,
 	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
-import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -546,9 +545,6 @@ const siteSetupFlow: Flow = {
 				case 'importerMedium':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
-						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
-							return goToFlow( backToFlow );
-						}
 						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
@@ -580,10 +576,6 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					if ( backToFlow && urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
-						return goToFlow( backToFlow );
-					}
-
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':
