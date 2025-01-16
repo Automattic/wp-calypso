@@ -56,7 +56,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? odieChat.messages : [] ),
-								...ODIE_TRANSFER_MESSAGE,
+								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
