@@ -3,7 +3,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { redirectJetpack, redirectLostPassword, login } from '../controller';
 
@@ -180,7 +179,6 @@ describe( 'redirectLostPassword', () => {
 		context.params.action = 'lostpassword';
 		context.store.getState.mockReturnValueOnce( {} );
 		getIsBlazePro.mockReturnValueOnce( false );
-		getIsWooPasswordless.mockReturnValueOnce( false );
 		isWooOAuth2Client.mockReturnValueOnce( false );
 		isWooPasswordlessJPCFlow.mockReturnValueOnce( false );
 
