@@ -8,7 +8,7 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 	const lastChatStatus = useRef< string | null >( null );
 	useEffect( () => {
 		const messageCount = chat.messages.length;
-		if ( messageCount < 2 || chat.status === 'loading' ) {
+		if ( messageCount < 1 || chat.status === 'loading' ) {
 			return;
 		}
 
