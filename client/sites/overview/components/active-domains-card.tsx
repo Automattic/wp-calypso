@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
@@ -47,11 +48,16 @@ const ActiveDomainsCard: FC = () => {
 	if ( isJetpackNotAtomic ) {
 		return null;
 	}
+
+	const addDomainsLink = isEnabled( 'calypso/all-domain-management' )
+		? `/start/domain/domain-only`
+		: `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }`;
+
 	return (
 		<HostingCard className="hosting-overview__active-domains">
 			<HostingCardHeading title={ translate( 'Active domains' ) }>
 				<HostingCardLinkButton
-					to={ `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }` }
+					to={ addDomainsLink }
 					hideOnMobile
 					onClick={ () =>
 						dispatch( recordTracksEvent( 'calypso_overview_add_domain_button_click' ) )
