@@ -156,6 +156,8 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	];
 	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
+	const locationData = shouldGate ? fakeData : data;
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -188,12 +190,12 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 							</StatsInfoArea>
 						}
 						moduleType="countryviews"
-						data={ shouldGate ? fakeData : data }
+						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart data={ data } geoMode={ geoMode } skipQuery /> }
+						heroElement={ <Geochart data={ locationData } geoMode={ geoMode } skipQuery /> }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={
@@ -201,7 +203,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								? {
 										url: summaryUrl,
 										label:
-											Array.isArray( data ) && data.length >= 10
+											Array.isArray( locationData ) && locationData.length >= 10
 												? translate( 'View all', {
 														context: 'Stats: Button link to show more detailed stats information',
 												  } )
