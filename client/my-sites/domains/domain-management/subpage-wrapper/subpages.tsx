@@ -40,6 +40,7 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	},
 	[ COMPARE_EMAIL_PROVIDERS ]: {
 		CustomHeader: CompareEmailProvidersHeader,
+		showBackButton: false,
 	},
 	[ DNS_RECORDS ]: {
 		CustomHeader: DNSRecordsHeader,
