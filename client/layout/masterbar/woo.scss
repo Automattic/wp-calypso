@@ -1283,10 +1283,7 @@ $breakpoint-mobile: 660px;
 
 		h1,
 		h2,
-		h3,
-		h4,
-		h5,
-		h6 {
+		h3 {
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
 		}
@@ -1729,6 +1726,7 @@ $breakpoint-mobile: 660px;
 			margin-top: 0;
 
 			h1.magic-login__form-header {
+				font-family: var(--woo-font-family-header);
 				color: var(--studio-gray-100);
 				text-align: center;
 				font-size: 2.25rem;
@@ -2254,10 +2252,7 @@ $breakpoint-mobile: 660px;
 
 	h1,
 	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
+	h3 {
 		font-feature-settings: "ss04";
 	}
 
