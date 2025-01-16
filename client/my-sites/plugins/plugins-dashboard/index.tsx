@@ -135,9 +135,6 @@ const PluginsDashboard = ( {
 	const currentPlugins = useSelector( ( state ) =>
 		getPluginsWithUpdateStatuses( state, allPlugins )
 	);
-	const currentFilteredPlugins = currentPlugins.filter(
-		( plugin: Plugin ) => ! ( isJetpackCloud() && plugin.isMarketplaceProduct )
-	);
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
@@ -150,8 +147,10 @@ const PluginsDashboard = ( {
 			! item?.options?.is_wpforteams_site
 	);
 
-	const sitesWithoutPlugin = sitesToShow.filter(
-		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
+	const sitesWithoutPluginAvailable = sitesToShow.filter(
+		( site ) =>
+			! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID ) &&
+			! ( isJetpackCloud() && hasMarketplaceProduct( productsList, pluginSlug ) )
 	);
 
 	const doActionOverSelected = (
@@ -362,7 +361,7 @@ const PluginsDashboard = ( {
 
 				<PluginsListDataViews
 					pluginSlug={ pluginSlug }
-					currentPlugins={ currentFilteredPlugins }
+					currentPlugins={ currentPlugins }
 					initialSearch={ searchTerm }
 					isLoading={ isLoading }
 					onSearch={ doSearch }
@@ -398,7 +397,7 @@ const PluginsDashboard = ( {
 						/>
 
 						<PluginAvailableOnSitesList
-							sites={ sitesWithoutPlugin }
+							sites={ sitesWithoutPluginAvailable }
 							isLoading={ isLoading }
 							plugin={ selectedPlugin }
 						/>
