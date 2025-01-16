@@ -306,14 +306,14 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 
 		return [
 			{
-				id: 'delete_site',
-				label: translate( 'Delete site' ),
-				isEligible() {
-					return false; // Feature is always disabled, see canDelete above.
+				id: 'issue_license',
+				label: translate( 'Issue new license' ),
+				isEligible( item: SiteData ) {
+					return ! item.site.error && ! isWPComSite( item ) && ! isUrlOnly( item );
 				},
-				callback() {
-					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
-					// TODO: implement modal. See setShowDeleteDevSiteDialog in SiteActions.
+				callback: () => {
+					page( A4A_MARKETPLACE_LINK );
+					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
 				},
 			},
 			{
@@ -327,14 +327,14 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 				isDestructive: true,
 			},
 			{
-				id: 'issue_license',
-				label: translate( 'Issue new license' ),
-				isEligible( item: SiteData ) {
-					return ! item.site.error && ! isWPComSite( item ) && ! isUrlOnly( item );
+				id: 'delete_site',
+				label: translate( 'Delete site' ),
+				isEligible() {
+					return false; // Feature is always disabled, see canDelete above.
 				},
-				callback: () => {
-					page( A4A_MARKETPLACE_LINK );
-					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
+				callback() {
+					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
+					// TODO: implement modal. See setShowDeleteDevSiteDialog in SiteActions.
 				},
 			},
 		];
