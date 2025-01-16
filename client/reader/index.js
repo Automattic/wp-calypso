@@ -9,6 +9,10 @@ import {
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
 import {
+	getUserProfileBasePath,
+	isUserProfileEnabled,
+} from 'calypso/reader/user-stream/user-profile.utils';
+import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
@@ -27,7 +31,6 @@ import {
 	pendingSubscriptionsManager,
 } from './controller';
 import { userPosts, userLists } from './user-stream/controller';
-import { isUserProfileEnabled } from './user-stream/user-profile.utils';
 
 import './style.scss';
 
@@ -100,7 +103,7 @@ export default async function () {
 		// User profile
 		if ( isUserProfileEnabled() ) {
 			page(
-				'/read/users/:user_id',
+				getUserProfileBasePath(),
 				blogDiscoveryByFeedId,
 				redirectLoggedOutToSignup,
 				updateLastRoute,
@@ -110,7 +113,7 @@ export default async function () {
 				clientRender
 			);
 			page(
-				'/read/users/:user_id/lists',
+				getUserProfileBasePath( 'lists' ),
 				blogDiscoveryByFeedId,
 				redirectLoggedOutToSignup,
 				updateLastRoute,

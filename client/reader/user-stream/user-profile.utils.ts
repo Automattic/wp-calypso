@@ -15,3 +15,12 @@ export function isUserProfileEnabled(): boolean {
 export function getUserProfileUrl( userId: number ): string {
 	return `/read/users/${ userId }`;
 }
+
+type UserProfileSubPage = '' | 'lists';
+
+/**
+ * Return the base path of the user profile page.
+ */
+export function getUserProfileBasePath( subPage: UserProfileSubPage = '' ): string {
+	return subPage ? `/read/users/:user_id/${ subPage }` : `/read/users/:user_id`;
+}
