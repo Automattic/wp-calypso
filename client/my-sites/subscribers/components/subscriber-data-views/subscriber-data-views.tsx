@@ -14,7 +14,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
 import { SubscriberDetails } from '../subscriber-details';
-import { SubscriberProfile } from '../subscriber-profile';
 import { SubscribersHeader } from '../subscribers-header';
 import type { View, Action } from '@wordpress/dataviews';
 import './style.scss';
@@ -130,11 +129,17 @@ const SubscriberDataViews = ( {
 					{ selectedSubscriber ? (
 						<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 					) : (
-						<SubscriberProfile
-							avatar={ item.avatar }
-							displayName={ item.display_name }
-							email={ item.email_address }
-						/>
+						<div className="subscriber-data-views__list-item">
+							<div className="subscriber-data-views__list-item-avatar">
+								<Gravatar
+									user={ { avatar_URL: item.avatar, name: item.display_name } }
+									size={ 52 }
+									imgSize={ 80 }
+									className="subscriber-data-views__square-avatar"
+								/>
+							</div>
+							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
+						</div>
 					) }
 				</button>
 			),

@@ -44,6 +44,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
             }
         
             .subscriber-data-views__square-avatar {
+                border-radius: 0;
                 cursor: pointer;
             }
         
@@ -72,6 +73,33 @@ body.is-section-subscribers.is-subscribers-dataviews {
                         }
                     }
                 }
+
+                &-item {
+                    display: flex;
+                    flex-direction: row;
+                    gap: calc(4px* 3);
+                    justify-content: start;
+
+                    &-avatar {
+                        position: relative;
+                        height: 52px;
+                        width: 52px;
+                        border-radius: 4px;
+                        flex-shrink: 0;
+                        overflow: hidden;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+                            border-radius: 4px;
+                        }
+                    }
+                }
             }
         
             &.has-selected-subscriber {
@@ -97,14 +125,6 @@ body.is-section-subscribers.is-subscribers-dataviews {
             &__details {
                 background: var( --color-surface );
                 display: none;
-            }
-        
-            &__square-avatar.gravatar {
-                border-radius: 0;
-                
-                img {
-                    border-radius: 0;
-                }
             }
         
             .subscriber-profile.subscriber-profile--compact {
