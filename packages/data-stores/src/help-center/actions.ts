@@ -100,25 +100,27 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 	} ) as const;
 
 export const setShowHelpCenter = function* ( show: boolean ) {
-	if ( canAccessWpcomApis() ) {
-		// Use the promise version to do that action without waiting for the result.
-		wpcomRequestPromise( {
-			path: `/me/preferences`,
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: {
-				calypso_preferences: { help_center_open: show },
-			},
-		} );
-	} else {
-		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
-			global: true,
-			path: `/help-center/open-state`,
-			method: 'PUT',
-			data: { help_center_open: show },
-		} as APIFetchOptions );
-	}
+	try {
+		if ( canAccessWpcomApis() ) {
+			// Use the promise version to do that action without waiting for the result.
+			wpcomRequestPromise( {
+				path: `/me/preferences`,
+				apiNamespace: 'wpcom/v2',
+				method: 'PUT',
+				body: {
+					calypso_preferences: { help_center_open: show },
+				},
+			} );
+		} else {
+			// Use the promise version to do that action without waiting for the result.
+			apiFetchPromise( {
+				global: true,
+				path: `/help-center/open-state`,
+				method: 'PUT',
+				data: { help_center_open: show },
+			} as APIFetchOptions );
+		}
+	} catch {}
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );

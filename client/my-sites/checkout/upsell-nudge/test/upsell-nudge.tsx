@@ -28,6 +28,10 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );
+
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
