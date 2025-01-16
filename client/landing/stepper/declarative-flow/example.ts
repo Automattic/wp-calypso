@@ -15,24 +15,9 @@ import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
-import type { Flow, ProvidedDependencies } from './internals/types';
+import type { Flow } from './internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-
-function initialize() {
-	const privateSteps = stepsWithRequiredLogin( [
-		STEPS.NEWSLETTER_SETUP,
-		STEPS.NEWSLETTER_GOALS,
-		STEPS.UNIFIED_DOMAINS,
-		STEPS.UNIFIED_PLANS,
-		STEPS.PROCESSING,
-		STEPS.SUBSCRIBERS,
-		STEPS.SITE_CREATION_STEP,
-		STEPS.LAUNCHPAD,
-	] );
-
-	return [ STEPS.INTRO, ...privateSteps ] as const;
-}
 
 const newsletter: Flow = {
 	name: EXAMPLE_FLOW,
@@ -57,8 +42,6 @@ const newsletter: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const a = this.initialize();
-
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
@@ -84,10 +67,7 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		function submit< T extends typeof _currentStep >(
-			providedDependencies: ProvidedDependencies< T >
-		) {
-			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+		function submit( providedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
 					return navigate( 'newsletterSetup' );
@@ -105,7 +85,7 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans': {
-					set( 'plan', providedDependencies );
+					set( 'plans', providedDependencies );
 					const siteTitle = get( 'newsletterSetup' )?.siteTitle;
 
 					setPendingAction( () =>
@@ -119,7 +99,9 @@ const newsletter: Flow = {
 					return navigate( 'processing' );
 				}
 				case 'processing': {
-					const site = set( 'site', providedDependencies );
+					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+
+					const site = set( 'processing', providedDependencies );
 					if ( site?.goToHome && site?.siteSlug ) {
 						return window.location.replace(
 							addQueryArgs( `/home/${ siteId ?? site?.siteSlug }`, {

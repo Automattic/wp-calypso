@@ -6,7 +6,7 @@ import { DomainStepResult, PlansStepResult } from './types';
  */
 export type FlowStateManifest = Partial< {
 	domains: DomainStepResult;
-	plan: PlansStepResult;
+	plans: PlansStepResult;
 	newsletterSetup: {
 		siteTitle: string;
 		tagline: string;
@@ -14,6 +14,7 @@ export type FlowStateManifest = Partial< {
 	newsletterGoals: {
 		goals: string[];
 	};
+	site: SiteDetails;
 	siteId: SiteDetails[ 'ID' ];
 	siteSlug: SiteDetails[ 'slug' ];
 	processing: {

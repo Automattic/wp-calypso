@@ -1,11 +1,12 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { ExperimentAssignment } from '@automattic/explat-client';
+import { Navigate } from '../../types';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
 interface Props {
 	exitFlow: ( path: string ) => void;
-	navigate: ( path: string ) => void;
+	navigate: Navigate;
 }
 
 interface PostFlowUrlProps {
