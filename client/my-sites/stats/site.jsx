@@ -46,6 +46,7 @@ import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-featu
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -155,6 +156,25 @@ const getDefaultDaysForPeriod = ( period ) => {
 	}
 };
 
+function useModuleVisibilitySettings( siteId ) {
+	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
+	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+
+	const defaultModuleSettings = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+		if ( module.key === 'videos' && ! hasVideoPress ) {
+			return { ...module, defaultValue: false, disabled: true };
+		}
+		return module;
+	} );
+
+	const defaultModuleVisibility = {};
+	defaultModuleSettings.forEach( ( module ) => {
+		defaultModuleVisibility[ module.key ] = module.defaultValue;
+	} );
+
+	return { ...defaultModuleVisibility, ...moduleToggles };
+}
+
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
 	const { period } = props.period;
@@ -173,12 +193,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const slug = useSelector( getSelectedSiteSlug );
-	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 
 	const upsellModalView = useSelector(
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
 	);
+
+	const moduleToggles = useModuleVisibilitySettings( siteId );
 
 	const {
 		supportsPlanUsage,
