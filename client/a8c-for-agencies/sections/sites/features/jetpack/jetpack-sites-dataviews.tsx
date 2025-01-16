@@ -19,12 +19,10 @@ import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cl
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
-import SiteActions from '../../site-actions';
 import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
 import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Action, Field } from '@wordpress/dataviews';
-import type { MouseEvent, KeyboardEvent } from 'react';
 
 export const JetpackSitesDataViews = ( {
 	data,
@@ -120,7 +118,6 @@ export const JetpackSitesDataViews = ( {
 	const [ monitorRef, setMonitorRef ] = useState< HTMLElement | null >();
 	const [ scanRef, setScanRef ] = useState< HTMLElement | null >();
 	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
-	const [ actionsRef ] = useState< HTMLElement | null >();
 
 	const fields = useMemo< Field< SiteData >[] >(
 		() => [
@@ -359,56 +356,6 @@ export const JetpackSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: false,
 			},
-			{
-				id: 'actions',
-				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
-				render: ( { item }: { item: SiteData } ) => {
-					if ( isLoading ) {
-						return <TextPlaceholder />;
-					}
-
-					const isDevSite = item.isDevSite ?? false;
-
-					return (
-						<>
-							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
-							<div
-								className="sites-dataviews__actions"
-								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
-								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
-							>
-								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
-									isNotProduction ) && (
-									<>
-										{ ! item.site.error && ! item.site.value.is_simple && (
-											<SiteActions
-												isLargeScreen={ isLargeScreen }
-												isDevSite={ isDevSite }
-												site={ item.site }
-												siteError={ item.site.error }
-												onRefetchSite={ onRefetchSite }
-											/>
-										) }
-									</>
-								) }
-							</div>
-						</>
-					);
-				},
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: (
-					<>
-						<span>ACTIONS</span>
-						<GuidedTourStep
-							id="sites-walkthrough-site-preview"
-							tourId="sitesWalkthrough"
-							context={ actionsRef }
-						/>
-					</>
-				),
-				enableHiding: false,
-				enableSorting: false,
-			},
 		],
 		[
 			translate,
@@ -419,15 +366,11 @@ export const JetpackSitesDataViews = ( {
 			monitorRef,
 			scanRef,
 			pluginsRef,
-			actionsRef,
 			isLoading,
 			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			getSiteErrors,
 			renderField,
-			isNotProduction,
-			isLargeScreen,
-			onRefetchSite,
 		]
 	);
 
