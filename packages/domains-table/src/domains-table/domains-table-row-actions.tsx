@@ -46,6 +46,7 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
+	isHostingOverview,
 	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
@@ -87,7 +88,13 @@ export const DomainsTableRowActions = ( {
 			canViewDetails && (
 				<MenuItemLink
 					key="actionDetails"
-					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+					href={ domainManagementLink(
+						domain,
+						siteSlug,
+						isAllSitesView,
+						undefined,
+						isHostingOverview
+					) }
 				>
 					{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 				</MenuItemLink>
