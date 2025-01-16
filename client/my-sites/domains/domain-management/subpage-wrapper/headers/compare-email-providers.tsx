@@ -6,6 +6,7 @@ import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { CustomHeaderComponentType } from './custom-header-component-type';
 
@@ -15,6 +16,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 	inSiteContext,
 } ) => {
 	const site = useSelector( ( state ) => getSite( state, selectedSiteSlug ) as SiteExcerptData );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	const navigationItems = useMemo( () => {
 		const baseNavigationItems = [
@@ -23,7 +25,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 				href: domainManagementAllOverview(
 					selectedSiteSlug,
 					selectedDomainName,
-					null,
+					currentRoute,
 					inSiteContext
 				),
 				className: 'navigation-header__domain-name',
@@ -33,7 +35,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 				href: getEmailManagementPath(
 					selectedSiteSlug,
 					selectedDomainName,
-					null,
+					currentRoute,
 					undefined,
 					inSiteContext
 				),
@@ -55,7 +57,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 		}
 
 		return baseNavigationItems;
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
+	}, [ currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
 
 	return (
 		<NavigationHeader

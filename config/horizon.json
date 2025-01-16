@@ -133,6 +133,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
+		"sites/drive-migrations": false,
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,

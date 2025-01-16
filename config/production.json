@@ -174,6 +174,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": false,
+		"sites/drive-migrations": false,
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
