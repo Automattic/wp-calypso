@@ -394,9 +394,11 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const duplicateViewsExperimentAssignment = await loadExperimentAssignment(
-		'calypso_post_onboarding_holdout_120924'
-	);
+	const experimentName = 'calypso_post_onboarding_holdout_120924';
+	const aaTestName = 'calypso_post_onboarding_aa_150125';
+
+	loadExperimentAssignment( aaTestName );
+	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
 	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
