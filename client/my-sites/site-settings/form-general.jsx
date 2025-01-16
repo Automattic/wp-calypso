@@ -442,7 +442,7 @@ export class SiteSettingsFormGeneral extends Component {
 								{ this.blogAddress() }
 								{ this.languageOptions() }
 								{ this.Timezone() }
-								{ this.hideActionbar() }
+								{ ! siteIsJetpack && this.hideActionbar() }
 								{ siteIsJetpack && this.WordPressVersion() }
 							</form>
 						</Card>

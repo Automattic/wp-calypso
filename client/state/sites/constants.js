@@ -93,6 +93,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_commercial',
 	'is_commercial_reasons',
 	'wpcom_admin_interface',
-	'wpcom_hide_action_bar',
 	'wpcom_classic_early_release',
+	'wpcom_hide_action_bar',
 ].join();
