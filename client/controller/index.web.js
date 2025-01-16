@@ -394,7 +394,7 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const experimentName = 'calypso_post_onboarding_holdout_120924';
+	const experimentName = 'calypso_post_onboarding_holdout_160125';
 	const aaTestName = 'calypso_post_onboarding_aa_150125';
 
 	loadExperimentAssignment( aaTestName );
