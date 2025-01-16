@@ -311,6 +311,8 @@ export function useSiteActionsDataViews( {
 			return true;
 		};
 		const getBlogId = ( item: SiteData ) => item.site.value.blog_id;
+		const hasBackup = ( item: SiteData ) => item.site.value.has_backup;
+		const getSiteSlug = ( item: SiteData ) => urlToSlug( item.site.value.url );
 
 		return [
 			{
@@ -402,6 +404,34 @@ export function useSiteActionsDataViews( {
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'clone_site_wpcom',
+				label: translate( 'Copy this site' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return isWPComSite( item ) && hasBackup( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/backup/${ getSiteSlug( items[ 0 ] ) }/clone` );
+					dispatch( recordTracksEvent( getActionEventName( 'clone_site', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'clone_site_not_wpcom',
+				label: translate( 'Copy this site' ),
+				isEligible( item: SiteData ) {
+					return ! isWPComSite( item ) && hasBackup( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					setDataViewsState( ( prevState: DataViewsState ) => ( {
+						...prevState,
+						selectedItem: items[ 0 ].site.value,
+						type: DATAVIEWS_LIST,
+					} ) );
+					setSelectedSiteFeature( JETPACK_BACKUP_ID );
+					dispatch( recordTracksEvent( getActionEventName( 'clone_site', isLargeScreen ) ) );
 				},
 			},
 			{
