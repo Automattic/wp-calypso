@@ -26,7 +26,7 @@ jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+	useLaunchpad: ( wpcom, siteSlug, siteIntentOption ) => {
 		let checklist = [
 			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
 			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
