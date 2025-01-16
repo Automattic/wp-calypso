@@ -58,7 +58,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 		}
 
 		return baseNavigationItems;
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
+	}, [ currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
 
 	return (
 		<>
