@@ -214,7 +214,11 @@ export function domainManagementDNS(
 	}
 }
 
-export function emailManagementEdit( siteSlug: string, domainName: string ) {
+export function emailManagementEdit(
+	siteSlug: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
 	// Encodes only real domain names and not parameter placeholders
 	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
@@ -222,5 +226,12 @@ export function emailManagementEdit( siteSlug: string, domainName: string ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return '/email/' + domainName + '/manage/' + siteSlug;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/email/${ domainName }/${ siteSlug }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/email/${ domainName }/${ siteSlug }`;
+		default:
+			return '/email/' + domainName + '/manage/' + siteSlug;
+	}
 }

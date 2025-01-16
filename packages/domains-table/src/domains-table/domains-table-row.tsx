@@ -224,7 +224,11 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td key={ domain.domain + column.name }>
-							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+							<DomainsTableEmailIndicator
+								domain={ domain }
+								siteSlug={ siteSlug }
+								context={ context }
+							/>
 						</td>
 					);
 				}
