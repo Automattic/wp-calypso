@@ -1,5 +1,8 @@
+import { hasMarketplaceProduct } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSite,
 	getSiteTitle,
@@ -134,6 +137,39 @@ export const getPlugins = createSelector(
 	}
 );
 
+export const getAllDotOrgAndDotComPlugins = createSelector(
+	( state, siteIds, dotComPlugins ) => {
+		const productsList = getProductsList( state );
+		const wporgPlugins = getAllWporgPlugins( state );
+		return getPlugins( state, siteIds, 'all' ).map( ( plugin ) => {
+			let dotComPluginData;
+			if ( dotComPlugins ) {
+				dotComPluginData = dotComPlugins.find(
+					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
+				);
+				if ( dotComPluginData ) {
+					dotComPluginData.isMarketplaceProduct = hasMarketplaceProduct(
+						productsList,
+						plugin.slug
+					);
+				}
+			}
+			const dotOrgPluginData = wporgPlugins?.[ plugin.slug ];
+			return Object.assign( {}, plugin, dotOrgPluginData, dotComPluginData );
+		} );
+	},
+	( state, siteIds ) => [
+		state.plugins.installed.plugins,
+		isRequestingForAllSites( state ),
+		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
+		getProductsList( state ),
+		getAllWporgPlugins( state ),
+	],
+	( state, siteIds, dotComPlugins ) => {
+		return [ siteIds, dotComPlugins?.map( ( plugin ) => plugin?.slug ) ].flat().join( '-' );
+	}
+);
+
 export const getPluginsWithUpdateStatuses = createSelector(
 	( state, allPlugins ) => {
 		const active = filter( allPlugins, _filters.active );
@@ -181,7 +217,7 @@ export const getPluginsWithUpdateStatuses = createSelector(
 			return [ ...memo, { ...plugin, status } ];
 		}, [] );
 	},
-	( plugins, pluginsUpdate ) => [ plugins, pluginsUpdate ]
+	( state ) => [ state.plugins.installed.plugins ]
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {
