@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { hasMarketplaceProduct } from '@automattic/calypso-products';
 import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
@@ -38,6 +39,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -110,21 +112,31 @@ const PluginsDashboard = ( {
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
 	);
+	const productsList = useSelector( ( state ) => getProductsList( state ) );
 	const { data: dotComPlugins }: { data: Plugin[] | undefined } = useWPCOMPluginsList( 'all' );
-	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
-		( plugin: Plugin ) => {
-			const pluginData = wporgPlugins?.[ plugin.slug ];
+	const allPlugins = useSelector( ( state ) =>
+		getPlugins( state, siteIds, 'all' ).map( ( plugin: Plugin ) => {
 			let dotComPluginData: Plugin | undefined;
 			if ( dotComPlugins ) {
 				dotComPluginData = dotComPlugins.find(
 					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
 				);
+				if ( dotComPluginData ) {
+					dotComPluginData.isMarketplaceProduct = hasMarketplaceProduct(
+						productsList,
+						plugin.slug
+					);
+				}
 			}
-			return Object.assign( {}, plugin, pluginData, dotComPluginData ) as Plugin;
-		}
+			const dotOrgPluginData = wporgPlugins?.[ plugin.slug ];
+			return Object.assign( {}, plugin, dotOrgPluginData, dotComPluginData ) as Plugin;
+		} )
 	);
 	const currentPlugins = useSelector( ( state ) =>
 		getPluginsWithUpdateStatuses( state, allPlugins )
+	);
+	const currentFilteredPlugins = currentPlugins.filter(
+		( plugin: Plugin ) => ! ( isJetpackCloud() && plugin.isMarketplaceProduct )
 	);
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
@@ -350,7 +362,7 @@ const PluginsDashboard = ( {
 
 				<PluginsListDataViews
 					pluginSlug={ pluginSlug }
-					currentPlugins={ currentPlugins }
+					currentPlugins={ currentFilteredPlugins }
 					initialSearch={ searchTerm }
 					isLoading={ isLoading }
 					onSearch={ doSearch }
