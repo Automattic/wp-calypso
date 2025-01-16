@@ -114,6 +114,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 						import_dns_records: true,
 						is_hundred_year_domain: isHundredYearTransfer,
 					},
+					volume: isHundredYearTransfer ? 100 : 1,
 				} )
 			);
 
