@@ -96,6 +96,7 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -222,6 +223,7 @@ const siteSetupFlow: Flow = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
+								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
