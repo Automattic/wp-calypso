@@ -845,6 +845,16 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar__icon-with-label {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and label */
+}
+
+.masterbar__icon-label {
+	font-size: $masterbar-font-size;
+}
+
 .masterbar-cart-button {
 	svg {
 		overflow: visible;
