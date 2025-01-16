@@ -41,7 +41,7 @@ type SubscribersHeaderProps = {
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
+export const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -189,10 +189,12 @@ const SubscribersPage = ( {
 			>
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader
-					selectedSiteId={ selectedSite?.ID }
-					disableCta={ isUnverified || isStagingSite }
-				/>
+				{ ! isEnabled( 'subscribers-dataviews' ) && (
+					<SubscribersHeader
+						selectedSiteId={ selectedSite?.ID }
+						disableCta={ isUnverified || isStagingSite }
+					/>
+				) }
 				<SubscriberValidationGate siteId={ siteId }>
 					{ isEnabled( 'subscribers-dataviews' ) ? (
 						// Your new dataviews component
@@ -201,6 +203,8 @@ const SubscribersPage = ( {
 							onClickView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }
 							onClickUnsubscribe={ onClickUnsubscribe }
+							isUnverified={ isUnverified }
+							isStagingSite={ isStagingSite }
 						/>
 					) : (
 						// Existing subscriber list

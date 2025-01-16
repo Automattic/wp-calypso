@@ -13,16 +13,19 @@ import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
+import { SubscribersHeader } from '../../main';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscriberProfile } from '../subscriber-profile';
 import type { View, Action } from '@wordpress/dataviews';
 import './style.scss';
 
 type SubscriberDataViewsProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
+	isUnverified?: boolean;
+	isStagingSite?: boolean;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -45,7 +48,12 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
-const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataViewsProps ) => {
+const SubscriberDataViews = ( {
+	siteId = undefined,
+	onClickUnsubscribe,
+	isUnverified = false,
+	isStagingSite = false,
+}: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<1040px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
@@ -262,6 +270,10 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 			className={ `subscriber-data-views ${ selectedSubscriber ? 'has-selected-subscriber' : '' }` }
 		>
 			<section className="subscriber-data-views__list">
+				<SubscribersHeader
+					selectedSiteId={ siteId || undefined }
+					disableCta={ isUnverified || isStagingSite }
+				/>
 				{ shouldShowLaunchpad ? (
 					<EmptyComponent />
 				) : (

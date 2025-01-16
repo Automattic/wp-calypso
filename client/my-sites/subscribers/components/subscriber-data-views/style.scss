@@ -1,13 +1,25 @@
+@import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
+@import "~@wordpress/base-styles/mixins";
 @import '@wordpress/dataviews/build-style/style.css';
 
+body.is-section-subscribers.is-subscribers-dataviews .layout:not(.has-no-sidebar)  {
+    .layout__content {
+        background: var(--studio-gray-0);
+        overflow: hidden;
+        padding-top: calc(var(--masterbar-height) + 16px);
+        padding-right: 16px;
+        padding-bottom: 16px;
+        padding-left: calc(var(--sidebar-width-max) + 16px);
+    }
+}
+
 .subscribers.subscribers--dataviews.main {
-    padding: 0;
     max-width: none;
-    background-color: var( --studio-gray-0 );
     height: 100vh;
     display: flex;
     flex-direction: column;
+    padding: 0;
 
     .navigation-header {
         padding: 0 48px;
@@ -23,7 +35,6 @@
 	flex-direction: row;
 	flex: 1 1 auto;
 	position: relative;
-	padding: 24px 48px;
 	gap: 24px;
 	max-height: calc(100vh - 100px);
 
@@ -43,7 +54,6 @@
 	&__list {
 		flex: 1 1 auto;
 		min-height: 0;
-		overflow-y: auto;
 		transition: width 0.15s ease-in-out;
 		width: 100%;
 		background: var( --color-surface );
