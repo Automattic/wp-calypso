@@ -55,7 +55,8 @@ export default function PluginsListDataViews( {
 	).length;
 
 	const fields = useFields( bulkActionDialog, openPluginSitesPane, shouldUseListView );
-	const visibleFields = shouldUseListView ? [ 'icon', ...pluginsFields ] : pluginsFields;
+	const visibleFields = ( shouldUseListView: boolean ) =>
+		shouldUseListView ? [ 'icon', ...pluginsFields ] : pluginsFields;
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => {
@@ -63,7 +64,7 @@ export default function PluginsListDataViews( {
 			...initialDataViewsState,
 			perPage: 15,
 			search: initialSearch,
-			fields: visibleFields,
+			fields: visibleFields( shouldUseListView ),
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 			layout: {
 				primaryField: 'plugins',
@@ -93,7 +94,7 @@ export default function PluginsListDataViews( {
 		// Sets the correct fields when route changes or viewport changes
 		setDataViewsState( {
 			...dataViewsState,
-			fields: visibleFields,
+			fields: visibleFields( shouldUseListView ),
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 		} );
 
@@ -102,7 +103,7 @@ export default function PluginsListDataViews( {
 			const shouldUseListView = pluginSlug !== undefined || ! matches;
 			setDataViewsState( {
 				...dataViewsState,
-				fields: visibleFields,
+				fields: visibleFields( shouldUseListView ),
 				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 			} );
 		} );
