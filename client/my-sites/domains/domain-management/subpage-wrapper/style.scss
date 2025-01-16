@@ -225,11 +225,17 @@
                 padding-top: 16px;
 
                 .breadcrumbs li {
-                    > a,
-                    > span {
-                        word-break: break-word;
-                        overflow-wrap: break-word;
-                        white-space: normal;
+                    &.navigation-header__domain-name {
+                        > a,
+                        > span {
+                            word-break: break-word;
+                            overflow-wrap: break-word;
+                            white-space: normal;
+                        }
+                    }
+
+                    > .gridicons-chevron-right {
+                        margin: 0 8px;
                     }
                 }
             }

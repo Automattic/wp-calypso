@@ -26,6 +26,7 @@ const ContactInformationHeader: CustomHeaderComponentType = ( {
 					null,
 					inSiteContext
 				),
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: translate( 'Contact information' ),

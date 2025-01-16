@@ -95,6 +95,7 @@ export type Item = {
 	helpBubble?: React.ReactElement;
 	icon?: React.ReactElement;
 	onClick?: () => void;
+	className?: string;
 };
 interface Props {
 	items: Item[];
@@ -140,7 +141,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<StyledUl className="breadcrumbs">
 			{ items.map( ( item: Item, index: Key ) => (
-				<StyledLi key={ index }>
+				<StyledLi key={ index } className={ item.className }>
 					{ item.icon && <StyledIcon>{ item.icon }</StyledIcon> }
 					{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
 					{ item.href && index !== items.length - 1 ? (

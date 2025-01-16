@@ -43,6 +43,7 @@ const DnsRecordHeader: CustomHeaderComponentType = ( {
 					null,
 					inSiteContext
 				),
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: translate( 'DNS records' ),

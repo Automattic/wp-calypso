@@ -24,6 +24,7 @@ const AddMailboxHeader: CustomHeaderComponentType = ( {
 			{
 				label: selectedDomainName,
 				href: `${ domainManagementOverviewRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`,
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: translate( 'Email' ),
