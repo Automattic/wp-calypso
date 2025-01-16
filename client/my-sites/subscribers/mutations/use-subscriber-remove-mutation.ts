@@ -10,6 +10,11 @@ import useManySubsSite from '../hooks/use-many-subs-site';
 import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
 
+type ApiResponseError = {
+	error: string;
+	message: string;
+};
+
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
 	args: SubscriberListArgs,
@@ -52,12 +57,25 @@ const useSubscriberRemoveMutation = (
 				await Promise.all( promises );
 			}
 
+			// Remove the subscriber from the followers and email followers because they may be both of them.
 			if ( subscriber.user_id ) {
-				await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
-			} else {
-				await wpcom.req.post(
-					`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
-				);
+				try {
+					await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
+				} catch ( e ) {
+					if ( ( e as ApiResponseError )?.error !== 'not_found' && subscriber.subscription_id ) {
+						throw new Error( 'Something went wrong while unsubscribing.' );
+					}
+				}
+			}
+
+			if ( subscriber.subscription_id ) {
+				try {
+					await wpcom.req.post(
+						`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
+					);
+				} catch ( e ) {
+					throw new Error( ( e as ApiResponseError )?.message );
+				}
 			}
 
 			return true;
