@@ -79,6 +79,47 @@
 		}
 	}
 
+	.domain-forwarding-card__fields {
+		.accordion .foldable-card {
+			.foldable-card__header,
+			.foldable-card__content {
+				padding: 0;
+			}
+	
+			.foldable-card__main >div {
+				flex-grow: 0;
+			}
+	
+			&.is-expanded .foldable-card__content {
+				padding: 0 24px 24px 0;
+			}
+		}
+	}
+
+	.domain-forwarding-card__fields,
+	.domain-glue-records-card__accordion {
+		@media (min-width: $break-small) {
+			.form-text-input-with-affixes {
+				> :first-child,
+				.form-text-input-with-affixes__prefix select {
+					border-radius: 2px 0 0 2px;
+				}
+
+				> :last-child {
+					border-radius: 0 2px 2px 0;
+				}
+
+				> :first-child:last-child {
+					border-radius: 2px;
+				}
+
+				.form-text-input-with-affixes__prefix select {
+					border-right: 0;
+				}
+			}
+		}
+	}
+	
 	.domain-info-card.action-card {
 		padding: 24px;
 
