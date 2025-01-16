@@ -182,6 +182,20 @@
 			height: 100%;
 		}
 	}
+
+	.domain__main-placeholder {
+		max-width: 1400px;
+
+		.vertical-nav {
+			> .domain__main-placeholder-card:first-child {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> .domain__main-placeholder-card:last-child {
+				border-radius: 0 0 4px 4px;
+			}
+		}
+	}
 }
 
 .sites-dashboard.domains-overview .hosting-dashboard-item-view__content {
