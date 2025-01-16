@@ -71,9 +71,25 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 
-	const handleSubscriberSelect = useCallback( ( subscriber: Subscriber ) => {
-		setSelectedSubscriber( subscriber );
-	}, [] );
+	const handleSubscriberSelect = useCallback(
+		( items: string[] ) => {
+			if ( items.length === 0 ) {
+				setSelectedSubscriber( null );
+				return;
+			}
+			const selectedId = items[ 0 ];
+			const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === selectedId );
+			if ( subscriber ) {
+				setSelectedSubscriber( subscriber );
+			}
+		},
+		[ subscribers ]
+	);
+
+	const getSubscriberId = useCallback(
+		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
+		[]
+	);
 
 	const handleCloseDetails = () => {
 		setSelectedSubscriber( null );
@@ -99,7 +115,10 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 			label: translate( 'Name' ),
 			getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 			render: ( { item }: { item: Subscriber } ) => (
-				<button onClick={ () => handleSubscriberSelect( item ) }>
+				<button
+					type="button"
+					onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
+				>
 					{ selectedSubscriber ? (
 						<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 					) : (
@@ -161,7 +180,11 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 			{
 				id: 'view',
 				label: translate( 'View' ),
-				callback: ( items: Subscriber[] ) => handleSubscriberSelect( items[ 0 ] ),
+				callback: ( items: Subscriber[] ) => {
+					if ( items[ 0 ] ) {
+						handleSubscriberSelect( [ getSubscriberId( items[ 0 ] ) ] );
+					}
+				},
 				isPrimary: true,
 			},
 			{
@@ -170,7 +193,13 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 				callback: ( items: Subscriber[] ) => onClickUnsubscribe( items[ 0 ] ),
 			},
 		];
-	}, [ selectedSubscriber, translate, handleSubscriberSelect, onClickUnsubscribe ] );
+	}, [
+		selectedSubscriber,
+		translate,
+		handleSubscriberSelect,
+		getSubscriberId,
+		onClickUnsubscribe,
+	] );
 
 	const handleViewChange = ( newView: View ) => {
 		if ( typeof newView.page === 'number' && newView.page !== page ) {
@@ -241,6 +270,10 @@ const SubscriberDataViews = ( { siteId, onClickUnsubscribe }: SubscriberDataView
 						fields={ fields }
 						view={ currentView }
 						onChangeView={ handleViewChange }
+						selection={
+							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
+						}
+						onChangeSelection={ handleSubscriberSelect }
 						isLoading={ isLoading }
 						paginationInfo={ paginationInfo }
 						getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
